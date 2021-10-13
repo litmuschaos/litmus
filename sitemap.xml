@@ -231,12 +231,7 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/awsIamIntegration/</loc>
-         <lastmod>2021-10-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/psp/</loc>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/IAM/awsIamIntegration/</loc>
          <lastmod>2021-10-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -382,6 +377,16 @@
     </url>
     <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/promProbe/</loc>
+         <lastmod>2021-10-13</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/security/kyverno-policies/</loc>
+         <lastmod>2021-10-13</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/security/psp/</loc>
          <lastmod>2021-10-13</lastmod>
          <changefreq>daily</changefreq>
     </url>

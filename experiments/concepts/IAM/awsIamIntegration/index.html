@@ -11,21 +11,21 @@
       
       
       
-        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-experiment/scope-specification/">
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/IAM/awsIamIntegration/">
       
-      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.3">
     
     
       
-        <title>Scope Specification - Litmus Experiments</title>
+        <title>AWS IAM Integration - Litmus Experiments</title>
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.5143246d.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.5143246d.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.3f5d1f46.min.css">
         
       
     
@@ -59,7 +59,7 @@
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
-    <script>function __prefix(e){return new URL("../../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
       <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#experiment-scope" class="md-skip">
+        <a href="#iam-integration-for-litmus-service-accounts" class="md-skip">
           Skip to content
         </a>
       
@@ -84,9 +84,9 @@
 
 <header class="md-header md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+    <a href="../../../.." title="Litmus Experiments" class="md-header__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
-  <img src="../../../../../images/litmus.png" alt="logo">
+  <img src="../../../../images/litmus.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Scope Specification
+              AWS IAM Integration
             
           </span>
         </div>
@@ -201,7 +201,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../.." class="md-tabs__link">
+    <a href="../../../.." class="md-tabs__link">
       Home
     </a>
   </li>
@@ -216,7 +216,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../categories/contents/" class="md-tabs__link">
+      <a href="../../../categories/contents/" class="md-tabs__link">
         Experiments
       </a>
     </li>
@@ -239,7 +239,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../contents/" class="md-tabs__link md-tabs__link--active">
+      <a href="../../chaos-resources/contents/" class="md-tabs__link md-tabs__link--active">
         Concepts
       </a>
     </li>
@@ -257,7 +257,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../faq/content/" class="md-tabs__link">
+      <a href="../../../faq/content/" class="md-tabs__link">
         Litmus FAQ
       </a>
     </li>
@@ -306,7 +306,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../../ROADMAP/" class="md-tabs__link">
+    <a href="../../../../ROADMAP/" class="md-tabs__link">
       Roadmap
     </a>
   </li>
@@ -318,7 +318,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../../../../api/contents/" class="md-tabs__link">
+    <a href="../../../api/contents/" class="md-tabs__link">
       API Docs
     </a>
   </li>
@@ -351,9 +351,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
+    <a href="../../../.." title="Litmus Experiments" class="md-nav__button md-logo" aria-label="Litmus Experiments" data-md-component="logo">
       
-  <img src="../../../../../images/litmus.png" alt="logo">
+  <img src="../../../../images/litmus.png" alt="logo">
 
     </a>
     Litmus Experiments
@@ -382,7 +382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -431,7 +431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/contents/" class="md-nav__link">
+      <a href="../../../categories/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -571,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/container-kill/" class="md-nav__link">
+      <a href="../../../categories/pods/container-kill/" class="md-nav__link">
         Container Kill
       </a>
     </li>
@@ -585,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/disk-fill/" class="md-nav__link">
+      <a href="../../../categories/pods/disk-fill/" class="md-nav__link">
         Disk Fill
       </a>
     </li>
@@ -599,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-autoscaler/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-autoscaler/" class="md-nav__link">
         Pod Autoscaler
       </a>
     </li>
@@ -613,7 +613,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-cpu-hog-exec/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-cpu-hog-exec/" class="md-nav__link">
         Pod CPU Hog Exec
       </a>
     </li>
@@ -627,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-cpu-hog/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-cpu-hog/" class="md-nav__link">
         Pod CPU Hog
       </a>
     </li>
@@ -641,7 +641,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-delete/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-delete/" class="md-nav__link">
         Pod Delete
       </a>
     </li>
@@ -655,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-dns-error/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-dns-error/" class="md-nav__link">
         Pod Dns Error
       </a>
     </li>
@@ -669,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-dns-spoof/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-dns-spoof/" class="md-nav__link">
         Pod Dns Spoof
       </a>
     </li>
@@ -683,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-io-stress/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-io-stress/" class="md-nav__link">
         Pod IO Stress
       </a>
     </li>
@@ -697,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-memory-hog-exec/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-memory-hog-exec/" class="md-nav__link">
         Pod Memory Hog Exec
       </a>
     </li>
@@ -711,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-memory-hog/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-memory-hog/" class="md-nav__link">
         Pod Memory Hog
       </a>
     </li>
@@ -725,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-corruption/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-network-corruption/" class="md-nav__link">
         Pod Network Corruption
       </a>
     </li>
@@ -739,7 +739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-duplication/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-network-duplication/" class="md-nav__link">
         Pod Network Duplication
       </a>
     </li>
@@ -753,7 +753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-latency/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-network-latency/" class="md-nav__link">
         Pod Network Latency
       </a>
     </li>
@@ -767,7 +767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-loss/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-network-loss/" class="md-nav__link">
         Pod Network Loss
       </a>
     </li>
@@ -781,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/pods/pod-network-partition/" class="md-nav__link">
+      <a href="../../../categories/pods/pod-network-partition/" class="md-nav__link">
         Pod Network Partition
       </a>
     </li>
@@ -846,7 +846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/docker-service-kill/" class="md-nav__link">
+      <a href="../../../categories/nodes/docker-service-kill/" class="md-nav__link">
         Docker Service Kill
       </a>
     </li>
@@ -860,7 +860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/kubelet-service-kill/" class="md-nav__link">
+      <a href="../../../categories/nodes/kubelet-service-kill/" class="md-nav__link">
         Kubelet Service Kill
       </a>
     </li>
@@ -874,7 +874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-cpu-hog/" class="md-nav__link">
+      <a href="../../../categories/nodes/node-cpu-hog/" class="md-nav__link">
         Node CPU Hog
       </a>
     </li>
@@ -888,7 +888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-drain/" class="md-nav__link">
+      <a href="../../../categories/nodes/node-drain/" class="md-nav__link">
         Node Drain
       </a>
     </li>
@@ -902,7 +902,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-io-stress/" class="md-nav__link">
+      <a href="../../../categories/nodes/node-io-stress/" class="md-nav__link">
         Node IO Stress
       </a>
     </li>
@@ -916,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-memory-hog/" class="md-nav__link">
+      <a href="../../../categories/nodes/node-memory-hog/" class="md-nav__link">
         Node Memory Hog
       </a>
     </li>
@@ -930,7 +930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-restart/" class="md-nav__link">
+      <a href="../../../categories/nodes/node-restart/" class="md-nav__link">
         Node Restart
       </a>
     </li>
@@ -944,7 +944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/nodes/node-taint/" class="md-nav__link">
+      <a href="../../../categories/nodes/node-taint/" class="md-nav__link">
         Node Taint
       </a>
     </li>
@@ -1002,7 +1002,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/kafka/kafka-broker-pod-failure/" class="md-nav__link">
+      <a href="../../../categories/kafka/kafka-broker-pod-failure/" class="md-nav__link">
         Kafka Broker Pod Failure
       </a>
     </li>
@@ -1053,7 +1053,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/cassandra/cassandra-pod-delete/" class="md-nav__link">
+      <a href="../../../categories/cassandra/cassandra-pod-delete/" class="md-nav__link">
         Cassandra Pod Delete
       </a>
     </li>
@@ -1183,7 +1183,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ec2-terminate-by-id/" class="md-nav__link">
+      <a href="../../../categories/aws/ec2-terminate-by-id/" class="md-nav__link">
         EC2 Terminate By ID
       </a>
     </li>
@@ -1197,7 +1197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ec2-terminate-by-tag/" class="md-nav__link">
+      <a href="../../../categories/aws/ec2-terminate-by-tag/" class="md-nav__link">
         EC2 Terminate By Tag
       </a>
     </li>
@@ -1250,7 +1250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ebs-loss-by-id/" class="md-nav__link">
+      <a href="../../../categories/aws/ebs-loss-by-id/" class="md-nav__link">
         EBS Loss By ID
       </a>
     </li>
@@ -1264,7 +1264,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws/ebs-loss-by-tag/" class="md-nav__link">
+      <a href="../../../categories/aws/ebs-loss-by-tag/" class="md-nav__link">
         EBS Loss By Tag
       </a>
     </li>
@@ -1317,7 +1317,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
+      <a href="../../../categories/aws-ssm/aws-ssm-chaos-by-id/" class="md-nav__link">
         AWS SSM Chaos By ID
       </a>
     </li>
@@ -1331,7 +1331,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
+      <a href="../../../categories/aws-ssm/aws-ssm-chaos-by-tag/" class="md-nav__link">
         AWS SSM Chaos By Tag
       </a>
     </li>
@@ -1389,7 +1389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/vmware/vm-poweroff/" class="md-nav__link">
+      <a href="../../../categories/vmware/vm-poweroff/" class="md-nav__link">
         VM Poweroff
       </a>
     </li>
@@ -1442,7 +1442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/azure/azure-instance-stop/" class="md-nav__link">
+      <a href="../../../categories/azure/azure-instance-stop/" class="md-nav__link">
         Azure Instance Stop
       </a>
     </li>
@@ -1456,7 +1456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/azure/azure-disk-loss/" class="md-nav__link">
+      <a href="../../../categories/azure/azure-disk-loss/" class="md-nav__link">
         Azure Disk Loss
       </a>
     </li>
@@ -1509,7 +1509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/gcp/gcp-vm-instance-stop/" class="md-nav__link">
+      <a href="../../../categories/gcp/gcp-vm-instance-stop/" class="md-nav__link">
         GCP Instance Stop
       </a>
     </li>
@@ -1523,7 +1523,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../categories/gcp/gcp-vm-disk-loss/" class="md-nav__link">
+      <a href="../../../categories/gcp/gcp-vm-disk-loss/" class="md-nav__link">
         GCP Disk Loss
       </a>
     </li>
@@ -1593,14 +1593,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
       
       
       
@@ -1637,7 +1635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../contents/" class="md-nav__link">
+      <a href="../../chaos-resources/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1693,7 +1691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1707,7 +1705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/engine-state/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/engine-state/" class="md-nav__link">
         State Specifications
       </a>
     </li>
@@ -1721,7 +1719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/application-details/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/application-details/" class="md-nav__link">
         Application Specifications
       </a>
     </li>
@@ -1735,7 +1733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/rbac-details/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/rbac-details/" class="md-nav__link">
         RBAC Specifications
       </a>
     </li>
@@ -1749,7 +1747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/runtime-details/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/runtime-details/" class="md-nav__link">
         Runtime Specifications
       </a>
     </li>
@@ -1763,7 +1761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/runner-components/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/runner-components/" class="md-nav__link">
         Runner Specifications
       </a>
     </li>
@@ -1777,7 +1775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-engine/experiment-components/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-engine/experiment-components/" class="md-nav__link">
         Experiment Specifications
       </a>
     </li>
@@ -1796,14 +1794,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_3" type="checkbox" id="__nav_3_1_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_3" type="checkbox" id="__nav_3_1_3" >
       
       
       
@@ -1838,7 +1834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-experiment/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -1850,54 +1846,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Scope Specification
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../chaos-resources/chaos-experiment/scope-specification/" class="md-nav__link">
         Scope Specification
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-scope" class="md-nav__link">
-    Experiment Scope
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-permissions" class="md-nav__link">
-    Experiment Permissions
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1909,7 +1862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../component-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-experiment/component-specification/" class="md-nav__link">
         Component Specification
       </a>
     </li>
@@ -1923,7 +1876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../experiment-tunable-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-experiment/experiment-tunable-specification/" class="md-nav__link">
         Experiment Tunables Specification
       </a>
     </li>
@@ -1937,7 +1890,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configuration-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-experiment/configuration-specification/" class="md-nav__link">
         Configuration Specification
       </a>
     </li>
@@ -1994,7 +1947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-result/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-result/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -2008,7 +1961,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-result/spec-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-result/spec-specification/" class="md-nav__link">
         Spec Specification
       </a>
     </li>
@@ -2022,7 +1975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-result/status-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-result/status-specification/" class="md-nav__link">
         Status Specification
       </a>
     </li>
@@ -2036,7 +1989,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-result/probe-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-result/probe-specification/" class="md-nav__link">
         Probe Status
       </a>
     </li>
@@ -2095,7 +2048,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-scheduler/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-scheduler/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -2109,7 +2062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-scheduler/schedule-once/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-scheduler/schedule-once/" class="md-nav__link">
         Schedule Once
       </a>
     </li>
@@ -2123,7 +2076,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-scheduler/schedule-repeat/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-scheduler/schedule-repeat/" class="md-nav__link">
         Schedule Repeat
       </a>
     </li>
@@ -2137,7 +2090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-scheduler/state/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-scheduler/state/" class="md-nav__link">
         Schedule State
       </a>
     </li>
@@ -2151,7 +2104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../chaos-scheduler/engine-specification/" class="md-nav__link">
+      <a href="../../chaos-resources/chaos-scheduler/engine-specification/" class="md-nav__link">
         Engine Specifications
       </a>
     </li>
@@ -2214,7 +2167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/contents/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/contents/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -2228,7 +2181,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/litmus-probes/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/litmus-probes/" class="md-nav__link">
         Introduction
       </a>
     </li>
@@ -2242,7 +2195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/cmdProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/cmdProbe/" class="md-nav__link">
         Command Probe
       </a>
     </li>
@@ -2256,7 +2209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/httpProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/httpProbe/" class="md-nav__link">
         HTTP Probe
       </a>
     </li>
@@ -2270,7 +2223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/k8sProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/k8sProbe/" class="md-nav__link">
         K8S Probe
       </a>
     </li>
@@ -2284,7 +2237,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/promProbe/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/promProbe/" class="md-nav__link">
         Prometheus Probe
       </a>
     </li>
@@ -2298,7 +2251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../probes/probe-chaining/" class="md-nav__link">
+      <a href="../../chaos-resources/probes/probe-chaining/" class="md-nav__link">
         Probe Chaining
       </a>
     </li>
@@ -2358,7 +2311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../security/psp/" class="md-nav__link">
+      <a href="../../security/psp/" class="md-nav__link">
         Pod Security Policies
       </a>
     </li>
@@ -2372,7 +2325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../security/kyverno-policies/" class="md-nav__link">
+      <a href="../../security/kyverno-policies/" class="md-nav__link">
         Kyverno Policies
       </a>
     </li>
@@ -2391,11 +2344,92 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../../IAM/awsIamIntegration/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          AWS IAM Integration
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         AWS IAM Integration
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-should-we-use-iam-integration-for-aws-authentication" class="md-nav__link">
+    Why should we use IAM integration for AWS authentication?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-service-accounts-to-access-aws-resources" class="md-nav__link">
+    Enable service accounts to access AWS resources:
+  </a>
+  
+    <nav class="md-nav" aria-label="Enable service accounts to access AWS resources:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-an-iam-oidc-provider-for-your-cluster" class="md-nav__link">
+    Step 1: Create an IAM OIDC provider for your cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-creating-an-iam-role-and-policy-for-your-service-account" class="md-nav__link">
+    Step 2: Creating an IAM role and policy for your service account
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-associate-an-iam-role-with-a-service-account" class="md-nav__link">
+    Step 3: Associate an IAM role with a service account
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-the-experiment-cr" class="md-nav__link">
+    Configure the Experiment CR.
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2449,7 +2483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/content/" class="md-nav__link">
+      <a href="../../../faq/content/" class="md-nav__link">
         Contents
       </a>
     </li>
@@ -2503,7 +2537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/install/" class="md-nav__link">
+      <a href="../../../faq/install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -2517,7 +2551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/experiments/" class="md-nav__link">
+      <a href="../../../faq/experiments/" class="md-nav__link">
         Experiments
       </a>
     </li>
@@ -2531,7 +2565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/portal/" class="md-nav__link">
+      <a href="../../../faq/portal/" class="md-nav__link">
         Portal
       </a>
     </li>
@@ -2545,7 +2579,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/scheduler/" class="md-nav__link">
+      <a href="../../../faq/scheduler/" class="md-nav__link">
         Scheduler
       </a>
     </li>
@@ -2559,7 +2593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/security/" class="md-nav__link">
+      <a href="../../../faq/security/" class="md-nav__link">
         Security
       </a>
     </li>
@@ -2573,7 +2607,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../faq/ci-cd/" class="md-nav__link">
+      <a href="../../../faq/ci-cd/" class="md-nav__link">
         CI/CD
       </a>
     </li>
@@ -2630,7 +2664,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/install/" class="md-nav__link">
+      <a href="../../../troubleshooting/install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -2644,7 +2678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/experiments/" class="md-nav__link">
+      <a href="../../../troubleshooting/experiments/" class="md-nav__link">
         Experiments
       </a>
     </li>
@@ -2658,7 +2692,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/portal/" class="md-nav__link">
+      <a href="../../../troubleshooting/portal/" class="md-nav__link">
         Portal
       </a>
     </li>
@@ -2672,7 +2706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../troubleshooting/scheduler/" class="md-nav__link">
+      <a href="../../../troubleshooting/scheduler/" class="md-nav__link">
         Scheduler
       </a>
     </li>
@@ -2746,7 +2780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../ROADMAP/" class="md-nav__link">
+      <a href="../../../../ROADMAP/" class="md-nav__link">
         Roadmap
       </a>
     </li>
@@ -2761,7 +2795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../api/contents/" class="md-nav__link">
+      <a href="../../../api/contents/" class="md-nav__link">
         API Docs
       </a>
     </li>
@@ -2784,6 +2818,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -2792,15 +2828,49 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#experiment-scope" class="md-nav__link">
-    Experiment Scope
+  <a href="#why-should-we-use-iam-integration-for-aws-authentication" class="md-nav__link">
+    Why should we use IAM integration for AWS authentication?
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#experiment-permissions" class="md-nav__link">
-    Experiment Permissions
+  <a href="#enable-service-accounts-to-access-aws-resources" class="md-nav__link">
+    Enable service accounts to access AWS resources:
+  </a>
+  
+    <nav class="md-nav" aria-label="Enable service accounts to access AWS resources:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-an-iam-oidc-provider-for-your-cluster" class="md-nav__link">
+    Step 1: Create an IAM OIDC provider for your cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-creating-an-iam-role-and-policy-for-your-service-account" class="md-nav__link">
+    Step 2: Creating an IAM role and policy for your service account
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-associate-an-iam-role-with-a-service-account" class="md-nav__link">
+    Step 3: Associate an IAM role with a service account
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-the-experiment-cr" class="md-nav__link">
+    Configure the Experiment CR.
   </a>
   
 </li>
@@ -2817,251 +2887,86 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/concepts/chaos-resources/chaos-experiment/scope-specification.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/concepts/IAM/awsIamIntegration.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                  <h1>Scope Specification</h1>
-                
-                <p>It contains scope and permissions details provided at <code>spec.definition.scope</code> and <code>spec.definition.permissions</code> respectively inside chaosexperiment.</p>
-<details class="info"><summary>View the scope specification schema</summary><p><table>
-<tr>
-<th>Field</th>
-<td><code>.spec.definition.scope</code></td>
-</tr>
-<tr>
-<th>Description</th>
-<td>Flag to specify the scope of the ChaosExperiment</td>
-</tr>
-<tr>
-<th>Type</th>
-<td>Optional</td>
-</tr>
-<tr>
-<th>Range</th>
-<td><code>Namespaced</code>, <code>Cluster</code></td>
-</tr>
-<tr>
-<th>Default</th>
-<td><i>n/a</i> (depends on experiment type)</td>
-</tr>
-<tr>
-<th>Notes</th>
-<td>The <code>.spec.definition.scope</code> specifies the scope of the experiment. It can be <code>Namespaced</code> scope for pod level experiments and <code>Cluster</code> for the experiments having a cluster wide impact.</td>
-</tr>
-</table></p>
-<p><table>
-<tr>
-<th>Field</th>
-<td><code>.spec.definition.permissions</code></td>
-</tr>
-<tr>
-<th>Description</th>
-<td>Flag to specify the minimum permission to run the ChaosExperiment</td>
-</tr>
-<tr>
-<th>Type</th>
-<td>Optional</td>
-</tr>
-<tr>
-<th>Range</th>
-<td><i>user-defined</i> (type: list)</td>
-</tr>
-<tr>
-<th>Default</th>
-<td><i>n/a</i></td>
-</tr>
-<tr>
-<th>Notes</th>
-<td>The <code>.spec.definition.permissions</code> specify the minimum permission that is required to run the ChaosExperiment. It also helps to estimate the blast radius for the ChaosExperiment.</td>
-</tr>
-</table></p>
-</details>
-<h2 id="experiment-scope">Experiment Scope<a class="headerlink" href="#experiment-scope" title="Permanent link">&para;</a></h2>
-<p>It specifies the scope of the experiment. It can be <code>Namespaced</code> scope for pod level experiments and <code>Cluster</code> for the experiments having a cluster wide impact. It can be tuned via <code>scope</code> field.</p>
-<p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">description</span><span class="p">:</span>
-  <span class="nt">message</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-    <span class="no">Deletes a pod belonging to a deployment/statefulset/daemonset</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosExperiment</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-  <span class="nt">labels</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
-    <span class="nt">app.kubernetes.io/component</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">chaosexperiment</span>
-    <span class="nt">app.kubernetes.io/version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">definition</span><span class="p">:</span>
-    <span class="c1"># scope of the chaosexperiment</span>
-    <span class="nt">scope</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Namespaced</span>
-    <span class="nt">permissions</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;apps&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;apps.openshift.io&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;argoproj.io&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;batch&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;litmuschaos.io&quot;</span>
-        <span class="nt">resources</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deployments&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;jobs&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;pods&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;pods/log&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;replicationcontrollers&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deployments&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;statefulsets&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;daemonsets&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;replicasets&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deploymentconfigs&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;rollouts&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;pods/exec&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;events&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;chaosengines&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;chaosexperiments&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;chaosresults&quot;</span>
-        <span class="nt">verbs</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;create&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;list&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;get&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;patch&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;update&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;delete&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deletecollection&quot;</span>
-    <span class="nt">image</span><span class="p">:</span> <span class="s">&quot;litmuschaos/go-runner:latest&quot;</span>
-    <span class="nt">imagePullPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Always</span>
-    <span class="nt">args</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">-c</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./experiments -name pod-delete</span>
-    <span class="nt">command</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/bin/bash</span>
-    <span class="nt">env</span><span class="p">:</span>
+                <h1 id="iam-integration-for-litmus-service-accounts">IAM integration for Litmus service accounts<a class="headerlink" href="#iam-integration-for-litmus-service-accounts" title="Permanent link">&para;</a></h1>
+<p>You can execute Litmus AWS experiments to target different AWS services from the EKS cluster itself, for this we need to authenticate Litmus with the AWS platform, we can do this in two different ways:</p>
+<ul>
+<li> <b>Using secrets:</b> It is one of the common ways to authenticate litmus with AWS irrespective of the Kubernetes cluster used for the deployment. In other words, it is Kubernetes’ native way for the authentication of litmus with the AWS platform. </li>
+<li> <b>IAM Integration:</b> It can be used when we’ve deployed Litmus on <code>EKS cluster</code>, we can associate an IAM role with a Kubernetes service account. This service account can then provide AWS permissions to the experiment pod that uses that service account. We’ll discuss more this method in the below sections.</li>
+</ul>
 
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;15&#39;</span>
+<h2 id="why-should-we-use-iam-integration-for-aws-authentication">Why should we use IAM integration for AWS authentication?<a class="headerlink" href="#why-should-we-use-iam-integration-for-aws-authentication" title="Permanent link">&para;</a></h2>
+<p>The IAM roles for service accounts feature provides the following benefits:</p>
+<ul>
+<li> <b>Least privilege:</b> By using the IAM roles for service accounts feature, you no longer need to provide extended permissions to the node IAM role so that pods on that node can call AWS APIs. You can scope IAM permissions to a service account, and only pods that use that service account have access to those permissions.</li>
+<li> <b>Credential isolation:</b> The experiment can only retrieve credentials for the IAM role that is associated with the service account to which it belongs. The experiment never has access to credentials that are intended for another experiment that belongs to another pod.</li>
+</ul>
 
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RAMP_TIME</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;5&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PODS_AFFECTED_PERC</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">LIB</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;litmus&#39;</span>    
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TARGET_PODS</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEQUENCE</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;parallel&#39;</span>
-
-    <span class="nt">labels</span><span class="p">:</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-      <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
-      <span class="nt">app.kubernetes.io/component</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">experiment-job</span>
-      <span class="nt">app.kubernetes.io/version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
+<h2 id="enable-service-accounts-to-access-aws-resources">Enable service accounts to access AWS resources:<a class="headerlink" href="#enable-service-accounts-to-access-aws-resources" title="Permanent link">&para;</a></h2>
+<h4 id="step-1-create-an-iam-oidc-provider-for-your-cluster">Step 1: Create an IAM OIDC provider for your cluster<a class="headerlink" href="#step-1-create-an-iam-oidc-provider-for-your-cluster" title="Permanent link">&para;</a></h4>
+<p>We need to perform this once for a cluster. We’re going to follow the <a href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">AWS documentation to setup an OIDC provider</a> with eksctl.</p>
+<p><strong>Check whether you have an existing IAM OIDC provider for your cluster:</strong> To check this you can follow the given instruction.</p>
+<p><strong><em>Note:</em></strong> <em>For demonstration we’ll be using cluster name as litmus-demo and region us-west-1 you can replace these values according to your ENV.</em></p>
+<p><div class="highlight"><pre><span></span><code>root@demo&gt; aws eks describe-cluster --name &lt;litmus-demo&gt; --query <span class="s2">&quot;cluster.identity.oidc.issuer&quot;</span> --output text
 </code></pre></div>
-<h2 id="experiment-permissions">Experiment Permissions<a class="headerlink" href="#experiment-permissions" title="Permanent link">&para;</a></h2>
-<p>It specify the minimum permission that is required to run the ChaosExperiment. It also helps to estimate the blast radius for the ChaosExperiment. It can be tuned via <code>permissions</code> field.</p>
-<p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">description</span><span class="p">:</span>
-  <span class="nt">message</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-    <span class="no">Deletes a pod belonging to a deployment/statefulset/daemonset</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosExperiment</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-  <span class="nt">labels</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
-    <span class="nt">app.kubernetes.io/component</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">chaosexperiment</span>
-    <span class="nt">app.kubernetes.io/version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">definition</span><span class="p">:</span>
-    <span class="nt">scope</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Namespaced</span>
-    <span class="c1"># permissions for the chaosexperiment</span>
-    <span class="nt">permissions</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">apiGroups</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;apps&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;apps.openshift.io&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;argoproj.io&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;batch&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;litmuschaos.io&quot;</span>
-        <span class="nt">resources</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deployments&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;jobs&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;pods&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;pods/log&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;replicationcontrollers&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deployments&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;statefulsets&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;daemonsets&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;replicasets&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deploymentconfigs&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;rollouts&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;pods/exec&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;events&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;chaosengines&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;chaosexperiments&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;chaosresults&quot;</span>
-        <span class="nt">verbs</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;create&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;list&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;get&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;patch&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;update&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;delete&quot;</span>
-          <span class="p p-Indicator">-</span> <span class="s">&quot;deletecollection&quot;</span>
-    <span class="nt">image</span><span class="p">:</span> <span class="s">&quot;litmuschaos/go-runner:latest&quot;</span>
-    <span class="nt">imagePullPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Always</span>
-    <span class="nt">args</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">-c</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">./experiments -name pod-delete</span>
-    <span class="nt">command</span><span class="p">:</span>
-    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/bin/bash</span>
-    <span class="nt">env</span><span class="p">:</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;15&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">RAMP_TIME</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;5&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PODS_AFFECTED_PERC</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">LIB</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;litmus&#39;</span>    
-
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TARGET_PODS</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-
-    <span class="c1">## it defines the sequence of chaos execution for multiple target pods</span>
-    <span class="c1">## supported values: serial, parallel</span>
-    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SEQUENCE</span>
-      <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;parallel&#39;</span>
-
-    <span class="nt">labels</span><span class="p">:</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-      <span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmus</span>
-      <span class="nt">app.kubernetes.io/component</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">experiment-job</span>
-      <span class="nt">app.kubernetes.io/version</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">latest</span>
+<strong>Output:</strong></p>
+<div class="highlight"><pre><span></span><code>https://oidc.eks.us-west-1.amazonaws.com/id/D054E55B6947B1A7B3F200297789662C
 </code></pre></div>
+<p>Now List the IAM OIDC providers in your account</p>
+<p><i>Command:</i></p>
+<div class="highlight"><pre><span></span><code>aws iam list-open-id-connect-providers <span class="p">|</span> grep &lt;EXAMPLED539D4633E53DE1B716D3041E&gt;
+</code></pre></div>
+<p>Replace <code>&lt;D054E55B6947B1A7B3F200297789662C&gt;</code> (including <code>&lt;&gt;</code>) with the value returned from the previous command.</p>
+<p>So now here we don’t have an IAM OIDC identity provider, So we need to create it for your cluster with the following command. Replace <code>&lt;litmus-demo&gt;</code> (<code>including &lt;&gt;</code>) with your own value.</p>
+<div class="highlight"><pre><span></span><code>root@demo$ eksctl utils associate-iam-oidc-provider --cluster litmus-demo --approve
+<span class="m">2021</span>-09-07 <span class="m">14</span>:54:01 <span class="o">[</span>ℹ<span class="o">]</span>  eksctl version <span class="m">0</span>.52.0
+<span class="m">2021</span>-09-07 <span class="m">14</span>:54:01 <span class="o">[</span>ℹ<span class="o">]</span>  using region us-west-1
+<span class="m">2021</span>-09-07 <span class="m">14</span>:54:04 <span class="o">[</span>ℹ<span class="o">]</span>  will create IAM Open ID Connect provider <span class="k">for</span> cluster <span class="s2">&quot;udit-cluster-11&quot;</span> <span class="k">in</span> <span class="s2">&quot;us-west-1&quot;</span>
+<span class="m">2021</span>-09-07 <span class="m">14</span>:54:05 <span class="o">[</span>✔<span class="o">]</span>  created IAM Open ID Connect provider <span class="k">for</span> cluster <span class="s2">&quot;litmus-demo&quot;</span> <span class="k">in</span> <span class="s2">&quot;us-west-1&quot;</span>
+</code></pre></div>
+<h4 id="step-2-creating-an-iam-role-and-policy-for-your-service-account">Step 2: Creating an IAM role and policy for your service account<a class="headerlink" href="#step-2-creating-an-iam-role-and-policy-for-your-service-account" title="Permanent link">&para;</a></h4>
+<p>You must create an IAM policy that specifies the permissions that you would like the experiment should to have. You have several ways to create a new IAM permission policy. Check out the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html#create-service-account-iam-policy">AWS docs for creating the IAM policy</a>. We will make use of eksctl command to setup the same.</p>
+<div class="highlight"><pre><span></span><code>root@demo&gt; eksctl create iamserviceaccount <span class="se">\</span>
+    --name &lt;service_account_name&gt; <span class="se">\</span>
+    --namespace &lt;service_account_namespace&gt; <span class="se">\</span>
+    --cluster &lt;cluster_name&gt; <span class="se">\</span>
+    --attach-policy-arn &lt;IAM_policy_ARN&gt; <span class="se">\</span>
+    --approve <span class="se">\</span>
+    --override-existing-serviceaccont
+</code></pre></div>
+<h4 id="step-3-associate-an-iam-role-with-a-service-account">Step 3: Associate an IAM role with a service account<a class="headerlink" href="#step-3-associate-an-iam-role-with-a-service-account" title="Permanent link">&para;</a></h4>
+<p>Complete this task for each Kubernetes service account that needs access to AWS resources. We can do this by defining the IAM role to associate with a service account in your cluster by adding the following annotation to the service account.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="nt">metadata</span><span class="p">:</span>
+  <span class="nt">annotations</span><span class="p">:</span>
+    <span class="nt">eks.amazonaws.com/role-arn</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE_NAME&gt;</span>
+</code></pre></div>
+<p>You can also annotate the experiment service account running the following command.</p>
+<div class="highlight"><pre><span></span><code>kubectl annotate serviceaccount -n &lt;SERVICE_ACCOUNT_NAMESPACE&gt; &lt;SERVICE_ACCOUNT_NAME&gt; <span class="se">\</span>
+eks.amazonaws.com/role-arn<span class="o">=</span>arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE_NAME&gt;
+</code></pre></div>
+<p>Verify that the experiment service account is now associated with the IAM</p>
+<p>Describe one of the pods and verify that the <code>AWS_WEB_IDENTITY_TOKEN_FILE</code> and <code>AWS_ROLE_ARN</code> environment variables exist.</p>
+<p><div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> -n kube-system &lt;aws-node-9rgzw&gt; env <span class="p">|</span> grep AWS
+</code></pre></div>
+Output:
+<div class="highlight"><pre><span></span><code>AWS_VPC_K8S_CNI_LOGLEVEL=DEBUG
+AWS_ROLE_ARN=arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE_NAME&gt;
+AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/eks.amazonaws.com/serviceaccount/token
+</code></pre></div></p>
+<p>Now we have successfully enabled the experiment service accounts to access AWS resources.</p>
+<h2 id="configure-the-experiment-cr">Configure the Experiment CR.<a class="headerlink" href="#configure-the-experiment-cr" title="Permanent link">&para;</a></h2>
+<p>Since we have already configured the IAM for the experiment service account we don’t need to create secret and mount it with experiment CR which is enabled by default. To remove the secret mount we have to remove the following lines from experiment YAML. </p>
+<p><div class="highlight"><pre><span></span><code><span class="nt">secrets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cloud-secret</span>
+    <span class="l l-Scalar l-Scalar-Plain">mountPath</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/</span>
+</code></pre></div>
+We can now run the experiment with the direct IAM integration.</p>
                 
               
               
@@ -3091,7 +2996,7 @@
         <!-- Link to previous page -->
         
         <a
-            href="../contents/"
+            href="../../security/kyverno-policies/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -3103,7 +3008,7 @@
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Contents
+                Kyverno Policies
             </div>
             </div>
         </a>
@@ -3112,7 +3017,7 @@
         <!-- Link to next page -->
         
         <a
-            href="../component-specification/"
+            href="../../../faq/content/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -3121,7 +3026,7 @@
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Component Specification
+                Contents
             </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -3148,11 +3053,11 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.8397ff9e.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../assets/javascripts/workers/search.8397ff9e.min.js", "version": {"provider": "mike"}}</script>
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.f89c2efe.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.f89c2efe.min.js"></script>
       
     
 
