@@ -167,8 +167,10 @@ nav:
           - K8S Probe: experiments/concepts/chaos-resources/probes/k8sProbe.md
           - Prometheus Probe: experiments/concepts/chaos-resources/probes/promProbe.md
           - Probe Chaining: experiments/concepts/chaos-resources/probes/probe-chaining.md
-      - Security:  experiments/concepts/psp.md
-      - AWS IAM Integration: experiments/concepts/awsIamIntegration.md
+      - Security:  
+          - Pod Security Policies: experiments/concepts/security/psp.md
+          - Kyverno Policies: experiments/concepts/security/kyverno-policies.md
+      - AWS IAM Integration: experiments/concepts/IAM/awsIamIntegration.md
     - Litmus FAQ:
       - Contents: experiments/faq/content.md
       - FAQ: 
