@@ -1,9 +1,11 @@
-[Kyverno policies](https://kyverno.io/policies/pod-security/) blocks configurations that donot match a policy(enforce mode), or can generate policy violations (audit mode). It scans existing configurations and reports violations in the cluster. 
-Litmus uses kyverno policies to restrict the pod configurations and allows only defined configurations.
+[Kyverno policies](https://kyverno.io/policies/pod-security/) blocks configurations that don't match a policy (enforce mode) or can generate policy violations (audit mode). It scans existing configurations and reports violations in the cluster. 
+Litmus recommends using the provided policy configuration to enable the execution of all supported (out-of-the-box) experiments listed in the chaoshub. Having said that, this is recommendatory in nature and left to user discretion/choice depending upon experiments desired.  
+
+The details listed here are expected to aid users of Kyverno. If you are using alternate means to enforce runtime security, such as native Kubernetes PSPs (pod security policies), refer this section: <> 
 
 ## Policies in Litmus
 
-Litmus uses following pod security policies:
+Litmus recommends using the following policies:
 
 1. [Add Capabilities](https://github.com/ispeakc0de/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-capabilities.yaml): It restricts add capabilities except the `NET_ADMIN` and `SYS_ADMIN` for the pods that use runtime API
 1. [Host Namespaces](https://github.com/ispeakc0de/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-host-namespaces.yaml): It validates following host namespaces for the pods that use runtime API.
@@ -25,7 +27,7 @@ kustomize build https://github.com/ispeakc0de/chaos-charts/kyverno-policies/secu
 
 ## Pod Security Policies in restricted setup
 
-If setup contains restricted policies which doesn't allow litmus to perform some actions. Following steps can be used to allow litmus to perform actions:
+If setup contains restricted policies which don't allow execution of litmus experiments by default, following steps can be used to allow the same: 
 
 - For Example: [deny-privilege-escalation](https://kyverno.io/policies/pod-security/restricted/deny-privilege-escalation/deny-privilege-escalation/) policy doesn't allow privileged escalation. It deny all the pods to use privileged escalation.
 
