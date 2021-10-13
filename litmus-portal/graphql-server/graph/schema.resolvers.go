@@ -607,7 +607,6 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		log.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
 		return clusterAction, err
 	}
-
 	data_store.Store.Mutex.Lock()
 	if _, ok := data_store.Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
 		data_store.Store.Mutex.Unlock()
@@ -637,7 +636,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	}()
 
 	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
-	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}, {"version", clusterInfo.Version}}}}
 
 	err = dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {

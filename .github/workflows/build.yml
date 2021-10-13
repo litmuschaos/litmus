@@ -108,7 +108,16 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/authentication
-          docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}  --build-arg TARGETARCH=amd64
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
   docker-build-subscriber:
     runs-on: ubuntu-latest
@@ -123,7 +132,16 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/cluster-agents/subscriber
-          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }} --build-arg TARGETARCH=amd64
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
   docker-build-event-tracker:
     runs-on: ubuntu-latest
@@ -138,7 +156,16 @@ jobs:
         shell: bash
         run: |
           cd litmus-portal/cluster-agents/event-tracker
-          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }} --build-arg TARGETARCH=amd64
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
   docker-build-upgrade-agent-cp:
     runs-on: ubuntu-latest
@@ -154,7 +181,6 @@ jobs:
         run: |
           cd litmus-portal/upgrade-agents/control-plane
           docker build . -f Dockerfile -t docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }} --build-arg TARGETARCH=amd64
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:

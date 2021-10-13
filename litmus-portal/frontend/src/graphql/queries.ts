@@ -224,6 +224,7 @@ export const GET_CLUSTER = gql`
       last_workflow_timestamp
       agent_namespace
       agent_scope
+      version
     }
   }
 `;
