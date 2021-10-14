@@ -3,8 +3,8 @@
 You can execute Litmus AWS experiments to target different AWS services from the EKS cluster itself, for this we need to authenticate Litmus with the AWS platform, we can do this in two different ways:
 
 <ul>
-<li> **Using secrets:** It is one of the common ways to authenticate litmus with AWS irrespective of the Kubernetes cluster used for the deployment. In other words, it is Kubernetes’ native way for the authentication of litmus with the AWS platform. </li>
-<li> **IAM Integration:** It can be used when we’ve deployed Litmus on <b>EKS cluster</b>, we can associate an IAM role with a Kubernetes service account. This service account can then provide AWS permissions to the experiment pod that uses that service account. We’ll discuss more this method in the below sections.</li>
+<li> <b>Using secrets:</b> It is one of the common ways to authenticate litmus with AWS irrespective of the Kubernetes cluster used for the deployment. In other words, it is Kubernetes’ native way for the authentication of litmus with the AWS platform. </li>
+<li> <b>IAM Integration:</b> It can be used when we’ve deployed Litmus on <code>EKS cluster</code>, we can associate an IAM role with a Kubernetes service account. This service account can then provide AWS permissions to the experiment pod that uses that service account. We’ll discuss more this method in the below sections.</li>
 </ul>
 
 ## Why should we use IAM integration for AWS authentication?
@@ -16,7 +16,7 @@ The IAM roles for service accounts feature provides the following benefits:
 <li> <b>Credential isolation:</b> The experiment can only retrieve credentials for the IAM role that is associated with the service account to which it belongs. The experiment never has access to credentials that are intended for another experiment that belongs to another pod.</li>
 </ul>
 
-# Enable service accounts to access AWS resources:
+## Enable service accounts to access AWS resources:
 
 #### Step 1: Create an IAM OIDC provider for your cluster
 
@@ -32,13 +32,13 @@ root@demo> aws eks describe-cluster --name <litmus-demo> --query "cluster.identi
 ```
 **Output:**
 
-```
+```bash
 https://oidc.eks.us-west-1.amazonaws.com/id/D054E55B6947B1A7B3F200297789662C
 ```
 
 Now List the IAM OIDC providers in your account
 
-Command: 
+<i>Command:</i>
 
 ```bash
 aws iam list-open-id-connect-providers | grep <EXAMPLED539D4633E53DE1B716D3041E>

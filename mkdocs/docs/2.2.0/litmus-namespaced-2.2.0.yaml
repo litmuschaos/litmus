@@ -353,7 +353,7 @@ kind: Role
 metadata:
   name: litmus-server-role
 rules:
-  - apiGroups: [networking.k8s.io/v1, extensions/v1beta1]
+  - apiGroups: [networking.k8s.io, extensions]
     resources: [ingresses]
     verbs: [get]
   - apiGroups: [""]
@@ -405,9 +405,9 @@ metadata:
   name: litmus-portal-admin-config
 data:
   AGENT_SCOPE: namespace
-  AGENT_NAMESPACE: ${OKTETO_NAMESPACE}
+  AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
   DB_SERVER: "mongodb://mongo-service:27017"
-  VERSION: "ci"
+  VERSION: "2.2.0"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -488,11 +488,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
-          resources:
-            limits:
-              cpu: 100m
-              memory: 100Mi
+          image: litmuschaos/litmusportal-frontend:2.2.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -550,11 +546,7 @@ spec:
             ]
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
+          image: litmuschaos/litmusportal-server:2.2.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -562,7 +554,9 @@ spec:
                 name: litmus-portal-admin-secret
           env:
             - name: LITMUS_PORTAL_NAMESPACE
-              value: ${OKTETO_NAMESPACE}
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: SELF_CLUSTER
               value: "true"
             - name: PORTAL_SCOPE
@@ -570,11 +564,11 @@ spec:
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: PORTAL_ENDPOINT
-              value: "https://litmusportal-server-service-${OKTETO_NAMESPACE}.cloud.okteto.net"
+              value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:2.2.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:2.2.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v2.11.0"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
@@ -593,11 +587,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
-          resources:
-            limits:
-              cpu: 200m
-              memory: 250Mi
+          image: litmuschaos/litmusportal-auth-server:2.2.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -651,10 +641,6 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
           ports:
             - containerPort: 27017
           imagePullPolicy: Always
@@ -680,7 +666,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 2Gi
+            storage: 20Gi
 ---
 apiVersion: v1
 kind: Service
@@ -694,45 +680,3 @@ spec:
       targetPort: 27017
   selector:
     component: database
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: litmusportal-production-frontend
-  labels:
-    component: litmusportal-production-frontend
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      component: litmusportal-production-frontend
-  template:
-    metadata:
-      labels:
-        component: litmusportal-production-frontend
-    spec:
-      containers:
-        - name: litmusportal-production-frontend
-          image: litmuschaos/litmusportal-frontend:ci
-          resources:
-            limits:
-              cpu: 100m
-              memory: 100Mi
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: litmusportal-production-frontend-service
-  annotations:
-    dev.okteto.com/auto-ingress: "true"
-spec:
-  type: NodePort
-  ports:
-    - name: http
-      port: 9091
-      targetPort: 8080
-  selector:
-    component: litmusportal-production-frontend
