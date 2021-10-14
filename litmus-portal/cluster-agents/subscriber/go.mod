@@ -7,10 +7,10 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gorilla/websocket v1.4.2
 	github.com/imdario/mergo v0.3.10 // indirect
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
-	github.com/litmuschaos/chaos-operator v0.0.0-20210415155750-e4081aec0e41
-	github.com/sirupsen/logrus v1.6.0
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d // indirect
+	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/litmuschaos/chaos-operator v0.0.0-20210906054553-064706497fb6
+	github.com/sirupsen/logrus v1.7.0
+	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.19.6

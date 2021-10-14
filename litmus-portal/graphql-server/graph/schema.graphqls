@@ -26,6 +26,8 @@ type Cluster {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
+  start_time: String!
+  version: String!
 }
 
 input ClusterInput {
@@ -40,6 +42,15 @@ input ClusterInput {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   node_selector: String
+  tolerations: [Toleration]
+}
+
+input Toleration {
+  tolerationSeconds: Int
+  key: String
+  operator: String
+  effect: String
+  value: String
 }
 
 type ClusterEvent {
@@ -231,9 +242,19 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
+  # Query to fetch manifest
+  getManifest(
+    projectID: String!
+    clusterID: String!
+    accessKey: String!
+  ): String! @authorized
+
+  # Query to fetch agent details based on project_id and agent_name
+  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
+
   getUser(username: String!): User! @authorized
 
-  #It is used to get projects by projectID
+  # It is used to get projects by projectID
   getProject(projectID: String!): Project! @authorized
 
   #It is used to get projects by userID
@@ -285,11 +306,13 @@ type Query {
   ListDashboard(
     project_id: String!
     cluster_id: String
-    db_id: String): [listDashboardResponse] @authorized
+    db_id: String
+  ): [listDashboardResponse] @authorized
 
-  PortalDashboardData (
+  PortalDashboardData(
     project_id: String!
-    hub_name: String!) : [PortalDashboardData!]! @authorized
+    hub_name: String!
+  ): [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -318,8 +341,7 @@ type Mutation {
   createUser(user: CreateUserInput!): User! @authorized
 
   # Used to disable a user
-  updateUserState(uid: String!, isDeactivate: Boolean!): String!
-    @authorized
+  updateUserState(uid: String!, isDeactivate: Boolean!): String! @authorized
 
   # It is used to create a project
   createProject(projectName: String!): Project! @authorized
@@ -338,7 +360,8 @@ type Mutation {
     @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+    @authorized
 
   syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
     @authorized
@@ -409,7 +432,8 @@ type Mutation {
 
   updateDashboard(
     dashboard: updateDBInput!
-    chaosQueryUpdate: Boolean!): String! @authorized
+    chaosQueryUpdate: Boolean!
+  ): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
@@ -457,5 +481,6 @@ type Subscription {
     dashboardID: String
     promQueries: [promQueryInput!]!
     dashboardQueryMap: [queryMapForPanelGroup!]!
-    dataVariables: dataVars!): dashboardPromResponse! @authorized
+    dataVariables: dataVars!
+  ): dashboardPromResponse! @authorized
 }

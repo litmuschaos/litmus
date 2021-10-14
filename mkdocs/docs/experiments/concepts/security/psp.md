@@ -15,7 +15,7 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
 
 - To run the litmus pods with operating characteristics described above, first create a custom PodSecurityPolicy that allows the same: 
 
-    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/pod-security-policy/psp-litmus.yaml yaml)
+    [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/pod-security-policy/psp-litmus.yaml yaml)
     ```yaml
     apiVersion: policy/v1beta1
     kind: PodSecurityPolicy

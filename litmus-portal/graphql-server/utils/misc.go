@@ -111,6 +111,20 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		nodeselector = string(addRootIndent(byt, 6))
 	}
 
+	var tolerations string
+	if cluster.Tolerations != nil {
+		byt, err := yaml.Marshal(struct {
+			Tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations"`
+		}{
+			Tolerations: cluster.Tolerations,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		tolerations = string(addRootIndent(byt, 6))
+	}
+
 	for _, fileName := range list {
 		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
 		if err != nil {
@@ -119,6 +133,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 
 		var newContent = string(fileContent)
 
+		newContent = strings.Replace(newContent, "#{tolerations}", tolerations, -1)
 		newContent = strings.Replace(newContent, "#{CLUSTER_ID}", cluster.ClusterID, -1)
 		newContent = strings.Replace(newContent, "#{ACCESS_KEY}", cluster.AccessKey, -1)
 		newContent = strings.Replace(newContent, "#{SERVER_ADDR}", subscriberConfig.GQLServerURI, -1)
@@ -135,11 +150,16 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-DEPLOYMENTS}", subscriberConfig.AgentDeployments, -1)
 		newContent = strings.Replace(newContent, "#{VERSION}", subscriberConfig.Version, -1)
+		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+cluster.StartTime+"\"", -1)
+		if cluster.IsClusterConfirmed == true {
+			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"true"+"\"", -1)
+		} else {
+			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"false"+"\"", -1)
+		}
 
 		if cluster.NodeSelector != nil {
 			newContent = strings.Replace(newContent, "#{nodeselector}", nodeselector, -1)
 		}
-
 		generatedYAML = append(generatedYAML, newContent)
 	}
 

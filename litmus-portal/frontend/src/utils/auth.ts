@@ -1,5 +1,6 @@
 import jwtDecode from 'jsonwebtoken';
 import { history } from '../redux/configureStore';
+import { getJwtTokenFromURL } from './getSearchParams';
 import { getJWTToken, setCookie, setJWTToken } from './cookies';
 
 interface UserDetails {
@@ -18,18 +19,6 @@ export function logout() {
   window.location.reload();
 }
 
-// Returns the jwt token
-export function getToken(): string {
-  const jwtToken = getJWTToken('token');
-
-  // Logout user if jwt is expired
-  if (jwtToken === '') {
-    history.push('/login');
-  }
-
-  return jwtToken;
-}
-
 // Sets the jwt token in the cookie
 export function setUserDetails(token: string) {
   setJWTToken({
@@ -37,6 +26,24 @@ export function setUserDetails(token: string) {
     cookieName: 'token',
     errorMessage: 'ERROR IN SETTING USER DETAILS: ',
   });
+}
+
+// Returns the jwt token
+export function getToken(): string {
+  let jwtToken = getJWTToken('token');
+
+  if (jwtToken === '') {
+    const _tokenFromUrl = getJwtTokenFromURL();
+    if (_tokenFromUrl !== '') {
+      jwtToken = _tokenFromUrl;
+      setUserDetails(jwtToken);
+      window.location.assign('/getStarted');
+    } else {
+      history.push('/login');
+    }
+  }
+
+  return jwtToken;
 }
 
 // Returns the details of a user from jwt token
