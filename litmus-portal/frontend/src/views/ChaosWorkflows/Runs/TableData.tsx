@@ -293,98 +293,123 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Typography>
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
-        <Typography>
-          <span>{t('chaosWorkflows.browseWorkflows.tableData.overallRR')}</span>
-          {data.resiliency_score === undefined ||
-          data.resiliency_score === null ? (
-            <span className={classes.less}>
-              {t('chaosWorkflows.browseWorkflows.tableData.na')}
-            </span>
-          ) : (
-            <span
-              className={`${classes.boldText} ${getResiliencyScoreColor(
-                data.resiliency_score
-              )}`}
-            >
-              {data.resiliency_score}%
-            </span>
-          )}
-        </Typography>
-        <Typography>
-          <span>
-            {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
-          </span>
-          {data.experiments_passed === undefined ||
-          data.experiments_passed === null ||
-          data.total_experiments === undefined ||
-          data.total_experiments === null ||
-          data.total_experiments === 0 ||
-          data.resiliency_score === undefined ||
-          data.resiliency_score === null ? (
-            <span className={classes.less}>
-              {t('chaosWorkflows.browseWorkflows.tableData.na')}
-            </span>
-          ) : (
-            <span
-              className={`${classes.boldText} ${getResiliencyScoreColor(
-                data.resiliency_score
-              )}`}
-            >
-              {data.experiments_passed}/{data.total_experiments}
-            </span>
-          )}
-        </Typography>
+        {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
+          ?.experiment_name !== '' ? (
+          <>
+            <Typography>
+              <span>
+                {t('chaosWorkflows.browseWorkflows.tableData.overallRR')}
+              </span>
+              {data.resiliency_score === undefined ||
+              data.resiliency_score === null ? (
+                <span className={classes.less}>
+                  {t('chaosWorkflows.browseWorkflows.tableData.na')}
+                </span>
+              ) : (
+                <span
+                  className={`${classes.boldText} ${getResiliencyScoreColor(
+                    data.resiliency_score
+                  )}`}
+                >
+                  {data.resiliency_score}%
+                </span>
+              )}
+            </Typography>
+            <Typography>
+              <span>
+                {t(
+                  'chaosWorkflows.browseWorkflows.tableData.experimentsPassed'
+                )}
+              </span>
+              {data.experiments_passed === undefined ||
+              data.experiments_passed === null ||
+              data.total_experiments === undefined ||
+              data.total_experiments === null ||
+              data.total_experiments === 0 ||
+              data.resiliency_score === undefined ||
+              data.resiliency_score === null ? (
+                <span className={classes.less}>
+                  {t('chaosWorkflows.browseWorkflows.tableData.na')}
+                </span>
+              ) : (
+                <span
+                  className={`${classes.boldText} ${getResiliencyScoreColor(
+                    data.resiliency_score
+                  )}`}
+                >
+                  {data.experiments_passed}/{data.total_experiments}
+                </span>
+              )}
+            </Typography>
+          </>
+        ) : (
+          <Typography style={{ marginLeft: 30 }}>
+            {t('chaosWorkflows.browseWorkflows.tableData.na')}
+          </Typography>
+        )}
       </TableCell>
       <TableCell>
         <div>
-          <Button
-            onClick={handlePopOverClick}
-            className={classes.buttonTransform}
-          >
-            <Typography className={classes.boldText}>
-              {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
-                .length ?? 0}
-              )
+          {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
+            ?.experiment_name !== '' ? (
+            <>
+              <Button
+                onClick={handlePopOverClick}
+                className={classes.buttonTransform}
+              >
+                <Typography className={classes.boldText}>
+                  {t(
+                    'chaosWorkflows.browseWorkflows.tableData.showExperiments'
+                  )}
+                  (
+                  {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
+                    .length ?? 0}
+                  )
+                </Typography>
+                <div className={classes.experimentDetails}>
+                  {isOpen ? (
+                    <KeyboardArrowDownIcon className={classes.arrowMargin} />
+                  ) : (
+                    <ChevronRightIcon className={classes.arrowMargin} />
+                  )}
+                </div>
+              </Button>
+              <Popover
+                id={id}
+                open={isOpen}
+                anchorEl={popAnchorEl}
+                onClose={handlePopOverClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <div className={classes.popover}>
+                  {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
+                    (weightEntry) => (
+                      <div
+                        key={weightEntry.experiment_name}
+                        style={{ marginBottom: 8 }}
+                      >
+                        <ExperimentPoints
+                          expName={weightEntry.experiment_name}
+                          weight={weightEntry.weightage}
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </Popover>
+            </>
+          ) : (
+            <Typography style={{ marginLeft: 30 }}>
+              {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </Typography>
-            <div className={classes.experimentDetails}>
-              {isOpen ? (
-                <KeyboardArrowDownIcon className={classes.arrowMargin} />
-              ) : (
-                <ChevronRightIcon className={classes.arrowMargin} />
-              )}
-            </div>
-          </Button>
-          <Popover
-            id={id}
-            open={isOpen}
-            anchorEl={popAnchorEl}
-            onClose={handlePopOverClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center',
-            }}
-          >
-            <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
-                (weightEntry) => (
-                  <div
-                    key={weightEntry.experiment_name}
-                    style={{ marginBottom: 8 }}
-                  >
-                    <ExperimentPoints
-                      expName={weightEntry.experiment_name}
-                      weight={weightEntry.weightage}
-                    />
-                  </div>
-                )
-              )}
-            </div>
-          </Popover>
+          )}
         </div>
       </TableCell>
       <TableCell>

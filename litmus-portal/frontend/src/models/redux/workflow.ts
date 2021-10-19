@@ -42,6 +42,7 @@ export interface WorkflowManifest {
   engineYAML: string;
   manifest: string;
   isCustomWorkflow: boolean;
+  isUploaded: boolean;
 }
 
 export enum WorkflowActions {

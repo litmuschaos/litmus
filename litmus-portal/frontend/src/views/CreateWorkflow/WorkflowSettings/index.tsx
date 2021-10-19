@@ -15,6 +15,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import config from '../../../config';
 import { GET_EXPERIMENT_DATA, GET_TEMPLATE_BY_ID } from '../../../graphql';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
@@ -164,7 +165,15 @@ const WorkflowSettings = forwardRef((_, ref) => {
         setDisplayRegChange(true);
       }
       if ((value as ChooseWorkflowRadio).selected === 'D') {
-        setName('chaos-workflow');
+        const workflow = YAML.parse(manifest);
+        const wfName = `custom-workflow-${Math.round(
+          new Date().getTime() / 1000
+        )}`;
+        workflow.metadata.name = wfName;
+        workflowAction.setWorkflowManifest({
+          manifest: YAML.stringify(workflow),
+        });
+        setName(wfName);
         setDescription('Chaos Workflow');
         setIcon('./avatars/litmus.svg');
         setDisplayRegChange(false);
