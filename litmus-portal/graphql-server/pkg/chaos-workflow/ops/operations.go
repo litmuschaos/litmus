@@ -56,7 +56,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		}
 	}
 
-	if workflow.WorkflowID == nil {
+	if workflow.WorkflowID == nil || (*workflow.WorkflowID) == "" {
 		workflow.WorkflowID = &workflow_id
 	}
 
