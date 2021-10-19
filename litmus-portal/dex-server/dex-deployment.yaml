@@ -105,7 +105,7 @@ spec:
       serviceAccountName: litmus-server-account
       containers:
         - name: litmus-dex
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           image: litmuschaos/litmusportal-dex-server:ci
           command: ["/usr/local/bin/dex", "serve", "/etc/dex/cfg/config.yaml"]
           ports:
