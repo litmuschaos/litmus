@@ -170,6 +170,7 @@ nav:
       - Security:  
           - Pod Security Policies: experiments/concepts/security/psp.md
           - Kyverno Policies: experiments/concepts/security/kyverno-policies.md
+          - OpenShift SCC: experiments/concepts/security/openshift-scc.md
       - AWS IAM Integration: experiments/concepts/IAM/awsIamIntegration.md
     - Litmus FAQ:
       - Contents: experiments/faq/content.md
