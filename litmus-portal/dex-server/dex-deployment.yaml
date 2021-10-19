@@ -106,7 +106,7 @@ spec:
       containers:
         - name: litmuschaos/litmusportal-dex-server:ci
           imagePullPolicy: Never
-          image: litmus-dex
+          image: litmuschaos/litmusportal-dex-server:ci
           command: ["/usr/local/bin/dex", "serve", "/etc/dex/cfg/config.yaml"]
           ports:
             - containerPort: 5556
