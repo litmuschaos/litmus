@@ -47,7 +47,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
   // Actions
   const workflowAction = useActions(WorkflowActions);
   const workflowData = useSelector((state: RootState) => state.workflowData);
-  const { manifest } = useSelector(
+  const { manifest, isUploaded } = useSelector(
     (state: RootState) => state.workflowManifest
   );
   const imageRegistry = useActions(ImageRegistryActions);
@@ -165,14 +165,9 @@ const WorkflowSettings = forwardRef((_, ref) => {
         setDisplayRegChange(true);
       }
       if ((value as ChooseWorkflowRadio).selected === 'D') {
-        const workflow = YAML.parse(manifest);
         const wfName = `custom-workflow-${Math.round(
           new Date().getTime() / 1000
         )}`;
-        workflow.metadata.name = wfName;
-        workflowAction.setWorkflowManifest({
-          manifest: YAML.stringify(workflow),
-        });
         setName(wfName);
         setDescription('Chaos Workflow');
         setIcon('./avatars/litmus.svg');
@@ -231,11 +226,19 @@ const WorkflowSettings = forwardRef((_, ref) => {
       icon,
       CRDLink,
     };
+
     localforage.setItem('workflow', workflowDetails);
     imageRegistry.selectImageRegistry({
       ...imageRegistryData,
       update_registry: updateRegistry,
     });
+    if (isUploaded) {
+      const workflow = YAML.parse(manifest);
+      workflow.metadata.name = name;
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(workflow),
+      });
+    }
     if (!name.length) {
       alert.changeAlertState(true); // Workflow Name is empty and user clicked on Next
       return false;
