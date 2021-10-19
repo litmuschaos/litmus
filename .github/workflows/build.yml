@@ -19,6 +19,7 @@ jobs:
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
       upgrade-agent-cp: ${{ steps.filter.outputs.upgrade-agent-cp }}
       subscriber: ${{ steps.filter.outputs.subscriber }}
+      dex-server: ${{ steps.filter.outputs.dex-server }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v2
@@ -37,6 +38,8 @@ jobs:
               - 'litmus-portal/upgrade-agents/control-plane/**'
             subscriber:
               - 'litmus-portal/cluster-agents/subscriber/**'
+            dex-server:
+              - 'litmus-portal/dex-server/**'
 
   backend-checks:
     runs-on: ubuntu-latest
@@ -205,3 +208,18 @@ jobs:
         run: |
           cd litmus-portal/frontend
           docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+
+  docker-build-dex-server:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+    if: needs.changes.outputs.dex-server == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build dex-server docker image
+        shell: bash
+        run: |
+          cd litmus-portal/dex-server
+          docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
