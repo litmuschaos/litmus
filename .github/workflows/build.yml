@@ -44,7 +44,7 @@ jobs:
   backend-checks:
     runs-on: ubuntu-latest
     needs: changes
-    if: needs.changes.outputs.graphql-server == 'true' || needs.changes.outputs.upgrade-agent-cp == 'true'  || needs.changes.outputs.authentication == 'true' || needs.changes.outputs.event-tracker == 'true' || needs.changes.outputs.subscriber == 'true'
+    if: needs.changes.outputs.graphql-server == 'true' || needs.changes.outputs.dex-server == 'true' || needs.changes.outputs.upgrade-agent-cp == 'true'  || needs.changes.outputs.authentication == 'true' || needs.changes.outputs.event-tracker == 'true' || needs.changes.outputs.subscriber == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
