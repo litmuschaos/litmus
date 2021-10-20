@@ -121,7 +121,10 @@ const UploadYAML = () => {
               }}
             >
               <img src="./icons/retry.svg" alt="Retry" />
-              <Typography className={classes.retryText}>
+              <Typography
+                className={classes.retryText}
+                data-cy="ErrorUploadYAML"
+              >
                 {t('customWorkflow.createWorkflow.retryUpload')}
               </Typography>
             </ButtonFilled>

@@ -91,6 +91,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
                   InputProps={{
                     readOnly: true,
                   }}
+                  data-cy="HubName"
                 />
                 <br />
               </>
@@ -101,6 +102,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
               onChange={(e) => {
                 setExperimentName(e.target.value);
               }}
+              data-cy="ExperimentName"
             />
             <br />
           </>
@@ -111,6 +113,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
           onChange={(e) => {
             setContext(e.target.value);
           }}
+          data-cy="Context"
         />
       </div>
       <br />
@@ -119,6 +122,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
         color="primary"
         onClick={handleNext}
         className={classes.button}
+        data-cy="GeneralNext"
       >
         {t('workflowStepper.next')}
       </Button>

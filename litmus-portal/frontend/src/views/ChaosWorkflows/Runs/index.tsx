@@ -394,7 +394,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
               ) : workflowRuns && workflowRuns.length ? (
                 workflowRuns.map((dataRow) => (
                   <TableRow
-                    data-cy="WorkflowRunsTableRow"
+                    data-cy={dataRow.workflow_name}
                     key={dataRow.workflow_run_id}
                   >
                     <TableData data={dataRow} refetchQuery={refetch} />

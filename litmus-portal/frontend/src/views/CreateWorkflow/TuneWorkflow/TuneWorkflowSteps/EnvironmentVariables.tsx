@@ -105,6 +105,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
                   env[index].value = event.target.value;
                   setEnvs([...env]);
                 }}
+                data-cy={data.name}
               />
               <br />
             </>
@@ -117,6 +118,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
               onClick={() => {
                 setShowMore(true);
               }}
+              data-cy="ShowMoreEnv"
             >
               <ArrowDownwardIcon />
               <Typography>
@@ -129,6 +131,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
               onClick={() => {
                 setShowMore(false);
               }}
+              data-cy="ShowLessEnv"
             >
               <ArrowUpwardIcon />
               <Typography>
@@ -156,6 +159,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
               }}
               width="20"
               className={classes.addKeyInput}
+              data-cy="AddKey"
             />
             <InputField
               label="Add Value"
@@ -167,6 +171,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
                 });
               }}
               width="20"
+              data-cy="AddValue"
             />
           </div>
           <ButtonFilled
@@ -189,7 +194,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
         </div>
       </div>
 
-      <div>
+      <div data-cy="TuneExperimentControlButtons">
         <Button onClick={() => gotoStep(2)} className={classes.button}>
           {t('workflowStepper.back')}
         </Button>

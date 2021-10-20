@@ -37,9 +37,15 @@ const SetTime: React.FC<SetTimeProps> = ({ handleChange, value, data }) => {
           onChange={handleChange}
           MenuProps={MenuProps}
           inputProps={{ 'aria-label': 'Without label' }}
+          data-cy="RecurringSelect"
         >
           {data.map((dataValue) => (
-            <MenuItem key={dataValue} className={classes.opt} value={dataValue}>
+            <MenuItem
+              key={dataValue}
+              className={classes.opt}
+              value={dataValue}
+              data-cy={dataValue}
+            >
               {dataValue}
             </MenuItem>
           ))}
