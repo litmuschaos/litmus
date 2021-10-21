@@ -2936,9 +2936,8 @@
                 
                 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
-<li>It causes Stops/PowerOff a VM before bringing it back to running state after a specified chaos duration
-Experiment uses vmware api's to start/stop the target vm.</li>
-<li>It helps to check the performance of the application/process running on the vmware server.</li>
+<li>It causes VMWare VMs to Stop/Power-off before bringing them back to Powered-on state after a specified chaos duration using the VMWare APIs to start/stop the target VM.</li>
+<li>It helps to check the performance of the application/process running on the VMWare VMs.</li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Scenario: poweroff the vm</p>
@@ -2952,7 +2951,7 @@ Experiment uses vmware api's to start/stop the target vm.</li>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
 <li>Ensure that the <code>vm-poweroff</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/vmware/vm-poweroff/experiment.yaml">here</a></li>
-<li>Ensure that you have sufficient Vcenter access to stop and start the vm.</li>
+<li>Ensure that you have sufficient Vcenter access to stop and start the VM.</li>
 <li>
 <p>(Optional) Ensure to create a Kubernetes secret having the Vcenter credentials in the <code>CHAOS_NAMESPACE</code>. A sample secret file looks like:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
@@ -2972,7 +2971,7 @@ Experiment uses vmware api's to start/stop the target vm.</li>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
 <details class="info"><summary>View the default validations</summary><ul>
-<li>VM instance should be in healthy state.</li>
+<li>VM should be in healthy state.</li>
 </ul>
 </details>
 <h2 id="minimal-rbac-configuration-example-optional">Minimal RBAC configuration example (optional)<a class="headerlink" href="#minimal-rbac-configuration-example-optional" title="Permanent link">&para;</a></h2>
@@ -3038,9 +3037,9 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <th> Notes </th>
   </tr>
   <tr>
-    <td> APP_VM_MOID </td>
-    <td> Moid of the vmware instance</td>
-    <td> Once you open VM in vCenter WebClient, you can find MOID in address field (VirtualMachine:vm-5365). Eg: vm-5365 </td>
+    <td> APP_VM_MOIDS </td>
+    <td> MOIDs of the vmware instance</td>
+    <td> Once you open VM in vCenter WebClient, you can find MOID in address field (VirtualMachine:vm-5365). Alternatively you can use the CLI to fetch the MOID. Eg: vm-5365 </td>
   </tr>
 </table></p>
 <p><h2>Optional Fields</h2></p>
@@ -3055,6 +3054,16 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> The total time duration for chaos insertion (sec) </td>
     <td> Defaults to 30s </td>
   </tr>
+  <tr> 
+    <td> CHAOS_INTERVAL </td>
+    <td> The interval (in sec) between successive instance termination </td>
+    <td> Defaults to 30s </td>
+  </tr>
+  <tr>
+    <td> SEQUENCE </td>
+    <td> It defines sequence of chaos execution for multiple instance </td>
+    <td> Default value: parallel. Supported: serial, parallel </td>
+  </tr>
   <tr>
     <td> RAMP_TIME </td>
     <td> Period to wait before and after injection of chaos in sec </td>
@@ -3066,9 +3075,9 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
 <h3 id="stoppoweroff-vm-by-moid">Stop/Poweroff VM By MOID<a class="headerlink" href="#stoppoweroff-vm-by-moid" title="Permanent link">&para;</a></h3>
-<p>It contains moid of the vm instance. It can be tuned via <code>APP_VM_MOID</code> ENV.</p>
+<p>It contains MOID of the vm instance. It can be tuned via <code>APP_VM_MOIDS</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># power-off the vmware vm</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># power-off the VMWare VM</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -3082,9 +3091,10 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <span class="nt">spec</span><span class="p">:</span>
       <span class="nt">components</span><span class="p">:</span>
         <span class="nt">env</span><span class="p">:</span>
-        <span class="c1"># moid of the vm instance</span>
-        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">APP_VM_MOID</span>
-          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;vm-5365&#39;</span>
+        <span class="c1"># MOID of the VM</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">APP_VM_MOIDS</span>
+          <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;vm-53,vm-65&#39;</span>
+
         <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
           <span class="nt">VALUE</span><span class="p">:</span> <span class="s">&#39;60&#39;</span>
 </code></pre></div>
