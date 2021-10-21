@@ -386,6 +386,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/concepts/security/openshift-scc/</loc>
+         <lastmod>2021-10-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/concepts/security/psp/</loc>
          <lastmod>2021-10-21</lastmod>
          <changefreq>daily</changefreq>
