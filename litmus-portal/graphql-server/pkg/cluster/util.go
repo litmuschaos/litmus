@@ -28,7 +28,7 @@ func VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, er
 		splitCPVersion := strings.Split(currentVersion, ".")
 		splitSubVersion := strings.Split(identity.Version, ".")
 		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] || splitSubVersion[1] != splitCPVersion[1] {
-			return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v.%v.x got %v.%v.x)", splitCPVersion[0], splitCPVersion[1], splitSubVersion[0], splitSubVersion[1])
+			return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v.%v.x got %v)", splitCPVersion[0], splitCPVersion[1], identity.Version)
 		}
 	}
 	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
