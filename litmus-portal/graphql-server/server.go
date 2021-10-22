@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
@@ -64,6 +67,13 @@ func init() {
 	err := envconfig.Process("", &c)
 	if err != nil {
 		logrus.Fatal(err)
+	}
+	// confirm version env is valid
+	if !strings.Contains(strings.ToLower(c.Version), cluster.CIVersion) {
+		splitCPVersion := strings.Split(c.Version, ".")
+		if len(splitCPVersion) != 3 {
+			logrus.Fatal("version doesn't follow semver semantic")
+		}
 	}
 }
 
