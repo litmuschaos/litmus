@@ -206,6 +206,7 @@ const WorkflowDetails: React.FC = () => {
                   },
                 }}
                 variant="fullWidth"
+                data-cy="statsTabs"
               >
                 <StyledTab label="Graph View" />
                 <StyledTab label="Table View" />

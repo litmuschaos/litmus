@@ -415,7 +415,7 @@ data:
   DB_SERVER: "mongodb://mongo-service:27017"
   AGENT_SCOPE: cluster
   AGENT_NAMESPACE: litmus
-  VERSION: "ci"
+  VERSION: "2.2.0"
   # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
   OIDC_ISSUER: "http://<Your Domain>:32000"
@@ -505,7 +505,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:2.2.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -565,7 +565,7 @@ spec:
             ]
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:2.2.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -581,9 +581,9 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:2.2.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:2.2.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v2.11.0"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
@@ -614,7 +614,7 @@ spec:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:2.2.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config

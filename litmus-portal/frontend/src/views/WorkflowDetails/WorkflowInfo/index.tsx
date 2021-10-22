@@ -118,7 +118,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
               <Typography className={classes.subCategorySectionTitle}>
                 {t('workflowDetailsView.workflowInfo.targets.namespace')}
               </Typography>
-              <Typography>{data.namespace}</Typography>
+              <Typography data-cy="workflowNamespace">
+                {data.namespace}
+              </Typography>
             </div>
           </div>
         </div>
