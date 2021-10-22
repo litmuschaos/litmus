@@ -186,6 +186,7 @@ class DagreGraph extends Component<GraphProps> {
         height={height}
         ref={this.svg}
         className={className || ''}
+        data-cy="DagreGraphSvg"
       >
         <g ref={this.innerG} />
       </svg>

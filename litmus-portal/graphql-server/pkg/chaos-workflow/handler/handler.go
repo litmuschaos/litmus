@@ -671,7 +671,10 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	var workflowRunMetrics types.WorkflowRunMetrics
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if input.Completed {
-		workflowRunMetrics = ops.ProcessCompletedWorkflowRun(executionData, input.WorkflowID)
+		workflowRunMetrics, err = ops.ProcessCompletedWorkflowRun(executionData, input.WorkflowID)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	count := 0

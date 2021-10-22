@@ -258,6 +258,7 @@ const WorkflowStepper = () => {
             <Alert
               onClose={() => alert.changeAlertState(false)}
               severity="error"
+              data-cy="AlertBox"
             >
               {message}
             </Alert>

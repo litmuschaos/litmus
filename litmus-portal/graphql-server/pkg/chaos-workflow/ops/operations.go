@@ -3,6 +3,7 @@ package ops
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -56,7 +57,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		}
 	}
 
-	if workflow.WorkflowID == nil {
+	if workflow.WorkflowID == nil || (*workflow.WorkflowID) == "" {
 		workflow.WorkflowID = &workflow_id
 	}
 
@@ -259,11 +260,17 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 }
 
 // ProcessCompletedWorkflowRun calculates the Resiliency Score and returns the updated ExecutionData
-func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) types.WorkflowRunMetrics {
+func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (types.WorkflowRunMetrics, error) {
 	var weightSum, totalTestResult = 0, 0
 	var result types.WorkflowRunMetrics
 
-	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}})
+	if err != nil {
+		return result, fmt.Errorf("failed to get workflow from db on complete, error: %w", err)
+	}
+	if len(chaosWorkflows) != 1 {
+		return result, fmt.Errorf("failed to get workflow from db on complete, error: couldn't find the unique workflow with id %v", wfID)
+	}
 
 	result.TotalExperiments = len(chaosWorkflows[0].Weightages)
 	weightMap := map[string]int{}
@@ -305,7 +312,7 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) type
 		result.ResiliencyScore = utils.Truncate(float64(totalTestResult) / float64(weightSum))
 	}
 
-	return result
+	return result, nil
 }
 
 func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
@@ -333,6 +340,9 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 	for i, template := range workflowManifest.Spec.Templates {
 		artifact := template.Inputs.Artifacts
 		if len(artifact) > 0 {
+			if artifact[0].Raw == nil {
+				continue
+			}
 			var data = artifact[0].Raw.Data
 			if len(data) > 0 {
 				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
@@ -444,6 +454,9 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 
 		artifact := template.Inputs.Artifacts
 		if len(artifact) > 0 {
+			if artifact[0].Raw == nil {
+				continue
+			}
 			var data = artifact[0].Raw.Data
 			if len(data) > 0 {
 				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}

@@ -268,6 +268,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           size="small"
           variant={getVariant(data.phase?.toLowerCase())}
           label={data.phase ?? ''}
+          data-cy="WorkflowStatus"
         />
       </TableCell>
       <TableCell
@@ -296,7 +297,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
           ?.experiment_name !== '' ? (
           <>
-            <Typography>
+            <Typography data-cy="ResScore">
               <span>
                 {t('chaosWorkflows.browseWorkflows.tableData.overallRR')}
               </span>
@@ -315,7 +316,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 </span>
               )}
             </Typography>
-            <Typography>
+            <Typography data-cy="ExperimentsPassed">
               <span>
                 {t(
                   'chaosWorkflows.browseWorkflows.tableData.experimentsPassed'

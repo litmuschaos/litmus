@@ -270,6 +270,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
             exclusive
             onChange={handleAlignment}
             aria-label="text alignment"
+            data-cy="AnnotationCheckToggle"
           >
             <ToggleButton
               className={classes.annotationToggleBtn}
@@ -361,6 +362,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                         ''
                       )
                     }
+                    data-cy="Appns"
                   />
                 )}
               />
@@ -394,6 +396,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                     });
                   }}
                   label={constants.appKind}
+                  data-cy="AppKind"
                 >
                   <MenuItem aria-label="None" value="" />
                   {gvrData.map((gvr) => {
@@ -447,6 +450,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                     }
                     {...params}
                     label={constants.appLabel}
+                    data-cy="AppLabel"
                   />
                 )}
               />
@@ -465,6 +469,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                 jobCleanUpPolicy: event.target.value,
               });
             }}
+            data-cy="JobCleanUpPolicy"
           />
           <br />
 
@@ -479,6 +484,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                 className={classes.checkBoxDefault}
                 name="checkedB"
                 color="primary"
+                data-cy="NodeSelector"
               />
             }
             label={
@@ -506,7 +512,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
       </div>
       <br />
 
-      <div>
+      <div data-cy="TargetControlButtons">
         <Button onClick={() => gotoStep(0)} className={classes.button}>
           {t('workflowStepper.back')}
         </Button>
