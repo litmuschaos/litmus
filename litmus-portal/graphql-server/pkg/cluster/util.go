@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	// CIVersion specifies the version tag used for ci builds
 	CIVersion = "ci"
 )
 
