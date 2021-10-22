@@ -3,6 +3,7 @@ package ops
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -259,11 +260,17 @@ func SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData) {
 }
 
 // ProcessCompletedWorkflowRun calculates the Resiliency Score and returns the updated ExecutionData
-func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) types.WorkflowRunMetrics {
+func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (types.WorkflowRunMetrics, error) {
 	var weightSum, totalTestResult = 0, 0
 	var result types.WorkflowRunMetrics
 
-	chaosWorkflows, _ := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}})
+	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}})
+	if err != nil {
+		return result, fmt.Errorf("failed to get workflow from db on complete, error: %w", err)
+	}
+	if len(chaosWorkflows) != 1 {
+		return result, fmt.Errorf("failed to get workflow from db on complete, error: couldn't find the unique workflow with id %v", wfID)
+	}
 
 	result.TotalExperiments = len(chaosWorkflows[0].Weightages)
 	weightMap := map[string]int{}
@@ -305,7 +312,7 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) type
 		result.ResiliencyScore = utils.Truncate(float64(totalTestResult) / float64(weightSum))
 	}
 
-	return result
+	return result, nil
 }
 
 func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
