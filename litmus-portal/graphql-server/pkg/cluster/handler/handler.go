@@ -39,14 +39,15 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		for _, el := range selectors {
 			kv := strings.Split(el, "=")
 			if len(kv) != 2 {
-				return nil, errors.New("nodeselector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
+				return nil, errors.New("node selector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
 			}
 
 			if strings.Contains(kv[0], "\"") || strings.Contains(kv[1], "\"") {
-				return nil, errors.New("nodeselector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
+				return nil, errors.New("node selector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
 			}
 		}
 	}
+
 	var tolerations []*dbSchemaCluster.Toleration
 	err = copier.Copy(&tolerations, input.Tolerations)
 	if err != nil {

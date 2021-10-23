@@ -99,6 +99,7 @@ type Cluster struct {
 	AgentSaExists         *bool   `json:"agent_sa_exists"`
 	LastWorkflowTimestamp string  `json:"last_workflow_timestamp"`
 	StartTime             string  `json:"start_time"`
+	Version               string  `json:"version"`
 }
 
 type ClusterAction struct {
@@ -499,10 +500,11 @@ type TemplateInput struct {
 }
 
 type Toleration struct {
-	TolerationSeconds *string `json:"tolerationSeconds"`
+	TolerationSeconds *int    `json:"tolerationSeconds"`
 	Key               *string `json:"key"`
 	Operator          *string `json:"operator"`
 	Effect            *string `json:"effect"`
+	Value             *string `json:"value"`
 }
 
 type TotalCount struct {

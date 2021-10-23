@@ -158,14 +158,20 @@ const AddProbe: React.FC<AddProbeProps> = ({
 
   const handleAddProbe = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const properties = probeData.runProperties;
-    if (Number.isNaN(parseInt(properties.initialDelaySeconds, 10))) {
+    const properties = runProperties;
+    if (
+      Number.isNaN(properties.initialDelaySeconds) ||
+      properties.initialDelaySeconds === ''
+    ) {
       delete properties.initialDelaySeconds;
     }
-    if (Number.isNaN(parseInt(properties.probePollingInterval, 10))) {
+    if (
+      Number.isNaN(properties.probePollingInterval) ||
+      properties.probePollingInterval === ''
+    ) {
       delete properties.probePollingInterval;
     }
-    probeData['runProperties'] = runProperties as RunProperties;
+    probeData['runProperties'] = properties;
     setProbeData(probeData);
     if (isEdit) {
       allProbes[editIndex] = probeData;

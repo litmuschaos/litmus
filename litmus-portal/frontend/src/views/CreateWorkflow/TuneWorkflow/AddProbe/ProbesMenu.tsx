@@ -14,6 +14,7 @@ interface ProbesMenuProps {
     child: React.ReactNode
   ) => void;
   valueList: string[];
+  required?: boolean;
 }
 
 const ProbesMenu: React.FC<ProbesMenuProps> = ({
@@ -22,18 +23,21 @@ const ProbesMenu: React.FC<ProbesMenuProps> = ({
   value,
   handleChange,
   valueList,
+  required,
 }) => {
   const classes = useStyles();
   return (
     <div className={classes.inputFormField}>
       <InputLabel className={classes.formLabel} htmlFor={id}>
         {label}
+        {required && <span className={classes.required}>*</span>}
       </InputLabel>
       <Select
         value={value}
         className={classes.inputSelect}
         variant="outlined"
         onChange={handleChange}
+        required={required}
         inputProps={{
           id,
           name: id,

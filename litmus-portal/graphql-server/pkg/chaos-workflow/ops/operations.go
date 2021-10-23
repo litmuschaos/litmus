@@ -56,7 +56,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 		}
 	}
 
-	if workflow.WorkflowID == nil {
+	if workflow.WorkflowID == nil || (*workflow.WorkflowID) == "" {
 		workflow.WorkflowID = &workflow_id
 	}
 
@@ -333,6 +333,9 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 	for i, template := range workflowManifest.Spec.Templates {
 		artifact := template.Inputs.Artifacts
 		if len(artifact) > 0 {
+			if artifact[0].Raw == nil {
+				continue
+			}
 			var data = artifact[0].Raw.Data
 			if len(data) > 0 {
 				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
@@ -444,6 +447,9 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 
 		artifact := template.Inputs.Artifacts
 		if len(artifact) > 0 {
+			if artifact[0].Raw == nil {
+				continue
+			}
 			var data = artifact[0].Raw.Data
 			if len(data) > 0 {
 				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}

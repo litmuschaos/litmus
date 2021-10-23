@@ -20,6 +20,7 @@ export interface Cluster {
   agent_ns_exists: boolean;
   agent_sa_exists: boolean;
   last_workflow_timestamp: string;
+  version: string;
 }
 
 export interface Clusters {

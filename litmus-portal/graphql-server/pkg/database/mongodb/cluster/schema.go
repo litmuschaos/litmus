@@ -22,13 +22,15 @@ type Cluster struct {
 	Token              string        `bson:"token"`
 	IsRemoved          bool          `bson:"is_removed"`
 	NodeSelector       *string       `bson:"node_selector"`
-	Tolerations        []*Toleration `bson:"tolerations"`
-	StartTime          string        `json:"start_time"`
+	Tolerations        []*Toleration `bson:"tolerations,omitempty"`
+	StartTime          string        `bson:"start_time"`
+	Version            string        `bson:"version"`
 }
 
 type Toleration struct {
-	TolerationSeconds *string `bson:"tolerationSeconds" yaml:"tolerationSeconds"`
-	Key               *string `bson:"key" yaml:"key"`
-	Operator          *string `bson:"operator" yaml:"operator"`
-	Effect            *string `bson:"effect" yaml:"effect"`
+	TolerationSeconds *int    `bson:"tolerationSeconds,omitempty" yaml:"tolerationSeconds,omitempty"`
+	Key               *string `bson:"key,omitempty" yaml:"key,omitempty"`
+	Operator          *string `bson:"operator,omitempty" yaml:"operator,omitempty"`
+	Effect            *string `bson:"effect,omitempty" yaml:"effect,omitempty"`
+	Value             *string `bson:"value,omitempty" yaml:"value,omitempty"`
 }

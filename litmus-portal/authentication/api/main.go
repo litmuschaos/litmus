@@ -71,6 +71,10 @@ func main() {
 		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,
 	}))
+	// Enable dex routes only if passed via environment variables
+	if utils.DexEnabled {
+		routes.DexRouter(app, userService)
+	}
 	routes.UserRouter(app, userService)
 	err = app.Run(utils.Port)
 	if err != nil {
