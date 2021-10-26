@@ -1,0 +1,30 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: sock-chaos
+  namespace: sock-shop
+spec:
+  engineState: 'active'
+  appinfo:
+    appns: sock-shop
+    # FYI, To see app label, apply kubectl get pods --show-labels
+    # unique-label of the application under test (AUT)
+    applabel: "name=carts-db"
+    appkind: deployment
+  chaosServiceAccount: sock-shop-chaos-engine
+  experiments:
+    - name: disk-fill
+      spec:
+        components:
+          env:
+            # specify the fill percentage according to the disk pressure required
+            - name: FILL_PERCENTAGE
+              value: "80"
+              
+            - name: TARGET_CONTAINER
+              value: "carts-db"
+              
+            - name: FILL_PERCENTAGE
+              value: ''
+            - name: CONTAINER_PATH
+              value: '/var/lib/containerd/io.containerd.grpc.v1.cri/containers/'         
