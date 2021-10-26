@@ -641,6 +641,7 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
+          args: ["--ipv6"]
           ports:
             - containerPort: 27017
           imagePullPolicy: Always

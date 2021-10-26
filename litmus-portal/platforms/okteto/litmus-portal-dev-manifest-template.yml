@@ -651,6 +651,7 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
+          args: ["--ipv6"]
           resources:
             limits:
               cpu: 200m
