@@ -2454,8 +2454,6 @@
         
           
         
-          
-        
       
       
         <label class="md-nav__link" for="__nav_4_2">
@@ -2629,20 +2627,6 @@
     <li class="md-nav__item">
       <a href="../scheduler/" class="md-nav__link">
         Scheduler
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../security/" class="md-nav__link">
-        Security
       </a>
     </li>
   
@@ -3004,7 +2988,9 @@
 <hr/>
 
 <h3 id="i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace">I encountered the concept of namespace and cluster scope during the installation. What is meant by the scopes, and how does it affect experiments to be performed outside or inside the litmus Namespace?<a class="headerlink" href="#i-encountered-the-concept-of-namespace-and-cluster-scope-during-the-installation-what-is-meant-by-the-scopes-and-how-does-it-affect-experiments-to-be-performed-outside-or-inside-the-litmus-namespace" title="Permanent link">&para;</a></h3>
-<p>The scope of portal control plane (portal) installation tuned by the env PORTAL_SCOPE of litmusportal-server deployment can be kept as a namespace if you want to provide very restricted access to litmus; It's useful in dev environments like Okteto cloud etc. That restricts portal installation along with its agent to a single namespace and the chaos operator, exporter all get installed in a single namespace and can only perform and monitor chaos in that namespace. Other than that there is another key in the control plane’s configmap litmus-portal-admin-config called AgentScope, this is given to allow users to restrict access to the litmus self-agent components self-agent is the agent for your control plane cluster (exporter, operator, etc), you can use both of them in a way to give access as per the requirement. The above holds for the control plane and self agent, for the external agents which can be connected using the litmusctl CLI you can provide the scope of the agent while using the utility to connect your other cluster to the control plane with access to just a single namespace or cluster-wide access. Using a combination of AgentScope: cluster and PORTAL_SCOPE env set to cluster would give you cluster-admin privileges to inject chaos on all namespaces where the control plane/portal is installed. For external agents just selecting the scope of installation as cluster would be sufficient via litmusctl.</p>
+<p>The scope of control plane (portal) installation can be tuned by the env PORTAL_SCOPE in the litmusportal-server deployment. Its value can be kept as a “namespace” if you want to provide restricted access to litmus. It is useful in strictly multi-tenant environments in which users have namespace-level permissions and need to set up their own chaos-center instances. This is also the case in certain popular SaaS environments like Okteto cloud. </p>
+<p>This setting can be used in combination with a flag, AGENT_SCOPE in the litmus-portal-admin-config configmap to limit the purview of the corresponding self-agent (the execution plane pods on the cluster/namespace where the control plane is installed) to the current namespace, which means the user can perform chaos experiments only in chose installation namespace. By default, both are set up for cluster-wide access, by which microservices across the cluster can be subjected to chaos. </p>
+<p>In case of external-agents, i.e., the targets being connected to the chaos-center, you can choose the agent’s scope to either cluster or namespace via a litmusctl flag (when using it in non-interactive mode) or by providing the appropriate input (in interactive mode). </p>
 <h3 id="does-litmus-20-maintain-backward-compatibility-with-kubernetes">Does Litmus 2.0 maintain backward compatibility with Kubernetes?<a class="headerlink" href="#does-litmus-20-maintain-backward-compatibility-with-kubernetes" title="Permanent link">&para;</a></h3>
 <p>Yes Litmus maintains a separate CRD manifest to support backward compatibility.</p>
 <h3 id="can-i-run-litmuschaos-outside-of-my-kubernetes-clusters">Can I run LitmusChaos Outside of my Kubernetes clusters?<a class="headerlink" href="#can-i-run-litmuschaos-outside-of-my-kubernetes-clusters" title="Permanent link">&para;</a></h3>

@@ -426,11 +426,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://litmuschaos.github.io/litmus/experiments/faq/security/</loc>
-         <lastmod>2021-10-26</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/troubleshooting/experiments/</loc>
          <lastmod>2021-10-26</lastmod>
          <changefreq>daily</changefreq>

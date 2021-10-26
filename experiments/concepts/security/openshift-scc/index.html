@@ -2462,8 +2462,6 @@
         
           
         
-          
-        
       
       
         <label class="md-nav__link" for="__nav_4_2">
@@ -2528,20 +2526,6 @@
     <li class="md-nav__item">
       <a href="../../../faq/scheduler/" class="md-nav__link">
         Scheduler
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../faq/security/" class="md-nav__link">
-        Security
       </a>
     </li>
   
@@ -2806,21 +2790,22 @@ restricted         <span class="nb">false</span>     <span class="o">[]</span>  
 </code></pre></div>
 <p>By default applications would run under the <code>restricted</code> SCC. We can use make use of the default SCC or can create our own SCC to provide the litmus experiment service account (here litmus-admin) to run all the experiments. Here is one such SCC that can be used:</p>
 <p><i>litmus-scc.yaml</i>
-<div class="highlight"><pre><span></span><code>allowHostDirVolumePlugin: <span class="nb">true</span>
+<div class="highlight"><pre><span></span><code>apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+allowHostDirVolumePlugin: <span class="nb">true</span>
 allowHostIPC: <span class="nb">false</span>
-allowHostNetwork: <span class="nb">true</span>
+allowHostNetwork: <span class="nb">false</span>
 allowHostPID: <span class="nb">true</span>
-allowHostPorts: <span class="nb">true</span>
+allowHostPorts: <span class="nb">false</span>
 allowPrivilegeEscalation: <span class="nb">true</span>
 allowPrivilegedContainer: <span class="nb">true</span>
 allowedCapabilities:
-- <span class="s1">&#39;*&#39;</span>
-apiVersion: security.openshift.io/v1
+- <span class="s1">&#39;NET_ADMIN&#39;</span>
+- <span class="s1">&#39;SYS_ADMIN&#39;</span>
 defaultAddCapabilities: null
 fsGroup:
   type: MustRunAs
 groups: <span class="o">[]</span>
-kind: SecurityContextConstraints
 metadata:
   name: litmus-scc
 priority: null

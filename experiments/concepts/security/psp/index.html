@@ -2492,8 +2492,6 @@
         
           
         
-          
-        
       
       
         <label class="md-nav__link" for="__nav_4_2">
@@ -2558,20 +2556,6 @@
     <li class="md-nav__item">
       <a href="../../../faq/scheduler/" class="md-nav__link">
         Scheduler
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../faq/security/" class="md-nav__link">
-        Security
       </a>
     </li>
   
@@ -2880,13 +2864,13 @@ opting for the default <a href="https://kubernetes.io/docs/concepts/policy/pod-s
     <span class="nt">ranges</span><span class="p">:</span>
     <span class="c1"># Forbid adding the root group.</span>
     <span class="p p-Indicator">-</span> <span class="nt">min</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-        <span class="l l-Scalar l-Scalar-Plain">max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">65535</span>
+      <span class="nt">max</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">65535</span>
 <span class="nt">fsGroup</span><span class="p">:</span>
     <span class="nt">rule</span><span class="p">:</span> <span class="s">&#39;MustRunAs&#39;</span>
     <span class="nt">ranges</span><span class="p">:</span>
     <span class="c1"># Forbid adding the root group.</span>
     <span class="p p-Indicator">-</span> <span class="nt">min</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-        <span class="l l-Scalar l-Scalar-Plain">max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">65535</span>
+      <span class="nt">max</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">65535</span>
 <span class="nt">readOnlyRootFilesystem</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 <p><strong>Note</strong>: This PodSecurityPolicy is a sample configuration which works for a majority of the usecases. It is left to the user's discretion to modify it based 
