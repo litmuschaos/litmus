@@ -1,7 +1,7 @@
 # Using Pod Security Policies with Litmus
 
 While working in environments (clusters) that have restrictive security policies, the default litmuschaos experiment execution procedure may be inhibited. 
-This is mainly due to the fact that the experiment pods running the chaos injection tasks run with a root user. This, in turn, is necessitated due to the mounting 
+This is mainly due to the fact that the experiment pods running the chaos injection tasks in privileged mode. This, in turn, is necessitated due to the mounting 
 of container runtime-specific socket files from the Kubernetes nodes in order to invoke runtime APIs. While this is not needed for all experiments (a considerable 
 number of them use purely the K8s API), those involving injection of chaos processes into the network/process namespaces of other containers have this requirement 
 (ex: netem, stress).
