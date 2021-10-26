@@ -179,7 +179,6 @@ nav:
         - Experiments: experiments/faq/experiments.md
         - Portal: experiments/faq/portal.md
         - Scheduler: experiments/faq/scheduler.md
-        - Security: experiments/faq/security.md
         - CI/CD: experiments/faq/ci-cd.md
       - Troubleshooting:
         - Install: experiments/troubleshooting/install.md 
