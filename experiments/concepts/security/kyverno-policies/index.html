@@ -2854,25 +2854,25 @@
                 
                 <p><a href="https://kyverno.io/policies/pod-security/">Kyverno policies</a> blocks configurations that don't match a policy (enforce mode) or can generate policy violations (audit mode). It scans existing configurations and reports violations in the cluster. 
 Litmus recommends using the provided policy configuration to enable the execution of all supported (out-of-the-box) experiments listed in the chaoshub. Having said that, this is recommendatory in nature and left to user discretion/choice depending upon experiments desired.  </p>
-<p>The details listed here are expected to aid users of Kyverno. If you are using alternate means to enforce runtime security, such as native Kubernetes PSPs (pod security policies), refer this section: &lt;&gt; </p>
+<p>The details listed here are expected to aid users of Kyverno. If you are using alternate means to enforce runtime security, such as native Kubernetes PSPs (pod security policies), refer this section: <a href="https://litmuschaos.github.io/litmus/experiments/concepts/security/psp/">refer</a></p>
 <h2 id="policies-in-litmus">Policies in Litmus<a class="headerlink" href="#policies-in-litmus" title="Permanent link">&para;</a></h2>
 <p>Litmus recommends using the following policies:</p>
 <ol>
-<li><a href="https://github.com/litmuschaos/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-capabilities.yaml">Add Capabilities</a>: It restricts add capabilities except the <code>NET_ADMIN</code> and <code>SYS_ADMIN</code> for the pods that use runtime API</li>
-<li><a href="https://github.com/litmuschaos/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-host-namespaces.yaml">Host Namespaces</a>: It validates following host namespaces for the pods that use runtime API.<ol>
+<li><a href="https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/kyverno-policies/allow-capabilities-for-litmus-experiments-which-uses-runtime-api.yaml">Add Capabilities</a>: It restricts add capabilities except the <code>NET_ADMIN</code> and <code>SYS_ADMIN</code> for the pods that use runtime API</li>
+<li><a href="https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/kyverno-policies/allow-host-namespaces-for-litmus-experiments-which-uses-runtime-api.yaml">Host Namespaces</a>: It validates following host namespaces for the pods that use runtime API.<ol>
 <li>HostPID: It allows hostPID. It should be set to <code>true</code>.</li>
 <li>HostIPC: It restricts the host IPC. It should be set to <code>false</code>.</li>
 <li>HostNetwork: It restricts the hostNetwork. It should be set to <code>false</code>.</li>
 </ol>
 </li>
-<li><a href="https://github.com/litmuschaos/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-host-paths.yaml">Host Paths</a>: It restricts hostPath except the <code>socket-path</code> &amp; <code>container-path</code> host paths for the pods that uses runtime API. It allows hostPaths for service-kill experiments.</li>
-<li><a href="https://github.com/litmuschaos/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-privilege-escalation.yaml">Privilege Escalation</a>: It restricts privilege escalation except for the pods that use runtime API</li>
-<li><a href="https://github.com/litmuschaos/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-privileged-containers.yaml">Privilege Container</a>: It restricts privileged containers except for the pods that use runtime API</li>
-<li><a href="https://github.com/litmuschaos/chaos-charts/blob/kyverno-policies/security/kyverno-policies/allow-user-groups.yaml">User Groups</a>: It allows users groups for all the experiment pods</li>
+<li><a href="https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/kyverno-policies/allow-host-paths-for-litmus-experiments-which-uses-hostPaths.yaml">Host Paths</a>: It restricts hostPath except the <code>socket-path</code> &amp; <code>container-path</code> host paths for the pods that uses runtime API. It allows hostPaths for service-kill experiments.</li>
+<li><a href="https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/kyverno-policies/allow-privilege-escalation-for-litmus-experiments-which-uses-runtime-api.yaml">Privilege Escalation</a>: It restricts privilege escalation except for the pods that use runtime API</li>
+<li><a href="https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/kyverno-policies/allow-privileged-containers-for-litmus-experiments-which-uses-runtime-api.yaml">Privilege Container</a>: It restricts privileged containers except for the pods that use runtime API</li>
+<li><a href="https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/security/kyverno-policies/allow-user-groups-for-litmus-experiments.yaml">User Groups</a>: It allows users groups for all the experiment pods</li>
 </ol>
 <h2 id="install-policies">Install Policies<a class="headerlink" href="#install-policies" title="Permanent link">&para;</a></h2>
 <p>These Kyverno policies are based on the <a href="https://kubernetes.io/docs/concepts/security/pod-security-standards/">Kubernetes Pod Security Standards</a> definitons. To apply all pod security policies (recommended) <a href="https://kyverno.io/docs/installation/">install Kyverno</a> and <a href="https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/">kustomize</a>, then run:</p>
-<div class="highlight"><pre><span></span><code>kustomize build https://github.com/litmuschaos/chaos-charts/kyverno-policies/security/kyverno <span class="p">|</span> kubectl apply -f -
+<div class="highlight"><pre><span></span><code>kustomize build https://github.com/litmuschaos/chaos-charts/security/kyverno-policies <span class="p">|</span> kubectl apply -f -
 </code></pre></div>
 <h2 id="pod-security-policies-in-restricted-setup">Pod Security Policies in restricted setup<a class="headerlink" href="#pod-security-policies-in-restricted-setup" title="Permanent link">&para;</a></h2>
 <p>If setup contains restricted policies which don't allow execution of litmus experiments by default. For Example <a href="https://kyverno.io/policies/pod-security/restricted/deny-privilege-escalation/deny-privilege-escalation/">deny-privilege-escalation</a> policy doesn't allow privileged escalation. It deny all the pods to use privileged escalation.</p>
