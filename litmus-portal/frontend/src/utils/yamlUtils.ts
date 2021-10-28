@@ -3,8 +3,10 @@
 /* eslint-disable no-param-reassign */
 import YAML from 'yaml';
 import { v4 as uuidv4 } from 'uuid';
+import localforage from 'localforage';
 import { constants } from '../constants';
 import { ImageRegistryInfo } from '../models/redux/image_registry';
+import { experimentMap } from '../models/redux/workflow';
 
 const validateNamespace = (chaosEngine: any) => {
   // Condition to check the namespace
@@ -221,6 +223,24 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const addWeights = (manifest: string) => {
+  const arr: experimentMap[] = [];
+  const hashMap = new Map();
+  const tests = parsed(manifest);
+  if (tests.length) {
+    tests.forEach((test) => {
+      let value = 10;
+      if (hashMap.has(test)) {
+        value = hashMap.get(test);
+      }
+      arr.push({ experimentName: test, weight: value });
+    });
+  } else {
+    arr.push({ experimentName: '', weight: 0 });
+  }
+  localforage.setItem('weights', arr);
+};
+
 export const fetchWorkflowNameFromManifest = (manifest: string) => {
   return YAML.parse(manifest).metadata.name;
 };
@@ -264,6 +284,15 @@ export const updateNamespace = (manifest: string, namespace: string) => {
         }
       }
     );
+  return updatedManifest;
+};
+
+export const updateNamespaceForUpload = (
+  manifest: string,
+  namespace: string
+) => {
+  const updatedManifest = YAML.parse(manifest);
+  updatedManifest.metadata.namespace = namespace;
   return updatedManifest;
 };
 

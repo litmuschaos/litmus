@@ -15,6 +15,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import config from '../../../config';
 import { GET_EXPERIMENT_DATA, GET_TEMPLATE_BY_ID } from '../../../graphql';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
@@ -46,7 +47,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
   // Actions
   const workflowAction = useActions(WorkflowActions);
   const workflowData = useSelector((state: RootState) => state.workflowData);
-  const { manifest } = useSelector(
+  const { manifest, isUploaded } = useSelector(
     (state: RootState) => state.workflowManifest
   );
   const imageRegistry = useActions(ImageRegistryActions);
@@ -164,7 +165,10 @@ const WorkflowSettings = forwardRef((_, ref) => {
         setDisplayRegChange(true);
       }
       if ((value as ChooseWorkflowRadio).selected === 'D') {
-        setName('chaos-workflow');
+        const wfName = `custom-workflow-${Math.round(
+          new Date().getTime() / 1000
+        )}`;
+        setName(wfName);
         setDescription('Chaos Workflow');
         setIcon('./avatars/litmus.svg');
         setDisplayRegChange(false);
@@ -222,11 +226,19 @@ const WorkflowSettings = forwardRef((_, ref) => {
       icon,
       CRDLink,
     };
+
     localforage.setItem('workflow', workflowDetails);
     imageRegistry.selectImageRegistry({
       ...imageRegistryData,
       update_registry: updateRegistry,
     });
+    if (isUploaded) {
+      const workflow = YAML.parse(manifest);
+      workflow.metadata.name = name;
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(workflow),
+      });
+    }
     if (!name.length) {
       alert.changeAlertState(true); // Workflow Name is empty and user clicked on Next
       return false;

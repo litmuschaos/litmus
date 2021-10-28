@@ -92,7 +92,7 @@ const VerifyCommit = forwardRef(
 
     const { clusterid, cronSyntax, clustername } = workflowData;
 
-    const { manifest, isCustomWorkflow } = useSelector(
+    const { manifest, isCustomWorkflow, isUploaded } = useSelector(
       (state: RootState) => state.workflowManifest
     );
 
@@ -241,7 +241,7 @@ const VerifyCommit = forwardRef(
     isLoading(loading);
 
     const handleMutation = () => {
-      if (workflow.name.length !== 0 && weights.length !== 0) {
+      if (workflow.name.length !== 0) {
         const weightData: WeightMap[] = [];
 
         weights.forEach((data) => {
@@ -298,7 +298,9 @@ const VerifyCommit = forwardRef(
     };
 
     function onNext() {
-      if (!isNameError.current && !isSubjectError.current) {
+      if (isUploaded) {
+        handleMutation();
+      } else if (!isNameError.current && !isSubjectError.current) {
         handleMutation();
       } else {
         alert.changeAlertState(true);
@@ -502,38 +504,41 @@ const VerifyCommit = forwardRef(
                     </div>
                   </div>
                 </div>
-                <div className={classes.itemWrapper}>
-                  <Typography className={classes.left}>
-                    {t('createWorkflow.verifyCommit.summary.adjustedWeights')}:
-                  </Typography>
-                  {weights.length === 0 ? (
-                    <Typography
-                      className={`${classes.errorText} ${classes.right}`}
-                    >
-                      {t('createWorkflow.verifyCommit.error')}
+                {!isUploaded && (
+                  <div className={classes.itemWrapper}>
+                    <Typography className={classes.left}>
+                      {t('createWorkflow.verifyCommit.summary.adjustedWeights')}
+                      :
                     </Typography>
-                  ) : (
-                    <div className={classes.right}>
-                      <div className={classes.progress}>
-                        {WorkflowTestData.map((Test) => (
-                          <AdjustedWeights
-                            key={Test.weight}
-                            testName={`${Test.experimentName} ${t(
-                              'createWorkflow.verifyCommit.test'
-                            )}`}
-                            testValue={Test.weight}
-                          />
-                        ))}
-                      </div>
-                      <ButtonOutlined
-                        onClick={() => handleGoToStep(4)}
-                        data-cy="testRunButton"
+                    {weights.length === 0 ? (
+                      <Typography
+                        className={`${classes.errorText} ${classes.right}`}
                       >
-                        {t('createWorkflow.verifyCommit.button.edit')}
-                      </ButtonOutlined>
-                    </div>
-                  )}
-                </div>
+                        {t('createWorkflow.verifyCommit.error')}
+                      </Typography>
+                    ) : (
+                      <div className={classes.right}>
+                        <div className={classes.progress}>
+                          {WorkflowTestData.map((Test) => (
+                            <AdjustedWeights
+                              key={Test.weight}
+                              testName={`${Test.experimentName} ${t(
+                                'createWorkflow.verifyCommit.test'
+                              )}`}
+                              testValue={Test.weight}
+                            />
+                          ))}
+                        </div>
+                        <ButtonOutlined
+                          onClick={() => handleGoToStep(4)}
+                          data-cy="testRunButton"
+                        >
+                          {t('createWorkflow.verifyCommit.button.edit')}
+                        </ButtonOutlined>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div className={classes.itemWrapper}>
                   <Typography className={classes.left}>
                     {t('createWorkflow.verifyCommit.YAML')}
