@@ -37,53 +37,73 @@
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: kafka-broker-pod-failure-sa
+          name: cassandra-pod-delete-sa
           namespace: default
           labels:
-            name: kafka-broker-pod-failure-sa
+            name: cassandra-pod-delete-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
-        kind: ClusterRole
+        kind: Role
         metadata:
-          name: kafka-broker-pod-failure-sa
+          name: cassandra-pod-delete-sa
+          namespace: default
           labels:
-            name: kafka-broker-pod-failure-sa
+            name: cassandra-pod-delete-sa
             app.kubernetes.io/part-of: litmus
         rules:
-        - apiGroups: [""]
-          resources: ["pods","events"]
-          verbs: ["create","list","get","patch","update","delete","deletecollection"]
-        - apiGroups: [""]
-          resources: ["pods/exec","pods/log"]
-          verbs: ["create","list","get"]
-        - apiGroups: ["batch"]
-          resources: ["jobs"]
-          verbs: ["create","list","get","delete","deletecollection"]
-        - apiGroups: ["apps"]
-          resources: ["deployments","statefulsets"]
-          verbs: ["list","get"]
-        - apiGroups: ["litmuschaos.io"]
-          resources: ["chaosengines","chaosexperiments","chaosresults"]
-          verbs: ["create","list","get","patch","update"]
-        - apiGroups: [""]
-          resources: ["nodes"]
-          verbs: ["get","list"]
+          # Create and monitor the experiment & helper pods
+          - apiGroups: [""]
+            resources: ["pods"]
+            verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+          # Performs CRUD operations on the events inside chaosengine and chaosresult
+          - apiGroups: [""]
+            resources: ["events"]
+            verbs: ["create","get","list","patch","update"]
+          # Create and manage the liveness and target application services
+          - apiGroups: [""]
+            resources: ["services"]
+            verbs: ["create","delete","get","list", "deletecollection"]
+          # Fetch configmaps & secrets details and mount it to the experiment pod (if specified)
+          - apiGroups: [""]
+            resources: ["secrets","configmaps"]
+            verbs: ["get","list",]
+          # Track and get the runner, experiment, and helper pods log 
+          - apiGroups: [""]
+            resources: ["pods/log"]
+            verbs: ["get","list","watch"]  
+          # for creating and managing to execute comands inside target container
+          - apiGroups: [""]
+            resources: ["pods/exec"]
+            verbs: ["get","list","create"]
+          # for deriving the parent/owner details of the pod   
+          - apiGroups: ["apps"]
+            resources: ["deployments","statefulsets"]
+            verbs: ["list","get"]
+          # for configuring and monitor the experiment job by the chaos-runner pod
+          - apiGroups: ["batch"]
+            resources: ["jobs"]
+            verbs: ["create","list","get","delete","deletecollection"]
+          # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+          - apiGroups: ["litmuschaos.io"]
+            resources: ["chaosengines","chaosexperiments","chaosresults"]
+            verbs: ["create","list","get","patch","update","delete"]
         ---
         apiVersion: rbac.authorization.k8s.io/v1
-        kind: ClusterRoleBinding
+        kind: RoleBinding
         metadata:
-          name: kafka-broker-pod-failure-sa
+          name: cassandra-pod-delete-sa
+          namespace: default
           labels:
-            name: kafka-broker-pod-failure-sa
+            name: cassandra-pod-delete-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
-          kind: ClusterRole
-          name: kafka-broker-pod-failure-sa
+          kind: Role
+          name: cassandra-pod-delete-sa
         subjects:
         - kind: ServiceAccount
-          name: kafka-broker-pod-failure-sa
+          name: cassandra-pod-delete-sa
           namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
