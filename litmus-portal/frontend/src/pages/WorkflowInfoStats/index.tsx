@@ -214,7 +214,7 @@ const WorkflowInfoStats: React.FC = () => {
       {/* Heading of the Page */}
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
-          <Typography className={classes.heading}>
+          <Typography className={classes.heading} data-cy="statsWorkflowName">
             {data?.ListWorkflow.workflows[0].workflow_name}
           </Typography>
           <Typography className={classes.subHeading}>

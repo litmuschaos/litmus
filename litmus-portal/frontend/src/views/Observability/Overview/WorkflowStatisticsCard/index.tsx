@@ -52,7 +52,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
   return (
     <>
       <div className={classes.animatedContainer}>
-        <div className={classes.workflowDataContainer}>
+        <div className={classes.workflowDataContainer} data-cy="workflowCard">
           <div>
             <div className={classes.statusDiv}>
               <img
@@ -101,6 +101,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}
+                data-cy="statsButton"
               >
                 <ObservabilityIcon />
               </IconButton>

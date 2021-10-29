@@ -38,7 +38,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             </Typography>
             <Typography>
               Name :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoWorkflowName">
                 {data.ListWorkflow.workflows[0].workflow_name}
               </span>
             </Typography>
@@ -63,7 +63,10 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             {data && (
               <Typography>
                 Namespace :{' '}
-                <span className={classes.infoHint}>
+                <span
+                  className={classes.infoHint}
+                  data-cy="infoWorkflowNamespace"
+                >
                   {
                     YAML.parse(
                       data?.ListWorkflow.workflows[0].workflow_manifest
@@ -118,7 +121,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             </Typography>
           </div>
           {/* Column 4 */}
-          <div className={classes.regularity}>
+          <div className={classes.regularity} data-cy="infoWorkflowRegularity">
             <Typography className={classes.infoHeader}>Regularity :</Typography>
             {data.ListWorkflow.workflows[0].cronSyntax === '' ? (
               <Typography>Non cron workflow</Typography>
@@ -144,6 +147,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
       <ButtonOutlined
         className={classes.button}
         onClick={() => setShowMore(!showMore)}
+        data-cy="showStatsButton"
       >
         {showMore ? (
           <>
