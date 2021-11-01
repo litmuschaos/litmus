@@ -95,6 +95,7 @@ const TableData: React.FC<TableDataProps> = ({
               });
             }}
             className={classes.buttonSeeStatistics}
+            data-cy="statsButton"
           >
             <ExpandMoreTwoToneIcon htmlColor="black" />
           </IconButton>

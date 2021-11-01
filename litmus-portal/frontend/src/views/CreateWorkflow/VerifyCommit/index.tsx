@@ -456,7 +456,7 @@ const VerifyCommit = forwardRef(
                     </Tooltip>
                   </div>
 
-                  <div className={classes.right}>
+                  <div className={classes.right} data-cy="WorkflowSubject">
                     {subject !== '' ? (
                       <div style={{ width: '100%' }}>
                         <EditableText

@@ -44,14 +44,17 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             </Typography>
             <Typography>
               Id :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoWorkflowId">
                 {data.ListWorkflow.workflows[0].workflow_id}
               </span>
             </Typography>
             {data && (
               <Typography>
                 Subject :{' '}
-                <span className={classes.infoHint}>
+                <span
+                  className={classes.infoHint}
+                  data-cy="infoWorkflowSubject"
+                >
                   {
                     YAML.parse(
                       data?.ListWorkflow.workflows[0].workflow_manifest
@@ -82,13 +85,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             <Typography className={classes.infoHeader}>Agent :</Typography>
             <Typography>
               Name :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoAgentName">
                 {data.ListWorkflow.workflows[0].cluster_name}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoClusterId">
                 {data.ListWorkflow.workflows[0].cluster_id}
               </span>
             </Typography>
@@ -106,7 +109,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                 )}
               </span>
             </Typography>
-            <Typography>
+            <Typography data-cy="infoWorkflowNextRun">
               Next Run :{' '}
               {data.ListWorkflow.workflows[0].cronSyntax ? (
                 <span className={classes.infoHint}>
