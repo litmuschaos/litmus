@@ -277,7 +277,7 @@ const WorkflowInfoStats: React.FC = () => {
                 </Select>
               </FormControl>
             </div>
-            <div className={classes.heatmapParent}>
+            <div className={classes.heatmapParent} data-cy="statsHeatMap">
               {loading ? (
                 <Center>
                   <Loader />
