@@ -166,6 +166,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 width: '62rem',
                 height: '20rem',
               }}
+              data-cy="statsBarGraph"
             >
               <StackBar
                 openSeries={openSeries}
