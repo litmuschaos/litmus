@@ -34,7 +34,6 @@ func GetProject(ctx context.Context, query bson.D) (*Project, error) {
 	}
 	err = result.Decode(project)
 	if err != nil {
-		log.Print("Error unmarshalling the result in project struct: ", err)
 		return nil, err
 	}
 
