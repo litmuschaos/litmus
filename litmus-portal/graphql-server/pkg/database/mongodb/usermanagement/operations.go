@@ -33,7 +33,6 @@ func GetUserByUserName(ctx context.Context, username string) (*User, error) {
 	}
 	err = result.Decode(user)
 	if err != nil {
-		log.Print("Error unmarshalling the result in user struct: ", err)
 		return nil, err
 	}
 
@@ -114,7 +113,6 @@ func GetUserByUserID(ctx context.Context, userID string) (*User, error) {
 	}
 	err = result.Decode(user)
 	if err != nil {
-		log.Print("Error unmarshalling the result in user struct ", err)
 		return nil, err
 	}
 
