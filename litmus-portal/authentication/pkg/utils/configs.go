@@ -23,7 +23,8 @@ var (
 	DexOIDCIssuer          = os.Getenv("OIDC_ISSUER")
 	DBName                 = "auth"
 	Port                   = ":3000"
-	CollectionName         = "usercredentials"
+	UserCollection         = "usercredentials"
+	ProjectCollection      = "project"
 	UsernameField          = "username"
 	PasswordEncryptionCost = 15
 )

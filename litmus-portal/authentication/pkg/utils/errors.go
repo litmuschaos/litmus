@@ -13,6 +13,7 @@ var (
 	ErrUnauthorized                  AppError = errors.New("unauthorized")
 	ErrUserExists                    AppError = errors.New("user_exists")
 	ErrUserNotFound                  AppError = errors.New("user does not exists")
+	ErrProjectNotFound                  AppError = errors.New("project does not exists")
 	ErrWrongPassword                 AppError = errors.New("password doesn't match")
 	ErrUpdatingAdmin                 AppError = errors.New("cannot remove admin")
 	ErrUserDeactivated               AppError = errors.New("your account has been deactivated")
@@ -28,6 +29,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUserExists:                    401,
 	ErrStrictPasswordPolicyViolation: 401,
 	ErrUserNotFound:                  400,
+	ErrProjectNotFound: 400,
 	ErrUpdatingAdmin:                 400,
 	ErrUserDeactivated:               400,
 	ErrUserAlreadyDeactivated:        400,

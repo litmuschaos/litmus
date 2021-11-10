@@ -17,14 +17,15 @@ import (
 //Repository holds the mongo database implementation of the Service
 type Repository interface {
 	LoginUser(user *entities.User) (*entities.User, error)
-	FindUser(username string) (*entities.User, error)
+	GetUser(uid string) (*entities.User, error)
+	GetUsers() (*[]entities.User, error)
+	FindUsersByUID(uid []string) (*[]entities.User, error)
+	FindUserByUsername(username string) (*entities.User, error)
 	CheckPasswordHash(hash, password string) error
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
-	GetUser(uid string) (*entities.User, error)
-	GetUsers() (*[]entities.User, error)
 	UpdateUserState(username string, isDeactivate bool) error
 }
 
@@ -57,8 +58,60 @@ func (r repository) LoginUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
+// GetUser fetches the user from database that matches the passed uid
+func (r repository) GetUser(uid string) (*entities.User, error) {
+	var result = entities.User{}
+	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
+		"_id": uid,
+	}).Decode(&result)
+
+	if findOneErr != nil {
+		return nil, findOneErr
+	}
+	return &(*result.SanitizedUser()), nil
+}
+
+// GetUsers fetches all the users from the database
+func (r repository) GetUsers() (*[]entities.User, error) {
+	var Users []entities.User
+	cursor, err := r.Collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var user entities.User
+		_ = cursor.Decode(&user)
+		Users = append(Users, *user.SanitizedUser())
+	}
+	return &Users, nil
+}
+
+
+// FindUsersByUID fetches the user from database that matches the passed uids
+func (r repository) FindUsersByUID(uid []string) (*[]entities.User, error) {
+	cursor, err := r.Collection.Find(context.Background(),
+		bson.D{
+			{"_id", bson.D{
+				{"$in", uid},
+			}},
+		})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var Users = []entities.User{}
+	for cursor.Next(context.TODO()) {
+		var user entities.User
+		_ = cursor.Decode(&user)
+		Users = append(Users, *user.SanitizedUser())
+	}
+
+	return &Users, nil
+}
+
 // FindUser finds and returns a user if it exists
-func (r repository) FindUser(username string) (*entities.User, error) {
+func (r repository) FindUserByUsername(username string) (*entities.User, error) {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
 		"username": username,
@@ -132,33 +185,7 @@ func (r repository) UpdateUser(user *entities.UserDetails) error {
 	return nil
 }
 
-// GetUser fetches the user from database that matches the passed uid
-func (r repository) GetUser(uid string) (*entities.User, error) {
-	var result = entities.User{}
-	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-		"_id": uid,
-	}).Decode(&result)
 
-	if findOneErr != nil {
-		return nil, findOneErr
-	}
-	return &(*result.SanitizedUser()), nil
-}
-
-// GetUsers fetches all the users from the database
-func (r repository) GetUsers() (*[]entities.User, error) {
-	var Users []entities.User
-	cursor, err := r.Collection.Find(context.Background(), bson.M{})
-	if err != nil {
-		return nil, err
-	}
-	for cursor.Next(context.TODO()) {
-		var user entities.User
-		_ = cursor.Decode(&user)
-		Users = append(Users, *user.SanitizedUser())
-	}
-	return &Users, nil
-}
 
 // IsAdministrator verifies if the passed user is an administrator
 func (r repository) IsAdministrator(user *entities.User) error {
