@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"strconv"
 	"strings"
@@ -15,6 +16,7 @@ import (
 )
 
 func GetLogs(podName, namespace, container string) (string, error) {
+	ctx := context.TODO()
 	conf, err := GetKubeConfig()
 	if err != nil {
 		return "", err
@@ -32,7 +34,7 @@ func GetLogs(podName, namespace, container string) (string, error) {
 	}
 
 	req := clientset.CoreV1().Pods(namespace).GetLogs(podName, &podLogOpts)
-	podLogs, err := req.Stream()
+	podLogs, err := req.Stream(ctx)
 	if err != nil {
 		return "", err
 	}

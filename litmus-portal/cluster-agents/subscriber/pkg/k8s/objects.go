@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"os"
@@ -23,6 +24,7 @@ var (
 
 //GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
 func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
+	ctx := context.TODO()
 	conf, err := GetKubeConfig()
 	if err != nil {
 		return nil, err
@@ -54,7 +56,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 		}
 		ObjData = append(ObjData, KubeObj)
 	} else {
-		namespace, err := clientset.CoreV1().Namespaces().List(metav1.ListOptions{})
+		namespace, err := clientset.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +89,8 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 
 //GetObjectDataByNamespace uses dynamic client to fetch Kubernetes Objects data.
 func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, resourceType schema.GroupVersionResource) ([]types.ObjectData, error) {
-	list, err := dynamicClient.Resource(resourceType).Namespace(namespace).List(metav1.ListOptions{})
+	ctx := context.TODO()
+	list, err := dynamicClient.Resource(resourceType).Namespace(namespace).List(ctx, metav1.ListOptions{})
 	var kubeObjects []types.ObjectData
 	if err != nil {
 		return kubeObjects, nil

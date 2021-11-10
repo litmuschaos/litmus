@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"context"
 	"log"
 	"os"
 	"strconv"
@@ -28,6 +29,7 @@ var (
 // This function handles cluster operations
 func ClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
 	// Getting dynamic and discovery client
+	ctx := context.TODO()
 	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
@@ -58,7 +60,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	response, err := dr.Create(obj, metaV1.CreateOptions{})
+	response, err := dr.Create(ctx, obj, metaV1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// This doesnt ever happen even if it does already exist
 		log.Print("Already exists")
@@ -95,14 +97,14 @@ func GetServerEndpoint() (string, error) {
 		Ingress           = os.Getenv("INGRESS")
 		IngressName       = os.Getenv("INGRESS_NAME")
 	)
-
+	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return "", err
 	}
 
 	if Ingress == "true" {
-		getIng, err := clientset.ExtensionsV1beta1().Ingresses(LitmusPortalNS).Get(IngressName, metaV1.GetOptions{})
+		getIng, err := clientset.ExtensionsV1beta1().Ingresses(LitmusPortalNS).Get(ctx, IngressName, metaV1.GetOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -157,7 +159,7 @@ func GetServerEndpoint() (string, error) {
 
 	} else if Ingress == "false" || Ingress == "" {
 
-		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ServerServiceName, metaV1.GetOptions{})
+		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ctx, ServerServiceName, metaV1.GetOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -185,7 +187,7 @@ func GetServerEndpoint() (string, error) {
 			}
 			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
-			nodeIP, err := clientset.CoreV1().Nodes().Get(NodeName, metaV1.GetOptions{})
+			nodeIP, err := clientset.CoreV1().Nodes().Get(ctx, NodeName, metaV1.GetOptions{})
 			if err != nil {
 				return "", err
 			}

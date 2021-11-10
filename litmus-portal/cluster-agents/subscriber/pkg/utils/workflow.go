@@ -1,12 +1,13 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
-	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
+	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/events"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/sirupsen/logrus"
@@ -84,6 +85,7 @@ func WorkflowRequest(clusterData map[string]string, requestType string, external
 }
 
 func DeleteWorflow(wfname string, clusterData map[string]string) error {
+	ctx := context.TODO()
 	conf, err := k8s.GetKubeConfig()
 	if err != nil {
 		return err
@@ -91,5 +93,5 @@ func DeleteWorflow(wfname string, clusterData map[string]string) error {
 
 	// create the events client
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(clusterData["AGENT_NAMESPACE"])
-	return wfClient.Delete(wfname, &metav1.DeleteOptions{})
+	return wfClient.Delete(ctx, wfname, metav1.DeleteOptions{})
 }

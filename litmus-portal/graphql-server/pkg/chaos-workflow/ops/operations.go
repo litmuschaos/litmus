@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
+	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/ghodss/yaml"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 	scheduleTypes "github.com/litmuschaos/chaos-scheduler/pkg/apis/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	chaos_workflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
