@@ -8,7 +8,7 @@ import YAML from 'yaml';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
+import { addWeights, updateNamespaceForUpload } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
@@ -46,15 +46,17 @@ const UploadYAML = () => {
         setFileName(file.name);
         try {
           setUploadError(false);
-          const wfmanifest = updateEngineName(YAML.parse(readFile));
-          const updatedManifest = updateNamespace(wfmanifest, namespace);
+          const wfmanifest = updateNamespaceForUpload(readFile, namespace);
+          addWeights(YAML.stringify(wfmanifest));
           workflowAction.setWorkflowManifest({
-            manifest: YAML.stringify(updatedManifest),
+            manifest: YAML.stringify(wfmanifest),
+            isUploaded: true,
           });
         } catch {
           setUploadError(true);
           workflowAction.setWorkflowManifest({
             manifest: '',
+            isUploaded: false,
           });
         }
       });
@@ -73,15 +75,17 @@ const UploadYAML = () => {
         setUploadedYAML(response);
         try {
           setUploadError(false);
-          const wfmanifest = updateEngineName(YAML.parse(response));
-          const updatedManifest = updateNamespace(wfmanifest, namespace);
+          const wfmanifest = updateNamespaceForUpload(response, namespace);
+          addWeights(YAML.stringify(wfmanifest));
           workflowAction.setWorkflowManifest({
-            manifest: YAML.stringify(updatedManifest),
+            manifest: YAML.stringify(wfmanifest),
+            isUploaded: true,
           });
         } catch {
           setUploadError(true);
           workflowAction.setWorkflowManifest({
             manifest: '',
+            isUploaded: false,
           });
         }
       });

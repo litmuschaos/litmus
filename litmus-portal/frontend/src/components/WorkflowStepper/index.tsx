@@ -57,16 +57,6 @@ interface AlertBoxProps {
   message: string;
 }
 
-const steps: string[] = [
-  'Choose Agent',
-  'Choose a workflow',
-  'Workflow Settings',
-  'Tune workflow',
-  'Reliability score',
-  'Schedule',
-  'Verify and Commit',
-];
-
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
@@ -87,31 +77,55 @@ const WorkflowStepper = () => {
 
   function getStepContent(
     stepIndex: number,
-    childRef: React.MutableRefObject<ChildRef | undefined>
+    childRef: React.MutableRefObject<ChildRef | undefined>,
+    isWorkflowUploaded: boolean
   ): React.ReactNode {
-    switch (stepIndex) {
-      case 0:
-        return <ChooseAWorkflowAgent ref={childRef} />;
-      case 1:
-        return <ChooseWorkflow ref={childRef} />;
-      case 2:
-        return <WorkflowSettings ref={childRef} />;
-      case 3:
-        return <TuneWorkflow ref={childRef} />;
-      case 4:
-        return <ReliablityScore ref={childRef} />;
-      case 5:
-        return <ScheduleWorkflow ref={childRef} />;
-      case 6:
-        return (
-          <VerifyCommit
-            isLoading={isButtonLoading}
-            handleGoToStep={goToStep}
-            ref={childRef}
-          />
-        );
-      default:
-        return <ChooseAWorkflowAgent ref={childRef} />;
+    if (isWorkflowUploaded) {
+      switch (stepIndex) {
+        case 0:
+          return <ChooseAWorkflowAgent ref={childRef} />;
+        case 1:
+          return <ChooseWorkflow ref={childRef} />;
+        case 2:
+          return <WorkflowSettings ref={childRef} />;
+        case 3:
+          return <ScheduleWorkflow ref={childRef} />;
+        case 4:
+          return (
+            <VerifyCommit
+              isLoading={isButtonLoading}
+              handleGoToStep={goToStep}
+              ref={childRef}
+            />
+          );
+        default:
+          return <ChooseAWorkflowAgent ref={childRef} />;
+      }
+    } else {
+      switch (stepIndex) {
+        case 0:
+          return <ChooseAWorkflowAgent ref={childRef} />;
+        case 1:
+          return <ChooseWorkflow ref={childRef} />;
+        case 2:
+          return <WorkflowSettings ref={childRef} />;
+        case 3:
+          return <TuneWorkflow ref={childRef} />;
+        case 4:
+          return <ReliablityScore ref={childRef} />;
+        case 5:
+          return <ScheduleWorkflow ref={childRef} />;
+        case 6:
+          return (
+            <VerifyCommit
+              isLoading={isButtonLoading}
+              handleGoToStep={goToStep}
+              ref={childRef}
+            />
+          );
+        default:
+          return <ChooseAWorkflowAgent ref={childRef} />;
+      }
     }
   }
 
@@ -120,6 +134,26 @@ const WorkflowStepper = () => {
   const isAlertOpen = useSelector(
     (state: RootState) => state.alert.isAlertOpen
   );
+  const isWorkflowUploaded = useSelector(
+    (state: RootState) => state.workflowManifest.isUploaded
+  );
+  const steps: string[] = isWorkflowUploaded
+    ? [
+        'Choose Agent',
+        'Choose a workflow',
+        'Workflow Settings',
+        'Schedule',
+        'Verify and Commit',
+      ]
+    : [
+        'Choose Agent',
+        'Choose a workflow',
+        'Workflow Settings',
+        'Tune workflow',
+        'Reliability score',
+        'Schedule',
+        'Verify and Commit',
+      ];
   const alert = useActions(AlertActions);
 
   useEffect(() => {
@@ -282,7 +316,7 @@ const WorkflowStepper = () => {
         finishAction={() => {}}
       >
         <SuspenseLoader style={{ height: '50vh' }}>
-          {getStepContent(activeStep, childRef)}
+          {getStepContent(activeStep, childRef, isWorkflowUploaded)}
         </SuspenseLoader>
       </LitmusStepper>
     </div>

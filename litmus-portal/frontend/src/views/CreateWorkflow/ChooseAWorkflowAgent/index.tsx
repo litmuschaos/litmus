@@ -278,6 +278,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
             name="Agent Selection"
             value={currentlySelectedAgent}
             onChange={(e) => handleChange(e)}
+            data-cy="AgentRadioGroup"
           >
             <div className={classes.agentWrapperDiv} data-cy="AgentsRadioGroup">
               {filteredCluster?.length > 0 ? (
@@ -297,6 +298,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
                     <RadioButton
                       value={cluster.cluster_id}
                       className={classes.agentRadioButton}
+                      data-cy={cluster.cluster_name}
                     >
                       <div>
                         <Typography>{cluster.cluster_name}</Typography>

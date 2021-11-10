@@ -38,20 +38,23 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             </Typography>
             <Typography>
               Name :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoWorkflowName">
                 {data.ListWorkflow.workflows[0].workflow_name}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoWorkflowId">
                 {data.ListWorkflow.workflows[0].workflow_id}
               </span>
             </Typography>
             {data && (
               <Typography>
                 Subject :{' '}
-                <span className={classes.infoHint}>
+                <span
+                  className={classes.infoHint}
+                  data-cy="infoWorkflowSubject"
+                >
                   {
                     YAML.parse(
                       data?.ListWorkflow.workflows[0].workflow_manifest
@@ -63,7 +66,10 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             {data && (
               <Typography>
                 Namespace :{' '}
-                <span className={classes.infoHint}>
+                <span
+                  className={classes.infoHint}
+                  data-cy="infoWorkflowNamespace"
+                >
                   {
                     YAML.parse(
                       data?.ListWorkflow.workflows[0].workflow_manifest
@@ -79,13 +85,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             <Typography className={classes.infoHeader}>Agent :</Typography>
             <Typography>
               Name :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoAgentName">
                 {data.ListWorkflow.workflows[0].cluster_name}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
-              <span className={classes.infoHint}>
+              <span className={classes.infoHint} data-cy="infoClusterId">
                 {data.ListWorkflow.workflows[0].cluster_id}
               </span>
             </Typography>
@@ -103,7 +109,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                 )}
               </span>
             </Typography>
-            <Typography>
+            <Typography data-cy="infoWorkflowNextRun">
               Next Run :{' '}
               {data.ListWorkflow.workflows[0].cronSyntax ? (
                 <span className={classes.infoHint}>
@@ -118,7 +124,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             </Typography>
           </div>
           {/* Column 4 */}
-          <div className={classes.regularity}>
+          <div className={classes.regularity} data-cy="infoWorkflowRegularity">
             <Typography className={classes.infoHeader}>Regularity :</Typography>
             {data.ListWorkflow.workflows[0].cronSyntax === '' ? (
               <Typography>Non cron workflow</Typography>
@@ -144,6 +150,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
       <ButtonOutlined
         className={classes.button}
         onClick={() => setShowMore(!showMore)}
+        data-cy="showStatsButton"
       >
         {showMore ? (
           <>
