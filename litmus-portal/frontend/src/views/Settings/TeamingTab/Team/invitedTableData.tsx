@@ -25,8 +25,13 @@ interface TableDataProps {
   row: Member;
   index: number;
   showModal: () => void;
+  fetchData: () => void;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
+const InvitedTableData: React.FC<TableDataProps> = ({
+  row,
+  showModal,
+  fetchData,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
@@ -55,7 +60,8 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
         if ('error' in data) {
           console.error(data);
         } else {
-          window.location.reload();
+          fetchData();
+          // window.location.reload();
         }
       })
       .catch((err) => {
@@ -95,24 +101,26 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
   //     });
   //   },
   // });
-  fetch(`${config.auth.url}/getUser/${row.UserID}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      setMemberDetails({
-        // TODO: Check if all are being used
-        name: data.first_name,
-        uid: data._id,
-        username: data.username,
-        role: data.role,
-        email: data.email,
+  React.useEffect(() => {
+    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMemberDetails({
+          // TODO: Check if all are being used
+          name: data.first_name,
+          uid: data._id,
+          username: data.username,
+          role: data.role,
+          email: data.email,
+        });
       });
-    });
+  }, []);
 
   return (
     <>

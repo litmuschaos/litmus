@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
 // import { LIST_PROJECTS } from '../../../../graphql';
 import { Member, Project } from '../../../../models/graphql/user';
-import { getUserId } from '../../../../utils/auth';
+import { getToken, getUserId } from '../../../../utils/auth';
 import AcceptedInvitations from './AcceptedInvitations';
 import ReceivedInvitations from './ReceivedInvitations';
 import useStyles from './styles';
@@ -53,6 +53,7 @@ const Invitation: React.FC = () => {
 
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
+
   function fetchProjectData() {
     fetch(`${config.auth.url}/list_projects`, {
       method: 'GET',
@@ -64,11 +65,11 @@ const Invitation: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error(data);
+          console.error(data.data);
         } else {
           let otherCount = 0;
           let inviteCount = 0;
-          data.forEach((project: Project): void => {
+          data.data.forEach((project: Project): void => {
             project.Members.forEach((member: Member) => {
               if (member.UserID === userID && member.Invitation === 'Pending') {
                 inviteCount++;
@@ -126,7 +127,7 @@ const Invitation: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
-    // refetch();
+    fetchProjectData();
   };
 
   return (
@@ -172,15 +173,12 @@ const Invitation: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={activeTab} index={0}>
-        <AcceptedInvitations />
+        <AcceptedInvitations fetchData={fetchProjectData} />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <ReceivedInvitations />
+        <ReceivedInvitations fetchData={fetchProjectData} />
       </TabPanel>
     </div>
   );
 };
 export default Invitation;
-function getToken() {
-  throw new Error('Function not implemented.');
-}

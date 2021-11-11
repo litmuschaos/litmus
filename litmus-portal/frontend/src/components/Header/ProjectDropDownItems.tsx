@@ -120,25 +120,27 @@ const ProjectDropdownItems: React.FC = () => {
   const [myProjects, setMyProjects] = useState<Project[]>([]);
   const [otherProjects, setOtherProjects] = useState<OtherProjectsType[]>([]);
 
-  fetch(`${config.auth.url}/list_projects`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if ('error' in data) {
-        console.error(data);
-      } else {
-        setProjects(data);
-        setLoading(false);
-      }
+  useEffect(() => {
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
     })
-    .catch((err) => {
-      console.error(err);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.data);
+        } else {
+          setProjects(data.data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   useEffect(() => {
     const projectOwner: Project[] = [];

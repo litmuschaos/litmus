@@ -66,6 +66,10 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
           setError(data.error_description as string);
           setLoading(false);
           setOpen(true);
+        } else {
+          setLoading(false);
+          setOpen(true);
+          setError('');
         }
       })
       .catch((err) => {

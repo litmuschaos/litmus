@@ -16,7 +16,13 @@ interface ReceivedInvitation {
   user_name: string;
 }
 
-const ReceivedInvitations: React.FC = () => {
+interface ReceivedInvitationsProps {
+  fetchData: () => void;
+}
+
+const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
+  fetchData,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -42,9 +48,9 @@ const ReceivedInvitations: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error(data);
+          console.error(data.data);
         } else {
-          setProjectList(data);
+          setProjectList(data.data);
         }
         setLoading(false);
       })
@@ -72,7 +78,7 @@ const ReceivedInvitations: React.FC = () => {
     getProjects();
   }, []);
   const acceptInvite = (projectid: string, userid: string, role: string) => {
-    fetch(`${config.auth.url}/leaveProject`, {
+    fetch(`${config.auth.url}/accept_invitation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,10 +93,11 @@ const ReceivedInvitations: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error(data.error);
+          console.error(data.data.error);
         } else {
           setRows(rows.filter((row) => row.user_id !== acceptDecline));
           getProjects();
+          fetchData();
         }
       })
       .catch((err) => {
@@ -98,7 +105,7 @@ const ReceivedInvitations: React.FC = () => {
       });
   };
   const declineInvite = (projectid: string, userid: string, role: string) => {
-    fetch(`${config.auth.url}/leave_project`, {
+    fetch(`${config.auth.url}/decline_invitation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -117,6 +124,7 @@ const ReceivedInvitations: React.FC = () => {
         } else {
           setRows(rows.filter((row) => row.user_id !== acceptDecline));
           getProjects();
+          fetchData();
         }
       })
       .catch((err) => {

@@ -13,7 +13,13 @@ interface OtherProjectsType {
   currentUserProjectRole: string;
 }
 
-const AcceptedInvitations: React.FC = () => {
+interface AcceptedInvitationsProps {
+  fetchData: () => void;
+}
+
+const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
+  fetchData,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
@@ -41,9 +47,9 @@ const AcceptedInvitations: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error(data);
+          console.error(data.data);
         } else {
-          setProjects(data);
+          setProjects(data.data);
           //  setLoading(false);
         }
       })
@@ -51,6 +57,7 @@ const AcceptedInvitations: React.FC = () => {
         console.error(err);
       });
   };
+
   useEffect(() => {
     getProjects();
   }, []);
@@ -63,6 +70,7 @@ const AcceptedInvitations: React.FC = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
       },
       body: JSON.stringify({
         project_id: projectid,
@@ -79,6 +87,7 @@ const AcceptedInvitations: React.FC = () => {
             projectOther.filter((row) => row.projectDetails.ID !== exitedMember)
           );
           getProjects();
+          fetchData();
         }
       })
       .catch((err) => {

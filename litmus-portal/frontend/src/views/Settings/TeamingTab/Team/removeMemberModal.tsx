@@ -31,7 +31,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
 
   const removeMember = (userid: string, role: string) => {
     setLoading(true);
-    fetch(`${config.auth.url}/send_invitation`, {
+    fetch(`${config.auth.url}/remove_invitation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
           showModal();
           handleClose();
           setLoading(false);
-          window.location.reload();
+          // window.location.reload();
         }
       })
       .catch((err) => {

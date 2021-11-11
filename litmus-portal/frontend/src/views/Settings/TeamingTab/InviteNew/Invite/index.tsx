@@ -59,7 +59,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
   const [selected, setSelected] = React.useState<SelectedUser[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [sendInviteLoading, setSendInviteLoading] = useState<boolean>(false);
-  const [sendInviteError, setSendInviteError] = useState<string>();
+  const [sendInviteError, setSendInviteError] = useState<string>('');
 
   // Sets the user role while inviting
   const setUserRole = (user_uid: string, role: string) => {
@@ -97,7 +97,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
         if ('error' in data) {
           console.error(data);
         } else {
-          setProject(data);
+          setProject(data.data);
         }
         setLoading(false);
       })
@@ -106,7 +106,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       });
   };
 
-  getProject();
+  React.useEffect(() => {
+    getProject();
+  }, []);
 
   // const [users,setUsers]=useState<UserData[]>([])
   useEffect(() => {
@@ -173,7 +175,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
   const SendInvite = (userid: string, role: string) => {
     setSendInviteLoading(true);
-    fetch(`${config.auth.url}/sendInvitation`, {
+    fetch(`${config.auth.url}/send_invitation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -193,7 +195,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
         } else {
           setSendInviteLoading(false);
           setSendInviteError('');
-          window.location.reload();
         }
       })
       .catch((err) => {

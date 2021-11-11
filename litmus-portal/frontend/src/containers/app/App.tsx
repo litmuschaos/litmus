@@ -126,7 +126,7 @@ const Routes: React.FC = () => {
   const getProjectDetails = () => {
     let isMember = false;
     setProjectValidation(true);
-    fetch(`${config.auth.url}/getProject/${projectID}`, {
+    fetch(`${config.auth.url}/get_project/${projectID}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

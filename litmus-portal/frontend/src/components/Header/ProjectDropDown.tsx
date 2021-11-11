@@ -33,9 +33,9 @@ const ProjectDropdown: React.FC = () => {
     .then((response) => response.json())
     .then((data) => {
       if ('error' in data) {
-        console.error(data);
+        console.error(data.data);
       } else {
-        setProjectName(data.Name);
+        setProjectName(data.data.Name);
       }
     })
     .catch((err) => {

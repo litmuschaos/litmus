@@ -1,6 +1,6 @@
 import { Avatar, IconButton, TableCell } from '@material-ui/core';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import config from '../../../../config';
 import { Member, Role } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
@@ -39,24 +39,28 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
   //     });
   //   },
   // });
-  fetch(`${config.auth.url}/getUser/${row.UserID}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      setMemberDetails({
-        // TODO: Check if all are being used
-        name: data.first_name,
-        uid: data._id,
-        username: data.username,
-        role: data.role,
-        email: data.email,
+
+  useEffect(() => {
+    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMemberDetails({
+          // TODO: Check if all are being used
+          name: data.first_name,
+          uid: data._id,
+          username: data.username,
+          role: data.role,
+          email: data.email,
+        });
       });
-    });
+  }, []);
+
   return (
     <>
       <TableCell

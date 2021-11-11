@@ -101,10 +101,10 @@ const TeamingTab: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error(data);
+          console.error(data.data);
         } else {
           setLoading(false);
-          const memberList = data.Members ?? [];
+          const memberList = data.data.Members ?? [];
           const acceptedUsers: Member[] = [];
           const notAcceptedUsers: Member[] = [];
           memberList.forEach((member: Member) => {
@@ -117,7 +117,7 @@ const TeamingTab: React.FC = () => {
               notAcceptedUsers.push(member);
             }
           });
-          setProject(data);
+          setProject(data.data);
           setAccepted([...acceptedUsers]);
           setNotAccepted([...notAcceptedUsers]);
         }
@@ -216,25 +216,28 @@ const TeamingTab: React.FC = () => {
   //     }
   //   },
   // });
-  fetch(`${config.auth.url}/list_projects`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if ('error' in data) {
-        console.error(data);
-      } else {
-        setProjects(data);
-        //  setLoading(false);
-      }
+
+  useEffect(() => {
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
     })
-    .catch((err) => {
-      console.error(err);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          setProjects(data.data);
+          //  setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   useEffect(() => {
     let projectOwner = 0;
@@ -264,7 +267,7 @@ const TeamingTab: React.FC = () => {
   }, [projects, deleteMemberOpen, inviteNewOpen, activeTab]);
 
   const updateProjectName = (value: string) => {
-    fetch(`${config.auth.url}/update_project_name`, {
+    fetch(`${config.auth.url}/update_projectname`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -349,13 +352,15 @@ const TeamingTab: React.FC = () => {
               <Paper className={classes.myProject} elevation={0}>
                 <Center>
                   <div className={classes.project}>
-                    <EditableText
-                      label={t('settings.teamingTab.editProjectLabel')}
-                      defaultValue={project ? project.Name : ''}
-                      onSave={(value) => {
-                        updateProjectName(value);
-                      }}
-                    />
+                    {project && (
+                      <EditableText
+                        label={t('settings.teamingTab.editProjectLabel')}
+                        defaultValue={project ? project.Name : ''}
+                        onSave={(value) => {
+                          updateProjectName(value);
+                        }}
+                      />
+                    )}
                   </div>
                 </Center>
                 <Toolbar data-cy="toolBarComponent" className={classes.toolbar}>
@@ -485,6 +490,7 @@ const TeamingTab: React.FC = () => {
               </TabPanel>
               <TabPanel value={activeTab} index={1}>
                 <InvitedTable
+                  fetchData={getProjectDetails}
                   notAcceptedFilteredData={notAcceptedFilteredData}
                   showModal={() => {
                     showModal();

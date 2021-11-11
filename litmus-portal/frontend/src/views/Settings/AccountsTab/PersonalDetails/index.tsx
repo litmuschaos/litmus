@@ -61,9 +61,9 @@ const PersonalDetails: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         setPersonaData({
-          fullName: data.getUser.name,
-          userName: data.getUser.username,
-          email: data.getUser.email,
+          fullName: data?.name,
+          userName: data?.username,
+          email: data?.email,
         });
         setDataLoading(false);
       });
@@ -171,7 +171,7 @@ const PersonalDetails: React.FC = () => {
             <div className={classes.saveButton}>
               <div data-cy="save">
                 <ButtonFilled
-                  disabled={!(personaData.fullName.length && !loading)}
+                  disabled={!(personaData?.fullName?.length && !loading)}
                   onClick={handleSubmit}
                 >
                   {loading ? (
