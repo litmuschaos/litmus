@@ -1,9 +1,9 @@
-import { useQuery } from '@apollo/client';
 import { Box, Paper, Tab, Tabs, useTheme } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LIST_PROJECTS } from '../../../../graphql';
-import { Member, Projects } from '../../../../models/graphql/user';
+import config from '../../../../config';
+// import { LIST_PROJECTS } from '../../../../graphql';
+import { Member, Project } from '../../../../models/graphql/user';
 import { getUserId } from '../../../../utils/auth';
 import AcceptedInvitations from './AcceptedInvitations';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -53,39 +53,80 @@ const Invitation: React.FC = () => {
 
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
-
-  const { data: dataProject, refetch } = useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: () => {
-      if (dataProject?.listProjects) {
-        let otherCount = 0;
-        let inviteCount = 0;
-        dataProject.listProjects.forEach((project) => {
-          project.members.forEach((member: Member) => {
-            if (member.user_id === userID && member.invitation === 'Pending') {
-              inviteCount++;
-            } else if (
-              member.user_id === userID &&
-              member.role !== 'Owner' &&
-              member.invitation === 'Accepted'
-            ) {
-              otherCount++;
-            }
+  function fetchProjectData() {
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          let otherCount = 0;
+          let inviteCount = 0;
+          data.forEach((project: Project): void => {
+            project.Members.forEach((member: Member) => {
+              if (member.UserID === userID && member.Invitation === 'Pending') {
+                inviteCount++;
+              } else if (
+                member.UserID === userID &&
+                member.Role !== 'Owner' &&
+                member.Invitation === 'Accepted'
+              ) {
+                otherCount++;
+              }
+            });
           });
-        });
-        setInvitationCount(inviteCount);
-        setProjectOtherCount(otherCount);
-      }
-    },
-    onError: () => {
-      setInvitationCount(0);
-      setProjectOtherCount(0);
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+          setInvitationCount(inviteCount);
+          setProjectOtherCount(otherCount);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setInvitationCount(0);
+        setProjectOtherCount(0);
+      });
+  }
+
+  useEffect(() => {
+    fetchProjectData();
+  }, []);
+  // const { data: dataProject, refetch } = useQuery<Projects>(LIST_PROJECTS, {
+  //   onCompleted: () => {
+  //     if (dataProject?.listProjects) {
+  //       let otherCount = 0;
+  //       let inviteCount = 0;
+  //       dataProject.listProjects.forEach((project) => {
+  //         project.members.forEach((member: Member) => {
+  //           if (member.user_id === userID && member.invitation === 'Pending') {
+  //             inviteCount++;
+  //           } else if (
+  //             member.user_id === userID &&
+  //             member.role !== 'Owner' &&
+  //             member.invitation === 'Accepted'
+  //           ) {
+  //             otherCount++;
+  //           }
+  //         });
+  //       });
+  //       setInvitationCount(inviteCount);
+  //       setProjectOtherCount(otherCount);
+  //     }
+  //   },
+  //   onError: () => {
+  //     setInvitationCount(0);
+  //     setProjectOtherCount(0);
+  //   },
+  //   fetchPolicy: 'cache-and-network',
+  // });
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
-    refetch();
+    // refetch();
   };
 
   return (
@@ -140,3 +181,6 @@ const Invitation: React.FC = () => {
   );
 };
 export default Invitation;
+function getToken() {
+  throw new Error('Function not implemented.');
+}

@@ -27,16 +27,16 @@ export const DELETE_WORKFLOW_TEMPLATE = gql`
   }
 `;
 
-export const CREATE_USER = gql`
-  mutation CreateUser($user: CreateUserInput!) {
-    createUser(user: $user) {
-      username
-      created_at
-      updated_at
-      deactivated_at
-    }
-  }
-`;
+// export const CREATE_USER = gql`
+//   mutation CreateUser($user: CreateUserInput!) {
+//     createUser(user: $user) {
+//       username
+//       created_at
+//       updated_at
+//       deactivated_at
+//     }
+//   }
+// `;
 
 export const UPDATE_USER_STATE = gql`
   mutation updateUserState($uid: String!, $isDeactivate: Boolean!) {
@@ -44,56 +44,56 @@ export const UPDATE_USER_STATE = gql`
   }
 `;
 
-export const CREATE_PROJECT = gql`
-  mutation createProject($projectName: String!) {
-    createProject(projectName: $projectName) {
-      members {
-        user_id
-        role
-        user_name
-        invitation
-        joined_at
-      }
-      name
-      id
-    }
-  }
-`;
+// export const CREATE_PROJECT = gql`
+//   mutation createProject($projectName: String!) {
+//     createProject(projectName: $projectName) {
+//       members {
+//         user_id
+//         role
+//         user_name
+//         invitation
+//         joined_at
+//       }
+//       name
+//       id
+//     }
+//   }
+// `;
 
-export const UPDATE_PROJECT_NAME = gql`
-  mutation updateProjectName($projectID: String!, $projectName: String!) {
-    updateProjectName(projectID: $projectID, projectName: $projectName)
-  }
-`;
+// export const UPDATE_PROJECT_NAME = gql`
+//   mutation updateProjectName($projectID: String!, $projectName: String!) {
+//     updateProjectName(projectID: $projectID, projectName: $projectName)
+//   }
+// `;
 
-export const SEND_INVITE = gql`
-  mutation sendInvite($member: MemberInput!) {
-    sendInvitation(member: $member) {
-      user_id
-      user_name
-      role
-      invitation
-    }
-  }
-`;
+// export const SEND_INVITE = gql`
+//   mutation sendInvite($member: MemberInput!) {
+//     sendInvitation(member: $member) {
+//       user_id
+//       user_name
+//       role
+//       invitation
+//     }
+//   }
+// `;
 
-export const REMOVE_INVITATION = gql`
-  mutation RemoveInvitation($data: MemberInput!) {
-    removeInvitation(member: $data)
-  }
-`;
+// export const REMOVE_INVITATION = gql`
+//   mutation RemoveInvitation($data: MemberInput!) {
+//     removeInvitation(member: $data)
+//   }
+// `;
 
-export const ACCEPT_INVITE = gql`
-  mutation accept($member: MemberInput!) {
-    acceptInvitation(member: $member)
-  }
-`;
+// export const ACCEPT_INVITE = gql`
+//   mutation accept($member: MemberInput!) {
+//     acceptInvitation(member: $member)
+//   }
+// `;
 
-export const DECLINE_INVITE = gql`
-  mutation decline($member: MemberInput!) {
-    declineInvitation(member: $member)
-  }
-`;
+// export const DECLINE_INVITE = gql`
+//   mutation decline($member: MemberInput!) {
+//     declineInvitation(member: $member)
+//   }
+// `;
 
 export const UPDATE_SCHEDULE = gql`
   mutation updateChaos($ChaosWorkFlowInput: ChaosWorkFlowInput!) {

@@ -1,20 +1,18 @@
-import { useQuery } from '@apollo/client';
 import { Paper, Typography } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LIST_PROJECTS } from '../../../graphql';
+import config from '../../../config';
 import {
   InvitationStatus,
   Member,
   Project,
-  Projects,
   Role,
 } from '../../../models/graphql/user';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
-import { getUserId } from '../../../utils/auth';
+import { getToken, getUserId } from '../../../utils/auth';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -33,32 +31,51 @@ const ProjectInfoContainer: React.FC = () => {
   const [invitationsCount, setInvitationCount] = useState<number>(0);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: () => {
-      if (dataProject?.listProjects) {
-        setProjects(dataProject?.listProjects);
-      }
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+  // const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
+  //   onCompleted: () => {
+  //     if (dataProject?.listProjects) {
+  //       setProjects(dataProject?.listProjects);
+  //     }
+  //   },
+  //   fetchPolicy: 'cache-and-network',
+  // });
 
+  fetch(`${config.auth.url}/list_projects`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if ('error' in data) {
+        console.error(data.data);
+      } else {
+        setProjects(data.data);
+        //  setLoading(false);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   useEffect(() => {
     let projectOwner = 0;
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.members.forEach((member: Member) => {
-        if (member.user_id === userID && member.role === Role.owner) {
+      project.Members.forEach((member: Member) => {
+        if (member.UserID === userID && member.Role === Role.owner) {
           projectOwner++;
         } else if (
-          member.user_id === userID &&
-          member.invitation === InvitationStatus.PENDING
+          member.UserID === userID &&
+          member.Invitation === InvitationStatus.PENDING
         ) {
           projectInvitation++;
         } else if (
-          member.user_id === userID &&
-          member.role !== Role.owner &&
-          member.invitation === InvitationStatus.ACCEPTED
+          member.UserID === userID &&
+          member.Role !== Role.owner &&
+          member.Invitation === InvitationStatus.ACCEPTED
         ) {
           projectOther++;
         }
@@ -67,7 +84,7 @@ const ProjectInfoContainer: React.FC = () => {
     setProjectOwnerCount(projectOwner);
     setInvitationCount(projectInvitation);
     setProjectOtherCount(projectOther);
-  }, [projects, dataProject]);
+  }, [projects]);
 
   const projectCount = projectOwnerCount + projectOtherCount;
 

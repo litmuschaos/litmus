@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Box,
   FormControl,
@@ -16,20 +15,11 @@ import { EditableText, Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
+import config from '../../../../config';
 import Center from '../../../../containers/layouts/Center';
-import {
-  GET_PROJECT,
-  LIST_PROJECTS,
-  UPDATE_PROJECT_NAME,
-} from '../../../../graphql';
-import {
-  Member,
-  Project,
-  ProjectDetail,
-  ProjectDetailVars,
-  Projects,
-} from '../../../../models/graphql/user';
-import { getUserId } from '../../../../utils/auth';
+// import { GET_PROJECT, UPDATE_PROJECT_NAME } from '../../../../graphql';
+import { Member, Project } from '../../../../models/graphql/user';
+import { getToken, getUserId } from '../../../../utils/auth';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import Invitation from '../Invitation';
 import InviteNew from '../InviteNew';
@@ -89,6 +79,7 @@ const TeamingTab: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const userID = getUserId();
+  const [project, setProject] = useState<Project>();
 
   // for response data
   const [accepted, setAccepted] = useState<Member[]>([]);
@@ -99,33 +90,71 @@ const TeamingTab: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
   };
-
-  const { data: dataB, refetch: refetchGetProject } = useQuery<
-    ProjectDetail,
-    ProjectDetailVars
-  >(GET_PROJECT, {
-    variables: { projectID },
-    fetchPolicy: 'cache-and-network',
-    onCompleted: () => {
-      setLoading(false);
-      const memberList = dataB?.getProject.members ?? [];
-      const acceptedUsers: Member[] = [];
-      const notAcceptedUsers: Member[] = [];
-
-      memberList.forEach((member) => {
-        if (member.invitation === 'Accepted') {
-          acceptedUsers.push(member);
-        } else if (
-          member.user_id !== userID &&
-          member.invitation !== 'Accepted'
-        ) {
-          notAcceptedUsers.push(member);
+  const getProjectDetails = () => {
+    fetch(`${config.auth.url}/get_project/${projectID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          setLoading(false);
+          const memberList = data.Members ?? [];
+          const acceptedUsers: Member[] = [];
+          const notAcceptedUsers: Member[] = [];
+          memberList.forEach((member: Member) => {
+            if (member.Invitation === 'Accepted') {
+              acceptedUsers.push(member);
+            } else if (
+              member.UserID !== userID &&
+              member.Invitation !== 'Accepted'
+            ) {
+              notAcceptedUsers.push(member);
+            }
+          });
+          setProject(data);
+          setAccepted([...acceptedUsers]);
+          setNotAccepted([...notAcceptedUsers]);
         }
+      })
+      .catch((err) => {
+        console.error(err);
       });
-      setAccepted([...acceptedUsers]);
-      setNotAccepted([...notAcceptedUsers]);
-    },
-  });
+  };
+  useEffect(() => {
+    getProjectDetails();
+  }, []);
+  // const { data: dataB, refetch: refetchGetProject } = useQuery<
+  //   ProjectDetail,
+  //   ProjectDetailVars
+  // >(GET_PROJECT, {
+  //   variables: { projectID },
+  //   fetchPolicy: 'cache-and-network',
+  //   onCompleted: () => {
+  //     setLoading(false);
+  //     const memberList = dataB?.getProject.Members ?? [];
+  //     const acceptedUsers: Member[] = [];
+  //     const notAcceptedUsers: Member[] = [];
+
+  //     memberList.forEach((member) => {
+  //       if (member.Invitation === 'Accepted') {
+  //         acceptedUsers.push(member);
+  //       } else if (
+  //         member.UserID !== userID &&
+  //         member.Invitation !== 'Accepted'
+  //       ) {
+  //         notAcceptedUsers.push(member);
+  //       }
+  //     });
+  //     setAccepted([...acceptedUsers]);
+  //     setNotAccepted([...notAcceptedUsers]);
+  //   },
+  // });
 
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
@@ -144,13 +173,13 @@ const TeamingTab: React.FC = () => {
     ? accepted &&
       accepted
         .filter((dataRow) =>
-          dataRow.user_name.toLowerCase().includes(filters.search.toLowerCase())
+          dataRow.UserName.toLowerCase().includes(filters.search.toLowerCase())
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
-          if (filters.role === 'Editor') return dataRow.role === 'Editor';
-          if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
-          return dataRow.role === 'Owner';
+          if (filters.role === 'Editor') return dataRow.Role === 'Editor';
+          if (filters.role === 'Viewer') return dataRow.Role === 'Viewer';
+          return dataRow.Role === 'Owner';
         })
     : [];
 
@@ -158,13 +187,13 @@ const TeamingTab: React.FC = () => {
     ? notAccepted &&
       notAccepted
         .filter((dataRow) =>
-          dataRow.user_name.toLowerCase().includes(filters.search.toLowerCase())
+          dataRow.UserName.toLowerCase().includes(filters.search.toLowerCase())
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
-          if (filters.role === 'Editor') return dataRow.role === 'Editor';
-          if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
-          return dataRow.role === 'Owner';
+          if (filters.role === 'Editor') return dataRow.Role === 'Editor';
+          if (filters.role === 'Viewer') return dataRow.Role === 'Viewer';
+          return dataRow.Role === 'Owner';
         })
     : [];
 
@@ -172,38 +201,58 @@ const TeamingTab: React.FC = () => {
   const [deleteMemberOpen, setDeleteMemberOpen] = React.useState(false);
 
   function showModal() {
-    refetchGetProject();
+    getProjectDetails();
   }
 
   const [projectOwnerCount, setProjectOwnerCount] = useState<number>(0);
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
   const [projects, setProjects] = useState<Project[]>([]);
-  const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
-    fetchPolicy: 'cache-and-network',
-    onCompleted: () => {
-      if (dataProject?.listProjects) {
-        setProjects(dataProject.listProjects);
-      }
+  // const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
+  //   fetchPolicy: 'cache-and-network',
+  //   onCompleted: () => {
+  //     if (dataProject?.listProjects) {
+  //       setProjects(dataProject.listProjects);
+  //     }
+  //   },
+  // });
+  fetch(`${config.auth.url}/list_projects`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
     },
-  });
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if ('error' in data) {
+        console.error(data);
+      } else {
+        setProjects(data);
+        //  setLoading(false);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
   useEffect(() => {
     let projectOwner = 0;
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.members.forEach((member: Member) => {
-        if (member.user_id === userID && member.role === 'Owner') {
+      project.Members.forEach((member: Member) => {
+        if (member.UserID === userID && member.Role === 'Owner') {
           projectOwner++;
         } else if (
-          member.user_id === userID &&
-          member.invitation === 'Pending'
+          member.UserID === userID &&
+          member.Invitation === 'Pending'
         ) {
           projectInvitation++;
         } else if (
-          member.user_id === userID &&
-          member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
+          member.UserID === userID &&
+          member.Role !== 'Owner' &&
+          member.Invitation === 'Accepted'
         ) {
           projectOther++;
         }
@@ -212,16 +261,41 @@ const TeamingTab: React.FC = () => {
     setProjectOwnerCount(projectOwner);
     setInvitationCount(projectInvitation);
     setProjectOtherCount(projectOther);
-  }, [projects, dataProject, deleteMemberOpen, inviteNewOpen, activeTab]);
+  }, [projects, deleteMemberOpen, inviteNewOpen, activeTab]);
 
-  const [updateProjectName] = useMutation(UPDATE_PROJECT_NAME, {
-    refetchQueries: [
-      {
-        query: GET_PROJECT,
-        variables: { projectID },
+  const updateProjectName = (value: string) => {
+    fetch(`${config.auth.url}/update_project_name`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
       },
-    ],
-  });
+      body: JSON.stringify({
+        project_id: projectID,
+        project_name: value,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          getProjectDetails();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // const [updateProjectName] = useMutation(UPDATE_PROJECT_NAME, {
+  //   // refetchQueries: [
+  //   //   {
+  //   //     query: GET_PROJECT,
+  //   //     variables: { projectID },
+  //   //   },
+  //   ],
+  // });
   return (
     <div>
       {!loading ? (
@@ -277,14 +351,9 @@ const TeamingTab: React.FC = () => {
                   <div className={classes.project}>
                     <EditableText
                       label={t('settings.teamingTab.editProjectLabel')}
-                      defaultValue={dataB ? dataB.getProject.name : ''}
+                      defaultValue={project ? project.Name : ''}
                       onSave={(value) => {
-                        updateProjectName({
-                          variables: {
-                            projectID,
-                            projectName: value,
-                          },
-                        });
+                        updateProjectName(value);
                       }}
                     />
                   </div>

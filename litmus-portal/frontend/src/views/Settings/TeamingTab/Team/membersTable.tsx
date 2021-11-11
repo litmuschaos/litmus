@@ -72,7 +72,7 @@ const MembersTable: React.FC<MembersTableProps> = ({
                 .map((row, index) => (
                   <TableRow
                     data-cy="teamingTableRow"
-                    key={row.user_id}
+                    key={row.UserID}
                     className={classes.TR}
                   >
                     <TableData index={index} row={row} showModal={showModal} />

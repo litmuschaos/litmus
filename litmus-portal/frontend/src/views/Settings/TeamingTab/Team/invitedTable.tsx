@@ -70,7 +70,7 @@ const InvitedTable: React.FC<InvitedTableProps> = ({
                 .map((row, index) => (
                   <TableRow
                     data-cy="teamingTableRow"
-                    key={row.user_id}
+                    key={row.UserID}
                     className={classes.TR}
                   >
                     <InvitedTableData

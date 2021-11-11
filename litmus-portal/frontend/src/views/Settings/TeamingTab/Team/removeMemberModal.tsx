@@ -1,12 +1,11 @@
-import { useMutation } from '@apollo/client';
 import { IconButton, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
-import { ALL_USERS, GET_PROJECT, REMOVE_INVITATION } from '../../../../graphql';
-import { MemberInvitation } from '../../../../models/graphql/invite';
+import config from '../../../../config';
 import { Member } from '../../../../models/graphql/user';
+import { getToken } from '../../../../utils/auth';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -26,29 +25,60 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
 }) => {
   const classes = useStyles();
   const projectID = getProjectID();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { t } = useTranslation();
 
-  // mutation to remove member
-  const [removeMember, { loading }] = useMutation<MemberInvitation>(
-    REMOVE_INVITATION,
-    {
-      onCompleted: () => {
-        showModal();
-        handleClose();
-        window.location.reload();
+  const removeMember = (userid: string, role: string) => {
+    setLoading(true);
+    fetch(`${config.auth.url}/send_invitation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
       },
-      refetchQueries: [
-        {
-          query: GET_PROJECT,
-          variables: { projectID },
-        },
-        {
-          query: ALL_USERS,
-        },
-      ],
-    }
-  );
+      body: JSON.stringify({
+        project_id: projectID,
+        user_id: userid,
+        role,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.error);
+        } else {
+          showModal();
+          handleClose();
+          setLoading(false);
+          window.location.reload();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  // mutation to remove member
+  // const [removeMember, { loading }] = useMutation<MemberInvitation>(
+  //   REMOVE_INVITATION,
+  //   {
+  //     onCompleted: () => {
+  //       showModal();
+  //       handleClose();
+  //       window.location.reload();
+  //     },
+  //     refetchQueries: [
+  //       {
+  //         query: GET_PROJECT,
+  //         variables: { projectID },
+  //       },
+  //       {
+  //         query: ALL_USERS,
+  //       },
+  //     ],
+  //   }
+  // );
 
   return (
     <Modal
@@ -82,7 +112,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
             {isRemove
               ? t('settings.teamingTab.deleteUser.header')
               : t('settings.teamingTab.deleteModal.header')}
-            <strong> {row.user_name}?</strong>
+            <strong> {row.UserName}?</strong>
           </Typography>
         </div>
         <div className={classes.textSecond}>
@@ -106,15 +136,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
             <ButtonFilled
               disabled={loading}
               onClick={() => {
-                removeMember({
-                  variables: {
-                    data: {
-                      project_id: projectID,
-                      user_id: row.user_id,
-                      role: row.role,
-                    },
-                  },
-                });
+                removeMember(row.UserID, row.Role);
               }}
             >
               <>
