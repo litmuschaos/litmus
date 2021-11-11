@@ -86,7 +86,6 @@ func (r repository) GetUsers() (*[]entities.User, error) {
 	return &Users, nil
 }
 
-
 // FindUsersByUID fetches the user from database that matches the passed uids
 func (r repository) FindUsersByUID(uid []string) (*[]entities.User, error) {
 	cursor, err := r.Collection.Find(context.Background(),
@@ -184,8 +183,6 @@ func (r repository) UpdateUser(user *entities.UserDetails) error {
 
 	return nil
 }
-
-
 
 // IsAdministrator verifies if the passed user is an administrator
 func (r repository) IsAdministrator(user *entities.User) error {

@@ -24,6 +24,7 @@ type Repository interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
+	UpdateProjectState(user entities.User) error
 }
 
 type repository struct {
@@ -142,10 +143,8 @@ func (r repository) RemoveInvitation(projectID string, userID string, invitation
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
 	if err != nil {
 		if invitation == entities.AcceptedInvitation {
-			//log.Print("Error removing the member with userID: ", userID, " from the project", "\nError message: ", err)
 			return err
 		}
-		//log.Print("Error removing the invite with userID:", userID, " from the project", "\nError message: ", err)
 		return err
 
 	}
@@ -223,6 +222,52 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 	}
 
 	return results, nil
+}
+
+// UpdateUserState updates the deactivated_at state of the member and removed_at field of the project
+func (r repository) UpdateProjectState(user entities.User) error {
+	opts := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{
+			bson.D{{"elem.user_id", user.ID}},
+		},
+	})
+
+	filter := bson.D{{}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"members.$[elem].deactivated_at", user.DeactivatedAt},
+		}},
+	}
+
+	_, err :=  r.Collection.UpdateMany(context.Background(), filter, update, opts)
+	if err != nil {
+		//log.Print("Error updating user's state in projects : ", err)
+		return err
+	}
+
+	filter = bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", user.ID},
+				{"role", bson.D{
+					{"$eq", entities.RoleOwner},
+				}},
+			}},
+		}}}
+
+	update = bson.D{
+		{"$set", bson.D{
+			{"removed_at", user.DeactivatedAt},
+		}},
+	}
+
+	_, err =  r.Collection.UpdateMany(context.Background(), filter, update)
+	if err != nil {
+		//log.Print("Error updating user's state in projects : ", err)
+		return err
+	}
+
+	return nil
 }
 
 // NewRepo creates a new instance of this repository

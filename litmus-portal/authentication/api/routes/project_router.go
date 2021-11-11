@@ -11,6 +11,7 @@ import (
 // ProjectRouter creates all the required routes for project related purposes.
 func ProjectRouter(router *gin.Engine, service services.ApplicationService) {
 	router.Use(middleware.JwtMiddleware())
+	router.GET("/get_project/:project_id", rest.GetProject(service))
 	router.GET("/get_user_with_project/:username", rest.GetUserWithProject(service))
 	router.GET("/list_projects", rest.GetProjectsByUserID(service))
 	router.POST("/create_project", rest.CreateProject(service))

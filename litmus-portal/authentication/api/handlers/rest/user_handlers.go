@@ -321,6 +321,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+		err = service.UpdateProjectState(*user)
 		c.JSON(200, gin.H{
 			"message": "user's state updated successfully",
 		})

@@ -14,13 +14,14 @@ type Project struct {
 
 // Member contains the required fields to be stored in the database for a member
 type Member struct {
-	UserID     string     `bson:"user_id"`
-	UserName   string     `bson:"username"`
-	Name  string     `bson:"name"`
-	Role       MemberRole `bson:"role"`
-	Email      string     `bson:"email"`
-	Invitation Invitation `bson:"invitation"`
-	JoinedAt   string     `bson:"joined_at"`
+	UserID        string     `bson:"user_id"`
+	UserName      string     `bson:"username"`
+	Name          string     `bson:"name"`
+	Role          MemberRole `bson:"role"`
+	Email         string     `bson:"email"`
+	Invitation    Invitation `bson:"invitation"`
+	JoinedAt      string     `bson:"joined_at"`
+	DeactivatedAt string     `bson:"deactivated_at"`
 }
 
 type ProjectInput struct {
@@ -70,13 +71,14 @@ func (project *Project) GetMemberOutput() []*Member { // add logic to get member
 func (member *Member) GetMemberOutput() *Member {
 
 	return &Member{
-		UserID:     member.UserID,
-		UserName:   member.UserName,
-		Name:  member.Name,
-		Role:       member.Role,
-		Email:      member.Email,
-		Invitation: member.Invitation,
-		JoinedAt:   member.JoinedAt,
+		UserID:        member.UserID,
+		UserName:      member.UserName,
+		Name:          member.Name,
+		Role:          member.Role,
+		Email:         member.Email,
+		Invitation:    member.Invitation,
+		JoinedAt:      member.JoinedAt,
+		DeactivatedAt: member.DeactivatedAt,
 	}
 }
 

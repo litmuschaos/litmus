@@ -83,7 +83,6 @@ func main() {
 
 	validatedAdminSetup(applicationService)
 
-
 	gin.SetMode(gin.ReleaseMode)
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	app := gin.Default()

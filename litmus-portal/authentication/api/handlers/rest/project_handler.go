@@ -188,7 +188,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		newMember := &entities.Member{
 			UserID:     user.ID,
 			Email:      user.Email,
-			Name:  user.Name,
+			Name:       user.Name,
 			UserName:   user.UserName,
 			Role:       entities.RoleOwner,
 			Invitation: entities.AcceptedInvitation,
@@ -260,7 +260,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
-		if member.Role == nil{
+		if member.Role == nil {
 			c.JSON(400, gin.H{"message": "Enter a vaild role"})
 			return
 		}
@@ -282,11 +282,10 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		invitation, err := getInvitation(service, member)
-		if err == mongo.ErrNoDocuments{
+		if err == mongo.ErrNoDocuments {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrProjectNotFound], presenter.CreateErrorResponse(utils.ErrProjectNotFound))
 			return
-		} else if
-		err != nil {
+		} else if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
@@ -308,7 +307,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 		newMember := &entities.Member{
 			UserID:     user.ID,
-			UserName: user.UserName,
+			UserName:   user.UserName,
 			Role:       *member.Role,
 			Invitation: entities.PendingInvitation,
 			JoinedAt:   strconv.FormatInt(time.Now().Unix(), 10),
