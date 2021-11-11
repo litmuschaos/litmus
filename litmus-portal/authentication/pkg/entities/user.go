@@ -8,7 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 // Role states the role of the user in the portal
 type Role string
 
@@ -60,22 +59,22 @@ type APIStatus struct {
 }
 
 type UserWithProject struct {
-	ID         string     `bson:"_id"`
-	Username   string     `bson:"username"`
-	CreatedAt  string     `bson:"created_at"`
-	Email      string     `bson:"email"`
-	Name  string     `bson:"name"`
-	Projects   []*Project `bson:"projects"`
+	ID        string     `bson:"_id"`
+	Username  string     `bson:"username"`
+	CreatedAt string     `bson:"created_at"`
+	Email     string     `bson:"email"`
+	Name      string     `bson:"name"`
+	Projects  []*Project `bson:"projects"`
 }
 
 func (user User) GetUserWithProject() *UserWithProject {
 
 	return &UserWithProject{
-		ID:         user.ID,
-		Username:   user.UserName,
-		Name:  		user.Name,
-		CreatedAt:  *user.CreatedAt,
-		Email:      user.Email,
+		ID:        user.ID,
+		Username:  user.UserName,
+		Name:      user.Name,
+		CreatedAt: *user.CreatedAt,
+		Email:     user.Email,
 	}
 }
 

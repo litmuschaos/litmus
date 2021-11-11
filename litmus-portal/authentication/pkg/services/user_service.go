@@ -73,4 +73,3 @@ func (s applicationService) IsAdministrator(user *entities.User) error {
 func (s applicationService) UpdateUserState(username string, isDeactivate bool) error {
 	return s.userRepository.UpdateUserState(username, isDeactivate)
 }
-
