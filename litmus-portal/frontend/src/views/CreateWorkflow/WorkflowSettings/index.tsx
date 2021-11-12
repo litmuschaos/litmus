@@ -30,6 +30,7 @@ import { getProjectID } from '../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../utils/validate';
 import * as ImageRegistryActions from '../../../redux/actions/image_registry';
 import useStyles from './styles';
+import parsed from '../../../utils/yamlUtils';
 
 const WorkflowSettings = forwardRef((_, ref) => {
   const classes = useStyles();
@@ -84,6 +85,13 @@ const WorkflowSettings = forwardRef((_, ref) => {
         setDescription(data.GetTemplateManifestByID.template_description);
         setIcon('./avatars/litmus.svg');
         setCRDLink(data.GetTemplateManifestByID.template_id);
+        const savedTemplate = data.GetTemplateManifestByID.manifest;
+        if (parsed(savedTemplate).length === 0) {
+          workflowAction.setWorkflowManifest({
+            manifest: savedTemplate,
+            isUploaded: true,
+          });
+        }
       }
     },
   });
