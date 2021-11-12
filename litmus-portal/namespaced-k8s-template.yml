@@ -582,7 +582,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.1.x"
+              value: "v2.2.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
