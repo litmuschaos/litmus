@@ -66,7 +66,7 @@ const Routes: React.FC = () => {
       .then((data) => {
         if ('error' in data) {
           console.error(data);
-        } else if (data.data.message !== 'No projects found') {
+        } else if (data.message !== 'No projects found') {
           data.data.forEach((project: Project): void => {
             project.Members.forEach((member: Member): void => {
               if (member.UserID === userID && member.Role === 'Owner') {
