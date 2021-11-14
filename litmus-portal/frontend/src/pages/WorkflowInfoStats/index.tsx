@@ -280,7 +280,7 @@ const WorkflowInfoStats: React.FC = () => {
             <div className={classes.heatmapParent} data-cy="statsHeatMap">
               {loading ? (
                 <Center>
-                  <Loader />
+                  <Loader data-cy="statsHeatMapLoader" />
                 </Center>
               ) : (
                 <CalendarHeatmap

@@ -152,13 +152,13 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       {/* Border Starts */}
       <div className={classes.stackbarBorder}>
         {/* Stackbar parent */}
-        <div className={classes.stackbarParent}>
+        <div className={classes.stackbarParent} data-cy="statsBarGraphDiv">
           {/* Stackbar Area */}
           {loading ||
           openSeries.data.length <= 0 ||
           stackBarData.length <= 0 ? (
             <Center>
-              <Loader />
+              <Loader data-cy="statsBarGraphLoader" />
             </Center>
           ) : (
             <div
