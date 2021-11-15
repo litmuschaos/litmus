@@ -407,7 +407,7 @@ data:
   AGENT_SCOPE: namespace
   AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
   DB_SERVER: "mongodb://mongo-service:27017"
-  VERSION: "ci"
+  VERSION: "2.3.0"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -488,7 +488,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:2.3.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -571,7 +571,7 @@ spec:
                   key: DB_SERVER   
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:2.3.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -591,9 +591,9 @@ spec:
             - name: PORTAL_ENDPOINT
               value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:2.3.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:2.3.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v2.11.0"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
@@ -607,12 +607,12 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.1.x"
+              value: "v2.2.x"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:2.3.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
