@@ -50,7 +50,7 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 					var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
-						err := PolicyAuditor("Deployment", depNewObj, worflowid)
+						err := PolicyAuditor("Deployment", depNewObj, depOldObj, worflowid)
 						if err != nil {
 							log.Print(err)
 							return
@@ -105,7 +105,7 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 					var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsNewObj.Name, stsNewObj.Namespace)
-						err := PolicyAuditor("StateFulSet", stsNewObj, worflowid)
+						err := PolicyAuditor("StateFulSet", stsNewObj, stsOldObj, worflowid)
 						if err != nil {
 							log.Print(err)
 							return
@@ -161,7 +161,7 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 					var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 					if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
 						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
-						err := PolicyAuditor("DaemonSet", dsNewObj, worflowid)
+						err := PolicyAuditor("DaemonSet", dsNewObj, dsOldObj, worflowid)
 						if err != nil {
 							log.Print(err)
 							return

@@ -1,3 +1,18 @@
+#apiVersion: eventtracker.litmuschaos.io/v1
+#kind: EventTrackerPolicy
+#metadata:
+#  name: eventtrackerpolicy-sample
+#  namespace: litmus
+#spec:
+#  # Add fields here
+#  condition_type: "and"
+#  conditions:
+#    - key: "spec.replicas"
+#      value: "1"
+#      operator: EqualTo
+#    - key: "spec.template.spec.containers[0].image"
+#      value: "nginx:1.18"
+#      operator: EqualTo
 apiVersion: eventtracker.litmuschaos.io/v1
 kind: EventTrackerPolicy
 metadata:
@@ -8,8 +23,4 @@ spec:
   condition_type: "and"
   conditions:
     - key: "spec.replicas"
-      value: "1"
-      operator: EqualTo
-    - key: "spec.template.spec.containers[0].image"
-      value: "nginx:1.18"
-      operator: EqualTo
+      operator: Change

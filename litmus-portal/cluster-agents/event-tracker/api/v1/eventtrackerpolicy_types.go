@@ -35,7 +35,7 @@ type EventTrackerPolicySpec struct {
 
 type Condition struct {
 	Key      string `json:"key,omitempty"`
-	Value    string `json:"value,omitempty"`
+	Value    *string `json:"value,omitempty"`
 	Operator string `json:"operator,omitempty"`
 }
 
