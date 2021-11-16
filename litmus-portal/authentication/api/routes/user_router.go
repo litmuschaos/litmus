@@ -18,5 +18,5 @@ func UserRouter(router *gin.Engine, service services.ApplicationService) {
 	router.POST("/update/details", rest.UpdateUser(service))
 	router.GET("/getUser/:uid", rest.GetUser(service))
 	router.GET("/users", rest.FetchUsers(service))
-	router.POST("/updatestate", rest.UpdateUserState(service))
+	router.POST("/update/state", rest.UpdateUserState(service))
 }

@@ -18,7 +18,7 @@ type projectService interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
-	UpdateProjectState(user entities.User) error
+	UpdateProjectState(userID string, deactivateTime string) error
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -57,6 +57,6 @@ func (a applicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *
 	return a.projectRepository.GetAggregateProjects(pipeline, opts)
 }
 
-func (a applicationService) UpdateProjectState(user entities.User)(error){
-	return a.projectRepository.UpdateProjectState(user)
+func (a applicationService) UpdateProjectState(userID string, deactivateTime string) error {
+	return a.projectRepository.UpdateProjectState(userID, deactivateTime)
 }

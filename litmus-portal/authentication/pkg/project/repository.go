@@ -24,7 +24,7 @@ type Repository interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
-	UpdateProjectState(user entities.User) error
+	UpdateProjectState(userID string, deactivateTime string) error
 }
 
 type repository struct {
@@ -225,21 +225,21 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 }
 
 // UpdateUserState updates the deactivated_at state of the member and removed_at field of the project
-func (r repository) UpdateProjectState(user entities.User) error {
+func (r repository) UpdateProjectState(userID string, deactivateTime string) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.user_id", user.ID}},
+			bson.D{{"elem.user_id", userID}},
 		},
 	})
 
 	filter := bson.D{{}}
 	update := bson.D{
 		{"$set", bson.D{
-			{"members.$[elem].deactivated_at", user.DeactivatedAt},
+			{"members.$[elem].deactivated_at", deactivateTime},
 		}},
 	}
 
-	_, err :=  r.Collection.UpdateMany(context.Background(), filter, update, opts)
+	_, err := r.Collection.UpdateMany(context.Background(), filter, update, opts)
 	if err != nil {
 		//log.Print("Error updating user's state in projects : ", err)
 		return err
@@ -248,7 +248,7 @@ func (r repository) UpdateProjectState(user entities.User) error {
 	filter = bson.D{
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
-				{"user_id", user.ID},
+				{"user_id", userID},
 				{"role", bson.D{
 					{"$eq", entities.RoleOwner},
 				}},
@@ -257,11 +257,11 @@ func (r repository) UpdateProjectState(user entities.User) error {
 
 	update = bson.D{
 		{"$set", bson.D{
-			{"removed_at", user.DeactivatedAt},
+			{"removed_at", deactivateTime},
 		}},
 	}
 
-	_, err =  r.Collection.UpdateMany(context.Background(), filter, update)
+	_, err = r.Collection.UpdateMany(context.Background(), filter, update)
 	if err != nil {
 		//log.Print("Error updating user's state in projects : ", err)
 		return err

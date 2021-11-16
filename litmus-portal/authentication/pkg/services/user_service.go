@@ -16,22 +16,22 @@ type userService interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
-	UpdateUserState(username string, isDeactivate bool) error
+	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
 }
 
 // LoginUser is the implementation of the repository function `LoginUser`
-func (s applicationService) LoginUser(user *entities.User) (*entities.User, error) {
-	return s.userRepository.LoginUser(user)
+func (a applicationService) LoginUser(user *entities.User) (*entities.User, error) {
+	return a.userRepository.LoginUser(user)
 }
 
 // GetUser fetches user details for the given user id
-func (s applicationService) GetUser(uid string) (*entities.User, error) {
-	return s.userRepository.GetUser(uid)
+func (a applicationService) GetUser(uid string) (*entities.User, error) {
+	return a.userRepository.GetUser(uid)
 }
 
 // GetUsers fetches all the users from the database
-func (s applicationService) GetUsers() (*[]entities.User, error) {
-	return s.userRepository.GetUsers()
+func (a applicationService) GetUsers() (*[]entities.User, error) {
+	return a.userRepository.GetUsers()
 }
 
 // FindUsersByUID fetches multiple users based on user ids
@@ -40,36 +40,36 @@ func (a applicationService) FindUsersByUID(uid []string) (*[]entities.User, erro
 }
 
 // FindUser is the definition of finding an user from database
-func (s applicationService) FindUserByUsername(username string) (*entities.User, error) {
-	return s.userRepository.FindUserByUsername(username)
+func (a applicationService) FindUserByUsername(username string) (*entities.User, error) {
+	return a.userRepository.FindUserByUsername(username)
 }
 
 // CheckPasswordHash checks if hashed password matches with the input password
-func (s applicationService) CheckPasswordHash(hash, password string) error {
-	return s.userRepository.CheckPasswordHash(hash, password)
+func (a applicationService) CheckPasswordHash(hash, password string) error {
+	return a.userRepository.CheckPasswordHash(hash, password)
 }
 
 // UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
-func (s applicationService) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
-	return s.userRepository.UpdatePassword(userPassword, isAdminBeingReset)
+func (a applicationService) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
+	return a.userRepository.UpdatePassword(userPassword, isAdminBeingReset)
 }
 
 // CreateUser creates a new user in the database
-func (s applicationService) CreateUser(user *entities.User) (*entities.User, error) {
-	return s.userRepository.CreateUser(user)
+func (a applicationService) CreateUser(user *entities.User) (*entities.User, error) {
+	return a.userRepository.CreateUser(user)
 }
 
 // UpdateUser updates user details in the database
-func (s applicationService) UpdateUser(user *entities.UserDetails) error {
-	return s.userRepository.UpdateUser(user)
+func (a applicationService) UpdateUser(user *entities.UserDetails) error {
+	return a.userRepository.UpdateUser(user)
 }
 
 // IsAdministrator verifies if the passed user is an administrator
-func (s applicationService) IsAdministrator(user *entities.User) error {
-	return s.userRepository.IsAdministrator(user)
+func (a applicationService) IsAdministrator(user *entities.User) error {
+	return a.userRepository.IsAdministrator(user)
 }
 
 // UpdateUserState updates deactivated_at state of the user
-func (s applicationService) UpdateUserState(username string, isDeactivate bool) error {
-	return s.userRepository.UpdateUserState(username, isDeactivate)
+func (a applicationService) UpdateUserState(username string, isDeactivate bool, deactivateTime string) error {
+	return a.userRepository.UpdateUserState(username, isDeactivate, deactivateTime)
 }

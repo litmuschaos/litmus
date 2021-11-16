@@ -293,35 +293,14 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// Checking if user exists
-		user, err := service.FindUserByUsername(userRequest.Username)
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
-			return
-		}
-
-		// Checking if updated user is admin
-		if user.Role == entities.RoleAdmin {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUpdatingAdmin], presenter.CreateErrorResponse(utils.ErrUpdatingAdmin))
-			return
-		}
-
-		// Checking if user is already deactivated
-		if userRequest.IsDeactivate {
-			if user.DeactivatedAt != nil {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyDeactivated], presenter.CreateErrorResponse(utils.ErrUserAlreadyDeactivated))
-				return
-			}
-		}
-
-		err = service.UpdateUserState(userRequest.Username, userRequest.IsDeactivate)
+		// Transaction to update state in user and project collection
+		err = service.UpdateStateTransaction(userRequest)
 		if err != nil {
 			log.Info(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[err], presenter.CreateErrorResponse(err))
 			return
 		}
-		err = service.UpdateProjectState(*user)
+
 		c.JSON(200, gin.H{
 			"message": "user's state updated successfully",
 		})

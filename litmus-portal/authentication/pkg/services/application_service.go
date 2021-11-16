@@ -10,6 +10,7 @@ import (
 type ApplicationService interface {
 	userService
 	projectService
+	transactionService
 }
 
 type applicationService struct {

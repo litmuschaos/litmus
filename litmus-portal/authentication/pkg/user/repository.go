@@ -4,8 +4,6 @@ import (
 	"context"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"strconv"
-	"time"
 
 	"github.com/google/uuid"
 
@@ -26,7 +24,7 @@ type Repository interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
-	UpdateUserState(username string, isDeactivate bool) error
+	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
 }
 
 type repository struct {
@@ -201,11 +199,11 @@ func (r repository) IsAdministrator(user *entities.User) error {
 }
 
 // UpdateUserState updates the deactivated_at state of the user
-func (r repository) UpdateUserState(username string, isDeactivate bool) error {
+func (r repository) UpdateUserState(username string, isDeactivate bool, deactivateTime string) error {
 	var err error
 	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
-			"deactivated_at": strconv.FormatInt(time.Now().Unix(), 10),
+			"deactivated_at": deactivateTime,
 		}})
 	} else {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
