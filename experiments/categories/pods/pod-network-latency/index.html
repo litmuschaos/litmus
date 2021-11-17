@@ -3006,25 +3006,33 @@
 <p><img alt="Pod Network Latency" src="../../../images/network-chaos.png" /></p>
 </div>
 <h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>View the uses of the experiment</summary><p>The experiment causes network degradation without the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container). The idea of this experiment is to simulate issues within your pod network OR microservice communication across services in different availability zones/regions etc. </p>
+<details class="info">
+<summary>View the uses of the experiment</summary>
+<p>The experiment causes network degradation without the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container). The idea of this experiment is to simulate issues within your pod network OR microservice communication across services in different availability zones/regions etc. </p>
 <p>Mitigation (in this case keep the timeout i.e., access latency low) could be via some middleware that can switch traffic based on some SLOs/perf parameters. If such an arrangement is not available the next best thing would be to verify if such a degradation is highlighted via notification/alerts etc,. so the admin/SRE has the opportunity to investigate and fix things. Another utility of the test would be to see what the extent of impact caused to the end-user OR the last point in the app stack on account of degradation in access to a downstream/dependent microservice. Whether it is acceptable OR breaks the system to an unacceptable degree. The experiment provides DESTINATION_IPS or DESTINATION_HOSTS so that you can control the chaos against specific services within or outside the cluster.</p>
 <p>The applications may stall or get corrupted while they wait endlessly for a packet. The experiment limits the impact (blast radius) to only the traffic you want to test by specifying IP addresses or application information.This experiment will help to improve the resilience of your services over time</p>
 </details>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>Verify the prerequisites</summary><ul>
+<details class="info">
+<summary>Verify the prerequisites</summary>
+<ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
 <li>Ensure that the <code>pod-network-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-latency/experiment.yaml">here</a> </li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>View the default validations</summary><p>The application pods should be in running state before and after chaos injection.</p>
+<details class="info">
+<summary>View the default validations</summary>
+<p>The application pods should be in running state before and after chaos injection.</p>
 </details>
 <h2 id="minimal-rbac-configuration-example-optional">Minimal RBAC configuration example (optional)<a class="headerlink" href="#minimal-rbac-configuration-example-optional" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">NOTE</p>
 <p>If you are using this experiment as part of a litmus workflow scheduled constructed &amp; executed from chaos-center, then you may be making use of the <a href="https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml">litmus-admin</a> RBAC, which is pre installed in the cluster as part of the agent setup.</p>
-<details class="note"><summary>View the Minimal RBAC permissions</summary><p><div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<details class="note">
+<summary>View the Minimal RBAC permissions</summary>
+<p><div class="highlight"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -3109,7 +3117,9 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </details>
 </div>
 <h2 id="experiment-tunables">Experiment tunables<a class="headerlink" href="#experiment-tunables" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>check the experiment tunables</summary><p><h2>Optional Fields</h2></p>
+<details class="info">
+<summary>check the experiment tunables</summary>
+<p><h2>Optional Fields</h2></p>
 <p><table>
   <tr>
     <th> Variables </th>

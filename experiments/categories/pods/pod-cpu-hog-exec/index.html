@@ -2968,24 +2968,32 @@
 <p><img alt="Pod CPU Hog Exec" src="../../../images/pod-stress.png" /></p>
 </div>
 <h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>View the uses of the experiment</summary><p>Disk Pressure or CPU hogs is another very common and frequent scenario we find in kubernetes applications that can result in the eviction of the application replica and impact its delivery. Such scenarios that can still occur despite whatever availability aids K8s provides. These problems are generally referred to as "Noisy Neighbour"  problems.</p>
+<details class="info">
+<summary>View the uses of the experiment</summary>
+<p>Disk Pressure or CPU hogs is another very common and frequent scenario we find in kubernetes applications that can result in the eviction of the application replica and impact its delivery. Such scenarios that can still occur despite whatever availability aids K8s provides. These problems are generally referred to as "Noisy Neighbour"  problems.</p>
 <p>Injecting a rogue process into a target container, we starve the main microservice process (typically pid 1) of the resources allocated to it (where limits are defined) causing slowness in application traffic or in other cases unrestrained use can cause node to exhaust resources leading to eviction of all pods.So this category of chaos experiment helps to build the immunity on the application undergoing any such stress scenario</p>
 </details>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>Verify the prerequisites</summary><ul>
+<details class="info">
+<summary>Verify the prerequisites</summary>
+<ul>
 <li>Ensure that Kubernetes Version &gt; 1.16 </li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
 <li>Ensure that the <code>pod-cpu-hog-exec</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-hog-exec/experiment.yaml">here</a> </li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>View the default validations</summary><p>The application pods should be in running state before and after chaos injection.</p>
+<details class="info">
+<summary>View the default validations</summary>
+<p>The application pods should be in running state before and after chaos injection.</p>
 </details>
 <h2 id="minimal-rbac-configuration-example-optional">Minimal RBAC configuration example (optional)<a class="headerlink" href="#minimal-rbac-configuration-example-optional" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">NOTE</p>
 <p>If you are using this experiment as part of a litmus workflow scheduled constructed &amp; executed from chaos-center, then you may be making use of the <a href="https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml">litmus-admin</a> RBAC, which is pre installed in the cluster as part of the agent setup.</p>
-<details class="note"><summary>View the Minimal RBAC permissions</summary><p><div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<details class="note">
+<summary>View the Minimal RBAC permissions</summary>
+<p><div class="highlight"><pre><span></span><code><span class="nn">---</span>
 <span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -3070,7 +3078,9 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </details>
 </div>
 <h2 id="experiment-tunables">Experiment tunables<a class="headerlink" href="#experiment-tunables" title="Permanent link">&para;</a></h2>
-<details class="info"><summary>check the experiment tunables</summary><p><h2>Optional Fields</h2></p>
+<details class="info">
+<summary>check the experiment tunables</summary>
+<p><h2>Optional Fields</h2></p>
 <p><table>
   <tr>
     <th> Variables </th>

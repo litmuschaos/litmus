@@ -3170,7 +3170,9 @@
 </li>
 </ol>
 <h3 id="when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error">When I’m executing an experiment the experiment's pod failed with the exec format error<a class="headerlink" href="#when-im-executing-an-experiment-the-experiments-pod-failed-with-the-exec-format-error" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>standard_init_linux.go:211: exec user process caused "exec format error":</p>
+<details class="info">
+<summary>View the error message</summary>
+<p>standard_init_linux.go:211: exec user process caused "exec format error":</p>
 </details>
 <p>There could be multiple reasons for this. The most common one is mismatched in the binary and the platform on which it is running, try to check out the image binary you're using should have the support for the platform on which you’re trying to run the experiment.</p>
 <h3 id="nothing-happens-no-pods-created-when-the-chaosengine-resource-is-created">Nothing happens (no pods created) when the chaosengine resource is created?<a class="headerlink" href="#nothing-happens-no-pods-created-when-the-chaosengine-resource-is-created" title="Permanent link">&para;</a></h3>
@@ -3302,7 +3304,9 @@ perform the following checks: </p>
 For the above commands to execute successfully, you should simply wait for the experiment pod to be created. The waiting time will be based upon resource available
 (network bandwidth, space availability on the node filesyste</p>
 <h3 id="the-helper-pod-is-getting-in-a-failed-state-due-to-container-runtime-issue">The helper pod is getting in a failed state due to container runtime issue<a class="headerlink" href="#the-helper-pod-is-getting-in-a-failed-state-due-to-container-runtime-issue" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>time="2021-07-15T10:26:04Z" level=fatal msg="helper pod failed, err: Unable to run command, err: exit status 1; error output: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?"</p>
+<details class="info">
+<summary>View the error message</summary>
+<p>time="2021-07-15T10:26:04Z" level=fatal msg="helper pod failed, err: Unable to run command, err: exit status 1; error output: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?"</p>
 <p><center>OR</center></p>
 <p>time="2021-07-16T22:21:02Z" level=error msg="[docker]: Failed to run docker inspect: []\nError: No such object: 1807fec21ccad1101bbb63a7d412be15414f807316572f9e043b9f4a3e7c4acc\n"
 time="2021-07-16T22:21:02Z" level=fatal msg="helper pod failed, err: exit status 1"</p>
@@ -3326,12 +3330,16 @@ time="2021-07-16T22:21:02Z" level=fatal msg="helper pod failed, err: exit status
 </ul>
 <p><code>NOTE</code>: The above values are the common ones and may vary based on the cluster you’re using.</p>
 <h3 id="disk-fill-fail-with-the-error-message">Disk Fill fail with the error message<a class="headerlink" href="#disk-fill-fail-with-the-error-message" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>time="2021-08-12T05:27:39Z" level=fatal msg="helper pod failed, err: either provide ephemeral storage limit inside target container or define EPHEMERAL_STORAGE_MEBIBYTES ENV"</p>
+<details class="info">
+<summary>View the error message</summary>
+<p>time="2021-08-12T05:27:39Z" level=fatal msg="helper pod failed, err: either provide ephemeral storage limit inside target container or define EPHEMERAL_STORAGE_MEBIBYTES ENV"</p>
 </details>
 <p>The disk fill experiment needs to have either ephemeral storage limit defined in the application or you can provide the value in mebibytes using 
 <code>EPHEMERAL_STORAGE_MEBIBYTES</code> ENV in the chaos engine. Either of them is required. For more details refer: <a href="https://litmuschaos.github.io/litmus/experiments/categories/pods/disk-fill/#disk-fill-percentage">FILL_PERCENTAGE</a> and <a href="https://litmuschaos.github.io/litmus/experiments/categories/pods/disk-fill/#disk-fill-mebibytes">EPHEMERAL_STORAGE_MEBIBYTES</a></p>
 <h3 id="disk-fill-failed-with-error">Disk Fill failed with error:<a class="headerlink" href="#disk-fill-failed-with-error" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>time="2021-08-12T05:41:45Z" level=error msg="du: /diskfill/8a1088e3fd50a31d5f0d383ae2258d9975f1df152ff92b3efd570a44e952a732: No such file or directory\n"
+<details class="info">
+<summary>View the error message</summary>
+<p>time="2021-08-12T05:41:45Z" level=error msg="du: /diskfill/8a1088e3fd50a31d5f0d383ae2258d9975f1df152ff92b3efd570a44e952a732: No such file or directory\n"
 time="2021-08-12T05:41:45Z" level=fatal msg="helper pod failed, err: exit status 1"</p>
 </details>
 <p>This could be due to multiple issues in filling the disk of a container the most common one is invalid CONTAINER_PATH env set in the chaosengine. The default container path env is common for most of the use-cases and that is <code>/var/lib/docker/containers</code> </p>
@@ -3340,10 +3348,14 @@ time="2021-08-12T05:41:45Z" level=fatal msg="helper pod failed, err: exit status
 <h3 id="the-infra-experiments-like-node-drain-node-taint-kubelet-service-kill-to-act-on-the-litmus-pods-only">The infra experiments like node drain, node taint, kubelet service kill to act on the litmus pods only.<a class="headerlink" href="#the-infra-experiments-like-node-drain-node-taint-kubelet-service-kill-to-act-on-the-litmus-pods-only" title="Permanent link">&para;</a></h3>
 <p>Ans: These are the infra level experiments, we need to cordon the target node so that the application pods don’t get scheduled on it and use node selector in the chaos engine to specify the nodes for the experiment pods. Refer to the <a href="https://litmuschaos.github.io/litmus/experiments/chaos-resources/chaos-engine/experiment-components/#experiment-nodeselectors">this</a> to know how to schedule experiments on a certain node.</p>
 <h3 id="aws-experiments-failed-with-the-following-error">AWS experiments failed with the following error<a class="headerlink" href="#aws-experiments-failed-with-the-following-error" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>time="2021-08-12T10:25:57Z" level=error msg="failed perform ssm api calls, err: UnrecognizedClientException: The security token included in the request is invalid.\n\tstatus code: 400, request id: 68f0c2e8-a7ed-4576-8c75-0a3ed497efb9" </p>
+<details class="info">
+<summary>View the error message</summary>
+<p>time="2021-08-12T10:25:57Z" level=error msg="failed perform ssm api calls, err: UnrecognizedClientException: The security token included in the request is invalid.\n\tstatus code: 400, request id: 68f0c2e8-a7ed-4576-8c75-0a3ed497efb9" </p>
 </details>
 <p>The AWS experiment needs authentication to connect &amp; perform actions on the aws services we can provide this with the help of the secret as shown below:</p>
-<details class="note"><summary>View the secret manifest</summary><div class="highlight"><pre><span></span><code>apiVersion: v1
+<details class="note">
+<summary>View the secret manifest</summary>
+<div class="highlight"><pre><span></span><code>apiVersion: v1
 kind: Secret
 metadata:
   name: cloud-secret
@@ -3359,22 +3371,30 @@ stringData:
 <p>Make sure you have all the required permissions attached with your IAM to perform the chaos operation on the given service.
 If you are running the experiment in an EKS cluster then you have one more option than creating a secret, you can map the IAM role with the service account refer to <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">this</a> for more details.</p>
 <h3 id="in-aws-ssm-chaos-i-have-provided-the-aws-in-secret-but-still-not-able-to-inject-the-ssm-chaos-on-the-target-instance">In AWS SSM Chaos I have provided the aws in secret but still not able to inject the SSM chaos on the target instance<a class="headerlink" href="#in-aws-ssm-chaos-i-have-provided-the-aws-in-secret-but-still-not-able-to-inject-the-ssm-chaos-on-the-target-instance" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>time='2021-08-13T09:30:47Z' level=error msg='failed perform ssm api calls, err: error: the instance id-qqw2-123-12- might not have suitable permission or IAM attached to it. use \'aws ssm describe-instance-information\' to check the available instances'</p>
+<details class="info">
+<summary>View the error message</summary>
+<p>time='2021-08-13T09:30:47Z' level=error msg='failed perform ssm api calls, err: error: the instance id-qqw2-123-12- might not have suitable permission or IAM attached to it. use \'aws ssm describe-instance-information\' to check the available instances'</p>
 </details>
 <p>Ensure that you have the required AWS access and your target EC2 instances have attached an IAM instance profile. To know more checkout <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-launch-managed-instance.html">Systems Manager Docs</a></p>
 <h3 id="gcp-vm-disk-loss-experiment-fails-unexpectedly-where-the-disk-gets-detached-successfully-but-fails-to-attach-back-to-the-instance-what-can-be-the-reason">GCP VM Disk Loss experiment fails unexpectedly where the disk gets detached successfully but fails to attach back to the instance. What can be the reason?<a class="headerlink" href="#gcp-vm-disk-loss-experiment-fails-unexpectedly-where-the-disk-gets-detached-successfully-but-fails-to-attach-back-to-the-instance-what-can-be-the-reason" title="Permanent link">&para;</a></h3>
 <p>The GCP VM Disk Loss experiment requires a GCP Service Account having a Project Editor or higher permission to execute. This could be because of an issue in the GCP GoLang Compute Engine API, which fails to attach the disk using the attachDisk method with a Compute Admin or lower permission.</p>
 <h3 id="in-pod-level-stress-chaos-experiments-like-pod-memory-hog-or-pod-io-stress-after-the-chaos-is-injected-successfully-the-helper-fails-with-an-error-message">In pod level stress chaos experiments like pod memory hog or pod io stress after the chaos is injected successfully the helper fails with an error message<a class="headerlink" href="#in-pod-level-stress-chaos-experiments-like-pod-memory-hog-or-pod-io-stress-after-the-chaos-is-injected-successfully-the-helper-fails-with-an-error-message" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>Error: process exited before the actual cleanup</p>
+<details class="info">
+<summary>View the error message</summary>
+<p>Error: process exited before the actual cleanup</p>
 </details>
 <p>The error message indicates that the stress process inside the target container is somehow removed before the actual cleanup. There could be multiple reasons for this: the target container might have just got restarted due to excessive load on the container which it can’t handle and the kubelet terminated that replica and launches a new one (if applicable) and reports an OOM event on the older one.</p>
 <h3 id="experiment-failed-for-the-istio-enabled-namespaces">Experiment failed for the istio enabled namespaces<a class="headerlink" href="#experiment-failed-for-the-istio-enabled-namespaces" title="Permanent link">&para;</a></h3>
-<details class="info"><summary>View the error message</summary><p>W0817 06:32:26.531145       1 client_config.go:541] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
+<details class="info">
+<summary>View the error message</summary>
+<p>W0817 06:32:26.531145       1 client_config.go:541] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
 time="2021-08-17T06:32:26Z" level=error msg="unable to get ChaosEngineUID, error: unable to get ChaosEngine name: pod-delete-chaos, in namespace: default, error: Get \"<a href="https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos">https://10.100.0.1:443/apis/litmuschaos.io/v1alpha1/namespaces/default/chaosengines/pod-delete-chaos</a>\": dial tcp 10.100.0.1:443: connect: connection refused"</p>
 </details>
 <p>If istio is enabled for the <code>chaos-namespace</code>, it will launch the chaos-runner and chaos-experiment pods with the istio sidecar. Which may block/delay the external traffic of those pods for the intial few seconds. Which can fail the experiment.</p>
 <p>We can fix the above failure by avoiding istio sidecar for the chaos pods. Refer the following manifest:</p>
-<details class="note"><summary>View the ChaosEngine manifest with the required annotations</summary><div class="highlight"><pre><span></span><code>apiVersion: litmuschaos.io/v1alpha1
+<details class="note">
+<summary>View the ChaosEngine manifest with the required annotations</summary>
+<div class="highlight"><pre><span></span><code>apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
   name: engine-nginx

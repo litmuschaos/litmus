@@ -2872,7 +2872,9 @@
                 
                 <p>With the proliferation of custom resources &amp; operators, especially in the case of stateful applications, the steady-state is manifested as status parameters/flags within Kubernetes resources. <code>k8sProbe</code> addresses verification of the desired resource state by allowing users to define the Kubernetes GVR (group-version-resource) with appropriate filters (field selectors/label selectors). The experiment makes use of the Kubernetes Dynamic Client to achieve this. It supports CRUD operations which can be defined at <code>probe.k8sProbe/inputs.operation</code>.
 It can be executed by setting <code>type</code> as <code>k8sProbe</code> inside <code>.spec.experiments[].spec.probe</code>.</p>
-<details class="info"><summary>View the k8s probe schema</summary><p><table>
+<details class="info">
+<summary>View the k8s probe schema</summary>
+<p><table>
 <tr>
 <th>Field</th>
 <td><code>.name</code></td>

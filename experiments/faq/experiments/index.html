@@ -3645,7 +3645,9 @@ The status of the experiment can also be gauged by the “status” property of 
 <p>Typically applications are expected to be annotated with litmuschaos.io/chaos="true" to lend themselves to chaos. This is in order to support selection of the right applications with similar labels in a namespaces, thereby isolating the application under test (AUT) &amp; reduce the blast radius. It is also helpful for supporting automated execution (say, via cron) as a background service. However, in cases where the app deployment specifications are sacrosanct and not expected to be modified, or in cases where annotating a single application for chaos when the experiment itself is known to have a higher blast radius doesn’t make sense (ex: infra chaos), the annotationCheck can be disabled via the ChaosEngine tunable annotationCheck (<code>.spec.annotationCheck: false</code>).</p>
 <h3 id="how-to-add-custom-annotations-as-chaos-filters">How to add Custom Annotations as chaos filters?<a class="headerlink" href="#how-to-add-custom-annotations-as-chaos-filters" title="Permanent link">&para;</a></h3>
 <p>Currently Litmus allows you to set your own/custom keys for Annotation filters, the value being true/false. To use your custom annotation, add this key under an ENV named as CUSTOM_ANNOTATION in ChaosOperator deployment. A sample chaos-operator deployment spec is provided here for reference:</p>
-<details class="info"><summary>view the manifest</summary><div class="highlight"><pre><span></span><code>---
+<details class="info">
+<summary>view the manifest</summary>
+<div class="highlight"><pre><span></span><code>---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

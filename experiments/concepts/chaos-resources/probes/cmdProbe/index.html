@@ -2844,7 +2844,9 @@
                 
                 <p>The command probe allows developers to run shell commands and match the resulting output as part of the entry/exit criteria. The intent behind this probe was to allow users to implement a non-standard &amp; imperative way of expressing their hypothesis. For example, the cmdProbe enables you to check for specific data within a database, parse the value out of a JSON blob being dumped into a certain path, or check for the existence of a particular string in the service logs.
 It can be executed by setting <code>type</code> as <code>cmdProbe</code> inside <code>.spec.experiments[].spec.probe</code>.</p>
-<details class="info"><summary>View the command probe schema</summary><p><table>
+<details class="info">
+<summary>View the command probe schema</summary>
+<p><table>
 <tr>
 <th>Field</th>
 <td><code>.name</code></td>

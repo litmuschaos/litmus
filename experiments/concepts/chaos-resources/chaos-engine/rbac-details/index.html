@@ -2749,7 +2749,9 @@
                 
                 <p>It specifies the name of the serviceaccount mapped to a role/clusterRole with enough permissions to execute the desired chaos experiment. The minimum permissions needed for any given experiment are provided in the <code>.spec.definition.permissions</code> field of the respective chaosexperiment CR.
 It can be tuned via <code>chaosServiceAccount</code> field.</p>
-<details class="info"><summary>View the RBAC specification schema</summary><p><table>
+<details class="info">
+<summary>View the RBAC specification schema</summary>
+<p><table>
   <tr>
     <th>Field</th>
     <td><code>.spec.chaosServiceAccount</code></td>

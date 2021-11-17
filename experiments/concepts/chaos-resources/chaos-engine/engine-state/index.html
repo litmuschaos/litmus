@@ -2749,7 +2749,9 @@
                 
                 <p>It is a user-defined flag to trigger chaos. Setting it to <code>active</code> ensures the successful execution of chaos. Patching it with <code>stop</code> aborts ongoing experiments. It has a corresponding flag in the chaosengine status field, called <code>engineStatus</code> which is updated by the controller based on the actual state of the ChaosEngine.
 It can be tuned via <code>engineState</code> field. It supports <code>active</code> and <code>stop</code> values.</p>
-<details class="info"><summary>View the state specification schema</summary><p><table>
+<details class="info">
+<summary>View the state specification schema</summary>
+<p><table>
 <tr>
   <th>Field</th>
   <td><code>.spec.engineState</code></td>

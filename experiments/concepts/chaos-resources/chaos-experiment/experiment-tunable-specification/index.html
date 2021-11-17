@@ -2748,7 +2748,9 @@
                   <h1>Experiment Tunables Specification</h1>
                 
                 <p>It contains the array of tunables passed to the experiment pods as environment variables. It is used to manage the experiment execution. We can set the default values for all the variables (tunable) here which can be overridden by ChaosEngine from <code>.spec.experiments[].spec.components.env</code> if required. To know about the variables that need to be overridden check the list of "mandatory" &amp; "optional" env for an experiment as provided within the respective experiment documentation. It can be provided at <code>spec.definition.env</code> inside chaosexperiment.</p>
-<details class="info"><summary>View the experiment tunables specification</summary><p><table>
+<details class="info">
+<summary>View the experiment tunables specification</summary>
+<p><table>
 <tr>
 <th>Field</th>
 <td><code>.spec.definition.env</code></td>
