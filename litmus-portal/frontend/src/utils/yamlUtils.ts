@@ -291,7 +291,7 @@ export const updateNamespaceForUpload = (
   manifest: string,
   namespace: string
 ) => {
-  const updatedManifest = YAML.parse(manifest);
+  const updatedManifest = YAML.parse(manifest, { prettyErrors: true });
   updatedManifest.metadata.namespace = namespace;
   return updatedManifest;
 };
