@@ -23,6 +23,7 @@ var (
 	DexOIDCIssuer          = os.Getenv("OIDC_ISSUER")
 	DBName                 = "auth"
 	Port                   = ":3000"
+	GrpcPort               = ":3030"
 	UserCollection         = "usercredentials"
 	ProjectCollection      = "project"
 	UsernameField          = "username"
