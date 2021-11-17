@@ -61,7 +61,6 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           console.error(data);
         } else {
           fetchData();
-          // window.location.reload();
         }
       })
       .catch((err) => {
@@ -69,38 +68,9 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       });
   };
 
-  // const [SendInvite] = useMutation<MemberInviteNew>(SEND_INVITE, {
-  //   onCompleted: () => {
-  //     window.location.reload();
-  //   },
-  //   refetchQueries: [
-  //     {
-  //       query: GET_PROJECT,
-  //       variables: { projectID },
-  //     },
-  //     {
-  //       query: ALL_USERS,
-  //     },
-  //   ],
-  // });
-
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
   const [cancelInviteOpen, setCancelInviteOpen] = useState<boolean>(false);
 
-  // Query to get user details
-  // useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
-  //   variables: { username: row.user_name },
-  //   onCompleted: (data) => {
-  //     setMemberDetails({
-  //       // TODO: Check if all are being used
-  //       name: data.getUser.name,
-  //       uid: data.getUser.id,
-  //       username: data.getUser.username,
-  //       role: data.getUser.role,
-  //       email: data.getUser.email,
-  //     });
-  //   },
-  // });
   React.useEffect(() => {
     fetch(`${config.auth.url}/getUser/${row.UserID}`, {
       method: 'GET',

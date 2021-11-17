@@ -26,15 +26,6 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
   const userID = getUserId();
   const [projectOther, setProjectOther] = useState<OtherProjectsType[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  // const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
-  //   onCompleted: () => {
-  //     if (dataProject?.listProjects) {
-  //       setProjects(dataProject?.listProjects);
-  //     }
-  //   },
-  //   fetchPolicy: 'cache-and-network',
-  // });
-  // const projectID = getProjectID();
 
   const getProjects = () => {
     fetch(`${config.auth.url}/list_projects`, {
@@ -50,7 +41,6 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
           console.error(data.data);
         } else {
           setProjects(data.data);
-          //  setLoading(false);
         }
       })
       .catch((err) => {
@@ -94,21 +84,6 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
         console.error(err);
       });
   };
-
-  // const [leaveProject] = useMutation<MemberInvitation>(LEAVE_PROJECT, {
-  //   onCompleted: () => {
-  //     setProjectOther(
-  //       projectOther.filter((row) => row.projectDetails.id !== exitedMember)
-  //     );
-  //   },
-  //   refetchQueries: [
-  //     {
-  //       query: GET_PROJECT,
-  //       variables: { projectID },
-  //     },
-  //     { query: LIST_PROJECTS },
-  //   ],
-  // });
 
   useEffect(() => {
     const otherProject: OtherProjectsType[] = [];

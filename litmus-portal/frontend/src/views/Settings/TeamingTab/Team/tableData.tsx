@@ -27,19 +27,6 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
 
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
 
-  // useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
-  //   variables: { username: row.user_name },
-  //   onCompleted: (data) => {
-  //     setMemberDetails({
-  //       name: data.getUser.name,
-  //       uid: data.getUser.id,
-  //       username: data.getUser.username,
-  //       role: data.getUser.role,
-  //       email: data.getUser.email,
-  //     });
-  //   },
-  // });
-
   useEffect(() => {
     fetch(`${config.auth.url}/getUser/${row.UserID}`, {
       method: 'GET',

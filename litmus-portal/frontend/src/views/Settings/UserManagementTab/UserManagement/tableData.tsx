@@ -44,14 +44,6 @@ const TableData: React.FC<TableDataProps> = ({
     setAnchorEl(null);
   };
 
-  // // Mutation to create a user in litmusDB
-  // const [UpdateUserState] = useMutation<UpdateUserStateInput>(
-  //   UPDATE_USER_STATE,
-  //   {
-  //     onCompleted: () => window.location.reload(),
-  //   }
-  // );
-
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     fetch(`${config.auth.url}/update/state`, {

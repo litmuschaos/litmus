@@ -3,7 +3,6 @@ import React, { lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
 import config from '../../config';
-// import { GET_PROJECT } from '../../graphql';
 import { Member, Project, UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
@@ -87,27 +86,6 @@ const Routes: React.FC = () => {
       });
   };
 
-  // const { loading } = useQuery<Projects>(LIST_PROJECTS, {
-  //   skip: (projectID !== '' && projectID !== undefined) || getToken() === '',
-  //   onCompleted: (data) => {
-  //     if (data.listProjects) {
-  //       data.listProjects.forEach((project): void => {
-  //         project.members.forEach((member: Member): void => {
-  //           if (member.user_id === userID && member.role === 'Owner') {
-  //             setprojectID(project.id);
-  //             setprojectRole(member.role);
-  //             history.push({
-  //               pathname: `/${baseRoute}`,
-  //               search: `?projectID=${project.id}&projectRole=${member.role}`,
-  //             });
-  //           }
-  //         });
-  //       });
-  //     }
-  //   },
-  //   fetchPolicy: 'cache-and-network',
-  // });
-
   useEffect(() => {
     if (!((projectID !== '' && projectID !== undefined) || getToken() === '')) {
       getProjects();
@@ -140,7 +118,6 @@ const Routes: React.FC = () => {
         } else {
           data.data.Members.forEach((member: Member) => {
             if (member.UserID === userID) {
-              // setIsProjectMember(true);
               isMember = true;
               setprojectID(data.data.ID);
               setprojectRole(member.Role);
@@ -166,32 +143,6 @@ const Routes: React.FC = () => {
       getProjectDetails();
     }
   }, []);
-
-  // const { loading: projectValidation } = useQuery<ProjectDetail>(GET_PROJECT, {
-  //   skip: getToken() === '',
-  //   variables: { projectID },
-  //   onCompleted: (data) => {
-  //     if (data?.getProject) {
-  //       data.getProject.Members.forEach((member: Member) => {
-  //         if (member.UserID === userID) {
-  //           setIsProjectMember(true);
-  //           setprojectID(data.getProject.ID);
-  //           setprojectRole(member.Role);
-  //         }
-  //       });
-  //       if (!isProjectMember) {
-  //         setprojectID('');
-  //         setprojectRole('');
-  //       }
-  //     }
-  //   },
-  //   onError: () => {
-  //     if (!isProjectMember) {
-  //       setprojectID('');
-  //       setprojectRole('');
-  //     }
-  //   },
-  // });
 
   if (getToken() === '') {
     return (

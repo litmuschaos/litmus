@@ -96,34 +96,6 @@ const Invitation: React.FC = () => {
   useEffect(() => {
     fetchProjectData();
   }, []);
-  // const { data: dataProject, refetch } = useQuery<Projects>(LIST_PROJECTS, {
-  //   onCompleted: () => {
-  //     if (dataProject?.listProjects) {
-  //       let otherCount = 0;
-  //       let inviteCount = 0;
-  //       dataProject.listProjects.forEach((project) => {
-  //         project.members.forEach((member: Member) => {
-  //           if (member.user_id === userID && member.invitation === 'Pending') {
-  //             inviteCount++;
-  //           } else if (
-  //             member.user_id === userID &&
-  //             member.role !== 'Owner' &&
-  //             member.invitation === 'Accepted'
-  //           ) {
-  //             otherCount++;
-  //           }
-  //         });
-  //       });
-  //       setInvitationCount(inviteCount);
-  //       setProjectOtherCount(otherCount);
-  //     }
-  //   },
-  //   onError: () => {
-  //     setInvitationCount(0);
-  //     setProjectOtherCount(0);
-  //   },
-  //   fetchPolicy: 'cache-and-network',
-  // });
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);

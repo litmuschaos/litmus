@@ -21,7 +21,6 @@ const PersonalDetails: React.FC = () => {
   const { t } = useTranslation();
   const [dataLoading, setDataLoading] = React.useState<boolean>(false);
 
-  // const username = getUsername();
   const [loading, setLoading] = React.useState(false);
   // Query to get user details
 
@@ -32,21 +31,6 @@ const PersonalDetails: React.FC = () => {
     userName: '',
     fullName: '',
   });
-
-  // const { data: dataA } = useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(
-  //   GET_USER,
-  //   {
-  //     variables: { username },
-  //     fetchPolicy: 'cache-and-network',
-  //     onCompleted: (data) => {
-  //       setPersonaData({
-  //         fullName: data.getUser.name,
-  //         userName: data.getUser.username,
-  //         email: data.getUser.email,
-  //       });
-  //     },
-  //   }
-  // );
 
   React.useEffect(() => {
     setDataLoading(true);
@@ -95,18 +79,7 @@ const PersonalDetails: React.FC = () => {
       email: e.target.value,
     });
   };
-  // const [updateDetails] = useMutation<UpdateUser>(UPDATE_DETAILS, {
-  //   onCompleted: () => {
-  //     setLoading(false);
-  //     setOpen(true);
-  //   },
-  //   onError: (error) => {
-  //     setLoading(false);
-  //     setError(error.message as string);
-  //     setOpen(true);
-  //   },
-  // refetchQueries: [{ query: GET_USER, variables: { username } }],
-  // });
+
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
     setLoading(true);
@@ -128,15 +101,6 @@ const PersonalDetails: React.FC = () => {
           setLoading(false);
           setOpen(true);
         } else {
-          // updateDetails({
-          //   variables: {
-          //     user: {
-          //       id: dataA?.getUser.id,
-          //       name: personaData.fullName,
-          //       email: personaData.email,
-          //     },
-          //   },
-          // });
           setLoading(false);
           setOpen(true);
         }

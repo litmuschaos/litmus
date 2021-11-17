@@ -74,54 +74,6 @@ const GetStarted: React.FC = () => {
     ValidateUser();
   }, []);
 
-  // Mutation to create project for a user
-  // const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
-  //   onCompleted: () => {
-  //     setIsLoading(false);
-  //     window.location.assign(`${process.env.PUBLIC_URL}/home`);
-  //   },
-  // });
-
-  // Mutation to create a user in litmusDB
-  // const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
-  //   onCompleted: () => {
-  //     CreateProject({
-  //       variables: {
-  //         projectName: `${username}'s project`,
-  //       },
-  //     });
-  //   },
-  // });
-
-  // Query to fetch user details of user from litmusDB
-  // const [getUserInfo] = useLazyQuery<CurrentUserDetails>(GET_USER_INFO, {
-  //   variables: { username },
-  //   // Adding the user to litmusDB if user does not exists
-  //   onError: (err) => {
-  //     if (err.message === 'mongo: no documents in result')
-  //       CreateUser({
-  //         variables: {
-  //           user: {
-  //             username,
-  //             email: getUserEmail(),
-  //             name: getUserFullName(),
-  //             role: getUserRole(),
-  //             userID: getUserId(),
-  //           },
-  //         },
-  //       });
-  //     else console.error(err.message);
-  //   },
-  // Creating project for the user
-  //   onCompleted: () => {
-  //     CreateProject({
-  //       variables: {
-  //         projectName: `${username}'s project`,
-  //       },
-  //     });
-  //   },
-  // });
-
   const createProject = () => {
     fetch(`${config.auth.url}/create_project`, {
       method: 'POST',

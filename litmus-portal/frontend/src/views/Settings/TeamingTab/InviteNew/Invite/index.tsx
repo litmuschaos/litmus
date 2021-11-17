@@ -75,14 +75,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     }
   };
 
-  // const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
-  //   GET_PROJECT,
-  //   {
-  //     variables: { projectID },
-  //     fetchPolicy: 'cache-and-network',
-  //   }
-  // );
-
   const getProject = () => {
     setLoading(true);
     fetch(`${config.auth.url}/get_project/${projectID}`, {
@@ -110,7 +102,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     getProject();
   }, []);
 
-  // const [users,setUsers]=useState<UserData[]>([])
   useEffect(() => {
     fetch(`${config.auth.url}/users`, {
       headers: {
@@ -149,31 +140,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       });
   }, [project]);
 
-  // useQuery(ALL_USERS, {
-  //   skip: !dataB,
-  //   fetchPolicy: 'cache-and-network',
-  //   onCompleted: (data) => {
-  //     const memberList = new Map();
-  //     const users: UserInvite[] = [];
-  //     if (dataB !== undefined) {
-  //       dataB.getProject.members.forEach((member) => {
-  //         if (
-  //           member.invitation === 'Accepted' ||
-  //           member.invitation === 'Pending'
-  //         ) {
-  //           memberList.set(member.user_id, 1);
-  //         }
-  //       });
-  //       // check for displaying only those users who are not the part of team
-  //       data &&
-  //         data.users.forEach((user: UserInvite) => {
-  //           if (!memberList.has(user._id)) users.push(user);
-  //         });
-  //       setRows([...users]);
-  //     }
-  //   },
-  // });
-
   const SendInvite = (userid: string, role: string) => {
     setSendInviteLoading(true);
     fetch(`${config.auth.url}/send_invitation`, {
@@ -203,17 +169,6 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
         setSendInviteError('');
       });
   };
-
-  // mutation to send invitation to selected users
-  // const [SendInvite, { error: errorB, loading: loadingB }] =
-  //   useMutation<MemberInviteNew>(SEND_INVITE, {
-  //     refetchQueries: [
-  //       {
-  //         query: GET_PROJECT,
-  //         variables: { projectID },
-  //       },
-  //     ],
-  //   });
 
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {

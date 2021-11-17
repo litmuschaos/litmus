@@ -59,21 +59,6 @@ const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
       });
   };
 
-  // mutation to accept the invitation
-  // const [acceptInvite] = useMutation<MemberInvitation>(ACCEPT_INVITE, {
-  //   onCompleted: () => {
-  //     setRows(rows.filter((row) => row.user_id !== acceptDecline));
-  //   },
-  //   // refetchQueries: [{ query: LIST_PROJECTS }],
-  // });
-
-  // // mutation to decline the invitation
-  // const [declineInvite] = useMutation<MemberInvitation>(DECLINE_INVITE, {
-  //   onCompleted: () => {
-  //     setRows(rows.filter((row) => row.user_id !== acceptDecline));
-  //   },
-  //   // refetchQueries: [{ query: LIST_PROJECTS }],
-  // });
   useEffect(() => {
     getProjects();
   }, []);
@@ -131,10 +116,6 @@ const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
         console.error(err);
       });
   };
-
-  // const { data, loading } = useQuery<Projects>(LIST_PROJECTS, {
-  //   fetchPolicy: 'cache-and-network',
-  // });
 
   useEffect(() => {
     const users: ReceivedInvitation[] = [];

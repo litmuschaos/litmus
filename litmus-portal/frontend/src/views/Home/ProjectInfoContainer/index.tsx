@@ -31,15 +31,6 @@ const ProjectInfoContainer: React.FC = () => {
   const [invitationsCount, setInvitationCount] = useState<number>(0);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  // const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
-  //   onCompleted: () => {
-  //     if (dataProject?.listProjects) {
-  //       setProjects(dataProject?.listProjects);
-  //     }
-  //   },
-  //   fetchPolicy: 'cache-and-network',
-  // });
-
   useEffect(() => {
     fetch(`${config.auth.url}/list_projects`, {
       method: 'GET',
@@ -54,7 +45,6 @@ const ProjectInfoContainer: React.FC = () => {
           console.error(data.data);
         } else {
           setProjects(data.data);
-          //  setLoading(false);
         }
       })
       .catch((err) => {

@@ -9,7 +9,7 @@ import {
   Tabs,
   Toolbar,
   Typography,
-  useTheme,
+  useTheme
 } from '@material-ui/core';
 import { EditableText, Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
@@ -129,33 +129,7 @@ const TeamingTab: React.FC = () => {
   useEffect(() => {
     getProjectDetails();
   }, []);
-  // const { data: dataB, refetch: refetchGetProject } = useQuery<
-  //   ProjectDetail,
-  //   ProjectDetailVars
-  // >(GET_PROJECT, {
-  //   variables: { projectID },
-  //   fetchPolicy: 'cache-and-network',
-  //   onCompleted: () => {
-  //     setLoading(false);
-  //     const memberList = dataB?.getProject.Members ?? [];
-  //     const acceptedUsers: Member[] = [];
-  //     const notAcceptedUsers: Member[] = [];
-
-  //     memberList.forEach((member) => {
-  //       if (member.Invitation === 'Accepted') {
-  //         acceptedUsers.push(member);
-  //       } else if (
-  //         member.UserID !== userID &&
-  //         member.Invitation !== 'Accepted'
-  //       ) {
-  //         notAcceptedUsers.push(member);
-  //       }
-  //     });
-  //     setAccepted([...acceptedUsers]);
-  //     setNotAccepted([...notAcceptedUsers]);
-  //   },
-  // });
-
+ 
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
     pageNo: 0,
@@ -208,14 +182,6 @@ const TeamingTab: React.FC = () => {
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
   const [projects, setProjects] = useState<Project[]>([]);
-  // const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
-  //   fetchPolicy: 'cache-and-network',
-  //   onCompleted: () => {
-  //     if (dataProject?.listProjects) {
-  //       setProjects(dataProject.listProjects);
-  //     }
-  //   },
-  // });
 
   useEffect(() => {
     fetch(`${config.auth.url}/list_projects`, {
@@ -291,14 +257,6 @@ const TeamingTab: React.FC = () => {
       });
   };
 
-  // const [updateProjectName] = useMutation(UPDATE_PROJECT_NAME, {
-  //   // refetchQueries: [
-  //   //   {
-  //   //     query: GET_PROJECT,
-  //   //     variables: { projectID },
-  //   //   },
-  //   ],
-  // });
   return (
     <div>
       {!loading ? (

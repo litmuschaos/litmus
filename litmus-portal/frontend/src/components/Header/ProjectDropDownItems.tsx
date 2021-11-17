@@ -105,8 +105,6 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 const ProjectDropdownItems: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  // const { data, loading } = useQuery<Projects>(LIST_PROJECTS);
-  // const projects = data?.listProjects ?? [];
   const [loading, setLoading] = useState<boolean>(true);
 
   const baseRoute = window.location.pathname

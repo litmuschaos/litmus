@@ -52,15 +52,6 @@ const ProfileDropdown: React.FC = () => {
       });
   }, []);
 
-  // Run query to get the data in case it is not present in the JWT
-  // useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
-  //   variables: { username },
-  //   fetchPolicy: 'cache-and-network',
-  //   onCompleted: (data) => {
-  //     setuserEmail(data.getUser.email);
-  //   },
-  // });
-
   // Handle clicks
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);

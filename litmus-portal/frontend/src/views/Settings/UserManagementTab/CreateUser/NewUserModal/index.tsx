@@ -37,17 +37,6 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
     handleDiv();
   };
 
-  // const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
-  //   onError: (err) => {
-  //     console.error(err);
-  //   },
-  //   onCompleted: () => {
-  //     setLoading(false);
-  //     setOpen(true);
-  //     setError('');
-  //   },
-  // });
-
   const handleOpen = () => {
     setLoading(true);
     fetch(`${config.auth.url}/create`, {

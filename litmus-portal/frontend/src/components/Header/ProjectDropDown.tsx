@@ -19,10 +19,6 @@ const ProjectDropdown: React.FC = () => {
   const projectRole = getProjectRole();
   const [projectName, setProjectName] = useState<string>('');
 
-  // Get Project Name
-  // const { data } = useQuery<ProjectDetail>(GET_PROJECT_NAME, {
-  //   variables: { projectID },
-  // });
   fetch(`${config.auth.url}/get_project/${projectID}`, {
     method: 'GET',
     headers: {
