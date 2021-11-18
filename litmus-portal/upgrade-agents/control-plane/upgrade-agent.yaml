@@ -10,9 +10,11 @@ spec:
     spec:
       containers:
         - name: upgrade-agent
-          image: litmuschaos/upgrade-agent-cp:ci
+          image: saranyaj/upgrade:latest
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
           imagePullPolicy: Always
       restartPolicy: Never
