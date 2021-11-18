@@ -6,7 +6,7 @@ LABEL maintainer="LitmusChaos"
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-ADD . /gql-server
+COPY . /gql-server
 WORKDIR /gql-server
 
 ENV GOOS=${TARGETOS} \
@@ -23,7 +23,9 @@ FROM litmuschaos/infra-alpine
 LABEL maintainer="LitmusChaos"
 
 COPY --from=builder /output/server /litmus
-COPY --from=builder /gql-server/manifests/. /litmus/manifests
+# Copy manifests and change the group to 0(root) to make it Openshift friendly
+# as Openshift runs container with an arbitrary uid that in the root group
+COPY --chown=litmus:0 --chmod=750 ./manifests/. /litmus/manifests
 CMD ["./server"]
 
 EXPOSE 8080
