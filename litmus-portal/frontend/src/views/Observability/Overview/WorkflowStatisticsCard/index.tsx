@@ -17,6 +17,7 @@ import {
   PENDING,
   RUNNING,
   SUCCEEDED,
+  TERMINATED,
 } from '../../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 
@@ -44,6 +45,8 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
         return 'status-pending.svg';
       case NOTAVAILABLE:
         return 'status-NotAvailable.svg';
+      case TERMINATED:
+        return 'status-terminated.svg';
       default:
         return '';
     }
