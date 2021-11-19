@@ -1,0 +1,41 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: sock-chaos
+  namespace: sock-shop
+spec:
+  engineState: 'active'
+  appinfo:
+    appns: sock-shop
+    # FYI, To see app label, apply kubectl get pods --show-labels
+    # unique-label of the application under test (AUT)
+    applabel: "name=carts-db"
+    appkind: deployment
+  chaosServiceAccount: sock-shop-chaos-engine
+  experiments:
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            # Provide name of target container
+            # where chaos has to be injected
+            - name: TARGET_CONTAINER
+              value: 'carts-db'
+
+            - name: TOTAL_CHAOS_DURATION
+              value: '60' # in seconds
+
+            - name: CPU_CORES
+              value: '1'    
+
+            ## Percentage of total pods to target
+            - name: PODS_AFFECTED_PERC
+              value: ''   
+
+            - name: CONTAINER_RUNTIME
+              value: 'containerd'
+              
+            # provide the socket file path
+            # applicable only for containerd and crio runtime
+            - name: SOCKET_PATH
+              value: '/run/containerd/containerd.sock'

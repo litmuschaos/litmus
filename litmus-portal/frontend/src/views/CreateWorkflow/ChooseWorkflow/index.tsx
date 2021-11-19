@@ -51,7 +51,8 @@ const ChooseWorkflow = forwardRef((_, ref) => {
   };
 
   useEffect(() => {
-    workflowAction.setWorkflowManifest({ manifest: '' });
+    workflowAction.setWorkflowManifest({ manifest: '', isUploaded: false });
+    localforage.removeItem('weights');
   }, []);
 
   function onNext() {

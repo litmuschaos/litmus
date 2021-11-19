@@ -363,7 +363,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
         />
       </section>
       <TableContainer className={classes.tableMain}>
-        <Table aria-label="simple table">
+        <Table aria-label="simple table" data-cy="statsTable">
           <TableHeader
             callBackToSort={(sortConfigurations: SortData) => {
               setFilter({

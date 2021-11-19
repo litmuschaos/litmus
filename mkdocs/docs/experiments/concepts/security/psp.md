@@ -57,13 +57,13 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
         ranges:
         # Forbid adding the root group.
         - min: 1
-            max: 65535
+          max: 65535
     fsGroup:
         rule: 'MustRunAs'
         ranges:
         # Forbid adding the root group.
         - min: 1
-            max: 65535
+          max: 65535
     readOnlyRootFilesystem: false
     ```
 

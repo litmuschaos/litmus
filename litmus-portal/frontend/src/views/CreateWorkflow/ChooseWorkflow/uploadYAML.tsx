@@ -8,7 +8,7 @@ import YAML from 'yaml';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { updateEngineName, updateNamespace } from '../../../utils/yamlUtils';
+import { addWeights, updateNamespaceForUpload } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
@@ -20,6 +20,7 @@ const UploadYAML = () => {
   const { t } = useTranslation();
   const [uploadedYAML, setUploadedYAML] = useState('');
   const [fileName, setFileName] = useState<string | null>('');
+  const [errorText, setErrorText] = useState('');
   const [uploadError, setUploadError] = useState(false);
   const workflowAction = useActions(WorkflowActions);
   const { namespace } = useSelector((state: RootState) => state.workflowData);
@@ -46,15 +47,18 @@ const UploadYAML = () => {
         setFileName(file.name);
         try {
           setUploadError(false);
-          const wfmanifest = updateEngineName(YAML.parse(readFile));
-          const updatedManifest = updateNamespace(wfmanifest, namespace);
+          const wfmanifest = updateNamespaceForUpload(readFile, namespace);
+          addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
           workflowAction.setWorkflowManifest({
-            manifest: YAML.stringify(updatedManifest),
+            manifest: YAML.stringify(wfmanifest, { prettyErrors: true }),
+            isUploaded: true,
           });
-        } catch {
+        } catch (err) {
           setUploadError(true);
+          setErrorText((err as Error).message);
           workflowAction.setWorkflowManifest({
             manifest: '',
+            isUploaded: false,
           });
         }
       });
@@ -73,15 +77,18 @@ const UploadYAML = () => {
         setUploadedYAML(response);
         try {
           setUploadError(false);
-          const wfmanifest = updateEngineName(YAML.parse(response));
-          const updatedManifest = updateNamespace(wfmanifest, namespace);
+          const wfmanifest = updateNamespaceForUpload(response, namespace);
+          addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
           workflowAction.setWorkflowManifest({
-            manifest: YAML.stringify(updatedManifest),
+            manifest: YAML.stringify(wfmanifest, { prettyErrors: true }),
+            isUploaded: true,
           });
-        } catch {
+        } catch (err) {
           setUploadError(true);
+          setErrorText((err as Error).message);
           workflowAction.setWorkflowManifest({
             manifest: '',
+            isUploaded: false,
           });
         }
       });
@@ -111,12 +118,13 @@ const UploadYAML = () => {
               height="20"
             />
             <Typography className={classes.errorText}>
-              {t('customWorkflow.createWorkflow.errorUpload')}
+              {t('customWorkflow.createWorkflow.errorUpload')} : {errorText}
             </Typography>
             <ButtonFilled
               className={classes.errorBtn}
               onClick={() => {
                 setUploadedYAML('');
+                setErrorText('');
                 setUploadError(false);
               }}
             >

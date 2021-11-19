@@ -17,6 +17,7 @@ import {
   PENDING,
   RUNNING,
   SUCCEEDED,
+  TERMINATED,
 } from '../../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 
@@ -44,6 +45,8 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
         return 'status-pending.svg';
       case NOTAVAILABLE:
         return 'status-NotAvailable.svg';
+      case TERMINATED:
+        return 'status-terminated.svg';
       default:
         return '';
     }
@@ -52,7 +55,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
   return (
     <>
       <div className={classes.animatedContainer}>
-        <div className={classes.workflowDataContainer}>
+        <div className={classes.workflowDataContainer} data-cy="workflowCard">
           <div>
             <div className={classes.statusDiv}>
               <img
@@ -101,6 +104,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}
+                data-cy="statsButton"
               >
                 <ObservabilityIcon />
               </IconButton>

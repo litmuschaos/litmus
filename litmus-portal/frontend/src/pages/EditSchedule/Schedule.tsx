@@ -381,10 +381,6 @@ const ScheduleWorkflow = () => {
     });
   }, [valueDef, value]);
 
-  useEffect(() => {
-    EditYaml();
-  }, [cronValue]);
-
   return (
     <>
       <BackButton />
@@ -751,14 +747,15 @@ const ScheduleWorkflow = () => {
         </ButtonOutlined>
         <ButtonFilled
           data-cy="VerifyButton"
-          onClick={() =>
+          onClick={() => {
+            EditYaml();
             history.push({
               pathname: `/workflows/schedule/${getProjectID()}/${fetchWorkflowNameFromManifest(
                 manifest
               )}`,
               search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
-            })
-          }
+            });
+          }}
         >
           {t('editSchedule.verify')}
         </ButtonFilled>

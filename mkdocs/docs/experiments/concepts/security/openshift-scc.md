@@ -33,22 +33,22 @@ By default applications would run under the <code>restricted</code> SCC. We can 
 
 <i>litmus-scc.yaml</i>
 ```bash
-
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
 allowHostDirVolumePlugin: true
 allowHostIPC: false
-allowHostNetwork: true
+allowHostNetwork: false
 allowHostPID: true
-allowHostPorts: true
+allowHostPorts: false
 allowPrivilegeEscalation: true
 allowPrivilegedContainer: true
 allowedCapabilities:
-- '*'
-apiVersion: security.openshift.io/v1
+- 'NET_ADMIN'
+- 'SYS_ADMIN'
 defaultAddCapabilities: null
 fsGroup:
   type: MustRunAs
 groups: []
-kind: SecurityContextConstraints
 metadata:
   name: litmus-scc
 priority: null

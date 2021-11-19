@@ -214,7 +214,7 @@ const WorkflowInfoStats: React.FC = () => {
       {/* Heading of the Page */}
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
-          <Typography className={classes.heading}>
+          <Typography className={classes.heading} data-cy="statsWorkflowName">
             {data?.ListWorkflow.workflows[0].workflow_name}
           </Typography>
           <Typography className={classes.subHeading}>
@@ -283,33 +283,35 @@ const WorkflowInfoStats: React.FC = () => {
                   <Loader />
                 </Center>
               ) : (
-                <CalendarHeatmap
-                  calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
-                  valueThreshold={valueThreshold}
-                  CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
-                  handleBinClick={(bin: any) => {
-                    if (bin) {
-                      if (bin?.bin?.workflowRunDetail.no_of_runs === 0) {
-                        setDataCheck(true);
-                        setShowStackBar(false);
-                        handleTableClose();
+                <div className={classes.heatmapParent} data-cy="statsHeatMap">
+                  <CalendarHeatmap
+                    calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
+                    valueThreshold={valueThreshold}
+                    CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
+                    handleBinClick={(bin: any) => {
+                      if (bin) {
+                        if (bin?.bin?.workflowRunDetail.no_of_runs === 0) {
+                          setDataCheck(true);
+                          setShowStackBar(false);
+                          handleTableClose();
+                        } else {
+                          setShowStackBar(true);
+                          handleTableClose();
+                          setBinResiliencyScore(bin.bin.value);
+                          setWorkflowRunDate(
+                            bin.bin.workflowRunDetail.date_stamp
+                          );
+                        }
                       } else {
-                        setShowStackBar(true);
+                        setShowStackBar(false);
+                        setDataCheck(false);
                         handleTableClose();
-                        setBinResiliencyScore(bin.bin.value);
-                        setWorkflowRunDate(
-                          bin.bin.workflowRunDetail.date_stamp
-                        );
+                        setWorkflowRunDate(0);
+                        setBinResiliencyScore(0);
                       }
-                    } else {
-                      setShowStackBar(false);
-                      setDataCheck(false);
-                      handleTableClose();
-                      setWorkflowRunDate(0);
-                      setBinResiliencyScore(0);
-                    }
-                  }}
-                />
+                    }}
+                  />
+                </div>
               )}
             </div>
             {/* Legend */}
