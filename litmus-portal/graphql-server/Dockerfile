@@ -8,6 +8,8 @@ ARG TARGETARCH
 
 ADD . /gql-server
 WORKDIR /gql-server
+RUN go mod download
+RUN go run github.com/99designs/gqlgen generate .
 
 ENV GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH}
