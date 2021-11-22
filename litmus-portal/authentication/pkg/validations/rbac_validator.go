@@ -10,17 +10,16 @@ import (
 func RbacValidator(uid string, projectID string,
 	requiredRoles []string, invitation string,
 	service services.ApplicationService) error {
-	// TODO: Check for user status validity
-	//user, err := service.GetUser(uid)
-	//fmt.Println(user)
-	//if err != nil {
-	//	log.Errorf("authgRPC Error: querying for user -  %s", err)
-	//	return err
-	//}
-	//if user.DeactivatedAt != nil {
-	//	log.Error("authgRPC Error: Deactivated User")
-	//	return errors.New("auth gRPC - Deactivated User")
-	//}
+
+	user, err := service.GetUser(uid)
+	if err != nil {
+		log.Errorf("authgRPC Error: querying for user -  %s", err)
+		return err
+	}
+	if user.DeactivatedAt != nil {
+		log.Error("authgRPC Error: Deactivated User")
+		return errors.New("auth gRPC - Deactivated User")
+	}
 
 
 	// Check for project permission validity
