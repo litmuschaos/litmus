@@ -52,3 +52,13 @@ func ValidatorGRPCRequest(client protos.AuthRpcServiceClient,
 	}
 	return nil
 }
+
+// GetProjectById returns the project details based on its uid
+func GetProjectById(client protos.AuthRpcServiceClient,
+	projectId string) (*protos.GetProjectByIdResponse, error) {
+	resp, err := client.GetProjectById(context.Background(), &protos.GetProjectByIdRequest{ProjectID: projectId})
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

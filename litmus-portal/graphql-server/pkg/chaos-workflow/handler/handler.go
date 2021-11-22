@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	grpc2 "google.golang.org/grpc"
 	"log"
 	"strconv"
 	"strings"
@@ -23,7 +25,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
@@ -871,7 +872,10 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 	if IsExist == true {
 		return nil, errors.New("Template already exists")
 	}
-	projectData, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", templateInput.ProjectID}})
+
+	var conn *grpc2.ClientConn
+	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	projectData, err := grpc.GetProjectById(client, templateInput.ProjectID)
 	if err != nil {
 		return nil, err
 	}

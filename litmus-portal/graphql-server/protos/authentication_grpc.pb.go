@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthRpcServiceClient interface {
 	ValidateRequest(ctx context.Context, in *ValidationRequest, opts ...grpc.CallOption) (*ValidationResponse, error)
+	GetProjectById(ctx context.Context, in *GetProjectByIdRequest, opts ...grpc.CallOption) (*GetProjectByIdResponse, error)
 }
 
 type authRpcServiceClient struct {
@@ -38,11 +39,21 @@ func (c *authRpcServiceClient) ValidateRequest(ctx context.Context, in *Validati
 	return out, nil
 }
 
+func (c *authRpcServiceClient) GetProjectById(ctx context.Context, in *GetProjectByIdRequest, opts ...grpc.CallOption) (*GetProjectByIdResponse, error) {
+	out := new(GetProjectByIdResponse)
+	err := c.cc.Invoke(ctx, "/protos.authRpcService/GetProjectById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthRpcServiceServer is the server API for AuthRpcService service.
 // All implementations must embed UnimplementedAuthRpcServiceServer
 // for forward compatibility
 type AuthRpcServiceServer interface {
 	ValidateRequest(context.Context, *ValidationRequest) (*ValidationResponse, error)
+	GetProjectById(context.Context, *GetProjectByIdRequest) (*GetProjectByIdResponse, error)
 	mustEmbedUnimplementedAuthRpcServiceServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedAuthRpcServiceServer struct {
 
 func (UnimplementedAuthRpcServiceServer) ValidateRequest(context.Context, *ValidationRequest) (*ValidationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateRequest not implemented")
+}
+func (UnimplementedAuthRpcServiceServer) GetProjectById(context.Context, *GetProjectByIdRequest) (*GetProjectByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProjectById not implemented")
 }
 func (UnimplementedAuthRpcServiceServer) mustEmbedUnimplementedAuthRpcServiceServer() {}
 
@@ -84,6 +98,24 @@ func _AuthRpcService_ValidateRequest_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthRpcService_GetProjectById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProjectByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthRpcServiceServer).GetProjectById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protos.authRpcService/GetProjectById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthRpcServiceServer).GetProjectById(ctx, req.(*GetProjectByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthRpcService_ServiceDesc is the grpc.ServiceDesc for AuthRpcService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -95,7 +127,11 @@ var AuthRpcService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ValidateRequest",
 			Handler:    _AuthRpcService_ValidateRequest_Handler,
 		},
+		{
+			MethodName: "GetProjectById",
+			Handler:    _AuthRpcService_GetProjectById_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "validator.proto",
+	Metadata: "authentication.proto",
 }
