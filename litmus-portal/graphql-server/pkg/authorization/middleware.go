@@ -12,7 +12,7 @@ type contextKey string
 const (
 	AuthKey    = contextKey("authorization")
 	UserClaim  = contextKey("user-claims")
-	CookieName = "token"
+	CookieName = "litmus-clc-token"
 )
 
 func Middleware(handler http.Handler) http.Handler {

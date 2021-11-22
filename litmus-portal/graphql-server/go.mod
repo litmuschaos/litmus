@@ -28,6 +28,8 @@ require (
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
+	google.golang.org/grpc v1.32.0
+	google.golang.org/protobuf v1.24.0
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.18.6
 	k8s.io/client-go v12.0.0+incompatible
