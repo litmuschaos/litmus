@@ -408,6 +408,7 @@ data:
   AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
   DB_SERVER: "mongodb://mongo-service:27017"
   VERSION: "ci"
+  SKIP_SSL_VERIFY: "false"
 ---
 apiVersion: v1
 kind: ConfigMap

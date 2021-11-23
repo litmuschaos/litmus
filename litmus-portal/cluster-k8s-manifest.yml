@@ -416,6 +416,7 @@ data:
   AGENT_SCOPE: cluster
   AGENT_NAMESPACE: litmus
   VERSION: "ci"
+  SKIP_SSL_VERIFY: "false"
   # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
   OIDC_ISSUER: "http://<Your Domain>:32000"
