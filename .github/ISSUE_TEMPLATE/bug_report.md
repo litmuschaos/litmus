@@ -20,6 +20,9 @@ labels: bug
 
 **What you expected to happen**:
 
+**Where is this stated?**
+<!-- provide additional information about the location that needs to be modified -->
+
 **How to reproduce it (as minimally and precisely as possible)**:
 
 **Anything else we need to know?**:
