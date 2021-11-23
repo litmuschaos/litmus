@@ -59,7 +59,7 @@ const TableData: React.FC<TableDataProps> = ({
               <div className={classes.email}>{row.email}</div>
             </div>
           </div>
-          <div>
+          <div data-cy="selectRole">
             {role}
             <IconButton
               aria-label="more"
@@ -80,6 +80,7 @@ const TableData: React.FC<TableDataProps> = ({
               onClose={handleClose}
             >
               <MenuItem
+                data-cy="editorRole"
                 onClick={() => {
                   setRole('Editor');
                   setAnchorEl(null);
@@ -112,6 +113,7 @@ const TableData: React.FC<TableDataProps> = ({
                 </div>
               </MenuItem>
               <MenuItem
+                data-cy="viewerRole"
                 onClick={() => {
                   setRole('Viewer');
                   setAnchorEl(null);
