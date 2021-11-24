@@ -150,6 +150,7 @@ type ClusterInput struct {
 	AgentScope     string        `json:"agent_scope"`
 	AgentNsExists  *bool         `json:"agent_ns_exists"`
 	AgentSaExists  *bool         `json:"agent_sa_exists"`
+	SkipSsl        *bool         `json:"skip_ssl"`
 	NodeSelector   *string       `json:"node_selector"`
 	Tolerations    []*Toleration `json:"tolerations"`
 }
