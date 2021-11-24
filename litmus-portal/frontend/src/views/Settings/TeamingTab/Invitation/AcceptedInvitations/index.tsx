@@ -116,7 +116,7 @@ const AcceptedInvitations: React.FC = () => {
                 {project.currentUserProjectRole}
               </Typography>
               <div className={classes.buttonDiv}>
-                <div data-cy="LeaveAcceptedProject">
+                <div data-cy="leaveAcceptedProject">
                   <ButtonFilled
                     className={classes.leaveProjectBtn}
                     onClick={() => {
