@@ -149,6 +149,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           keepMounted
           open={menuOpen}
           onClose={handleOptClose}
+          data-cy="agentMenu"
         >
           <MenuItem
             value="Copy_ID"
