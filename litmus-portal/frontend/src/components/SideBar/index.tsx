@@ -101,19 +101,21 @@ const SideBar: React.FC = () => {
             <WorkflowsIcon />
           </CustomisedListItem>
         </div>
-        <CustomisedListItem
-          key="targets"
-          handleClick={() => {
-            history.push({
-              pathname: `/targets`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
-          label="ChaosAgents"
-          selected={['targets', 'target-connect'].includes(pathName)}
-        >
-          <TargetsIcon />
-        </CustomisedListItem>
+        <div data-cy="targets">
+          <CustomisedListItem
+            key="targets"
+            handleClick={() => {
+              history.push({
+                pathname: `/targets`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+            label="ChaosAgents"
+            selected={['targets', 'target-connect'].includes(pathName)}
+          >
+            <TargetsIcon />
+          </CustomisedListItem>
+        </div>
         <div data-cy="myHub">
           <CustomisedListItem
             key="myhub"
