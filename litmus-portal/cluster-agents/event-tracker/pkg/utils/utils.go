@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 
 	"github.com/jmespath/go-jmespath"
@@ -69,17 +70,16 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
 			if err != nil {
-				log.Print(err)
+				logrus.Error(err)
 				return false
 			}
 
 			if condition.Operator == "Change" {
 				oldDataResult, err := jmespath.Search(condition.Key, oldData)
 				if err != nil {
-					log.Print(err)
+					logrus.Error(err)
 					return false
 				}
-
 
 				if newDataResult != oldDataResult {
 					final_result = true
@@ -103,13 +103,13 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
 			if err != nil {
-				log.Print(err)
+				logrus.Error(err)
 			}
 
 			if condition.Operator == "Change" {
 				oldDataResult, err := jmespath.Search(condition.Key, oldData)
 				if err != nil {
-					log.Print(err)
+					logrus.Error(err)
 					return false
 				}
 
@@ -125,7 +125,12 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 		}
 	}
 
-	log.Print(final_result)
+	if final_result {
+		logrus.Info("condition matched")
+	} else {
+		logrus.Info("condition not matched")
+
+	}
 	return final_result
 }
 
@@ -147,7 +152,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 	}
 
 	if len(deploymentConfigList.Items) == 0 {
-		log.Print("No event-tracker policy(s) found")
+		log.Print("No event-tracker policy(s) found in " + AgentNamespace + " namespace")
 		return nil
 	}
 
