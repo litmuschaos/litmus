@@ -6,8 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jmespath/go-jmespath"
 	litmuschaosv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
@@ -41,8 +42,8 @@ const (
 
 const (
 	StateFulSet = "statefulset"
-	Deployment = "deployment"
-	DaemonSet = "daemonset"
+	Deployment  = "deployment"
+	DaemonSet   = "daemonset"
 )
 
 func cases(key string, value string, operator string) bool {
@@ -129,8 +130,8 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 		logrus.Info("condition matched")
 	} else {
 		logrus.Info("condition not matched")
-
 	}
+
 	return final_result
 }
 
@@ -176,7 +177,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 
 		var (
 			newDataInterface interface{}
-			resourceName string
+			resourceName     string
 			oldDataInterface interface{}
 		)
 
@@ -260,7 +261,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 			return errors.New("resource not supported")
 		}
 
-		check := conditionChecker(etp, newDataInterface,oldDataInterface)
+		check := conditionChecker(etp, newDataInterface, oldDataInterface)
 		var result string
 		if check == true {
 			result = ConditionPassed

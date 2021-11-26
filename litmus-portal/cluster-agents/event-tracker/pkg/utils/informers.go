@@ -21,7 +21,6 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 
 	defer runtime.HandleCrash()
 
-	// label change -->ver (2) --> policy-replicas=1
 	deploymentInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		// When a resource gets updated
 		UpdateFunc: func(oldObj interface{}, newObj interface{}) {

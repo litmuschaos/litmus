@@ -34,9 +34,9 @@ type EventTrackerPolicySpec struct {
 }
 
 type Condition struct {
-	Key      string `json:"key,omitempty"`
+	Key      string  `json:"key,omitempty"`
 	Value    *string `json:"value,omitempty"`
-	Operator string `json:"operator,omitempty"`
+	Operator string  `json:"operator,omitempty"`
 }
 
 // EventTrackerPolicyStatus defines the observed state of EventTrackerPolicy
