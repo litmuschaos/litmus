@@ -179,7 +179,6 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
               disabled={
                 userRole === 'Viewer' ||
                 data.version === version ||
-                !data.is_active ||
                 data.version === ''
               }
             >
