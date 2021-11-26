@@ -21,6 +21,7 @@ type Cluster struct {
 	ClusterType        string        `bson:"cluster_type"`
 	Token              string        `bson:"token"`
 	IsRemoved          bool          `bson:"is_removed"`
+	SkipSSL            *bool         `bson:"skip_ssl"`
 	NodeSelector       *string       `bson:"node_selector"`
 	Tolerations        []*Toleration `bson:"tolerations,omitempty"`
 	StartTime          string        `bson:"start_time"`

@@ -41,10 +41,11 @@ const ProfileDropdown: React.FC = () => {
 
   // Run query to get the data in case it is not present in the JWT
   useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
+    skip: username === '',
     variables: { username },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
-      setuserEmail(data.getUser.email);
+      if (data) setuserEmail(data.getUser.email);
     },
   });
 
@@ -63,9 +64,14 @@ const ProfileDropdown: React.FC = () => {
   const initials = userInitials(username);
 
   return (
-    <div className={classes.profileDropdown} data-cy="headerProfileDropdown">
-      <IconButton edge="end" onClick={handleClick}>
-        <Avatar className={classes.avatarBackground}>{initials}</Avatar>
+    <div className={classes.profileDropdown}>
+      <IconButton edge="end" onClick={(event) => handleClick(event)}>
+        <Avatar
+          data-cy="headerProfileDropdown"
+          className={classes.avatarBackground}
+        >
+          {initials}
+        </Avatar>
       </IconButton>
       <Popover
         id={id}

@@ -217,7 +217,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             placement="bottom"
             title="User has been deactivated"
           >
-            <div>
+            <div data-cy="resendButton">
               <ButtonFilled
                 disabled={row.deactivated_at !== ''}
                 onClick={() => {
