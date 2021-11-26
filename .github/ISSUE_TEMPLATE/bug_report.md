@@ -20,8 +20,8 @@ labels: bug
 
 **What you expected to happen**:
 
-**Where is this stated?**
-<!-- provide additional information about the location that needs to be modified -->
+**Where can this issue be corrected? (optional)**
+<!-- provide additional information about the file location or directory that needs to be modified to fix this issue, if available -->
 
 **How to reproduce it (as minimally and precisely as possible)**:
 
