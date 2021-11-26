@@ -234,6 +234,7 @@ const TableData: React.FC<TableDataProps> = ({
         onClose={() => setOpenModal(false)}
         width="45%"
         height="fit-content"
+        data-cy="deleteDataSourceModal"
       >
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
