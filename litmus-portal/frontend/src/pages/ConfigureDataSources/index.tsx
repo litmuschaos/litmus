@@ -254,7 +254,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               onClick={() =>
                 page === 2 && !disabled ? setMutate(true) : setPage(2)
               }
-              data-cy="dataSourceControl"
+              data-cy="dataSourceControlButton"
             >
               <Typography className={classes.buttonText}>
                 {page === 2

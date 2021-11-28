@@ -321,7 +321,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 className={classes.btnImg}
               />
               <Typography
-                data-cy="configureDashboard"
+                data-cy="configureDatasource"
                 className={classes.btnText}
               >
                 {t('monitoringDashboard.monitoringDashboardTable.configure')}
@@ -367,7 +367,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 className={classes.btnImg}
               />
               <Typography
-                data-cy="deleteDashboard"
+                data-cy="deleteDatasource"
                 className={`${classes.btnText} ${classes.deleteText}`}
               >
                 {t('monitoringDashboard.monitoringDashboardTable.delete')}

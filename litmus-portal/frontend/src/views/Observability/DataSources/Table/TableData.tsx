@@ -197,7 +197,7 @@ const TableData: React.FC<TableDataProps> = ({
                 className={classes.btnImg}
               />
               <Typography
-                data-cy="configureDashboard"
+                data-cy="configureDatasource"
                 className={classes.btnText}
               >
                 {t('monitoringDashboard.dataSourceTable.configure')}
@@ -220,7 +220,7 @@ const TableData: React.FC<TableDataProps> = ({
                 className={classes.btnImg}
               />
               <Typography
-                data-cy="deleteDashboard"
+                data-cy="deleteDatasource"
                 className={`${classes.btnText} ${classes.deleteText}`}
               >
                 {t('monitoringDashboard.dataSourceTable.delete')}
