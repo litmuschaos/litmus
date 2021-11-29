@@ -114,6 +114,8 @@ func GetServerEndpoint() (string, error) {
 			IPAddress = getIng.Spec.Rules[0].Host
 		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].IP != "" {
 			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].Hostname != "" {
+			IPAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
 		} else {
 			return "", errors.New("IP Address or HostName not generated")
 		}
