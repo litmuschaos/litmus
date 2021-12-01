@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
@@ -9,6 +8,9 @@ import (
 	"litmus/litmus-portal/authentication/pkg/validations"
 	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 
 	//"google.golang.org/grpc"
 
@@ -214,25 +216,25 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		//
-		//var conn *grpc.ClientConn
-		//client, conn := utils.GetProjectGRPCSvcClient(conn)
-		//err = utils.ProjectInitializer(client, pID)
-		//
-		//defer func(conn *grpc.ClientConn) {
-		//	err := conn.Close()
-		//	if err != nil {
-		//		log.Errorf("could not close gRPC client connection: %v", err)
-		//		c.JSON(500, "could not close gRPC client connection")
-		//		return
-		//	}
-		//}(conn)
-		//
-		//if err != nil {
-		//	log.Errorf("could not initialize project %v: %v", userRequest.ProjectName, err)
-		//	c.JSON(500, "could not initialize project")
-		//	return
-		//}
+
+		var conn *grpc.ClientConn
+		client, conn := utils.GetProjectGRPCSvcClient(conn)
+		err = utils.ProjectInitializer(client, pID)
+
+		defer func(conn *grpc.ClientConn) {
+			err := conn.Close()
+			if err != nil {
+				log.Errorf("could not close gRPC client connection: %v", err)
+				c.JSON(500, "could not close gRPC client connection")
+				return
+			}
+		}(conn)
+
+		if err != nil {
+			log.Errorf("could not initialize project %v: %v", userRequest.ProjectName, err)
+			c.JSON(500, "could not initialize project")
+			return
+		}
 
 		c.JSON(200, gin.H{"data": newProject.GetProjectOutput()})
 

@@ -21,7 +21,6 @@ func RbacValidator(uid string, projectID string,
 		return errors.New("auth gRPC - Deactivated User")
 	}
 
-
 	// Check for project permission validity
 	filter := bson.D{
 		{"_id", projectID},

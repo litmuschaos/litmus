@@ -167,15 +167,6 @@ type CreateMyHub struct {
 	SSHPublicKey  *string  `json:"SSHPublicKey"`
 }
 
-type CreateUserInput struct {
-	Username    string  `json:"username"`
-	Email       *string `json:"email"`
-	CompanyName *string `json:"company_name"`
-	Name        *string `json:"name"`
-	UserID      string  `json:"userID"`
-	Role        string  `json:"role"`
-}
-
 type DSInput struct {
 	DsID              *string `json:"ds_id"`
 	DsName            string  `json:"ds_name"`
@@ -337,23 +328,6 @@ type ManifestTemplate struct {
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
-type Member struct {
-	UserID        string     `json:"user_id"`
-	UserName      string     `json:"user_name"`
-	Name          string     `json:"name"`
-	Email         string     `json:"email"`
-	Role          MemberRole `json:"role"`
-	Invitation    string     `json:"invitation"`
-	JoinedAt      string     `json:"joined_at"`
-	DeactivatedAt string     `json:"deactivated_at"`
-}
-
-type MemberInput struct {
-	ProjectID string      `json:"project_id"`
-	UserID    string      `json:"user_id"`
-	Role      *MemberRole `json:"role"`
-}
-
 type MemberStat struct {
 	Owner *Owner `json:"Owner"`
 	Total int    `json:"Total"`
@@ -449,16 +423,6 @@ type PortalDashboardData struct {
 	DashboardData string `json:"dashboard_data"`
 }
 
-type Project struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Members   []*Member `json:"members"`
-	State     *string   `json:"state"`
-	CreatedAt string    `json:"created_at"`
-	UpdatedAt string    `json:"updated_at"`
-	RemovedAt string    `json:"removed_at"`
-}
-
 type ProjectData struct {
 	Name      string        `json:"Name"`
 	Workflows *WorkflowStat `json:"Workflows"`
@@ -528,13 +492,6 @@ type UpdateMyHub struct {
 	SSHPublicKey  *string  `json:"SSHPublicKey"`
 }
 
-type UpdateUserInput struct {
-	ID          string  `json:"id"`
-	Name        *string `json:"name"`
-	Email       *string `json:"email"`
-	CompanyName *string `json:"company_name"`
-}
-
 type UsageData struct {
 	Projects     []*ProjectData `json:"Projects"`
 	TotalEntries int            `json:"TotalEntries"`
@@ -551,20 +508,6 @@ type UsageQuery struct {
 type UsageSortInput struct {
 	Field      UsageSort `json:"Field"`
 	Descending bool      `json:"Descending"`
-}
-
-type User struct {
-	ID              string     `json:"id"`
-	Username        string     `json:"username"`
-	Email           *string    `json:"email"`
-	IsEmailVerified *bool      `json:"is_email_verified"`
-	CompanyName     *string    `json:"company_name"`
-	Name            *string    `json:"name"`
-	Projects        []*Project `json:"projects"`
-	Role            *string    `json:"role"`
-	CreatedAt       string     `json:"created_at"`
-	UpdatedAt       string     `json:"updated_at"`
-	DeactivatedAt   string     `json:"deactivated_at"`
 }
 
 type WeightagesInput struct {
@@ -1029,6 +972,47 @@ func (e *AuthType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Invitation string
+
+const (
+	InvitationAccepted Invitation = "Accepted"
+	InvitationPending  Invitation = "Pending"
+)
+
+var AllInvitation = []Invitation{
+	InvitationAccepted,
+	InvitationPending,
+}
+
+func (e Invitation) IsValid() bool {
+	switch e {
+	case InvitationAccepted, InvitationPending:
+		return true
+	}
+	return false
+}
+
+func (e Invitation) String() string {
+	return string(e)
+}
+
+func (e *Invitation) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Invitation(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Invitation", str)
+	}
+	return nil
+}
+
+func (e Invitation) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
