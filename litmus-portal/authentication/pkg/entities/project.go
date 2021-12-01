@@ -12,6 +12,21 @@ type Project struct {
 	RemovedAt string    `bson:"removed_at"`
 }
 
+type Owner struct {
+	UserId   string `bson:"user_id"`
+	Username string `bson:"username"`
+}
+type MemberStat struct {
+	Owner *[]Owner `bson:"owner"`
+	Total int      `bson:"total"`
+}
+
+type ProjectStats struct {
+	Name      string      `bson:"name"`
+	ProjectId string      `bson:"_id"`
+	Members   *MemberStat `bson:"memberStat"`
+}
+
 // Member contains the required fields to be stored in the database for a member
 type Member struct {
 	UserID        string     `bson:"user_id"`

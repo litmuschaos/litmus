@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"go.mongodb.org/mongo-driver/mongo"
+	"fmt"
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
@@ -9,6 +9,8 @@ import (
 	"litmus/litmus-portal/authentication/pkg/validations"
 	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 
 	//"google.golang.org/grpc"
 
@@ -129,6 +131,30 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		c.JSON(200, gin.H{"data": outputProjects})
+	}
+}
+
+func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role := c.MustGet("role").(string)
+		if role != "admin" {
+			c.JSON(200, gin.H{
+				"message": "Permission denied, user is not admin",
+			})
+		}
+		project, err := service.GetProjectStats()
+		if project == nil {
+			c.JSON(200, gin.H{
+				"message": "No projects found",
+			})
+		}
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		fmt.Println(project)
+		c.JSON(200, gin.H{"data": project})
 	}
 }
 

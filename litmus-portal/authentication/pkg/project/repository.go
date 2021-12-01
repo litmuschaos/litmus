@@ -3,8 +3,10 @@ package project
 import (
 	"context"
 	"errors"
+	"fmt"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
+	"log"
 	"strconv"
 	"time"
 
@@ -18,6 +20,7 @@ type Repository interface {
 	GetProjectByProjectID(projectID string) (*entities.Project, error)
 	GetProjects(query bson.D) ([]*entities.Project, error)
 	GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error)
+	GetProjectStats() ([]*entities.ProjectStats, error)
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
@@ -96,6 +99,48 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 	}
 
 	return projects, err
+}
+
+func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
+
+	pipeline := mongo.Pipeline{
+		bson.D{{"$project", bson.M{
+			"name": 1,
+			"memberStat": bson.M{
+				"owner": bson.M{
+					"$map": bson.M{
+						"input": bson.M{"$filter": bson.M{
+							"input": "$members",
+							"as":    "members",
+							"cond": bson.M{
+								"$eq": bson.A{"$$members.role", "Owner"},
+							}}},
+						"as": "owner",
+						"in": bson.M{
+							"user_id":  "$$owner.user_id",
+							"username": "$$owner.username",
+						}}},
+				"total": bson.M{"$size": "$members"},
+			},
+		},
+		}},
+	}
+	result, err := r.Collection.Aggregate(context.Background(), pipeline, nil)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var data []*entities.ProjectStats
+	for result.Next(context.TODO()) {
+		res := entities.ProjectStats{}
+		if err := result.Decode(&res); err != nil {
+			log.Fatal(err)
+		}
+		data = append(data, &res)
+		fmt.Println("res", res.Members.Owner)
+	}
+	return data, nil
 }
 
 // CreateProject creates a new project for a user
