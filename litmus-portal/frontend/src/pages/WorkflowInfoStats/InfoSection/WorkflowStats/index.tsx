@@ -182,6 +182,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                   value={showWorkflowStats ? 0 : 1}
                   onChange={handleStatsChange}
                   className={classes.dropDown}
+                  data-cy="statsDropdown"
                 >
                   <MenuItem value={0}>Workflow Runs</MenuItem>
                   <MenuItem value={1}>Experiments</MenuItem>
