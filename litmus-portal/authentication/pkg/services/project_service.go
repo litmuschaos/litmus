@@ -12,6 +12,7 @@ type projectService interface {
 	GetProjectByProjectID(projectID string) (*entities.Project, error)
 	GetProjects(query bson.D) ([]*entities.Project, error)
 	GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error)
+	GetProjectStats() ([]*entities.ProjectStats, error)
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
@@ -31,6 +32,10 @@ func (a applicationService) GetProjects(query bson.D) ([]*entities.Project, erro
 
 func (a applicationService) GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error) {
 	return a.projectRepository.GetProjectsByUserID(uid, isOwner)
+}
+
+func (a applicationService) GetProjectStats() ([]*entities.ProjectStats, error) {
+	return a.projectRepository.GetProjectStats()
 }
 
 func (a applicationService) CreateProject(project *entities.Project) error {

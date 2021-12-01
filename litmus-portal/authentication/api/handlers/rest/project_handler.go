@@ -12,8 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 
-	//"google.golang.org/grpc"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -131,6 +129,29 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		c.JSON(200, gin.H{"data": outputProjects})
+	}
+}
+
+func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role := c.MustGet("role").(string)
+		if role != "admin" {
+			c.JSON(400, gin.H{
+				"message": "Permission denied, user is not admin",
+			})
+		}
+		project, err := service.GetProjectStats()
+		if project == nil {
+			c.JSON(200, gin.H{
+				"message": "No projects found",
+			})
+		}
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{"data": project})
 	}
 }
 

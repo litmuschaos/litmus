@@ -332,8 +332,6 @@ type ComplexityRoot struct {
 
 	ProjectData struct {
 		Agents    func(childComplexity int) int
-		Members   func(childComplexity int) int
-		Name      func(childComplexity int) int
 		ProjectID func(childComplexity int) int
 		Workflows func(childComplexity int) int
 	}
@@ -2266,20 +2264,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectData.Agents(childComplexity), true
-
-	case "ProjectData.Members":
-		if e.complexity.ProjectData.Members == nil {
-			break
-		}
-
-		return e.complexity.ProjectData.Members(childComplexity), true
-
-	case "ProjectData.Name":
-		if e.complexity.ProjectData.Name == nil {
-			break
-		}
-
-		return e.complexity.ProjectData.Name(childComplexity), true
 
 	case "ProjectData.ProjectId":
 		if e.complexity.ProjectData.ProjectID == nil {
@@ -4952,71 +4936,72 @@ type Subscription {
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
-    Schedules : Int!
-    Runs      : Int!
-    ExpRuns   : Int!
+  Schedules: Int!
+  Runs: Int!
+  ExpRuns: Int!
 }
 
-type AgentStat{
-    Ns      : Int!
-    Cluster : Int!
-    Total   : Int!
-    Active  : Int!
+type AgentStat {
+  Ns: Int!
+  Cluster: Int!
+  Total: Int!
+  Active: Int!
 }
 
 type Owner {
-    UserId   : ID!
-    Username : String!
-    Name     : String!
+  UserId: ID!
+  Username: String!
+  Name: String!
 }
 
 type MemberStat {
-    Owner : Owner!
-    Total : Int!
+  Owner: Owner!
+  Total: Int!
 }
 
 type ProjectData {
-    Name      : String!
-    Workflows : WorkflowStat!
-    Agents    : AgentStat!
-    ProjectId : String!
-    Members   : MemberStat!
+  # Name: String!
+  Workflows: WorkflowStat!
+  Agents: AgentStat!
+  ProjectId: String!
+  # Members   : MemberStat!
 }
 
-type TotalCount{
-    Projects  : Int!
-    Users     : Int!
-    Agents    : AgentStat!
-    Workflows : WorkflowStat!
+type TotalCount {
+  Projects: Int!
+  Users: Int!
+  Agents: AgentStat!
+  Workflows: WorkflowStat!
 }
 
 type UsageData {
-    Projects   : [ProjectData]!
-    TotalEntries : Int!
-    TotalCount : TotalCount!
+  Projects: [ProjectData]!
+  TotalEntries: Int!
+  TotalCount: TotalCount!
 }
 
 enum UsageSort {
-    Project
-    Owner
-    Agents
-    Schedules
-    WorkflowRuns
-    ExperimentRuns
-    TeamMembers
+  Project
+  Owner
+  Agents
+  Schedules
+  WorkflowRuns
+  ExperimentRuns
+  TeamMembers
 }
 
 input UsageSortInput {
-    Field: UsageSort!
-    Descending: Boolean!
+  Field: UsageSort!
+  Descending: Boolean!
 }
 
-input UsageQuery{
-    Pagination: Pagination
-    DateRange: DateRange!
-    Sort: UsageSortInput
-    SearchProject: String
-}`, BuiltIn: false},
+input UsageQuery {
+  Pagination: Pagination
+  DateRange: DateRange!
+  Sort: UsageSortInput
+  SearchProject: String
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
@@ -13594,40 +13579,6 @@ func (ec *executionContext) _PortalDashboardData_dashboard_data(ctx context.Cont
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProjectData_Name(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ProjectData",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ProjectData_Workflows(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -13728,40 +13679,6 @@ func (ec *executionContext) _ProjectData_ProjectId(ctx context.Context, field gr
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ProjectData_Members(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ProjectData",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Members, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.MemberStat)
-	fc.Result = res
-	return ec.marshalNMemberStat2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberStat(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Provider_Name(ctx context.Context, field graphql.CollectedField, obj *model.Provider) (ret graphql.Marshaler) {
@@ -25926,11 +25843,6 @@ func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionS
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ProjectData")
-		case "Name":
-			out.Values[i] = ec._ProjectData_Name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "Workflows":
 			out.Values[i] = ec._ProjectData_Workflows(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -25943,11 +25855,6 @@ func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionS
 			}
 		case "ProjectId":
 			out.Values[i] = ec._ProjectData_ProjectId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "Members":
-			out.Values[i] = ec._ProjectData_Members(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28742,20 +28649,6 @@ func (ec *executionContext) marshalNManifestTemplate2ᚖgithubᚗcomᚋlitmuscha
 		return graphql.Null
 	}
 	return ec._ManifestTemplate(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNMemberStat2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberStat(ctx context.Context, sel ast.SelectionSet, v model.MemberStat) graphql.Marshaler {
-	return ec._MemberStat(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMemberStat2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberStat(ctx context.Context, sel ast.SelectionSet, v *model.MemberStat) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._MemberStat(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNMetadata2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetadata(ctx context.Context, sel ast.SelectionSet, v model.Metadata) graphql.Marshaler {

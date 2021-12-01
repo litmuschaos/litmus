@@ -18,6 +18,7 @@ import (
 func GetUsage(ctx context.Context, query model.UsageQuery) (*model.UsageData, error) {
 	data, err := usageHelper(ctx, query)
 	if err != nil {
+		fmt.Println("error GETUSAGE", err)
 		return nil, err
 	}
 	var Projects []*model.ProjectData
@@ -44,10 +45,12 @@ func GetUsage(ctx context.Context, query model.UsageQuery) (*model.UsageData, er
 }
 
 func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, error) {
+
 	pagination := bson.A{}
 	project := bson.A{}
 	startTime, err := strconv.Atoi(query.DateRange.StartDate)
 	if err != nil {
+		fmt.Println("start time err", err)
 		return AggregateData{}, errors.New("invalid start time")
 	}
 	endTime := int(time.Now().Unix())
@@ -69,10 +72,10 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 		}
 		orderField := ""
 		switch query.Sort.Field {
-		case model.UsageSortProject:
-			orderField = "name"
-		case model.UsageSortOwner:
-			orderField = "members.owner.username"
+		//case model.UsageSortProject:
+		//	orderField = "name"
+		//case model.UsageSortOwner:
+		//	orderField = "members.owner.username"
 		case model.UsageSortAgents:
 			orderField = "agents.total"
 		case model.UsageSortSchedules:
@@ -81,8 +84,8 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 			orderField = "workflows.runs"
 		case model.UsageSortExperimentRuns:
 			orderField = "workflows.expRuns"
-		case model.UsageSortTeamMembers:
-			orderField = "members.total"
+		// case model.UsageSortTeamMembers:
+		// 	orderField = "members.total"
 		default:
 			return AggregateData{}, errors.New("invalid sort field")
 		}
@@ -91,9 +94,17 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 	if query.Pagination != nil {
 		project = append(project, bson.M{"$skip": query.Pagination.Page * query.Pagination.Limit}, bson.M{"$limit": query.Pagination.Limit})
 	}
-	project = append(project, bson.M{"$project": bson.M{"_id": 0}})
+	project = append(project, bson.M{"$project": bson.M{"project_id": 0}})
 	pagination = append(pagination, bson.M{"$count": "totalEntries"})
 	pipeline := mongo.Pipeline{
+		// Group by cluster using project ID
+		bson.D{
+			{
+				"$group", bson.M{
+					"_id": "$project_id",
+				},
+			},
+		},
 		bson.D{
 			{"$lookup", bson.M{
 				"from":         "cluster-collection",
@@ -154,24 +165,24 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 					},
 				}}}}},
 		bson.D{{"$addFields", bson.M{
-			"memberStat": bson.M{
-				"owner": bson.M{
-					"$mergeObjects": bson.M{
-						"$map": bson.M{
-							"input": bson.M{"$filter": bson.M{
-								"input": "$members",
-								"as":    "members",
-								"cond": bson.M{
-									"$eq": bson.A{"$$members.role", "Owner"},
-								}}},
-							"as": "owner",
-							"in": bson.M{
-								"user_id":  "$$owner.user_id",
-								"username": "$$owner.username",
-								"name":     "$$owner.name",
-							}}}},
-				"total": bson.M{"$size": "$members"},
-			},
+			//"memberStat": bson.M{
+			//	"owner": bson.M{
+			//		"$mergeObjects": bson.M{
+			//			"$map": bson.M{
+			//				"input": bson.M{"$filter": bson.M{
+			//					"input": "$members",
+			//					"as":    "members",
+			//					"cond": bson.M{
+			//						"$eq": bson.A{"$$members.role", "Owner"},
+			//					}}},
+			//				"as": "owner",
+			//				"in": bson.M{
+			//					"user_id":  "$$owner.user_id",
+			//					"username": "$$owner.username",
+			//					"name":     "$$owner.name",
+			//				}}}},
+			//	"total": bson.M{"$size": "$members"},
+			//},
 			"agents": bson.M{"ns": bson.M{
 				"$size": bson.M{
 					"$filter": bson.M{
@@ -234,11 +245,11 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 				"expRuns": bson.M{"$sum": "$wfData.total_experiments"},
 			}}}},
 		bson.D{{"$project", bson.M{
-			"project_id": "$_id",
+			"project_id": 1,
 			"name":       1,
 			"workflows":  1,
-			"members":    "$memberStat",
-			"agents":     1,
+			//"members":    "$memberStat",
+			"agents": 1,
 		}}},
 		bson.D{{
 			"$facet", bson.M{
@@ -246,8 +257,8 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 				"pagination": pagination,
 				"totalCount": bson.A{
 					bson.M{"$group": bson.M{"_id": 0,
-						"projects":  bson.M{"$sum": 1},
-						"users":     bson.M{"$sum": 1},
+						"projects": bson.M{"$sum": 1},
+						//"users":     bson.M{"$sum": 1},
 						"ns":        bson.M{"$sum": "$agents.ns"},
 						"cluster":   bson.M{"$sum": "$agents.cluster"},
 						"total":     bson.M{"$sum": "$agents.total"},
@@ -271,10 +282,14 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 	}
 	cursor, err := dbOperationsProject.GetAggregateProjects(ctx, pipeline, nil)
 	if err != nil {
+		fmt.Println("query error", err)
 		return AggregateData{}, err
 	}
 	data := []AggregateData{}
 	err = cursor.All(ctx, &data)
+	fmt.Println("projects: ", data[0].Projects[0].ProjectID)
+	fmt.Println("workflows: ", *data[0].TotalCount[0].Workflows)
+	fmt.Println("agents: ", *data[0].TotalCount[0].Agents)
 	if err != nil {
 		return AggregateData{}, err
 	}

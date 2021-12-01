@@ -20,6 +20,22 @@ export interface Project {
   RemovedAt: string;
 }
 
+export interface Owner {
+  UserId: string;
+  Username: string;
+}
+
+export interface MemberData {
+  Owner: Owner[];
+  Total: number;
+}
+
+export interface ProjectStats {
+  Name: string;
+  ProjectId: string;
+  Members: MemberData;
+}
+
 export interface UserDetails {
   username: string;
   projects: Project[];

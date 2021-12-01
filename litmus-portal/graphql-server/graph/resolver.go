@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 )
@@ -16,6 +15,7 @@ import (
 type Resolver struct{}
 
 func NewConfig() generated.Config {
+
 	config := generated.Config{Resolvers: &Resolver{}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)
@@ -24,6 +24,11 @@ func NewConfig() generated.Config {
 			return nil, err
 		}
 		newCtx := context.WithValue(ctx, authorization.UserClaim, user)
+		// var x model.UsageQuery
+		// x.DateRange = &model.DateRange{
+		// 	StartDate: "1635942521",
+		// }
+		// _, err = usage.GetUsage(newCtx, x)
 		return next(newCtx)
 	}
 
