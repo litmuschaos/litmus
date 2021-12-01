@@ -716,7 +716,7 @@ export const GLOBAL_PROJECT_DATA = gql`
         Projects
       }
       Projects {
-        Name
+        ProjectId
         Workflows {
           Schedules
           ExpRuns
@@ -727,13 +727,13 @@ export const GLOBAL_PROJECT_DATA = gql`
           Ns
           Cluster
         }
-        Members {
-          Owner {
-            Name
-            Username
-          }
-          Total
-        }
+        # Members {
+        #   Owner {
+        #     Name
+        #     Username
+        #   }
+        #   Total
+        # }
       }
     }
   }

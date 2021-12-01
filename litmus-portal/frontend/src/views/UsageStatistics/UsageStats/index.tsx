@@ -2,7 +2,9 @@ import { useLazyQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
+import config from '../../../config';
 import { GET_GLOBAL_STATS } from '../../../graphql';
+import { getToken } from '../../../utils/auth';
 import Card from './Cards';
 import useStyles from './styles';
 
@@ -29,6 +31,55 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
     });
   }, [start_time, end_time]);
 
+  const [projectCount, setProjectCount] = React.useState<number>(0);
+  const [userCount, setUserCount] = React.useState<number>(0);
+
+  const getProjectStats = () => {
+    fetch(`${config.auth.url}/get_projects_stats`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          if (data.data) {
+            setProjectCount(data.data?.length);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const fetchUsers = () => {
+    fetch(`${config.auth.url}/users`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        setUserCount(res?.length);
+      })
+
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  React.useEffect(() => {
+    getProjectStats();
+    fetchUsers();
+  }, []);
   return (
     <div className={classes.cardDiv}>
       {loading ? (
@@ -40,14 +91,14 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
             header={t('usage.card.userHeader')}
             subtitle={t('usage.card.userSubtitle')}
             color={classes.usersData}
-            data={data?.UsageQuery.TotalCount.Users}
+            data={userCount}
           />
           <Card
             image="./icons/viewProjects.svg"
             header={t('usage.card.projectHeader')}
             subtitle={t('usage.card.projectSubtitle')}
             color={classes.projectData}
-            data={data?.UsageQuery.TotalCount.Projects}
+            data={projectCount}
           />
           <Card
             image="./icons/targets.svg"
