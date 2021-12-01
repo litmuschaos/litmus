@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	"log"
 	"strconv"
 	"time"
@@ -29,6 +28,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"

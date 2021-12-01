@@ -460,11 +460,9 @@ type Project struct {
 }
 
 type ProjectData struct {
-	Name      string        `json:"Name"`
 	Workflows *WorkflowStat `json:"Workflows"`
 	Agents    *AgentStat    `json:"Agents"`
 	ProjectID string        `json:"ProjectId"`
-	Members   *MemberStat   `json:"Members"`
 }
 
 type Provider struct {

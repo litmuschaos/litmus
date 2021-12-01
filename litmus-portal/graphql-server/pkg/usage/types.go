@@ -21,11 +21,11 @@ type MemberStat struct {
 	Total int    `bson:"total"`
 }
 type ProjectData struct {
-	Name      string        `bson:"name"`
+	// Name      string        `bson:"name"`
 	Workflows *WorkflowStat `bson:"workflows"`
 	Agents    *AgentStat    `bson:"agents"`
-	ProjectId string        `bson:"project_id"`
-	Members   *MemberStat   `bson:"members"`
+	ProjectID string        `bson:"_id"`
+	// Members   *MemberStat   `bson:"members"`
 }
 
 type Pagination struct {
@@ -33,8 +33,8 @@ type Pagination struct {
 }
 
 type TotalCount struct {
-	Projects  int           `bson:"projects"`
-	Users     int           `bson:"users"`
+	Projects int `bson:"projects"`
+	// Users     int           `bson:"users"`
 	Agents    *AgentStat    `bson:"agents"`
 	Workflows *WorkflowStat `bson:"workflows"`
 }
