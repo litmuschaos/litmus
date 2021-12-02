@@ -6,6 +6,8 @@ package graph
 import (
 	"context"
 	"errors"
+	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"log"
 	"strconv"
 	"time"
@@ -466,12 +468,11 @@ func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID st
 }
 
 func (r *queryResolver) UsageQuery(ctx context.Context, query model.UsageQuery) (*model.UsageData, error) {
-	// claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
-	// if claims["role"].(string) != "admin" {
-	// 	return nil, errors.New("only portal admin access")
-	// }
-	// return usage.GetUsage(ctx, query)
-	return nil, nil
+	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
+	if claims["role"].(string) != "admin" {
+		return nil, errors.New("only portal admin access")
+	}
+	return usage.GetUsage(ctx, query)
 }
 
 func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {

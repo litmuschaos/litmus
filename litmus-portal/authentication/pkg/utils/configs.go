@@ -24,7 +24,7 @@ var (
 	DBName                 = "auth"
 	Port                   = ":3000"
 	GrpcPort               = ":3030"
-	UserCollection         = "usercredentials"
+	UserCollection         = "users"
 	ProjectCollection      = "project"
 	UsernameField          = "username"
 	PasswordEncryptionCost = 15

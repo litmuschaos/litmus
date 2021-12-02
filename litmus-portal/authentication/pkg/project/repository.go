@@ -101,8 +101,8 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 	return projects, err
 }
 
+// GetProjectStats returns stats related to projects in the DB
 func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
-
 	pipeline := mongo.Pipeline{
 		bson.D{{"$project", bson.M{
 			"name": 1,
@@ -113,14 +113,21 @@ func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
 							"input": "$members",
 							"as":    "members",
 							"cond": bson.M{
-								"$eq": bson.A{"$$members.role", "Owner"},
+								"$eq": bson.A{"$$members.role", entities.RoleOwner},
 							}}},
 						"as": "owner",
 						"in": bson.M{
 							"user_id":  "$$owner.user_id",
 							"username": "$$owner.username",
 						}}},
-				"total": bson.M{"$size": "$members"},
+				"total": bson.M{"$size": bson.M{
+					"$filter": bson.M{
+						"input": "$members",
+						"as":    "members",
+						"cond": bson.M{
+							"$eq": bson.A{"$$members.invitation", entities.AcceptedInvitation},
+						},
+					}}},
 			},
 		},
 		}},
@@ -138,7 +145,6 @@ func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
 			log.Fatal(err)
 		}
 		data = append(data, &res)
-		fmt.Println("res", res.Members.Owner)
 	}
 	return data, nil
 }

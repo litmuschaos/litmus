@@ -132,10 +132,11 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats is used to retrive stats related to projects in the DB
 func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role := c.MustGet("role").(string)
-		if role != "admin" {
+		if role != string(entities.RoleAdmin) {
 			c.JSON(400, gin.H{
 				"message": "Permission denied, user is not admin",
 			})
