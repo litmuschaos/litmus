@@ -109,16 +109,20 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
       {projectOther.length ? (
         projectOther.map((project) => (
           <div
-            data-cy="receivedInvitationModal"
+            data-cy="acceptedInvitationRow"
             className={classes.rootDiv}
             key={`${project}`}
           >
             <Paper className={classes.root}>
               <div className={classes.projectDiv}>
-                <Typography className={classes.projectName}>
+                <Typography
+                  data-cy="acceptedProjectName"
+                  className={classes.projectName}
+                >
                   {project.projectDetails.Name}
                 </Typography>
                 <IconButton
+                  data-cy="viewAcceptedProject"
                   className={classes.viewProject}
                   onClick={() => {
                     history.push({
@@ -134,12 +138,15 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
                   </Typography>
                 </IconButton>
               </div>
-              <Typography className={classes.projectRole}>
+              <Typography
+                data-cy="roleInAcceptedProject"
+                className={classes.projectRole}
+              >
                 {t('settings.teamingTab.invitation.acceptedInvitation.role')}:{' '}
                 {project.currentUserProjectRole}
               </Typography>
               <div className={classes.buttonDiv}>
-                <div data-cy="LeaveProject">
+                <div data-cy="leaveAcceptedProject">
                   <ButtonFilled
                     className={classes.leaveProjectBtn}
                     onClick={() => {

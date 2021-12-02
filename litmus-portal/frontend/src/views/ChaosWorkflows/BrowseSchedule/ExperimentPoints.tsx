@@ -16,8 +16,8 @@ const ExperimentPoints: React.FC<ExperimentPointsProps> = ({
   return (
     <>
       <div className={classes.weightInfo}>
-        <Typography>{expName}</Typography>
-        <Typography className={classes.points}>
+        <Typography data-cy="expName">{expName}</Typography>
+        <Typography className={classes.points} data-cy="expWeight">
           {weight === 1 || 0 ? `${weight} point` : `${weight} points`}
         </Typography>
       </div>

@@ -129,7 +129,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             <Typography className={classes.cardText}>
               {isSingleRun ? 'Experiment Statistics' : 'Workflow Statistics'}
             </Typography>
-            <div className={classes.radialChart}>
+            <div className={classes.radialChart} data-cy="statsRadialChart">
               <RadialChart
                 legendTableHeight={isSingleRun ? 160 : NaN}
                 radialData={graphData}
@@ -149,7 +149,10 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             <Typography className={classes.cardText}>
               {isSingleRun ? 'Resilience Score' : 'Average Resilience Score'}
             </Typography>
-            <div className={classes.radialProgressChart}>
+            <div
+              className={classes.radialProgressChart}
+              data-cy="statsResScoreChart"
+            >
               <RadialProgressChart
                 radialData={progressGraphData}
                 semiCircle
@@ -179,13 +182,14 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                   value={showWorkflowStats ? 0 : 1}
                   onChange={handleStatsChange}
                   className={classes.dropDown}
+                  data-cy="statsDropdown"
                 >
                   <MenuItem value={0}>Workflow Runs</MenuItem>
                   <MenuItem value={1}>Experiments</MenuItem>
                 </Select>
               )}
             </div>
-            <div className={classes.passedFailedBar}>
+            <div className={classes.passedFailedBar} data-cy="statsPassFailBar">
               <PassFailBar
                 passPercentage={
                   showWorkflowStats

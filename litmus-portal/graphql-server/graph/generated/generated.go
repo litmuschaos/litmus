@@ -4531,6 +4531,7 @@ input ClusterInput {
   agent_scope: String!
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
+  skip_ssl: Boolean
   node_selector: String
   tolerations: [Toleration]
 }
@@ -22536,6 +22537,12 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 		case "agent_sa_exists":
 			var err error
 			it.AgentSaExists, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "skip_ssl":
+			var err error
+			it.SkipSsl, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}

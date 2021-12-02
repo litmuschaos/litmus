@@ -7,17 +7,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/utils"
-
 	"github.com/gorilla/websocket"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
 func ClusterConnect(clusterData map[string]string) {
 	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
+	if err != nil {
+		logrus.WithError(err).Fatal("failed to parse url")
+	}
 	scheme := "ws"
 	if serverURL.Scheme == "https" {
 		scheme = "wss"

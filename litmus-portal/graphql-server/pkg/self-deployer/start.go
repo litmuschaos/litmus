@@ -18,6 +18,7 @@ func StartDeployer(projectID string) {
 		isAllManifestInstall = true
 		deployerNamespace    = os.Getenv("AGENT_NAMESPACE")
 		agentScope           = os.Getenv("AGENT_SCOPE")
+		skipSSL              = os.Getenv("SKIP_SSL_VERIFY")
 		failedManifest       string
 	)
 
@@ -28,6 +29,11 @@ func StartDeployer(projectID string) {
 		PlatformName:   "others",
 		AgentScope:     agentScope,
 		AgentNamespace: &deployerNamespace,
+	}
+
+	if strings.ToLower(skipSSL) == "true" {
+		skip := true
+		clusterInput.SkipSsl = &skip
 	}
 
 	resp, err := clusterHandler.ClusterRegister(clusterInput)

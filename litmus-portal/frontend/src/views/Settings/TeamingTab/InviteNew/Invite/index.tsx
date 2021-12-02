@@ -343,7 +343,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
                   return (
                     <TableRow
-                      data-cy="inviteNewMemberCheckBox"
+                      data-cy="inviteNewMemberRow"
                       role="checkbox"
                       key={row._id}
                       aria-checked={isItemSelected}
