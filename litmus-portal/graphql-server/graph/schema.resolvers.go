@@ -6,11 +6,12 @@ package graph
 import (
 	"context"
 	"errors"
-	"github.com/golang-jwt/jwt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"

@@ -20,7 +20,7 @@ type Pagination struct {
 	TotalEntries int `bson:"totalEntries"`
 }
 type TotalCount struct {
-	Projects int `bson:"projects"`
+	Projects  int           `bson:"projects"`
 	Agents    *AgentStat    `bson:"agents"`
 	Workflows *WorkflowStat `bson:"workflows"`
 }

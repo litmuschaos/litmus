@@ -221,7 +221,7 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 			"project_id": 1,
 			"name":       1,
 			"workflows":  1,
-			"agents": 1,
+			"agents":     1,
 		}}},
 		bson.D{{
 			"$facet", bson.M{
@@ -229,7 +229,7 @@ func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, er
 				"pagination": pagination,
 				"totalCount": bson.A{
 					bson.M{"$group": bson.M{"_id": 0,
-						"projects": bson.M{"$sum": 1},
+						"projects":  bson.M{"$sum": 1},
 						"ns":        bson.M{"$sum": "$agents.ns"},
 						"cluster":   bson.M{"$sum": "$agents.cluster"},
 						"total":     bson.M{"$sum": "$agents.total"},

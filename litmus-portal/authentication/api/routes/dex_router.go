@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"litmus/litmus-portal/authentication/api/handlers/rest"
 	"litmus/litmus-portal/authentication/pkg/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 // DexRouter creates all the required routes for OAuth purposes.
