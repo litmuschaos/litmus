@@ -20,6 +20,9 @@ labels: bug
 
 **What you expected to happen**:
 
+**Where can this issue be corrected? (optional)**
+<!-- provide additional information about the file location or directory that needs to be modified to fix this issue, if available -->
+
 **How to reproduce it (as minimally and precisely as possible)**:
 
 **Anything else we need to know?**:
