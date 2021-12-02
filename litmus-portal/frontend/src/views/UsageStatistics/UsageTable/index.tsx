@@ -155,12 +155,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
       if (sortData.Agent.sort) {
         const x = a.Agents;
         const y = b.Agents;
-        console.log('here1');
 
         return sortData.Agent.ascending ? sortNumAsc(y, x) : sortNumDesc(y, x);
       }
       if (sortData.Schedules.sort) {
-        console.log('here');
         const x = a.Schedules;
         const y = b.Schedules;
 

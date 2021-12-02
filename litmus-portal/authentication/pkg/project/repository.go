@@ -134,7 +134,6 @@ func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
 	}
 	result, err := r.Collection.Aggregate(context.Background(), pipeline, nil)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
