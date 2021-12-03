@@ -238,6 +238,3 @@ const ProjectDropdownItems: React.FC = () => {
 };
 
 export default ProjectDropdownItems;
-function setLoading(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

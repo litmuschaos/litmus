@@ -42,7 +42,6 @@ const GetStarted: React.FC = () => {
     isError.current = true;
     isSuccess.current = false;
   }
-  const username = getUsername();
 
   const [loading, setIsLoading] = useState<boolean>(false);
 
