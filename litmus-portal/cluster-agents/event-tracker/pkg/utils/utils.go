@@ -37,7 +37,7 @@ var (
 const (
 	ExternAgentConfigName = "agent-config"
 	ConditionPassed       = "ConditionPassed"
-	ConditionFailed       = "ConditionFailed"
+	//ConditionFailed       = "ConditionFailed"
 )
 
 const (
@@ -75,29 +75,26 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 				return false
 			}
 
-			if condition.Operator == "Change" {
-				oldDataResult, err := jmespath.Search(condition.Key, oldData)
-				if err != nil {
-					logrus.Error(err)
-					return false
-				}
+			oldDataResult, err := jmespath.Search(condition.Key, oldData)
+			if err != nil {
+				logrus.Error(err)
+				return false
+			}
 
-				if newDataResult != oldDataResult {
+			if newDataResult != oldDataResult {
+				if condition.Operator == "Change" {
 					final_result = true
 				} else {
-					final_result = false
-					break
+					str := fmt.Sprintf("%v", newDataResult)
+					if val := cases(str, *condition.Value, condition.Operator); !val {
+						final_result = val
+						break
+					} else if val {
+						final_result = true
+					}
 				}
-
 			} else {
-
-				str := fmt.Sprintf("%v", newDataResult)
-				if val := cases(str, *condition.Value, condition.Operator); !val {
-					final_result = val
-					break
-				} else if val {
-					final_result = true
-				}
+				log.Println("no changes in the resource")
 			}
 		}
 	} else if etp.Spec.ConditionType == "or" {
@@ -107,29 +104,25 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 				logrus.Error(err)
 			}
 
-			if condition.Operator == "Change" {
-				oldDataResult, err := jmespath.Search(condition.Key, oldData)
-				if err != nil {
-					logrus.Error(err)
-					return false
-				}
+			oldDataResult, err := jmespath.Search(condition.Key, oldData)
+			if err != nil {
+				logrus.Error(err)
+				return false
+			}
 
-				if newDataResult != oldDataResult {
+			if newDataResult != oldDataResult {
+				if condition.Operator == "Change" {
 					final_result = true
+				} else {
+					str := fmt.Sprintf("%v", newDataResult)
+					if val := cases(str, *condition.Value, condition.Operator); val {
+						final_result = val
+					}
 				}
 			} else {
-				str := fmt.Sprintf("%v", newDataResult)
-				if val := cases(str, *condition.Value, condition.Operator); val {
-					final_result = val
-				}
+				log.Println("no changes in the resource")
 			}
 		}
-	}
-
-	if final_result {
-		logrus.Info("condition matched")
-	} else {
-		logrus.Info("condition not matched")
 	}
 
 	return final_result
@@ -262,40 +255,38 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 		}
 
 		check := conditionChecker(etp, newDataInterface, oldDataInterface)
-		var result string
+
 		if check == true {
-			result = ConditionPassed
-		} else if check == false {
-			result = ConditionFailed
+			etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
+				TimeStamp:    time.Now().Format(time.RFC850),
+				Resource:     resourceType,
+				ResourceName: resourceName,
+				Result:       ConditionPassed,
+				WorkflowID:   workflowid,
+				IsTriggered:  "false",
+			})
+
+			// Updating EventTrackerPolicy
+			var unstruc unstructured.Unstructured
+			data, err = json.Marshal(etp)
+			if err != nil {
+				return err
+			}
+
+			err = json.Unmarshal(data, &unstruc)
+			if err != nil {
+				return err
+			}
+
+			_, err = clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Update(context.TODO(), &unstruc, metav1.UpdateOptions{})
+			if err != nil {
+				return err
+			}
+
+			log.Print("EventTrackerPolicy updated")
+		} else {
+			logrus.Println("Condition failed for resource name:", resourceName, " resource type:", resourceType)
 		}
-
-		etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
-			TimeStamp:    time.Now().Format(time.RFC850),
-			Resource:     resourceType,
-			ResourceName: resourceName,
-			Result:       result,
-			WorkflowID:   workflowid,
-			IsTriggered:  "false",
-		})
-
-		// Updating EventTrackerPolicy
-		var unstruc unstructured.Unstructured
-		data, err = json.Marshal(etp)
-		if err != nil {
-			return err
-		}
-
-		err = json.Unmarshal(data, &unstruc)
-		if err != nil {
-			return err
-		}
-
-		_, err = clientSet.Resource(deploymentRes).Namespace(AgentNamespace).Update(context.TODO(), &unstruc, metav1.UpdateOptions{})
-		if err != nil {
-			return err
-		}
-
-		log.Print("EventTrackerPolicy updated")
 	}
 
 	return nil
