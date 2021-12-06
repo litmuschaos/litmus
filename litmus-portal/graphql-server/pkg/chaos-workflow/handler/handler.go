@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
-	grpc2 "google.golang.org/grpc"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	grpc2 "google.golang.org/grpc"
 
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"

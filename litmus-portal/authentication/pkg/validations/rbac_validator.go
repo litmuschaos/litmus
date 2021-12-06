@@ -2,9 +2,10 @@ package validations
 
 import (
 	"errors"
+	"litmus/litmus-portal/authentication/pkg/services"
+
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
-	"litmus/litmus-portal/authentication/pkg/services"
 )
 
 func RbacValidator(uid string, projectID string,
@@ -20,7 +21,6 @@ func RbacValidator(uid string, projectID string,
 		log.Error("authgRPC Error: Deactivated User")
 		return errors.New("auth gRPC - Deactivated User")
 	}
-
 
 	// Check for project permission validity
 	filter := bson.D{

@@ -2,7 +2,6 @@ package cluster
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
@@ -121,7 +120,6 @@ func GetClusters(ctx context.Context, query bson.D) ([]*Cluster, error) {
 func GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
 	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ClusterCollection, pipeline, opts)
 	if err != nil {
-		fmt.Println("error ", err)
 		return nil, err
 	}
 

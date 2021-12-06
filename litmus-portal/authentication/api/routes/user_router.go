@@ -1,10 +1,11 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"litmus/litmus-portal/authentication/api/handlers/rest"
 	"litmus/litmus-portal/authentication/api/middleware"
 	"litmus/litmus-portal/authentication/pkg/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 // UserRouter creates all the required routes for user authentications purposes.

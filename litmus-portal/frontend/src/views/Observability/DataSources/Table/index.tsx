@@ -214,6 +214,7 @@ const DataSourceTable: React.FC = () => {
             })
           }
           className={classes.addButton}
+          data-cy="addDataSource"
         >
           <Typography className={classes.buttonText}>
             {t('monitoringDashboard.dataSourceTable.addDataSource')}

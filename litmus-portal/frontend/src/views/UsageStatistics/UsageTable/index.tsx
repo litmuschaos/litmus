@@ -64,6 +64,7 @@ interface SortData {
 const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  let usageData: TableData;
 
   const [sortData, setSortData] = useState<SortData>({
     Agent: { sort: false, ascending: true },
@@ -74,6 +75,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
 
   const [usageQuery, { loading, data }] =
     useLazyQuery<UsageStats>(GLOBAL_PROJECT_DATA);
+
+  const [projectStats, setProjectStats] = React.useState<ProjectStats[]>([]);
+
+  const tableData: TableData[] = [];
 
   useEffect(() => {
     usageQuery({
@@ -88,10 +93,6 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
     });
   }, [start_time, end_time]);
 
-  const [projectStats, setProjectStats] = React.useState<ProjectStats[]>([]);
-
-  let tableData: TableData[] = [];
-
   const getProjectStats = () => {
     fetch(`${config.auth.url}/get_projects_stats`, {
       method: 'GET',
@@ -104,10 +105,8 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
       .then((data) => {
         if ('error' in data) {
           console.error(data);
-        } else {
-          if (data.data) {
-            setProjectStats(data.data);
-          }
+        } else if (data.data) {
+          setProjectStats(data.data);
         }
       })
       .catch((err) => {
@@ -115,9 +114,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
       });
   };
 
-  let usageData: TableData;
-
-  projectStats?.map((project) => {
+  projectStats.map((project) => {
     usageData = {
       ProjectName: project.Name,
       Owner: project.Members.Owner[0].Username,
@@ -127,7 +124,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
       ExpRuns: 0,
       Members: project.Members.Total,
     };
-    for (var i = 0; i < (data ? data.UsageQuery.Projects.length : 0); i++) {
+    for (let i = 0; i < (data ? data.UsageQuery.Projects.length : 0); i++) {
       if (project.ProjectId === data?.UsageQuery.Projects[i].ProjectId) {
         usageData.Agents = data.UsageQuery.Projects[i].Agents.Total;
         usageData.ExpRuns = data.UsageQuery.Projects[i].Workflows.ExpRuns;
@@ -137,6 +134,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
       }
     }
     tableData.push(usageData);
+    return null;
   });
 
   React.useEffect(() => {
@@ -155,12 +153,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
       if (sortData.Agent.sort) {
         const x = a.Agents;
         const y = b.Agents;
-        console.log('here1');
 
         return sortData.Agent.ascending ? sortNumAsc(y, x) : sortNumDesc(y, x);
       }
       if (sortData.Schedules.sort) {
-        console.log('here');
         const x = a.Schedules;
         const y = b.Schedules;
 

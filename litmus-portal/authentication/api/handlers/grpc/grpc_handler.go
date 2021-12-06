@@ -2,11 +2,12 @@ package grpc
 
 import (
 	"context"
-	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/api/middleware"
 	"litmus/litmus-portal/authentication/api/presenter/protos"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/validations"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/golang-jwt/jwt"
 )

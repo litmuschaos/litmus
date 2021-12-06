@@ -8,7 +8,8 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-git/go-git/v5 v5.2.0
 	github.com/golang-jwt/jwt v3.2.1+incompatible
-	github.com/google/uuid v1.1.1
+	github.com/golang/protobuf v1.5.2
+	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/websocket v1.4.1
 	github.com/imdario/mergo v0.3.11 // indirect
@@ -22,14 +23,18 @@ require (
 	github.com/prometheus/common v0.24.0
 	github.com/rs/cors v1.6.0
 	github.com/sirupsen/logrus v1.7.0
-	github.com/tidwall/gjson v1.8.1
+	github.com/tidwall/gjson v1.12.1
 	github.com/tidwall/sjson v1.1.1
 	github.com/vektah/gqlparser/v2 v2.0.1
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f
+	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4 // indirect
+	golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
-	google.golang.org/grpc v1.32.0
-	google.golang.org/protobuf v1.24.0
+	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1 // indirect
+	google.golang.org/grpc v1.42.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.18.6
 	k8s.io/client-go v12.0.0+incompatible

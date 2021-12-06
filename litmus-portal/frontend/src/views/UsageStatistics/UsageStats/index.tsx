@@ -109,11 +109,11 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
             split
             subData={[
               {
-                option1: data?.UsageQuery.TotalCount.Agents.Cluster,
+                option1: data?.UsageQuery.TotalCount.Agents.Cluster ?? 0,
                 option2: `${t('usage.card.agentClusterScope')}`,
               },
               {
-                option1: data?.UsageQuery.TotalCount.Agents.Ns,
+                option1: data?.UsageQuery.TotalCount.Agents.Ns ?? 0,
                 option2: `${t('usage.card.agentNamespaceScope')}`,
               },
             ]}

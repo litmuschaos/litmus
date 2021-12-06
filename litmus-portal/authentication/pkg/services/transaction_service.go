@@ -2,12 +2,13 @@ package services
 
 import (
 	"context"
-	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type transactionService interface {

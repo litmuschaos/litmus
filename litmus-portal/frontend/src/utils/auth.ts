@@ -1,7 +1,7 @@
 import jwtDecode from 'jsonwebtoken';
 import { history } from '../redux/configureStore';
-import { getJwtTokenFromURL } from './getSearchParams';
 import { getJWTToken, setCookie, setJWTToken } from './cookies';
+import { getJwtTokenFromURL } from './getSearchParams';
 
 interface UserDetails {
   role: string;
@@ -15,7 +15,7 @@ interface UserDetails {
 
 // Logs out the user and unsets the jwt token
 export function logout() {
-  setCookie({ name: 'token', value: '', exhours: 1 });
+  setCookie({ name: 'litmus-cc-token', value: '', exhours: 1 });
   window.location.reload();
 }
 
@@ -23,14 +23,14 @@ export function logout() {
 export function setUserDetails(token: string) {
   setJWTToken({
     token,
-    cookieName: 'token',
+    cookieName: 'litmus-cc-token',
     errorMessage: 'ERROR IN SETTING USER DETAILS: ',
   });
 }
 
 // Returns the jwt token
 export function getToken(): string {
-  let jwtToken = getJWTToken('token');
+  let jwtToken = getJWTToken('litmus-cc-token');
 
   if (jwtToken === '') {
     const _tokenFromUrl = getJwtTokenFromURL();
@@ -39,6 +39,7 @@ export function getToken(): string {
       setUserDetails(jwtToken);
       window.location.assign('/getStarted');
     } else {
+      // Going to login page
       history.push('/login');
     }
   }

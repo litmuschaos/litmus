@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -24,20 +26,17 @@ import (
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/project"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usermanagement"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
 	err := authorization.ValidateRole(ctx, clusterInput.ProjectID,
 		authorization.MutationRbacRules[authorization.UserClusterReg],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -45,36 +44,10 @@ func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput mode
 	return clusterHandler.ClusterRegister(clusterInput)
 }
 
-func (r *mutationResolver) CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error) {
-	return usermanagement.CreateUser(ctx, user)
-}
-
-func (r *mutationResolver) UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error) {
-	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
-	userRole := claims["role"].(string)
-	if userRole != "admin" {
-		return "Unauthorized", errors.New("Unauthorized ")
-	}
-
-	return usermanagement.UpdateUserState(ctx, uid, isDeactivate)
-}
-
-func (r *mutationResolver) CreateProject(ctx context.Context, projectName string) (*model.Project, error) {
-	//fetching all the user's details from jwt token
-	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
-	userUID := claims["uid"].(string)
-
-	return project.CreateProjectWithUser(ctx, projectName, userUID)
-}
-
-func (r *mutationResolver) UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error) {
-	return usermanagement.UpdateUser(ctx, user)
-}
-
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
 	err := authorization.ValidateRole(ctx, input.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateChaosWorkFlow],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -95,76 +68,6 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, workflowi
 
 func (r *mutationResolver) SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error) {
 	return wfHandler.SyncWorkflowRun(ctx, workflowid, workflowRunID, data_store.Store)
-}
-
-func (r *mutationResolver) SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error) {
-	err := authorization.ValidateRole(ctx, member.ProjectID,
-		authorization.MutationRbacRules[authorization.SendInvitation],
-		usermanagement.AcceptedInvitation)
-	if err != nil {
-		return nil, err
-	}
-
-	return project.SendInvitation(ctx, member)
-}
-
-func (r *mutationResolver) AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := authorization.ValidateRole(ctx, member.ProjectID,
-		authorization.MutationRbacRules[authorization.AcceptInvitation],
-		usermanagement.PendingInvitation)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-
-	return project.AcceptInvitation(ctx, member)
-}
-
-func (r *mutationResolver) DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := authorization.ValidateRole(ctx, member.ProjectID,
-		authorization.MutationRbacRules[authorization.DeclineInvitation],
-		usermanagement.PendingInvitation)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-
-	return project.DeclineInvitation(ctx, member)
-}
-
-func (r *mutationResolver) RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error) {
-	err := authorization.ValidateRole(ctx, member.ProjectID,
-		authorization.MutationRbacRules[authorization.RemoveInvitation],
-		usermanagement.AcceptedInvitation)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-
-	return project.RemoveInvitation(ctx, member)
-}
-
-func (r *mutationResolver) LeaveProject(ctx context.Context, member model.MemberInput) (string, error) {
-	err := authorization.ValidateRole(ctx, member.ProjectID,
-		authorization.MutationRbacRules[authorization.LeaveProject],
-		usermanagement.AcceptedInvitation)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-
-	return project.LeaveProject(ctx, member)
-}
-
-func (r *mutationResolver) UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.UpdateProjectName],
-		usermanagement.AcceptedInvitation)
-	if err != nil {
-		return "Unsuccessful", err
-	}
-
-	//fetching all the user's details from jwt token
-	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
-	userUID := claims["uid"].(string)
-
-	return project.UpdateProjectName(ctx, projectID, projectName, userUID)
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
@@ -190,7 +93,7 @@ func (r *mutationResolver) KubeObj(ctx context.Context, kubeData model.KubeObjec
 func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.AddMyHub],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +104,7 @@ func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.Create
 func (r *mutationResolver) SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.SaveMyHub],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +119,7 @@ func (r *mutationResolver) SyncHub(ctx context.Context, id string) ([]*model.MyH
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
 	err := authorization.ValidateRole(ctx, input.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +145,7 @@ func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, 
 func (r *mutationResolver) UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.UpdateMyHub],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +163,7 @@ func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.
 func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
 	err := authorization.ValidateRole(ctx, config.ProjectID,
 		authorization.MutationRbacRules[authorization.EnableGitOps],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
 	}
@@ -270,7 +173,7 @@ func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitCon
 func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DisableGitOps],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
 	}
@@ -280,7 +183,7 @@ func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) 
 func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
 	err := authorization.ValidateRole(ctx, config.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateGitOps],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
 	}
@@ -290,7 +193,7 @@ func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitCon
 func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error) {
 	err := authorization.ValidateRole(ctx, *datasource.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateDataSource],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -301,7 +204,7 @@ func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *mod
 func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error) {
 	err := authorization.ValidateRole(ctx, dashboard.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateDashBoard],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -312,7 +215,7 @@ func (r *mutationResolver) CreateDashBoard(ctx context.Context, dashboard *model
 func (r *mutationResolver) UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error) {
 	err := authorization.ValidateRole(ctx, *datasource.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateDataSource],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -339,7 +242,7 @@ func (r *mutationResolver) DeleteDataSource(ctx context.Context, input model.Del
 func (r *mutationResolver) CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
 	err := authorization.ValidateRole(ctx, templateInput.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateManifestTemplate],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -379,7 +282,7 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 func (r *queryResolver) GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
 	err := authorization.ValidateRole(ctx, workflowRunsInput.ProjectID,
 		authorization.MutationRbacRules[authorization.GetWorkflowRuns],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -389,7 +292,7 @@ func (r *queryResolver) GetWorkflowRuns(ctx context.Context, workflowRunsInput m
 func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetCluster],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -399,12 +302,12 @@ func (r *queryResolver) GetCluster(ctx context.Context, projectID string, cluste
 func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetManifest],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err
 	}
 
-	response, err := rest_handlers.GetManifestWithClusterID(clusterID, accessKey)
+	response, err := handlers.GetManifestWithClusterID(clusterID, accessKey)
 	if err != nil {
 		return "", err
 	}
@@ -415,43 +318,17 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetAgentDetails],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 	return clusterHandler.GetAgentDetails(ctx, clusterID, projectID)
 }
 
-func (r *queryResolver) GetUser(ctx context.Context, username string) (*model.User, error) {
-	return usermanagement.GetUser(ctx, username)
-}
-
-func (r *queryResolver) GetProject(ctx context.Context, projectID string) (*model.Project, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetProject],
-		usermanagement.
-			AcceptedInvitation)
-	if err != nil {
-		return nil, err
-	}
-	return project.GetProject(ctx, projectID)
-}
-
-func (r *queryResolver) ListProjects(ctx context.Context) ([]*model.Project, error) {
-	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
-	userUID := claims["uid"].(string)
-
-	return project.GetProjectsByUserID(ctx, userUID)
-}
-
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	return usermanagement.GetUsers(ctx)
-}
-
 func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetHeatmapData],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -461,7 +338,7 @@ func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, wo
 func (r *queryResolver) GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetWorkflowStats],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -471,7 +348,7 @@ func (r *queryResolver) GetWorkflowStats(ctx context.Context, projectID string, 
 func (r *queryResolver) GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error) {
 	err := authorization.ValidateRole(ctx, workflowRunStatsRequest.ProjectID,
 		authorization.MutationRbacRules[authorization.GetWorkflowRunStats],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -481,7 +358,7 @@ func (r *queryResolver) GetWorkflowRunStats(ctx context.Context, workflowRunStat
 func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
 	err := authorization.ValidateRole(ctx, workflowInput.ProjectID,
 		authorization.MutationRbacRules[authorization.ListWorkflow],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -491,7 +368,7 @@ func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.Li
 func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetCharts],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -501,7 +378,7 @@ func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID
 func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
 		authorization.MutationRbacRules[authorization.GetHubExperiment],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -511,7 +388,7 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput mo
 func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetHubStatus],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
@@ -554,7 +431,7 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clu
 func (r *queryResolver) PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.PortalDashboardData],
-		usermanagement.AcceptedInvitation)
+		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}

@@ -4,14 +4,15 @@ package handler
 import (
 	"context"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
-	grpc2 "google.golang.org/grpc"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	grpc2 "google.golang.org/grpc"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"

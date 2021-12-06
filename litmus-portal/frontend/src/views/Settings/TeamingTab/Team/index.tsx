@@ -264,7 +264,9 @@ const TeamingTab: React.FC = () => {
           <div className={classes.row1}>
             <Paper className={classes.projectInfo} elevation={0}>
               <div className={classes.projectInfoProjectStats}>
-                <Typography>{projectOtherCount + projectOwnerCount}</Typography>
+                <Typography data-cy="totalProjectsCount">
+                  {projectOtherCount + projectOwnerCount}
+                </Typography>
                 {projectOtherCount + projectOwnerCount !== 1 ? (
                   <Typography>{t('settings.teamingTab.projects')}</Typography>
                 ) : (
@@ -273,7 +275,10 @@ const TeamingTab: React.FC = () => {
               </div>
               <div>
                 <div className={classes.displayFlex}>
-                  <Typography className={classes.projectInfoBoldText}>
+                  <Typography
+                    data-cy="ownedProjectsCount"
+                    className={classes.projectInfoBoldText}
+                  >
                     {projectOwnerCount}
                   </Typography>
                   <Typography>
@@ -281,7 +286,10 @@ const TeamingTab: React.FC = () => {
                   </Typography>
                 </div>
                 <div className={classes.displayFlex}>
-                  <Typography className={classes.projectInfoBoldText}>
+                  <Typography
+                    data-cy="otherProjectsCount"
+                    className={classes.projectInfoBoldText}
+                  >
                     {projectOtherCount}
                   </Typography>
                   <Typography>
@@ -294,7 +302,9 @@ const TeamingTab: React.FC = () => {
               <div className={classes.invitationButton}>
                 <div className={classes.invitationButtonFlex}>
                   {t('settings.teamingTab.invitations')}
-                  <Typography>{invitationsCount}</Typography>
+                  <Typography data-cy="invitationsCount">
+                    {invitationsCount}
+                  </Typography>
                 </div>
               </div>
               <Typography>{t('settings.teamingTab.manageTeam')}</Typography>

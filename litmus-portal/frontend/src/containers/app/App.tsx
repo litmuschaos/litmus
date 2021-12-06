@@ -48,7 +48,6 @@ const Routes: React.FC = () => {
   const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
-  const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
   const userID = getUserId();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -176,8 +175,8 @@ const Routes: React.FC = () => {
   return (
     <>
       {!projectValidation && !loading && (
-        <Scaffold>
-          <SuspenseLoader style={{ height: '80vh' }}>
+        <SuspenseLoader style={{ height: '80vh' }}>
+          <Scaffold>
             <Switch>
               <Route exact path="/home" component={HomePage} />
               <Redirect exact path="/" to="/home" />
@@ -293,8 +292,8 @@ const Routes: React.FC = () => {
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
               <Redirect to="/404" />
             </Switch>
-          </SuspenseLoader>
-        </Scaffold>
+          </Scaffold>
+        </SuspenseLoader>
       )}
     </>
   );

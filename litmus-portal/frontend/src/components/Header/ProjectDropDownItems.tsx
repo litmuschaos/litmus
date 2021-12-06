@@ -61,6 +61,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 
   return (
     <ListItem
+      data-cy="projectDropDownItem"
       button
       selected={selected}
       onClick={handleClick}
@@ -165,10 +166,7 @@ const ProjectDropdownItems: React.FC = () => {
   }, [projects]);
 
   return (
-    <div
-      className={classes.projectPopover}
-      data-cy="headerProjectDropdownItems"
-    >
+    <div className={classes.projectPopover}>
       {loading ? (
         <Loader />
       ) : (
@@ -240,6 +238,3 @@ const ProjectDropdownItems: React.FC = () => {
 };
 
 export default ProjectDropdownItems;
-function setLoading(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}

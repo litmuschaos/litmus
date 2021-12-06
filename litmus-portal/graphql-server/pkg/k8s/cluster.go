@@ -1,22 +1,20 @@
 package k8s
 
 import (
+	"errors"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 
-	"errors"
-
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
+	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/restmapper"
-
-	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	memory "k8s.io/client-go/discovery/cached"
 )
 
 var (
@@ -116,6 +114,8 @@ func GetServerEndpoint() (string, error) {
 			IPAddress = getIng.Spec.Rules[0].Host
 		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].IP != "" {
 			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].Hostname != "" {
+			IPAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
 		} else {
 			return "", errors.New("IP Address or HostName not generated")
 		}
@@ -153,7 +153,7 @@ func GetServerEndpoint() (string, error) {
 			Scheme = "http"
 		}
 
-		FinalUrl = Scheme + "://" + IPAddress + "/" + IngressPath
+		FinalUrl = Scheme + "://" + wrapIPV6(IPAddress) + "/" + IngressPath
 
 	} else if Ingress == "false" || Ingress == "" {
 
@@ -183,7 +183,7 @@ func GetServerEndpoint() (string, error) {
 			} else {
 				return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 			}
-			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port)) + "/query"
+			FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
 			nodeIP, err := clientset.CoreV1().Nodes().Get(NodeName, metaV1.GetOptions{})
 			if err != nil {
@@ -200,9 +200,9 @@ func GetServerEndpoint() (string, error) {
 
 			// Whichever one of External IP and Internal IP is present, that will be selected for Server Endpoint
 			if IPAddress != "" {
-				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort)) + "/query"
+				FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else if InternalIP != "" {
-				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
+				FinalUrl = "http://" + wrapIPV6(InternalIP) + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
@@ -211,7 +211,7 @@ func GetServerEndpoint() (string, error) {
 			if svc.Spec.ClusterIP == "" {
 				return "", errors.New("ClusterIP is not present")
 			}
-			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port)) + "/query"
+			FinalUrl = "http://" + wrapIPV6(svc.Spec.ClusterIP) + ":" + strconv.Itoa(int(Port)) + "/query"
 		default:
 			return "", errors.New("No service type found")
 		}
@@ -222,4 +222,11 @@ func GetServerEndpoint() (string, error) {
 	log.Print("Server endpoint: ", FinalUrl)
 
 	return FinalUrl, nil
+}
+
+func wrapIPV6(addr string) string {
+	if strings.Count(addr, ":") > 0 {
+		return "[" + addr + "]"
+	}
+	return addr
 }

@@ -132,7 +132,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
             {t('settings.teamingTab.deleteUser.noButton')}
           </ButtonOutlined>
 
-          <div className={classes.yesButton}>
+          <div className={classes.yesButton} data-cy="yesButton">
             <ButtonFilled
               disabled={loading}
               onClick={() => {
