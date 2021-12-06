@@ -20,7 +20,6 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -94,7 +93,7 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 					}
 				}
 			} else {
-				log.Println("no changes in the resource")
+				logrus.Println("no changes in the resource")
 			}
 		}
 	} else if etp.Spec.ConditionType == "or" {
@@ -120,7 +119,7 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 					}
 				}
 			} else {
-				log.Println("no changes in the resource")
+				logrus.Println("no changes in the resource")
 			}
 		}
 	}
@@ -146,7 +145,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 	}
 
 	if len(deploymentConfigList.Items) == 0 {
-		log.Print("No event-tracker policy(s) found in " + AgentNamespace + " namespace")
+		logrus.Print("No event-tracker policy(s) found in " + AgentNamespace + " namespace")
 		return nil
 	}
 
@@ -283,7 +282,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 				return err
 			}
 
-			log.Print("EventTrackerPolicy updated")
+			logrus.Print("EventTrackerPolicy updated")
 		} else {
 			logrus.Println("Condition failed for resource name:", resourceName, " resource type:", resourceType)
 		}
