@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
+
+	"github.com/sirupsen/logrus"
 
 	v1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/util/runtime"
@@ -27,34 +27,17 @@ func RunDeploymentInformer(factory informers.SharedInformerFactory) {
 			depNewObj := newObj.(*v1.Deployment)
 			depOldObj := oldObj.(*v1.Deployment)
 
-			oldManifest := depOldObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
-			newManifest := depNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+			var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 
-			if oldManifest != "" && newManifest != "" {
-				var oldDep v1.Deployment
-				err := json.Unmarshal([]byte(oldManifest), &oldDep)
+			if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion() &&
+				!reflect.DeepEqual(depNewObj, depOldObj) &&
+				depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" &&
+				worflowid != "" {
+				logrus.Infof("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
+				err := PolicyAuditor("Deployment", depNewObj, depOldObj, worflowid)
 				if err != nil {
-					log.Print(err)
+					logrus.Error(err)
 					return
-				}
-
-				var newDep v1.Deployment
-				err = json.Unmarshal([]byte(newManifest), &newDep)
-				if err != nil {
-					log.Print(err)
-					return
-				}
-
-				if depNewObj.GetResourceVersion() != depOldObj.GetResourceVersion() && !reflect.DeepEqual(newDep, oldDep) {
-					var worflowid = depNewObj.GetAnnotations()["litmuschaos.io/workflow"]
-					if depNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", depNewObj.Name, depNewObj.Namespace)
-						err := PolicyAuditor("Deployment", depNewObj, depOldObj, worflowid)
-						if err != nil {
-							log.Print(err)
-							return
-						}
-					}
 				}
 			}
 		},
@@ -82,37 +65,20 @@ func RunStsInformer(factory informers.SharedInformerFactory) {
 			stsNewObj := newObj.(*v1.StatefulSet)
 			stsOldObj := oldObj.(*v1.StatefulSet)
 
-			oldManifest := stsOldObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
-			newManifest := stsNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+			var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 
-			if oldManifest != "" && newManifest != "" {
-				var oldSts v1.StatefulSet
-				err := json.Unmarshal([]byte(oldManifest), &oldSts)
+			if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion() &&
+				!reflect.DeepEqual(stsNewObj, stsOldObj) &&
+				stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" &&
+				worflowid != "" {
+				logrus.Infof("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", stsNewObj.Name, stsNewObj.Namespace)
+				err := PolicyAuditor("Deployment", stsNewObj, stsOldObj, worflowid)
 				if err != nil {
-					log.Print(err)
+					logrus.Error(err)
 					return
-				}
-
-				var newSts v1.StatefulSet
-				err = json.Unmarshal([]byte(newManifest), &newSts)
-				if err != nil {
-					log.Print(err)
-					return
-				}
-
-				if stsNewObj.GetResourceVersion() != stsOldObj.GetResourceVersion() && !reflect.DeepEqual(newSts, oldSts) {
-					var worflowid = stsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
-					if stsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "StateFulSet", stsNewObj.Name, stsNewObj.Namespace)
-						err := PolicyAuditor("StateFulSet", stsNewObj, stsOldObj, worflowid)
-						if err != nil {
-							log.Print(err)
-							return
-						}
-					}
-
 				}
 			}
+
 		},
 	})
 
@@ -138,36 +104,20 @@ func RunDSInformer(factory informers.SharedInformerFactory) {
 			dsNewObj := newObj.(*v1.DaemonSet)
 			dsOldObj := newObj.(*v1.DaemonSet)
 
-			oldManifest := dsOldObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
-			newManifest := dsNewObj.GetAnnotations()["kubectl.kubernetes.io/last-applied-configuration"]
+			var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
 
-			if oldManifest != "" && newManifest != "" {
-				var oldDm v1.StatefulSet
-				err := json.Unmarshal([]byte(oldManifest), &oldDm)
+			if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() &&
+				!reflect.DeepEqual(dsNewObj, dsOldObj) &&
+				dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" &&
+				worflowid != "" {
+				logrus.Infof("GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "Deployment", dsNewObj.Name, dsNewObj.Namespace)
+				err := PolicyAuditor("Deployment", dsNewObj, dsOldObj, worflowid)
 				if err != nil {
-					log.Print(err)
+					logrus.Error(err)
 					return
-				}
-
-				var newDm v1.StatefulSet
-				err = json.Unmarshal([]byte(newManifest), &newDm)
-				if err != nil {
-					log.Print(err)
-					return
-				}
-
-				if dsNewObj.GetResourceVersion() != dsOldObj.GetResourceVersion() && !reflect.DeepEqual(newDm, oldDm) {
-					var worflowid = dsNewObj.GetAnnotations()["litmuschaos.io/workflow"]
-					if dsNewObj.GetAnnotations()["litmuschaos.io/gitops"] == "true" && worflowid != "" {
-						log.Printf("EventType: Update \n GitOps Notification for workflowID: %s, ResourceType: %s, ResourceName: %s, ResourceNamespace: %s", worflowid, "DaemonSet", dsNewObj.Name, dsNewObj.Namespace)
-						err := PolicyAuditor("DaemonSet", dsNewObj, dsOldObj, worflowid)
-						if err != nil {
-							log.Print(err)
-							return
-						}
-					}
 				}
 			}
+
 		},
 	})
 
