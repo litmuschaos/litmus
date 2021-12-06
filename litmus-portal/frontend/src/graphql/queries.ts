@@ -165,47 +165,6 @@ export const GET_WORKFLOW_RUNS_STATS = gql`
   }
 `;
 
-// export const GET_USER = gql`
-//   query getUser($username: String!) {
-//     getUser(username: $username) {
-//       username
-//       email
-//       id
-//       name
-//       projects {
-//         members {
-//           user_id
-//           user_name
-//           role
-//           invitation
-//           name
-//           email
-//           joined_at
-//         }
-//         name
-//         id
-//       }
-//       company_name
-//       updated_at
-//       created_at
-//       deactivated_at
-//       is_email_verified
-//       role
-//     }
-//   }
-// `;
-
-// export const GET_USER_INFO = gql`
-//   query getUser($username: String!) {
-//     getUser(username: $username) {
-//       username
-//       email
-//       id
-//       name
-//     }
-//   }
-// `;
-
 export const GET_CLUSTER = gql`
   query getClusters($project_id: String!, $cluster_type: String) {
     getCluster(project_id: $project_id, cluster_type: $cluster_type) {
@@ -384,54 +343,6 @@ export const LIST_MANIFEST_TEMPLATE = gql`
     }
   }
 `;
-
-// export const LIST_PROJECTS = gql`
-//   query listProjects {
-//     listProjects {
-//       id
-//       name
-//       members {
-//         user_name
-//         user_id
-//         role
-//         invitation
-//         joined_at
-//         deactivated_at
-//       }
-//       created_at
-//       updated_at
-//       removed_at
-//     }
-//   }
-// `;
-
-// export const GET_PROJECT = gql`
-//   query getProject($projectID: String!) {
-//     getProject(projectID: $projectID) {
-//       id
-//       name
-//       members {
-//         user_id
-//         user_name
-//         role
-//         invitation
-//         joined_at
-//         deactivated_at
-//       }
-//       created_at
-//       updated_at
-//       removed_at
-//     }
-//   }
-// `;
-
-// export const GET_PROJECT_NAME = gql`
-//   query getProject($projectID: String!) {
-//     getProject(projectID: $projectID) {
-//       name
-//     }
-//   }
-// `;
 
 export const LIST_DATASOURCE = gql`
   query listDataSource($projectID: String!) {
@@ -727,13 +638,6 @@ export const GLOBAL_PROJECT_DATA = gql`
           Ns
           Cluster
         }
-        # Members {
-        #   Owner {
-        #     Name
-        #     Username
-        #   }
-        #   Total
-        # }
       }
     }
   }
