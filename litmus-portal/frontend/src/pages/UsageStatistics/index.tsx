@@ -60,7 +60,13 @@ const UsageStatistics = () => {
     );
     setDates({
       start_date: moment(selectStartDate).unix().toString(),
-      end_date: moment(selectEndDate).unix().toString(),
+      end_date: moment(selectEndDate)
+        .add(23, 'hours')
+        .add(59, 'minutes')
+        .add(59, 'seconds')
+        .add(59, 'milliseconds')
+        .unix()
+        .toString(),
     });
   };
   return (

@@ -84,7 +84,7 @@ const TableData: React.FC<TableDataProps> = ({
                 onClick={() => {
                   setRole('Editor');
                   setAnchorEl(null);
-                  sendInvite(row.id, 'Editor');
+                  sendInvite(row._id, 'Editor');
                 }}
                 className={classes.menuOpt}
               >
@@ -117,7 +117,7 @@ const TableData: React.FC<TableDataProps> = ({
                 onClick={() => {
                   setRole('Viewer');
                   setAnchorEl(null);
-                  sendInvite(row.id, 'Viewer');
+                  sendInvite(row._id, 'Viewer');
                 }}
                 className={classes.menuOpt}
               >

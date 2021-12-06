@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/client';
 import {
   Avatar,
   IconButton,
@@ -10,15 +9,11 @@ import { ButtonFilled, Icon, TextButton } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { GET_USER } from '../../graphql';
-import {
-  CurrentUserDetails,
-  CurrentUserDedtailsVars,
-} from '../../models/graphql/user';
+import config from '../../config';
 import useActions from '../../redux/actions';
 import * as TabActions from '../../redux/actions/tabs';
 import { history } from '../../redux/configureStore';
-import { getUsername, logout } from '../../utils/auth';
+import { getToken, getUserId, getUsername, logout } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { userInitials } from '../../utils/userInitials';
 import useStyles from './styles';
@@ -39,15 +34,23 @@ const ProfileDropdown: React.FC = () => {
 
   const [userEmail, setuserEmail] = useState<string>('');
 
-  // Run query to get the data in case it is not present in the JWT
-  useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
-    skip: username === '',
-    variables: { username },
-    fetchPolicy: 'cache-and-network',
-    onCompleted: (data) => {
-      if (data) setuserEmail(data.getUser.email);
-    },
-  });
+  React.useEffect(() => {
+    fetch(`${config.auth.url}/getUser/${getUserId()}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          setuserEmail(data.email);
+        }
+      });
+  }, []);
 
   // Handle clicks
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

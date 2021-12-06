@@ -1,10 +1,10 @@
-package handlers
+package rest
 
 import (
 	"context"
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/user"
+	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"net/http"
 
@@ -52,7 +52,7 @@ func DexLogin() gin.HandlerFunc {
 }
 
 // DexCallback is the handler that creates/logs in the user from Dex and provides JWT to frontend via a reidirect
-func DexCallback(userService user.Service) gin.HandlerFunc {
+func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		incomingState := c.Query("state")
 		validated, err := utils.ValidateOAuthJWT(incomingState)

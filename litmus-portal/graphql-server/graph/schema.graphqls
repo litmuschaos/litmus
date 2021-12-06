@@ -253,16 +253,6 @@ type Query {
   # Query to fetch agent details based on project_id and agent_name
   getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
 
-  getUser(username: String!): User! @authorized
-
-  # It is used to get projects by projectID
-  getProject(projectID: String!): Project! @authorized
-
-  #It is used to get projects by userID
-  listProjects: [Project!]! @authorized
-
-  users: [User!]! @authorized
-
   # Query to fetch workflow data for heatmap
   getHeatmapData(
     project_id: String!
@@ -338,17 +328,6 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  # Used to create a user
-  createUser(user: CreateUserInput!): User! @authorized
-
-  # Used to disable a user
-  updateUserState(uid: String!, isDeactivate: Boolean!): String! @authorized
-
-  # It is used to create a project
-  createProject(projectName: String!): Project! @authorized
-
-  updateUser(user: UpdateUserInput!): String! @authorized
-
   ## Workflow APIs
   # It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
@@ -365,25 +344,6 @@ type Mutation {
     @authorized
 
   syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
-    @authorized
-
-  #Used for sending invitation
-  sendInvitation(member: MemberInput!): Member @authorized
-
-  #Used for accepting invitation
-  acceptInvitation(member: MemberInput!): String! @authorized
-
-  #Used for declining the invitation
-  declineInvitation(member: MemberInput!): String! @authorized
-
-  #Used for cancelling the sent invitation
-  removeInvitation(member: MemberInput!): String! @authorized
-
-  #Used for leaving a project
-  leaveProject(member: MemberInput!): String! @authorized
-
-  #Used to update project name
-  updateProjectName(projectID: String!, projectName: String!): String!
     @authorized
 
   #It is used to confirm the subscriber registration

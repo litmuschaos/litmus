@@ -1,9 +1,9 @@
-package handlers
+package rest
 
 import (
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/user"
+	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"strconv"
 	"time"
@@ -16,7 +16,7 @@ import (
 
 // Status will request users list and return, if successful,
 // an http code 200
-func Status(service user.Service) gin.HandlerFunc {
+func Status(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := service.GetUsers()
 		if err != nil {
@@ -28,7 +28,7 @@ func Status(service user.Service) gin.HandlerFunc {
 	}
 }
 
-func CreateUser(service user.Service) gin.HandlerFunc {
+func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
 
@@ -41,6 +41,11 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		if userRequest.Role != entities.RoleUser && userRequest.Role != entities.RoleAdmin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
@@ -81,7 +86,7 @@ func CreateUser(service user.Service) gin.HandlerFunc {
 		c.JSON(200, userResponse)
 	}
 }
-func UpdateUser(service user.Service) gin.HandlerFunc {
+func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.UserDetails
 		err := c.BindJSON(&userRequest)
@@ -112,7 +117,7 @@ func UpdateUser(service user.Service) gin.HandlerFunc {
 }
 
 // GetUser returns the user that matches the uid passed in parameter
-func GetUser(service user.Service) gin.HandlerFunc {
+func GetUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uid := c.Param("uid")
 		user, err := service.GetUser(uid)
@@ -125,7 +130,7 @@ func GetUser(service user.Service) gin.HandlerFunc {
 	}
 }
 
-func FetchUsers(service user.Service) gin.HandlerFunc {
+func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := service.GetUsers()
 		if err != nil {
@@ -137,7 +142,7 @@ func FetchUsers(service user.Service) gin.HandlerFunc {
 	}
 }
 
-func LoginUser(service user.Service) gin.HandlerFunc {
+func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.User
 		err := c.BindJSON(&userRequest)
@@ -153,7 +158,7 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 		}
 
 		// Checking if user exists
-		user, err := service.FindUser(userRequest.UserName)
+		user, err := service.FindUserByUsername(userRequest.UserName)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
@@ -189,7 +194,7 @@ func LoginUser(service user.Service) gin.HandlerFunc {
 	}
 }
 
-func UpdatePassword(service user.Service) gin.HandlerFunc {
+func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
@@ -223,7 +228,7 @@ func UpdatePassword(service user.Service) gin.HandlerFunc {
 	}
 }
 
-func ResetPassword(service user.Service) gin.HandlerFunc {
+func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
@@ -266,7 +271,7 @@ func ResetPassword(service user.Service) gin.HandlerFunc {
 	}
 }
 
-func UpdateUserState(service user.Service) gin.HandlerFunc {
+func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.UpdateUserState
 		err := c.BindJSON(&userRequest)
@@ -288,34 +293,14 @@ func UpdateUserState(service user.Service) gin.HandlerFunc {
 			return
 		}
 
-		// Checking if user exists
-		user, err := service.FindUser(userRequest.Username)
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
-			return
-		}
-
-		// Checking if updated user is admin
-		if user.Role == entities.RoleAdmin {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUpdatingAdmin], presenter.CreateErrorResponse(utils.ErrUpdatingAdmin))
-			return
-		}
-
-		// Checking if user is already deactivated
-		if userRequest.IsDeactivate {
-			if user.DeactivatedAt != nil {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrUserAlreadyDeactivated], presenter.CreateErrorResponse(utils.ErrUserAlreadyDeactivated))
-				return
-			}
-		}
-
-		err = service.UpdateUserState(userRequest.Username, userRequest.IsDeactivate)
+		// Transaction to update state in user and project collection
+		err = service.UpdateStateTransaction(userRequest)
 		if err != nil {
 			log.Info(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[err], presenter.CreateErrorResponse(err))
 			return
 		}
+
 		c.JSON(200, gin.H{
 			"message": "user's state updated successfully",
 		})

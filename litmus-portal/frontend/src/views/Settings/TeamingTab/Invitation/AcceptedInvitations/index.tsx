@@ -1,18 +1,11 @@
-import { useMutation, useQuery } from '@apollo/client';
 import { IconButton, Paper, Typography } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  GET_PROJECT,
-  LEAVE_PROJECT,
-  LIST_PROJECTS,
-} from '../../../../../graphql';
-import { MemberInvitation } from '../../../../../models/graphql/invite';
-import { Member, Project, Projects } from '../../../../../models/graphql/user';
+import config from '../../../../../config';
+import { Member, Project } from '../../../../../models/graphql/user';
 import { history } from '../../../../../redux/configureStore';
-import { getUserId } from '../../../../../utils/auth';
-import { getProjectID } from '../../../../../utils/getSearchParams';
+import { getToken, getUserId } from '../../../../../utils/auth';
 import useStyles from './styles';
 
 interface OtherProjectsType {
@@ -20,53 +13,90 @@ interface OtherProjectsType {
   currentUserProjectRole: string;
 }
 
-const AcceptedInvitations: React.FC = () => {
+interface AcceptedInvitationsProps {
+  fetchData: () => void;
+}
+
+const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
+  fetchData,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
   const userID = getUserId();
   const [projectOther, setProjectOther] = useState<OtherProjectsType[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const { data: dataProject } = useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: () => {
-      if (dataProject?.listProjects) {
-        setProjects(dataProject?.listProjects);
-      }
-    },
-    fetchPolicy: 'cache-and-network',
-  });
-  const projectID = getProjectID();
+
+  const getProjects = () => {
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.data);
+        } else {
+          setProjects(data.data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    getProjects();
+  }, []);
 
   // stores the user who has left the project
   const [exitedMember, setExitedMember] = useState<string>('');
 
-  const [leaveProject] = useMutation<MemberInvitation>(LEAVE_PROJECT, {
-    onCompleted: () => {
-      setProjectOther(
-        projectOther.filter((row) => row.projectDetails.id !== exitedMember)
-      );
-    },
-    refetchQueries: [
-      {
-        query: GET_PROJECT,
-        variables: { projectID },
+  const leaveProject = (projectid: string, userid: string, role: string) => {
+    fetch(`${config.auth.url}/leave_project`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
       },
-      { query: LIST_PROJECTS },
-    ],
-  });
+      body: JSON.stringify({
+        project_id: projectid,
+        user_id: userid,
+        role,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.error);
+        } else {
+          setProjectOther(
+            projectOther.filter((row) => row.projectDetails.ID !== exitedMember)
+          );
+          getProjects();
+          fetchData();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   useEffect(() => {
     const otherProject: OtherProjectsType[] = [];
     projects.map((project) => {
-      return project.members.forEach((member: Member) => {
+      return project.Members.forEach((member: Member) => {
         if (
-          member.user_id === userID &&
-          member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
+          member.UserID === userID &&
+          member.Role !== 'Owner' &&
+          member.Invitation === 'Accepted'
         ) {
           otherProject.push({
             projectDetails: project,
-            currentUserProjectRole: member.role,
+            currentUserProjectRole: member.Role,
           });
         }
       });
@@ -89,7 +119,7 @@ const AcceptedInvitations: React.FC = () => {
                   data-cy="acceptedProjectName"
                   className={classes.projectName}
                 >
-                  {project.projectDetails.name}
+                  {project.projectDetails.Name}
                 </Typography>
                 <IconButton
                   data-cy="viewAcceptedProject"
@@ -97,7 +127,7 @@ const AcceptedInvitations: React.FC = () => {
                   onClick={() => {
                     history.push({
                       pathname: `/home`,
-                      search: `?projectID=${project.projectDetails.id}&projectRole=${project.currentUserProjectRole}`,
+                      search: `?projectID=${project.projectDetails.ID}&projectRole=${project.currentUserProjectRole}`,
                     });
                   }}
                 >
@@ -120,16 +150,21 @@ const AcceptedInvitations: React.FC = () => {
                   <ButtonFilled
                     className={classes.leaveProjectBtn}
                     onClick={() => {
-                      setExitedMember(project.projectDetails.id);
-                      leaveProject({
-                        variables: {
-                          data: {
-                            project_id: project.projectDetails.id,
-                            user_id: getUserId(),
-                            role: project.currentUserProjectRole,
-                          },
-                        },
-                      });
+                      setExitedMember(project.projectDetails.ID);
+                      // leaveProject({
+                      //   variables: {
+                      //     data: {
+                      //       project_id: project.projectDetails.id,
+                      //       user_id: getUserId(),
+                      //       role: project.currentUserProjectRole,
+                      //     },
+                      //   },
+                      // });
+                      leaveProject(
+                        project.projectDetails.ID,
+                        getUserId(),
+                        project.currentUserProjectRole
+                      );
                     }}
                   >
                     {t(

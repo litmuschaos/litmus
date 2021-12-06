@@ -8,6 +8,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Role states the role of the user in the portal
+type Role string
+
+const (
+	// RoleAdmin gives the admin permissions to a user
+	RoleAdmin Role = "admin"
+
+	//RoleUser gives the normal user permissions to a user
+	RoleUser Role = "user"
+)
+
 // User contains the user information
 type User struct {
 	ID            string  `bson:"_id,omitempty" json:"_id"`
@@ -47,16 +58,25 @@ type APIStatus struct {
 	Status string `json:"status"`
 }
 
-// Role states the role of the user in the portal
-type Role string
+type UserWithProject struct {
+	ID        string     `bson:"_id"`
+	Username  string     `bson:"username"`
+	CreatedAt string     `bson:"created_at"`
+	Email     string     `bson:"email"`
+	Name      string     `bson:"name"`
+	Projects  []*Project `bson:"projects"`
+}
 
-const (
-	// RoleAdmin gives the admin permissions to a user
-	RoleAdmin Role = "admin"
+func (user User) GetUserWithProject() *UserWithProject {
 
-	//RoleUser gives the normal user permissions to a user
-	RoleUser Role = "user"
-)
+	return &UserWithProject{
+		ID:        user.ID,
+		Username:  user.UserName,
+		Name:      user.Name,
+		CreatedAt: *user.CreatedAt,
+		Email:     user.Email,
+	}
+}
 
 // SanitizedUser returns the user object without sensitive information
 func (user *User) SanitizedUser() *User {

@@ -22,11 +22,13 @@ interface PaginationData {
 interface InvitedTableProps {
   notAcceptedFilteredData: Member[];
   showModal: () => void;
+  fetchData: () => void;
 }
 
 const InvitedTable: React.FC<InvitedTableProps> = ({
   notAcceptedFilteredData,
   showModal,
+  fetchData,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -70,10 +72,11 @@ const InvitedTable: React.FC<InvitedTableProps> = ({
                 .map((row, index) => (
                   <TableRow
                     data-cy="teamingTableRow"
-                    key={row.user_id}
+                    key={row.UserID}
                     className={classes.TR}
                   >
                     <InvitedTableData
+                      fetchData={fetchData}
                       index={index}
                       row={row}
                       showModal={showModal}

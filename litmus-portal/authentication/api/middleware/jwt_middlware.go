@@ -20,7 +20,7 @@ func JwtMiddleware() gin.HandlerFunc {
 			return
 		}
 		tokenString := authHeader[len(BearerSchema):]
-		token, err := validateToken(tokenString)
+		token, err := ValidateToken(tokenString)
 		if token.Valid {
 			claims := token.Claims.(jwt.MapClaims)
 			c.Set("username", claims["username"])
@@ -35,8 +35,8 @@ func JwtMiddleware() gin.HandlerFunc {
 	}
 }
 
-//validateToken validates the given JWT Token
-func validateToken(encodedToken string) (*jwt.Token, error) {
+//ValidateToken validates the given JWT Token
+func ValidateToken(encodedToken string) (*jwt.Token, error) {
 	return jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
 		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
 			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
