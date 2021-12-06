@@ -46,10 +46,8 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
       .then((data) => {
         if ('error' in data) {
           console.error(data);
-        } else {
-          if (data.data) {
-            setProjectCount(data.data.length);
-          }
+        } else if (data.data) {
+          setProjectCount(data.data.length);
         }
       })
       .catch((err) => {
