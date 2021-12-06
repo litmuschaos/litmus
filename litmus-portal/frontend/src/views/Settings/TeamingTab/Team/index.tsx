@@ -9,7 +9,7 @@ import {
   Tabs,
   Toolbar,
   Typography,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
 import { EditableText, Search } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
@@ -129,7 +129,7 @@ const TeamingTab: React.FC = () => {
   useEffect(() => {
     getProjectDetails();
   }, []);
- 
+
   // State for pagination
   const [paginationData, setPaginationData] = useState<PaginationData>({
     pageNo: 0,
@@ -313,7 +313,7 @@ const TeamingTab: React.FC = () => {
                     {project && (
                       <EditableText
                         label={t('settings.teamingTab.editProjectLabel')}
-                        defaultValue={project ? project.Name : ''}
+                        defaultValue={project.Name ? project.Name : ''}
                         onSave={(value) => {
                           updateProjectName(value);
                         }}

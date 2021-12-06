@@ -122,12 +122,12 @@ const PersonalDetails: React.FC = () => {
         <>
           <form>
             <UserDetails
-              nameValue={personaData.fullName}
+              nameValue={personaData?.fullName}
               isUsernameDisabled
               handleNameChange={handleNameChange}
-              emailValue={personaData.email}
+              emailValue={personaData?.email}
               handleEmailChange={handleEmailChange}
-              userValue={personaData.userName}
+              userValue={personaData?.userName}
               handleUserChange={handleUserChange}
               isNameDisabled={false}
               isEmailDisabled={false}

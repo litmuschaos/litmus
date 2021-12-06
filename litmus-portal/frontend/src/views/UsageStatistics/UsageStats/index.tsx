@@ -48,7 +48,7 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
           console.error(data);
         } else {
           if (data.data) {
-            setProjectCount(data.data?.length);
+            setProjectCount(data.data.length);
           }
         }
       })
@@ -105,7 +105,7 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
             header={t('usage.card.agentHeader')}
             subtitle={t('usage.card.agentSubtitle')}
             color={classes.agentsData}
-            data={data?.UsageQuery.TotalCount.Agents.Total}
+            data={data?.UsageQuery.TotalCount.Agents.Total ?? 0}
             split
             subData={[
               {
@@ -124,21 +124,21 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
             header={t('usage.card.workflowScheduleHeader')}
             subtitle={t('usage.card.workflowScheduleSubtitle')}
             color={classes.schedules}
-            data={data?.UsageQuery.TotalCount.Workflows.Schedules}
+            data={data?.UsageQuery.TotalCount.Workflows.Schedules ?? 0}
           />
           <Card
             image="./icons/workflows-outline.svg"
             header={t('usage.card.workflowRunHeader')}
             subtitle={t('usage.card.workflowRunSubtitle')}
             color={classes.wfRuns}
-            data={data?.UsageQuery.TotalCount.Workflows.Runs}
+            data={data?.UsageQuery.TotalCount.Workflows.Runs ?? 0}
           />
           <Card
             image="./icons/myhub.svg"
             header={t('usage.card.experimentRunHeader')}
             subtitle={t('usage.card.experimentRunSubtitle')}
             color={classes.expRuns}
-            data={data?.UsageQuery.TotalCount.Workflows.ExpRuns}
+            data={data?.UsageQuery.TotalCount.Workflows.ExpRuns ?? 0}
           />
         </>
       )}

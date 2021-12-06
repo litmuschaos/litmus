@@ -148,7 +148,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
     rowsPerPage: 5,
   });
   const filteredData: TableData[] = tableData
-    ?.filter((dataRow) =>
+    .filter((dataRow) =>
       dataRow.ProjectName.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a: TableData, b: TableData) => {
