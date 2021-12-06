@@ -24,11 +24,6 @@ func NewConfig() generated.Config {
 			return nil, err
 		}
 		newCtx := context.WithValue(ctx, authorization.UserClaim, user)
-		// var x model.UsageQuery
-		// x.DateRange = &model.DateRange{
-		// 	StartDate: "1635942521",
-		// }
-		// _, err = usage.GetUsage(newCtx, x)
 		return next(newCtx)
 	}
 
