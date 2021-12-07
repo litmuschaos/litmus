@@ -1,16 +1,21 @@
-package handlers
+package projects
 
 import (
 	"context"
 	"fmt"
 	"log"
 	"os"
+	"strings"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 )
 
@@ -39,7 +44,22 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 // ProjectInitializer creates a default hub and default image registry for a new project
 func ProjectInitializer(ctx context.Context, projectID string) error {
 
-	var bl_true = true
+	var (
+		selfCluster = os.Getenv("SELF_CLUSTER")
+		bl_true     = true
+	)
+
+	// Extracting role from token
+	jwtToken := ctx.Value(authorization.AuthKey).(string)
+	fmt.Println("token", jwtToken)
+	token, _ := jwt.Parse(jwtToken, nil)
+	if token == nil {
+		fmt.Println("exiting")
+		os.Exit(1)
+	}
+	claims, _ := token.Claims.(jwt.MapClaims)
+	role := claims["role"].(string)
+	fmt.Println("role", role)
 
 	defaultHub := model.CreateMyHub{
 		HubName:    "Litmus ChaosHub",
@@ -60,6 +80,11 @@ func ProjectInitializer(ctx context.Context, projectID string) error {
 		SecretNamespace:   nil,
 		EnableRegistry:    &bl_true,
 	})
+
+	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
+		log.Print("Starting self deployer")
+		go selfDeployer.StartDeployer(projectID)
+	}
 
 	return err
 }

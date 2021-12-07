@@ -1,4 +1,4 @@
-package handlers
+package projects
 
 import pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 
