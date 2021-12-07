@@ -15,4 +15,5 @@ service Project {
 // The request message containing the projectID
 message ProjectInitializationRequest {
   string projectID = 1;
+  string role = 2;
 }

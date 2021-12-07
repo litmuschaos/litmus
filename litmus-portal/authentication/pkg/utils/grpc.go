@@ -19,11 +19,12 @@ func GetProjectGRPCSvcClient(conn *grpc.ClientConn) (grpc2.ProjectClient, *grpc.
 }
 
 // ProjectInitializer initializes a new project with default hub and image registry
-func ProjectInitializer(context context.Context, client grpc2.ProjectClient, projectID string) error {
+func ProjectInitializer(context context.Context, client grpc2.ProjectClient, projectID string, role string) error {
 
 	_, err := client.InitializeProject(context,
 		&grpc2.ProjectInitializationRequest{
 			ProjectID: projectID,
+			Role:      role,
 		})
 
 	return err

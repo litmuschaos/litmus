@@ -239,9 +239,12 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		// Extracting user role
+		role := c.MustGet("role").(string)
+
 		var conn *grpc.ClientConn
 		client, conn := utils.GetProjectGRPCSvcClient(conn)
-		err = utils.ProjectInitializer(c, client, pID)
+		err = utils.ProjectInitializer(c, client, pID, role)
 
 		defer func(conn *grpc.ClientConn) {
 			err := conn.Close()
