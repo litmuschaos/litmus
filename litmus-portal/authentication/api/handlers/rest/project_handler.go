@@ -241,7 +241,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 
 		var conn *grpc.ClientConn
 		client, conn := utils.GetProjectGRPCSvcClient(conn)
-		err = utils.ProjectInitializer(client, pID)
+		err = utils.ProjectInitializer(c, client, pID)
 
 		defer func(conn *grpc.ClientConn) {
 			err := conn.Close()
