@@ -1,16 +1,18 @@
-package handlers
+package projects
 
 import (
 	"context"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 )
 
@@ -28,7 +30,7 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 	}
 
 	// ProjectInitializer initializes the project by creating instances for required stateful services
-	err := ProjectInitializer(ctx, req.ProjectID)
+	err := ProjectInitializer(ctx, req.ProjectID, req.Role)
 	if err != nil {
 		return res, fmt.Errorf("failed to initialize project, %w", err)
 	} else {
@@ -37,9 +39,12 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 }
 
 // ProjectInitializer creates a default hub and default image registry for a new project
-func ProjectInitializer(ctx context.Context, projectID string) error {
+func ProjectInitializer(ctx context.Context, projectID string, role string) error {
 
-	var bl_true = true
+	var (
+		selfCluster = os.Getenv("SELF_CLUSTER")
+		bl_true     = true
+	)
 
 	defaultHub := model.CreateMyHub{
 		HubName:    "Litmus ChaosHub",
@@ -60,6 +65,11 @@ func ProjectInitializer(ctx context.Context, projectID string) error {
 		SecretNamespace:   nil,
 		EnableRegistry:    &bl_true,
 	})
+
+	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
+		log.Print("Starting self deployer")
+		go selfDeployer.StartDeployer(projectID)
+	}
 
 	return err
 }

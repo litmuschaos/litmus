@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
@@ -168,7 +170,7 @@ func startGRPCServer(port string) {
 	grpcServer := grpc.NewServer()
 
 	// Register services
-	pb.RegisterProjectServer(grpcServer, &handlers.ProjectServer{})
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{})
 
 	logrus.Printf("GRPC server listening on %v", lis.Addr())
 	logrus.Fatal(grpcServer.Serve(lis))
