@@ -1,16 +1,10 @@
-import { useMutation, useQuery } from '@apollo/client';
 import { Avatar, Paper, Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ACCEPT_INVITE,
-  DECLINE_INVITE,
-  LIST_PROJECTS,
-} from '../../../../../graphql';
-import { MemberInvitation } from '../../../../../models/graphql/invite';
-import { Projects } from '../../../../../models/graphql/user';
-import { getUserId } from '../../../../../utils/auth';
+import config from '../../../../../config';
+import { Member, Project } from '../../../../../models/graphql/user';
+import { getToken, getUserId } from '../../../../../utils/auth';
 import { userInitials } from '../../../../../utils/userInitials';
 import useStyles from './styles';
 
@@ -22,10 +16,18 @@ interface ReceivedInvitation {
   user_name: string;
 }
 
-const ReceivedInvitations: React.FC = () => {
+interface ReceivedInvitationsProps {
+  fetchData: () => void;
+}
+
+const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
+  fetchData,
+}) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [projectList, setProjectList] = useState<Project[]>([]);
   // for response data
   const [rows, setRows] = useState<ReceivedInvitation[]>([]);
 
@@ -33,49 +35,110 @@ const ReceivedInvitations: React.FC = () => {
   const [acceptDecline, setAcceptDecline] = useState<string>('');
 
   const userID = getUserId();
-  // mutation to accept the invitation
-  const [acceptInvite] = useMutation<MemberInvitation>(ACCEPT_INVITE, {
-    onCompleted: () => {
-      setRows(rows.filter((row) => row.user_id !== acceptDecline));
-    },
-    refetchQueries: [{ query: LIST_PROJECTS }],
-  });
 
-  // mutation to decline the invitation
-  const [declineInvite] = useMutation<MemberInvitation>(DECLINE_INVITE, {
-    onCompleted: () => {
-      setRows(rows.filter((row) => row.user_id !== acceptDecline));
-    },
-    refetchQueries: [{ query: LIST_PROJECTS }],
-  });
-
-  const { data, loading } = useQuery<Projects>(LIST_PROJECTS, {
-    fetchPolicy: 'cache-and-network',
-  });
+  const getProjects = () => {
+    setLoading(true);
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.data);
+        } else {
+          setProjectList(data.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   useEffect(() => {
-    const projectList = data?.listProjects ?? [];
+    getProjects();
+  }, []);
+  const acceptInvite = (projectid: string, userid: string, role: string) => {
+    fetch(`${config.auth.url}/accept_invitation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({
+        project_id: projectid,
+        user_id: userid,
+        role,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.data.error);
+        } else {
+          setRows(rows.filter((row) => row.user_id !== acceptDecline));
+          getProjects();
+          fetchData();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+  const declineInvite = (projectid: string, userid: string, role: string) => {
+    fetch(`${config.auth.url}/decline_invitation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({
+        project_id: projectid,
+        user_id: userid,
+        role,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.error);
+        } else {
+          setRows(rows.filter((row) => row.user_id !== acceptDecline));
+          getProjects();
+          fetchData();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
     const users: ReceivedInvitation[] = [];
 
     let flag = 0;
     let roleVar = '';
 
-    projectList.forEach((project) => {
-      project.members.forEach((member) => {
-        if (member.user_id === userID && member.invitation === 'Pending') {
+    projectList.forEach((project: Project) => {
+      project.Members.forEach((member: Member) => {
+        if (member.UserID === userID && member.Invitation === 'Pending') {
           flag = 1;
-          roleVar = member.role;
+          roleVar = member.Role;
         }
       });
       if (flag === 1) {
-        project.members.forEach((member) => {
-          if (member.user_id !== userID && member.role === 'Owner') {
+        project.Members.forEach((member: Member) => {
+          if (member.UserID !== userID && member.Role === 'Owner') {
             users.push({
-              projectID: project.id,
-              projectName: project.name,
+              projectID: project.ID,
+              projectName: project.Name,
               role: roleVar,
-              user_id: member.user_id,
-              user_name: member.user_name,
+              user_id: member.UserID,
+              user_name: member.UserName,
             });
           }
         });
@@ -83,7 +146,7 @@ const ReceivedInvitations: React.FC = () => {
       }
     });
     setRows([...users]);
-  }, [data]);
+  }, [projectList]);
 
   return (
     <div data-cy="receivedInvitationModal">
@@ -127,15 +190,7 @@ const ReceivedInvitations: React.FC = () => {
                     className={classes.butnOutline}
                     onClick={() => {
                       setAcceptDecline(row.user_id);
-                      declineInvite({
-                        variables: {
-                          member: {
-                            project_id: row.projectID,
-                            user_id: getUserId(),
-                            role: row.role,
-                          },
-                        },
-                      });
+                      declineInvite(row.projectID, getUserId(), row.role);
                     }}
                     disabled={false}
                   >
@@ -149,15 +204,7 @@ const ReceivedInvitations: React.FC = () => {
                     <ButtonFilled
                       onClick={() => {
                         setAcceptDecline(row.user_id);
-                        acceptInvite({
-                          variables: {
-                            member: {
-                              project_id: row.projectID,
-                              user_id: getUserId(),
-                              role: row.role,
-                            },
-                          },
-                        });
+                        acceptInvite(row.projectID, getUserId(), row.role);
                       }}
                       disabled={false}
                     >

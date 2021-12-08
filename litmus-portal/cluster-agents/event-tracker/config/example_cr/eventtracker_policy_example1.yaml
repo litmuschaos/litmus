@@ -1,7 +1,7 @@
 apiVersion: eventtracker.litmuschaos.io/v1
 kind: EventTrackerPolicy
 metadata:
-  name: eventtrackerpolicy-sample
+  name: eventtrackerpolicy-sample-1
   namespace: litmus
 spec:
   # Add fields here

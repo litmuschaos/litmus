@@ -614,8 +614,11 @@ spec:
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
               value: "v2.1.x"
+            - name: LITMUS_AUTH_GRPC_ENDPOINT
+              value: "litmusportal-server-service"
           ports:
             - containerPort: 8080
+            - containerPort: 8000
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
@@ -635,8 +638,11 @@ spec:
               value: "admin"
             - name: ADMIN_PASSWORD
               value: "litmus"
+            - name: LITMUS_SVC_ENDPOINT
+              value: "litmusportal-server-service"
           ports:
             - containerPort: 3000
+            - containerPort: 3030
           imagePullPolicy: Always
       serviceAccountName: litmus-server-account
 ---
@@ -650,9 +656,15 @@ spec:
     - name: graphql-server
       port: 9002
       targetPort: 8080
+    - name: graphql-rpc-server
+      port: 8000
+      targetPort: 8000
     - name: auth-server
       port: 9003
       targetPort: 3000
+    - name: auth-rpc-server
+      port: 3030
+      targetPort: 3030  
   selector:
     component: litmusportal-server
 ---
@@ -676,6 +688,7 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
+          args: ["--ipv6"]
           resources:
             limits:
               cpu: 200m

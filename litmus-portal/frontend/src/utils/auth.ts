@@ -39,6 +39,7 @@ export function getToken(): string {
       setUserDetails(jwtToken);
       window.location.assign('/getStarted');
     } else {
+      // Going to login page
       history.push('/login');
     }
   }
