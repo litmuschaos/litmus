@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	v2_0_1 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.0.1"
+	v2_4_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.4.0"
 
 	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -55,12 +55,12 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 	// key : previous version,
 	// value :{ Version Manger that upgrades the system from priv version to next, NextVersion points to next version in the path}
 	return map[string]UpgradeExecutor{
-		"2.0.0": {
-			NextVersion:    "2.0.1",
-			VersionManager: v2_0_1.NewVersionManger(m.Logger, m.DBClient),
+		"2.3.0": {
+			NextVersion:    "2.4.0",
+			VersionManager: v2_4_0.NewVersionManger(m.Logger, m.DBClient),
 		},
 		// latest version no more upgrades available
-		"2.0.1": {
+		"2.4.0": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},
