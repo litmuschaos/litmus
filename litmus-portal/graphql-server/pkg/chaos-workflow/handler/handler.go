@@ -877,7 +877,7 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 	var conn *grpc2.ClientConn
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
 	defer conn.Close()
-	
+
 	projectData, err := grpc.GetProjectById(client, templateInput.ProjectID)
 	if err != nil {
 		return nil, err
