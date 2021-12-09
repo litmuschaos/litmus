@@ -52,6 +52,8 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 
 	var conn *grpc2.ClientConn
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	defer conn.Close()
+	
 	_, err := grpc.GetProjectById(client, config.ProjectID)
 
 	log.Print("Enabling Gitops")
