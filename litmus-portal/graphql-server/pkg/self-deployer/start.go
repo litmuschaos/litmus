@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
@@ -18,6 +18,7 @@ func StartDeployer(projectID string) {
 		isAllManifestInstall = true
 		deployerNamespace    = os.Getenv("AGENT_NAMESPACE")
 		agentScope           = os.Getenv("AGENT_SCOPE")
+		skipSSL              = os.Getenv("SKIP_SSL_VERIFY")
 		failedManifest       string
 	)
 
@@ -30,12 +31,17 @@ func StartDeployer(projectID string) {
 		AgentNamespace: &deployerNamespace,
 	}
 
+	if strings.ToLower(skipSSL) == "true" {
+		skip := true
+		clusterInput.SkipSsl = &skip
+	}
+
 	resp, err := clusterHandler.ClusterRegister(clusterInput)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 	}
 
-	response, statusCode, err := rest_handlers.GetManifest(resp.Token)
+	response, statusCode, err := handlers.GetManifest(resp.Token)
 	if err != nil {
 		log.Print("ERROR", err)
 	}

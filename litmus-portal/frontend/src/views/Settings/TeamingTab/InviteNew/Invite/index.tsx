@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   Input,
   InputAdornment,
@@ -12,18 +11,13 @@ import {
   useTheme,
 } from '@material-ui/core';
 import { ButtonFilled } from 'litmus-ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../../components/Loader';
-import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../../graphql';
-import {
-  MemberInviteNew,
-  UserInvite,
-} from '../../../../../models/graphql/invite';
-import {
-  ProjectDetail,
-  ProjectDetailVars,
-} from '../../../../../models/graphql/user';
+import config from '../../../../../config';
+import { UserInvite } from '../../../../../models/graphql/invite';
+import { Project } from '../../../../../models/graphql/user';
+import { getToken } from '../../../../../utils/auth';
 import { getProjectID } from '../../../../../utils/getSearchParams';
 import useStyles from './styles';
 import TableData from './TableData';
@@ -59,9 +53,13 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
   // for setting the role of the user while sending invitation
   const [roles, setRoles] = useState<Role[]>([]);
+  const [project, setProject] = useState<Project>();
 
   // Array to store the list of selected users to be invited
   const [selected, setSelected] = React.useState<SelectedUser[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [sendInviteLoading, setSendInviteLoading] = useState<boolean>(false);
+  const [sendInviteError, setSendInviteError] = useState<string>('');
 
   // Sets the user role while inviting
   const setUserRole = (user_uid: string, role: string) => {
@@ -77,55 +75,106 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     }
   };
 
-  const { loading, data: dataB } = useQuery<ProjectDetail, ProjectDetailVars>(
-    GET_PROJECT,
-    {
-      variables: { projectID },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+  const getProject = () => {
+    setLoading(true);
+    fetch(`${config.auth.url}/get_project/${projectID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          setProject(data.data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
-  useQuery(ALL_USERS, {
-    skip: !dataB,
-    fetchPolicy: 'cache-and-network',
-    onCompleted: (data) => {
-      const memberList = new Map();
-      const users: UserInvite[] = [];
-      if (dataB !== undefined) {
-        dataB.getProject.members.forEach((member) => {
-          if (
-            member.invitation === 'Accepted' ||
-            member.invitation === 'Pending'
-          ) {
-            memberList.set(member.user_id, 1);
-          }
-        });
-        // check for displaying only those users who are not the part of team
-        data &&
-          data.users.forEach((user: UserInvite) => {
-            if (!memberList.has(user.id)) users.push(user);
+  React.useEffect(() => {
+    getProject();
+  }, []);
+
+  useEffect(() => {
+    fetch(`${config.auth.url}/users`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        // setUsers(res);
+        const memberList = new Map();
+        const users: UserInvite[] = [];
+        if (project !== undefined) {
+          project.Members.forEach((member) => {
+            if (
+              member.Invitation === 'Accepted' ||
+              member.Invitation === 'Pending'
+            ) {
+              memberList.set(member.UserID, 1);
+            }
           });
-        setRows([...users]);
-      }
-    },
-  });
+          // check for displaying only those users who are not the part of team
+          res &&
+            res.forEach((user: UserInvite) => {
+              if (!memberList.has(user._id) && !user.deactivated_at)
+                users.push(user);
+            });
+          setRows([...users]);
+        }
+      })
 
-  // mutation to send invitation to selected users
-  const [SendInvite, { error: errorB, loading: loadingB }] =
-    useMutation<MemberInviteNew>(SEND_INVITE, {
-      refetchQueries: [
-        {
-          query: GET_PROJECT,
-          variables: { projectID },
-        },
-      ],
-    });
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [project]);
+
+  const SendInvite = (userid: string, role: string) => {
+    setSendInviteLoading(true);
+    fetch(`${config.auth.url}/send_invitation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({
+        project_id: projectID,
+        user_id: userid,
+        role,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+          setSendInviteError(data.error);
+        } else {
+          setSendInviteLoading(false);
+          setSendInviteError('');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setSendInviteError('');
+      });
+  };
 
   // Checks if the user the already selected or not
   const isSelected = (user: UserInvite) => {
     const user_uids = new Map();
     selected.map((el) => user_uids.set(el.user_id, el.role));
-    return user_uids.has(user.id);
+    return user_uids.has(user._id);
   };
 
   const handleClick = (
@@ -133,11 +182,11 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     selectedUser: UserInvite
   ) => {
     const selectedIds = selected.map((el) => el.user_id);
-    const isUserAlreadySelected = selectedIds.indexOf(selectedUser.id);
+    const isUserAlreadySelected = selectedIds.indexOf(selectedUser._id);
     let newSelected: SelectedUser[] = [];
     if (isUserAlreadySelected === -1) {
       const userrole = () => {
-        const r = roles.find((ele) => ele.user_uid === selectedUser.id);
+        const r = roles.find((ele) => ele.user_uid === selectedUser._id);
         if (r) {
           return r.role;
         }
@@ -145,7 +194,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
       };
       newSelected = newSelected.concat(selected, {
         user_name: selectedUser.username,
-        user_id: selectedUser.id,
+        user_id: selectedUser._id,
         role: userrole(),
       });
     } else if (isUserAlreadySelected === 0) {
@@ -180,14 +229,14 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
     <div>
       {showsuccess ? (
         <>
-          {loadingB ? (
+          {sendInviteLoading ? (
             <>
               <Loader />
             </>
           ) : (
             <Typography>
-              {errorB ? (
-                <Typography>{errorB.message}</Typography>
+              {sendInviteError ? (
+                <Typography>{sendInviteError}</Typography>
               ) : (
                 <div
                   data-cy="inviteNewMemberSuccessModal"
@@ -269,17 +318,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
                     setShowsuccess(true);
                     selected.map(
                       (s) =>
-                        !errorB &&
-                        !loadingB &&
-                        SendInvite({
-                          variables: {
-                            member: {
-                              project_id: projectID,
-                              user_id: s.user_id,
-                              role: s.role,
-                            },
-                          },
-                        })
+                        !(sendInviteError !== '') &&
+                        !sendInviteLoading &&
+                        SendInvite(s.user_id, s.role)
                     );
                   }}
                 >
@@ -302,9 +343,9 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
 
                   return (
                     <TableRow
-                      data-cy="inviteNewMemberCheckBox"
+                      data-cy="inviteNewMemberRow"
                       role="checkbox"
-                      key={row.id}
+                      key={row._id}
                       aria-checked={isItemSelected}
                       selected={isItemSelected}
                     >

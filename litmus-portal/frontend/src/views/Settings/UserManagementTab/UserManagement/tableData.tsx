@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client';
 import {
   IconButton,
   Menu,
@@ -13,12 +12,7 @@ import moment from 'moment';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
-import { UPDATE_USER_STATE } from '../../../../graphql';
-import {
-  UpdateUserStateInput,
-  UserData,
-  UserRole,
-} from '../../../../models/graphql/user';
+import { UserData, UserRole } from '../../../../models/graphql/user';
 import { getToken } from '../../../../utils/auth';
 import useStyles from './styles';
 
@@ -26,11 +20,13 @@ interface TableDataProps {
   row: UserData;
   handleCurrRow: (currRow: UserData) => void;
   handleEditDiv: () => void;
+  fetchusers: () => void;
 }
 const TableData: React.FC<TableDataProps> = ({
   row,
   handleEditDiv,
   handleCurrRow,
+  fetchusers,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -48,17 +44,9 @@ const TableData: React.FC<TableDataProps> = ({
     setAnchorEl(null);
   };
 
-  // Mutation to create a user in litmusDB
-  const [UpdateUserState] = useMutation<UpdateUserStateInput>(
-    UPDATE_USER_STATE,
-    {
-      onCompleted: () => window.location.reload(),
-    }
-  );
-
   // Submit entered data to /update endpoint
   const handleSubmit = () => {
-    fetch(`${config.auth.url}/updatestate`, {
+    fetch(`${config.auth.url}/update/state`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,12 +62,8 @@ const TableData: React.FC<TableDataProps> = ({
         if ('error' in data) {
           console.error(data);
         } else {
-          UpdateUserState({
-            variables: {
-              uid: row?._id,
-              isDeactivate: !row?.deactivated_at,
-            },
-          });
+          // window.location.reload();
+          fetchusers();
         }
       })
       .catch((err) => {

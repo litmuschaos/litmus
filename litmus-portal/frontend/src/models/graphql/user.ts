@@ -1,21 +1,39 @@
 export interface Member {
-  user_id: string;
-  user_name: string;
-  role: string;
-  invitation: string;
-  name: string;
-  email: string;
-  joined_at: string;
-  deactivated_at: string;
+  Email: string;
+  FirstName: string;
+  Invitation: string;
+  JoinedAt: string;
+  Role: string;
+  UserID: string;
+  UserName: string;
+  DeactivatedAt: string;
 }
 
 export interface Project {
-  members: Member[];
-  name: string;
-  id: string;
-  created_at: string;
-  updated_at: string;
-  removed_at: string;
+  Members: Member[];
+  Name: string;
+  UID: string;
+  ID: string;
+  State: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+  RemovedAt: string;
+}
+
+export interface Owner {
+  UserId: string;
+  Username: string;
+}
+
+export interface MemberData {
+  Owner: Owner[];
+  Total: number;
+}
+
+export interface ProjectStats {
+  Name: string;
+  ProjectId: string;
+  Members: MemberData;
 }
 
 export interface UserDetails {
@@ -150,4 +168,10 @@ export enum UserRole {
 export enum InvitationStatus {
   PENDING = 'Pending',
   ACCEPTED = 'Accepted',
+}
+
+export enum UserStatus {
+  DELETED = 'deleted',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
 }

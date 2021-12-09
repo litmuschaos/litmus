@@ -62,6 +62,11 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		ServiceAccountName = DefaultServiceAccountName
 	}
 
+	skipSSL := "false"
+	if cluster.SkipSSL != nil && *cluster.SkipSSL {
+		skipSSL = "true"
+	}
+
 	var (
 		namspaceStr       = "---\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: " + AgentNamespace + "\n"
 		serviceAccountStr = "---\napiVersion: v1\nkind: ServiceAccount\nmetadata:\n  name: " + ServiceAccountName + "\n  namespace: " + AgentNamespace + "\n"
@@ -150,6 +155,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", subscriberConfig.ContainerRuntimeExecutor, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-DEPLOYMENTS}", subscriberConfig.AgentDeployments, -1)
 		newContent = strings.Replace(newContent, "#{VERSION}", subscriberConfig.Version, -1)
+		newContent = strings.Replace(newContent, "#{SKIP_SSL_VERIFY}", skipSSL, -1)
 		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+cluster.StartTime+"\"", -1)
 		if cluster.IsClusterConfirmed == true {
 			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"true"+"\"", -1)

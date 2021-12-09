@@ -11,11 +11,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	grpc2 "google.golang.org/grpc"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbSchemaGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
-	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 
 	"github.com/tidwall/gjson"
@@ -48,10 +50,9 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	gitLock.Lock(config.RepoURL, &config.Branch)
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
 
-	_, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", config.ProjectID}})
-	if err != nil {
-		return false, errors.New("Failed to setup GitOps : " + err.Error())
-	}
+	var conn *grpc2.ClientConn
+	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	_, err := grpc.GetProjectById(client, config.ProjectID)
 
 	log.Print("Enabling Gitops")
 	gitDB := dbSchemaGitOps.GetGitConfigDB(config)

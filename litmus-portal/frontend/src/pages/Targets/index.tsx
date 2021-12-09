@@ -34,7 +34,7 @@ const Targets: React.FC = () => {
           placement="bottom"
           title="Insufficient Permissions"
         >
-          <div className={classes.scheduleBtn}>
+          <div className={classes.scheduleBtn} data-cy="connectAgentButton">
             <ButtonFilled
               onClick={handleCluster}
               disabled={userRole === 'Viewer'}

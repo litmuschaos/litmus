@@ -73,7 +73,7 @@ const UserManagement: React.FC = () => {
   });
   const [editDiv, setEditDiv] = React.useState<boolean>(false);
 
-  useEffect(() => {
+  const fetchUsers = () => {
     fetch(`${config.auth.url}/users`, {
       headers: {
         'Content-Type': 'application/json',
@@ -90,6 +90,10 @@ const UserManagement: React.FC = () => {
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  useEffect(() => {
+    fetchUsers();
   }, [showDiv]);
 
   const filteredData = rows
@@ -266,6 +270,7 @@ const UserManagement: React.FC = () => {
                             .map((row) => {
                               return (
                                 <TableData
+                                  fetchusers={fetchUsers}
                                   row={row}
                                   handleEditDiv={() => setEditDiv(true)}
                                   handleCurrRow={(row: UserData) => {

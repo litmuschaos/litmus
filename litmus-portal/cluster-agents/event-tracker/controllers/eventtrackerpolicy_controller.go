@@ -19,9 +19,10 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"strings"
 	"sync"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/go-logr/logr"
 	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
@@ -60,23 +61,27 @@ func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.R
 	var etp eventtrackerv1.EventTrackerPolicy
 	err := r.Client.Get(context.Background(), req.NamespacedName, &etp)
 	if errors.IsNotFound(err) {
-		log.Print(req.NamespacedName, " not found")
+		logrus.Print(req.NamespacedName, " not found")
 		return ctrl.Result{}, nil
 	} else if err != nil {
 		return ctrl.Result{}, err
 	}
 
 	for index, status := range etp.Statuses {
-		if string(status.Result) == ConditionPassed && strings.ToLower(status.IsTriggered) == "false" {
-			log.Print("ResourceName: " + status.ResourceName + "WorkflowID: " + status.WorkflowID)
+		if status.Result == ConditionPassed && strings.ToLower(status.IsTriggered) == "false" {
+			logrus.Print("ResourceName: " + status.ResourceName + ", WorkflowID: " + status.WorkflowID)
 			response, err := utils.SendRequest(status.WorkflowID)
 			if err != nil {
 				return ctrl.Result{}, err
 			}
-			log.Print(response)
+
+			logrus.Print(response)
 
 			var res Response
-			json.Unmarshal([]byte(response), &res)
+			err = json.Unmarshal([]byte(response), &res)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
 
 			if res.Data.GitopsNotifer == "Gitops Disabled" {
 				etp.Statuses[index].IsTriggered = "false"
