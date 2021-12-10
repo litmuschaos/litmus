@@ -17,9 +17,12 @@ limitations under the License.
 package main
 
 import (
+	"crypto/tls"
 	"flag"
+	"net/http"
 	"os"
 	rt "runtime"
+	"strings"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -117,6 +120,10 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
+	// disable ssl verification if configured
+	if strings.ToLower(os.Getenv("SKIP_SSL_VERIFY")) == "true" {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 	var (
 		agent_scope = os.Getenv("AGENT_SCOPE")
 		mgr         manager.Manager
