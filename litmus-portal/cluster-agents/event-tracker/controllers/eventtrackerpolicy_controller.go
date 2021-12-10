@@ -19,11 +19,12 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"strings"
+	"sync"
+
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"strings"
-	"sync"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"

@@ -18,14 +18,15 @@ package main
 
 import (
 	"flag"
+	"os"
+	rt "runtime"
+	"time"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/informers"
-	"os"
-	rt "runtime"
-	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
