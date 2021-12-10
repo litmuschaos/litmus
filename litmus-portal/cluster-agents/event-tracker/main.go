@@ -124,6 +124,7 @@ func main() {
 	if strings.ToLower(os.Getenv("SKIP_SSL_VERIFY")) == "true" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
+	
 	var (
 		agent_scope = os.Getenv("AGENT_SCOPE")
 		mgr         manager.Manager
