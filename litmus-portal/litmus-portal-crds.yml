@@ -1,4 +1,4 @@
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: clusterworkflowtemplates.argoproj.io
@@ -6,14 +6,36 @@ spec:
   group: argoproj.io
   names:
     kind: ClusterWorkflowTemplate
+    listKind: ClusterWorkflowTemplateList
     plural: clusterworkflowtemplates
     shortNames:
       - clusterwftmpl
       - cwft
+    singular: clusterworkflowtemplate
   scope: Cluster
-  version: v1alpha1
+  versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              x-kubernetes-map-type: atomic
+              x-kubernetes-preserve-unknown-fields: true
+          required:
+            - metadata
+            - spec
+          type: object
+      served: true
+      storage: true
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: cronworkflows.argoproj.io
@@ -21,38 +43,91 @@ spec:
   group: argoproj.io
   names:
     kind: CronWorkflow
+    listKind: CronWorkflowList
     plural: cronworkflows
     shortNames:
-      - cronwf
       - cwf
+      - cronwf
+    singular: cronworkflow
   scope: Namespaced
-  version: v1alpha1
+  versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              x-kubernetes-map-type: atomic
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-map-type: atomic
+              x-kubernetes-preserve-unknown-fields: true
+          required:
+            - metadata
+            - spec
+          type: object
+      served: true
+      storage: true
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: workflows.argoproj.io
 spec:
-  additionalPrinterColumns:
-    - JSONPath: .status.phase
-      description: Status of the workflow
-      name: Status
-      type: string
-    - JSONPath: .status.startedAt
-      description: When the workflow was started
-      format: date-time
-      name: Age
-      type: date
   group: argoproj.io
   names:
     kind: Workflow
+    listKind: WorkflowList
     plural: workflows
     shortNames:
       - wf
+    singular: workflow
   scope: Namespaced
-  version: v1alpha1
+  versions:
+    - additionalPrinterColumns:
+        - description: Status of the workflow
+          jsonPath: .status.phase
+          name: Status
+          type: string
+        - description: When the workflow was started
+          format: date-time
+          jsonPath: .status.startedAt
+          name: Age
+          type: date
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              x-kubernetes-map-type: atomic
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-map-type: atomic
+              x-kubernetes-preserve-unknown-fields: true
+          required:
+            - metadata
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources: {}
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: workflowtemplates.argoproj.io
@@ -60,11 +135,33 @@ spec:
   group: argoproj.io
   names:
     kind: WorkflowTemplate
+    listKind: WorkflowTemplateList
     plural: workflowtemplates
     shortNames:
       - wftmpl
+    singular: workflowtemplate
   scope: Namespaced
-  version: v1alpha1
+  versions:
+    - name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              x-kubernetes-map-type: atomic
+              x-kubernetes-preserve-unknown-fields: true
+          required:
+            - metadata
+            - spec
+          type: object
+      served: true
+      storage: true
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -839,11 +936,11 @@ spec:
   conversion:
     strategy: None
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.2.5
+    controller-gen.kubebuilder.io/version: v0.7.0
   creationTimestamp: null
   name: eventtrackerpolicies.eventtracker.litmuschaos.io
 spec:
@@ -854,68 +951,69 @@ spec:
     plural: eventtrackerpolicies
     singular: eventtrackerpolicy
   scope: Namespaced
-  validation:
-    openAPIV3Schema:
-      description: EventTrackerPolicy is the Schema for the eventtrackerpolicies API
-      properties:
-        apiVersion:
-          description: 'APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-          type: string
-        kind:
-          description: 'Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-          type: string
-        metadata:
-          type: object
-        spec:
-          description: EventTrackerPolicySpec defines the desired state of EventTrackerPolicy
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          description: EventTrackerPolicy is the Schema for the eventtrackerpolicies
+            API
           properties:
-            condition_type:
-              description: Foo is an example field of EventTrackerPolicy. Edit EventTrackerPolicy_types.go
-                to remove/update
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+               of an object. Servers should convert recognized schemas to the latest
+               internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
               type: string
-            conditions:
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+               object represents. Servers may infer this from the endpoint the client
+               submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: EventTrackerPolicySpec defines the desired state of EventTrackerPolicy
+              properties:
+                condition_type:
+                  type: string
+                conditions:
+                  items:
+                    properties:
+                      key:
+                        type: string
+                      operator:
+                        type: string
+                      value:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+            statuses:
               items:
+                description: EventTrackerPolicyStatus defines the observed state of
+                  EventTrackerPolicy
                 properties:
-                  key:
+                  is_triggered:
                     type: string
-                  operator:
+                  resource:
                     type: string
-                  value:
+                  resource_name:
+                    type: string
+                  result:
+                    type: string
+                  time_stamp:
+                    description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                     of cluster Important: Run "make" to regenerate code after modifying
+                     this file'
+                    type: string
+                  workflow_id:
                     type: string
                 type: object
               type: array
           type: object
-        statuses:
-          items:
-            description: EventTrackerPolicyStatus defines the observed state of EventTrackerPolicy
-            properties:
-              is_triggered:
-                type: string
-              resource:
-                type: string
-              resource_name:
-                type: string
-              result:
-                type: string
-              time_stamp:
-                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
-                  of cluster Important: Run "make" to regenerate code after modifying
-                  this file'
-                type: string
-              workflow_id:
-                type: string
-            type: object
-          type: array
-      type: object
-  version: v1
-  versions:
-    - name: v1
       served: true
       storage: true
+      subresources:
+        status: {}
 status:
   acceptedNames:
     kind: ""
