@@ -6,7 +6,7 @@
 *.so
 *.dylib
 bin
-main
+testbin/*
 
 # Test binary, build with `go test -c`
 *.test
@@ -19,7 +19,7 @@ main
 !vendor/**/zz_generated.*
 
 # editor and IDE paraphernalia
-../.idea
+.idea
 *.swp
 *.swo
 *~
