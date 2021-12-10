@@ -21,6 +21,12 @@ rules:
 - apiGroups:
   - eventtracker.litmuschaos.io
   resources:
+  - eventtrackerpolicies/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - eventtracker.litmuschaos.io
+  resources:
   - eventtrackerpolicies/status
   verbs:
   - get
