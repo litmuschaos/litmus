@@ -63,7 +63,7 @@ rules:
         devicerequests,
         devicetokens,
         oauth2clients,
-        oflinesessionses,
+        offlinesessionses,
         passwords,
         refreshtokens,
         signingkeies,
