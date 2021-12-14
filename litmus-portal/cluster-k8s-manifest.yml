@@ -20,7 +20,7 @@ rules:
   resources: [workflows, workflows/finalizers]
   verbs: [get, list, watch, update, patch, delete, create]
 - apiGroups: [argoproj.io]
-  resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers]
+  resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, workflowtasksets]
   verbs: [get, list, watch]
 - apiGroups: [""]
   resources: [serviceaccounts]

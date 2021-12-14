@@ -17,7 +17,7 @@ rules:
   resources: [persistentvolumeclaims]
   verbs: [create, delete]
 - apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers]
+  resources: [workflows, workflows/finalizers, workflowtasksets]
   verbs: [get, list, watch, update, patch, delete, create]
 - apiGroups: [argoproj.io]
   resources: [workflowtemplates, workflowtemplates/finalizers]
