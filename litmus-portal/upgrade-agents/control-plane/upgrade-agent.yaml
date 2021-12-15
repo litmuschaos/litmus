@@ -14,5 +14,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
           imagePullPolicy: Always
       restartPolicy: Never

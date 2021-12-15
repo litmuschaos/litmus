@@ -3,13 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"runtime"
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
@@ -27,9 +31,11 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
+	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/rs/cors"
+	"google.golang.org/grpc"
 )
 
 type Config struct {
@@ -97,16 +103,24 @@ func validateVersion() error {
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	httpPort := os.Getenv("HTTP_PORT")
+	if httpPort == "" {
+		httpPort = utils.DefaultHTTPPort
 	}
+
+	rpcPort := os.Getenv("RPC_PORT")
+	if rpcPort == "" {
+		rpcPort = utils.DefaultRPCPort
+	}
+
 	// Initialize the mongo client
 	mongodb.Client = mongodb.Client.Initialize()
 
 	if err := validateVersion(); err != nil {
 		logrus.Fatal(err)
 	}
+
+	go startGRPCServer(rpcPort) // start GRPC server
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
@@ -138,10 +152,26 @@ func main() {
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
-	router.HandleFunc("/file/{key}{path:.yaml}", rest_handlers.FileHandler)
-	router.HandleFunc("/status", rest_handlers.StatusHandler)
+	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
+	router.HandleFunc("/status", handlers.StatusHandler)
 
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
-	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	logrus.Fatal(http.ListenAndServe(":"+port, router))
+	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
+	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))
+}
+
+// startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
+func startGRPCServer(port string) {
+	lis, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		logrus.Fatal("failed to listen: %w", err)
+	}
+
+	grpcServer := grpc.NewServer()
+
+	// Register services
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{})
+
+	logrus.Printf("GRPC server listening on %v", lis.Addr())
+	logrus.Fatal(grpcServer.Serve(lis))
 }

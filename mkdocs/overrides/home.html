@@ -5,6 +5,28 @@
 
 <!-- Additional styles for landing page -->
 <style>
+   .more-box{
+    margin-left: 20px;
+   }
+   .ex-h1{
+        font-size: 40px;width: 400px;
+    }
+    .ex-p{
+        font-size: 20px; color: #777288;width: 480px;
+    }
+    .more-h1{ font-size: 20px;font-weight:900}
+    .more-p{
+        width: 320px; color: #777288; font-size: 18px;
+    }
+    .lit-p{
+        font-size: 16px; color: #777288; width: 400px;
+    }
+    .ch-div{
+        margin-left: 40px;
+    }
+    .fol{
+        margin: auto;
+    }
     /* Application header should be static for the landing page */
     .md-header {
       position: initial;
@@ -33,6 +55,51 @@
         display: none;
       }
     }
+    @media (max-width:400px) {
+    .more_resource{
+        flex-direction: column;
+        text-align: center;
+    }
+    .more_resource_reverse{
+        flex-direction: column-reverse;
+        text-align: center;
+    }
+    .ex-h1 {
+        font-size:20px;text-align: center;width:fit-content;
+    }
+    .ex-p{
+        font-size: 14px; color: #777288;text-align: center;width:fit-content;
+    }
+    .more_resource .imgimg{
+        width: 50px;
+        height: 50px;
+    }
+.more-box{ margin-left:0;}
+    .mo-img{
+        width: 250px;
+        height: 250px;
+    }
+    .more-h1{ font-size:25px;
+    }
+    .more-p{
+        width:fit-content;
+    }
+    .lit-p{
+        font-size: 14px; color: #777288; width: fit-content;margin:20px;
+    }
+    .chakli{
+        width:275px;
+        height: 275px;
+        margin-top: 10%;
+    }
+    .ch-div{
+        margin-left: 0;
+    }
+    .fol{
+        margin: auto;
+        margin-top:5%;
+    }
+}
 </style>
 <head>
     <meta charset="UTF-8">
@@ -52,12 +119,12 @@
 
 <!-- Header Section -->
 <div style="margin: 0%;">
-    <div style="display: flex;">
-        <div style="margin: auto;">
-            <h1 style="width:400px;font-size: 40px">
+    <div class="more_resource_reverse" style="display: flex;">
+        <div style="margin: auto;justify-content:start;">
+            <h1 class="ex-h1">
                 Experiments in LitmusChaos
             </h1>
-            <p style="font-size: 20px; color: #777288; width: 480px">
+            <p class="ex-p">
                 Litmus experiments for chaos injection
             </p>
             <button
@@ -67,34 +134,35 @@
                 background: linear-gradient(133.06deg, #7C6AC8 1.78%, #5B44BA 64.41%); 
                 color: #FFFFFF; border-radius: 4px; 
                 border:1px solid;
+                margin-bottom: 30px;
                 cursor: pointer;
                 font-size: 15px;">
                 Start Learning
             </button>
         </div>
         <div style="margin: auto;">
-            <img src="exp-docs-icons/cloud-provider.svg" style="height:400px;" alt="cloud provider" />
+            <img class="mo-img" src="exp-docs-icons/cloud-provider.svg" style="height:400px;" alt="cloud provider" />
         </div>
     </div>
 
     <!-- More Resource Section -->
     <div style="background-color: #F9FAFC;">
         <div style="padding: 40px; margin: auto;">
-            <div style="display: flex; justify-content: space-between;">
-                <div style="display: flex; margin: auto;">
-                    <img src="exp-docs-icons/faqs.svg" alt="faqs"/>
-                    <div style="margin-left: 20px;">
-                        <a href="experiments/faq/install"><h1 style="color: blue; text-decoration: underline; cursor: pointer;">FAQs</h1></a>
-                        <p style="width: 280px; color: #777288; font-size: 18px;">
+            <div class="more_resource" style="display: flex; justify-content: space-between;">
+                <div class="more_resource" style="display: flex; margin: auto;">
+                    <img style="margin:auto;" class="imgimg" src="exp-docs-icons/faqs.svg" alt="faqs"/>
+                    <div class="more-box">
+                        <a href="experiments/faq/install"><h1 class="more-h1" style="color: blue; text-decoration: underline; cursor: pointer;">FAQs</h1></a>
+                        <p class="more-p">
                             All common Frequently Asked Questions curated in one place
                         </p>
                     </div>
                 </div>
-                <div style="display: flex; margin: auto;">
-                    <img src="exp-docs-icons/troubleshooting.svg" alt="troubleshooting"/>
-                    <div style="margin-left: 20px;">
-                        <a href="experiments/troubleshooting/install"><h1 style="color: blue; text-decoration: underline; cursor: pointer;">Troubleshooting</h1></a>
-                        <p style="width: 320px; color: #777288; font-size: 18px;">
+                <div class="more_resource" style="display: flex; margin: auto;">
+                    <img style="margin:auto;"  class="imgimg" src="exp-docs-icons/troubleshooting.svg" alt="troubleshooting"/>
+                    <div class="more-box">
+                        <a href="experiments/troubleshooting/install"><h1 class="more-h1" style="color: blue; text-decoration: underline; cursor: pointer;">Troubleshooting</h1></a>
+                        <p class="more-p">
                             Know more about troubleshooting of common issues
                         </p>
                     </div>
@@ -103,12 +171,12 @@
         </div>
     </div>
     <div style="margin: 0%;">
-        <div style="display: flex; padding:20px 0px">
+        <div class="more_resource" style="display: flex; padding:20px 0px">
             <div style="margin: auto;">
                 <h3 style="font-size: 22px;">
                     Do you like our Litmus Docs?
                 </h3>
-                <p style="font-size: 16px; color: #777288; width: 400px">
+                <p class="lit-p">
                     We are always trying to improve our docs. If you like the documentation we would want you to become our stargazer.
                 </p>
                 <button
@@ -126,9 +194,9 @@
                     </div> 
                 </button>
             </div>
-            <div style=" display: inline-flex; margin: auto;">
-                <img src="exp-docs-icons/chaos-bird.svg" alt="chaos-bird"  />
-                <div style="margin-left: 40px;">
+            <div class="more_resource"  style=" display: inline-flex; margin: auto;">
+                <img class="chakli" src="exp-docs-icons/chaos-bird.svg" alt="chaos-bird"  />
+                <div class="ch-div">
                     <img src="exp-docs-icons/cncf.svg" alt="cncf" />
                     <p style="text-align: center;font-size: 16px;">
                         We are a <a href="https://www.cncf.io/" target="_", style="color: blue; text-decoration: underline; cursor: pointer;">CNCF</a> Sandbox project.</p>
@@ -138,12 +206,12 @@
         </div>
         <hr style="height: 1px; border: 2; border-top: 2px solid #E6E8F0;"/>
         <br>
-        <div style="display: flex;padding:15px 0px">
+        <div class="more_resource"  style="display: flex;padding:15px 0px">
             <div style="display: flex;margin: auto">
                 <img src="exp-docs-icons/litmus.svg" alt="litmus"/>
                 <p style="font-size: 14px; margin-top: 15px; margin-left: 10px; color: #777288;"> © 2021 LitmusChaos Authors</p>
             </div>
-            <div style="display: inline-flex;margin: auto">
+            <div class="fol" style="display: inline-flex;">
                 <p style="font-size: 14px;margin-top:0.5px; color: #777288;"> Follow us on:</p>
                 <a target="_" href="https://slack.litmuschaos.io/"><img src="exp-docs-icons/Slack.svg" alt="slack" style="margin-left: 10px;"/></a>
                 <a target="_" href="https://github.com/litmuschaos/litmus"><img src="exp-docs-icons/Github.svg" alt="github" style="margin-left: 10px;"/></a>

@@ -1,23 +1,15 @@
-import { useLazyQuery, useMutation } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import { ButtonFilled, InputField, TextButton } from 'litmus-ui';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import config from '../../config';
-import { CREATE_PROJECT, CREATE_USER, GET_USER_INFO } from '../../graphql';
-import {
-  CreateUserData,
-  CurrentUserDetails,
-  Project,
-} from '../../models/graphql/user';
 import {
   getToken,
   getUserEmail,
   getUserFullName,
   getUserId,
   getUsername,
-  getUserRole,
   logout,
 } from '../../utils/auth';
 import { validateConfirmPassword } from '../../utils/validate';
@@ -50,7 +42,6 @@ const GetStarted: React.FC = () => {
     isError.current = true;
     isSuccess.current = false;
   }
-  const username = getUsername();
 
   const [loading, setIsLoading] = useState<boolean>(false);
 
@@ -82,53 +73,31 @@ const GetStarted: React.FC = () => {
     ValidateUser();
   }, []);
 
-  // Mutation to create project for a user
-  const [CreateProject] = useMutation<Project>(CREATE_PROJECT, {
-    onCompleted: () => {
-      setIsLoading(false);
-      window.location.assign(`${process.env.PUBLIC_URL}/home`);
-    },
-  });
-
-  // Mutation to create a user in litmusDB
-  const [CreateUser] = useMutation<CreateUserData>(CREATE_USER, {
-    onCompleted: () => {
-      CreateProject({
-        variables: {
-          projectName: `${username}'s project`,
-        },
+  const createProject = () => {
+    fetch(`${config.auth.url}/create_project`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({
+        project_name: `${getUsername()}'s project`,
+        user_id: getUserId(),
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          window.location.assign(`${process.env.PUBLIC_URL}/home`);
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
       });
-    },
-  });
-
-  // Query to fetch user details of user from litmusDB
-  const [getUserInfo] = useLazyQuery<CurrentUserDetails>(GET_USER_INFO, {
-    variables: { username },
-    // Adding the user to litmusDB if user does not exists
-    onError: (err) => {
-      if (err.message === 'mongo: no documents in result')
-        CreateUser({
-          variables: {
-            user: {
-              username,
-              email: getUserEmail(),
-              name: getUserFullName(),
-              role: getUserRole(),
-              userID: getUserId(),
-            },
-          },
-        });
-      else console.error(err.message);
-    },
-    // Creating project for the user
-    onCompleted: () => {
-      CreateProject({
-        variables: {
-          projectName: `${username}'s project`,
-        },
-      });
-    },
-  });
+  };
 
   // Submit entered data to /update/details endpoint
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -151,7 +120,7 @@ const GetStarted: React.FC = () => {
         if ('error' in data) {
           isError.current = true;
         } else {
-          getUserInfo();
+          createProject();
         }
       })
       .catch((err) => {
@@ -220,7 +189,7 @@ const GetStarted: React.FC = () => {
               onClick={() => {
                 if (ValidateUser()) {
                   setIsLoading(true);
-                  getUserInfo();
+                  createProject();
                 }
               }}
             >

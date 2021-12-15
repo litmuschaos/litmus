@@ -9,16 +9,19 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography,
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Search } from 'litmus-ui';
+import { Search, Typography } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
+import config from '../../../config';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
-import { Pagination } from '../../../models/graphql/workflowListData';
+import { UsageStats } from '../../../models/graphql/usage';
+import { ProjectStats } from '../../../models/graphql/user';
+import { getToken } from '../../../utils/auth';
+import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
 import useStyles from './styles';
 
 interface SortInput {
@@ -33,25 +36,49 @@ interface SortInput {
   Descending?: boolean;
 }
 
+interface PaginationData {
+  pageNo: number;
+  rowsPerPage: number;
+}
+interface TableData {
+  ProjectName: string;
+  Owner: string;
+  Agents: number;
+  Schedules: number;
+  WfRuns: number;
+  ExpRuns: number;
+  Members: number;
+}
+
 interface TimeRange {
   start_time: string;
   end_time: string;
 }
 
+interface SortData {
+  Agent: { sort: boolean; ascending: boolean };
+  Schedules: { sort: boolean; ascending: boolean };
+  Members: { sort: boolean; ascending: boolean };
+}
+
 const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [paginationData, setPaginationData] = useState<Pagination>({
-    page: 0,
-    limit: 10,
-  });
-  const [sortData, setSortData] = useState<SortInput>({
-    Field: 'Project',
-    Descending: false,
+  let usageData: TableData;
+
+  const [sortData, setSortData] = useState<SortData>({
+    Agent: { sort: false, ascending: true },
+    Schedules: { sort: false, ascending: true },
+    Members: { sort: false, ascending: true },
   });
   const [search, setSearch] = useState<string>('');
 
-  const [usageQuery, { loading, data }] = useLazyQuery(GLOBAL_PROJECT_DATA);
+  const [usageQuery, { loading, data }] =
+    useLazyQuery<UsageStats>(GLOBAL_PROJECT_DATA);
+
+  const [projectStats, setProjectStats] = React.useState<ProjectStats[]>([]);
+
+  const tableData: TableData[] = [];
 
   useEffect(() => {
     usageQuery({
@@ -61,16 +88,92 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
             start_date: start_time,
             end_date: end_time,
           },
-          Pagination: {
-            page: paginationData.page,
-            limit: paginationData.limit,
-          },
-          SearchProject: search,
-          Sort: sortData,
         },
       },
     });
-  }, [paginationData, search, sortData, start_time, end_time]);
+  }, [start_time, end_time]);
+
+  const getProjectStats = () => {
+    fetch(`${config.auth.url}/get_projects_stats`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else if (data.data) {
+          setProjectStats(data.data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  projectStats.map((project) => {
+    usageData = {
+      ProjectName: project.Name,
+      Owner: project.Members.Owner[0].Username,
+      Agents: 0,
+      Schedules: 0,
+      WfRuns: 0,
+      ExpRuns: 0,
+      Members: project.Members.Total,
+    };
+    for (let i = 0; i < (data ? data.UsageQuery.Projects.length : 0); i++) {
+      if (project.ProjectId === data?.UsageQuery.Projects[i].ProjectId) {
+        usageData.Agents = data.UsageQuery.Projects[i].Agents.Total;
+        usageData.ExpRuns = data.UsageQuery.Projects[i].Workflows.ExpRuns;
+        usageData.WfRuns = data.UsageQuery.Projects[i].Workflows.Runs;
+        usageData.Schedules = data.UsageQuery.Projects[i].Workflows.Schedules;
+        break;
+      }
+    }
+    tableData.push(usageData);
+    return null;
+  });
+
+  React.useEffect(() => {
+    getProjectStats();
+  }, []);
+
+  const [paginationData, setPaginationData] = useState<PaginationData>({
+    pageNo: 0,
+    rowsPerPage: 5,
+  });
+  const filteredData: TableData[] = tableData
+    .filter((dataRow) =>
+      dataRow.ProjectName.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a: TableData, b: TableData) => {
+      if (sortData.Agent.sort) {
+        const x = a.Agents;
+        const y = b.Agents;
+
+        return sortData.Agent.ascending ? sortNumAsc(y, x) : sortNumDesc(y, x);
+      }
+      if (sortData.Schedules.sort) {
+        const x = a.Schedules;
+        const y = b.Schedules;
+
+        return sortData.Schedules.ascending
+          ? sortNumAsc(y, x)
+          : sortNumDesc(y, x);
+      }
+      if (sortData.Members.sort) {
+        const x = a.Members;
+        const y = b.Members;
+
+        return sortData.Members.ascending
+          ? sortNumAsc(y, x)
+          : sortNumDesc(y, x);
+      }
+      return 0;
+    });
 
   return (
     <div className={classes.table}>
@@ -82,7 +185,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
           id="input-with-icon-textfield"
           placeholder="Search Projects"
           value={search}
-          onChange={(event: any) => setSearch(event.target.value)}
+          onChange={(event: any) => {
+            setSearch(event.target.value);
+            setPaginationData({ ...paginationData, pageNo: 0 });
+          }}
         />
       </div>
 
@@ -93,76 +199,16 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
               <TableRow className={classes.tableHead}>
                 {/* Projects */}
                 <TableCell className={classes.projectName}>
-                  <div style={{ display: 'flex' }}>
-                    <Typography className={classes.tableHeadName}>
-                      {t('usage.table.project')}
-                    </Typography>
-                    <div className={classes.sortIconDiv}>
-                      <IconButton
-                        aria-label="sort project ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'Project',
-                            Descending: false,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort project descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'Project',
-                            Descending: true,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
+                  <Typography className={classes.tableHeadName}>
+                    {t('usage.table.project')}
+                  </Typography>
                 </TableCell>
 
                 {/* Owners */}
                 <TableCell align="left">
-                  <div style={{ display: 'flex' }}>
-                    <Typography className={classes.tableHeadName}>
-                      {t('usage.table.owner')}
-                    </Typography>
-                    <div className={classes.sortIconDiv}>
-                      <IconButton
-                        aria-label="sort owner ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'Owner',
-                            Descending: false,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort owner descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'Owner',
-                            Descending: true,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
+                  <Typography className={classes.tableHeadName}>
+                    {t('usage.table.owner')}
+                  </Typography>
                 </TableCell>
 
                 {/* Agents */}
@@ -177,8 +223,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            Field: 'Agents',
-                            Descending: false,
+                            ...sortData,
+                            Agent: { sort: true, ascending: true },
+                            Schedules: { sort: false, ascending: true },
+                            Members: { sort: false, ascending: true },
                           })
                         }
                         className={classes.imgSize}
@@ -190,8 +238,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            Field: 'Agents',
-                            Descending: true,
+                            ...sortData,
+                            Agent: { sort: true, ascending: false },
+                            Schedules: { sort: false, ascending: true },
+                            Members: { sort: false, ascending: true },
                           })
                         }
                         className={classes.imgSize}
@@ -214,8 +264,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            Field: 'Schedules',
-                            Descending: false,
+                            ...sortData,
+                            Schedules: { sort: true, ascending: true },
+                            Agent: { sort: false, ascending: true },
+                            Members: { sort: false, ascending: true },
                           })
                         }
                         className={classes.imgSize}
@@ -227,8 +279,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            Field: 'Schedules',
-                            Descending: true,
+                            ...sortData,
+                            Schedules: { sort: true, ascending: false },
+                            Agent: { sort: false, ascending: true },
+                            Members: { sort: false, ascending: true },
                           })
                         }
                         className={classes.imgSize}
@@ -241,76 +295,16 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
 
                 {/* WorkflowRuns */}
                 <TableCell align="center">
-                  <div style={{ display: 'flex' }}>
-                    <Typography className={classes.tableHeadName}>
-                      {t('usage.table.wfRuns')}
-                    </Typography>
-                    <div className={classes.sortIconDiv}>
-                      <IconButton
-                        aria-label="sort WorkflowRuns ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'WorkflowRuns',
-                            Descending: false,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort WorkflowRuns descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'WorkflowRuns',
-                            Descending: true,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
+                  <Typography className={classes.tableHeadName}>
+                    {t('usage.table.wfRuns')}
+                  </Typography>
                 </TableCell>
 
                 {/* ExperimentRuns */}
                 <TableCell align="center">
-                  <div style={{ display: 'flex' }}>
-                    <Typography className={classes.tableHeadName}>
-                      {t('usage.table.expRuns')}
-                    </Typography>
-                    <div className={classes.sortIconDiv}>
-                      <IconButton
-                        aria-label="sort ExperimentRuns ascending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'ExperimentRuns',
-                            Descending: false,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandLessIcon fontSize="inherit" />
-                      </IconButton>
-                      <IconButton
-                        aria-label="sort ExperimentRuns descending"
-                        size="small"
-                        onClick={() =>
-                          setSortData({
-                            Field: 'ExperimentRuns',
-                            Descending: true,
-                          })
-                        }
-                        className={classes.imgSize}
-                      >
-                        <ExpandMoreIcon fontSize="inherit" />
-                      </IconButton>
-                    </div>
-                  </div>
+                  <Typography className={classes.tableHeadName}>
+                    {t('usage.table.expRuns')}
+                  </Typography>
                 </TableCell>
 
                 {/* Team Mambers */}
@@ -325,8 +319,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            Field: 'TeamMembers',
-                            Descending: false,
+                            ...sortData,
+                            Schedules: { sort: false, ascending: false },
+                            Agent: { sort: false, ascending: true },
+                            Members: { sort: true, ascending: true },
                           })
                         }
                         className={classes.imgSize}
@@ -338,8 +334,9 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            Field: 'TeamMembers',
-                            Descending: true,
+                            Schedules: { sort: false, ascending: false },
+                            Agent: { sort: false, ascending: true },
+                            Members: { sort: true, ascending: false },
                           })
                         }
                         className={classes.imgSize}
@@ -358,34 +355,33 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
                     <Loader />
                   </TableCell>
                 </TableRow>
-              ) : data?.UsageQuery.Projects.length > 0 ? (
-                data?.UsageQuery.Projects.map((project: any) => (
-                  <TableRow key={project.Name} className={classes.projectData}>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      className={classes.tableDataProjectName}
+              ) : filteredData.length > 0 ? (
+                filteredData
+                  .slice(
+                    paginationData.pageNo * paginationData.rowsPerPage,
+                    paginationData.pageNo * paginationData.rowsPerPage +
+                      paginationData.rowsPerPage
+                  )
+                  .map((project: TableData) => (
+                    <TableRow
+                      key={project.ProjectName}
+                      className={classes.projectData}
                     >
-                      {project.Name}
-                    </TableCell>
-                    <TableCell align="left">
-                      {project.Members.Owner.Username}
-                    </TableCell>
-                    <TableCell align="center">{project.Agents.Total}</TableCell>
-                    <TableCell align="center">
-                      {project.Workflows.Schedules}
-                    </TableCell>
-                    <TableCell align="center">
-                      {project.Workflows.Runs}
-                    </TableCell>
-                    <TableCell align="center">
-                      {project.Workflows.ExpRuns}
-                    </TableCell>
-                    <TableCell align="center">
-                      {project.Members.Total}
-                    </TableCell>
-                  </TableRow>
-                ))
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        className={classes.tableDataProjectName}
+                      >
+                        {project.ProjectName}
+                      </TableCell>
+                      <TableCell align="left">{project.Owner}</TableCell>
+                      <TableCell align="center">{project.Agents}</TableCell>
+                      <TableCell align="center">{project.Schedules}</TableCell>
+                      <TableCell align="center">{project.WfRuns}</TableCell>
+                      <TableCell align="center">{project.ExpRuns}</TableCell>
+                      <TableCell align="center">{project.Members}</TableCell>
+                    </TableRow>
+                  ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>
@@ -399,21 +395,24 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.UsageQuery.TotalCount.Projects ?? 0}
-          rowsPerPage={paginationData.limit}
-          page={paginationData.page}
+          count={filteredData.length ?? 0}
+          rowsPerPage={paginationData.rowsPerPage}
+          page={paginationData.pageNo}
           onChangePage={(_, page) =>
-            setPaginationData({ ...paginationData, page })
-          }
-          onChangeRowsPerPage={(event) => {
             setPaginationData({
               ...paginationData,
-              page: 0,
-              limit: parseInt(event.target.value, 10),
-            });
-          }}
+              pageNo: page,
+            })
+          }
+          onChangeRowsPerPage={(event) =>
+            setPaginationData({
+              ...paginationData,
+              pageNo: 0,
+              rowsPerPage: parseInt(event.target.value, 10),
+            })
+          }
         />
       </Paper>
     </div>

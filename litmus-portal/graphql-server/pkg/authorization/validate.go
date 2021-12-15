@@ -4,52 +4,25 @@ import (
 	"context"
 	"errors"
 
-	jwt "github.com/golang-jwt/jwt"
-	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
-	dbOperationsUserManagement "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/usermanagement"
-	"go.mongodb.org/mongo-driver/bson"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	grpc2 "google.golang.org/grpc"
 )
 
 // ValidateRole Validates the role of a user in a given project
-func ValidateRole(ctx context.Context, projectID string, requiredRoles []model.MemberRole, invitation string) error {
-	claims := ctx.Value(UserClaim).(jwt.MapClaims)
-	uid := claims["uid"].(string)
+func ValidateRole(ctx context.Context, projectID string,
+	requiredRoles []string, invitation string) error {
+	jwt := ctx.Value(AuthKey).(string)
 
-	filter := bson.D{
-		{"_id", projectID},
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", uid},
-				{"deactivated_at", ""},
-				{"role", bson.D{
-					{"$in", requiredRoles},
-				}},
-				{"invitation", invitation},
-			}},
-		}},
-	}
+	var conn *grpc2.ClientConn
 
-	_, err := dbOperationsProject.GetProject(ctx, filter)
+	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	defer conn.Close()
 
+	err := grpc.ValidatorGRPCRequest(client, jwt, projectID,
+		requiredRoles,
+		invitation)
 	if err != nil {
-		return errors.New("permission denied")
+		return errors.New("permission_denied")
 	}
-
-	return nil
-}
-
-// ValidateUserStatus checks if the user with given uid is deactivated or not
-func ValidateUserStatus(ctx context.Context, uid string) error {
-	user, err := dbOperationsUserManagement.GetUserByUserID(ctx, uid)
-	if err != nil {
-		return err
-	}
-
-	if user.DeactivatedAt != "" {
-		return errors.New("user has been deactivated")
-	}
-
 	return nil
 }

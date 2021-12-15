@@ -20,7 +20,7 @@ rules:
   resources: [workflows, workflows/finalizers]
   verbs: [get, list, watch, update, patch, delete, create]
 - apiGroups: [argoproj.io]
-  resources: [workflowtemplates, workflowtemplates/finalizers]
+  resources: [workflowtemplates, workflowtemplates/finalizers, workflowtasksets]
   verbs: [get, list, watch]
 - apiGroups: [""]
   resources: [serviceaccounts]
@@ -548,31 +548,6 @@ spec:
             [
               "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
-        - name: server-version-updater
-          image: litmuschaos/mongo-utils:latest
-          command: ["/bin/sh"]
-          args: ["-c"," mongo  $DB_SERVER --username $DB_USER --password $DB_PASSWORD --eval 'db=db.getSiblingDB(\"litmus\");db.getCollection(\"server-config-collection\").updateOne({\"key\":\"version\"},{ \"$set\":{ \"value\":\"'$VERSION'\"}})'"]
-          env:
-            - name: VERSION
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: VERSION
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: litmus-portal-admin-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: litmus-portal-admin-secret
-                  key: DB_PASSWORD
-            - name: DB_SERVER
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: DB_SERVER   
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
@@ -601,21 +576,24 @@ spec:
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v2.11.0"
+              value: "litmuschaos/workflow-controller:v3.2.3"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v2.11.0"
+              value: "litmuschaos/argoexec:v3.2.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.2.0"
+              value: "litmuschaos/chaos-operator:2.3.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.2.0"
+              value: "litmuschaos/chaos-runner:2.3.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.2.0"
+              value: "litmuschaos/chaos-exporter:2.3.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.1.x"
+              value: "v2.3.x"
+            - name: LITMUS_AUTH_GRPC_ENDPOINT
+              value: "litmusportal-server-service"
           ports:
             - containerPort: 8080
+            - containerPort: 8000
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
@@ -635,8 +613,11 @@ spec:
               value: "admin"
             - name: ADMIN_PASSWORD
               value: "litmus"
+            - name: LITMUS_SVC_ENDPOINT
+              value: "litmusportal-server-service"
           ports:
             - containerPort: 3000
+            - containerPort: 3030
           imagePullPolicy: Always
       serviceAccountName: litmus-server-account
 ---
@@ -650,9 +631,15 @@ spec:
     - name: graphql-server
       port: 9002
       targetPort: 8080
+    - name: graphql-rpc-server
+      port: 8000
+      targetPort: 8000
     - name: auth-server
       port: 9003
       targetPort: 3000
+    - name: auth-rpc-server
+      port: 3030
+      targetPort: 3030  
   selector:
     component: litmusportal-server
 ---
@@ -676,6 +663,7 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
+          args: ["--ipv6"]
           resources:
             limits:
               cpu: 200m

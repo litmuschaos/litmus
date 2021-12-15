@@ -41,4 +41,7 @@ spec:
             - workflow-controller
           image: #{ARGO-WORKFLOW-CONTROLLER}
           name: workflow-controller
+          env:
+            - name: LEADER_ELECTION_DISABLE
+              value: "true"
       serviceAccountName: argo

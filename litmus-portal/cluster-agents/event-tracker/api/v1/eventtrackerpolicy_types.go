@@ -1,5 +1,5 @@
 /*
-
+Copyright 2021.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,15 +28,14 @@ type EventTrackerPolicySpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of EventTrackerPolicy. Edit EventTrackerPolicy_types.go to remove/update
 	ConditionType string      `json:"condition_type,omitempty"`
 	Conditions    []Condition `json:"conditions,omitempty"`
 }
 
 type Condition struct {
-	Key      string `json:"key,omitempty"`
-	Value    string `json:"value,omitempty"`
-	Operator string `json:"operator,omitempty"`
+	Key      string  `json:"key,omitempty"`
+	Value    *string `json:"value,omitempty"`
+	Operator string  `json:"operator,omitempty"`
 }
 
 // EventTrackerPolicyStatus defines the observed state of EventTrackerPolicy
@@ -51,7 +50,8 @@ type EventTrackerPolicyStatus struct {
 	IsTriggered  string `json:"is_triggered,omitempty"`
 }
 
-// +kubebuilder:object:root=true
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
 
 // EventTrackerPolicy is the Schema for the eventtrackerpolicies API
 type EventTrackerPolicy struct {
@@ -62,7 +62,7 @@ type EventTrackerPolicy struct {
 	Statuses []EventTrackerPolicyStatus `json:"statuses,omitempty"`
 }
 
-// +kubebuilder:object:root=true
+//+kubebuilder:object:root=true
 
 // EventTrackerPolicyList contains a list of EventTrackerPolicy
 type EventTrackerPolicyList struct {

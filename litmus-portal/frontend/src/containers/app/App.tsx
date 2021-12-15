@@ -1,15 +1,9 @@
-import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
-import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
-import {
-  Member,
-  ProjectDetail,
-  Projects,
-  UserRole,
-} from '../../models/graphql/user';
+import config from '../../config';
+import { Member, Project, UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
 import { getToken, getUserId, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
@@ -54,29 +48,48 @@ const Routes: React.FC = () => {
   const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
-  const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
   const userID = getUserId();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const { loading } = useQuery<Projects>(LIST_PROJECTS, {
-    skip: (projectID !== '' && projectID !== undefined) || getToken() === '',
-    onCompleted: (data) => {
-      if (data.listProjects) {
-        data.listProjects.forEach((project): void => {
-          project.members.forEach((member: Member): void => {
-            if (member.user_id === userID && member.role === 'Owner') {
-              setprojectID(project.id);
-              setprojectRole(member.role);
-              history.push({
-                pathname: `/${baseRoute}`,
-                search: `?projectID=${project.id}&projectRole=${member.role}`,
-              });
-            }
+  const getProjects = () => {
+    setLoading(true);
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else if (data.message !== 'No projects found') {
+          data.data.forEach((project: Project): void => {
+            project.Members.forEach((member: Member): void => {
+              if (member.UserID === userID && member.Role === 'Owner') {
+                setprojectID(project.ID);
+                setprojectRole(member.Role);
+                history.push({
+                  pathname: `/${baseRoute}`,
+                  search: `?projectID=${project.ID}&projectRole=${member.Role}`,
+                });
+              }
+            });
           });
-        });
-      }
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    if (!((projectID !== '' && projectID !== undefined) || getToken() === '')) {
+      getProjects();
+    }
+  }, [projectID]);
 
   history.listen((location) => {
     if (location.pathname !== '/login') {
@@ -85,31 +98,50 @@ const Routes: React.FC = () => {
     }
   });
 
-  const { loading: projectValidation } = useQuery<ProjectDetail>(GET_PROJECT, {
-    skip: getToken() === '',
-    variables: { projectID },
-    onCompleted: (data) => {
-      if (data?.getProject) {
-        data.getProject.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setIsProjectMember(true);
-            setprojectID(data.getProject.id);
-            setprojectRole(member.role);
+  const [projectValidation, setProjectValidation] = useState<boolean>(false);
+
+  const getProjectDetails = () => {
+    let isMember = false;
+    setProjectValidation(true);
+    fetch(`${config.auth.url}/get_project/${projectID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          data.data.Members.forEach((member: Member) => {
+            if (member.UserID === userID) {
+              isMember = true;
+              setprojectID(data.data.ID);
+              setprojectRole(member.Role);
+            }
+          });
+          if (!isMember) {
+            setprojectID('');
+            setprojectRole('');
           }
-        });
-        if (!isProjectMember) {
+        }
+        setProjectValidation(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (!isMember) {
           setprojectID('');
           setprojectRole('');
         }
-      }
-    },
-    onError: () => {
-      if (!isProjectMember) {
-        setprojectID('');
-        setprojectRole('');
-      }
-    },
-  });
+      });
+  };
+  useEffect(() => {
+    if (getToken() !== '' && projectID) {
+      getProjectDetails();
+    }
+  }, []);
 
   if (getToken() === '') {
     return (
@@ -143,8 +175,8 @@ const Routes: React.FC = () => {
   return (
     <>
       {!projectValidation && !loading && (
-        <Scaffold>
-          <SuspenseLoader style={{ height: '80vh' }}>
+        <SuspenseLoader style={{ height: '80vh' }}>
+          <Scaffold>
             <Switch>
               <Route exact path="/home" component={HomePage} />
               <Redirect exact path="/" to="/home" />
@@ -260,8 +292,8 @@ const Routes: React.FC = () => {
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
               <Redirect to="/404" />
             </Switch>
-          </SuspenseLoader>
-        </Scaffold>
+          </Scaffold>
+        </SuspenseLoader>
       )}
     </>
   );
