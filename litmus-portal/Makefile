@@ -36,10 +36,10 @@ frontend-services-checks:
 	@echo "--> checking code style [frontend]"
 	@echo "------------------"
 	cd frontend && npm i eslint --no-save && npm run lint
-	@echo "------------------"
-	@echo "--> Check litmusportal frontend [depcheck]"
-	@echo "------------------"
-	cd frontend && npm i depcheck --no-save && node_modules/.bin/depcheck --skip-missing .
+# @echo "------------------"
+# @echo "--> Check litmusportal frontend [depcheck]"
+# @echo "------------------"
+# cd frontend && npm i depcheck --no-save && node_modules/.bin/depcheck --skip-missing .
 
 backend-services-checks:
 	@echo "------------------"
