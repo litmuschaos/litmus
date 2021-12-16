@@ -486,7 +486,7 @@ const WorkflowTable = forwardRef(
                         </Typography>
                       </div>
                     </div>
-                    <div>
+                    <div data-cy="revertChaosSwitch">
                       <SwitchButton
                         checked={revertChaos}
                         handleChange={handleChange}
