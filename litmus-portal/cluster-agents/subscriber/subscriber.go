@@ -76,6 +76,7 @@ func init() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+
 	logrus.Info("all components live...starting up subscriber")
 
 	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
