@@ -41,12 +41,12 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		data, err := json.Marshal(payload)
 		if err != nil {
-			logrus.WithError(err).Error("failed to marshal message")
+			logrus.WithError(err).Fatal("failed to marshal message")
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Error("failed to write message after init")
+			logrus.WithError(err).Fatal("failed to write message after init")
 			return
 		}
 
@@ -56,9 +56,13 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 
 		data, err = json.Marshal(payload)
+		if err != nil {
+			logrus.WithError(err).Fatal("failed to marshal message")
+		}
+
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Error("failed to write message after start")
+			logrus.WithError(err).Fatal("failed to write message after start")
 			return
 		}
 	}()
