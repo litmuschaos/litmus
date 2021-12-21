@@ -70,13 +70,14 @@ func ClusterConnect(clusterData map[string]string) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			logrus.WithError(err).Error("failed to read message")
+			logrus.WithError(err).Fatal("failed to read message")
 		}
 
 		var r types.RawData
 		err = json.Unmarshal(message, &r)
 		if err != nil {
 			logrus.WithError(err).Error("error un-marshaling request payload")
+			continue
 		}
 
 		if r.Type == "connection_ack" {
@@ -87,6 +88,7 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		if r.Payload.Errors != nil {
 			logrus.Error("graphql error : ", string(message))
+			continue
 		}
 
 		err = RequestProcessor(clusterData, r)
