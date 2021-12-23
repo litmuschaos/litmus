@@ -468,6 +468,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             )}
             className={classes.selectText}
             disabled={activeAgents.length === 0 || loading}
+            data-cy="agentName"
           >
             {activeAgents.map((agent: Cluster) => (
               <MenuItem key={agent.cluster_id} value={agent.cluster_id}>
@@ -538,9 +539,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             )}
             className={classes.selectText}
             disabled={activeDataSources.length === 0}
+            data-cy="selectDatasource"
           >
             {activeDataSources.map((dataSource: ListDataSourceResponse) => (
-              <MenuItem key={dataSource.ds_id} value={dataSource.ds_id}>
+              <MenuItem
+                key={dataSource.ds_id}
+                value={dataSource.ds_id}
+                data-cy={dataSource.ds_name}
+              >
                 {dataSource.ds_name}
               </MenuItem>
             ))}
@@ -617,6 +623,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             disableClearable={false}
             limitTags={4}
             className={classes.namespaceSelect}
+            data-cy="selectNamespaces"
           />
 
           <div className={classes.appSelectFlex}>
@@ -644,9 +651,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                   'monitoringDashboard.monitoringDashboards.configureDashboardMetadata.form.selectApplicationType'
                 )}
                 className={classes.selectText}
+                data-cy="applicationType"
               >
                 {gvrList.map((gvr: GVRRequest) => (
-                  <MenuItem key={gvr.resource} value={gvr.resource}>
+                  <MenuItem
+                    key={gvr.resource}
+                    value={gvr.resource}
+                    data-cy={gvr.resource}
+                  >
                     {gvr.resource}
                   </MenuItem>
                 ))}

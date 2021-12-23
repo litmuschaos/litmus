@@ -381,6 +381,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
         onClose={() => setOpenModal(false)}
         width="45%"
         height="fit-content"
+        data-cy="removeDashboardModal"
       >
         <div className={classes.modal}>
           <Typography className={classes.modalHeading} align="left">
@@ -399,7 +400,10 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             ?
           </Typography>
 
-          <div className={classes.flexButtons}>
+          <div
+            className={classes.flexButtons}
+            data-cy="removeDashboardModalButtons"
+          >
             <TextButton
               onClick={() => setOpenModal(false)}
               className={classes.cancelButton}

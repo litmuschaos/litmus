@@ -245,6 +245,7 @@ const DashboardStepper: React.FC<DashboardStepperProps> = ({
             className={classes.headerButtonWrapper}
             aria-label="buttons"
             style={{ width: 'fit-content' }}
+            data-cy="saveChangesControlButton"
           >
             {!loading && (
               <ButtonOutlined
@@ -284,7 +285,11 @@ const DashboardStepper: React.FC<DashboardStepperProps> = ({
           </div>
         ) : (activeStep !== 0 && !configure) ||
           (activeStep === 0 && configure) ? ( // Apply headerButtonWrapper style for top button's div
-          <div className={classes.headerButtonWrapper} aria-label="buttons">
+          <div
+            className={classes.headerButtonWrapper}
+            aria-label="buttons"
+            data-cy="dashboardControlButton"
+          >
             {!(activeStep === 0 && configure) && (
               <ButtonOutlined
                 onClick={() => handleBack()}

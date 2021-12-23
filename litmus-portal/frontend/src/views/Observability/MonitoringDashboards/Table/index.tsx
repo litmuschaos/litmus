@@ -227,6 +227,7 @@ const DashboardTable: React.FC = () => {
             loadingDataSources ||
             (!activeDataSourceAvailable && !loadingDataSources)
           }
+          data-cy="createDashboard"
         >
           <Typography
             className={`${classes.buttonText} ${
