@@ -151,7 +151,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
   };
 
   return (
-    <div className={classes.buttons}>
+    <div className={classes.buttons} data-cy="infoButton">
       {navButtonStates.isInfoToggled ? (
         <ButtonFilled
           onClick={() => {

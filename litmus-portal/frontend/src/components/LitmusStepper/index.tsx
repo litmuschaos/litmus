@@ -83,7 +83,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
       </Paper>
 
       {/* Stepper Actions */}
-      <div className={classes.stepperActions}>
+      <div className={classes.stepperActions} data-cy="controlButtons">
         {activeStep === 2 ? (
           <Tooltip
             title="All selected Workflow Data will be lost"
