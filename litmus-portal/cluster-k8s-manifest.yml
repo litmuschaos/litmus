@@ -615,7 +615,7 @@ spec:
             - name: HUB_BRANCH_NAME
               value: "v2.3.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "127.0.0.1"
+              value: "litmusportal-server-service.litmus.svc.cluster.local"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -635,7 +635,7 @@ spec:
             - name: ADMIN_PASSWORD
               value: "litmus"
             - name: LITMUS_SVC_ENDPOINT
-              value: "127.0.0.1"
+              value: "litmusportal-server-service.litmus.svc.cluster.local"
           ports:
             - containerPort: 3000
             - containerPort: 3030
