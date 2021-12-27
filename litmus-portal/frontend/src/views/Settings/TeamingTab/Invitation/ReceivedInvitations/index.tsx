@@ -18,10 +18,12 @@ interface ReceivedInvitation {
 
 interface ReceivedInvitationsProps {
   fetchData: () => void;
+  getProjectDetail: () => void;
 }
 
 const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
   fetchData,
+  getProjectDetail,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -83,6 +85,7 @@ const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
           setRows(rows.filter((row) => row.user_id !== acceptDecline));
           getProjects();
           fetchData();
+          getProjectDetail();
         }
       })
       .catch((err) => {
@@ -110,6 +113,7 @@ const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
           setRows(rows.filter((row) => row.user_id !== acceptDecline));
           getProjects();
           fetchData();
+          getProjectDetail();
         }
       })
       .catch((err) => {

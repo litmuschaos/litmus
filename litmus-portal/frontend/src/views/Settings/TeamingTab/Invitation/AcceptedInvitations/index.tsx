@@ -15,10 +15,12 @@ interface OtherProjectsType {
 
 interface AcceptedInvitationsProps {
   fetchData: () => void;
+  getProjectDetail: () => void;
 }
 
 const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
   fetchData,
+  getProjectDetail,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -78,6 +80,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
           );
           getProjects();
           fetchData();
+          getProjectDetail();
         }
       })
       .catch((err) => {
