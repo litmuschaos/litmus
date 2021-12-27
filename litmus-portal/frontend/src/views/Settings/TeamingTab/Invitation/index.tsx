@@ -42,8 +42,12 @@ function tabProps(index: any) {
   };
 }
 
+interface InvitationProps {
+  getProjectDetail: () => void;
+}
+
 // NewUserModal displays a modal on creating a new user
-const Invitation: React.FC = () => {
+const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
   const classes = useStyles();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -145,10 +149,16 @@ const Invitation: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={activeTab} index={0}>
-        <AcceptedInvitations fetchData={fetchProjectData} />
+        <AcceptedInvitations
+          fetchData={fetchProjectData}
+          getProjectDetail={getProjectDetail}
+        />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <ReceivedInvitations fetchData={fetchProjectData} />
+        <ReceivedInvitations
+          fetchData={fetchProjectData}
+          getProjectDetail={getProjectDetail}
+        />
       </TabPanel>
     </div>
   );

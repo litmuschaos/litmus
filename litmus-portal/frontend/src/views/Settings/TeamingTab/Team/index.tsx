@@ -183,7 +183,7 @@ const TeamingTab: React.FC = () => {
   const [invitationsCount, setInvitationCount] = useState<number>(0);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  useEffect(() => {
+  const getProjectDetail = () => {
     fetch(`${config.auth.url}/list_projects`, {
       method: 'GET',
       headers: {
@@ -203,6 +203,10 @@ const TeamingTab: React.FC = () => {
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  useEffect(() => {
+    getProjectDetail();
   }, []);
 
   useEffect(() => {
@@ -478,7 +482,7 @@ const TeamingTab: React.FC = () => {
                   'settings.teamingTab.invitation.receivedInvitation.receivedHeading'
                 )}
               </Typography>
-              <Invitation />
+              <Invitation getProjectDetail={getProjectDetail} />
             </Paper>
           </div>
         </>
