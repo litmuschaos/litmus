@@ -575,6 +575,9 @@ spec:
           env:
             - name: SELF_CLUSTER
               value: "true"
+            # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
+            - name: TLS_SECRET_NAME
+              value: ""
             - name: LITMUS_PORTAL_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -612,7 +615,7 @@ spec:
             - name: HUB_BRANCH_NAME
               value: "v2.3.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
+              value: "127.0.0.1"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -632,7 +635,7 @@ spec:
             - name: ADMIN_PASSWORD
               value: "litmus"
             - name: LITMUS_SVC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
+              value: "127.0.0.1"
           ports:
             - containerPort: 3000
             - containerPort: 3030

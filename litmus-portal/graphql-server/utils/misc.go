@@ -156,6 +156,7 @@ func ManifestParser(cluster dbSchemaCluster.Cluster, rootPath string, subscriber
 		newContent = strings.Replace(newContent, "#{AGENT-DEPLOYMENTS}", subscriberConfig.AgentDeployments, -1)
 		newContent = strings.Replace(newContent, "#{VERSION}", subscriberConfig.Version, -1)
 		newContent = strings.Replace(newContent, "#{SKIP_SSL_VERIFY}", skipSSL, -1)
+		newContent = strings.Replace(newContent, "#{CUSTOM_TLS_CERT}", subscriberConfig.TLSCert, -1)
 		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+cluster.StartTime+"\"", -1)
 		if cluster.IsClusterConfirmed == true {
 			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"true"+"\"", -1)
