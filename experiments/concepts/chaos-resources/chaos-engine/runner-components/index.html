@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/runner-components/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.edf004c2.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -3204,26 +3204,26 @@
 <h3 id="chaosrunner-annotations">ChaosRunner Annotations<a class="headerlink" href="#chaosrunner-annotations" title="Permanent link">&para;</a></h3>
 <p>It allows developers to specify the custom annotations for the runner pod. It can be tuned via <code>runnerAnnotations</code> field. </p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains annotations for the chaos runner pod</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-     <span class="c1"># annotations for the chaos-runner</span>
-     <span class="nt">runnerAnnotations</span><span class="p">:</span>
-       <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">chaos-runner</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains annotations for the chaos runner pod</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">     </span><span class="c1"># annotations for the chaos-runner</span><span class="w"></span>
+<span class="w">     </span><span class="nt">runnerAnnotations</span><span class="p">:</span><span class="w"></span>
+<span class="w">       </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chaos-runner</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-args-and-command">ChaosRunner Args And Command<a class="headerlink" href="#chaosrunner-args-and-command" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>args</code> and <code>command</code> to set the args and command of the chaos-runner respectively.</p>
@@ -3232,34 +3232,34 @@
 <li><code>command</code>: It allows developers to specify their own debug runner commands.</li>
 </ul>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains args and command for the chaos runner</span>
-<span class="c1"># it will be useful for the cases where custom image of the chaos-runner is used, which supports args and commands</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="c1"># override the args and command for the chaos-runner </span>
-    <span class="nt">runner</span><span class="p">:</span> 
-      <span class="c1"># name of the custom image </span>
-      <span class="nt">image</span><span class="p">:</span> <span class="s">&quot;&lt;your</span><span class="nv"> </span><span class="s">repo&gt;/chaos-runner:ci&quot;</span>
-      <span class="c1"># args for the image</span>
-      <span class="nt">args</span><span class="p">:</span> 
-      <span class="p p-Indicator">-</span> <span class="s">&quot;/bin/sh&quot;</span>
-      <span class="c1"># command for the image</span>
-      <span class="nt">command</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="s">&quot;-c&quot;</span>
-      <span class="p p-Indicator">-</span> <span class="s">&quot;&lt;custom-command&gt;&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains args and command for the chaos runner</span><span class="w"></span>
+<span class="c1"># it will be useful for the cases where custom image of the chaos-runner is used, which supports args and commands</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># override the args and command for the chaos-runner </span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="c1"># name of the custom image </span><span class="w"></span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;your</span><span class="nv"> </span><span class="s">repo&gt;/chaos-runner:ci&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># args for the image</span><span class="w"></span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># command for the image</span><span class="w"></span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;&lt;custom-command&gt;&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-configmaps-and-secrets">ChaosRunner Configmaps And Secrets<a class="headerlink" href="#chaosrunner-configmaps-and-secrets" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>configMaps</code> and <code>secrets</code> to set the configmaps and secrets mounted to the chaos-runner respectively.</p>
@@ -3268,31 +3268,31 @@
 <li><code>secrets</code>: It provides for a means to push secrets (typically project ids, access credentials, etc.,) into the chaos runner pod. These are especially useful in the case of platform-level/infra-level chaos experiments.</li>
 </ul>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains configmaps and secrets for the chaos-runner</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-     <span class="c1"># configmaps details mounted to the runner pod</span>
-     <span class="nt">configMaps</span><span class="p">:</span>
-     <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;configmap-01&quot;</span>
-       <span class="nt">mountPath</span><span class="p">:</span> <span class="s">&quot;/mnt&quot;</span>
-     <span class="c1"># secrets details mounted to the runner pod</span>
-     <span class="nt">secrets</span><span class="p">:</span>
-     <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;secret-01&quot;</span>
-       <span class="nt">mountPath</span><span class="p">:</span> <span class="s">&quot;/tmp&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains configmaps and secrets for the chaos-runner</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">     </span><span class="c1"># configmaps details mounted to the runner pod</span><span class="w"></span>
+<span class="w">     </span><span class="nt">configMaps</span><span class="p">:</span><span class="w"></span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;configmap-01&quot;</span><span class="w"></span>
+<span class="w">       </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mnt&quot;</span><span class="w"></span>
+<span class="w">     </span><span class="c1"># secrets details mounted to the runner pod</span><span class="w"></span>
+<span class="w">     </span><span class="nt">secrets</span><span class="p">:</span><span class="w"></span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;secret-01&quot;</span><span class="w"></span>
+<span class="w">       </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/tmp&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-image-and-imagepullpoicy">ChaosRunner Image and ImagePullPoicy<a class="headerlink" href="#chaosrunner-image-and-imagepullpoicy" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>image</code> and <code>imagePullPolicy</code> to set the image and imagePullPolicy for the chaos-runner respectively.</p>
@@ -3301,135 +3301,135 @@
 <li><code>imagePullPolicy</code>: It allows developers to specify the pull policy for chaos-runner. Set to Always during debug/test.</li>
 </ul>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the image and imagePullPolicy of the chaos-runner</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-      <span class="c1"># override the image of the chaos-runner</span>
-      <span class="c1"># by default it is used the image based on the litmus version </span>
-      <span class="nt">image</span><span class="p">:</span> <span class="s">&quot;litmuschaos/chaos-runner:latest&quot;</span>
-      <span class="c1"># imagePullPolicy for the runner image</span>
-      <span class="c1"># supports: Always, IfNotPresent. default: IfNotPresent</span>
-      <span class="nt">imagePullPolicy</span><span class="p">:</span> <span class="s">&quot;Always&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the image and imagePullPolicy of the chaos-runner</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># override the image of the chaos-runner</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># by default it is used the image based on the litmus version </span><span class="w"></span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;litmuschaos/chaos-runner:latest&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># imagePullPolicy for the runner image</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># supports: Always, IfNotPresent. default: IfNotPresent</span><span class="w"></span>
+<span class="w">      </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Always&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-imagepullsecrets">ChaosRunner ImagePullSecrets<a class="headerlink" href="#chaosrunner-imagepullsecrets" title="Permanent link">&para;</a></h3>
 <p>It allows developers to specify the imagePullSecret name for the ChaosRunner. It can be tuned via <code>imagePullSecrets</code> field.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the imagePullSecrets for the chaos-runner</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-      <span class="c1"># secret name for the runner image, if using private registry</span>
-      <span class="nt">imagePullSecrets</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">regcred</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the imagePullSecrets for the chaos-runner</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># secret name for the runner image, if using private registry</span><span class="w"></span>
+<span class="w">      </span><span class="nt">imagePullSecrets</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regcred</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-nodeselectors">ChaosRunner NodeSelectors<a class="headerlink" href="#chaosrunner-nodeselectors" title="Permanent link">&para;</a></h3>
 <p>The nodeselector contains labels of the node on which runner pod should be scheduled. Typically used in case of infra/node level chaos. It can be tuned via <code>nodeSelector</code> field.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the node-selector for the chaos-runner</span>
-<span class="c1"># it will schedule the chaos-runner on the coresponding node with matching labels</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-      <span class="c1"># nodeselector for the runner pod</span>
-      <span class="nt">nodeSelector</span><span class="p">:</span>
-        <span class="nt">context</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">chaos</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the node-selector for the chaos-runner</span><span class="w"></span>
+<span class="c1"># it will schedule the chaos-runner on the coresponding node with matching labels</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># nodeselector for the runner pod</span><span class="w"></span>
+<span class="w">      </span><span class="nt">nodeSelector</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chaos</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-resource-requirements">ChaosRunner Resource Requirements<a class="headerlink" href="#chaosrunner-resource-requirements" title="Permanent link">&para;</a></h3>
 <p>It contains the resource requirements for the ChaosRunner Pod, where we can provide resource requests and limits for the pod. It can be tuned via <code>resources</code> field.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the resource requirements for the runner pod</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-      <span class="c1"># resource requirements for the runner pod</span>
-      <span class="nt">resources</span><span class="p">:</span>
-        <span class="nt">requests</span><span class="p">:</span>
-          <span class="nt">cpu</span><span class="p">:</span> <span class="s">&quot;250m&quot;</span>
-          <span class="nt">memory</span><span class="p">:</span> <span class="s">&quot;64Mi&quot;</span>
-        <span class="nt">limits</span><span class="p">:</span>
-         <span class="nt">cpu</span><span class="p">:</span> <span class="s">&quot;500m&quot;</span>
-         <span class="nt">memory</span><span class="p">:</span> <span class="s">&quot;128Mi&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the resource requirements for the runner pod</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># resource requirements for the runner pod</span><span class="w"></span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;250m&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;64Mi&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span><span class="w"></span>
+<span class="w">         </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500m&quot;</span><span class="w"></span>
+<span class="w">         </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;128Mi&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 <h3 id="chaosrunner-tolerations">ChaosRunner Tolerations<a class="headerlink" href="#chaosrunner-tolerations" title="Permanent link">&para;</a></h3>
 <p>It provides tolerations for the runner pod so that it can be scheduled on the respective tainted node. Typically used in case of infra/node level chaos. It can be tuned via <code>tolerations</code> field.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the tolerations for the chaos-runner</span>
-<span class="c1"># it will schedule the chaos-runner on the tainted node</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&quot;false&quot;</span>
-  <span class="nt">components</span><span class="p">:</span>
-    <span class="nt">runner</span><span class="p">:</span>
-      <span class="c1"># tolerations for the runner pod</span>
-      <span class="nt">tolerations</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;key1&quot;</span>
-        <span class="nt">operator</span><span class="p">:</span> <span class="s">&quot;Equal&quot;</span>
-        <span class="nt">value</span><span class="p">:</span> <span class="s">&quot;value1&quot;</span>
-        <span class="nt">effect</span><span class="p">:</span> <span class="s">&quot;Schedule&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the tolerations for the chaos-runner</span><span class="w"></span>
+<span class="c1"># it will schedule the chaos-runner on the tainted node</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># tolerations for the runner pod</span><span class="w"></span>
+<span class="w">      </span><span class="nt">tolerations</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;key1&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Equal&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;value1&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Schedule&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3512,11 +3512,11 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.e1a181d9.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
 

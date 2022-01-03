@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/litmus-probes/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.edf004c2.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -2868,40 +2868,40 @@ It supports four types: <code>cmdProbe</code>, <code>k8sProbe</code>, <code>http
 <li><code>OnChaos</code>: The probe is executed continuously, with a specified polling interval strictly for chaos duration of chaos</li>
 </ul>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the common attributes or run properties</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;check-frontend-access-url&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;httpProbe&quot;</span>
-        <span class="nt">httpProbe/inputs</span><span class="p">:</span>
-          <span class="nt">url</span><span class="p">:</span> <span class="s">&quot;&lt;url&gt;&quot;</span>
-          <span class="nt">insecureSkipVerify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-          <span class="nt">responseTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span>
-          <span class="nt">method</span><span class="p">:</span>
-            <span class="nt">get</span><span class="p">:</span> 
-              <span class="nt">criteria</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">==</span>
-              <span class="nt">responseCode</span><span class="p">:</span> <span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-        <span class="c1"># modes for the probes</span>
-        <span class="c1"># supports: [SOT, EOT, Edge, Continuous, OnChaos]</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;Continuous&quot;</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-          <span class="nt">probePollingInterval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the common attributes or run properties</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">insecureSkipVerify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">          </span><span class="nt">responseTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">method</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"></span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># modes for the probes</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># supports: [SOT, EOT, Edge, Continuous, OnChaos]</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probePollingInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
 </code></pre></div>
 <h3 id="run-properties">Run Properties<a class="headerlink" href="#run-properties" title="Permanent link">&para;</a></h3>
 <p>All probes share some common attributes. Which can be tuned via <code>runProperties</code> ENV.</p>
@@ -2912,125 +2912,125 @@ It supports four types: <code>cmdProbe</code>, <code>k8sProbe</code>, <code>http
 <li><code>probePollingInterval</code>: The time interval for which continuous/onchaos probes should be sleep after each iteration.</li>
 </ul>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the common attributes or run properties</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;check-frontend-access-url&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;httpProbe&quot;</span>
-        <span class="nt">httpProbe/inputs</span><span class="p">:</span>
-          <span class="nt">url</span><span class="p">:</span> <span class="s">&quot;&lt;url&gt;&quot;</span>
-          <span class="nt">insecureSkipVerify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-          <span class="nt">responseTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span>
-          <span class="nt">method</span><span class="p">:</span>
-            <span class="nt">get</span><span class="p">:</span> 
-              <span class="nt">criteria</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">==</span>
-              <span class="nt">responseCode</span><span class="p">:</span> <span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;Continuous&quot;</span>
-        <span class="c1"># contains runProperties for the probes</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="c1"># time limit for the probe to execute the specified check</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> <span class="c1">#in seconds</span>
-          <span class="c1"># the time period between subsequent retries</span>
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> <span class="c1">#in seconds</span>
-          <span class="c1"># number of times a check is re-run upon failure before declaring the probe status as failed</span>
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-          <span class="c1">#time interval for which continuous probe should wait after each iteration</span>
-          <span class="c1"># applicable for onChaos and Continuous probes</span>
-          <span class="nt">probePollingInterval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the common attributes or run properties</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">insecureSkipVerify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">          </span><span class="nt">responseTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">method</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"></span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># contains runProperties for the probes</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># time limit for the probe to execute the specified check</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span><span class="c1">#in seconds</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># the time period between subsequent retries</span><span class="w"></span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span><span class="c1">#in seconds</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># number of times a check is re-run upon failure before declaring the probe status as failed</span><span class="w"></span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">          </span><span class="c1">#time interval for which continuous probe should wait after each iteration</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># applicable for onChaos and Continuous probes</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probePollingInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
 </code></pre></div>
 <h3 id="initial-delay-seconds">Initial Delay Seconds<a class="headerlink" href="#initial-delay-seconds" title="Permanent link">&para;</a></h3>
 <p>It Represents the initial waiting time interval for the probes. It can be tuned via 
 <code>initialDelaySeconds</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the initial delay seconds for the probes</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;check-frontend-access-url&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;httpProbe&quot;</span>
-        <span class="nt">httpProbe/inputs</span><span class="p">:</span>
-          <span class="nt">url</span><span class="p">:</span> <span class="s">&quot;&lt;url&gt;&quot;</span>
-          <span class="nt">insecureSkipVerify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-          <span class="nt">responseTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span>
-          <span class="nt">method</span><span class="p">:</span>
-            <span class="nt">get</span><span class="p">:</span> 
-              <span class="nt">criteria</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">==</span>
-              <span class="nt">responseCode</span><span class="p">:</span> <span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;Continuous&quot;</span>
-        <span class="c1"># contains runProperties for the probes</span>
-        <span class="nt">RunProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-          <span class="nt">probePollingInterval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
-          <span class="c1">#initial waiting time interval for the probes</span>
-          <span class="nt">initialDelaySeconds</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span> <span class="c1">#in seconds</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the initial delay seconds for the probes</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">insecureSkipVerify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">          </span><span class="nt">responseTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">method</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"></span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># contains runProperties for the probes</span><span class="w"></span>
+<span class="w">        </span><span class="nt">RunProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probePollingInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+<span class="w">          </span><span class="c1">#initial waiting time interval for the probes</span><span class="w"></span>
+<span class="w">          </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"> </span><span class="c1">#in seconds</span><span class="w"></span>
 </code></pre></div>
 <h3 id="stopcontinue-experiment-on-probe-failure">Stop/Continue Experiment On Probe Failure<a class="headerlink" href="#stopcontinue-experiment-on-probe-failure" title="Permanent link">&para;</a></h3>
 <p>It can be set to true/false to stop or continue the experiment execution after the probe fails. It can be tuned via <code>stopOnFailure</code> ENV. 
 It supports boolean values. The default value is <code>false</code>.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># contains the flag to stop/continue experiment based on the specified flag</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;check-frontend-access-url&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;httpProbe&quot;</span>
-        <span class="nt">httpProbe/inputs</span><span class="p">:</span>
-          <span class="nt">url</span><span class="p">:</span> <span class="s">&quot;&lt;url&gt;&quot;</span>
-          <span class="nt">insecureSkipVerify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-          <span class="nt">responseTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span>
-          <span class="nt">method</span><span class="p">:</span>
-            <span class="nt">get</span><span class="p">:</span> 
-              <span class="nt">criteria</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">==</span>
-              <span class="nt">responseCode</span><span class="p">:</span> <span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;Continuous&quot;</span>
-        <span class="c1"># contains runProperties for the probes</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-          <span class="nt">probePollingInterval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
-          <span class="c1">#it can be set to true/false to stop or continue the experiment execution after probe fails</span>
-          <span class="c1"># supports: true, false. default: false</span>
-          <span class="nt">stopOnFailure</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># contains the flag to stop/continue experiment based on the specified flag</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-frontend-access-url&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;httpProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">httpProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;url&gt;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">insecureSkipVerify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">          </span><span class="nt">responseTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;value&gt;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">method</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">get</span><span class="p">:</span><span class="w"> </span>
+<span class="w">              </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">==</span><span class="w"></span>
+<span class="w">              </span><span class="nt">responseCode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;response</span><span class="nv"> </span><span class="s">code&gt;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Continuous&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># contains runProperties for the probes</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probePollingInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+<span class="w">          </span><span class="c1">#it can be set to true/false to stop or continue the experiment execution after probe fails</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># supports: true, false. default: false</span><span class="w"></span>
+<span class="w">          </span><span class="nt">stopOnFailure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3113,11 +3113,11 @@ It supports boolean values. The default value is <code>false</code>.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.e1a181d9.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
 

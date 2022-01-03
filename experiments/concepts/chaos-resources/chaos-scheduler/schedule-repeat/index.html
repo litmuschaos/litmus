@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-scheduler/schedule-repeat/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.edf004c2.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -3132,338 +3132,338 @@
 <h3 id="basic-schema-to-execute-repeat-strategy">Basic Schema to Execute Repeat Strategy<a class="headerlink" href="#basic-schema-to-execute-repeat-strategy" title="Permanent link">&para;</a></h3>
 <p>This will keep executing the schedule and creating engines for an indefinite amount of time.</p>
 <h4 id="schedule-chaosengine-at-every-nth-minute">Schedule ChaosEngine at every nth minute<a class="headerlink" href="#schedule-chaosengine-at-every-nth-minute" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="c1"># schedule the chaos at every 5 minutes</span>
-          <span class="nt">minute</span><span class="p">:</span>
-            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># schedule the chaos at every 5 minutes</span><span class="w"></span>
+<span class="w">          </span><span class="nt">minute</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthMinute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h4 id="schedule-chaosengine-at-every-nth-hour">Schedule ChaosEngine at every nth hour<a class="headerlink" href="#schedule-chaosengine-at-every-nth-hour" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="c1"># schedule the chaos every hour at 0th minute</span>
-          <span class="nt">hour</span><span class="p">:</span>
-            <span class="nt">everyNthHour</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># schedule the chaos every hour at 0th minute</span><span class="w"></span>
+<span class="w">          </span><span class="nt">hour</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthHour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h4 id="schedule-chaosengine-at-nth-minute-of-every-nth-hour">Schedule ChaosEngine at nth minute of every nth hour<a class="headerlink" href="#schedule-chaosengine-at-nth-minute-of-every-nth-hour" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="c1"># schedule the chaos every hour at 30th minute</span>
-          <span class="nt">hour</span><span class="p">:</span>
-            <span class="nt">everyNthHour</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-            <span class="nt">minuteOfTheHour</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># schedule the chaos every hour at 30th minute</span><span class="w"></span>
+<span class="w">          </span><span class="nt">hour</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthHour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">            </span><span class="nt">minuteOfTheHour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="specifying-time-range-for-the-chaos-schedule">Specifying Time Range for the Chaos Schedule<a class="headerlink" href="#specifying-time-range-for-the-chaos-schedule" title="Permanent link">&para;</a></h3>
 <p>This will manipulate the schedule to be started and ended according to our definition.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">timeRange</span><span class="p">:</span>
-        <span class="c1">#should be modified according to current UTC Time</span>
-        <span class="nt">startTime</span><span class="p">:</span> <span class="s">&quot;2020-05-12T05:47:00Z&quot;</span>   
-        <span class="nt">endTime</span><span class="p">:</span> <span class="s">&quot;2020-09-13T02:58:00Z&quot;</span>   
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="nt">minute</span><span class="p">:</span>
-            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timeRange</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1">#should be modified according to current UTC Time</span><span class="w"></span>
+<span class="w">        </span><span class="nt">startTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2020-05-12T05:47:00Z&quot;</span><span class="w">   </span>
+<span class="w">        </span><span class="nt">endTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2020-09-13T02:58:00Z&quot;</span><span class="w">   </span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">minute</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthMinute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="specifying-just-the-end-time">Specifying Just the End Time<a class="headerlink" href="#specifying-just-the-end-time" title="Permanent link">&para;</a></h3>
 <p>Assumes the custom resource creation timestamp as the StartTime</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">timeRange</span><span class="p">:</span>
-        <span class="c1">#should be modified according to current UTC Time</span>
-        <span class="nt">endTime</span><span class="p">:</span> <span class="s">&quot;2020-09-13T02:58:00Z&quot;</span>   
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="nt">minute</span><span class="p">:</span>
-            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timeRange</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1">#should be modified according to current UTC Time</span><span class="w"></span>
+<span class="w">        </span><span class="nt">endTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2020-09-13T02:58:00Z&quot;</span><span class="w">   </span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">minute</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthMinute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="specifying-just-the-starttime">Specifying Just the StartTime<a class="headerlink" href="#specifying-just-the-starttime" title="Permanent link">&para;</a></h3>
 <p>Executes chaos indefinitely (until the ChaosSchedule CR is removed) starting from the specified timestamp</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">timeRange</span><span class="p">:</span>
-        <span class="c1">#should be modified according to current UTC Time</span>
-        <span class="nt">startTime</span><span class="p">:</span> <span class="s">&quot;2020-05-12T05:47:00Z&quot;</span>   
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="nt">minute</span><span class="p">:</span>
-            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">auxiliaryAppInfo</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">timeRange</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1">#should be modified according to current UTC Time</span><span class="w"></span>
+<span class="w">        </span><span class="nt">startTime</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2020-05-12T05:47:00Z&quot;</span><span class="w">   </span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">minute</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthMinute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">auxiliaryAppInfo</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="specifying-work-hours">Specifying Work Hours<a class="headerlink" href="#specifying-work-hours" title="Permanent link">&para;</a></h3>
 <p>This ensures chaos execution within the specified hours of the day, everyday.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="nt">minute</span><span class="p">:</span>
-            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>   
-      <span class="nt">workHours</span><span class="p">:</span>
-        <span class="c1"># format should be &lt;starting-hour-number&gt;-&lt;ending-hour-number&gt;(inclusive)</span>
-        <span class="nt">includedHours</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0-12</span>
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="c1"># It can be true/false</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="c1">#ex. values: ns1:name=percona,ns2:run=nginx</span>
-    <span class="nt">auxiliaryAppInfo</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="c1"># It can be delete/retain</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">minute</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthMinute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">   </span>
+<span class="w">      </span><span class="nt">workHours</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># format should be &lt;starting-hour-number&gt;-&lt;ending-hour-number&gt;(inclusive)</span><span class="w"></span>
+<span class="w">        </span><span class="nt">includedHours</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0-12</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># It can be true/false</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">#ex. values: ns1:name=percona,ns2:run=nginx</span><span class="w"></span>
+<span class="w">    </span><span class="nt">auxiliaryAppInfo</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># It can be delete/retain</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="specifying-work-days">Specifying work days<a class="headerlink" href="#specifying-work-days" title="Permanent link">&para;</a></h3>
 <p>This executes chaos on specified days of the week, with the specified minimum interval.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">schedule</span><span class="p">:</span>
-    <span class="nt">repeat</span><span class="p">:</span>
-      <span class="nt">properties</span><span class="p">:</span>
-        <span class="nt">minChaosInterval</span><span class="p">:</span>
-          <span class="nt">minute</span><span class="p">:</span>
-            <span class="nt">everyNthMinute</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>  
-      <span class="nt">workDays</span><span class="p">:</span>
-        <span class="nt">includedDays</span><span class="p">:</span> <span class="s">&quot;Mon,Tue,Wed,Sat,Sun&quot;</span>
-  <span class="nt">engineTemplateSpec</span><span class="p">:</span>
-    <span class="nt">engineState</span><span class="p">:</span> <span class="s">&#39;active&#39;</span>
-    <span class="nt">appinfo</span><span class="p">:</span>
-      <span class="nt">appns</span><span class="p">:</span> <span class="s">&#39;default&#39;</span>
-      <span class="nt">applabel</span><span class="p">:</span> <span class="s">&#39;app=nginx&#39;</span>
-      <span class="nt">appkind</span><span class="p">:</span> <span class="s">&#39;deployment&#39;</span>
-    <span class="nt">annotationCheck</span><span class="p">:</span> <span class="s">&#39;true&#39;</span>
-    <span class="nt">auxiliaryAppInfo</span><span class="p">:</span> <span class="s">&#39;&#39;</span>
-    <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-    <span class="nt">jobCleanUpPolicy</span><span class="p">:</span> <span class="s">&#39;delete&#39;</span>
-    <span class="nt">experiments</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-        <span class="nt">spec</span><span class="p">:</span>
-          <span class="nt">components</span><span class="p">:</span>
-            <span class="nt">env</span><span class="p">:</span>
-              <span class="c1"># set chaos duration (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;30&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosSchedule</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schedule-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">repeat</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">properties</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">minChaosInterval</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">minute</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">everyNthMinute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">  </span>
+<span class="w">      </span><span class="nt">workDays</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">includedDays</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Mon,Tue,Wed,Sat,Sun&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineTemplateSpec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;active&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;app=nginx&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;deployment&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">auxiliaryAppInfo</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobCleanUpPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;delete&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">              </span><span class="c1"># set chaos duration (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;30&#39;</span><span class="w"></span>
 
-              <span class="c1"># set chaos interval (in sec) as desired</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;10&#39;</span>
+<span class="w">              </span><span class="c1"># set chaos interval (in sec) as desired</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"></span>
 
-              <span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span>
-              <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FORCE</span>
-                <span class="nt">value</span><span class="p">:</span> <span class="s">&#39;false&#39;</span>
+<span class="w">              </span><span class="c1"># pod failures without &#39;--force&#39; &amp; default terminationGracePeriodSeconds</span><span class="w"></span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FORCE</span><span class="w"></span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3546,11 +3546,11 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.e1a181d9.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
 

@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/probes/k8sProbe/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.3">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.1.4">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.edf004c2.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.bb3983ee.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.e6a45f82.min.css">
@@ -3231,185 +3231,185 @@ It can be executed by setting <code>type</code> as <code>k8sProbe</code> inside 
 <h3 id="create-operation">Create Operation<a class="headerlink" href="#create-operation" title="Permanent link">&para;</a></h3>
 <p>It creates kubernetes resource based on the data provided inside <code>probe.data</code> field. It can be defined by setting <code>operation</code> to <code>create</code> operation.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># create the given resource provided inside data field</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;create-percona-pvc&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;k8sProbe&quot;</span>
-        <span class="nt">k8sProbe/inputs</span><span class="p">:</span>
-          <span class="c1"># group of the resource</span>
-          <span class="nt">group</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># version of the resource</span>
-          <span class="nt">version</span><span class="p">:</span> <span class="s">&quot;v1&quot;</span>
-          <span class="c1"># name of the resource</span>
-          <span class="nt">resource</span><span class="p">:</span> <span class="s">&quot;persistentvolumeclaims&quot;</span>
-          <span class="c1"># namespace where the instance of resource should be created</span>
-          <span class="nt">namespace</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-          <span class="c1"># type of operation</span>
-          <span class="c1"># supports: create, delete, present, absent</span>
-          <span class="nt">operation</span><span class="p">:</span> <span class="s">&quot;create&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;SOT&quot;</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-        <span class="c1"># contains manifest, which can be used to create the resource</span>
-        <span class="nt">data</span><span class="p">:</span> <span class="p p-Indicator">|</span>
-          <span class="no">kind: PersistentVolumeClaim</span>
-          <span class="no">apiVersion: v1</span>
-          <span class="no">metadata:</span>
-            <span class="no">name: percona-mysql-claim</span>
-            <span class="no">labels:</span>
-              <span class="no">openebs.io/target-affinity: percona</span>
-          <span class="no">spec:</span>
-            <span class="no">storageClassName: standard</span>
-            <span class="no">accessModes:</span>
-            <span class="no">- ReadWriteOnce</span>
-            <span class="no">resources:</span>
-              <span class="no">requests:</span>
-                <span class="no">storage: 100Mi</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># create the given resource provided inside data field</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;create-percona-pvc&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8sProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">k8sProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># group of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># version of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;v1&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># name of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;persistentvolumeclaims&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># namespace where the instance of resource should be created</span><span class="w"></span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># type of operation</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># supports: create, delete, present, absent</span><span class="w"></span>
+<span class="w">          </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;create&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SOT&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># contains manifest, which can be used to create the resource</span><span class="w"></span>
+<span class="w">        </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">          </span><span class="no">kind: PersistentVolumeClaim</span><span class="w"></span>
+<span class="w">          </span><span class="no">apiVersion: v1</span><span class="w"></span>
+<span class="w">          </span><span class="no">metadata:</span><span class="w"></span>
+<span class="w">            </span><span class="no">name: percona-mysql-claim</span><span class="w"></span>
+<span class="w">            </span><span class="no">labels:</span><span class="w"></span>
+<span class="w">              </span><span class="no">openebs.io/target-affinity: percona</span><span class="w"></span>
+<span class="w">          </span><span class="no">spec:</span><span class="w"></span>
+<span class="w">            </span><span class="no">storageClassName: standard</span><span class="w"></span>
+<span class="w">            </span><span class="no">accessModes:</span><span class="w"></span>
+<span class="w">            </span><span class="no">- ReadWriteOnce</span><span class="w"></span>
+<span class="w">            </span><span class="no">resources:</span><span class="w"></span>
+<span class="w">              </span><span class="no">requests:</span><span class="w"></span>
+<span class="w">                </span><span class="no">storage: 100Mi</span><span class="w"></span>
 </code></pre></div>
 <h3 id="delete-operation">Delete Operation<a class="headerlink" href="#delete-operation" title="Permanent link">&para;</a></h3>
 <p>It deletes matching kubernetes resources via GVR and filters (field selectors/label selectors) provided at <code>probe.k8sProbe/inputs</code>. It can be defined by setting <code>operation</code> to <code>delete</code> operation.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># delete the resource matched with the given inputs</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;delete-percona-pvc&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;k8sProbe&quot;</span>
-        <span class="nt">k8sProbe/inputs</span><span class="p">:</span>
-          <span class="c1"># group of the resource</span>
-          <span class="nt">group</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># version of the resource</span>
-          <span class="nt">version</span><span class="p">:</span> <span class="s">&quot;v1&quot;</span>
-          <span class="c1"># name of the resource</span>
-          <span class="nt">resource</span><span class="p">:</span> <span class="s">&quot;persistentvolumeclaims&quot;</span>
-          <span class="c1"># namespace of the instance, which needs to be deleted</span>
-          <span class="nt">namespace</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-          <span class="c1"># labels selectors for the k8s resource, which needs to be deleted</span>
-          <span class="nt">labelSelector</span><span class="p">:</span> <span class="s">&quot;openebs.io/target-affinity=percona&quot;</span>
-          <span class="c1"># fieldselector for the k8s resource, which needs to be deleted</span>
-          <span class="nt">fieldSelector</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># type of operation</span>
-          <span class="c1"># supports: create, delete, present, absent</span>
-          <span class="nt">operation</span><span class="p">:</span> <span class="s">&quot;delete&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;EOT&quot;</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># delete the resource matched with the given inputs</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;delete-percona-pvc&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8sProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">k8sProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># group of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># version of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;v1&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># name of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;persistentvolumeclaims&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># namespace of the instance, which needs to be deleted</span><span class="w"></span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># labels selectors for the k8s resource, which needs to be deleted</span><span class="w"></span>
+<span class="w">          </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openebs.io/target-affinity=percona&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># fieldselector for the k8s resource, which needs to be deleted</span><span class="w"></span>
+<span class="w">          </span><span class="nt">fieldSelector</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># type of operation</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># supports: create, delete, present, absent</span><span class="w"></span>
+<span class="w">          </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;delete&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;EOT&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
 </code></pre></div>
 <h3 id="present-operation">Present Operation<a class="headerlink" href="#present-operation" title="Permanent link">&para;</a></h3>
 <p>It checks for the presence of kubernetes resource based on GVR and filters (field selectors/labelselectors) provided at <code>probe.k8sProbe/inputs</code>. It can be defined by setting <code>operation</code> to <code>present</code> operation.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># verify the existance of the resource matched with the given inputs inside cluster</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;check-percona-pvc-presence&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;k8sProbe&quot;</span>
-        <span class="nt">k8sProbe/inputs</span><span class="p">:</span>
-          <span class="c1"># group of the resource</span>
-          <span class="nt">group</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># version of the resource</span>
-          <span class="nt">version</span><span class="p">:</span> <span class="s">&quot;v1&quot;</span>
-          <span class="c1"># name of the resource</span>
-          <span class="nt">resource</span><span class="p">:</span> <span class="s">&quot;persistentvolumeclaims&quot;</span>
-          <span class="c1"># namespace where the instance of resource</span>
-          <span class="nt">namespace</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-          <span class="c1"># labels selectors for the k8s resource</span>
-          <span class="nt">labelSelector</span><span class="p">:</span> <span class="s">&quot;openebs.io/target-affinity=percona&quot;</span>
-          <span class="c1"># fieldselector for the k8s resource</span>
-          <span class="nt">fieldSelector</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># type of operation</span>
-          <span class="c1"># supports: create, delete, present, absent</span>
-          <span class="nt">operation</span><span class="p">:</span> <span class="s">&quot;present&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;SOT&quot;</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># verify the existance of the resource matched with the given inputs inside cluster</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-percona-pvc-presence&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8sProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">k8sProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># group of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># version of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;v1&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># name of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;persistentvolumeclaims&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># namespace where the instance of resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># labels selectors for the k8s resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openebs.io/target-affinity=percona&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># fieldselector for the k8s resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">fieldSelector</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># type of operation</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># supports: create, delete, present, absent</span><span class="w"></span>
+<span class="w">          </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;present&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SOT&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
 </code></pre></div>
 <h3 id="absent-operation">Absent Operation<a class="headerlink" href="#absent-operation" title="Permanent link">&para;</a></h3>
 <p>It checks for the absence of kubernetes resource based on GVR and filters (field selectors/labelselectors)  provided at <code>probe.k8sProbe/inputs</code>. It can be defined by setting <code>operation</code> to <code>absent</code> operation.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># verify that the no resource should be present in cluster with the given inputs</span>
-<span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
-<span class="nt">spec</span><span class="p">:</span>
-  <span class="nt">engineState</span><span class="p">:</span> <span class="s">&quot;active&quot;</span>
-  <span class="nt">appinfo</span><span class="p">:</span>
-    <span class="nt">appns</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-    <span class="nt">applabel</span><span class="p">:</span> <span class="s">&quot;app=nginx&quot;</span>
-    <span class="nt">appkind</span><span class="p">:</span> <span class="s">&quot;deployment&quot;</span>
-  <span class="nt">chaosServiceAccount</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span>
-  <span class="nt">experiments</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">pod-delete</span>
-    <span class="nt">spec</span><span class="p">:</span>
-      <span class="nt">probe</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;check-percona-pvc-absence&quot;</span>
-        <span class="nt">type</span><span class="p">:</span> <span class="s">&quot;k8sProbe&quot;</span>
-        <span class="nt">k8sProbe/inputs</span><span class="p">:</span>
-          <span class="c1"># group of the resource</span>
-          <span class="nt">group</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># version of the resource</span>
-          <span class="nt">version</span><span class="p">:</span> <span class="s">&quot;v1&quot;</span>
-          <span class="c1"># name of the resource</span>
-          <span class="nt">resource</span><span class="p">:</span> <span class="s">&quot;persistentvolumeclaims&quot;</span>
-          <span class="c1"># namespace where the instance of resource</span>
-          <span class="nt">namespace</span><span class="p">:</span> <span class="s">&quot;default&quot;</span>
-          <span class="c1"># labels selectors for the k8s resource</span>
-          <span class="nt">labelSelector</span><span class="p">:</span> <span class="s">&quot;openebs.io/target-affinity=percona&quot;</span>
-          <span class="c1"># fieldselector for the k8s resource</span>
-          <span class="nt">fieldSelector</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
-          <span class="c1"># type of operation</span>
-          <span class="c1"># supports: create, delete, present, absent</span>
-          <span class="nt">operation</span><span class="p">:</span> <span class="s">&quot;absent&quot;</span>
-        <span class="nt">mode</span><span class="p">:</span> <span class="s">&quot;EOT&quot;</span>
-        <span class="nt">runProperties</span><span class="p">:</span>
-          <span class="nt">probeTimeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span> 
-          <span class="nt">interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span> 
-          <span class="nt">retry</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># verify that the no resource should be present in cluster with the given inputs</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">probe</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;check-percona-pvc-absence&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;k8sProbe&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">k8sProbe/inputs</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># group of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># version of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;v1&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># name of the resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;persistentvolumeclaims&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># namespace where the instance of resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># labels selectors for the k8s resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">labelSelector</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openebs.io/target-affinity=percona&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># fieldselector for the k8s resource</span><span class="w"></span>
+<span class="w">          </span><span class="nt">fieldSelector</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># type of operation</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># supports: create, delete, present, absent</span><span class="w"></span>
+<span class="w">          </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;absent&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;EOT&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">runProperties</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">probeTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"> </span>
+<span class="w">          </span><span class="nt">retry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3492,11 +3492,11 @@ It can be executed by setting <code>type</code> as <code>k8sProbe</code> inside 
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.0bbba5b5.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["content.code.annotate", "content.tabs.link", "header.autohide", "navigation.indexes", "navigation.instant", "navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "search.share", "search.suggest"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../../../assets/javascripts/workers/search.361d90f1.min.js", "version": {"provider": "mike"}}</script>
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.e1a181d9.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.289a2a4b.min.js"></script>
       
     
 
