@@ -1,23 +1,23 @@
 ---
-swagger: '2.0'
-host: 'localhost:3000'
+swagger: "2.0"
+host: "localhost:3000"
 schemes:
-- https
-- http
+  - https
+  - http
 info:
   title: Litmus Portal Authentication API
   description: |
-   Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
-    <li>Update Profile</li>
-    <li>Change Password</li>
-    <li>Reset Password</li>
-    <li>Create new users etc.</li>
+    Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
+     <li>Update Profile</li>
+     <li>Change Password</li>
+     <li>Reset Password</li>
+     <li>Create new users etc.</li>
 paths:
   "/status":
     get:
       description: This API is used to check the status of the server.
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
@@ -26,7 +26,7 @@ paths:
             type: object
       parameters: []
       produces:
-      - application/json
+        - application/json
   "/login":
     post:
       description: |
@@ -49,7 +49,7 @@ paths:
           </tr>
         </table>
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
@@ -58,44 +58,65 @@ paths:
               type: Bearer
           schema:
             type: object
-        '401':
+        "401":
           description: Unauthorized
           examples:
             application/json:
               error: unauthorized
-              error_description: The user does not have requested authorization to
+              error_description:
+                The user does not have requested authorization to
                 access this resource
           schema:
             type: object
       parameters:
-      - name: body
-        in: body
-        schema:
-          type: object
-          example:
-            username: admin
-            password: admin
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              username: admin
+              password: admin
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
   "/users":
     get:
       description: This API is used to get the list of users
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
-            - _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
-              username: admin
-              role: admin
-              created_at: '1627040098'
+              - _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
+                username: admin
+                email: user1@litmus.com
+                name: user1
+                role: admin
+                created_at: "1627040098"
           schema:
             type: object
       parameters: []
       produces:
-      - application/json
+        - application/json
+  "/getUser/{user_id}":
+    get:
+      description: This API is used to get the details of an user by passing uid in the URL
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              - _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
+                username: admin
+                email: user1@litmus.com
+                name: user1
+                role: admin
+                created_at: "1627040098"
+          schema:
+            type: object
+      produces:
+        - application/json
   "/update/password":
     post:
       description: |
@@ -123,7 +144,7 @@ paths:
           </tr>
         </table>
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
@@ -131,18 +152,18 @@ paths:
           schema:
             type: object
       parameters:
-      - name: body
-        in: body
-        schema:
-          type: object
-          example:
-            username: admin
-            old_password: admin
-            new_password: litmus
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              username: admin
+              old_password: admin
+              new_password: litmus
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
   "/create":
     post:
       description: |
@@ -155,7 +176,7 @@ paths:
           </tr>
           <tr>
             <td>username</td>
-            <td>admin</td>
+            <td>user1</td>
             <td>Mandatory</td>
           </tr>
           <tr>
@@ -170,7 +191,7 @@ paths:
           </tr>
           <tr>
             <td>email</td>
-            <td>admin</td>
+            <td>user1@gmail.com</td>
             <td>Mandatory</td>
           </tr>
           <tr>
@@ -180,7 +201,7 @@ paths:
           </tr>
         </table>
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
@@ -189,24 +210,24 @@ paths:
               email: test1@litmus.com
               name: Test Account
               role: admin
-              created_at: '1627040799'
+              created_at: "1627040799"
           schema:
             type: object
       parameters:
-      - name: body
-        in: body
-        schema:
-          type: object
-          example:
-            username: test1
-            password: test1
-            role: admin
-            email: test1@litmus.com
-            name: Test Account
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              username: test1
+              password: test1
+              role: admin
+              email: test1@litmus.com
+              name: Test Account
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
   "/reset/password":
     post:
       description: |
@@ -229,7 +250,7 @@ paths:
           </tr>
         </table>
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
@@ -237,17 +258,17 @@ paths:
           schema:
             type: object
       parameters:
-      - name: body
-        in: body
-        schema:
-          type: object
-          example:
-            username: test1
-            new_password: test2
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              username: test1
+              new_password: test2
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
   "/update/details":
     post:
       description: |
@@ -261,64 +282,502 @@ paths:
           <tr>
             <td>name</td>
             <td>test1</td>
-            <td>Mandatory</td>
+            <td>Optional</td>
           </tr>
            <tr>
             <td>email</td>
             <td>test1@test.com</td>
-            <td>Mandatory</td>
+            <td>Optional</td>
           </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              message: User details updated successfully
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              name: Administrator
+              email: admin@litmus.com
+      consumes:
+        - application/json
+      produces:
+        - application/json
+  "/update/state":
+    post:
+      description: |
+        This API is used to update the state of a user.
+        <table>
           <tr>
-            <td>role</td>
-            <td>admin</td>
-            <td>Mandatory</td>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
           </tr>
           <tr>
             <td>username</td>
             <td>test1</td>
             <td>Mandatory</td>
           </tr>
+           <tr>
+            <td>is_deactivate</td>
+            <td>true</td>
+            <td>Mandatory</td>
+          </tr>
         </table>
       responses:
-        '200':
+        "200":
           description: OK
           examples:
             application/json:
-              _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
-              username: admin
-              email: admin@litmus.com
-              name: Administrator
-              role: admin
+              message: user's state updated successfully
           schema:
             type: object
       parameters:
-      - name: body
-        in: body
-        schema:
-          type: object
-          example:
-            name: Administrator
-            email: admin@litmus.com
-            role: admin
-            username: admin
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              username: test1
+              is_deactivate: true
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
-  "/updatestate":
+        - application/json
+  "/create_project":
     post:
-      description: This API is used to update the state of a user.
+      description: |
+        This API is used to create a project
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_name</td>
+            <td>My project</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
       responses:
-        '200':
-          description: Successful response
+        "200":
+          description: OK
+          examples:
+            application/json:
+              data:
+                ID: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+                Name: my project
+                Members:
+                  [
+                    {
+                      UserID: "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                      UserName: "admin",
+                      Name: "",
+                      Role: "Owner",
+                      Email: "",
+                      Invitation: "Accepted",
+                      JoinedAt: "1640676874",
+                      DeactivatedAt: "",
+                    },
+                  ]
+                State: active
+                CreatedAt: "1627040799"
+                UpdatedAt: "1627040799"
+                RemovedAt: ""
+          schema:
+            type: object
       parameters:
-      - name: body
-        in: body
-        schema:
-          type: object
-          example:
-            '': ''
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_name: my project
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
+  "/get_project/{project_id}":
+    get:
+      description: |
+        This API is used to get details of a project with given project ID
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              data:
+                ID: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+                Name: my project
+                Members:
+                  [
+                    {
+                      UserID: "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                      UserName: "admin",
+                      Name: "",
+                      Role: "Owner",
+                      Email: "",
+                      Invitation: "Accepted",
+                      JoinedAt: "1640676874",
+                      DeactivatedAt: "",
+                    },
+                  ]
+                State: active
+                CreatedAt: "1627040799"
+                UpdatedAt: "1627040799"
+                RemovedAt: ""
+          schema:
+            type: object
+      parameters: []
+      produces:
+        - application/json
+  "/get_user_with_project/{username}":
+    get:
+      description: |
+        This API is used to get details of a project for a user
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              data:
+                ID: c0b43e3f-8e7f-475e-9aa3-c2393a0f408b
+                UserName: "admin"
+                CreatedAt: "1627040799"
+                Email: ""
+                Name: ""
+                Projects:
+                  [
+                    {
+                      ID: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8,
+                      Name: my project,
+                      Members:
+                        [
+                          {
+                            UserID: c0b43e3f-8e7f-475e-9aa3-c2393a0f408b,
+                            UserName: admin,
+                            Name: "",
+                            Role: Owner,
+                            Email: "",
+                            Invitation: Accepted,
+                            JoinedAt: "1640676874",
+                            DeactivatedAt: "",
+                          },
+                        ],
+                      State: active,
+                      CreatedAt: "1627040799",
+                      UpdatedAt: "1627040799",
+                      RemovedAt: "",
+                    },
+                  ]
+          schema:
+            type: object
+      parameters: []
+      produces:
+        - application/json
+  "/list_projects":
+    get:
+      description: |
+        This API is used to get project details of logged in user
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              data:
+                [
+                  {
+                    ID: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8,
+                    Name: my project,
+                    Members:
+                      [
+                        {
+                          UserID: "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                          UserName: "admin",
+                          Name: "",
+                          Role: "Owner",
+                          Email: "",
+                          Invitation: "Accepted",
+                          JoinedAt: "1640676874",
+                          DeactivatedAt: "",
+                        },
+                      ],
+                    State: active,
+                    CreatedAt: "1627040799",
+                    UpdatedAt: "1627040799",
+                    RemovedAt: "",
+                  },
+                ]
+          schema:
+            type: object
+      parameters: []
+      produces:
+        - application/json
+  "/update_projectname":
+    post:
+      description: |
+        This API is used to update a project name
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>project_name</td>
+            <td>admin's project</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              message: Successful
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_id: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+              project_name: admin's project
+      consumes:
+        - application/json
+      produces:
+        - application/json
+  "/send_invitation":
+    post:
+      description: |
+        This API is used to send project invite to an user
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>user_id</td>
+            <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>role</td>
+            <td>Viewer</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              data:
+                UserID: 3bdc0bd9-fc46-433b-ac21-05d555566c46
+                UserName: john
+                Name: ""
+                Role: "Viewer"
+                Email: ""
+                Invitation: "Pending"
+                JoinedAt: "1640676874"
+                DeactivatedAt: ""
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_id: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+              user_id: 3bdc0bd9-fc46-433b-ac21-05d555566c46
+              role: Viewer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+  "/accept_invitation":
+    post:
+      description: |
+        This API is used to accept a project invite
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>user_id</td>
+            <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              message: Successful
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_id: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+              user_id: 3bdc0bd9-fc46-433b-ac21-05d555566c46
+      consumes:
+        - application/json
+      produces:
+        - application/json
+  "/decline_invitation":
+    post:
+      description: |
+        This API is used to decline a project invite
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>user_id</td>
+            <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              message: Successful
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_id: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+              user_id: 3bdc0bd9-fc46-433b-ac21-05d555566c46
+      consumes:
+        - application/json
+      produces:
+        - application/json
+  "/remove_invitation":
+    post:
+      description: |
+        This API is used to revoke a project invite or remove a project member
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>user_id</td>
+            <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              message: Successful
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_id: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+              user_id: 3bdc0bd9-fc46-433b-ac21-05d555566c46
+      consumes:
+        - application/json
+      produces:
+        - application/json
+  "/leave_project":
+    post:
+      description: |
+        This API is used to leave a project
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>user_id</td>
+            <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+            <td>Mandatory</td>
+          </tr>
+        </table>
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              message: Successful
+          schema:
+            type: object
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            example:
+              project_id: 384f6666-3b7d-4381-b5b5-bfc4c3dedbc8
+              user_id: 3bdc0bd9-fc46-433b-ac21-05d555566c46
+      consumes:
+        - application/json
+      produces:
+        - application/json

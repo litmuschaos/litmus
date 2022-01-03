@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
@@ -9,20 +9,30 @@
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!-- <script src="javascripts/foundation.js"></script> -->
     <script src="javascripts/spectacle.min.js"></script>
-    <link rel="icon" type="image/png" href="../logo.png"/>
+    <link rel="icon" type="image/png" href="../logo.png" />
   </head>
   <body id="spectacle">
     <div id="page" class="drawer-layout drawer-slide-right-large">
       <div id="sidebar">
-        <button class="close-button" aria-label="Close menu" type="button" data-drawer-close>
+        <button
+          class="close-button"
+          aria-label="Close menu"
+          type="button"
+          data-drawer-close
+        >
           <span aria-hidden="true">×</span>
         </button>
         <div id="logo">
-          <img src="../logo.png" title="Litmus Portal API Documentation" /> </div>
+          <img src="../logo.png" title="Litmus Portal API Documentation" />
+        </div>
         <nav id="nav" role="navigation">
           <h5>Topics</h5>
           <a href="#introduction">Authentication</a>
-          <a href="https://litmuschaos.github.io/litmus/graphql/v2.0.0/api.html" target="_blank">GraphQL APIs</a>
+          <a
+            href="https://litmuschaos.github.io/litmus/graphql/v2.0.0/api.html"
+            target="_blank"
+            >GraphQL APIs</a
+          >
           <h5>Paths</h5>
           <!-- <section>
                 <a href="#path--status">/status</a>
@@ -45,6 +55,16 @@
                 <ul> -->
           <!-- <li> -->
           <a href="#operation--users-get"> GET /users </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--getUser--user_id-">/getUser/{user_id}</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--getUser--user_id--get">
+            GET /getUser/{user_id}
+          </a>
           <!-- </li> -->
           <!-- </ul>
               </section> -->
@@ -81,28 +101,129 @@
           <!-- </ul>
               </section> -->
           <!-- <section>
-                <a href="#path--updatestate">/updatestate</a>
+                <a href="#path--update-state">/update/state</a>
                 <ul> -->
           <!-- <li> -->
-          <a href="#operation--updatestate-post"> POST /updatestate </a>
+          <a href="#operation--update-state-post"> POST /update/state </a>
           <!-- </li> -->
           <!-- </ul>
               </section> -->
+          <!-- <section>
+                <a href="#path--create_project">/create_project</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--create_project-post"> POST /create_project </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--get_project--project_id-">/get_project/{project_id}</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--get_project--project_id--get">
+            GET /get_project/{project_id}
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--get_user_with_project--username-">/get_user_with_project/{username}</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--get_user_with_project--username--get">
+            GET /get_user_with_project/{username}
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--list_projects">/list_projects</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--list_projects-get"> GET /list_projects </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--update_projectname">/update_projectname</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--update_projectname-post">
+            POST /update_projectname
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--send_invitation">/send_invitation</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--send_invitation-post"> POST /send_invitation </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--accept_invitation">/accept_invitation</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--accept_invitation-post">
+            POST /accept_invitation
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--decline_invitation">/decline_invitation</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--decline_invitation-post">
+            POST /decline_invitation
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--remove_invitation">/remove_invitation</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--remove_invitation-post">
+            POST /remove_invitation
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--leave_project">/leave_project</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--leave_project-post"> POST /leave_project </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <h5>Schema Definitions</h5>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
-        <button class="floating-menu-icon" type="button" data-drawer-slide="right">
+        <button
+          class="floating-menu-icon"
+          type="button"
+          data-drawer-slide="right"
+        >
           <span class="hamburger"></span>
         </button>
         <div class="example-box doc-content"></div>
         <article>
-          <h1 class="doc-title">Litmus Portal Authentication API
+          <h1 class="doc-title">
+            Litmus Portal Authentication API
             <span>API Reference</span>
           </h1>
           <div id="introduction" data-traverse-target="introduction">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
+                <p>
+                  Litmus Portal Authentication APIs are used to authenticate the
+                  idenity of a user and to perform several user-specific tasks
+                  like:
                   <li>Update Profile</li>
                   <li>Change Password</li>
                   <li>Reset Password</li>
@@ -112,9 +233,11 @@
               <div class="doc-examples">
                 <section>
                   <h5>API Endpoint</h5>
-                  <!-- <div class="hljs"> --><pre><code>https://localhost:3000</code></pre>
+                  <!-- <div class="hljs"> -->
+                  <pre><code>https://localhost:3000</code></pre>
                   <!-- </div> -->
-                  <h5>Schemes:
+                  <h5>
+                    Schemes:
                     <span>https, http</span>
                   </h5>
                 </section>
@@ -123,7 +246,11 @@
           </div>
           <h1>Paths</h1>
           <span id="path--status"></span>
-          <div id="operation--status-get" class="operation panel" data-traverse-target="operation--status-get">
+          <div
+            id="operation--status-get"
+            class="operation panel"
+            data-traverse-target="operation--status-get"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">GET</span>
@@ -138,7 +265,7 @@
               </div>
             </div>
             <div class="doc-row">
-              <div class="doc-copy"> </div>
+              <div class="doc-copy"></div>
               <div class="doc-examples"></div>
             </div>
             <div class="doc-row">
@@ -158,26 +285,33 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"status"</span>: <span class="hljs-string">"up"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -185,7 +319,11 @@
             </div>
           </div>
           <span id="path--login"></span>
-          <div id="operation--login-post" class="operation panel" data-traverse-target="operation--login-post">
+          <div
+            id="operation--login-post"
+            class="operation panel"
+            data-traverse-target="operation--login-post"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">POST</span>
@@ -218,22 +356,25 @@
             </div>
             <div class="doc-row">
               <div class="doc-copy">
-                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-body"></section>
               </div>
               <div class="doc-examples">
                 <section>
-                  <h5>Request Content-Types:
+                  <h5>
+                    Request Content-Types:
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"password"</span>: <span class="hljs-string">"admin"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -256,7 +397,10 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -273,43 +417,53 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"access_token"</span>: <span class="hljs-string">"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA"</span>,
   <span class="hljs-attr">"expires_in"</span>: <span class="hljs-number">86400</span>,
   <span class="hljs-attr">"type"</span>: <span class="hljs-string">"Bearer"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(401 Unauthorized)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"error"</span>: <span class="hljs-string">"unauthorized"</span>,
   <span class="hljs-attr">"error_description"</span>: <span class="hljs-string">"The user does not have requested authorization to access this resource"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -317,7 +471,11 @@
             </div>
           </div>
           <span id="path--users"></span>
-          <div id="operation--users-get" class="operation panel" data-traverse-target="operation--users-get">
+          <div
+            id="operation--users-get"
+            class="operation panel"
+            data-traverse-target="operation--users-get"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">GET</span>
@@ -332,7 +490,7 @@
               </div>
             </div>
             <div class="doc-row">
-              <div class="doc-copy"> </div>
+              <div class="doc-copy"></div>
               <div class="doc-examples"></div>
             </div>
             <div class="doc-row">
@@ -352,31 +510,123 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">[
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">[
   {
     <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
     <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+    <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user1@litmus.com"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"user1"</span>,
     <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
     <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040098"</span>
   }
 ]
-</code></pre> </body>
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--getUser--user_id-"></span>
+          <div
+            id="operation--getUser--user_id--get"
+            class="operation panel"
+            data-traverse-target="operation--getUser--user_id--get"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path">/getUser/{user_id}</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    This API is used to get the details of an user by passing
+                    uid in the URL
+                  </p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"></div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">[
+  {
+    <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
+    <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+    <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user1@litmus.com"</span>,
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"user1"</span>,
+    <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
+    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040098"</span>
+  }
+]
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -384,7 +634,11 @@
             </div>
           </div>
           <span id="path--update-password"></span>
-          <div id="operation--update-password-post" class="operation panel" data-traverse-target="operation--update-password-post">
+          <div
+            id="operation--update-password-post"
+            class="operation panel"
+            data-traverse-target="operation--update-password-post"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">POST</span>
@@ -422,23 +676,26 @@
             </div>
             <div class="doc-row">
               <div class="doc-copy">
-                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-body"></section>
               </div>
               <div class="doc-examples">
                 <section>
-                  <h5>Request Content-Types:
+                  <h5>
+                    Request Content-Types:
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"old_password"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"litmus"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -461,26 +718,33 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"password has been reset"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -488,7 +752,11 @@
             </div>
           </div>
           <span id="path--create"></span>
-          <div id="operation--create-post" class="operation panel" data-traverse-target="operation--create-post">
+          <div
+            id="operation--create-post"
+            class="operation panel"
+            data-traverse-target="operation--create-post"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">POST</span>
@@ -507,7 +775,7 @@
                     </tr>
                     <tr>
                       <td>username</td>
-                      <td>admin</td>
+                      <td>user1</td>
                       <td>Mandatory</td>
                     </tr>
                     <tr>
@@ -522,7 +790,7 @@
                     </tr>
                     <tr>
                       <td>email</td>
-                      <td>admin</td>
+                      <td>user1@gmail.com</td>
                       <td>Mandatory</td>
                     </tr>
                     <tr>
@@ -536,25 +804,28 @@
             </div>
             <div class="doc-row">
               <div class="doc-copy">
-                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-body"></section>
               </div>
               <div class="doc-examples">
                 <section>
-                  <h5>Request Content-Types:
+                  <h5>
+                    Request Content-Types:
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"password"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test1@litmus.com"</span>,
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Test Account"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -577,23 +848,29 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"5873815a-1535-4b1c-8766-2fe53c726276"</span>,
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"email"</span>: <span class="hljs-string">"test1@litmus.com"</span>,
@@ -601,7 +878,8 @@
   <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
   <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040799"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -609,7 +887,11 @@
             </div>
           </div>
           <span id="path--reset-password"></span>
-          <div id="operation--reset-password-post" class="operation panel" data-traverse-target="operation--reset-password-post">
+          <div
+            id="operation--reset-password-post"
+            class="operation panel"
+            data-traverse-target="operation--reset-password-post"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">POST</span>
@@ -642,22 +924,25 @@
             </div>
             <div class="doc-row">
               <div class="doc-copy">
-                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-body"></section>
               </div>
               <div class="doc-examples">
                 <section>
-                  <h5>Request Content-Types:
+                  <h5>
+                    Request Content-Types:
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
   <span class="hljs-attr">"new_password"</span>: <span class="hljs-string">"test2"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -680,26 +965,33 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"message"</span>: <span class="hljs-string">"password has been reset successfully"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -707,7 +999,11 @@
             </div>
           </div>
           <span id="path--update-details"></span>
-          <div id="operation--update-details-post" class="operation panel" data-traverse-target="operation--update-details-post">
+          <div
+            id="operation--update-details-post"
+            class="operation panel"
+            data-traverse-target="operation--update-details-post"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">POST</span>
@@ -727,22 +1023,12 @@
                     <tr>
                       <td>name</td>
                       <td>test1</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                     <tr>
                       <td>email</td>
                       <td>test1@test.com</td>
-                      <td>Mandatory</td>
-                    </tr>
-                    <tr>
-                      <td>role</td>
-                      <td>admin</td>
-                      <td>Mandatory</td>
-                    </tr>
-                    <tr>
-                      <td>username</td>
-                      <td>test1</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -750,24 +1036,25 @@
             </div>
             <div class="doc-row">
               <div class="doc-copy">
-                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-body"></section>
               </div>
               <div class="doc-examples">
                 <section>
-                  <h5>Request Content-Types:
+                  <h5>
+                    Request Content-Types:
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Administrator"</span>,
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>,
-  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -790,68 +1077,96 @@
                     <div class="prop-name">type</div>
                     <div class="prop-value">
                       <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
                 <section>
-                  <h5>Response Example
+                  <h5>
+                    Response Example
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
-  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
-  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"admin@litmus.com"</span>,
-  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Administrator"</span>,
-  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"User details updated successfully"</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
               </div>
             </div>
           </div>
-          <span id="path--updatestate"></span>
-          <div id="operation--updatestate-post" class="operation panel" data-traverse-target="operation--updatestate-post">
+          <span id="path--update-state"></span>
+          <div
+            id="operation--update-state-post"
+            class="operation panel"
+            data-traverse-target="operation--update-state-post"
+          >
             <h2 class="operation-title">
               <span class="operation-name">
                 <span class="operation-name">POST</span>
-                <span class="operation-path">/updatestate</span>
+                <span class="operation-path">/update/state</span>
               </span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This API is used to update the state of a user.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>username</td>
+                      <td>test1</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>is_deactivate</td>
+                      <td>true</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
                 </section>
               </div>
             </div>
             <div class="doc-row">
               <div class="doc-copy">
-                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-body"></section>
               </div>
               <div class="doc-examples">
                 <section>
-                  <h5>Request Content-Types:
+                  <h5>
+                    Request Content-Types:
                     <span>application/json</span>
                   </h5>
                   <h5>Request Example</h5>
                   <!-- <div class="hljs"> -->
                   <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">""</span>: <span class="hljs-string">""</span>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"test1"</span>,
+  <span class="hljs-attr">"is_deactivate"</span>: <span class="hljs-literal">true</span>
 }
-</code></pre> </body>
+</code></pre>
+                    </body>
                   </html>
                   <!-- </div> -->
                 </section>
@@ -863,23 +1178,1163 @@
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Successful response</p>
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples">
-                <h5>Response Content-Types:
+                <h5>
+                  Response Content-Types:
                   <span>application/json</span>
                 </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"user's state updated successfully"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--create_project"></span>
+          <div
+            id="operation--create_project-post"
+            class="operation panel"
+            data-traverse-target="operation--create_project-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/create_project</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to create a project</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_name</td>
+                      <td>My project</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_name"</span>: <span class="hljs-string">"my project"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"data"</span>: {
+    <span class="hljs-attr">"ID"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+    <span class="hljs-attr">"Name"</span>: <span class="hljs-string">"my project"</span>,
+    <span class="hljs-attr">"Members"</span>: [
+      {
+        <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
+        <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
+        <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
+        <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
+        <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
+        <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
+        <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
+        <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+      }
+    ],
+    <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
+    <span class="hljs-attr">"CreatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+    <span class="hljs-attr">"UpdatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+    <span class="hljs-attr">"RemovedAt"</span>: <span class="hljs-string">""</span>
+  }
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--get_project--project_id-"></span>
+          <div
+            id="operation--get_project--project_id--get"
+            class="operation panel"
+            data-traverse-target="operation--get_project--project_id--get"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path">/get_project/{project_id}</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    This API is used to get details of a project with given
+                    project ID
+                  </p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"></div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"data"</span>: {
+    <span class="hljs-attr">"ID"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+    <span class="hljs-attr">"Name"</span>: <span class="hljs-string">"my project"</span>,
+    <span class="hljs-attr">"Members"</span>: [
+      {
+        <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
+        <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
+        <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
+        <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
+        <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
+        <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
+        <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
+        <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+      }
+    ],
+    <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
+    <span class="hljs-attr">"CreatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+    <span class="hljs-attr">"UpdatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+    <span class="hljs-attr">"RemovedAt"</span>: <span class="hljs-string">""</span>
+  }
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--get_user_with_project--username-"></span>
+          <div
+            id="operation--get_user_with_project--username--get"
+            class="operation panel"
+            data-traverse-target="operation--get_user_with_project--username--get"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path"
+                  >/get_user_with_project/{username}</span
+                >
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to get details of a project for a user</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"></div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"data"</span>: {
+    <span class="hljs-attr">"ID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
+    <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
+    <span class="hljs-attr">"CreatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+    <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
+    <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
+    <span class="hljs-attr">"Projects"</span>: [
+      {
+        <span class="hljs-attr">"ID"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+        <span class="hljs-attr">"Name"</span>: <span class="hljs-string">"my project"</span>,
+        <span class="hljs-attr">"Members"</span>: [
+          {
+            <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
+            <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
+            <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
+            <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
+            <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
+            <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+          }
+        ],
+        <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
+        <span class="hljs-attr">"CreatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+        <span class="hljs-attr">"UpdatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+        <span class="hljs-attr">"RemovedAt"</span>: <span class="hljs-string">""</span>
+      }
+    ]
+  }
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--list_projects"></span>
+          <div
+            id="operation--list_projects-get"
+            class="operation panel"
+            data-traverse-target="operation--list_projects-get"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path">/list_projects</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    This API is used to get project details of logged in user
+                  </p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"></div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"data"</span>: [
+    {
+      <span class="hljs-attr">"ID"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+      <span class="hljs-attr">"Name"</span>: <span class="hljs-string">"my project"</span>,
+      <span class="hljs-attr">"Members"</span>: [
+        {
+          <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
+          <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
+          <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
+          <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
+          <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
+          <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
+          <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
+          <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+        }
+      ],
+      <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
+      <span class="hljs-attr">"CreatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+      <span class="hljs-attr">"UpdatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
+      <span class="hljs-attr">"RemovedAt"</span>: <span class="hljs-string">""</span>
+    }
+  ]
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--update_projectname"></span>
+          <div
+            id="operation--update_projectname-post"
+            class="operation panel"
+            data-traverse-target="operation--update_projectname-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/update_projectname</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to update a project name</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>project_name</td>
+                      <td>admin's project</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_id"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+  <span class="hljs-attr">"project_name"</span>: <span class="hljs-string">"admin's project"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Successful"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--send_invitation"></span>
+          <div
+            id="operation--send_invitation-post"
+            class="operation panel"
+            data-traverse-target="operation--send_invitation-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/send_invitation</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to send project invite to an user</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>user_id</td>
+                      <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>role</td>
+                      <td>Viewer</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_id"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"3bdc0bd9-fc46-433b-ac21-05d555566c46"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"Viewer"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"data"</span>: {
+    <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"3bdc0bd9-fc46-433b-ac21-05d555566c46"</span>,
+    <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"john"</span>,
+    <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
+    <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Viewer"</span>,
+    <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
+    <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Pending"</span>,
+    <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
+    <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+  }
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--accept_invitation"></span>
+          <div
+            id="operation--accept_invitation-post"
+            class="operation panel"
+            data-traverse-target="operation--accept_invitation-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/accept_invitation</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to accept a project invite</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>user_id</td>
+                      <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_id"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"3bdc0bd9-fc46-433b-ac21-05d555566c46"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Successful"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--decline_invitation"></span>
+          <div
+            id="operation--decline_invitation-post"
+            class="operation panel"
+            data-traverse-target="operation--decline_invitation-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/decline_invitation</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to decline a project invite</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>user_id</td>
+                      <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_id"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"3bdc0bd9-fc46-433b-ac21-05d555566c46"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Successful"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--remove_invitation"></span>
+          <div
+            id="operation--remove_invitation-post"
+            class="operation panel"
+            data-traverse-target="operation--remove_invitation-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/remove_invitation</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    This API is used to revoke a project invite or remove a
+                    project member
+                  </p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>user_id</td>
+                      <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_id"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"3bdc0bd9-fc46-433b-ac21-05d555566c46"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Successful"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--leave_project"></span>
+          <div
+            id="operation--leave_project-post"
+            class="operation panel"
+            data-traverse-target="operation--leave_project-post"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/leave_project</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to leave a project</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>project_id</td>
+                      <td>384f6666-3b7d-4381-b5b5-bfc4c3dedbc8</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>user_id</td>
+                      <td>3bdc0bd9-fc46-433b-ac21-05d555566c46</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"></section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>
+                    Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"project_id"</span>: <span class="hljs-string">"384f6666-3b7d-4381-b5b5-bfc4c3dedbc8"</span>,
+  <span class="hljs-attr">"user_id"</span>: <span class="hljs-string">"3bdc0bd9-fc46-433b-ac21-05d555566c46"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Successful"</span>
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
               </div>
             </div>
           </div>
           <div class="doc-row no-margin">
             <div class="doc-copy doc-separator">
-              <a class="powered-by" href="https://sourcey.com/spectacle">Documentation by
+              <a class="powered-by" href="https://sourcey.com/spectacle"
+                >Documentation by
                 <span>Spectacle</span>
               </a>
             </div>
