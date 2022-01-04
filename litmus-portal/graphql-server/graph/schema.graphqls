@@ -333,7 +333,7 @@ type Mutation {
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String! @authorized
 
   # removes workflow from cluster and db
   deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!

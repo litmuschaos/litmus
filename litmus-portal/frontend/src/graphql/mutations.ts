@@ -144,8 +144,8 @@ export const DISABLE_GITOPS = gql`
 `;
 
 export const RERUN_CHAOS_WORKFLOW = gql`
-  mutation rerunChaosWorkflow($data: String!) {
-    reRunChaosWorkFlow(workflowID: $data)
+  mutation rerunChaosWorkflow($projectID: String!, $workflowID: String!) {
+    reRunChaosWorkFlow(projectID: $projectID, workflowID: $workflowID)
   }
 `;
 
