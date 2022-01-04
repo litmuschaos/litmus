@@ -3,7 +3,6 @@ package entities
 // Project contains the required fields to be stored in the database for a project
 type Project struct {
 	ID        string    `bson:"_id"`
-	UID       string    `bson:"uid"`
 	Name      string    `bson:"name"`
 	Members   []*Member `bson:"members"`
 	State     *string   `bson:"state"`
@@ -29,14 +28,10 @@ type ProjectStats struct {
 
 // Member contains the required fields to be stored in the database for a member
 type Member struct {
-	UserID        string     `bson:"user_id"`
-	UserName      string     `bson:"username"`
-	Name          string     `bson:"name"`
-	Role          MemberRole `bson:"role"`
-	Email         string     `bson:"email"`
-	Invitation    Invitation `bson:"invitation"`
-	JoinedAt      string     `bson:"joined_at"`
-	DeactivatedAt string     `bson:"deactivated_at"`
+	UserID     string     `bson:"user_id"`
+	Role       MemberRole `bson:"role"`
+	Invitation Invitation `bson:"invitation"`
+	JoinedAt   string     `bson:"joined_at"`
 }
 
 type ProjectInput struct {
@@ -60,7 +55,6 @@ func (project *Project) GetProjectOutput() *Project {
 
 	return &Project{
 		ID:        project.ID,
-		UID:       project.UID,
 		Name:      project.Name,
 		Members:   project.GetMemberOutput(),
 		State:     project.State,
@@ -86,14 +80,10 @@ func (project *Project) GetMemberOutput() []*Member { // add logic to get member
 func (member *Member) GetMemberOutput() *Member {
 
 	return &Member{
-		UserID:        member.UserID,
-		UserName:      member.UserName,
-		Name:          member.Name,
-		Role:          member.Role,
-		Email:         member.Email,
-		Invitation:    member.Invitation,
-		JoinedAt:      member.JoinedAt,
-		DeactivatedAt: member.DeactivatedAt,
+		UserID:     member.UserID,
+		Role:       member.Role,
+		Invitation: member.Invitation,
+		JoinedAt:   member.JoinedAt,
 	}
 }
 

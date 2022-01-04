@@ -71,7 +71,6 @@ func (s *ServerGrpc) GetProjectById(ctx context.Context,
 
 	return &protos.GetProjectByIdResponse{
 		Id:        project.ID,
-		Uid:       project.UID,
 		Name:      project.Name,
 		Members:   projectMembers,
 		State:     "",
