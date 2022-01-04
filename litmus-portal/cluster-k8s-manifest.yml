@@ -575,6 +575,9 @@ spec:
           env:
             - name: SELF_CLUSTER
               value: "true"
+            # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
+            - name: TLS_SECRET_NAME
+              value: ""
             - name: LITMUS_PORTAL_NAMESPACE
               valueFrom:
                 fieldRef:

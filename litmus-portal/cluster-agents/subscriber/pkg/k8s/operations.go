@@ -160,6 +160,8 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"COMPONENTS":           clusterData["COMPONENTS"],
 		"START_TIME":           clusterData["START_TIME"],
 		"VERSION":              clusterData["VERSION"],
+		"SKIP_SSL_VERIFY":      clusterData["SKIP_SSL_VERIFY"],
+		"CUSTOM_TLS_CERT":      clusterData["CUSTOM_TLS_CERT"],
 	}
 
 	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(ctx, &corev1.ConfigMap{

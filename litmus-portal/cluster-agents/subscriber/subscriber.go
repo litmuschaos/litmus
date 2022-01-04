@@ -2,6 +2,8 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"net/http"
@@ -33,6 +35,7 @@ var (
 		"VERSION":              os.Getenv("VERSION"),
 		"START_TIME":           os.Getenv("START_TIME"),
 		"SKIP_SSL_VERIFY":      os.Getenv("SKIP_SSL_VERIFY"),
+		"CUSTOM_TLS_CERT":      os.Getenv("CUSTOM_TLS_CERT"),
 	}
 
 	err error
@@ -66,6 +69,15 @@ func init() {
 	if strings.ToLower(clusterData["SKIP_SSL_VERIFY"]) == "true" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 		websocket.DefaultDialer.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	} else if clusterData["CUSTOM_TLS_CERT"] != "" {
+		cert, err := base64.StdEncoding.DecodeString(clusterData["CUSTOM_TLS_CERT"])
+		if err != nil {
+			logrus.Fatalf("failed to parse custom tls cert %v", err)
+		}
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(cert)
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{RootCAs: caCertPool}
+		websocket.DefaultDialer.TLSClientConfig = &tls.Config{RootCAs: caCertPool}
 	}
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")

@@ -18,6 +18,8 @@ package main
 
 import (
 	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
 	"flag"
 	"net/http"
 	"os"
@@ -123,6 +125,14 @@ func main() {
 	// disable ssl verification if configured
 	if strings.ToLower(os.Getenv("SKIP_SSL_VERIFY")) == "true" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	} else if os.Getenv("CUSTOM_TLS_CERT") != "" {
+		cert, err := base64.StdEncoding.DecodeString(os.Getenv("CUSTOM_TLS_CERT"))
+		if err != nil {
+			logrus.Fatalf("failed to parse custom tls cert %v", err)
+		}
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(cert)
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{RootCAs: caCertPool}
 	}
 
 	var (

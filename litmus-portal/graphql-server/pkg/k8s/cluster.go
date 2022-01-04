@@ -2,7 +2,9 @@ package k8s
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -102,7 +104,7 @@ func GetServerEndpoint() (string, error) {
 	}
 
 	if Ingress == "true" {
-		getIng, err := clientset.ExtensionsV1beta1().Ingresses(LitmusPortalNS).Get(ctx, IngressName, metaV1.GetOptions{})
+		getIng, err := clientset.NetworkingV1().Ingresses(LitmusPortalNS).Get(ctx, IngressName, metaV1.GetOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -128,7 +130,7 @@ func GetServerEndpoint() (string, error) {
 
 		for _, rule := range getIng.Spec.Rules {
 			for _, path := range rule.HTTP.Paths {
-				if path.Backend.ServiceName == ServerServiceName {
+				if path.Backend.Service.Name == ServerServiceName {
 					f := func(c rune) bool {
 						return c == '/'
 					}
@@ -231,4 +233,20 @@ func wrapIPV6(addr string) string {
 		return "[" + addr + "]"
 	}
 	return addr
+}
+
+func GetTLSCert(secretName string) (string, error) {
+	ctx := context.TODO()
+	clientset, err := GetGenericK8sClient()
+	if err != nil {
+		return "", err
+	}
+	secret, err := clientset.CoreV1().Secrets(os.Getenv("LITMUS_PORTAL_NAMESPACE")).Get(ctx, secretName, metaV1.GetOptions{})
+	if err != nil {
+		return "", err
+	}
+	if cert, ok := secret.Data["tls.crt"]; ok {
+		return base64.StdEncoding.EncodeToString(cert), nil
+	}
+	return "", fmt.Errorf("could not find tls.crt value in provided TLS Secret %v", secretName)
 }

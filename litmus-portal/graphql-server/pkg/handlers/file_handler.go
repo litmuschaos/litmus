@@ -64,13 +64,23 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, 500, err
 	}
 
-	if os.Getenv("PORTAL_SCOPE") == "cluster" {
+	scope := os.Getenv("PORTAL_SCOPE")
+	if scope == clusterScope {
 		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, 500, err
 		}
-	} else if os.Getenv("PORTAL_SCOPE") == "namespace" {
+	} else if scope == namespaceScope {
 		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
+		subscriberConfiguration.TLSCert = os.Getenv("TLS_CERT_B64")
+	}
+
+	secretName := os.Getenv("TLS_SECRET_NAME")
+	if scope == clusterScope && secretName != "" {
+		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(secretName)
+		if err != nil {
+			return nil, 500, err
+		}
 	}
 
 	if !reqCluster.IsRegistered {
@@ -105,14 +115,23 @@ func GetManifestWithClusterID(id string, key string) ([]byte, error) {
 	if reqCluster.AccessKey != key {
 		return nil, errors.New("Invalid access key")
 	}
-
-	if os.Getenv("PORTAL_SCOPE") == clusterScope {
+	scope := os.Getenv("PORTAL_SCOPE")
+	if scope == clusterScope {
 		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, err
 		}
-	} else if os.Getenv("PORTAL_SCOPE") == namespaceScope {
+	} else if scope == namespaceScope {
 		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
+		subscriberConfiguration.TLSCert = os.Getenv("TLS_CERT_B64")
+	}
+
+	secretName := os.Getenv("TLS_SECRET_NAME")
+	if scope == clusterScope && secretName != "" {
+		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(secretName)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var respData []byte
