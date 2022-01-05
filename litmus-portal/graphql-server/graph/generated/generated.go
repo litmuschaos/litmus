@@ -256,7 +256,7 @@ type ComplexityRoot struct {
 		KubeObj                func(childComplexity int, kubeData model.KubeObjectData) int
 		NewClusterEvent        func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog                 func(childComplexity int, log model.PodLog) int
-		ReRunChaosWorkFlow     func(childComplexity int, projectID string, workflowID string) int
+		ReRunChaosWorkFlow     func(childComplexity int, workflowID string) int
 		SaveMyHub              func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SyncHub                func(childComplexity int, id string) int
 		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
@@ -651,7 +651,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
-	ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error)
+	ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error)
 	DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
 	TerminateChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
 	SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error)
@@ -1825,7 +1825,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ReRunChaosWorkFlow(childComplexity, args["projectID"].(string), args["workflowID"].(string)), true
+		return e.complexity.Mutation.ReRunChaosWorkFlow(childComplexity, args["workflowID"].(string)), true
 
 	case "Mutation.saveMyHub":
 		if e.complexity.Mutation.SaveMyHub == nil {
@@ -4823,7 +4823,7 @@ type Mutation {
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
-  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
   # removes workflow from cluster and db
   deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
@@ -5464,21 +5464,13 @@ func (ec *executionContext) field_Mutation_reRunChaosWorkFlow_args(ctx context.C
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["projectID"]; ok {
+	if tmp, ok := rawArgs["workflowID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["projectID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["workflowID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["workflowID"] = arg1
+	args["workflowID"] = arg0
 	return args, nil
 }
 
@@ -10363,7 +10355,7 @@ func (ec *executionContext) _Mutation_reRunChaosWorkFlow(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().ReRunChaosWorkFlow(rctx, args["projectID"].(string), args["workflowID"].(string))
+			return ec.resolvers.Mutation().ReRunChaosWorkFlow(rctx, args["workflowID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {

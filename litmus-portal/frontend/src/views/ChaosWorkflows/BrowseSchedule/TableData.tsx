@@ -152,8 +152,7 @@ const TableData: React.FC<TableDataProps> = ({
   const reRunSchedule = () => {
     reRunChaosWorkFlow({
       variables: {
-        projectID,
-        workflowID: data.workflow_id,
+        data: data.workflow_id,
       },
     });
   };

@@ -10,7 +10,6 @@ type RoleQuery string
 const (
 	UserClusterReg         RoleQuery = "userClusterReg"
 	CreateChaosWorkFlow    RoleQuery = "CreateChaosWorkFlow"
-	ReRunChaosWorkFlow     RoleQuery = "ReRunChaosWorkFlow"
 	SendInvitation         RoleQuery = "SendInvitation"
 	AcceptInvitation       RoleQuery = "AcceptInvitation"
 	DeclineInvitation      RoleQuery = "DeclineInvitation"
@@ -50,7 +49,6 @@ const (
 var MutationRbacRules = map[RoleQuery][]string{
 	UserClusterReg:      {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateChaosWorkFlow: {MemberRoleOwnerString, MemberRoleEditorString},
-	ReRunChaosWorkFlow:  {MemberRoleOwnerString, MemberRoleEditorString},
 	SendInvitation:      {MemberRoleOwnerString},
 	AcceptInvitation:    {MemberRoleViewerString, MemberRoleEditorString},
 	DeclineInvitation:   {MemberRoleViewerString, MemberRoleEditorString},

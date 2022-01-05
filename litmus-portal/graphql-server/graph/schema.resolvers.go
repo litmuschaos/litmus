@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -28,7 +30,6 @@ import (
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -53,13 +54,7 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.
 	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
 }
 
-func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ReRunChaosWorkFlow],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return "", err
-	}
+func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
 	return wfHandler.ReRunWorkflow(workflowID)
 }
 
