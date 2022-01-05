@@ -976,3 +976,25 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 
 	return true, nil
 }
+
+func GetWorkflowByID(ctx context.Context, workflow_id string) (*model.Workflow, error) {
+	workflowInput, err := dbOperationsWorkflow.GetWorkflowById(workflow_id)
+	if err != nil {
+		return nil, err
+	}
+	workflow := model.Workflow{
+		WorkflowID:          workflowInput.WorkflowID,
+		WorkflowName:        workflowInput.WorkflowName,
+		WorkflowDescription: workflowInput.WorkflowDescription,
+		ProjectID:           workflowInput.ProjectID,
+		ClusterID:           workflowInput.ClusterID,
+		ClusterName:         workflowInput.ClusterName,
+		ClusterType:         workflowInput.ClusterType,
+		IsRemoved:           workflowInput.IsRemoved,
+		IsCustomWorkflow:    workflowInput.IsCustomWorkflow,
+		CronSyntax:          workflowInput.CronSyntax,
+		CreatedAt:           workflowInput.CreatedAt,
+	}
+
+	return &workflow, nil
+}
