@@ -979,7 +979,7 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 
 // GetWorkflowByID is used to fetch a Workflow details for a given workflow id
 func GetWorkflowByID(ctx context.Context, workflowID string) (*model.Workflow, error) {
-	workflowInput, err := dbOperationsWorkflow.GetWorkflowByID(workflowID)
+	workflowInput, err := dbOperationsWorkflow.GetWorkflow(bson.D{{"workflow_id", workflowID}})
 	if err != nil {
 		return nil, err
 	}
