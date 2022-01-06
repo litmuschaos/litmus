@@ -55,6 +55,17 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.
 }
 
 func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error) {
+	workflow, err := wfHandler.GetWorkflowByID(ctx, workflowID)
+
+	if err != nil {
+		return "", err
+	}
+	err = authorization.ValidateRole(ctx, workflow.ProjectID,
+		authorization.MutationRbacRules[authorization.ReRunChaosWorkFlow],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return "", err
+	}
 	return wfHandler.ReRunWorkflow(workflowID)
 }
 
