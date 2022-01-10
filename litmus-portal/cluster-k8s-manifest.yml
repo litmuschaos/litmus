@@ -1,389 +1,3 @@
-### RBAC Manifests
-## If SELF_CLUSTER="true" then these permissions are required to apply 
-## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/1b_argo_rbac.yaml
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: argo-cr-for-litmusportal-server
-rules:
-- apiGroups: [""]
-  resources: [pods, pods/exec]
-  verbs: [create, get, list, watch, update, patch, delete]
-- apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, watch, list]
-- apiGroups: [""]
-  resources: [persistentvolumeclaims]
-  verbs: [create, delete]
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers]
-  verbs: [get, list, watch, update, patch, delete, create]
-- apiGroups: [argoproj.io]
-  resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, workflowtasksets]
-  verbs: [get, list, watch]
-- apiGroups: [""]
-  resources: [serviceaccounts]
-  verbs: [get, list]
-- apiGroups: [argoproj.io]
-  resources: [cronworkflows, cronworkflows/finalizers]
-  verbs: [get, list, watch, update, patch, delete]
-- apiGroups: [""]
-  resources: [events]
-  verbs: [create, patch]
-- apiGroups: [policy]
-  resources: [poddisruptionbudgets]
-  verbs: [create, get, delete]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: argo-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: argo-cr-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-#these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/2b_litmus_rbac.yaml
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: litmus-cluster-scope-for-litmusportal-server
-  labels:
-    app.kubernetes.io/name: litmus
-    # provide unique instance-id if applicable
-    # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.0.0
-    app.kubernetes.io/component: operator-clusterrole
-    app.kubernetes.io/part-of: litmus
-    app.kubernetes.io/managed-by: kubectl
-    name: litmus-cluster-scope-for-litmusportal-server
-rules:
-  - apiGroups: [""]
-    resources: [replicationcontrollers, secrets]
-    verbs: [get, list]
-  - apiGroups: [apps.openshift.io]
-    resources: [deploymentconfigs]
-    verbs: [get, list]
-  - apiGroups: [apps]
-    resources: [deployments, daemonsets, replicasets, statefulsets]
-    verbs: [get, list]
-  - apiGroups: [batch]
-    resources: [jobs]
-    verbs: [get, list, deletecollection]
-  - apiGroups: [argoproj.io]
-    resources: [rollouts]
-    verbs: [get, list]
-  - apiGroups: [""]
-    resources: [pods, configmaps, events, services]
-    verbs: [get, create, update, patch, delete, list, watch, deletecollection]
-  - apiGroups: [litmuschaos.io]
-    resources: [chaosengines, chaosexperiments, chaosresults]
-    verbs: [get, create, update, patch, delete, list, watch, deletecollection]
-  - apiGroups: [apiextensions.k8s.io]
-    resources: [customresourcedefinitions]
-    verbs: [list, get]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-cluster-scope-crb-for-litmusportal-server
-  labels:
-    app.kubernetes.io/name: litmus
-    # provide unique instance-id if applicable
-    # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.0.0
-    app.kubernetes.io/component: operator-clusterrolebinding
-    app.kubernetes.io/part-of: litmus
-    app.kubernetes.io/managed-by: kubectl
-    name: litmus-cluster-scope-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: litmus-cluster-scope-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-#these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/3a_agents_rbac.yaml
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: litmus-admin-cr-for-litmusportal-server
-  labels:
-    name: litmus-admin-cr-for-litmusportal-server
-rules:
-  # ***************************************************************************************
-  # Permissions needed for preparing and monitor the chaos resources by chaos-runner
-  # ***************************************************************************************
-
-  # The chaos operator watches the chaosengine resource and orchestartes the chaos experiment..
-  ## .. by creating the chaos-runner
-
-  # for creating and monitoring the chaos-runner pods
-- apiGroups: [""]
-  resources: [pods,events]
-  verbs: [create, delete, get, list, patch, update, deletecollection]
-
-  # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-- apiGroups: [""]
-  resources: [secrets, configmaps]
-  verbs: [get, list]
-
-  # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
-- apiGroups: [""]
-  resources: [pods/log]
-  verbs: [get, list, watch]  
-
-  # for configuring and monitor the experiment job by chaos-runner pod
-- apiGroups: [batch]
-  resources: [jobs]
-  verbs: [create, list, get, delete, deletecollection]
-
-  # ********************************************************************
-  # Permissions needed for creation and discovery of chaos experiments 
-  # ********************************************************************
-
-  # The helper pods are created by experiment to perform the actual chaos injection ...
-  # ... for a period of chaos duration
-
-  # for creating and deleting the helper or target app pod and events by experiment
-- apiGroups: [""]
-  resources: [pods]
-  verbs: [create, delete, deletecollection]
-
-  # for creating and monitoring the events for chaos operations
-- apiGroups: [""]
-  resources: [events]
-  verbs: [create, delete, get, list, patch, update, deletecollection]
-
-  # for monitoring the helper and target app pod
-- apiGroups: [""]
-  resources: [pods]
-  verbs: [get, list, patch, update]
-
-  # for creating and managing to execute comands inside target container
-- apiGroups: [""]
-  resources: [pods/exec, pods/eviction, replicationcontrollers]
-  verbs: [get,list,create]
-
-  # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
-- apiGroups: [""]
-  resources: [pods/log]
-  verbs: [get, list, watch]
-
-  # for creating and monitoring liveness services or monitoring target app services during chaos injection
-- apiGroups: [""]
-  resources: [services]
-  verbs: [create, delete, get, list, delete, deletecollection]
-
-  # for checking the app parent resources as deployments or sts and are eligible chaos candidates  
-- apiGroups: [apps]
-  resources: [deployments, statefulsets]
-  verbs: [list, get, patch, update, create, delete]
-
-  # for checking the app parent resources as replicasets and are eligible chaos candidates  
-- apiGroups: [apps]
-  resources: [replicasets]
-  verbs: [list, get]
-
-  # for checking the app parent resources as deamonsets and are eligible chaos candidates  
-- apiGroups: [apps]
-  resources: [daemonsets]
-  verbs: [list, get, delete]
-
-  # for checking (openshift) app parent resources if they are eligible chaos candidates  
-- apiGroups: [apps.openshift.io]
-  resources: [deploymentconfigs]
-  verbs: [list, get]
-
-  # for checking (argo) app parent resources if they are eligible chaos candidates  
-- apiGroups: [argoproj.io]
-  resources: [rollouts]
-  verbs: [list, get]
-
-  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
-- apiGroups: [litmuschaos.io]
-  resources: [chaosengines, chaosexperiments, chaosresults]
-  verbs: [create, list, get, patch, update, delete]
-
-  # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
-- apiGroups: [""]
-  resources: [nodes]
-  verbs: [patch, get, list, update]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-admin-crb-for-litmusportal-server
-  labels:
-    name: litmus-admin-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: litmus-admin-cr-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: chaos-cr-for-litmusportal-server
-rules:
-  # for managing the pods created by workflow controller to implement individual steps in the workflow
-  - apiGroups: [""]
-    resources: [pods, services, namespaces]
-    verbs: [create, get, watch, patch, delete, list]
-
-  # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
-  - apiGroups: [""]
-    resources: [pods/log, secrets, configmaps]
-    verbs: [get, watch, create, delete, patch]
-
-  # for creation & deletion of application in predefined workflows
-  - apiGroups: [apps]
-    resources: [deployments, statefulsets]
-    verbs: [get, watch, patch, create, delete]
-    
-  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
-  - apiGroups: [litmuschaos.io]
-    resources: [chaosengines, chaosexperiments, chaosresults, chaosschedules]
-    verbs: [create, list, get, patch, delete, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: chaos-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: chaos-cr-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: subscriber-cr-for-litmusportal-server
-  namespace: litmus
-  labels:
-    name: subscriber-cr-for-litmusportal-server
-rules:
-- apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, create, delete, update]
-- apiGroups: [""]
-  resources: [pods/log]
-  verbs: [get, list, watch]
-- apiGroups: [""]
-  resources: [pods, namespaces, nodes, services]
-  verbs: [get, list, watch]
-- apiGroups: [litmuschaos.io]
-  resources: [chaosengines, chaosschedules, chaosresults]
-  verbs: [get, list, create, delete, update, watch]
-- apiGroups: [apps.openshift.io]
-  resources: [deploymentconfigs]
-  verbs: [get, list]
-- apiGroups: [apps]
-  resources: [deployments, daemonsets, replicasets, statefulsets]
-  verbs: [get, list, delete]
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
-  verbs: [get, list, create, delete, update, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: subscriber-crb-for-litmusportal-server
-  namespace: litmus
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-roleRef:
-  kind: ClusterRole
-  name: subscriber-cr-for-litmusportal-server
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: event-tracker-cr-for-litmusportal-server
-rules:
-- apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolicies]
-  verbs: [create, delete, get, list, patch, update, watch]
-- apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolicies/status]
-  verbs: [get, patch, update]
-- apiGroups: ["", extensions, apps]
-  resources: [deployments, daemonsets, statefulsets, pods, configmaps]
-  verbs: [get, list, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: event-tracker-crb-for-litmusportal-server
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: event-tracker-cr-for-litmusportal-server
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-# litmus-server-cr is used by the litmusportal-server
-# If SELF_CLUSTER=false, then only litmus-server-cr and litmus-server-crb are required.
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: litmus-server-cr
-rules:
-  - apiGroups: [networking.k8s.io, extensions]
-    resources: [ingresses]
-    verbs: [get]
-  - apiGroups: [""]
-    resources: [services, nodes, pods/log]
-    verbs: [get, watch]
-  - apiGroups: [apiextensions.k8s.io]
-    resources: [customresourcedefinitions]
-    verbs: [create]
-  - apiGroups: [apps]
-    resources: [deployments]
-    verbs: [create]
-  - apiGroups: [""]
-    resources: [configmaps]
-    verbs: [get]
-  - apiGroups: [""]
-    resources: [serviceaccounts]
-    verbs: [create]
-  - apiGroups: [rbac.authorization.k8s.io]
-    resources: [rolebindings, roles, clusterrolebindings, clusterroles]
-    verbs: [create]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: litmus-server-crb
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: litmus-server-cr
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
-    namespace: litmus
-## Control plane manifests
 ---
 apiVersion: v1
 kind: Namespace
@@ -391,101 +5,20 @@ metadata:
   name: litmus
 ---
 apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-server-account
-  namespace: litmus
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: litmus-portal-admin-secret
-  namespace: litmus
-stringData:
-  JWT_SECRET: "litmus-portal@123"
-  DB_USER: "admin"
-  DB_PASSWORD: "1234"
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
   namespace: litmus
 data:
-  DB_SERVER: "mongodb://mongo-service:27017"
+  AgentScope: cluster
+  AgentNamespace: litmus
+  DataBaseServer: "mongodb://litmus-mongo-mongos:27017"
+  JWTSecret: "litmus-portal@123"
+  DB_USER: "admin"
+  DB_PASSWORD: "password"
   AGENT_SCOPE: cluster
   AGENT_NAMESPACE: litmus
   VERSION: "ci"
-  SKIP_SSL_VERIFY: "false"
-  # Configurations if you are using dex for OAuth
-  DEX_ENABLED: "false"
-  OIDC_ISSUER: "http://<Your Domain>:32000"
-  DEX_OAUTH_CALLBACK_URL: "http://<litmus-portal frontend exposed URL>:8080/auth/dex/callback"
-  DEX_OAUTH_CLIENT_ID: "LitmusPortalAuthBackend"
-  DEX_OAUTH_CLIENT_SECRET: "ZXhhbXBsZS1hcHAtc2VjcmV0"
-  OAuthJwtSecret: "litmus-oauth@123"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: litmusportal-frontend-nginx-configuration
-  namespace: litmus
-data:
-  default.conf: |
-    server {
-        listen       8080;
-        server_name  localhost;
-        #charset koi8-r;
-        #access_log  /var/log/nginx/host.access.log  main;
-
-        location / {
-            root   /usr/share/nginx/html;
-            index  index.html index.htm;
-            try_files $uri /index.html;
-        }
-
-        #error_page  404              /404.html;
-
-        # redirect server error pages to the static page /50x.html
-        #
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   /usr/share/nginx/html;
-        }
-
-        # deny access to .htaccess files, if Apache's document root
-        # concurs with nginx's one
-        #
-        #location ~ /\.ht {
-        #    deny  all;
-        #}
-
-        location /auth/ {
-            proxy_set_header   Host                 $host;
-            proxy_set_header   X-Real-IP            $remote_addr;
-            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9003/";
-        }
-
-        location /api/ {
-            proxy_set_header   Host                 $host;
-            proxy_set_header   X-Real-IP            $remote_addr;
-            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9002/";
-        }
-
-        location /ws/ {
-            proxy_set_header   Upgrade              $http_upgrade;
-            proxy_set_header   Connection           "Upgrade";
-            proxy_set_header   Host                 $host;
-            proxy_set_header   X-Real-IP            $remote_addr;
-            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-            proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9002/";
-        }
-    }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -515,15 +48,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
-                  key: AGENT_SCOPE
-          volumeMounts:
-          - name: nginx-config
-            mountPath: /etc/nginx/conf.d/default.conf
-            subPath: default.conf
-      volumes:
-        - name: nginx-config
-          configMap:
-            name: litmusportal-frontend-nginx-configuration
+                  key: AgentScope
 ---
 apiVersion: v1
 kind: Service
@@ -538,6 +63,41 @@ spec:
       targetPort: 8080
   selector:
     component: litmusportal-frontend
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-server-account
+  namespace: litmus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: litmus-server
+  namespace: litmus
+  labels:
+    name: litmus-server
+rules:
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: litmus-server-rb
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: litmus
+roleRef:
+  kind: ClusterRole
+  name: litmus-server
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -556,32 +116,48 @@ spec:
       labels:
         component: litmusportal-server
     spec:
-      initContainers:
-        - name: wait-for-mongodb
-          image: litmuschaos/curl:latest
-          command: ["/bin/sh", "-c"]
-          args:
-            [
-              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
-            ]
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
-          envFrom:
-            - configMapRef:
-                name: litmus-portal-admin-config
-            - secretRef:
-                name: litmus-portal-admin-secret
           env:
+            - name: VERSION
+              value: "ci"
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DataBaseServer
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: JWTSecret
             - name: SELF_CLUSTER
               value: "true"
-            # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
-            - name: TLS_SECRET_NAME
-              value: ""
+            - name: AGENT_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentScope
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AgentNamespace
             - name: LITMUS_PORTAL_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
@@ -589,19 +165,17 @@ spec:
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v3.2.3"
+              value: "litmuschaos/workflow-controller:v2.11.0"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v3.2.3"
+              value: "litmuschaos/argoexec:v2.11.0"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.4.0"
+              value: "litmuschaos/chaos-operator:1.13.6"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.4.0"
+              value: "litmuschaos/chaos-runner:1.13.6"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.4.0"
+              value: "litmuschaos/chaos-exporter:1.13.6"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
-            - name: AGENT_DEPLOYMENTS
-              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
@@ -613,32 +187,45 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.4.x"
-            - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
+              value: "v1.13.x"
+            - name: NODE_SELECTOR
+              value: ""
+            - name: AGENT_DEPLOYMENTS
+              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
           ports:
             - containerPort: 8080
-            - containerPort: 8000
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
-          envFrom:
-            - configMapRef:
-                name: litmus-portal-admin-config
-            - secretRef:
-                name: litmus-portal-admin-secret
           env:
             - name: STRICT_PASSWORD_POLICY
               value: "false"
+            - name: DB_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DataBaseServer
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: JWTSecret
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: DB_PASSWORD
             - name: ADMIN_USERNAME
               value: "admin"
             - name: ADMIN_PASSWORD
               value: "litmus"
-            - name: LITMUS_SVC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
           ports:
             - containerPort: 3000
-            - containerPort: 3030
           imagePullPolicy: Always
       serviceAccountName: litmus-server-account
 ---
@@ -653,77 +240,958 @@ spec:
     - name: graphql-server
       port: 9002
       targetPort: 8080
-    - name: graphql-rpc-server
-      port: 8000
-      targetPort: 8000
     - name: auth-server
       port: 9003
       targetPort: 3000
-    - name: auth-rpc-server
-      port: 3030
-      targetPort: 3030   
   selector:
     component: litmusportal-server
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
 metadata:
-  name: mongo
-  namespace: litmus
-  labels:
-    app: mongo
+  name: perconaservermongodbs.psmdb.percona.com
 spec:
+  group: psmdb.percona.com
+  names:
+    kind: PerconaServerMongoDB
+    listKind: PerconaServerMongoDBList
+    plural: perconaservermongodbs
+    singular: perconaservermongodb
+    shortNames:
+    - psmdb
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-1-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-2-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-3-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-4-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-5-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-6-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-7-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-8-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-9-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-10-0
+      storage: false
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+    - name: v1-11-0
+      storage: true
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+      - name: ENDPOINT
+        type: string
+        jsonPath: .status.host
+      - name: Status
+        type: string
+        jsonPath: .status.state
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaservermongodbbackups.psmdb.percona.com
+spec:
+  group: psmdb.percona.com
+  names:
+    kind: PerconaServerMongoDBBackup
+    listKind: PerconaServerMongoDBBackupList
+    plural: perconaservermongodbbackups
+    singular: perconaservermongodbbackup
+    shortNames:
+      - psmdb-backup
+  scope: Namespaced
+  versions:
+    - name: v1
+      storage: true
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: Cluster
+          type: string
+          description: Cluster name
+          jsonPath: .spec.psmdbCluster
+        - name: Storage
+          type: string
+          description: Storage name from pxc spec
+          jsonPath: .spec.storageName
+        - name: Destination
+          type: string
+          description: Backup destination
+          jsonPath: .status.destination
+        - name: Status
+          type: string
+          description: Job status
+          jsonPath: .status.state
+        - name: Completed
+          description: Completed time
+          type: date
+          jsonPath: .status.completed
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: perconaservermongodbrestores.psmdb.percona.com
+spec:
+  group: psmdb.percona.com
+  names:
+    kind: PerconaServerMongoDBRestore
+    listKind: PerconaServerMongoDBRestoreList
+    plural: perconaservermongodbrestores
+    singular: perconaservermongodbrestore
+    shortNames:
+      - psmdb-restore
+  scope: Namespaced
+  versions:
+    - name: v1
+      storage: true
+      served: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: Cluster
+          type: string
+          description: Cluster name
+          jsonPath: .spec.clusterName
+        - name: Status
+          type: string
+          description: Job status
+          jsonPath: .status.state
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+      subresources:
+        status: {}
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: percona-server-mongodb-operator
+  namespace: litmus
+rules:
+  - apiGroups:
+      - psmdb.percona.com
+    resources:
+      - perconaservermongodbs
+      - perconaservermongodbs/status
+      - perconaservermongodbbackups
+      - perconaservermongodbbackups/status
+      - perconaservermongodbrestores
+      - perconaservermongodbrestores/status
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/exec
+      - services
+      - persistentvolumeclaims
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - certmanager.k8s.io
+      - cert-manager.io
+    resources:
+      - issuers
+      - certificates
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+      - deletecollection
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: percona-server-mongodb-operator
+  namespace: litmus
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-account-percona-server-mongodb-operator
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: percona-server-mongodb-operator
+roleRef:
+  kind: Role
+  name: percona-server-mongodb-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: percona-server-mongodb-operator
+  namespace: litmus
+spec:
+  replicas: 1
   selector:
     matchLabels:
-      component: database
-  serviceName: mongo
-  replicas: 1
+      name: percona-server-mongodb-operator
   template:
     metadata:
       labels:
-        component: database
+        name: percona-server-mongodb-operator
     spec:
+      serviceAccountName: percona-server-mongodb-operator
       containers:
-        - name: mongo
-          image: litmuschaos/mongo:4.2.8
-          args: ["--ipv6"]
+        - name: percona-server-mongodb-operator
+          image: percona/percona-server-mongodb-operator:1.9.0
           ports:
-            - containerPort: 27017
+            - containerPort: 60000
+              name: metrics
+          command:
+            - percona-server-mongodb-operator
           imagePullPolicy: Always
-          volumeMounts:
-            - name: mongo-persistent-storage
-              mountPath: /data/db
           env:
-            - name: MONGO_INITDB_ROOT_USERNAME
+            - name: WATCH_NAMESPACE
               valueFrom:
-                secretKeyRef:
-                  name: litmus-portal-admin-secret
-                  key: DB_USER
-            - name: MONGO_INITDB_ROOT_PASSWORD
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
               valueFrom:
-                secretKeyRef:
-                  name: litmus-portal-admin-secret
-                  key: DB_PASSWORD
-  volumeClaimTemplates:
-    - metadata:
-        name: mongo-persistent-storage
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 20Gi
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: percona-server-mongodb-operator
+            - name: RESYNC_PERIOD
+              value: 5s
+            - name: LOG_VERBOSE
+              value: "false"
 ---
-apiVersion: v1
-kind: Service
+apiVersion: psmdb.percona.com/v1-9-0
+kind: PerconaServerMongoDB
 metadata:
-  labels:
-    app: mongo
-  name: mongo-service
+  name: litmus-mongo
   namespace: litmus
+#  finalizers:
+#    - delete-psmdb-pvc
 spec:
-  ports:
-    - port: 27017
-      targetPort: 27017
-  selector:
-    component: database
+  #  platform: openshift
+  #  clusterServiceDNSSuffix: svc.cluster.local
+  #  pause: true
+  crVersion: 1.9.0
+  image: percona/percona-server-mongodb:4.4.6-8
+  imagePullPolicy: Always
+  #  imagePullSecrets:
+  #    - name: private-registry-credentials
+  #  runUid: 1001
+  allowUnsafeConfigurations: false
+  updateStrategy: SmartUpdate
+  upgradeOptions:
+    versionServiceEndpoint: https://check.percona.com
+    apply: 4.4-recommended
+    schedule: "0 2 * * *"
+    setFCV: false
+  secrets:
+    users: litmus-mongo-secrets
+  pmm:
+    enabled: false
+    image: percona/pmm-client:2.18.0
+    serverHost: monitoring-service
+  #    mongodParams: --environment=ENVIRONMENT
+  #    mongosParams: --environment=ENVIRONMENT
+  replsets:
+    - name: rs0
+      size: 3
+      #    # for more configuration fields refer to https://docs.mongodb.com/manual/reference/configuration-options/
+      # configuration: |
+      #      operationProfiling:
+      #        mode: slowOp
+      #      systemLog:
+      #         verbosity: 1
+      #    storage:
+      #      engine: wiredTiger
+      #      inMemory:
+      #        engineConfig:
+      #          inMemorySizeRatio: 0.9
+      #      wiredTiger:
+      #        engineConfig:
+      #          cacheSizeRatio: 0.5
+      #          directoryForIndexes: false
+      #          journalCompressor: snappy
+      #        collectionConfig:
+      #          blockCompressor: snappy
+      #        indexConfig:
+      #          prefixCompression: true
+      #      affinity:
+      #        antiAffinityTopologyKey: "kubernetes.io/hostname"
+      #      advanced:
+      #        nodeAffinity:
+      #          requiredDuringSchedulingIgnoredDuringExecution:
+      #            nodeSelectorTerms:
+      #            - matchExpressions:
+      #              - key: kubernetes.io/e2e-az-name
+      #                operator: In
+      #                values:
+      #                - e2e-az1
+      #                - e2e-az2
+      #    tolerations:
+      #    - key: "node.alpha.kubernetes.io/unreachable"
+      #      operator: "Exists"
+      #      effect: "NoExecute"
+      #      tolerationSeconds: 6000
+      #    priorityClassName: high-priority
+      #    annotations:
+      #    annotations:
+      #      iam.amazonaws.com/role: role-arn
+      #    labels:
+      #      rack: rack-22
+      #    nodeSelector:
+      #      disktype: ssd
+      #    livenessProbe:
+      #      failureThreshold: 4
+      #      initialDelaySeconds: 60
+      #      periodSeconds: 30
+      #      successThreshold: 1
+      #      timeoutSeconds: 5
+      #      startupDelaySeconds: 7200
+      #    runtimeClassName: image-rc
+      #    sidecars:
+      #    - image: busybox
+      #      command: ["/bin/sh"]
+      #      args: ["-c", "while true; do echo echo $(date -u) 'test' >> /dev/null; sleep 5;done"]
+      #      name: rs-sidecar-1
+      podDisruptionBudget:
+        maxUnavailable: 1
+      #      minAvailable: 0
+      expose:
+        enabled: false
+        exposeType: LoadBalancer
+      #      loadBalancerSourceRanges:
+      #        - 10.0.0.0/8
+      #      serviceAnnotations:
+      #        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+      arbiter:
+        enabled: false
+        size: 1
+      #        affinity:
+      #          antiAffinityTopologyKey: "kubernetes.io/hostname"
+      #        advanced:
+      #          nodeAffinity:
+      #            requiredDuringSchedulingIgnoredDuringExecution:
+      #              nodeSelectorTerms:
+      #              - matchExpressions:
+      #                - key: kubernetes.io/e2e-az-name
+      #                  operator: In
+      #                  values:
+      #                  - e2e-az1
+      #                  - e2e-az2
+      #      tolerations:
+      #      - key: "node.alpha.kubernetes.io/unreachable"
+      #        operator: "Exists"
+      #        effect: "NoExecute"
+      #        tolerationSeconds: 6000
+      #      priorityClassName: high-priority
+      #      annotations:
+      #        iam.amazonaws.com/role: role-arn
+      #      labels:
+      #        rack: rack-22
+      #      nodeSelector:
+      #        disktype: ssd
+      #    schedulerName: "default"
+      #      resources:
+      #        limits:
+      #          cpu: "300m"
+      #          memory: "0.5G"
+      #        requests:
+      #          cpu: "300m"
+      #          memory: "0.5G"
+      volumeSpec:
+        #      emptyDir: {}
+        #      hostPath:
+        #        path: /data
+        #        type: Directory
+        persistentVolumeClaim:
+          #        storageClassName: standard
+          #        accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: 20Gi
+
+  sharding:
+    enabled: true
+
+    configsvrReplSet:
+      size: 3
+      #      # for more configuration fields refer to https://docs.mongodb.com/manual/reference/configuration-options/
+      #      configuration: |
+      #        operationProfiling:
+      #          mode: slowOp
+      #        systemLog:
+      #           verbosity: 1
+      #      affinity:
+      #        antiAffinityTopologyKey: "kubernetes.io/hostname"
+      #        advanced:
+      #          nodeAffinity:
+      #            requiredDuringSchedulingIgnoredDuringExecution:
+      #              nodeSelectorTerms:
+      #              - matchExpressions:
+      #                - key: kubernetes.io/e2e-az-name
+      #                  operator: In
+      #                  values:
+      #                  - e2e-az1
+      #                  - e2e-az2
+      #      tolerations:
+      #      - key: "node.alpha.kubernetes.io/unreachable"
+      #        operator: "Exists"
+      #        effect: "NoExecute"
+      #        tolerationSeconds: 6000
+      #      priorityClassName: high-priority
+      #      annotations:
+      #        iam.amazonaws.com/role: role-arn
+      #      labels:
+      #        rack: rack-22
+      #      nodeSelector:
+      #        disktype: ssd
+      #      storage:
+      #        engine: wiredTiger
+      #        wiredTiger:
+      #          engineConfig:
+      #            cacheSizeRatio: 0.5
+      #            directoryForIndexes: false
+      #            journalCompressor: snappy
+      #          collectionConfig:
+      #            blockCompressor: snappy
+      #          indexConfig:
+      #            prefixCompression: true
+      #      runtimeClassName: image-rc
+      #      sidecars:
+      #      - image: busybox
+      #        command: ["/bin/sh"]
+      #        args: ["-c", "while true; do echo echo $(date -u) 'test' >> /dev/null; sleep 5;done"]
+      #        name: rs-sidecar-1
+      podDisruptionBudget:
+        maxUnavailable: 1
+      #      resources:
+      #        limits:
+      #          cpu: "300m"
+      #          memory: "0.5G"
+      #        requests:
+      #          cpu: "300m"
+      #          memory: "0.5G"
+      volumeSpec:
+        #       emptyDir: {}
+        #       hostPath:
+        #         path: /data
+        #         type: Directory
+        persistentVolumeClaim:
+          #          storageClassName: standard
+          #          accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: 20Gi
+
+    mongos:
+      size: 3
+      #      # for more configuration fields refer to https://docs.mongodb.com/manual/reference/configuration-options/
+      #      configuration: |
+      #        systemLog:
+      #           verbosity: 1
+      #      affinity:
+      #        antiAffinityTopologyKey: "kubernetes.io/hostname"
+      #        advanced:
+      #          nodeAffinity:
+      #            requiredDuringSchedulingIgnoredDuringExecution:
+      #              nodeSelectorTerms:
+      #              - matchExpressions:
+      #                - key: kubernetes.io/e2e-az-name
+      #                  operator: In
+      #                  values:
+      #                  - e2e-az1
+      #                  - e2e-az2
+      #      tolerations:
+      #      - key: "node.alpha.kubernetes.io/unreachable"
+      #        operator: "Exists"
+      #        effect: "NoExecute"
+      #        tolerationSeconds: 6000
+      #      priorityClassName: high-priority
+      #      annotations:
+      #        iam.amazonaws.com/role: role-arn
+      #      labels:
+      #        rack: rack-22
+      #      nodeSelector:
+      #        disktype: ssd
+      #      runtimeClassName: image-rc
+      #      sidecars:
+      #      - image: busybox
+      #        command: ["/bin/sh"]
+      #        args: ["-c", "while true; do echo echo $(date -u) 'test' >> /dev/null; sleep 5;done"]
+      #        name: rs-sidecar-1
+      podDisruptionBudget:
+        maxUnavailable: 1
+      #      resources:
+      #        limits:
+      #          cpu: "300m"
+      #          memory: "0.5G"
+      #        requests:
+      #          cpu: "300m"
+      #          memory: "0.5G"
+      expose:
+        exposeType: ClusterIP
+  #        loadBalancerSourceRanges:
+  #          - 10.0.0.0/8
+  #        serviceAnnotations:
+  #          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+  #      auditLog:
+  #        destination: file
+  #        format: BSON
+  #        filter: '{}'
+
+  mongod:
+    net:
+      port: 27017
+      hostPort: 0
+    security:
+      redactClientLogData: false
+      enableEncryption: true
+      encryptionKeySecret: litmus-mongo-mongodb-encryption-key
+      encryptionCipherMode: AES256-CBC
+    setParameter:
+      ttlMonitorSleepSecs: 60
+      wiredTigerConcurrentReadTransactions: 128
+      wiredTigerConcurrentWriteTransactions: 128
+    storage:
+      engine: wiredTiger
+      inMemory:
+        engineConfig:
+          inMemorySizeRatio: 0.9
+      wiredTiger:
+        engineConfig:
+          cacheSizeRatio: 0.5
+          directoryForIndexes: false
+          journalCompressor: snappy
+        collectionConfig:
+          blockCompressor: snappy
+        indexConfig:
+          prefixCompression: true
+    operationProfiling:
+      mode: slowOp
+      slowOpThresholdMs: 100
+      rateLimit: 100
+  #    auditLog:
+  #      destination: file
+  #      format: BSON
+  #      filter: '{}'
+
+  backup:
+    enabled: true
+    restartOnFailure: true
+    image: percona/percona-server-mongodb-operator:1.9.0-backup
+    serviceAccountName: percona-server-mongodb-operator
+    #    resources:
+    #      limits:
+    #        cpu: "300m"
+    #        memory: "0.5G"
+    #      requests:
+    #        cpu: "300m"
+    #        memory: "0.5G"
+    storages:
+    #      s3-us-west:
+    #        type: s3
+    #        s3:
+    #          bucket: S3-BACKUP-BUCKET-NAME-HERE
+    #          credentialsSecret: litmus-mongo-backup-s3
+    #          region: us-west-2
+    #      minio:
+    #        type: s3
+    #        s3:
+    #          bucket: MINIO-BACKUP-BUCKET-NAME-HERE
+    #          region: us-east-1
+    #          credentialsSecret: litmus-mongo-backup-minio
+    #          endpointUrl: http://minio.psmdb.svc.cluster.local:9000/minio/
+    pitr:
+      enabled: false
+    tasks:
+#      - name: daily-s3-us-west
+#        enabled: true
+#        schedule: "0 0 * * *"
+#        keep: 3
+#        storageName: s3-us-west
+#        compressionType: gzip
+#      - name: weekly-s3-us-west
+#        enabled: false
+#        schedule: "0 0 * * 0"
+#        keep: 5
+#        storageName: s3-us-west
+#        compressionType: gzip
