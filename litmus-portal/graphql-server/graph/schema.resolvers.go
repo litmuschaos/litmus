@@ -11,8 +11,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
-
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -30,6 +28,7 @@ import (
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -69,16 +68,16 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, workflowID st
 	return wfHandler.ReRunWorkflow(workflowID)
 }
 
-func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error) {
-	return wfHandler.DeleteWorkflow(ctx, workflowid, workflowRunID, data_store.Store)
+func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, workflowID *string, workflowRunID *string) (bool, error) {
+	return wfHandler.DeleteWorkflow(ctx, workflowID, workflowRunID, data_store.Store)
 }
 
-func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error) {
-	return wfHandler.TerminateWorkflow(ctx, workflowid, workflowRunID, data_store.Store)
+func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, workflowID *string, workflowRunID *string) (bool, error) {
+	return wfHandler.TerminateWorkflow(ctx, workflowID, workflowRunID, data_store.Store)
 }
 
-func (r *mutationResolver) SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error) {
-	return wfHandler.SyncWorkflowRun(ctx, workflowid, workflowRunID, data_store.Store)
+func (r *mutationResolver) SyncWorkflow(ctx context.Context, workflowID string, workflowRunID string) (bool, error) {
+	return wfHandler.SyncWorkflowRun(ctx, workflowID, workflowRunID, data_store.Store)
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {

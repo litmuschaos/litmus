@@ -1,21 +1,21 @@
 enum WorkflowRunStatus {
-  All
-  Failed
-  Running
-  Succeeded
-  Terminated
+  ALL
+  FAILED
+  RUNNING
+  SUCCEEDED
+  TERMINATED
 }
 
 input DateRange {
-  start_date: String!
-  end_date: String
+  startDate: String!
+  endDate: String
 }
 
 input WorkflowRunFilterInput {
-  workflow_name: String
-  cluster_name: String
-  workflow_status: WorkflowRunStatus
-  date_range: DateRange
+  workflowName: String
+  clusterName: String
+  workflowStatus: WorkflowRunStatus
+  dateRange: DateRange
 }
 
 input Pagination {
@@ -24,8 +24,8 @@ input Pagination {
 }
 
 enum WorkflowSortingField {
-  Name
-  Time
+  NAME
+  TIME
 }
 
 input WorkflowRunSortInput {
@@ -34,54 +34,54 @@ input WorkflowRunSortInput {
 }
 
 input GetWorkflowRunsInput {
-  project_id: ID!
-  workflow_run_ids: [ID]
-  workflow_ids: [ID]
+  projectID: ID!
+  workflowRunIDs: [ID]
+  workflowIDs: [ID]
   pagination: Pagination
   sort: WorkflowRunSortInput
   filter: WorkflowRunFilterInput
 }
 
-type weightages {
-  experiment_name: String!
+type Weightages {
+  experimentName: String!
   weightage: Int!
 }
 
 type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  weightages: [weightages!]!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
+  workflowRunID: ID!
+  workflowID: ID!
+  clusterName: String!
+  weightages: [Weightages!]!
+  lastUpdated: String!
+  projectID: ID!
+  clusterID: ID!
+  workflowName: String!
+  clusterType: String
   phase: String!
-  resiliency_score: Float
-  experiments_passed: Int
-  experiments_failed: Int
-  experiments_awaited: Int
-  experiments_stopped: Int
-  experiments_na: Int
-  total_experiments: Int
-  execution_data: String!
+  resiliencyScore: Float
+  experimentsPassed: Int
+  experimentsFailed: Int
+  experimentsAwaited: Int
+  experimentsStopped: Int
+  experimentsNa: Int
+  totalExperiments: Int
+  executionData: String!
   isRemoved: Boolean
 }
 
 type GetWorkflowsOutput {
-  total_no_of_workflow_runs: Int!
-  workflow_runs: [WorkflowRun]!
+  totalNoOfWorkflowRuns: Int!
+  workflowRuns: [WorkflowRun]!
 }
 
 input WorkflowFilterInput {
-  workflow_name: String
-  cluster_name: String
+  workflowName: String
+  clusterName: String
 }
 
 input ListWorkflowsInput {
-  project_id: ID!
-  workflow_ids: [ID]
+  projectID: ID!
+  workflowIDs: [ID]
   pagination: Pagination
   sort: WorkflowSortInput
   filter: WorkflowFilterInput
@@ -93,23 +93,23 @@ input WorkflowSortInput {
 }
 
 type Workflow {
-  workflow_id: String!
-  workflow_manifest: String!
+  workflowID: String!
+  workflowManifest: String!
   cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
+  clusterName: String!
+  workflowName: String!
+  workflowDescription: String!
+  weightages: [Weightages!]!
   isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
+  updatedAt: String!
+  createdAt: String!
+  projectID: ID!
+  clusterID: ID!
+  clusterType: String!
   isRemoved: Boolean!
 }
 
 type ListWorkflowsOutput {
-  total_no_of_workflows: Int!
+  totalNoOfWorkflows: Int!
   workflows: [Workflow]!
 }

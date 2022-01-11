@@ -1,66 +1,66 @@
 type WorkflowStat {
-  Schedules: Int!
-  Runs: Int!
-  ExpRuns: Int!
+  schedules: Int!
+  runs: Int!
+  expRuns: Int!
 }
 
 type AgentStat {
-  Ns: Int!
-  Cluster: Int!
-  Total: Int!
-  Active: Int!
+  ns: Int!
+  cluster: Int!
+  total: Int!
+  active: Int!
 }
 
-type Owner {
-  UserId: ID!
-  Username: String!
-  Name: String!
-}
+#type Owner {
+#  userId: ID!
+#  username: String!
+#  name: String!
+#}
 
-type MemberStat {
-  Owner: Owner!
-  Total: Int!
-}
+#type MemberStat {
+#  owner: Owner!
+#  total: Int!
+#}
 
 type ProjectData {
   # Name: String!
-  Workflows: WorkflowStat!
-  Agents: AgentStat!
-  ProjectId: String!
+  workflows: WorkflowStat!
+  agents: AgentStat!
+  projectId: String!
   # Members   : MemberStat!
 }
 
 type TotalCount {
-  Projects: Int!
-  Users: Int!
-  Agents: AgentStat!
-  Workflows: WorkflowStat!
+  projects: Int!
+  users: Int!
+  agents: AgentStat!
+  workflows: WorkflowStat!
 }
 
 type UsageData {
-  Projects: [ProjectData]!
-  TotalEntries: Int!
-  TotalCount: TotalCount!
+  projects: [ProjectData]!
+  totalEntries: Int!
+  totalCount: TotalCount!
 }
 
 enum UsageSort {
-  Project
-  Owner
-  Agents
-  Schedules
-  WorkflowRuns
-  ExperimentRuns
-  TeamMembers
+  AGENTS
+  EXPERIMENT_RUNS
+  OWNER
+  PROJECT
+  SCHEDULES
+  TEAM_MEMBERS
+  WORKFLOW_RUNS
 }
 
 input UsageSortInput {
-  Field: UsageSort!
-  Descending: Boolean!
+  field: UsageSort!
+  descending: Boolean!
 }
 
 input UsageQuery {
-  Pagination: Pagination
-  DateRange: DateRange!
-  Sort: UsageSortInput
-  SearchProject: String
+  pagination: Pagination
+  dateRange: DateRange!
+  sort: UsageSortInput
+  searchProject: String
 }

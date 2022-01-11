@@ -5,44 +5,60 @@
 directive @authorized on FIELD_DEFINITION
 
 type Cluster {
-  cluster_id: ID!
-  project_id: ID!
-  cluster_name: String!
+  clusterID: ID!
+  projectID: ID!
+  clusterName: String!
   description: String
-  platform_name: String!
-  access_key: String!
-  is_registered: Boolean!
-  is_cluster_confirmed: Boolean!
-  is_active: Boolean!
-  updated_at: String!
-  created_at: String!
-  cluster_type: String!
-  no_of_schedules: Int
-  no_of_workflows: Int
+  platformName: String!
+  accessKey: String!
+  isRegistered: Boolean!
+  isClusterConfirmed: Boolean!
+  isActive: Boolean!
+  updatedAt: String!
+  createdAt: String!
+  clusterType: String!
+  noOfSchedules: Int
+  noOfWorkflows: Int
   token: String!
-  agent_namespace: String
-  serviceaccount: String
-  agent_scope: String!
-  agent_ns_exists: Boolean
-  agent_sa_exists: Boolean
-  last_workflow_timestamp: String!
-  start_time: String!
+  agentNamespace: String
+  serviceAccount: String
+  agentScope: String!
+  agentNsExists: Boolean
+  agentSaExists: Boolean
+  lastWorkflowTimestamp: String!
+  startTime: String!
   version: String!
 }
 
+"""
+Defines the details for the new cluster being connected
+"""
 input ClusterInput {
-  cluster_name: String!
+  """ Name of the cluster """
+  clusterName: String!
+  """ Description of the cluster """
   description: String
-  platform_name: String!
-  project_id: ID!
-  cluster_type: String!
-  agent_namespace: String
-  serviceaccount: String
-  agent_scope: String!
-  agent_ns_exists: Boolean
-  agent_sa_exists: Boolean
-  skip_ssl: Boolean
-  node_selector: String
+  """ Cluster Platform Name eg. GKE,AWS, Others """
+  platformName: String!
+  """ Project ID the cluster is being connected to """
+  projectID: ID!
+  """ Cluster type : Internal or External """
+  clusterType: String!
+  """ Namespace where the cluster agent is bein installed """
+  agentNamespace: String
+  """ Name of service account used by cluster agent """
+  serviceAccount: String
+  """ Scope of the cluster agent : ns or cluster """
+  agentScope: String!
+  """ Bool value indicating whether agent ns used already exists on cluster or not """
+  agentNsExists: Boolean
+  """ Bool value indicating whether service account used already exists on cluster or not """
+  agentSaExists: Boolean
+  """ Bool value indicating whether agent will skip ssl checks or not """
+  skipSsl: Boolean
+  """ Node selectors used by cluster agent """
+  nodeSelector: String
+  """ Node tolerations used by cluster agent """
   tolerations: [Toleration]
 }
 
@@ -55,115 +71,114 @@ input Toleration {
 }
 
 type ClusterEvent {
-  event_id: ID!
-  event_type: String!
-  event_name: String!
+  eventID: ID!
+  eventType: String!
+  eventName: String!
   description: String!
   cluster: Cluster!
 }
 
 type ActionPayload {
-  request_type: String!
-  k8s_manifest: String!
+  requestType: String!
+  k8sManifest: String!
   namespace: String!
-  external_data: String
+  externalData: String
 }
 
 type ClusterAction {
-  project_id: ID!
+  projectID: ID!
   action: ActionPayload!
 }
 
-input ClusterActionInput {
-  cluster_id: ID!
-  action: String!
-}
-
 input ClusterEventInput {
-  event_name: String!
+  eventName: String!
   description: String!
-  cluster_id: String!
-  access_key: String!
+  clusterID: String!
+  accessKey: String!
 }
 
 input ClusterIdentity {
-  cluster_id: String!
-  access_key: String!
+  clusterID: String!
+  accessKey: String!
   version: String!
 }
 
 type ClusterConfirmResponse {
   isClusterConfirmed: Boolean!
   newAccessKey: String
-  cluster_id: String
+  clusterID: String
 }
 
 input WeightagesInput {
-  experiment_name: String!
+  experimentName: String!
   weightage: Int!
 }
 
-input ChaosWorkFlowInput {
-  workflow_id: String
-  workflow_manifest: String!
+input chaosWorkFlowInput {
+  workflowID: String
+  workflowManifest: String!
   cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
+  workflowName: String!
+  workflowDescription: String!
   weightages: [WeightagesInput!]!
   isCustomWorkflow: Boolean!
-  project_id: ID!
-  cluster_id: ID!
+  projectID: ID!
+  clusterID: ID!
 }
 
 type ChaosWorkFlowResponse {
-  workflow_id: String!
+  workflowID: String!
   cronSyntax: String!
-  workflow_name: String!
-  workflow_description: String!
+  workflowName: String!
+  workflowDescription: String!
   isCustomWorkflow: Boolean!
 }
 
 input WorkflowRunInput {
-  workflow_id: ID!
-  workflow_run_id: ID!
-  workflow_name: String!
-  execution_data: String!
-  cluster_id: ClusterIdentity!
+  workflowID: ID!
+  workflowRunID: ID!
+  workflowName: String!
+  executionData: String!
+  clusterID: ClusterIdentity!
   completed: Boolean!
   isRemoved: Boolean
 }
 
 type PodLogResponse {
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_type: String!
+  workflowRunID: ID!
+  podName: String!
+  podType: String!
   log: String!
 }
 
 input PodLog {
-  cluster_id: ClusterIdentity!
-  request_id: ID!
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_type: String!
+  clusterID: ClusterIdentity!
+  requestID: ID!
+  workflowRunID: ID!
+  podName: String!
+  podType: String!
   log: String!
 }
 
 input PodLogRequest {
-  cluster_id: ID!
-  workflow_run_id: ID!
-  pod_name: String!
-  pod_namespace: String!
-  pod_type: String!
-  exp_pod: String
-  runner_pod: String
-  chaos_namespace: String
+  clusterID: ID!
+  workflowRunID: ID!
+  podName: String!
+  podNamespace: String!
+  podType: String!
+  expPod: String
+  runnerPod: String
+  chaosNamespace: String
 }
 
-type clusterRegResponse {
+""" Response received for registering a new cluster """
+type ClusterRegResponse {
+  """ Token used to verify and retrieve the cluster agent manifest """
   token: String!
-  cluster_id: String!
-  cluster_name: String!
+  """ Unique ID for the newly registered cluster """
+  clusterID: String!
+  """ Cluster name as sent in request """
+  clusterName: String!
 }
 
 type SSHKey {
@@ -172,62 +187,62 @@ type SSHKey {
 }
 
 input GitConfig {
-  ProjectID: String!
-  Branch: String!
-  RepoURL: String!
-  AuthType: AuthType!
-  Token: String
-  UserName: String
-  Password: String
-  SSHPrivateKey: String
+  projectID: String!
+  branch: String!
+  repoURL: String!
+  authType: AuthType!
+  token: String
+  userName: String
+  password: String
+  sshPrivateKey: String
 }
 type GitConfigResponse {
-  Enabled: Boolean!
-  ProjectID: String!
-  Branch: String
-  RepoURL: String
-  AuthType: AuthType
-  Token: String
-  UserName: String
-  Password: String
-  SSHPrivateKey: String
+  enabled: Boolean!
+  projectID: String!
+  branch: String
+  repoURL: String
+  authType: AuthType
+  token: String
+  userName: String
+  password: String
+  sshPrivateKey: String
 }
 
 type ManifestTemplate {
-  template_id: ID!
+  templateID: ID!
   manifest: String!
-  template_name: String!
-  template_description: String!
-  project_id: String!
-  project_name: String!
-  created_at: String!
-  is_removed: Boolean!
+  templateName: String!
+  templateDescription: String!
+  projectID: String!
+  projectName: String!
+  createdAt: String!
+  isRemoved: Boolean!
   isCustomWorkflow: Boolean!
 }
 
 input TemplateInput {
   manifest: String!
-  template_name: String!
-  template_description: String!
-  project_id: String!
+  templateName: String!
+  templateDescription: String!
+  projectID: String!
   isCustomWorkflow: Boolean!
 }
 
 type KubeObjectResponse {
-  cluster_id: ID!
-  kube_obj: String!
+  clusterID: ID!
+  kubeObj: String!
 }
 
 input KubeObjectData {
-  request_id: ID!
-  cluster_id: ClusterIdentity!
-  kube_obj: String!
+  requestID: ID!
+  clusterID: ClusterIdentity!
+  kubeObj: String!
 }
 
 input KubeObjectRequest {
-  cluster_id: ID!
-  object_type: String!
-  kube_obj_request: KubeGVRRequest!
+  clusterID: ID!
+  objectType: String!
+  kubeObjRequest: KubeGVRRequest!
 }
 
 input KubeGVRRequest {
@@ -241,7 +256,7 @@ type Query {
     workflowRunsInput: GetWorkflowRunsInput!
   ): GetWorkflowsOutput! @authorized
 
-  getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
+  getCluster(projectID: String!, clusterType: String): [Cluster!]! @authorized
 
   # Query to fetch manifest
   getManifest(
@@ -250,30 +265,30 @@ type Query {
     accessKey: String!
   ): String! @authorized
 
-  # Query to fetch agent details based on project_id and agent_name
-  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
+  # Query to fetch agent details based on projectID and agent_name
+  getAgentDetails(clusterID: String!, projectID: String!): Cluster! @authorized
 
   # Query to fetch workflow data for heatmap
   getHeatmapData(
-    project_id: String!
-    workflow_id: String!
+    projectID: String!
+    workflowID: String!
     year: Int!
   ): [HeatmapData]! @authorized
 
   getWorkflowStats(
-    project_id: ID!
+    projectID: ID!
     filter: TimeFrequency!
-    show_workflow_runs: Boolean!
+    showWorkflowRuns: Boolean!
   ): [WorkflowStats]! @authorized
 
   getWorkflowRunStats(
     workflowRunStatsRequest: WorkflowRunStatsRequest!
   ): WorkflowRunStatsResponse! @authorized
 
-  ListWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
+  listWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
     @authorized
 
-  getCharts(HubName: String!, projectID: String!): [Chart!]! @authorized
+  getCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
 
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
@@ -281,69 +296,72 @@ type Query {
 
   getYAMLData(experimentInput: ExperimentInput!): String!
 
-  GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
+  getPredefinedWorkflowList(hubName: String!, projectID: String!): [String!]!
 
-  GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+  getPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
 
-  ListDataSource(project_id: String!): [DSResponse]! @authorized
+  listDataSource(projectID: String!): [DSResponse]! @authorized
 
-  GetPromQuery(query: promInput): promResponse! @authorized
+  getPromQuery(query: PromInput): PromResponse! @authorized
 
-  GetPromLabelNamesAndValues(series: promSeriesInput): promSeriesResponse!
+  getPromLabelNamesAndValues(series: PromSeriesInput): PromSeriesResponse!
     @authorized
 
-  GetPromSeriesList(ds_details: dsDetails): promSeriesListResponse! @authorized
+  getPromSeriesList(dsDetails: DsDetails): PromSeriesListResponse! @authorized
 
-  ListDashboard(
-    project_id: String!
-    cluster_id: String
-    db_id: String
-  ): [listDashboardResponse] @authorized
+  listDashboard(
+    projectID: String!
+    clusterID: String
+    dbID: String
+  ): [ListDashboardResponse] @authorized
 
-  PortalDashboardData(
-    project_id: String!
-    hub_name: String!
+  portalDashboardData(
+    projectID: String!
+    hubName: String!
   ): [PortalDashboardData!]! @authorized
 
   # Git Ops
-  getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
+  getGitOpsDetails(projectID: String!): GitConfigResponse! @authorized
 
   # Manifest Template
-  ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
+  listManifestTemplate(projectID: String!): [ManifestTemplate]! @authorized
 
-  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
+  getTemplateManifestByID(templateID: String!): ManifestTemplate! @authorized
 
   #Image Registry Queries
-  ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
+  listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
-  GetImageRegistry(
-    image_registry_id: String!
-    project_id: String!
+  getImageRegistry(
+    imageRegistryID: String!
+    projectID: String!
   ): ImageRegistryResponse! @authorized
 
-  UsageQuery(query: UsageQuery!): UsageData! @authorized
+  usageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Mutation {
-  #It is used to create external cluster.
-  userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
+  """ Registers a new cluster for a user in a specified project """
+  userClusterReg(
+    """ Details for the cluster being registered """
+    clusterInput: ClusterInput!
+  ): ClusterRegResponse! @authorized
 
   ## Workflow APIs
   # It is used to create chaosworkflow
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+  createChaosWorkFlow(input: chaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
 
   # removes workflow from cluster and db
-  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+  deleteChaosWorkflow(workflowID: String, workflowRunID: String): Boolean!
     @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
+  terminateChaosWorkflow(workflowID: String, workflowRunID: String): Boolean!
     @authorized
 
-  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
+  syncWorkflow(workflowID: String!, workflowRunID: String!): Boolean!
     @authorized
 
   #It is used to confirm the subscriber registration
@@ -364,71 +382,71 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+  updateChaosWorkflow(input: chaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(cluster_id: String!): String! @authorized
+  deleteClusterReg(clusterID: String!): String! @authorized
 
   generaterSSHKey: SSHKey! @authorized
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hub_id: String!): Boolean! @authorized
+  deleteMyHub(hubID: String!): Boolean! @authorized
 
   # Gitops
-  gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
+  gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
 
   enableGitOps(config: GitConfig!): Boolean! @authorized
 
-  disableGitOps(project_id: String!): Boolean! @authorized
+  disableGitOps(projectID: String!): Boolean! @authorized
 
   updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # Analytics
   createDataSource(datasource: DSInput): DSResponse @authorized
 
-  createDashBoard(dashboard: createDBInput): listDashboardResponse! @authorized
+  createDashBoard(dashboard: CreateDBInput): ListDashboardResponse! @authorized
 
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
   updateDashboard(
-    dashboard: updateDBInput!
+    dashboard: UpdateDBInput!
     chaosQueryUpdate: Boolean!
   ): String! @authorized
 
-  updatePanel(panelInput: [panel]): String! @authorized
+  updatePanel(panelInput: [Panel]): String! @authorized
 
-  deleteDashboard(db_id: String): Boolean! @authorized
+  deleteDashboard(dbID: String): Boolean! @authorized
 
-  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  deleteDataSource(input: DeleteDSInput!): Boolean! @authorized
 
   # Manifest Template
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
     @authorized
 
-  deleteManifestTemplate(template_id: String!): Boolean! @authorized
+  deleteManifestTemplate(templateID: String!): Boolean! @authorized
 
   #Image Registry Mutations
   createImageRegistry(
-    project_id: String!
-    imageRegistryInfo: imageRegistryInput!
+    projectID: String!
+    imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
   updateImageRegistry(
-    image_registry_id: String!
-    project_id: String!
-    imageRegistryInfo: imageRegistryInput!
+    imageRegistryID: String!
+    projectID: String!
+    imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
-  deleteImageRegistry(image_registry_id: String!, project_id: String!): String!
+  deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
     @authorized
 }
 
 type Subscription {
   #It is used to listen cluster events from the graphql server
-  clusterEventListener(project_id: String!): ClusterEvent! @authorized
+  clusterEventListener(projectID: String!): ClusterEvent! @authorized
 
-  workflowEventListener(project_id: String!): WorkflowRun! @authorized
+  workflowEventListener(projectID: String!): WorkflowRun! @authorized
 
   getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
@@ -440,8 +458,8 @@ type Subscription {
 
   viewDashboard(
     dashboardID: String
-    promQueries: [promQueryInput!]!
-    dashboardQueryMap: [queryMapForPanelGroup!]!
-    dataVariables: dataVars!
-  ): dashboardPromResponse! @authorized
+    promQueries: [PromQueryInput!]!
+    dashboardQueryMap: [QueryMapForPanelGroup!]!
+    dataVariables: DataVars!
+  ): DashboardPromResponse! @authorized
 }

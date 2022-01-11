@@ -704,7 +704,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 			defer wg.Done()
 
 			newPromQuery := analytics.PromQuery{
-				Queryid:    val.Queryid,
+				QueryID:    val.QueryID,
 				Query:      val.Query,
 				Legend:     val.Legend,
 				Resolution: val.Resolution,
@@ -715,19 +715,19 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 			cacheKey := val.Query + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 
 			queryType := "metrics"
-			if strings.Contains(val.Queryid, "chaos-event") || strings.Contains(val.Queryid, "chaos-verdict") {
+			if strings.Contains(val.QueryID, "chaos-event") || strings.Contains(val.QueryID, "chaos-verdict") {
 				queryType = "annotation"
-				cacheKey = val.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
+				cacheKey = val.QueryID + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 			}
 
 			if obj, isExist := AnalyticsCache.Get(cacheKey); isExist {
 				if queryType == "metrics" {
 					metrics = append(metrics, obj.(*model.MetricsPromResponse))
 					mutex.Lock()
-					queryResponseMap[val.Queryid] = obj.(*model.MetricsPromResponse)
+					queryResponseMap[val.QueryID] = obj.(*model.MetricsPromResponse)
 					mutex.Unlock()
 				} else {
-					if strings.Contains(val.Queryid, "chaos-event") {
+					if strings.Contains(val.QueryID, "chaos-event") {
 						annotations = append(annotations, obj.(*model.AnnotationsPromResponse))
 					}
 				}
@@ -739,7 +739,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 				if queryType == "metrics" {
 					metrics = append(metrics, response.(*model.MetricsPromResponse))
 					mutex.Lock()
-					queryResponseMap[val.Queryid] = response.(*model.MetricsPromResponse)
+					queryResponseMap[val.QueryID] = response.(*model.MetricsPromResponse)
 					mutex.Unlock()
 					cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 					if cacheError != nil {
@@ -752,7 +752,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 						}
 					}
 				} else {
-					if strings.Contains(val.Queryid, "chaos-event") {
+					if strings.Contains(val.QueryID, "chaos-event") {
 						annotations = append(annotations, response.(*model.AnnotationsPromResponse))
 						cacheError := utils.AddCache(AnalyticsCache, cacheKey, response)
 						if cacheError != nil {
@@ -764,7 +764,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 								}
 							}
 						}
-					} else if strings.Contains(val.Queryid, "chaos-verdict") {
+					} else if strings.Contains(val.QueryID, "chaos-verdict") {
 						patchEventWithVerdict = true
 						verdictResponse = response.(*model.AnnotationsPromResponse)
 					}
@@ -1308,11 +1308,11 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	pipeline = append(pipeline, matchProjectIdStage)
 
 	// Match the workflowIds from the input array
-	if len(workflowRunStatsRequest.WorkflowIds) != 0 {
+	if len(workflowRunStatsRequest.WorkflowIDs) != 0 {
 		matchWfIdStage := bson.D{
 			{"$match", bson.D{
 				{"workflow_id", bson.D{
-					{"$in", workflowRunStatsRequest.WorkflowIds},
+					{"$in", workflowRunStatsRequest.WorkflowIDs},
 				}},
 			}},
 		}
