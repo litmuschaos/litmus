@@ -59,8 +59,14 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 			NextVersion:    "2.4.0",
 			VersionManager: v2_4_0.NewVersionManger(m.Logger, m.DBClient),
 		},
-		// latest version no more upgrades available
+
 		"2.4.0": {
+			NextVersion:    "2.5.0",
+			VersionManager: nil,
+		},
+
+		// latest version no more upgrades available
+		"2.5.0": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},
