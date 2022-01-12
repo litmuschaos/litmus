@@ -1,45 +1,98 @@
+"""
+Defines details of workflow statistics
+"""
 type WorkflowStat {
+  """
+  Number of schedules
+  """
   schedules: Int!
+  """
+  Number of workflow runs
+  """
   runs: Int!
+  """
+  Number of experiment runs
+  """
   expRuns: Int!
 }
 
+"""
+Defines details of agent statistics
+"""
 type AgentStat {
+  """
+  Number of namespaces
+  """
   ns: Int!
+  """
+  Number of clusters
+  """
   cluster: Int!
+  """
+  Total number of agents
+  """
   total: Int!
+  """
+  Number of active agents
+  """
   active: Int!
 }
 
-#type Owner {
-#  userId: ID!
-#  username: String!
-#  name: String!
-#}
-
-#type MemberStat {
-#  owner: Owner!
-#  total: Int!
-#}
-
+"""
+Defines all the stats under a project
+"""
 type ProjectData {
-  # Name: String!
+  """
+  Workflow related statistics
+  """
   workflows: WorkflowStat!
+  """
+  Agent related statistics
+  """
   agents: AgentStat!
+  """
+  ID of the project
+  """
   projectId: String!
-  # Members   : MemberStat!
 }
 
+"""
+Defines total number of projects, users, agents and workflows
+"""
 type TotalCount {
+  """
+  Total number of projects
+  """
   projects: Int!
+  """
+  Total number of users
+  """
   users: Int!
+  """
+  Total number of agents
+  """
   agents: AgentStat!
+  """
+  Total number of workflows
+  """
   workflows: WorkflowStat!
 }
 
+"""
+Defines total usage data
+"""
 type UsageData {
+  """
+  Project related data
+  """
   projects: [ProjectData]!
+  """
+  Total number of entries
+  """
   totalEntries: Int!
+  """
+  Total number of projects, users, agents and workflows
+  """
   totalCount: TotalCount!
 }
 
@@ -53,14 +106,38 @@ enum UsageSort {
   WORKFLOW_RUNS
 }
 
+"""
+Defines details required for sorting the data for a particular field
+"""
 input UsageSortInput {
+  """
+  Field for which sorting will be done
+  """
   field: UsageSort!
+  """
+  Bool value indicating if sorting will be done in descending order or not
+  """
   descending: Boolean!
 }
 
+"""
+Defines input details for querying the total usage related details
+"""
 input UsageQuery {
+  """
+  Pagination detail to fetch only a required number of data at a time
+  """
   pagination: Pagination
+  """
+  Rage of dates between which the data will be fetched
+  """
   dateRange: DateRange!
+  """
+  Sorting details to fetch the data in a sorted manner
+  """
   sort: UsageSortInput
+  """
+  Search field to search for a particular project and fetch it's data
+  """
   searchProject: String
 }

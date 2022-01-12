@@ -1,29 +1,101 @@
+"""
+Defines details for image registry
+"""
 type ImageRegistry {
-    isDefault: Boolean
-    imageRegistryName: String!
-    imageRepoName: String!
-    imageRegistryType: String!
-    secretName: String
-    secretNamespace: String
-    enableRegistry: Boolean
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean
+  """
+  Name of Image Registry
+  """
+  imageRegistryName: String!
+  """
+  Name of image repository
+  """
+  imageRepoName: String!
+  """
+  Type of the image registry: public/private
+  """
+  imageRegistryType: String!
+  """
+  Secret which is used for private registry
+  """
+  secretName: String
+  """
+  Namespace where the secret is available
+  """
+  secretNamespace: String
+  """
+  Bool value indicating if image registry is enabled or not
+  """
+  enableRegistry: Boolean
 }
 
+"""
+Defines input data for querying the details of an image registry
+"""
 input ImageRegistryInput {
-    isDefault: Boolean!
-    imageRegistryName: String!
-    imageRepoName: String!
-    imageRegistryType: String!
-    secretName: String
-    secretNamespace: String
-    enableRegistry: Boolean
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean!
+  """
+  Name of Image Registry
+  """
+  imageRegistryName: String!
+  """
+  Name of image repository
+  """
+  imageRepoName: String!
+  """
+  Type of the image registry: public/private
+  """
+  imageRegistryType: String!
+  """
+  Secret which is used for private registry
+  """
+  secretName: String
+  """
+  Namespace where the secret is available
+  """
+  secretNamespace: String
+  """
+  Bool value indicating if image registry is enabled or not
+  """
+  enableRegistry: Boolean
 }
 
+"""
+Defines response data for image registry
+"""
 type ImageRegistryResponse {
-    isDefault: Boolean!
-    imageRegistryInfo: ImageRegistry
-    imageRegistryID: String!
-    projectID: String!
-    updatedAt: String
-    createdAt: String
-    isRemoved: Boolean
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean!
+  """
+  Information Image Registry
+  """
+  imageRegistryInfo: ImageRegistry
+  """
+  ID of the image registry
+  """
+  imageRegistryID: String!
+  """
+  ID of the project in which image registry is created
+  """
+  projectID: String!
+  """
+  Timestamp when the image registry was last updated
+  """
+  updatedAt: String
+  """
+  Timestamp when the image registry was created
+  """
+  createdAt: String
+  """
+  Bool value indicating if the image registry has been removed
+  """
+  isRemoved: Boolean
 }
