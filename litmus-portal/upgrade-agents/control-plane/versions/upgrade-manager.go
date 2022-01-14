@@ -109,8 +109,11 @@ func (m *UpgradeManager) Run() error {
 	versionIterator := m.PreviousVersion
 	// loop till the target version is reached
 	for versionIterator != m.TargetVersion {
-		if err := upgradePath[versionIterator].VersionManager.Run(); err != nil {
-			return fmt.Errorf("failed to upgrade to version %v, error : %w", versionIterator, err)
+		// Skipping schema upgrade, if version manager not available (Only version will be upgraded)
+		if upgradePath[versionIterator].VersionManager != nil {
+			if err := upgradePath[versionIterator].VersionManager.Run(); err != nil {
+				return fmt.Errorf("failed to upgrade to version %v, error : %w", versionIterator, err)
+			}
 		}
 		versionIterator = upgradePath[versionIterator].NextVersion
 	}
