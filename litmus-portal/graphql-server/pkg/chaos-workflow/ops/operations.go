@@ -196,6 +196,7 @@ func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInp
 	return nil
 }
 
+// ProcessWorkflowRunDelete deletes a workflow entry and updates the database
 func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, username string, r *store.StateData) error {
 	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
@@ -233,6 +234,7 @@ func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow w
 	return nil
 }
 
+// SendWorkflowToSubscriber sends the workflow to the subscriber to be handled
 func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, username *string, externalData *string, reqType string, r *store.StateData) {
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 

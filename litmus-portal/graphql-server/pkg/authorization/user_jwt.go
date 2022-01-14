@@ -37,6 +37,7 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 	return nil, errors.New("Invalid Token")
 }
 
+// Returns the username from the jwt token
 func GetUsername(token string) (string, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
