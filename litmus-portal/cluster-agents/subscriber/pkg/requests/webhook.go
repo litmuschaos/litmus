@@ -15,7 +15,7 @@ import (
 )
 
 func ClusterConnect(clusterData map[string]string) {
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     username\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
 	if err != nil {
 		logrus.WithError(err).Fatal("failed to parse url")
@@ -128,12 +128,12 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 		logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData)
 		k8s.SendPodLogs(clusterData, podRequest)
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.Namespace)
+		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.Namespace, r.Payload.Data.ClusterConnect.Action.Username)
 		if err != nil {
 			return errors.New("error performing cluster operation: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_sync", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		err := utils.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData)
+		err := utils.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData, r.Payload.Data.ClusterConnect.Action.Username)
 		if err != nil {
 			return errors.New("error performing events operation: " + err.Error())
 		}

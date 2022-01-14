@@ -264,6 +264,7 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 			Namespace:    subscriberRequest.Namespace,
 			RequestType:  subscriberRequest.RequestType,
 			ExternalData: subscriberRequest.ExternalData,
+			Username:     subscriberRequest.Username,
 		},
 	}
 

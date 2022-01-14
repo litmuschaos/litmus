@@ -249,7 +249,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 }
 
 // This function handles cluster operations
-func ClusterOperations(manifest string, requestType string, namespace string) (*unstructured.Unstructured, error) {
+func ClusterOperations(manifest string, requestType string, namespace string, executed_by string) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
@@ -272,6 +272,10 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 	if err != nil {
 		return nil, err
 	}
+
+	labels := obj.GetLabels()
+	labels["executed_by"] = executed_by
+	obj.SetLabels(labels)
 
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)

@@ -604,7 +604,7 @@ func createWorkflow(data, file string, config GitConfig) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	err = ops.ProcessWorkflowCreation(input, wfType, store.Store)
+	err = ops.ProcessWorkflowCreation(input, "git-ops", wfType, store.Store)
 	if err != nil {
 		return false, err
 	}
@@ -666,7 +666,7 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 	if err != nil {
 		return err
 	}
-	return ops.ProcessWorkflowUpdate(input, wfType, store.Store)
+	return ops.ProcessWorkflowUpdate(input, "git-ops", wfType, store.Store)
 
 }
 
@@ -681,5 +681,5 @@ func deleteWorkflow(file string, config GitConfig) error {
 		return err
 	}
 
-	return ops.ProcessWorkflowDelete(query, workflow, store.Store)
+	return ops.ProcessWorkflowDelete(query, workflow, "git-ops", store.Store)
 }

@@ -67,6 +67,7 @@ type ActionPayload {
   k8s_manifest: String!
   namespace: String!
   external_data: String
+  username: String
 }
 
 type ClusterAction {
@@ -127,6 +128,7 @@ input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
+  executed_by: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
