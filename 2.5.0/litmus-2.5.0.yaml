@@ -57,7 +57,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.4.0
+    app.kubernetes.io/version: v2.5.0
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -96,7 +96,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.4.0
+    app.kubernetes.io/version: v2.5.0
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -415,7 +415,7 @@ data:
   DB_SERVER: "mongodb://mongo-service:27017"
   AGENT_SCOPE: cluster
   AGENT_NAMESPACE: litmus
-  VERSION: "2.4.0"
+  VERSION: "2.5.0"
   SKIP_SSL_VERIFY: "false"
   # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
@@ -506,7 +506,7 @@ spec:
     spec:
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:2.4.0
+          image: litmuschaos/litmusportal-frontend:2.5.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -566,13 +566,16 @@ spec:
             ]
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:2.4.0
+          image: litmuschaos/litmusportal-server:2.5.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
             - secretRef:
                 name: litmus-portal-admin-secret
           env:
+            # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
+            - name: TLS_SECRET_NAME
+              value: ""
             - name: SELF_CLUSTER
               value: "true"
             - name: LITMUS_PORTAL_NAMESPACE
@@ -582,19 +585,19 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:2.4.0"
+              value: "litmuschaos/litmusportal-subscriber:2.5.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:2.4.0"
+              value: "litmuschaos/litmusportal-event-tracker:2.5.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.2.3"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.3.0"
+              value: "litmuschaos/chaos-operator:2.4.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.3.0"
+              value: "litmuschaos/chaos-runner:2.4.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.3.0"
+              value: "litmuschaos/chaos-exporter:2.4.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -610,15 +613,15 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.3.x"
+              value: "v2.4.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
+              value: "127.0.0.1"
           ports:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:2.4.0
+          image: litmuschaos/litmusportal-auth-server:2.5.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -632,7 +635,7 @@ spec:
             - name: ADMIN_PASSWORD
               value: "litmus"
             - name: LITMUS_SVC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
+              value: "127.0.0.1"
           ports:
             - containerPort: 3000
             - containerPort: 3030
