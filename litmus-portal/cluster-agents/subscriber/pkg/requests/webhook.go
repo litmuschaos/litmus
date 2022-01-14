@@ -128,7 +128,7 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 		logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData)
 		k8s.SendPodLogs(clusterData, podRequest)
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.Namespace, r.Payload.Data.ClusterConnect.Action.Username)
+		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action)
 		if err != nil {
 			return errors.New("error performing cluster operation: " + err.Error())
 		}

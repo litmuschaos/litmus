@@ -47,10 +47,6 @@ func GetUsername(token string) (string, error) {
 		return "", errors.New("Invalid Token")
 	}
 
-	if !tkn.Valid {
-		return "", errors.New("Invalid Token")
-	}
-
 	claims, ok := tkn.Claims.(jwt.MapClaims)
 	if ok {
 		return claims["username"].(string), nil
