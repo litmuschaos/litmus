@@ -176,6 +176,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 		StartedAt:         StrConvTime(workflowObj.Status.StartedAt.Unix()),
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,
+		ExecutedBy:        workflowObj.Labels["executed_by"],
 	}
 
 	if experimentFail == 1 {
