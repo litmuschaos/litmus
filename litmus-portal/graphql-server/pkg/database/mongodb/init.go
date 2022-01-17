@@ -130,7 +130,9 @@ func (m *MongoClient) initAllCollection() {
 			Keys: bson.M{
 				"workflow_name": 1,
 			},
-			Options: options.Index().SetUnique(true),
+			Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.D{{
+				"isRemoved", false,
+			}}),
 		},
 	})
 	if err != nil {
