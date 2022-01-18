@@ -308,7 +308,7 @@ input WorkflowRunInput {
   """
   executionData: String!
   """
-  ID of the cluster in which the workflow is running
+  ID of the cluster agent in which the workflow is running
   """
   clusterID: ClusterIdentity!
   """
