@@ -223,6 +223,11 @@ const TableData: React.FC<TableDataProps> = ({
         </Typography>
       </TableCell>
       <TableCell>
+        <Typography className={classes.clusterData}>
+          <span>{data.last_updated_by ?? ''}</span>
+        </Typography>
+      </TableCell>
+      <TableCell>
         <Button
           onClick={handlePopOverClick}
           className={classes.buttonTransform}

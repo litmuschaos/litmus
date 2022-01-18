@@ -101,6 +101,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
     color: theme.palette.text.disabled,
   },
+  lastUpdatedBy: {
+    paddingLeft: theme.spacing(5),
+    color: theme.palette.text.disabled,
+  },
   clusterStartDate: {
     paddingLeft: theme.spacing(10),
   },
