@@ -321,6 +321,37 @@ spec:
           value: '60'
 ```
 
+### Jitter
+
+It defines the jitter (in ms), a parameter that allows introducing a network delay variation. It can be tuned via `JITTER` ENV. Its default value is `0`.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-latency/network-latency-jitter.yaml yaml)
+```yaml
+# provide the network latency jitter
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-latency-sa
+  experiments:
+  - name: pod-network-latency
+    spec:
+      components:
+        env:
+        # value of the network latency jitter (in ms) 
+        - name: JITTER
+          value: '200'
+```
+
 ### Container Runtime Socket Path
 
 It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container runtime and socket file path.

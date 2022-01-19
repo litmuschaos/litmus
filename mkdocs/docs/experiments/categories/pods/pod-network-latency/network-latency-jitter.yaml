@@ -1,0 +1,21 @@
+# provide the network latency jitter
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-latency-sa
+  experiments:
+  - name: pod-network-latency
+    spec:
+      components:
+        env:
+        # value of the network latency jitter (in ms) 
+        - name: JITTER
+          value: '200'
