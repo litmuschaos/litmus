@@ -618,7 +618,7 @@ spec:
             - containerPort: 8000
           imagePullPolicy: Always
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:2.4.0
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
