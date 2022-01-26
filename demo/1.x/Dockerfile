@@ -1,5 +1,5 @@
 # select base image from https://hub.docker.com/_/docker
-FROM docker:stable
+FROM docker:19
 
 # Add Maintainer Info
 LABEL maintainer="LitmusDev"
