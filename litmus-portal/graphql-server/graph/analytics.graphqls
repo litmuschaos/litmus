@@ -1,309 +1,309 @@
 input DSInput {
-  ds_id: String
-  ds_name: String!
-  ds_type: String!
-  ds_url: String!
-  access_type: String!
-  auth_type: String!
-  basic_auth_username: String
-  basic_auth_password: String
-  scrape_interval: Int!
-  query_timeout: Int!
-  http_method: String!
-  project_id: String
+  dsID: String
+  dsName: String!
+  dsType: String!
+  dsURL: String!
+  accessType: String!
+  authType: String!
+  basicAuthUsername: String
+  basicAuthPassword: String
+  scrapeInterval: Int!
+  queryTimeout: Int!
+  httpMethod: String!
+  projectID: String
 }
 
 type DSResponse {
-  ds_id: String
-  ds_name: String
-  ds_type: String
-  ds_url: String
-  access_type: String
-  auth_type: String
-  basic_auth_username: String
-  basic_auth_password: String
-  scrape_interval: Int
-  query_timeout: Int
-  http_method: String
-  project_id: ID!
-  health_status: String!
-  created_at: String
-  updated_at: String
+  dsID: String
+  dsName: String
+  dsType: String
+  dsURL: String
+  accessType: String
+  authType: String
+  basicAuthUsername: String
+  basicAuthPassword: String
+  scrapeInterval: Int
+  queryTimeout: Int
+  httpMethod: String
+  projectID: ID!
+  healthStatus: String!
+  createdAt: String
+  updatedAt: String
 }
 
-input createDBInput {
-  ds_id: String!
-  db_name: String!
-  db_type_name: String!
-  db_type_id: String!
-  db_information: String
-  chaos_event_query_template: String!
-  chaos_verdict_query_template: String!
-  application_metadata_map: [applicationMetadata]
-  panel_groups: [panelGroup]!
-  end_time: String!
-  start_time: String!
-  project_id: ID!
-  cluster_id: ID!
-  refresh_rate: String!
+input CreateDBInput {
+  dsID: String!
+  dbName: String!
+  dbTypeName: String!
+  dbTypeID: String!
+  dbInformation: String
+  chaosEventQueryTemplate: String!
+  chaosVerdictQueryTemplate: String!
+  applicationMetadataMap: [ApplicationMetadata]
+  panelGroups: [PanelGroup]!
+  endTime: String!
+  startTime: String!
+  projectID: ID!
+  clusterID: ID!
+  refreshRate: String!
 }
 
-input applicationMetadata {
+input ApplicationMetadata {
   namespace: String!
-  applications: [resource]
+  applications: [Resource]
 }
 
-input resource {
+input Resource {
   kind: String!
   names: [String]
 }
 
-input updateDBInput {
-  db_id: String!
-  ds_id: String
-  db_name: String
-  db_type_name: String
-  db_type_id: String
-  db_information: String
-  chaos_event_query_template: String
-  chaos_verdict_query_template: String
-  application_metadata_map: [applicationMetadata]
-  panel_groups: [updatePanelGroupInput]
-  end_time: String
-  start_time: String
-  cluster_id: ID
-  refresh_rate: String
+input UpdateDBInput {
+  dbID: String!
+  dsID: String
+  dbName: String
+  dbTypeName: String
+  dbTypeID: String
+  dbInformation: String
+  chaosEventQueryTemplate: String
+  chaosVerdictQueryTemplate: String
+  applicationMetadataMap: [ApplicationMetadata]
+  panelGroups: [UpdatePanelGroupInput]
+  endTime: String
+  startTime: String
+  clusterID: ID
+  refreshRate: String
 }
 
-input updatePanelGroupInput {
-  panel_group_name: String!
-  panel_group_id: String!
-  panels: [panel]
+input UpdatePanelGroupInput {
+  panelGroupName: String!
+  panelGroupID: String!
+  panels: [Panel]
 }
 
-input panelGroup {
-  panels: [panel]
-  panel_group_name: String!
+input PanelGroup {
+  panels: [Panel]
+  panelGroupName: String!
 }
 
-input panel {
-  panel_id: String
-  db_id: String
-  y_axis_left: String
-  y_axis_right: String
-  x_axis_down: String
+input Panel {
+  panelID: String
+  dbID: String
+  yAxisLeft: String
+  yAxisRight: String
+  xAxisDown: String
   unit: String
-  panel_group_id: String
-  created_at: String
-  prom_queries: [promQuery]
-  panel_options: panelOption
-  panel_name: String!
+  panelGroupID: String
+  createdAt: String
+  promQueries: [PromQuery]
+  panelOptions: PanelOption
+  panelName: String!
 }
 
-input panelOption {
+input PanelOption {
   points: Boolean
-  grids: Boolean
-  left_axis: Boolean
+  grIDs: Boolean
+  leftAxis: Boolean
 }
 
-input promQuery {
-  queryid: String!
-  prom_query_name: String
+input PromQuery {
+  queryID: String!
+  promQueryName: String
   legend: String
   resolution: String
   minstep: String
   line: Boolean
-  close_area: Boolean
+  closeArea: Boolean
 }
 
-input promInput {
-  queries: [promQueryInput]
-  ds_details: dsDetails!
+input PromInput {
+  queries: [PromQueryInput]
+  dsDetails: DsDetails!
 }
 
-input promSeriesInput {
+input PromSeriesInput {
   series: String!
-  ds_details: dsDetails!
+  dsDetails: DsDetails!
 }
 
-input dsDetails {
+input DsDetails {
   url: String!
   start: String!
   end: String!
 }
 
-input promQueryInput {
-  queryid: String!
+input PromQueryInput {
+  queryID: String!
   query: String!
   legend: String
   resolution: String
   minstep: Int!
 }
 
-input queryMapForPanel {
+input QueryMapForPanel {
   panelID: String!
   queryIDs: [String!]!
 }
 
-input queryMapForPanelGroup {
+input QueryMapForPanelGroup {
   panelGroupID: String!
-  panelQueryMap: [queryMapForPanel!]!
+  panelQueryMap: [QueryMapForPanel!]!
 }
 
-input dataVars {
+input DataVars {
   url: String!
   start: String!
   end: String!
-  relative_time: Int!
-  refresh_interval: Int!
+  relativeTime: Int!
+  refreshInterval: Int!
 }
 
-type metricsPromResponse {
-  queryid: String!
+type MetricsPromResponse {
+  queryID: String!
   legends: [String]
-  tsvs: [[metricsTimeStampValue]]
+  tsvs: [[MetricsTimeStampValue]]
 }
 
-type metricsTimeStampValue {
+type MetricsTimeStampValue {
   date: Float
   value: Float
 }
 
-type subData {
+type SubData {
   date: Float
   value: String!
   subDataName: String!
 }
 
-type annotationsPromResponse {
-  queryid: String!
+type AnnotationsPromResponse {
+  queryID: String!
   legends: [String]
-  tsvs: [[annotationsTimeStampValue]]
-  subDataArray: [[subData]]
+  tsvs: [[AnnotationsTimeStampValue]]
+  subDataArray: [[SubData]]
 }
 
-type annotationsTimeStampValue {
+type AnnotationsTimeStampValue {
   date: Float
   value: Int
 }
 
-type promResponse {
-  metricsResponse: [metricsPromResponse]
-  annotationsResponse: [annotationsPromResponse]
+type PromResponse {
+  metricsResponse: [MetricsPromResponse]
+  annotationsResponse: [AnnotationsPromResponse]
 }
 
-type metricDataForPanel {
+type MetricDataForPanel {
   panelID: String!
-  PanelMetricsResponse: [metricsPromResponse]
+  panelMetricsResponse: [MetricsPromResponse]
 }
 
-type metricDataForPanelGroup {
+type MetricDataForPanelGroup {
   panelGroupID: String!
-  panelGroupMetricsResponse: [metricDataForPanel]
+  panelGroupMetricsResponse: [MetricDataForPanel]
 }
 
-type dashboardPromResponse {
-  dashboardMetricsResponse: [metricDataForPanelGroup]
-  annotationsResponse: [annotationsPromResponse]
+type DashboardPromResponse {
+  dashboardMetricsResponse: [MetricDataForPanelGroup]
+  annotationsResponse: [AnnotationsPromResponse]
 }
 
-type promSeriesResponse {
+type PromSeriesResponse {
   series: String!
-  labelValues: [labelValue]
+  labelValues: [LabelValue]
 }
 
-type promSeriesListResponse {
+type PromSeriesListResponse {
   seriesList: [String]
 }
 
-type labelValue {
+type LabelValue {
   label: String!
-  values: [option]
+  values: [Option]
 }
 
-type option {
+type Option {
   name: String!
 }
 
-type listDashboardResponse {
-  ds_id: String!
-  db_id: String!
-  db_name: String!
-  db_type_id: String!
-  db_type_name: String!
-  db_information: String
-  chaos_event_query_template: String!
-  chaos_verdict_query_template: String!
-  application_metadata_map: [applicationMetadataResponse]
-  cluster_name: String
-  ds_name: String
-  ds_type: String
-  ds_url: String
-  ds_health_status: String
-  panel_groups: [panelGroupResponse]!
-  end_time: String!
-  start_time: String!
-  refresh_rate: String!
-  project_id: ID!
-  cluster_id: ID!
-  created_at: String
-  updated_at: String
-  viewed_at: String
+type ListDashboardResponse {
+  dsID: String!
+  dbID: String!
+  dbName: String!
+  dbTypeID: String!
+  dbTypeName: String!
+  dbInformation: String
+  chaosEventQueryTemplate: String!
+  chaosVerdictQueryTemplate: String!
+  applicationMetadataMap: [ApplicationMetadataResponse]
+  clusterName: String
+  dsName: String
+  dsType: String
+  dsURL: String
+  dsHealthStatus: String
+  panelGroups: [PanelGroupResponse]!
+  endTime: String!
+  startTime: String!
+  refreshRate: String!
+  projectID: ID!
+  clusterID: ID!
+  createdAt: String
+  updatedAt: String
+  viewedAt: String
 }
 
-type applicationMetadataResponse {
+type ApplicationMetadataResponse {
   namespace: String!
-  applications: [resourceResponse]
+  applications: [ResourceResponse]
 }
 
-type resourceResponse {
+type ResourceResponse {
   kind: String!
   names: [String]
 }
 
-type panelGroupResponse {
-  panels: [panelResponse]
-  panel_group_name: String!
-  panel_group_id: String
+type PanelGroupResponse {
+  panels: [PanelResponse]
+  panelGroupName: String!
+  panelGroupID: String
 }
 
-type panelResponse {
-  panel_id: String!
-  y_axis_left: String
-  y_axis_right: String
-  x_axis_down: String
+type PanelResponse {
+  panelID: String!
+  yAxisLeft: String
+  yAxisRight: String
+  xAxisDown: String
   unit: String
-  prom_queries: [promQueryResponse]
-  panel_options: panelOptionResponse
-  panel_name: String
-  created_at: String
+  promQueries: [PromQueryResponse]
+  panelOptions: PanelOptionResponse
+  panelName: String
+  createdAt: String
 }
 
-type panelOptionResponse {
+type PanelOptionResponse {
   points: Boolean
-  grids: Boolean
-  left_axis: Boolean
+  grIDs: Boolean
+  leftAxis: Boolean
 }
 
-type promQueryResponse {
-  queryid: ID!
-  prom_query_name: String
+type PromQueryResponse {
+  queryID: ID!
+  promQueryName: String
   legend: String
   resolution: String
   minstep: String
   line: Boolean
-  close_area: Boolean
+  closeArea: Boolean
 }
 
-input deleteDSInput {
-  force_delete: Boolean!
-  ds_id: ID!
+input DeleteDSInput {
+  forceDelete: Boolean!
+  dsID: ID!
 }
 
 enum TimeFrequency {
-  Monthly
-  Daily
-  Hourly
+  DAILY
+  HOURLY
+  MONTHLY
 }
 
 type WorkflowStats {
@@ -312,8 +312,8 @@ type WorkflowStats {
 }
 
 type WorkflowRunDetails {
-  no_of_runs: Int!
-  date_stamp: Float!
+  noOfRuns: Int!
+  dateStamp: Float!
 }
 
 type WorkflowRunsData {
@@ -325,29 +325,29 @@ type HeatmapData {
   bins: [WorkflowRunsData]!
 }
 input WorkflowRunStatsRequest {
-  project_id: ID!
-  workflow_ids: [ID]
+  projectID: ID!
+  workflowIDs: [ID]
 }
 
 type WorkflowRunStatsResponse {
-  total_workflow_runs: Int!
-  succeeded_workflow_runs: Int!
-  failed_workflow_runs: Int!
-  running_workflow_runs: Int!
-  average_resiliency_score: Float!
-  total_experiments: Int!
-  experiments_passed: Int!
-  experiments_failed: Int!
-  experiments_awaited: Int!
-  experiments_stopped: Int!
-  experiments_na: Int!
-  passed_percentage: Float!
-  failed_percentage: Float!
-  workflow_run_succeeded_percentage: Float!
-  workflow_run_failed_percentage: Float!
+  totalWorkflowRuns: Int!
+  succeededWorkflowRuns: Int!
+  failedWorkflowRuns: Int!
+  runningWorkflowRuns: Int!
+  averageResiliencyScore: Float!
+  totalExperiments: Int!
+  experimentsPassed: Int!
+  experimentsFailed: Int!
+  experimentsAwaited: Int!
+  experimentsStopped: Int!
+  experimentsNa: Int!
+  passedPercentage: Float!
+  failedPercentage: Float!
+  workflowRunSucceededPercentage: Float!
+  workflowRunFailedPercentage: Float!
 }
 
 type PortalDashboardData {
     name: String!
-    dashboard_data: String!
+    dashboardData: String!
 }

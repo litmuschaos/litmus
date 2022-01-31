@@ -62,7 +62,7 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		ClusterType:    input.ClusterType,
 		PlatformName:   input.PlatformName,
 		AgentNamespace: input.AgentNamespace,
-		Serviceaccount: input.Serviceaccount,
+		Serviceaccount: input.ServiceAccount,
 		AgentScope:     input.AgentScope,
 		AgentNsExists:  input.AgentNsExists,
 		AgentSaExists:  input.AgentSaExists,

@@ -72,7 +72,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 			log.Printf("Error parsing existing annotation  %v\n", err)
 		}
 
-		if strings.Contains(existingAnnotation.Queryid, "chaos-event") {
+		if strings.Contains(existingAnnotation.QueryID, "chaos-event") {
 			var newAnnotation model.AnnotationsPromResponse
 			err := copier.Copy(&newAnnotation, &verdictResponse)
 			if err != nil {
@@ -165,7 +165,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 				}
 			}
 
-			eventCacheKey := annotation.Queryid + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
+			eventCacheKey := annotation.QueryID + "-" + promInput.DsDetails.Start + "-" + promInput.DsDetails.End + "-" + promInput.DsDetails.URL
 			cacheError := utils.AddCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
 			if cacheError != nil {
 				errorStr := fmt.Sprintf("%v", cacheError)

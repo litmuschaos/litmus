@@ -1,10 +1,10 @@
 enum Invitation {
-  Accepted
-  Pending
+  ACCEPTED
+  PENDING
 }
 
 enum MemberRole {
-  Owner
-  Editor
-  Viewer
+  OWNER
+  EDITOR
+  VIEWER
 }

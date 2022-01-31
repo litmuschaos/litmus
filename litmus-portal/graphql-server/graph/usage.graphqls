@@ -1,66 +1,143 @@
+"""
+Defines details of workflow statistics
+"""
 type WorkflowStat {
-  Schedules: Int!
-  Runs: Int!
-  ExpRuns: Int!
+  """
+  Number of schedules
+  """
+  schedules: Int!
+  """
+  Number of workflow runs
+  """
+  runs: Int!
+  """
+  Number of experiment runs
+  """
+  expRuns: Int!
 }
 
+"""
+Defines details of agent statistics
+"""
 type AgentStat {
-  Ns: Int!
-  Cluster: Int!
-  Total: Int!
-  Active: Int!
+  """
+  Number of namespaces
+  """
+  ns: Int!
+  """
+  Number of clusters
+  """
+  cluster: Int!
+  """
+  Total number of agents
+  """
+  total: Int!
+  """
+  Number of active agents
+  """
+  active: Int!
 }
 
-type Owner {
-  UserId: ID!
-  Username: String!
-  Name: String!
-}
-
-type MemberStat {
-  Owner: Owner!
-  Total: Int!
-}
-
+"""
+Defines all the stats under a project
+"""
 type ProjectData {
-  # Name: String!
-  Workflows: WorkflowStat!
-  Agents: AgentStat!
-  ProjectId: String!
-  # Members   : MemberStat!
+  """
+  Workflow related statistics
+  """
+  workflows: WorkflowStat!
+  """
+  Agent related statistics
+  """
+  agents: AgentStat!
+  """
+  ID of the project
+  """
+  projectId: String!
 }
 
+"""
+Defines total number of projects, users, agents and workflows
+"""
 type TotalCount {
-  Projects: Int!
-  Users: Int!
-  Agents: AgentStat!
-  Workflows: WorkflowStat!
+  """
+  Total number of projects
+  """
+  projects: Int!
+  """
+  Total number of users
+  """
+  users: Int!
+  """
+  Total number of agents
+  """
+  agents: AgentStat!
+  """
+  Total number of workflows
+  """
+  workflows: WorkflowStat!
 }
 
+"""
+Defines total usage data
+"""
 type UsageData {
-  Projects: [ProjectData]!
-  TotalEntries: Int!
-  TotalCount: TotalCount!
+  """
+  Project related data
+  """
+  projects: [ProjectData]!
+  """
+  Total number of entries
+  """
+  totalEntries: Int!
+  """
+  Total number of projects, users, agents and workflows
+  """
+  totalCount: TotalCount!
 }
 
 enum UsageSort {
-  Project
-  Owner
-  Agents
-  Schedules
-  WorkflowRuns
-  ExperimentRuns
-  TeamMembers
+  AGENTS
+  EXPERIMENT_RUNS
+  OWNER
+  PROJECT
+  SCHEDULES
+  TEAM_MEMBERS
+  WORKFLOW_RUNS
 }
 
+"""
+Defines details required for sorting the data for a particular field
+"""
 input UsageSortInput {
-  Field: UsageSort!
-  Descending: Boolean!
+  """
+  Field for which sorting will be done
+  """
+  field: UsageSort!
+  """
+  Bool value indicating if sorting will be done in descending order or not
+  """
+  descending: Boolean!
 }
 
+"""
+Defines input details for querying the total usage related details
+"""
 input UsageQuery {
-  Pagination: Pagination
-  DateRange: DateRange!
-  Sort: UsageSortInput
-  SearchProject: String
+  """
+  Pagination detail to fetch only a required number of data at a time
+  """
+  pagination: Pagination
+  """
+  Rage of dates between which the data will be fetched
+  """
+  dateRange: DateRange!
+  """
+  Sorting details to fetch the data in a sorted manner
+  """
+  sort: UsageSortInput
+  """
+  Search field to search for a particular project and fetch it's data
+  """
+  searchProject: String
 }
