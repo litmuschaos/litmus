@@ -4205,63 +4205,180 @@ type PortalDashboardData {
     name: String!
     dashboardData: String!
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type ImageRegistry {
-    isDefault: Boolean
-    imageRegistryName: String!
-    imageRepoName: String!
-    imageRegistryType: String!
-    secretName: String
-    secretNamespace: String
-    enableRegistry: Boolean
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `"""
+Defines details for image registry
+"""
+type ImageRegistry {
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean
+  """
+  Name of Image Registry
+  """
+  imageRegistryName: String!
+  """
+  Name of image repository
+  """
+  imageRepoName: String!
+  """
+  Type of the image registry: public/private
+  """
+  imageRegistryType: String!
+  """
+  Secret which is used for private registry
+  """
+  secretName: String
+  """
+  Namespace where the secret is available
+  """
+  secretNamespace: String
+  """
+  Bool value indicating if image registry is enabled or not
+  """
+  enableRegistry: Boolean
 }
 
+"""
+Defines input data for querying the details of an image registry
+"""
 input ImageRegistryInput {
-    isDefault: Boolean!
-    imageRegistryName: String!
-    imageRepoName: String!
-    imageRegistryType: String!
-    secretName: String
-    secretNamespace: String
-    enableRegistry: Boolean
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean!
+  """
+  Name of Image Registry
+  """
+  imageRegistryName: String!
+  """
+  Name of image repository
+  """
+  imageRepoName: String!
+  """
+  Type of the image registry: public/private
+  """
+  imageRegistryType: String!
+  """
+  Secret which is used for private registry
+  """
+  secretName: String
+  """
+  Namespace where the secret is available
+  """
+  secretNamespace: String
+  """
+  Bool value indicating if image registry is enabled or not
+  """
+  enableRegistry: Boolean
 }
 
+"""
+Defines response data for image registry
+"""
 type ImageRegistryResponse {
-    isDefault: Boolean!
-    imageRegistryInfo: ImageRegistry
-    imageRegistryID: String!
-    projectID: String!
-    updatedAt: String
-    createdAt: String
-    isRemoved: Boolean
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean!
+  """
+  Information Image Registry
+  """
+  imageRegistryInfo: ImageRegistry
+  """
+  ID of the image registry
+  """
+  imageRegistryID: String!
+  """
+  ID of the project in which image registry is created
+  """
+  projectID: String!
+  """
+  Timestamp when the image registry was last updated
+  """
+  updatedAt: String
+  """
+  Timestamp when the image registry was created
+  """
+  createdAt: String
+  """
+  Bool value indicating if the image registry has been removed
+  """
+  isRemoved: Boolean
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
-	BASIC
-	NONE
-	SSH
-	TOKEN
+  BASIC
+  NONE
+  SSH
+  TOKEN
 }
 
 type MyHub {
-	id: ID!
-	repoURL: String!
-	repoBranch: String!
-	projectID: String!
-	hubName: String!
-	isPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	authType: AuthType!
-	token: String
-	userName: String
-	password: String
-	sshPrivateKey: String
-	isRemoved: Boolean!
-	createdAt: String!
-	updatedAt: String!
-	lastSyncedAt: String!
+  """
+  ID of the chaos hub
+  """
+  id: ID!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  ID of the project in which the chaos hub is present
+  """
+  projectID: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Bool value indicating if the chaos hub is removed
+  """
+  isRemoved: Boolean!
+  """
+  Timestamp when the chaos hub was created
+  """
+  createdAt: String!
+  """
+  Timestamp when the chaos hub was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the chaos hub was last synced
+  """
+  lastSyncedAt: String!
 }
 
 #type Charts {
@@ -4269,51 +4386,60 @@ type MyHub {
 #}
 
 type Chart {
-	apiVersion: String!
-	kind: String!
-	metadata: Metadata!
-	spec: Spec!
-	packageInfo: PackageInformation!
+  apiVersion: String!
+  kind: String!
+  metadata: Metadata!
+  spec: Spec!
+  packageInfo: PackageInformation!
 }
 
+"""
+Defines the details of the maintainer
+"""
 type Maintainer {
-	name: String!
-	email: String!
+  """
+  Name of the maintainer
+  """
+  name: String!
+  """
+  Email of the maintainer
+  """
+  email: String!
 }
 
 type Link {
-	name: String!
-	url: String!
+  name: String!
+  url: String!
 }
 
 type Metadata {
-	name: String!
-	version: String!
-	annotations: Annotation!
+  name: String!
+  version: String!
+  annotations: Annotation!
 }
 
 type Annotation {
-	categories: String!
-	vendor: String!
-	createdAt: String!
-	repository: String!
-	support: String!
-	chartDescription: String!
+  categories: String!
+  vendor: String!
+  createdAt: String!
+  repository: String!
+  support: String!
+  chartDescription: String!
 }
 
 type Spec {
-	displayName: String!
-	categoryDescription: String!
-	keywords: [String!]!
-	maturity: String!
-	maintainers: [Maintainer!]!
-	minKubeVersion: String!
-	provider: String!
-	links: [Link!]!
-	experiments: [String!]!
-	chaosExpCRDLink: String!
-	platforms: [String!]!
-	chaosType: String
+  displayName: String!
+  categoryDescription: String!
+  keywords: [String!]!
+  maturity: String!
+  maintainers: [Maintainer!]!
+  minKubeVersion: String!
+  provider: String!
+  links: [Link!]!
+  experiments: [String!]!
+  chaosExpCRDLink: String!
+  platforms: [String!]!
+  chaosType: String
 }
 
 #type Provider {
@@ -4321,92 +4447,245 @@ type Spec {
 #}
 
 type PackageInformation {
-	packageName: String!
-	experiments: [Experiments!]!
+  packageName: String!
+  experiments: [Experiments!]!
 }
 
 type Experiments {
-	name: String!
-	cSV: String!
-	desc: String!
+  name: String!
+  cSV: String!
+  desc: String!
 }
 
 type MyHubStatus {
-	id: ID!
-	repoURL: String!
-	repoBranch: String!
-	isAvailable: Boolean!
-	totalExp: String!
-	hubName: String!
-	isPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	authType: AuthType!
-	token: String
-	userName: String
-	password: String
-	isRemoved: Boolean!
-	sshPrivateKey: String
-	sshPublicKey: String
-	lastSyncedAt: String!
+  """
+  ID of the hub
+  """
+  id: ID!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is available or not.
+  """
+  isAvailable: Boolean!
+  """
+  Total number of experiments in the hub
+  """
+  totalExp: String!
+  """
+  Bame of the chaos hub
+  """
+  hubName: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isRemoved: Boolean!
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Timestamp when the chaos hub was last synced
+  """
+  lastSyncedAt: String!
 }
 
+"""
+Defines the details required for creating a chaos hub
+"""
 input CreateMyHub {
-	hubName: String!
-	repoURL: String!
-	repoBranch: String!
-	isPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	authType: AuthType!
-	token: String
-	userName: String
-	password: String
-	sshPrivateKey: String
-	sshPublicKey: String
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
 }
 
 input ExperimentInput {
-	projectID: String!
-	chartName: String!
-	experimentName: String!
-	hubName: String!
-	fileType: String
+  """
+  ID of the project
+  """
+  projectID: String!
+  """
+  Name of the chart being used
+  """
+  chartName: String!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Name of the hub
+  """
+  hubName: String!
+  """
+  Type of thr file for workflow: chaosEngine/ experimentInput
+  """
+  fileType: String
 }
 
 input CloningInput {
-	hubName: String!
-	projectID: String!
-	repoBranch: String!
-	repoURL: String!
-	isPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	authType: AuthType!
-	token: String
-	userName: String
-	password: String
-	sshPrivateKey: String
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  ID of the project
+  """
+  projectID: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  sshPrivateKey: String
 }
 
 input UpdateMyHub {
-	id: String!
-	hubName: String!
-	repoURL: String!
-	repoBranch: String!
-	isPrivate: Boolean!
-	authType: AuthType!
-	token: String
-	userName: String
-	password: String
-	sshPrivateKey: String
-	sshPublicKey: String
+  """
+  ID of the chaos hub
+  """
+  id: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
@@ -4426,29 +4705,99 @@ enum MemberRole {
 
 directive @authorized on FIELD_DEFINITION
 
+"""
+Defines the details for a cluster
+"""
 type Cluster {
+  """
+  ID of the cluster
+  """
   clusterID: ID!
+  """
+  Project ID the cluster is being connected to
+  """
   projectID: ID!
+  """
+  Name of the cluster
+  """
   clusterName: String!
+  """
+  Description of the cluster
+  """
   description: String
+  """
+  Cluster Platform Name eg. GKE,AWS, Others
+  """
   platformName: String!
+
   accessKey: String!
+  """
+  Bool value indicating if the cluster agent is registered or not
+  """
   isRegistered: Boolean!
+  """
+  Bool value indicating if the cluster agent is confirmed or not
+  """
   isClusterConfirmed: Boolean!
+  """
+  Bool value indicating if the cluster agent is active or not
+  """
   isActive: Boolean!
+  """
+  Timestamp when the cluster agent was last updated
+  """
   updatedAt: String!
+  """
+  Timestamp when the cluster agent was created
+  """
   createdAt: String!
+  """
+  Cluster type : Internal or External
+  """
   clusterType: String!
+  """
+  Number of schedules created in the cluster agent
+  """
   noOfSchedules: Int
+  """
+  Number of workflows run in the cluster agent
+  """
   noOfWorkflows: Int
+  """
+  Token used to verify and retrieve the cluster agent manifest
+  """
   token: String!
+  """
+  Namespace where the cluster agent is being installed
+  """
   agentNamespace: String
+  """
+  Name of service account used by cluster agent
+  """
   serviceAccount: String
+  """
+  Scope of the cluster agent : ns or cluster
+  """
   agentScope: String!
+  """
+  Bool value indicating whether agent ns used already exists on cluster or not
+  """
   agentNsExists: Boolean
+  """
+  Bool value indicating whether service account used already exists on cluster or not
+  """
   agentSaExists: Boolean
+  """
+  Timestamp of the last workflow run in the cluster agent
+  """
   lastWorkflowTimestamp: String!
+  """
+  Timestamp when the cluster agent got connected
+  """
   startTime: String!
+  """
+  Version of the cluster agent
+  """
   version: String!
 }
 
@@ -4456,31 +4805,57 @@ type Cluster {
 Defines the details for the new cluster being connected
 """
 input ClusterInput {
-  """ Name of the cluster """
+  """
+  Name of the cluster
+  """
   clusterName: String!
-  """ Description of the cluster """
+  """
+  Description of the cluster
+  """
   description: String
-  """ Cluster Platform Name eg. GKE,AWS, Others """
+  """
+  Cluster Platform Name eg. GKE,AWS, Others
+  """
   platformName: String!
-  """ Project ID the cluster is being connected to """
+  """
+  Project ID the cluster is being connected to
+  """
   projectID: ID!
-  """ Cluster type : Internal or External """
+  """
+  Cluster type : Internal or External
+  """
   clusterType: String!
-  """ Namespace where the cluster agent is bein installed """
+  """
+  Namespace where the cluster agent is being installed
+  """
   agentNamespace: String
-  """ Name of service account used by cluster agent """
+  """
+  Name of service account used by cluster agent
+  """
   serviceAccount: String
-  """ Scope of the cluster agent : ns or cluster """
+  """
+  Scope of the cluster agent : ns or cluster
+  """
   agentScope: String!
-  """ Bool value indicating whether agent ns used already exists on cluster or not """
+  """
+  Bool value indicating whether agent ns used already exists on cluster or not
+  """
   agentNsExists: Boolean
-  """ Bool value indicating whether service account used already exists on cluster or not """
+  """
+  Bool value indicating whether service account used already exists on cluster or not
+  """
   agentSaExists: Boolean
-  """ Bool value indicating whether agent will skip ssl checks or not """
+  """
+  Bool value indicating whether agent will skip ssl checks or not
+  """
   skipSsl: Boolean
-  """ Node selectors used by cluster agent """
+  """
+  Node selectors used by cluster agent
+  """
   nodeSelector: String
-  """ Node tolerations used by cluster agent """
+  """
+  Node tolerations used by cluster agent
+  """
   tolerations: [Toleration]
 }
 
@@ -4531,138 +4906,435 @@ type ClusterConfirmResponse {
   clusterID: String
 }
 
+"""
+Defines the details of the weightages of each chaos experiment in the workflow
+"""
 input WeightagesInput {
+  """
+  Name of the experiment
+  """
   experimentName: String!
+  """
+  Weightage of the experiment
+  """
   weightage: Int!
 }
 
+"""
+Defines the details for a chaos workflow
+"""
 input chaosWorkFlowInput {
+  """
+  ID of the workflow
+  """
   workflowID: String
+  """
+  Manifest of the workflow
+  """
   workflowManifest: String!
+  """
+  Cron syntax of the workflow schedule
+  """
   cronSyntax: String!
+  """
+  Name of the workflow
+  """
   workflowName: String!
+  """
+  Description of the workflow
+  """
   workflowDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
   weightages: [WeightagesInput!]!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
   isCustomWorkflow: Boolean!
+  """
+  ID of the project under which the workflow is scheduled
+  """
   projectID: ID!
+  """
+  ID of the target cluster in which the workflow will run
+  """
   clusterID: ID!
 }
 
+"""
+Defines the response received for querying the details of chaos workflow
+"""
 type ChaosWorkFlowResponse {
+  """
+  ID of the workflow
+  """
   workflowID: String!
+  """
+  Cron syntax of the workflow schedule
+  """
   cronSyntax: String!
+  """
+  Name of the workflow
+  """
   workflowName: String!
+  """
+  Description of the workflow
+  """
   workflowDescription: String!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
   isCustomWorkflow: Boolean!
 }
 
+"""
+Defines the details for a workflow run
+"""
 input WorkflowRunInput {
+  """
+  ID of the workflow
+  """
   workflowID: ID!
+  """
+  ID of the workflow run which is to be queried
+  """
   workflowRunID: ID!
+  """
+  Name of the workflow
+  """
   workflowName: String!
+  """
+  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+  """
   executionData: String!
+  """
+  ID of the cluster in which the workflow is running
+  """
   clusterID: ClusterIdentity!
+  """
+  Bool value indicating if the workflow run has completed
+  """
   completed: Boolean!
+  """
+  Bool value indicating if the workflow run has removed
+  """
   isRemoved: Boolean
 }
 
+"""
+Defines the response received for querying querying the pod logs
+"""
 type PodLogResponse {
+  """
+  ID of the workflow run which is to be queried
+  """
   workflowRunID: ID!
+  """
+  Name of the pod for which logs are queried
+  """
   podName: String!
+  """
+  Type of the pod: chaosengine
+  """
   podType: String!
+  """
+  Logs for the pod
+  """
   log: String!
 }
 
+"""
+Response received for querying pod logs
+"""
 input PodLog {
+  """
+  ID of the cluster
+  """
   clusterID: ClusterIdentity!
+  """
+  Unique request ID of a particular node which is being queried
+  """
   requestID: ID!
+  """
+  ID of a workflow run
+  """
   workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
   podName: String!
+  """
+  Type of the pod: chaosengine
+  """
   podType: String!
+  """
+  Logs for the pod
+  """
   log: String!
 }
 
+"""
+Defines the details for fetching the pod logs
+"""
 input PodLogRequest {
+  """
+  ID of the cluster
+  """
   clusterID: ID!
+  """
+  ID of a workflow run
+  """
   workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
   podName: String!
+  """
+  Namespace where the pod is running
+  """
   podNamespace: String!
+  """
+  Type of the pod: chaosengine or not pod
+  """
   podType: String!
+  """
+  Name of the experiment pod fetched from execution data
+  """
   expPod: String
+  """
+  Name of the runner pod fetched from execution data
+  """
   runnerPod: String
+  """
+  Namespace where the experiment is executing
+  """
   chaosNamespace: String
 }
 
-""" Response received for registering a new cluster """
+"""
+Response received for registering a new cluster
+"""
 type ClusterRegResponse {
-  """ Token used to verify and retrieve the cluster agent manifest """
+  """
+  Token used to verify and retrieve the cluster agent manifest
+  """
   token: String!
-  """ Unique ID for the newly registered cluster """
+  """
+  Unique ID for the newly registered cluster
+  """
   clusterID: String!
-  """ Cluster name as sent in request """
+  """
+  Cluster name as sent in request
+  """
   clusterName: String!
 }
 
+"""
+Defines the SSHKey details
+"""
 type SSHKey {
+  """
+  Public SSH key authenticating into git repository
+  """
   publicKey: String!
+  """
+  Private SSH key authenticating into git repository
+  """
   privateKey: String!
 }
 
+"""
+Details of setting a Git repository
+"""
 input GitConfig {
+  """
+  ID of the project where GitOps is configured
+  """
   projectID: String!
+  """
+  Git branch where the chaos charts will be pushed and synced
+  """
   branch: String!
+  """
+  URL of the Git repository
+  """
   repoURL: String!
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
   authType: AuthType!
+  """
+  Token used for private repository
+  """
   token: String
+  """
+  Git username
+  """
   userName: String
+  """
+  Git password
+  """
   password: String
+  """
+  Private SSH key authenticating into git repository
+  """
   sshPrivateKey: String
 }
+
+"""
+Response received after configuring GitOps
+"""
 type GitConfigResponse {
+  """
+  Bool value indicating whether GitOps is enabled or not
+  """
   enabled: Boolean!
+  """
+  ID of the project where GitOps is configured
+  """
   projectID: String!
+  """
+  Git branch where the chaos charts will be pushed and synced
+  """
   branch: String
+  """
+  URL of the Git repository
+  """
   repoURL: String
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
   authType: AuthType
+  """
+  Token used for private repository
+  """
   token: String
+  """
+  Git username
+  """
   userName: String
+  """
+  Git password
+  """
   password: String
+  """
+  Private SSH key authenticating into git repository
+  """
   sshPrivateKey: String
 }
 
+"""
+Details for a workflow template
+"""
 type ManifestTemplate {
+  """
+  ID of the template
+  """
   templateID: ID!
+  """
+  Workflow manifest in JSON escaped string
+  """
   manifest: String!
+  """
+  Name of the template
+  """
   templateName: String!
+  """
+  Description of the template
+  """
   templateDescription: String!
+  """
+  ID of the project
+  """
   projectID: String!
+  """
+  Name of the project
+  """
   projectName: String!
+  """
+  Time at which the manifest template was created
+  """
   createdAt: String!
+  """
+  Bool value indicating if the workflow template has removed
+  """
   isRemoved: Boolean!
+  """
+  Bool value indicating whether the workflow template is a custom or not
+  """
   isCustomWorkflow: Boolean!
 }
 
+"""
+Details for saving the template
+"""
 input TemplateInput {
+  """
+  Workflow manifest in JSON escaped format
+  """
   manifest: String!
+  """
+  Name of the template
+  """
   templateName: String!
+  """
+  Description of the template
+  """
   templateDescription: String!
+  """
+  Name of the project
+  """
   projectID: String!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
   isCustomWorkflow: Boolean!
 }
 
+"""
+Response received for querying Kubernetes Object
+"""
 type KubeObjectResponse {
+  """
+  ID of the cluster in which the Kubernetes object is present
+  """
   clusterID: ID!
+  """
+  Type of the Kubernetes object
+  """
   kubeObj: String!
 }
 
+"""
+Defines the details of Kubernetes object
+"""
 input KubeObjectData {
+  """
+  Unique request ID for fetching Kubernetes object details
+  """
   requestID: ID!
+  """
+  ID of the cluster in which the Kubernetes object is present
+  """
   clusterID: ClusterIdentity!
+  """
+  Type of the Kubernetes object
+  """
   kubeObj: String!
 }
 
+"""
+Defines details for fetching Kubernetes object data
+"""
 input KubeObjectRequest {
+  """
+  ID of the cluster in which the Kubernetes object is present
+  """
   clusterID: ID!
+  """
+  Type of the Kubernetes object to be fetched
+  """
   objectType: String!
   kubeObjRequest: KubeGVRRequest!
 }
@@ -4716,11 +5388,13 @@ type Query {
 
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-  getYAMLData(experimentInput: ExperimentInput!): String!
+  getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   getPredefinedWorkflowList(hubName: String!, projectID: String!): [String!]!
+    @authorized
 
   getPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+    @authorized
 
   listDataSource(projectID: String!): [DSResponse]! @authorized
 
@@ -4750,7 +5424,7 @@ type Query {
 
   getTemplateManifestByID(templateID: String!): ManifestTemplate! @authorized
 
-  #Image Registry Queries
+  # Image Registry Queries
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
   getImageRegistry(
@@ -4762,9 +5436,13 @@ type Query {
 }
 
 type Mutation {
-  """ Registers a new cluster for a user in a specified project """
+  """
+  Registers a new cluster for a user in a specified project
+  """
   userClusterReg(
-    """ Details for the cluster being registered """
+    """
+    Details for the cluster being registered
+    """
     clusterInput: ClusterInput!
   ): ClusterRegResponse! @authorized
 
@@ -4786,16 +5464,22 @@ type Mutation {
   syncWorkflow(workflowID: String!, workflowRunID: String!): Boolean!
     @authorized
 
-  #It is used to confirm the subscriber registration
+  # It is used to confirm the subscriber registration
+  # authorized directive not required
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-  #It is used to send cluster related events from the subscriber
+  # It is used to send cluster related events from the subscriber
+  # authorized directive not required
   newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
+  # authorized directive not required
+  # authorized directive not required
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
+  # authorized directive not required
   podLog(log: PodLog!): String!
 
+  # authorized directive not required
   kubeObj(kubeData: KubeObjectData!): String!
 
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
@@ -4848,7 +5532,7 @@ type Mutation {
 
   deleteManifestTemplate(templateID: String!): Boolean! @authorized
 
-  #Image Registry Mutations
+  # Image Registry Mutations
   createImageRegistry(
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
@@ -4865,14 +5549,15 @@ type Mutation {
 }
 
 type Subscription {
-  #It is used to listen cluster events from the graphql server
+  # It is used to listen cluster events from the graphql server
   clusterEventListener(projectID: String!): ClusterEvent! @authorized
 
   workflowEventListener(projectID: String!): WorkflowRun! @authorized
 
   getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-  #It is used to listen cluster operation request from the graphql server
+  # It is used to listen cluster operation request from the graphql server
+  # authorized directive not required
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
@@ -4886,48 +5571,101 @@ type Subscription {
   ): DashboardPromResponse! @authorized
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
+	&ast.Source{Name: "graph/usage.graphqls", Input: `"""
+Defines details of workflow statistics
+"""
+type WorkflowStat {
+  """
+  Number of schedules
+  """
   schedules: Int!
+  """
+  Number of workflow runs
+  """
   runs: Int!
+  """
+  Number of experiment runs
+  """
   expRuns: Int!
 }
 
+"""
+Defines details of agent statistics
+"""
 type AgentStat {
+  """
+  Number of namespaces
+  """
   ns: Int!
+  """
+  Number of clusters
+  """
   cluster: Int!
+  """
+  Total number of agents
+  """
   total: Int!
+  """
+  Number of active agents
+  """
   active: Int!
 }
 
-#type Owner {
-#  userId: ID!
-#  username: String!
-#  name: String!
-#}
-
-#type MemberStat {
-#  owner: Owner!
-#  total: Int!
-#}
-
+"""
+Defines all the stats under a project
+"""
 type ProjectData {
-  # Name: String!
+  """
+  Workflow related statistics
+  """
   workflows: WorkflowStat!
+  """
+  Agent related statistics
+  """
   agents: AgentStat!
+  """
+  ID of the project
+  """
   projectId: String!
-  # Members   : MemberStat!
 }
 
+"""
+Defines total number of projects, users, agents and workflows
+"""
 type TotalCount {
+  """
+  Total number of projects
+  """
   projects: Int!
+  """
+  Total number of users
+  """
   users: Int!
+  """
+  Total number of agents
+  """
   agents: AgentStat!
+  """
+  Total number of workflows
+  """
   workflows: WorkflowStat!
 }
 
+"""
+Defines total usage data
+"""
 type UsageData {
+  """
+  Project related data
+  """
   projects: [ProjectData]!
+  """
+  Total number of entries
+  """
   totalEntries: Int!
+  """
+  Total number of projects, users, agents and workflows
+  """
   totalCount: TotalCount!
 }
 
@@ -4941,15 +5679,39 @@ enum UsageSort {
   WORKFLOW_RUNS
 }
 
+"""
+Defines details required for sorting the data for a particular field
+"""
 input UsageSortInput {
+  """
+  Field for which sorting will be done
+  """
   field: UsageSort!
+  """
+  Bool value indicating if sorting will be done in descending order or not
+  """
   descending: Boolean!
 }
 
+"""
+Defines input details for querying the total usage related details
+"""
 input UsageQuery {
+  """
+  Pagination detail to fetch only a required number of data at a time
+  """
   pagination: Pagination
+  """
+  Rage of dates between which the data will be fetched
+  """
   dateRange: DateRange!
+  """
+  Sorting details to fetch the data in a sorted manner
+  """
   sort: UsageSortInput
+  """
+  Search field to search for a particular project and fetch it's data
+  """
   searchProject: String
 }
 `, BuiltIn: false},
@@ -16754,8 +17516,28 @@ func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphq
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16795,8 +17577,28 @@ func (ec *executionContext) _Query_getPredefinedWorkflowList(ctx context.Context
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPredefinedWorkflowList(rctx, args["hubName"].(string), args["projectID"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPredefinedWorkflowList(rctx, args["hubName"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16836,8 +17638,28 @@ func (ec *executionContext) _Query_getPredefinedExperimentYAML(ctx context.Conte
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["experimentInput"].(model.ExperimentInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["experimentInput"].(model.ExperimentInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)

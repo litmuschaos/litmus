@@ -15,11 +15,16 @@ type ActionPayload struct {
 	ExternalData *string `json:"externalData"`
 }
 
+// Defines details of agent statistics
 type AgentStat struct {
-	Ns      int `json:"ns"`
+	// Number of namespaces
+	Ns int `json:"ns"`
+	// Number of clusters
 	Cluster int `json:"cluster"`
-	Total   int `json:"total"`
-	Active  int `json:"active"`
+	// Total number of agents
+	Total int `json:"total"`
+	// Number of active agents
+	Active int `json:"active"`
 }
 
 type Annotation struct {
@@ -53,12 +58,18 @@ type ApplicationMetadataResponse struct {
 	Applications []*ResourceResponse `json:"applications"`
 }
 
+// Defines the response received for querying the details of chaos workflow
 type ChaosWorkFlowResponse struct {
-	WorkflowID          string `json:"workflowID"`
-	CronSyntax          string `json:"cronSyntax"`
-	WorkflowName        string `json:"workflowName"`
+	// ID of the workflow
+	WorkflowID string `json:"workflowID"`
+	// Cron syntax of the workflow schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Description of the workflow
 	WorkflowDescription string `json:"workflowDescription"`
-	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+	// Bool value indicating whether the workflow is a custom workflow or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
 }
 
 type Chart struct {
@@ -70,42 +81,74 @@ type Chart struct {
 }
 
 type CloningInput struct {
-	HubName       string   `json:"hubName"`
-	ProjectID     string   `json:"projectID"`
-	RepoBranch    string   `json:"repoBranch"`
-	RepoURL       string   `json:"repoURL"`
-	IsPrivate     bool     `json:"isPrivate"`
-	AuthType      AuthType `json:"authType"`
-	Token         *string  `json:"token"`
-	UserName      *string  `json:"userName"`
-	Password      *string  `json:"password"`
-	SSHPrivateKey *string  `json:"sshPrivateKey"`
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password      *string `json:"password"`
+	SSHPrivateKey *string `json:"sshPrivateKey"`
 }
 
+// Defines the details for a cluster
 type Cluster struct {
-	ClusterID             string  `json:"clusterID"`
-	ProjectID             string  `json:"projectID"`
-	ClusterName           string  `json:"clusterName"`
-	Description           *string `json:"description"`
-	PlatformName          string  `json:"platformName"`
-	AccessKey             string  `json:"accessKey"`
-	IsRegistered          bool    `json:"isRegistered"`
-	IsClusterConfirmed    bool    `json:"isClusterConfirmed"`
-	IsActive              bool    `json:"isActive"`
-	UpdatedAt             string  `json:"updatedAt"`
-	CreatedAt             string  `json:"createdAt"`
-	ClusterType           string  `json:"clusterType"`
-	NoOfSchedules         *int    `json:"noOfSchedules"`
-	NoOfWorkflows         *int    `json:"noOfWorkflows"`
-	Token                 string  `json:"token"`
-	AgentNamespace        *string `json:"agentNamespace"`
-	ServiceAccount        *string `json:"serviceAccount"`
-	AgentScope            string  `json:"agentScope"`
-	AgentNsExists         *bool   `json:"agentNsExists"`
-	AgentSaExists         *bool   `json:"agentSaExists"`
-	LastWorkflowTimestamp string  `json:"lastWorkflowTimestamp"`
-	StartTime             string  `json:"startTime"`
-	Version               string  `json:"version"`
+	// ID of the cluster
+	ClusterID string `json:"clusterID"`
+	// Project ID the cluster is being connected to
+	ProjectID string `json:"projectID"`
+	// Name of the cluster
+	ClusterName string `json:"clusterName"`
+	// Description of the cluster
+	Description *string `json:"description"`
+	// Cluster Platform Name eg. GKE,AWS, Others
+	PlatformName string `json:"platformName"`
+	AccessKey    string `json:"accessKey"`
+	// Bool value indicating if the cluster agent is registered or not
+	IsRegistered bool `json:"isRegistered"`
+	// Bool value indicating if the cluster agent is confirmed or not
+	IsClusterConfirmed bool `json:"isClusterConfirmed"`
+	// Bool value indicating if the cluster agent is active or not
+	IsActive bool `json:"isActive"`
+	// Timestamp when the cluster agent was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the cluster agent was created
+	CreatedAt string `json:"createdAt"`
+	// Cluster type : Internal or External
+	ClusterType string `json:"clusterType"`
+	// Number of schedules created in the cluster agent
+	NoOfSchedules *int `json:"noOfSchedules"`
+	// Number of workflows run in the cluster agent
+	NoOfWorkflows *int `json:"noOfWorkflows"`
+	// Token used to verify and retrieve the cluster agent manifest
+	Token string `json:"token"`
+	// Namespace where the cluster agent is being installed
+	AgentNamespace *string `json:"agentNamespace"`
+	// Name of service account used by cluster agent
+	ServiceAccount *string `json:"serviceAccount"`
+	// Scope of the cluster agent : ns or cluster
+	AgentScope string `json:"agentScope"`
+	// Bool value indicating whether agent ns used already exists on cluster or not
+	AgentNsExists *bool `json:"agentNsExists"`
+	// Bool value indicating whether service account used already exists on cluster or not
+	AgentSaExists *bool `json:"agentSaExists"`
+	// Timestamp of the last workflow run in the cluster agent
+	LastWorkflowTimestamp string `json:"lastWorkflowTimestamp"`
+	// Timestamp when the cluster agent got connected
+	StartTime string `json:"startTime"`
+	// Version of the cluster agent
+	Version string `json:"version"`
 }
 
 type ClusterAction struct {
@@ -142,41 +185,41 @@ type ClusterIdentity struct {
 
 // Defines the details for the new cluster being connected
 type ClusterInput struct {
-	//  Name of the cluster
+	// Name of the cluster
 	ClusterName string `json:"clusterName"`
-	//  Description of the cluster
+	// Description of the cluster
 	Description *string `json:"description"`
-	//  Cluster Platform Name eg. GKE,AWS, Others
+	// Cluster Platform Name eg. GKE,AWS, Others
 	PlatformName string `json:"platformName"`
-	//  Project ID the cluster is being connected to
+	// Project ID the cluster is being connected to
 	ProjectID string `json:"projectID"`
-	//  Cluster type : Internal or External
+	// Cluster type : Internal or External
 	ClusterType string `json:"clusterType"`
-	//  Namespace where the cluster agent is bein installed
+	// Namespace where the cluster agent is being installed
 	AgentNamespace *string `json:"agentNamespace"`
-	//  Name of service account used by cluster agent
+	// Name of service account used by cluster agent
 	ServiceAccount *string `json:"serviceAccount"`
-	//  Scope of the cluster agent : ns or cluster
+	// Scope of the cluster agent : ns or cluster
 	AgentScope string `json:"agentScope"`
-	//  Bool value indicating whether agent ns used already exists on cluster or not
+	// Bool value indicating whether agent ns used already exists on cluster or not
 	AgentNsExists *bool `json:"agentNsExists"`
-	//  Bool value indicating whether service account used already exists on cluster or not
+	// Bool value indicating whether service account used already exists on cluster or not
 	AgentSaExists *bool `json:"agentSaExists"`
-	//  Bool value indicating whether agent will skip ssl checks or not
+	// Bool value indicating whether agent will skip ssl checks or not
 	SkipSsl *bool `json:"skipSsl"`
-	//  Node selectors used by cluster agent
+	// Node selectors used by cluster agent
 	NodeSelector *string `json:"nodeSelector"`
-	//  Node tolerations used by cluster agent
+	// Node tolerations used by cluster agent
 	Tolerations []*Toleration `json:"tolerations"`
 }
 
-//  Response received for registering a new cluster
+// Response received for registering a new cluster
 type ClusterRegResponse struct {
-	//  Token used to verify and retrieve the cluster agent manifest
+	// Token used to verify and retrieve the cluster agent manifest
 	Token string `json:"token"`
-	//  Unique ID for the newly registered cluster
+	// Unique ID for the newly registered cluster
 	ClusterID string `json:"clusterID"`
-	//  Cluster name as sent in request
+	// Cluster name as sent in request
 	ClusterName string `json:"clusterName"`
 }
 
@@ -197,17 +240,28 @@ type CreateDBInput struct {
 	RefreshRate               string                 `json:"refreshRate"`
 }
 
+// Defines the details required for creating a chaos hub
 type CreateMyHub struct {
-	HubName       string   `json:"hubName"`
-	RepoURL       string   `json:"repoURL"`
-	RepoBranch    string   `json:"repoBranch"`
-	IsPrivate     bool     `json:"isPrivate"`
-	AuthType      AuthType `json:"authType"`
-	Token         *string  `json:"token"`
-	UserName      *string  `json:"userName"`
-	Password      *string  `json:"password"`
-	SSHPrivateKey *string  `json:"sshPrivateKey"`
-	SSHPublicKey  *string  `json:"sshPublicKey"`
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
 }
 
 type DSInput struct {
@@ -273,11 +327,16 @@ type DsDetails struct {
 }
 
 type ExperimentInput struct {
-	ProjectID      string  `json:"projectID"`
-	ChartName      string  `json:"chartName"`
-	ExperimentName string  `json:"experimentName"`
-	HubName        string  `json:"hubName"`
-	FileType       *string `json:"fileType"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Name of the chart being used
+	ChartName string `json:"chartName"`
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// Name of the hub
+	HubName string `json:"hubName"`
+	// Type of thr file for workflow: chaosEngine/ experimentInput
+	FileType *string `json:"fileType"`
 }
 
 type Experiments struct {
@@ -300,61 +359,104 @@ type GetWorkflowsOutput struct {
 	WorkflowRuns          []*WorkflowRun `json:"workflowRuns"`
 }
 
+// Details of setting a Git repository
 type GitConfig struct {
-	ProjectID     string   `json:"projectID"`
-	Branch        string   `json:"branch"`
-	RepoURL       string   `json:"repoURL"`
-	AuthType      AuthType `json:"authType"`
-	Token         *string  `json:"token"`
-	UserName      *string  `json:"userName"`
-	Password      *string  `json:"password"`
-	SSHPrivateKey *string  `json:"sshPrivateKey"`
+	// ID of the project where GitOps is configured
+	ProjectID string `json:"projectID"`
+	// Git branch where the chaos charts will be pushed and synced
+	Branch string `json:"branch"`
+	// URL of the Git repository
+	RepoURL string `json:"repoURL"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token used for private repository
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key authenticating into git repository
+	SSHPrivateKey *string `json:"sshPrivateKey"`
 }
 
+// Response received after configuring GitOps
 type GitConfigResponse struct {
-	Enabled       bool      `json:"enabled"`
-	ProjectID     string    `json:"projectID"`
-	Branch        *string   `json:"branch"`
-	RepoURL       *string   `json:"repoURL"`
-	AuthType      *AuthType `json:"authType"`
-	Token         *string   `json:"token"`
-	UserName      *string   `json:"userName"`
-	Password      *string   `json:"password"`
-	SSHPrivateKey *string   `json:"sshPrivateKey"`
+	// Bool value indicating whether GitOps is enabled or not
+	Enabled bool `json:"enabled"`
+	// ID of the project where GitOps is configured
+	ProjectID string `json:"projectID"`
+	// Git branch where the chaos charts will be pushed and synced
+	Branch *string `json:"branch"`
+	// URL of the Git repository
+	RepoURL *string `json:"repoURL"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType *AuthType `json:"authType"`
+	// Token used for private repository
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key authenticating into git repository
+	SSHPrivateKey *string `json:"sshPrivateKey"`
 }
 
 type HeatmapData struct {
 	Bins []*WorkflowRunsData `json:"bins"`
 }
 
+// Defines details for image registry
 type ImageRegistry struct {
-	IsDefault         *bool   `json:"isDefault"`
-	ImageRegistryName string  `json:"imageRegistryName"`
-	ImageRepoName     string  `json:"imageRepoName"`
-	ImageRegistryType string  `json:"imageRegistryType"`
-	SecretName        *string `json:"secretName"`
-	SecretNamespace   *string `json:"secretNamespace"`
-	EnableRegistry    *bool   `json:"enableRegistry"`
+	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+	IsDefault *bool `json:"isDefault"`
+	// Name of Image Registry
+	ImageRegistryName string `json:"imageRegistryName"`
+	// Name of image repository
+	ImageRepoName string `json:"imageRepoName"`
+	// Type of the image registry: public/private
+	ImageRegistryType string `json:"imageRegistryType"`
+	// Secret which is used for private registry
+	SecretName *string `json:"secretName"`
+	// Namespace where the secret is available
+	SecretNamespace *string `json:"secretNamespace"`
+	// Bool value indicating if image registry is enabled or not
+	EnableRegistry *bool `json:"enableRegistry"`
 }
 
+// Defines input data for querying the details of an image registry
 type ImageRegistryInput struct {
-	IsDefault         bool    `json:"isDefault"`
-	ImageRegistryName string  `json:"imageRegistryName"`
-	ImageRepoName     string  `json:"imageRepoName"`
-	ImageRegistryType string  `json:"imageRegistryType"`
-	SecretName        *string `json:"secretName"`
-	SecretNamespace   *string `json:"secretNamespace"`
-	EnableRegistry    *bool   `json:"enableRegistry"`
+	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+	IsDefault bool `json:"isDefault"`
+	// Name of Image Registry
+	ImageRegistryName string `json:"imageRegistryName"`
+	// Name of image repository
+	ImageRepoName string `json:"imageRepoName"`
+	// Type of the image registry: public/private
+	ImageRegistryType string `json:"imageRegistryType"`
+	// Secret which is used for private registry
+	SecretName *string `json:"secretName"`
+	// Namespace where the secret is available
+	SecretNamespace *string `json:"secretNamespace"`
+	// Bool value indicating if image registry is enabled or not
+	EnableRegistry *bool `json:"enableRegistry"`
 }
 
+// Defines response data for image registry
 type ImageRegistryResponse struct {
-	IsDefault         bool           `json:"isDefault"`
+	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+	IsDefault bool `json:"isDefault"`
+	// Information Image Registry
 	ImageRegistryInfo *ImageRegistry `json:"imageRegistryInfo"`
-	ImageRegistryID   string         `json:"imageRegistryID"`
-	ProjectID         string         `json:"projectID"`
-	UpdatedAt         *string        `json:"updatedAt"`
-	CreatedAt         *string        `json:"createdAt"`
-	IsRemoved         *bool          `json:"isRemoved"`
+	// ID of the image registry
+	ImageRegistryID string `json:"imageRegistryID"`
+	// ID of the project in which image registry is created
+	ProjectID string `json:"projectID"`
+	// Timestamp when the image registry was last updated
+	UpdatedAt *string `json:"updatedAt"`
+	// Timestamp when the image registry was created
+	CreatedAt *string `json:"createdAt"`
+	// Bool value indicating if the image registry has been removed
+	IsRemoved *bool `json:"isRemoved"`
 }
 
 type KubeGVRRequest struct {
@@ -363,21 +465,31 @@ type KubeGVRRequest struct {
 	Resource string `json:"resource"`
 }
 
+// Defines the details of Kubernetes object
 type KubeObjectData struct {
-	RequestID string           `json:"requestID"`
+	// Unique request ID for fetching Kubernetes object details
+	RequestID string `json:"requestID"`
+	// ID of the cluster in which the Kubernetes object is present
 	ClusterID *ClusterIdentity `json:"clusterID"`
-	KubeObj   string           `json:"kubeObj"`
+	// Type of the Kubernetes object
+	KubeObj string `json:"kubeObj"`
 }
 
+// Defines details for fetching Kubernetes object data
 type KubeObjectRequest struct {
-	ClusterID      string          `json:"clusterID"`
+	// ID of the cluster in which the Kubernetes object is present
+	ClusterID string `json:"clusterID"`
+	// Type of the Kubernetes object to be fetched
 	ObjectType     string          `json:"objectType"`
 	KubeObjRequest *KubeGVRRequest `json:"kubeObjRequest"`
 }
 
+// Response received for querying Kubernetes Object
 type KubeObjectResponse struct {
+	// ID of the cluster in which the Kubernetes object is present
 	ClusterID string `json:"clusterID"`
-	KubeObj   string `json:"kubeObj"`
+	// Type of the Kubernetes object
+	KubeObj string `json:"kubeObj"`
 }
 
 type LabelValue struct {
@@ -429,21 +541,34 @@ type ListWorkflowsOutput struct {
 	Workflows          []*Workflow `json:"workflows"`
 }
 
+// Defines the details of the maintainer
 type Maintainer struct {
-	Name  string `json:"name"`
+	// Name of the maintainer
+	Name string `json:"name"`
+	// Email of the maintainer
 	Email string `json:"email"`
 }
 
+// Details for a workflow template
 type ManifestTemplate struct {
-	TemplateID          string `json:"templateID"`
-	Manifest            string `json:"manifest"`
-	TemplateName        string `json:"templateName"`
+	// ID of the template
+	TemplateID string `json:"templateID"`
+	// Workflow manifest in JSON escaped string
+	Manifest string `json:"manifest"`
+	// Name of the template
+	TemplateName string `json:"templateName"`
+	// Description of the template
 	TemplateDescription string `json:"templateDescription"`
-	ProjectID           string `json:"projectID"`
-	ProjectName         string `json:"projectName"`
-	CreatedAt           string `json:"createdAt"`
-	IsRemoved           bool   `json:"isRemoved"`
-	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Name of the project
+	ProjectName string `json:"projectName"`
+	// Time at which the manifest template was created
+	CreatedAt string `json:"createdAt"`
+	// Bool value indicating if the workflow template has removed
+	IsRemoved bool `json:"isRemoved"`
+	// Bool value indicating whether the workflow template is a custom or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
 }
 
 type Metadata struct {
@@ -474,39 +599,69 @@ type MetricsTimeStampValue struct {
 }
 
 type MyHub struct {
-	ID            string   `json:"id"`
-	RepoURL       string   `json:"repoURL"`
-	RepoBranch    string   `json:"repoBranch"`
-	ProjectID     string   `json:"projectID"`
-	HubName       string   `json:"hubName"`
-	IsPrivate     bool     `json:"isPrivate"`
-	AuthType      AuthType `json:"authType"`
-	Token         *string  `json:"token"`
-	UserName      *string  `json:"userName"`
-	Password      *string  `json:"password"`
-	SSHPrivateKey *string  `json:"sshPrivateKey"`
-	IsRemoved     bool     `json:"isRemoved"`
-	CreatedAt     string   `json:"createdAt"`
-	UpdatedAt     string   `json:"updatedAt"`
-	LastSyncedAt  string   `json:"lastSyncedAt"`
+	// ID of the chaos hub
+	ID string `json:"id"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// ID of the project in which the chaos hub is present
+	ProjectID string `json:"projectID"`
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Bool value indicating if the chaos hub is removed
+	IsRemoved bool `json:"isRemoved"`
+	// Timestamp when the chaos hub was created
+	CreatedAt string `json:"createdAt"`
+	// Timestamp when the chaos hub was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the chaos hub was last synced
+	LastSyncedAt string `json:"lastSyncedAt"`
 }
 
 type MyHubStatus struct {
-	ID            string   `json:"id"`
-	RepoURL       string   `json:"repoURL"`
-	RepoBranch    string   `json:"repoBranch"`
-	IsAvailable   bool     `json:"isAvailable"`
-	TotalExp      string   `json:"totalExp"`
-	HubName       string   `json:"hubName"`
-	IsPrivate     bool     `json:"isPrivate"`
-	AuthType      AuthType `json:"authType"`
-	Token         *string  `json:"token"`
-	UserName      *string  `json:"userName"`
-	Password      *string  `json:"password"`
-	IsRemoved     bool     `json:"isRemoved"`
-	SSHPrivateKey *string  `json:"sshPrivateKey"`
-	SSHPublicKey  *string  `json:"sshPublicKey"`
-	LastSyncedAt  string   `json:"lastSyncedAt"`
+	// ID of the hub
+	ID string `json:"id"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is available or not.
+	IsAvailable bool `json:"isAvailable"`
+	// Total number of experiments in the hub
+	TotalExp string `json:"totalExp"`
+	// Bame of the chaos hub
+	HubName string `json:"hubName"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Bool value indicating whether the hub is private or not.
+	IsRemoved bool `json:"isRemoved"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
+	// Timestamp when the chaos hub was last synced
+	LastSyncedAt string `json:"lastSyncedAt"`
 }
 
 type Option struct {
@@ -572,31 +727,52 @@ type PanelResponse struct {
 	CreatedAt    *string              `json:"createdAt"`
 }
 
+// Response received for querying pod logs
 type PodLog struct {
-	ClusterID     *ClusterIdentity `json:"clusterID"`
-	RequestID     string           `json:"requestID"`
-	WorkflowRunID string           `json:"workflowRunID"`
-	PodName       string           `json:"podName"`
-	PodType       string           `json:"podType"`
-	Log           string           `json:"log"`
+	// ID of the cluster
+	ClusterID *ClusterIdentity `json:"clusterID"`
+	// Unique request ID of a particular node which is being queried
+	RequestID string `json:"requestID"`
+	// ID of a workflow run
+	WorkflowRunID string `json:"workflowRunID"`
+	// Name of the pod for which logs are required
+	PodName string `json:"podName"`
+	// Type of the pod: chaosengine
+	PodType string `json:"podType"`
+	// Logs for the pod
+	Log string `json:"log"`
 }
 
+// Defines the details for fetching the pod logs
 type PodLogRequest struct {
-	ClusterID      string  `json:"clusterID"`
-	WorkflowRunID  string  `json:"workflowRunID"`
-	PodName        string  `json:"podName"`
-	PodNamespace   string  `json:"podNamespace"`
-	PodType        string  `json:"podType"`
-	ExpPod         *string `json:"expPod"`
-	RunnerPod      *string `json:"runnerPod"`
+	// ID of the cluster
+	ClusterID string `json:"clusterID"`
+	// ID of a workflow run
+	WorkflowRunID string `json:"workflowRunID"`
+	// Name of the pod for which logs are required
+	PodName string `json:"podName"`
+	// Namespace where the pod is running
+	PodNamespace string `json:"podNamespace"`
+	// Type of the pod: chaosengine or not pod
+	PodType string `json:"podType"`
+	// Name of the experiment pod fetched from execution data
+	ExpPod *string `json:"expPod"`
+	// Name of the runner pod fetched from execution data
+	RunnerPod *string `json:"runnerPod"`
+	// Namespace where the experiment is executing
 	ChaosNamespace *string `json:"chaosNamespace"`
 }
 
+// Defines the response received for querying querying the pod logs
 type PodLogResponse struct {
+	// ID of the workflow run which is to be queried
 	WorkflowRunID string `json:"workflowRunID"`
-	PodName       string `json:"podName"`
-	PodType       string `json:"podType"`
-	Log           string `json:"log"`
+	// Name of the pod for which logs are queried
+	PodName string `json:"podName"`
+	// Type of the pod: chaosengine
+	PodType string `json:"podType"`
+	// Logs for the pod
+	Log string `json:"log"`
 }
 
 type PortalDashboardData struct {
@@ -604,10 +780,14 @@ type PortalDashboardData struct {
 	DashboardData string `json:"dashboardData"`
 }
 
+// Defines all the stats under a project
 type ProjectData struct {
+	// Workflow related statistics
 	Workflows *WorkflowStat `json:"workflows"`
-	Agents    *AgentStat    `json:"agents"`
-	ProjectID string        `json:"projectId"`
+	// Agent related statistics
+	Agents *AgentStat `json:"agents"`
+	// ID of the project
+	ProjectID string `json:"projectId"`
 }
 
 type PromInput struct {
@@ -682,8 +862,11 @@ type ResourceResponse struct {
 	Names []*string `json:"names"`
 }
 
+// Defines the SSHKey details
 type SSHKey struct {
-	PublicKey  string `json:"publicKey"`
+	// Public SSH key authenticating into git repository
+	PublicKey string `json:"publicKey"`
+	// Private SSH key authenticating into git repository
 	PrivateKey string `json:"privateKey"`
 }
 
@@ -708,12 +891,18 @@ type SubData struct {
 	SubDataName string   `json:"subDataName"`
 }
 
+// Details for saving the template
 type TemplateInput struct {
-	Manifest            string `json:"manifest"`
-	TemplateName        string `json:"templateName"`
+	// Workflow manifest in JSON escaped format
+	Manifest string `json:"manifest"`
+	// Name of the template
+	TemplateName string `json:"templateName"`
+	// Description of the template
 	TemplateDescription string `json:"templateDescription"`
-	ProjectID           string `json:"projectID"`
-	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
+	// Name of the project
+	ProjectID string `json:"projectID"`
+	// Bool value indicating whether the workflow is a custom workflow or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
 }
 
 type Toleration struct {
@@ -724,10 +913,15 @@ type Toleration struct {
 	Value             *string `json:"value"`
 }
 
+// Defines total number of projects, users, agents and workflows
 type TotalCount struct {
-	Projects  int           `json:"projects"`
-	Users     int           `json:"users"`
-	Agents    *AgentStat    `json:"agents"`
+	// Total number of projects
+	Projects int `json:"projects"`
+	// Total number of users
+	Users int `json:"users"`
+	// Total number of agents
+	Agents *AgentStat `json:"agents"`
+	// Total number of workflows
 	Workflows *WorkflowStat `json:"workflows"`
 }
 
@@ -749,17 +943,28 @@ type UpdateDBInput struct {
 }
 
 type UpdateMyHub struct {
-	ID            string   `json:"id"`
-	HubName       string   `json:"hubName"`
-	RepoURL       string   `json:"repoURL"`
-	RepoBranch    string   `json:"repoBranch"`
-	IsPrivate     bool     `json:"isPrivate"`
-	AuthType      AuthType `json:"authType"`
-	Token         *string  `json:"token"`
-	UserName      *string  `json:"userName"`
-	Password      *string  `json:"password"`
-	SSHPrivateKey *string  `json:"sshPrivateKey"`
-	SSHPublicKey  *string  `json:"sshPublicKey"`
+	// ID of the chaos hub
+	ID string `json:"id"`
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
 }
 
 type UpdatePanelGroupInput struct {
@@ -768,22 +973,34 @@ type UpdatePanelGroupInput struct {
 	Panels         []*Panel `json:"panels"`
 }
 
+// Defines total usage data
 type UsageData struct {
-	Projects     []*ProjectData `json:"projects"`
-	TotalEntries int            `json:"totalEntries"`
-	TotalCount   *TotalCount    `json:"totalCount"`
+	// Project related data
+	Projects []*ProjectData `json:"projects"`
+	// Total number of entries
+	TotalEntries int `json:"totalEntries"`
+	// Total number of projects, users, agents and workflows
+	TotalCount *TotalCount `json:"totalCount"`
 }
 
+// Defines input details for querying the total usage related details
 type UsageQuery struct {
-	Pagination    *Pagination     `json:"pagination"`
-	DateRange     *DateRange      `json:"dateRange"`
-	Sort          *UsageSortInput `json:"sort"`
-	SearchProject *string         `json:"searchProject"`
+	// Pagination detail to fetch only a required number of data at a time
+	Pagination *Pagination `json:"pagination"`
+	// Rage of dates between which the data will be fetched
+	DateRange *DateRange `json:"dateRange"`
+	// Sorting details to fetch the data in a sorted manner
+	Sort *UsageSortInput `json:"sort"`
+	// Search field to search for a particular project and fetch it's data
+	SearchProject *string `json:"searchProject"`
 }
 
+// Defines details required for sorting the data for a particular field
 type UsageSortInput struct {
-	Field      UsageSort `json:"field"`
-	Descending bool      `json:"descending"`
+	// Field for which sorting will be done
+	Field UsageSort `json:"field"`
+	// Bool value indicating if sorting will be done in descending order or not
+	Descending bool `json:"descending"`
 }
 
 type Weightages struct {
@@ -791,9 +1008,12 @@ type Weightages struct {
 	Weightage      int    `json:"weightage"`
 }
 
+// Defines the details of the weightages of each chaos experiment in the workflow
 type WeightagesInput struct {
+	// Name of the experiment
 	ExperimentName string `json:"experimentName"`
-	Weightage      int    `json:"weightage"`
+	// Weightage of the experiment
+	Weightage int `json:"weightage"`
 }
 
 type Workflow struct {
@@ -852,14 +1072,22 @@ type WorkflowRunFilterInput struct {
 	DateRange      *DateRange         `json:"dateRange"`
 }
 
+// Defines the details for a workflow run
 type WorkflowRunInput struct {
-	WorkflowID    string           `json:"workflowID"`
-	WorkflowRunID string           `json:"workflowRunID"`
-	WorkflowName  string           `json:"workflowName"`
-	ExecutionData string           `json:"executionData"`
-	ClusterID     *ClusterIdentity `json:"clusterID"`
-	Completed     bool             `json:"completed"`
-	IsRemoved     *bool            `json:"isRemoved"`
+	// ID of the workflow
+	WorkflowID string `json:"workflowID"`
+	// ID of the workflow run which is to be queried
+	WorkflowRunID string `json:"workflowRunID"`
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+	ExecutionData string `json:"executionData"`
+	// ID of the cluster in which the workflow is running
+	ClusterID *ClusterIdentity `json:"clusterID"`
+	// Bool value indicating if the workflow run has completed
+	Completed bool `json:"completed"`
+	// Bool value indicating if the workflow run has removed
+	IsRemoved *bool `json:"isRemoved"`
 }
 
 type WorkflowRunSortInput struct {
@@ -900,10 +1128,14 @@ type WorkflowSortInput struct {
 	Descending *bool                `json:"descending"`
 }
 
+// Defines details of workflow statistics
 type WorkflowStat struct {
+	// Number of schedules
 	Schedules int `json:"schedules"`
-	Runs      int `json:"runs"`
-	ExpRuns   int `json:"expRuns"`
+	// Number of workflow runs
+	Runs int `json:"runs"`
+	// Number of experiment runs
+	ExpRuns int `json:"expRuns"`
 }
 
 type WorkflowStats struct {
@@ -911,16 +1143,26 @@ type WorkflowStats struct {
 	Value int     `json:"value"`
 }
 
+// Defines the details for a chaos workflow
 type ChaosWorkFlowInput struct {
-	WorkflowID          *string            `json:"workflowID"`
-	WorkflowManifest    string             `json:"workflowManifest"`
-	CronSyntax          string             `json:"cronSyntax"`
-	WorkflowName        string             `json:"workflowName"`
-	WorkflowDescription string             `json:"workflowDescription"`
-	Weightages          []*WeightagesInput `json:"weightages"`
-	IsCustomWorkflow    bool               `json:"isCustomWorkflow"`
-	ProjectID           string             `json:"projectID"`
-	ClusterID           string             `json:"clusterID"`
+	// ID of the workflow
+	WorkflowID *string `json:"workflowID"`
+	// Manifest of the workflow
+	WorkflowManifest string `json:"workflowManifest"`
+	// Cron syntax of the workflow schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Description of the workflow
+	WorkflowDescription string `json:"workflowDescription"`
+	// Array containing weightage and name of each chaos experiment in the workflow
+	Weightages []*WeightagesInput `json:"weightages"`
+	// Bool value indicating whether the workflow is a custom workflow or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
+	// ID of the project under which the workflow is scheduled
+	ProjectID string `json:"projectID"`
+	// ID of the target cluster in which the workflow will run
+	ClusterID string `json:"clusterID"`
 }
 
 type AuthType string

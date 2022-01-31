@@ -687,11 +687,13 @@ type Query {
 
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-  getYAMLData(experimentInput: ExperimentInput!): String!
+  getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   getPredefinedWorkflowList(hubName: String!, projectID: String!): [String!]!
+    @authorized
 
   getPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+    @authorized
 
   listDataSource(projectID: String!): [DSResponse]! @authorized
 
@@ -721,7 +723,7 @@ type Query {
 
   getTemplateManifestByID(templateID: String!): ManifestTemplate! @authorized
 
-  #Image Registry Queries
+  # Image Registry Queries
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
   getImageRegistry(
@@ -761,16 +763,22 @@ type Mutation {
   syncWorkflow(workflowID: String!, workflowRunID: String!): Boolean!
     @authorized
 
-  #It is used to confirm the subscriber registration
+  # It is used to confirm the subscriber registration
+  # authorized directive not required
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
-  #It is used to send cluster related events from the subscriber
+  # It is used to send cluster related events from the subscriber
+  # authorized directive not required
   newClusterEvent(clusterEvent: ClusterEventInput!): String!
 
+  # authorized directive not required
+  # authorized directive not required
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
+  # authorized directive not required
   podLog(log: PodLog!): String!
 
+  # authorized directive not required
   kubeObj(kubeData: KubeObjectData!): String!
 
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
@@ -823,7 +831,7 @@ type Mutation {
 
   deleteManifestTemplate(templateID: String!): Boolean! @authorized
 
-  #Image Registry Mutations
+  # Image Registry Mutations
   createImageRegistry(
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
@@ -840,14 +848,15 @@ type Mutation {
 }
 
 type Subscription {
-  #It is used to listen cluster events from the graphql server
+  # It is used to listen cluster events from the graphql server
   clusterEventListener(projectID: String!): ClusterEvent! @authorized
 
   workflowEventListener(projectID: String!): WorkflowRun! @authorized
 
   getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
-  #It is used to listen cluster operation request from the graphql server
+  # It is used to listen cluster operation request from the graphql server
+  # authorized directive not required
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
