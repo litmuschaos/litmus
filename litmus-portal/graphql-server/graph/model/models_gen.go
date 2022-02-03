@@ -207,11 +207,11 @@ type DateRange struct {
 }
 
 type ExperimentInput struct {
-	ProjectID      string  `json:"ProjectID"`
-	ChartName      string  `json:"ChartName"`
-	ExperimentName string  `json:"ExperimentName"`
-	HubName        string  `json:"HubName"`
-	FileType       *string `json:"FileType"`
+	ProjectID      string   `json:"ProjectID"`
+	ChartName      string   `json:"ChartName"`
+	ExperimentName string   `json:"ExperimentName"`
+	HubName        string   `json:"HubName"`
+	FileType       FileType `json:"FileType"`
 }
 
 type Experiments struct {
@@ -971,6 +971,51 @@ func (e *AuthType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FileType string
+
+const (
+	FileTypeExperiment FileType = "EXPERIMENT"
+	FileTypeEngine     FileType = "ENGINE"
+	FileTypeWorkflow   FileType = "WORKFLOW"
+	FileTypeCsv        FileType = "CSV"
+)
+
+var AllFileType = []FileType{
+	FileTypeExperiment,
+	FileTypeEngine,
+	FileTypeWorkflow,
+	FileTypeCsv,
+}
+
+func (e FileType) IsValid() bool {
+	switch e {
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
+		return true
+	}
+	return false
+}
+
+func (e FileType) String() string {
+	return string(e)
+}
+
+func (e *FileType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FileType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FileType", str)
+	}
+	return nil
+}
+
+func (e FileType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

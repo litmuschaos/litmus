@@ -8,39 +8,43 @@ import (
 type RoleQuery string
 
 const (
-	UserClusterReg         RoleQuery = "userClusterReg"
-	CreateChaosWorkFlow    RoleQuery = "CreateChaosWorkFlow"
-	ReRunChaosWorkFlow     RoleQuery = "ReRunChaosWorkFlow"
-	SendInvitation         RoleQuery = "SendInvitation"
-	AcceptInvitation       RoleQuery = "AcceptInvitation"
-	DeclineInvitation      RoleQuery = "DeclineInvitation"
-	RemoveInvitation       RoleQuery = "RemoveInvitation"
-	LeaveProject           RoleQuery = "LeaveProject"
-	UpdateProjectName      RoleQuery = "UpdateProjectName"
-	AddMyHub               RoleQuery = "AddMyHub"
-	UpdateChaosWorkflow    RoleQuery = "UpdateChaosWorkflow"
-	UpdateMyHub            RoleQuery = "UpdateMyHub"
-	EnableGitOps           RoleQuery = "EnableGitOps"
-	DisableGitOps          RoleQuery = "DisableGitOps"
-	UpdateGitOps           RoleQuery = "UpdateGitOps"
-	CreateDataSource       RoleQuery = "CreateDataSource"
-	CreateDashBoard        RoleQuery = "CreateDashBoard"
-	UpdateDataSource       RoleQuery = "UpdateDataSource"
-	GetWorkflowRuns        RoleQuery = "GetWorkflowRuns"
-	GetCluster             RoleQuery = "GetCluster"
-	GetManifest            RoleQuery = "GetManifest"
-	GetAgentDetails        RoleQuery = "GetAgentDetails"
-	GetProject             RoleQuery = "GetProject"
-	GetHeatmapData         RoleQuery = "GetHeatmapData"
-	GetWorkflowStats       RoleQuery = "GetWorkflowStats"
-	GetCharts              RoleQuery = "GetCharts"
-	GetHubExperiment       RoleQuery = "GetHubExperiment"
-	GetWorkflowRunStats    RoleQuery = "GetWorkflowRunStats"
-	GetHubStatus           RoleQuery = "GetHubStatus"
-	PortalDashboardData    RoleQuery = "PortalDashboardData"
-	ListWorkflow           RoleQuery = "ListWorkflow"
-	SaveMyHub              RoleQuery = "SaveMyHub"
-	CreateManifestTemplate RoleQuery = "CreateManifestTemplate"
+	UserClusterReg               RoleQuery = "userClusterReg"
+	CreateChaosWorkFlow          RoleQuery = "CreateChaosWorkFlow"
+	ReRunChaosWorkFlow           RoleQuery = "ReRunChaosWorkFlow"
+	SendInvitation               RoleQuery = "SendInvitation"
+	AcceptInvitation             RoleQuery = "AcceptInvitation"
+	DeclineInvitation            RoleQuery = "DeclineInvitation"
+	RemoveInvitation             RoleQuery = "RemoveInvitation"
+	LeaveProject                 RoleQuery = "LeaveProject"
+	UpdateProjectName            RoleQuery = "UpdateProjectName"
+	AddMyHub                     RoleQuery = "AddMyHub"
+	SyncHub                      RoleQuery = "SyncHub"
+	UpdateChaosWorkflow          RoleQuery = "UpdateChaosWorkflow"
+	UpdateMyHub                  RoleQuery = "UpdateMyHub"
+	DeleteMyHub                  RoleQuery = "DeleteMyHub"
+	EnableGitOps                 RoleQuery = "EnableGitOps"
+	DisableGitOps                RoleQuery = "DisableGitOps"
+	UpdateGitOps                 RoleQuery = "UpdateGitOps"
+	CreateDataSource             RoleQuery = "CreateDataSource"
+	CreateDashBoard              RoleQuery = "CreateDashBoard"
+	UpdateDataSource             RoleQuery = "UpdateDataSource"
+	GetWorkflowRuns              RoleQuery = "GetWorkflowRuns"
+	GetCluster                   RoleQuery = "GetCluster"
+	GetManifest                  RoleQuery = "GetManifest"
+	GetAgentDetails              RoleQuery = "GetAgentDetails"
+	GetProject                   RoleQuery = "GetProject"
+	GetHeatmapData               RoleQuery = "GetHeatmapData"
+	GetWorkflowStats             RoleQuery = "GetWorkflowStats"
+	GetCharts                    RoleQuery = "GetCharts"
+	GetHubExperiment             RoleQuery = "GetHubExperiment"
+	GetWorkflowRunStats          RoleQuery = "GetWorkflowRunStats"
+	GetHubStatus                 RoleQuery = "GetHubStatus"
+	PortalDashboardData          RoleQuery = "PortalDashboardData"
+	ListWorkflow                 RoleQuery = "ListWorkflow"
+	SaveMyHub                    RoleQuery = "SaveMyHub"
+	CreateManifestTemplate       RoleQuery = "CreateManifestTemplate"
+	GetYAMLData                  RoleQuery = "GetYAMLData"
+	PredefinedWorkflowOperations RoleQuery = "PredefinedWorkflowOperations"
 
 	MemberRoleOwnerString  = string(model.MemberRoleOwner)
 	MemberRoleEditorString = string(model.MemberRoleEditor)
@@ -58,8 +62,10 @@ var MutationRbacRules = map[RoleQuery][]string{
 	LeaveProject:        {MemberRoleViewerString, MemberRoleEditorString},
 	UpdateProjectName:   {MemberRoleOwnerString},
 	AddMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
+	SyncHub:             {MemberRoleOwnerString, MemberRoleEditorString},
 	UpdateChaosWorkflow: {MemberRoleOwnerString, MemberRoleEditorString},
 	UpdateMyHub:         {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteMyHub:         {MemberRoleOwnerString, MemberRoleEditorString},
 	EnableGitOps:        {MemberRoleOwnerString},
 	DisableGitOps:       {MemberRoleOwnerString},
 	UpdateGitOps:        {MemberRoleOwnerString},
@@ -73,14 +79,16 @@ var MutationRbacRules = map[RoleQuery][]string{
 	GetAgentDetails: {MemberRoleOwnerString, MemberRoleEditorString},
 	GetProject: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
-	GetHeatmapData:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetWorkflowStats:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetCharts:              {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetHubExperiment:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetWorkflowRunStats:    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetHubStatus:           {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	PortalDashboardData:    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	ListWorkflow:           {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	SaveMyHub:              {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateManifestTemplate: {MemberRoleOwnerString, MemberRoleEditorString},
+	GetHeatmapData:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetWorkflowStats:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetCharts:                    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetHubExperiment:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetWorkflowRunStats:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetHubStatus:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	PortalDashboardData:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	SaveMyHub:                    {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
+	GetYAMLData:                  {MemberRoleOwnerString, MemberRoleEditorString},
+	PredefinedWorkflowOperations: {MemberRoleOwnerString, MemberRoleEditorString},
 }

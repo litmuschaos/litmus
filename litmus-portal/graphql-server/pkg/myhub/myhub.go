@@ -230,14 +230,15 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 	return ChartsData, nil
 }
 
-// GetExperiment is used for getting details of a given experiment using chartserviceversion.yaml.
+// GetExperiment is used for getting details of chartserviceversion.yaml.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 	var ExperimentPath string
-	if strings.ToLower(experimentInput.ChartName) == "predefined" {
-		ExperimentPath = handler.GetPreDefinedWorkflowCSVPath(ctx, experimentInput)
-	} else {
-		ExperimentPath = handler.GetExperimentChartsVersionYamlPath(ctx, experimentInput)
+
+	if strings.ToLower(experimentInput.FileType.String()) != "csv" {
+		return nil, errors.New("invalid file type")
 	}
+	ExperimentPath = handler.GetCSVData(experimentInput)
+
 	ExperimentData, err := handler.GetExperimentData(ExperimentPath)
 	if err != nil {
 		return nil, err
@@ -284,6 +285,9 @@ func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
 func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	if strings.ToLower(experimentInput.FileType.String()) == "csv" || strings.ToLower(experimentInput.FileType.String()) == "workflow" {
+		return "", errors.New("invalid file type")
+	}
 	YAMLPath := handler.GetExperimentYAMLPath(ctx, experimentInput)
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
 	if err != nil {
@@ -292,9 +296,15 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 	return YAMLData, nil
 }
 
-// GetPredefinedExperimentYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
+// GetPredefinedExperimentYAMLData is responsible for sending the workflow.yaml for a given pre-defined workflow.
 func GetPredefinedExperimentYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
-	YAMLPath := handler.GetPredefinedExperimentManifest(ctx, experimentInput)
+	var YAMLPath string
+	if strings.ToLower(experimentInput.FileType.String()) != "workflow" {
+		return "", errors.New("invalid file type")
+	}
+	if strings.ToLower(experimentInput.ChartName) == "predefined" && strings.ToLower(experimentInput.FileType.String()) == "workflow" {
+		YAMLPath = handler.GetPredefinedExperimentManifest(ctx, experimentInput)
+	}
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
 	if err != nil {
 		return "", err
