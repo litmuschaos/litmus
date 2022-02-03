@@ -247,8 +247,8 @@ func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (
 }
 
 // SyncHub is used for syncing the hub again if some not present or some error happens.
-func SyncHub(ctx context.Context, hubID string) ([]*model.MyHubStatus, error) {
-	myhub, err := dbOperationsMyHub.GetHubByID(ctx, hubID)
+func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.MyHubStatus, error) {
+	myhub, err := dbOperationsMyHub.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +343,7 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 		SSHPrivateKey: myhub.SSHPrivateKey,
 	}
 
-	prevMyHub, err := dbOperationsMyHub.GetHubByID(ctx, myhub.ID)
+	prevMyHub, err := dbOperationsMyHub.GetHubByID(ctx, myhub.ID, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -393,8 +393,8 @@ func UpdateMyHub(ctx context.Context, myhub model.UpdateMyHub, projectID string)
 	return &newMyhub, nil
 }
 
-func DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
-	query := bson.D{{"myhub_id", hubID}}
+func DeleteMyHub(ctx context.Context, hubID string, projectID string) (bool, error) {
+	query := bson.D{{"myhub_id", hubID}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err := dbOperationsMyHub.UpdateMyHub(ctx, query, update)

@@ -129,7 +129,7 @@ func (r *mutationResolver) SyncHub(ctx context.Context, id string, projectID str
 	if err != nil {
 		return nil, err
 	}
-	return myhub.SyncHub(ctx, id)
+	return myhub.SyncHub(ctx, id, projectID)
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
@@ -175,7 +175,7 @@ func (r *mutationResolver) DeleteMyHub(ctx context.Context, hubID string, projec
 	if err != nil {
 		return false, err
 	}
-	return myhub.DeleteMyHub(ctx, hubID)
+	return myhub.DeleteMyHub(ctx, hubID, projectID)
 }
 
 func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
