@@ -224,7 +224,7 @@ const TableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterData}>
-          <span>{data.last_updated_by ?? ''}</span>
+          <span>{data.last_updated_by || '-'}</span>
         </Typography>
       </TableCell>
       <TableCell>

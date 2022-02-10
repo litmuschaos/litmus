@@ -418,7 +418,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
       </TableCell>
       <TableCell>
         <Typography className={classes.executedBy}>
-          {data.executed_by ?? ''}
+          {data.executed_by || '-'}
         </Typography>
       </TableCell>
       <TableCell>

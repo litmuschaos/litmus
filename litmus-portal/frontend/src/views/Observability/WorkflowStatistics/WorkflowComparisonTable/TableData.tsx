@@ -79,7 +79,7 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell style={{ width: '10rem' }}>
         <Typography className={classes.tableObjects}>
-          &nbsp;{data.last_updated_by ?? ''}
+          &nbsp;{data.last_updated_by || '-'}
         </Typography>
       </StyledTableCell>
       <StyledTableCell style={{ width: '10rem' }}>
