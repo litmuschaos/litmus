@@ -14,7 +14,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func WorkflowRequest(clusterData map[string]string, requestType string, externalData string) error {
+func WorkflowRequest(clusterData map[string]string, requestType string, externalData string, username string) error {
 	if requestType == "workflow_delete" {
 		wfOb, err := events.GetWorkflowObj(externalData)
 		if err != nil {

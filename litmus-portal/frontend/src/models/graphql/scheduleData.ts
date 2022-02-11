@@ -19,6 +19,7 @@ export interface ScheduleWorkflow {
   cluster_type: string;
   regularity?: string;
   isRemoved: boolean;
+  last_updated_by: string;
 }
 export interface DeleteSchedule {
   workflow_id: string;
