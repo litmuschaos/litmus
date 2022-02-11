@@ -13,6 +13,7 @@ type ActionPayload struct {
 	K8sManifest  string  `json:"k8s_manifest"`
 	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"external_data"`
+	Username     *string `json:"username"`
 }
 
 type AgentStat struct {
@@ -529,6 +530,7 @@ type Workflow struct {
 	ClusterID           string        `json:"cluster_id"`
 	ClusterType         string        `json:"cluster_type"`
 	IsRemoved           bool          `json:"isRemoved"`
+	LastUpdatedBy       *string       `json:"last_updated_by"`
 }
 
 type WorkflowFilterInput struct {
@@ -556,6 +558,7 @@ type WorkflowRun struct {
 	TotalExperiments   *int          `json:"total_experiments"`
 	ExecutionData      string        `json:"execution_data"`
 	IsRemoved          *bool         `json:"isRemoved"`
+	ExecutedBy         string        `json:"executed_by"`
 }
 
 type WorkflowRunDetails struct {
@@ -574,6 +577,7 @@ type WorkflowRunInput struct {
 	WorkflowID    string           `json:"workflow_id"`
 	WorkflowRunID string           `json:"workflow_run_id"`
 	WorkflowName  string           `json:"workflow_name"`
+	ExecutedBy    string           `json:"executed_by"`
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 	Completed     bool             `json:"completed"`

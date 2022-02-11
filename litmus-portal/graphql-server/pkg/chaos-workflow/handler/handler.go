@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
 	grpc2 "google.golang.org/grpc"
 
@@ -47,7 +48,15 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowCreation(input, wfType, r)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return nil, err
+	}
+
+	err = ops.ProcessWorkflowCreation(input, username, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow: ", err)
 		return nil, err
@@ -69,6 +78,14 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 		return false, err
 	}
 
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return false, err
+	}
+
 	if *workflow_id != "" && *workflowRunID != "" {
 		for _, workflow_run := range workflow.WorkflowRuns {
 			if workflow_run.WorkflowRunID == *workflowRunID {
@@ -77,7 +94,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 			}
 		}
 
-		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, username, r)
 		if err != nil {
 			return false, err
 		}
@@ -98,7 +115,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 			return false, err
 		}
 
-		err = ops.ProcessWorkflowDelete(query, workflow, r)
+		err = ops.ProcessWorkflowDelete(query, workflow, username, r)
 		if err != nil {
 			return false, err
 		}
@@ -117,6 +134,14 @@ func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *
 		return false, err
 	}
 
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return false, err
+	}
+
 	if *workflow_id != "" && *workflowRunID != "" {
 		for _, workflow_run := range workflow.WorkflowRuns {
 			if workflow_run.WorkflowRunID == *workflowRunID {
@@ -125,7 +150,7 @@ func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *
 			}
 		}
 
-		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, username, r)
 		if err != nil {
 			return false, err
 		}
@@ -143,6 +168,14 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return nil, err
+	}
+
 	// GitOps Update
 	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
 	if err != nil {
@@ -150,7 +183,7 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowUpdate(input, wfType, r)
+	err = ops.ProcessWorkflowUpdate(input, username, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow update: ", err)
 		return nil, err
@@ -441,6 +474,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			ClusterName:        workflow.ClusterName,
 			ClusterType:        &workflow.ClusterType,
 			IsRemoved:          workflowRun.IsRemoved,
+			ExecutedBy:         workflowRun.ExecutedBy,
 		}
 		result = append(result, &newWorkflowRun)
 	}
@@ -638,6 +672,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 			ClusterName:         cluster.ClusterName,
 			ClusterID:           cluster.ClusterID,
 			ClusterType:         cluster.ClusterType,
+			LastUpdatedBy:       &workflow.LastUpdatedBy,
 		}
 		result = append(result, &newChaosWorkflows)
 	}
@@ -695,6 +730,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		ExecutionData:      input.ExecutionData,
 		Completed:          input.Completed,
 		IsRemoved:          &isRemoved,
+		ExecutedBy:         input.ExecutedBy,
 	})
 
 	if err != nil {
@@ -724,6 +760,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		ExecutionData:      input.ExecutionData,
 		WorkflowID:         input.WorkflowID,
 		IsRemoved:          &isRemoved,
+		ExecutedBy:         input.ExecutedBy,
 	}, &r)
 
 	return "Workflow Run Accepted", nil
@@ -780,7 +817,7 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 }
 
 // ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
-func ReRunWorkflow(workflowID string) (string, error) {
+func ReRunWorkflow(workflowID string, username string) (string, error) {
 	query := bson.D{{"workflow_id", workflowID}, {"isRemoved", false}}
 	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
@@ -814,7 +851,7 @@ func ReRunWorkflow(workflowID string) (string, error) {
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, nil, "create", store.Store)
+	}, &username, nil, "create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
@@ -995,6 +1032,7 @@ func GetWorkflowByID(ctx context.Context, workflowID string) (*model.Workflow, e
 		IsCustomWorkflow:    workflowInput.IsCustomWorkflow,
 		CronSyntax:          workflowInput.CronSyntax,
 		CreatedAt:           workflowInput.CreatedAt,
+		LastUpdatedBy:       &workflowInput.LastUpdatedBy,
 	}
 
 	return &workflow, nil

@@ -70,6 +70,7 @@ export interface WorkflowRun {
   experiments_na: number;
   total_experiments: number;
   execution_data: string;
+  executed_by: string;
   isRemoved: boolean;
 }
 
