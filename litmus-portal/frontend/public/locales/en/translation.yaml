@@ -179,6 +179,7 @@ observability:
   tableHead2: Starting Date
   tableHead3: Regularity
   tableHead4: Agent
+  tableHead5: Last Updated By
   workflowInfoStats:
     noRuns: No completed runs yet
     back: Back to Observability
@@ -593,6 +594,7 @@ chaosWorkflows:
   browseSchedules:
     name: Name
     agent: Agent
+    lastUpdatedBy: Last Updated By
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
@@ -631,6 +633,7 @@ chaosWorkflows:
     reliabilityDetails: Reliability Details
     experiments: Experiments
     lastRun: Last Run
+    executedBy: Executed By
     wfIssue: Seems like there has been some issue in workflow.
     runningFrom: Running from last
     min: mins.

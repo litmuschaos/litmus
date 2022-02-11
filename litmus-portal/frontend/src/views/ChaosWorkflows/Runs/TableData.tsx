@@ -417,6 +417,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         <TimePopOver unixTime={data.last_updated ?? ''} />
       </TableCell>
       <TableCell>
+        <Typography className={classes.executedBy}>
+          {data.executed_by || '-'}
+        </Typography>
+      </TableCell>
+      <TableCell>
         <IconButton
           aria-label="more"
           aria-controls="long-menu"

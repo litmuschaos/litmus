@@ -96,6 +96,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
   },
 
+  executedBy: {
+    paddingLeft: theme.spacing(5),
+  },
+
   sortDiv: {
     display: 'flex',
     flexDirection: 'column',
