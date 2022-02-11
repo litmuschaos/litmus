@@ -5,11 +5,14 @@ on:
     branches:
       - master
 
+env:
+  DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
+
 jobs:
   # Job for finding last commit sha of pull-request
   find-latest-commit-sha:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     outputs:
       commit-sha: ${{ steps.getcommit.outputs.sha }}
     steps:
@@ -32,7 +35,7 @@ jobs:
 
   find-changes:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: find-latest-commit-sha
     # Set job outputs to values from filter step
     outputs:
@@ -57,7 +60,7 @@ jobs:
 
   docker-build-image:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [find-latest-commit-sha, find-changes]
     strategy:
       # Matrix of changed directories for building images in parallel
@@ -84,29 +87,31 @@ jobs:
 
   tests:
     if: contains(github.event.comment.html_url, '/pull/') && startsWith(github.event.comment.body, '/run-e2e')
-    needs: [docker-build-image]
-    runs-on: ubuntu-18.04
+    needs: [find-latest-commit-sha, docker-build-image]
+    runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ needs.find-latest-commit-sha.outputs.commit-sha }}
+          fetch-depth: 0
+
       - name: Checkout litmus-E2E Repository
         uses: actions/checkout@v2
         with:
           repository: litmuschaos/litmus-e2e
           path: litmus-e2e
 
-      - name: Notification for Starting Testing.
-        uses: peter-evans/create-or-update-comment@v1
+      - uses: AbsaOSS/k3d-action@v2
+        name: Create k3d cluster
         with:
-          comment-id: "${{ github.event.comment.id }}"
-          body: |
-            ****
-            **Test Status:** The testing has been started please wait for the results ...
-
-      - name: Setting up KinD Cluster
-        run: kind create cluster --wait 5m
+          cluster-name: self-agent
+          args: >
+            --agents 3
+            --k3s-arg "--no-deploy=traefik, metrics-server@server:*"
 
       - name: Configuring and Testing the Cluster Installation
         run: |
-          kubectl cluster-info --context kind-kind
+          kubectl cluster-info --context k3d-self-agent
           kubectl get nodes
           kubectl get pods -n kube-system
 
@@ -119,20 +124,19 @@ jobs:
       # Loading all build images of changed components in KIND Cluster
       - name: loading the docker build artifacts into KIND Cluster
         run: |
-          ls -1 Images/*.tar | xargs --no-run-if-empty -L 1 kind load image-archive
+          ls -1 Images/*.tar | xargs --no-run-if-empty -L 1 k3d image import -c self-agent
 
       - name: Deploying the litmus-portal for E2E testing
         run: |
-          wget https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
-          sed -i 's/Always/IfNotPresent/g' cluster-k8s-manifest.yml
-          kubectl apply -f cluster-k8s-manifest.yml
+          sed -i 's/Always/IfNotPresent/g' litmus-portal/cluster-k8s-manifest.yml
+          kubectl apply -f litmus-portal/cluster-k8s-manifest.yml
           kubectl get pods -n litmus
           kubectl get deployments -o wide -n litmus
           source ./litmus-e2e/litmus/utils.sh
-          verify_all_components frontend,server litmus
+          verify_all_components litmusportal-frontend,litmusportal-server litmus
           wait_for_pods litmus 720
 
-      - name: Getting the ENV variables for using while testing
+      - name: Getting the AccessURL for ChaosCenter
         run: |
           export NODE_NAME=$(kubectl -n litmus get pod  -l "component=litmusportal-frontend" -o=jsonpath='{.items[*].spec.nodeName}')
           export NODE_IP=$(kubectl -n litmus get nodes $NODE_NAME -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
@@ -140,41 +144,74 @@ jobs:
           export AccessURL="http://$NODE_IP:$NODE_PORT"
           echo "URL=$AccessURL" >> $GITHUB_ENV
 
-      - name: Portal Authentication Tests
-        if: always()
+      # Fetching Access Point & Token for accessing kube api server
+      - name: Configuring Kube-Api server
+        run: |
+          kubectl config view -o jsonpath='{"Cluster name\tServer\n"}{range .clusters[*]}{.name}{"\t"}{.cluster.server}{"\n"}{end}'
+          export CLUSTER_NAME=k3d-self-agent
+          KUBE_API_SERVER=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CLUSTER_NAME\")].cluster.server}")
+          KUBE_API_TOKEN=$(kubectl get secrets -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"|base64 --decode)
+          echo "KUBE_API_SERVER=$KUBE_API_SERVER" >> $GITHUB_ENV
+          echo "KUBE_API_TOKEN=$KUBE_API_TOKEN" >> $GITHUB_ENV
+
+      - name: Deploying Prometheus as a DataSource
+        run: |
+          kubectl create ns monitoring
+          kubectl -n monitoring apply -f monitoring/utils/prometheus/prometheus-scrape-configuration/
+          kubectl -n monitoring apply -f monitoring/utils/metrics-exporters/node-exporter/
+          kubectl -n monitoring apply -f monitoring/utils/metrics-exporters/kube-state-metrics/
+          source ./litmus-e2e/litmus/utils.sh
+          wait_for_pods monitoring 720
+          wait_for_loadbalancer prometheus-k8s monitoring
+          loadBalancerIP=$(kubectl get services prometheus-k8s -n monitoring -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          DATA_SOURCE="http://$loadBalancerIP:9090"
+          echo "DATA_SOURCE_URL=$DATA_SOURCE" >> $GITHUB_ENV
+
+      # RBAC for allowing Cypress Runner to access Cluster resources
+      - name: Setting RBAC for Cypress for running e2e tests
+        run: |
+          kubectl apply -f ./litmus-e2e/Cypress/cypress-rbac.yml
+
+      - name: Running basic tests (Login and Onboarding Tests)
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
           spec: cypress/integration/Basic_Setup/**/*.spec.js
-          working-directory: litmus-e2e/Cypress/
+          working-directory: ./litmus-e2e/Cypress/
           config-file: cypress.prod.json
           env: true
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
 
-      - name: Verifying Execution Plane components
+      - name: Verifying the execution-plane components
         if: always()
         run: |
           source ./litmus-e2e/litmus/utils.sh
-          verify_all_components ${COMPONENTS} litmus
-          wait_for_pods litmus 720
+          verify_all_components ${COMPONENTS} ${NAMESPACE}
+          wait_for_pods ${NAMESPACE} 720
         env:
           COMPONENTS: subscriber,chaos-exporter,chaos-operator-ce,event-tracker,workflow-controller
+          NAMESPACE: litmus
 
-      - name: Post Authentication Tests
-        if: always()
+      - name: Running Post-Authentication Tests
         uses: cypress-io/github-action@v2
+        if: always()
         continue-on-error: false
         with:
           spec: cypress/integration/Parallel_Tests/**/*.spec.js
-          working-directory: litmus-e2e/Cypress/
+          working-directory: ./litmus-e2e/Cypress/
           config-file: cypress.prod.json
           env: true
         env:
           CYPRESS_BASE_URL: ${{ env.URL }}
+          CYPRESS_KUBE_API_TOKEN: ${{ env.KUBE_API_TOKEN }}
+          CYPRESS_KUBE_API_SERVER: ${{ env.KUBE_API_SERVER}}
+          CYPRESS_AGENT_NAMESPACE: "litmus"
+          CYPRESS_AGENT: "Self-Agent"
+          CYPRESS_TARGET_APP_NS: "default"
+          CYPRESS_DATA_SOURCE_URL: ${{ env.DATA_SOURCE_URL }}
 
       - name: Check the test run
-        if: always()
         run: |
           echo "TEST_RUN=true" >> $GITHUB_ENV
 
@@ -213,7 +250,3 @@ jobs:
           reactions: eyes
         env:
           RUN_ID: ${{ github.run_id }}
-
-      - name: Deleting KinD cluster
-        if: always()
-        run: kind delete cluster
