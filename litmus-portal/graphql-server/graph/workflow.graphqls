@@ -67,6 +67,7 @@ type WorkflowRun {
   total_experiments: Int
   execution_data: String!
   isRemoved: Boolean
+  executed_by: String!
 }
 
 type GetWorkflowsOutput {
@@ -107,6 +108,7 @@ type Workflow {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
+  last_updated_by: String
 }
 
 type ListWorkflowsOutput {

@@ -376,6 +376,13 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                   </div>
                 </TableCell>
 
+                {/* Executed By */}
+                <TableCell>
+                  <Typography className={classes.executedBy}>
+                    {t('chaosWorkflows.browseWorkflows.executedBy')}
+                  </Typography>
+                </TableCell>
+
                 {/* Menu Cell */}
                 <TableCell />
               </TableRow>

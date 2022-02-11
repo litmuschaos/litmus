@@ -296,6 +296,13 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                   </Typography>
                 </TableCell>
 
+                {/* Last Updated By */}
+                <TableCell>
+                  <Typography className={classes.lastUpdatedBy}>
+                    {t('chaosWorkflows.browseSchedules.lastUpdatedBy')}
+                  </Typography>
+                </TableCell>
+
                 {/* Show Experiments */}
                 <TableCell>
                   <Typography className={classes.showExp}>

@@ -52,6 +52,7 @@ type ComplexityRoot struct {
 		K8sManifest  func(childComplexity int) int
 		Namespace    func(childComplexity int) int
 		RequestType  func(childComplexity int) int
+		Username     func(childComplexity int) int
 	}
 
 	AgentStat struct {
@@ -419,6 +420,7 @@ type ComplexityRoot struct {
 		CronSyntax          func(childComplexity int) int
 		IsCustomWorkflow    func(childComplexity int) int
 		IsRemoved           func(childComplexity int) int
+		LastUpdatedBy       func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
 		UpdatedAt           func(childComplexity int) int
 		Weightages          func(childComplexity int) int
@@ -432,6 +434,7 @@ type ComplexityRoot struct {
 		ClusterID          func(childComplexity int) int
 		ClusterName        func(childComplexity int) int
 		ClusterType        func(childComplexity int) int
+		ExecutedBy         func(childComplexity int) int
 		ExecutionData      func(childComplexity int) int
 		ExperimentsAwaited func(childComplexity int) int
 		ExperimentsFailed  func(childComplexity int) int
@@ -764,6 +767,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionPayload.RequestType(childComplexity), true
+
+	case "ActionPayload.username":
+		if e.complexity.ActionPayload.Username == nil {
+			break
+		}
+
+		return e.complexity.ActionPayload.Username(childComplexity), true
 
 	case "AgentStat.Active":
 		if e.complexity.AgentStat.Active == nil {
@@ -2866,6 +2876,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Workflow.IsRemoved(childComplexity), true
 
+	case "Workflow.last_updated_by":
+		if e.complexity.Workflow.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Workflow.LastUpdatedBy(childComplexity), true
+
 	case "Workflow.project_id":
 		if e.complexity.Workflow.ProjectID == nil {
 			break
@@ -2935,6 +2952,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowRun.ClusterType(childComplexity), true
+
+	case "WorkflowRun.executed_by":
+		if e.complexity.WorkflowRun.ExecutedBy == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExecutedBy(childComplexity), true
 
 	case "WorkflowRun.execution_data":
 		if e.complexity.WorkflowRun.ExecutionData == nil {
@@ -4557,6 +4581,7 @@ type ActionPayload {
   k8s_manifest: String!
   namespace: String!
   external_data: String
+  username: String
 }
 
 type ClusterAction {
@@ -4617,6 +4642,7 @@ input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
+  executed_by: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
@@ -5072,6 +5098,7 @@ type WorkflowRun {
   total_experiments: Int
   execution_data: String!
   isRemoved: Boolean
+  executed_by: String!
 }
 
 type GetWorkflowsOutput {
@@ -5112,6 +5139,7 @@ type Workflow {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
+  last_updated_by: String
 }
 
 type ListWorkflowsOutput {
@@ -6452,6 +6480,37 @@ func (ec *executionContext) _ActionPayload_external_data(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ExternalData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionPayload_username(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ActionPayload",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16898,6 +16957,37 @@ func (ec *executionContext) _Workflow_isRemoved(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Workflow_last_updated_by(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Workflow",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkflowRun_workflow_run_id(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17515,6 +17605,40 @@ func (ec *executionContext) _WorkflowRun_isRemoved(ctx context.Context, field gr
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_executed_by(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExecutedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRunDetails_no_of_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunDetails) (ret graphql.Marshaler) {
@@ -23488,6 +23612,12 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
+		case "executed_by":
+			var err error
+			it.ExecutedBy, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "execution_data":
 			var err error
 			it.ExecutionData, err = ec.unmarshalNString2string(ctx, v)
@@ -24370,6 +24500,8 @@ func (ec *executionContext) _ActionPayload(ctx context.Context, sel ast.Selectio
 			}
 		case "external_data":
 			out.Values[i] = ec._ActionPayload_external_data(ctx, field, obj)
+		case "username":
+			out.Values[i] = ec._ActionPayload_username(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26592,6 +26724,8 @@ func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "last_updated_by":
+			out.Values[i] = ec._Workflow_last_updated_by(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26682,6 +26816,11 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			}
 		case "isRemoved":
 			out.Values[i] = ec._WorkflowRun_isRemoved(ctx, field, obj)
+		case "executed_by":
+			out.Values[i] = ec._WorkflowRun_executed_by(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
