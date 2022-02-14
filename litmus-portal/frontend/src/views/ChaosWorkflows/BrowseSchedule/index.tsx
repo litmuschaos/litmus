@@ -335,13 +335,13 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={8}>
                     <Loader />
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleError" colSpan={7}>
+                  <TableCell data-cy="browseScheduleError" colSpan={8}>
                     <Typography align="center">Unable to fetch data</Typography>
                   </TableCell>
                 </TableRow>
@@ -361,7 +361,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleNoData" colSpan={7}>
+                  <TableCell data-cy="browseScheduleNoData" colSpan={8}>
                     <Typography align="center">No records available</Typography>
                   </TableCell>
                 </TableRow>
