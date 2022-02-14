@@ -2,8 +2,9 @@ package versions
 
 import (
 	"fmt"
-	v2_6_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.6.0"
 	"os"
+
+	v2_6_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.6.0"
 
 	v2_4_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.4.0"
 
