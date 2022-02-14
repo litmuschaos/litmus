@@ -22,6 +22,5 @@ func (vm VersionManager) Run() error {
 	if err := upgradeWorkflowCollection(vm.Logger, vm.DBClient); err != nil {
 		return nil
 	}
-	// other upgrade step .....
 	return nil
 }
