@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	v2_6_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.6.0"
+
 	v2_4_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.4.0"
 
 	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
@@ -65,8 +67,13 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 			VersionManager: nil,
 		},
 
-		// latest version no more upgrades available
 		"2.5.0": {
+			NextVersion:    "2.6.0",
+			VersionManager: v2_6_0.NewVersionManger(m.Logger, m.DBClient),
+		},
+
+		// latest version no more upgrades available
+		"2.6.0": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},
