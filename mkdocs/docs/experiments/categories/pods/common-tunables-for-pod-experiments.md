@@ -100,3 +100,33 @@ spec:
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
+
+### Default Application Health Check
+
+It defines the default application status checks as a tunable. It is helpful for the scenarios where you don’t want to validate the application status as a mandatory check during pre & post chaos. It can be tuned via `DEFAULT_APP_HEALTH_CHECK` ENV. If `DEFAULT_APP_HEALTH_CHECK` is not provided by default it is set to `true`.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/default-app-health-check.yaml yaml)
+```yaml
+## application status check as tunable
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        - name: DEFAULT_APP_HEALTH_CHECK
+          value: 'false'
+```
