@@ -870,6 +870,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#jitter" class="md-nav__link">
+    Jitter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#container-runtime-socket-path" class="md-nav__link">
     Container Runtime Socket Path
   </a>
@@ -2958,6 +2965,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#jitter" class="md-nav__link">
+    Jitter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#container-runtime-socket-path" class="md-nav__link">
     Container Runtime Socket Path
   </a>
@@ -3294,6 +3308,31 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;eth0&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="jitter">Jitter<a class="headerlink" href="#jitter" title="Permanent link">&para;</a></h3>
+<p>It defines the jitter (in ms), a parameter that allows introducing a network delay variation. It can be tuned via <code>JITTER</code> ENV. Its default value is <code>0</code>.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># provide the network latency jitter</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-latency-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-latency</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># value of the network latency jitter (in ms) </span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">JITTER</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;200&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="container-runtime-socket-path">Container Runtime Socket Path<a class="headerlink" href="#container-runtime-socket-path" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
