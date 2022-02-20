@@ -342,12 +342,12 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 	}
 
 	for i, template := range workflowManifest.Spec.Templates {
-		artifact := template.Inputs.Artifacts
-		if len(artifact) > 0 {
-			if artifact[0].Raw == nil {
+		artifacts := template.Inputs.Artifacts
+		for _, artifact := range artifacts {
+			if artifact.Raw == nil {
 				continue
 			}
-			var data = artifact[0].Raw.Data
+			var data = artifact.Raw.Data
 			if len(data) > 0 {
 				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
 				// And it is not able the unmarshal the yamlstring to chaos engine struct
@@ -357,7 +357,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 				var meta chaosTypes.ChaosEngine
 				err := yaml.Unmarshal([]byte(data), &meta)
 				if err != nil {
-					return errors.New("failed to unmarshal chaosengine")
+					continue
 				}
 
 				if strings.ToLower(meta.Kind) == "chaosengine" {
@@ -456,12 +456,12 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 
 	for i, template := range cronWorkflowManifest.Spec.WorkflowSpec.Templates {
 
-		artifact := template.Inputs.Artifacts
-		if len(artifact) > 0 {
-			if artifact[0].Raw == nil {
+		artifacts := template.Inputs.Artifacts
+		for _, artifact := range artifacts {
+			if artifact.Raw == nil {
 				continue
 			}
-			var data = artifact[0].Raw.Data
+			var data = artifact.Raw.Data
 			if len(data) > 0 {
 				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
 				// And it is not able the unmarshal the yamlstring to chaos engine struct
@@ -471,7 +471,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 				var meta chaosTypes.ChaosEngine
 				err = yaml.Unmarshal([]byte(data), &meta)
 				if err != nil {
-					return errors.New("failed to unmarshal chaosengine")
+					continue
 				}
 
 				if strings.ToLower(meta.Kind) == "chaosengine" {
