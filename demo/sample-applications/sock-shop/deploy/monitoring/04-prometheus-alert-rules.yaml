@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alertrules
+  namespace: monitoring
+data:
+  alert.rules: |
+    groups:
+    - name: PM2 Alert
+      rules:
+        # Alert for high error rate in the Sock Shop.
+        - alert: HighErrorRate
+          expr: rate(request_duration_seconds_count{status_code="500"}[5m]) > 1
+          for: 5m
+          labels:
+            severity: "slack"
+          annotations:
+            summary: "High HTTP 500 error rates"
+            description: "Rate of HTTP 500 errors per 5 minutes: {{ $value }}"

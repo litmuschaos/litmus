@@ -212,19 +212,6 @@ jobs:
           cd litmus-portal/frontend
           docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
-  docker-build-litmus-demo:
-    runs-on: ubuntu-latest
-    needs:
-      - changes
-    if: ${{ needs.changes.outputs.litmus-demo == 'true' }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build frontend docker image
-        shell: bash
-        run: |
-          cd demo/1.x
-          docker build . -f Dockerfile
   docker-build-dex-server:
     runs-on: ubuntu-latest
     needs:
