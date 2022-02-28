@@ -7,6 +7,7 @@ import (
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"litmus/litmus-portal/authentication/pkg/validations"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -215,14 +216,9 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.CreateProjectInput
 		err := c.BindJSON(&userRequest)
-		if err != nil {
+		if err != nil || userRequest.ProjectName == "" {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
-			return
-		}
-
-		if userRequest.ProjectName == "" {
-			c.JSON(400, gin.H{"message": "project name can't be empty"})
 			return
 		}
 
@@ -324,7 +320,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		if member.Role == nil {
-			c.JSON(400, gin.H{"message": "Enter a vaild role"})
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
 
@@ -355,7 +351,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		if invitation == entities.AcceptedInvitation {
-			c.JSON(400, gin.H{"message": "user is already a member of this project"})
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], gin.H{"message": "user is already a member of this project"})
 			return
 		} else if invitation == entities.PendingInvitation || invitation == entities.DeclinedInvitation || invitation == entities.ExitedProject {
 			err = service.UpdateInvite(member.ProjectID, member.UserID, entities.PendingInvitation, member.Role)
@@ -364,7 +360,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 				return
 			}
-			c.JSON(200, gin.H{"message": "Invitation sent successfully"})
+			c.JSON(http.StatusOK, gin.H{"message": "Invitation sent successfully"})
 			return
 		}
 
@@ -510,6 +506,11 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		if member.UserID == "" {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["removeInvitation"],
 			string(entities.AcceptedInvitation),
