@@ -50,6 +50,16 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
+
+		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+			validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		project, err := service.GetProjectByProjectID(projectID)
 		if err != nil {
 			log.Error(err)
@@ -216,9 +226,14 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.CreateProjectInput
 		err := c.BindJSON(&userRequest)
-		if err != nil || userRequest.ProjectName == "" {
+		if err != nil {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		// checking if project name is empty
+		if userRequest.ProjectName == "" {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrEmptyProjectName], presenter.CreateErrorResponse(utils.ErrEmptyProjectName))
 			return
 		}
 
@@ -320,12 +335,12 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		if member.Role == nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}
 
 		if *member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}
 
