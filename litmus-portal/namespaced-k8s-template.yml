@@ -539,7 +539,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:latest
+          image: litmuschaos/curl:2.6.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -578,15 +578,15 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.5.0"
+              value: "litmuschaos/chaos-operator:2.6.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.5.0"
+              value: "litmuschaos/chaos-runner:2.6.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.5.0"
+              value: "litmuschaos/chaos-exporter:2.6.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.5.x"
+              value: "v2.6.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "127.0.0.1"
           ports:
