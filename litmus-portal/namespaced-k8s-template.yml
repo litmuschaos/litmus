@@ -704,7 +704,6 @@ metadata:
   labels:
     app: mongo
   name: mongo-headless-service
-  namespace: litmus
 spec:
   clusterIP: None
   ports:
