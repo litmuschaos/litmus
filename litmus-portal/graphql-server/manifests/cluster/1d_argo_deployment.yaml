@@ -41,6 +41,9 @@ spec:
             - workflow-controller
           image: #{ARGO-WORKFLOW-CONTROLLER}
           name: workflow-controller
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           env:
             - name: LEADER_ELECTION_DISABLE
               value: "true"

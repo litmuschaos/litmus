@@ -39,6 +39,9 @@ spec:
           command:
             - chaos-operator
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           env:
             - name: CHAOS_RUNNER_IMAGE
               value: #{LITMUS-CHAOS-RUNNER}
@@ -80,6 +83,9 @@ spec:
         - image: #{LITMUS-CHAOS-EXPORTER}
           imagePullPolicy: Always
           name: chaos-exporter
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
               name: tcp
