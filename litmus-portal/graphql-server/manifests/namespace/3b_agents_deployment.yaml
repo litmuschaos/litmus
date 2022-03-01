@@ -44,6 +44,9 @@ spec:
               cpu: 200m
               memory: 500Mi
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: agent-config
@@ -76,6 +79,9 @@ spec:
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           name: litmus-event-tracker
           envFrom:
             - configMapRef:
