@@ -507,6 +507,15 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "300Mi"
+              cpu: "25m"
+              ephemeral-storage: "1Gi"
       volumes:
         - name: nginx-config
           configMap:
@@ -601,6 +610,13 @@ spec:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "350Mi"
+              cpu: "25m"
+            limits:
+              memory: "350Mi"
+              cpu: "25m"
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
           securityContext:
@@ -625,6 +641,13 @@ spec:
             - containerPort: 3000
             - containerPort: 3030
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+            limits:
+              memory: "150Mi"
+              cpu: "25m"
       serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
@@ -690,6 +713,13 @@ spec:
                 secretKeyRef:
                   name: litmus-portal-admin-secret
                   key: DB_PASSWORD
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "75m"
+            limits:
+              memory: "500Mi"
+              cpu: "150m"
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
