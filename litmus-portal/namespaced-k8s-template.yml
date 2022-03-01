@@ -490,6 +490,9 @@ spec:
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -548,6 +551,9 @@ spec:
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -595,6 +601,9 @@ spec:
           imagePullPolicy: Always
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -657,6 +666,9 @@ spec:
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
+          securityContext:
+#            runAsUser: 2000
+            allowPrivilegeEscalation: false
           args: ["--ipv6"]
           ports:
             - containerPort: 27017
