@@ -676,7 +676,7 @@ spec:
   selector:
     matchLabels:
       component: database
-  serviceName: mongo-headless
+  serviceName: mongo-headless-service
   replicas: 1
   template:
     metadata:
