@@ -493,6 +493,7 @@ spec:
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -554,6 +555,7 @@ spec:
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -604,6 +606,7 @@ spec:
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
