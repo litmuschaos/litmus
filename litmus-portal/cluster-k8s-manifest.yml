@@ -676,7 +676,7 @@ spec:
   selector:
     matchLabels:
       component: database
-  serviceName: mongo
+  serviceName: mongo-headless
   replicas: 1
   template:
     metadata:
@@ -722,6 +722,21 @@ metadata:
   name: mongo-service
   namespace: litmus
 spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    component: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo
+  name: mongo-headless-service
+  namespace: litmus
+spec:
+  clusterIP: None
   ports:
     - port: 27017
       targetPort: 27017
