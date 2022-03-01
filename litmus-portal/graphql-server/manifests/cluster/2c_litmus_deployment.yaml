@@ -57,6 +57,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "25m"
+            limits:
+              memory: "300Mi"
+              cpu: "25m"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -92,6 +99,13 @@ spec:
           env:
             - name: TSDB_SCRAPE_INTERVAL
               value: '10'
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "25m"
+            limits:
+              memory: "300Mi"
+              cpu: "25m"
       serviceAccountName: litmus-cluster-scope
 ---
 apiVersion: v1

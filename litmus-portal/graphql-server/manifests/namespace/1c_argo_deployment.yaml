@@ -49,7 +49,10 @@ spec:
             - name: LEADER_ELECTION_DISABLE
               value: "true"
           resources:
+            requests:
+              memory: "300Mi"
+              cpu: "25m"
             limits:
-              cpu: 150m
-              memory: 250Mi
+              memory: "300Mi"
+              cpu: "25m"
       serviceAccountName: argo
