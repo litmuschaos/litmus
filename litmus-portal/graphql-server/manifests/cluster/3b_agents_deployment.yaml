@@ -40,6 +40,9 @@ spec:
         - name: subscriber
           image: #{SUBSCRIBER-IMAGE}
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: agent-config
@@ -73,6 +76,9 @@ spec:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always
           name: litmus-event-tracker
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: agent-config
