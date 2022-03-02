@@ -57,7 +57,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const [getPredefinedWorkflow] = useLazyQuery(GET_PREDEFINED_WORKFLOW_LIST, {
       fetchPolicy: 'network-only',
       onCompleted: (data) => {
-        if (data.GetPredefinedWorkflowList !== undefined) {
+        if (data?.GetPredefinedWorkflowList !== undefined) {
           setWorkflowlist(data.GetPredefinedWorkflowList);
         }
       },
