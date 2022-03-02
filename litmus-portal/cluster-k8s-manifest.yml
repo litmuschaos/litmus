@@ -504,6 +504,7 @@ spec:
       labels:
         component: litmusportal-frontend
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
@@ -718,6 +719,7 @@ spec:
       labels:
         component: database
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
