@@ -1,0 +1,211 @@
+# ---
+# Default policy for denying all Ingress/Egress rules in given namespace (FOR TESTING, If applied, users will have to add rules for allowing traffic to DNS servers)
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: default-deny-ingress
+# spec:
+#   podSelector: {}
+#   egress:
+#     - ports:
+#         - port: 53
+#           protocol: UDP
+#         - port: 53
+#           protocol: TCP
+#   policyTypes:
+#     - Ingress
+#     - Egress
+---
+# Policy for Mongo Database
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: database
+  policyTypes:
+    - Ingress
+    - Egress
+  # No outbound connection allowed for DB
+  egress: []
+  ingress:
+    - from:
+        # Accepts connections from backend-server pod
+        - podSelector:
+            matchLabels:
+              component: litmusportal-server
+
+      ports:
+        - protocol: TCP
+          port: 27017
+---
+# Policy for Backend-Server (Needs Egress access to subscriber)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: server-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: litmusportal-server
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        # Frontend --> Server connection
+        - podSelector:
+            matchLabels:
+              component: litmusportal-frontend
+
+        # Self-agent --> Server, websocket connections
+        - podSelector:
+            matchLabels:
+              app: subscriber
+
+      #External Agent rules, please commentout & update as per requirements
+      # - from:
+      #     - ipBlock:
+      #         cidr: 10.0.0.0/24
+
+      ports:
+        - protocol: TCP
+          port: 3000
+        - protocol: TCP
+          port: 8080
+
+  egress:
+    - to:
+        # Server --> Self-agent, workflow CRUD Ops
+        - podSelector:
+            matchLabels:
+              app: subscriber
+
+        # Server -> database connection
+        - podSelector:
+            matchLabels:
+              component: database
+
+        # Server --> External Agent connection, please commentout & update as per requirements
+        # - ipBlock:
+        #     cidr: 10.0.0.0/24
+
+        # Needs access to kube-api-server as well for Ingress related operations
+---
+#Policy for Frontend pod (Allows External/Internal Traffic & egress only to server pod)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: litmusportal-frontend
+  # Allowed all Ingress connections, customize according to requirements
+  ingress:
+    - {}
+  egress:
+    - to:
+        # Frontend --> Server connection
+        - podSelector:
+            matchLabels:
+              component: litmusportal-server
+
+      ports:
+        - protocol: TCP
+          port: 3000
+        - protocol: TCP
+          port: 8080
+
+  policyTypes:
+    - Ingress
+    - Egress
+---
+## Policy for Self-agent Subscriber
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: subscriber-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: subscriber
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        # Server --> Self-agent, Accepting workflow requests from gql-server
+        - podSelector:
+            matchLabels:
+              component: litmusportal-server
+
+        # Server --> External Agent connection, please commentout & update as per requirements
+        # - ipBlock:
+        #     cidr: 10.0.0.0/24
+
+  egress:
+    # Needs access to kube-api-server for applying the workflows
+    - {}
+---
+#Policy for event-tracker
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: event-tracker-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: event-tracker
+  policyTypes:
+    - Egress
+  # Needs access to kube-api-server for reconcilation on workflows & target-applications annoted for gitOps
+  egress:
+    - {}
+---
+#Policy for workflow-controller
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: workflow-controller-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: workflow-controller
+  policyTypes:
+    - Egress
+  egress:
+    # Needs access to kube-api-server for reconcilation & running the scheduled workflows on the cluster
+    - {}
+---
+#Policy for chaos-operator
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chaos-operator-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: operator
+  policyTypes:
+    - Egress
+  egress:
+    # Needs access to kube-api-server for reconcilation & running the chaos-injection
+    - {}
+---
+#Policy for chaos-exporter
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chaos-exporter-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: chaos-exporter
+  policyTypes:
+    - Egress
+  egress:
+    # Needs access to kube-api-server
+    - {}
