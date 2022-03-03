@@ -20,7 +20,7 @@ func GetProjectGRPCSvcClient(conn *grpc.ClientConn) (grpc2.ProjectClient, *grpc.
 	if litmusGqlGrpcPort == "" {
 		litmusGqlGrpcPort = DefaultLitmusGqlGrpcPort
 	}
-	
+
 	conn, err := grpc.Dial(litmusGqlGrpcEndpoint+litmusGqlGrpcPort, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		logrus.Fatalf("did not connect: %s", err)
