@@ -1,5 +1,5 @@
 ### RBAC Manifests
-## If SELF_CLUSTER="true" then these permissions are required to apply 
+## If SELF_CLUSTER="true" then these permissions are required to apply
 ## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -138,7 +138,7 @@ rules:
   # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
 - apiGroups: [""]
   resources: [pods/log]
-  verbs: [get, list, watch]  
+  verbs: [get, list, watch]
 
   # for configuring and monitor the experiment job by chaos-runner pod
 - apiGroups: [batch]
@@ -146,7 +146,7 @@ rules:
   verbs: [create, list, get, delete, deletecollection]
 
   # ********************************************************************
-  # Permissions needed for creation and discovery of chaos experiments 
+  # Permissions needed for creation and discovery of chaos experiments
   # ********************************************************************
 
   # The helper pods are created by experiment to perform the actual chaos injection ...
@@ -182,27 +182,27 @@ rules:
   resources: [services]
   verbs: [create, delete, get, list, delete, deletecollection]
 
-  # for checking the app parent resources as deployments or sts and are eligible chaos candidates  
+  # for checking the app parent resources as deployments or sts and are eligible chaos candidates
 - apiGroups: [apps]
   resources: [deployments, statefulsets]
   verbs: [list, get, patch, update, create, delete]
 
-  # for checking the app parent resources as replicasets and are eligible chaos candidates  
+  # for checking the app parent resources as replicasets and are eligible chaos candidates
 - apiGroups: [apps]
   resources: [replicasets]
   verbs: [list, get]
 
-  # for checking the app parent resources as deamonsets and are eligible chaos candidates  
+  # for checking the app parent resources as deamonsets and are eligible chaos candidates
 - apiGroups: [apps]
   resources: [daemonsets]
   verbs: [list, get, delete]
 
-  # for checking (openshift) app parent resources if they are eligible chaos candidates  
+  # for checking (openshift) app parent resources if they are eligible chaos candidates
 - apiGroups: [apps.openshift.io]
   resources: [deploymentconfigs]
   verbs: [list, get]
 
-  # for checking (argo) app parent resources if they are eligible chaos candidates  
+  # for checking (argo) app parent resources if they are eligible chaos candidates
 - apiGroups: [argoproj.io]
   resources: [rollouts]
   verbs: [list, get]
@@ -251,7 +251,7 @@ rules:
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
     verbs: [get, watch, patch, create, delete]
-    
+
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults, chaosschedules]
@@ -465,7 +465,7 @@ data:
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
             proxy_set_header   X-Forwarded-Proto    $scheme;
-            proxy_pass "http://litmusportal-server-service:9003/";
+            proxy_pass "http://litmusportal-auth-server-service:9003/";
         }
 
         location /api/ {
@@ -521,19 +521,19 @@ spec:
                 configMapKeyRef:
                   name: litmus-portal-admin-config
                   key: AGENT_SCOPE
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
           volumeMounts:
           - name: nginx-config
             mountPath: /etc/nginx/conf.d/default.conf
             subPath: default.conf
-          resources:
-            requests:
-              memory: "300Mi"
-              cpu: "25m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "300Mi"
-              cpu: "25m"
-              ephemeral-storage: "1Gi"
       volumes:
         - name: nginx-config
           configMap:
@@ -578,6 +578,15 @@ spec:
             [
               "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+              ephemeral-storage: "1Gi"
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
@@ -642,11 +651,13 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "350Mi"
-              cpu: "25m"
+              memory: "250Mi"
+              cpu: "225m"
+              ephemeral-storage: "500Mi"
             limits:
-              memory: "350Mi"
-              cpu: "25m"
+              memory: "712Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
       serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
@@ -662,7 +673,7 @@ spec:
       targetPort: 8080
     - name: graphql-rpc-server
       port: 8000
-      targetPort: 8000  
+      targetPort: 8000
   selector:
     component: litmusportal-server
 ---
@@ -692,6 +703,15 @@ spec:
             [
               "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "225Mi"
+              cpu: "250m"
+              ephemeral-storage: "1Gi"
       containers:
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
@@ -715,17 +735,19 @@ spec:
               value: "litmusportal-server-service.litmus.svc.cluster.local"
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "225m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "712Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
           ports:
             - containerPort: 3000
             - containerPort: 3030
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "25m"
-            limits:
-              memory: "150Mi"
-              cpu: "25m"
 ---
 apiVersion: v1
 kind: Service
@@ -740,7 +762,7 @@ spec:
       targetPort: 3000
     - name: auth-rpc-server
       port: 3030
-      targetPort: 3030   
+      targetPort: 3030
   selector:
     component: litmusportal-auth-server
 ---
@@ -777,6 +799,15 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
+          resources:
+            requests:
+              memory: "550Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
+            limits:
+              memory: "1Gi"
+              cpu: "750m"
+              ephemeral-storage: "3Gi"
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
@@ -788,13 +819,6 @@ spec:
                 secretKeyRef:
                   name: litmus-portal-admin-secret
                   key: DB_PASSWORD
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "75m"
-            limits:
-              memory: "500Mi"
-              cpu: "150m"
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
