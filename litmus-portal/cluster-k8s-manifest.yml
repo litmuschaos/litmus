@@ -504,6 +504,7 @@ spec:
       labels:
         component: litmusportal-frontend
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
@@ -632,7 +633,9 @@ spec:
             - name: HUB_BRANCH_NAME
               value: "v2.6.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "127.0.0.1"
+              value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
+            - name: LITMUS_AUTH_GRPC_PORT
+              value: ":3030"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -644,6 +647,52 @@ spec:
             limits:
               memory: "350Mi"
               cpu: "25m"
+      serviceAccountName: litmus-server-account
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-server-service
+  namespace: litmus
+spec:
+  type: NodePort
+  ports:
+    - name: graphql-server
+      port: 9002
+      targetPort: 8080
+    - name: graphql-rpc-server
+      port: 8000
+      targetPort: 8000  
+  selector:
+    component: litmusportal-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-auth-server
+  namespace: litmus
+  labels:
+    component: litmusportal-auth-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-auth-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-auth-server
+    spec:
+      automountServiceAccountToken: false
+      initContainers:
+        - name: wait-for-mongodb
+          image: litmuschaos/curl:2.6.0
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+            ]
+      containers:
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
           securityContext:
@@ -662,8 +711,10 @@ spec:
               value: "admin"
             - name: ADMIN_PASSWORD
               value: "litmus"
-            - name: LITMUS_SVC_ENDPOINT
-              value: "127.0.0.1"
+            - name: LITMUS_GQL_GRPC_ENDPOINT
+              value: "litmusportal-server-service.litmus.svc.cluster.local"
+            - name: LITMUS_GQL_GRPC_PORT
+              value: ":8000"
           ports:
             - containerPort: 3000
             - containerPort: 3030
@@ -675,22 +726,15 @@ spec:
             limits:
               memory: "150Mi"
               cpu: "25m"
-      serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: litmusportal-server-service
+  name: litmusportal-auth-server-service
   namespace: litmus
 spec:
   type: NodePort
   ports:
-    - name: graphql-server
-      port: 9002
-      targetPort: 8080
-    - name: graphql-rpc-server
-      port: 8000
-      targetPort: 8000
     - name: auth-server
       port: 9003
       targetPort: 3000
@@ -698,7 +742,7 @@ spec:
       port: 3030
       targetPort: 3030   
   selector:
-    component: litmusportal-server
+    component: litmusportal-auth-server
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -718,6 +762,7 @@ spec:
       labels:
         component: database
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8

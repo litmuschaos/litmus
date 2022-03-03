@@ -487,6 +487,7 @@ spec:
       labels:
         component: litmusportal-frontend
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
@@ -605,7 +606,9 @@ spec:
             - name: HUB_BRANCH_NAME
               value: "v2.6.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "127.0.0.1"
+              value: "litmusportal-auth-server-service"
+            - name: LITMUS_AUTH_GRPC_PORT
+              value: ":3030"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -616,37 +619,6 @@ spec:
               cpu: "25m"
             limits:
               memory: "350Mi"
-              cpu: "25m"
-        - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
-          securityContext:
-            runAsUser: 2000
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-          envFrom:
-            - configMapRef:
-                name: litmus-portal-admin-config
-            - secretRef:
-                name: litmus-portal-admin-secret
-          env:
-            - name: STRICT_PASSWORD_POLICY
-              value: "false"
-            - name: ADMIN_USERNAME
-              value: "admin"
-            - name: ADMIN_PASSWORD
-              value: "litmus"
-            - name: LITMUS_SVC_ENDPOINT
-              value: "127.0.0.1"
-          ports:
-            - containerPort: 3000
-            - containerPort: 3030
-          imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "25m"
-            limits:
-              memory: "150Mi"
               cpu: "25m"
       serviceAccountName: litmus-server-account
 ---
@@ -673,6 +645,82 @@ spec:
     component: litmusportal-server
 ---
 apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-auth-server
+  labels:
+    component: litmusportal-auth-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-auth-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-auth-server
+    spec:
+      automountServiceAccountToken: false
+      initContainers:
+        - name: wait-for-mongodb
+          image: litmuschaos/curl:2.6.0
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+            ]
+      containers:
+        - name: auth-server
+          image: litmuschaos/litmusportal-auth-server:ci
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
+          env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "litmus"
+            - name: LITMUS_GQL_GRPC_ENDPOINT
+              value: "litmusportal-server-service"
+            - name: LITMUS_GQL_GRPC_PORT
+              value: ":8000"
+          ports:
+            - containerPort: 3000
+            - containerPort: 3030
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+            limits:
+              memory: "150Mi"
+              cpu: "25m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-auth-server-service
+spec:
+  type: NodePort
+  ports:
+    - name: auth-server
+      port: 9003
+      targetPort: 3000
+    - name: auth-rpc-server
+      port: 3030
+      targetPort: 3030   
+  selector:
+    component: litmusportal-auth-server
+---
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo
@@ -689,6 +737,7 @@ spec:
       labels:
         component: database
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
