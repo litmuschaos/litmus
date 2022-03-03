@@ -334,12 +334,8 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
-		if member.Role == nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
-			return
-		}
-
-		if *member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer {
+		// Validating member role
+		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}
