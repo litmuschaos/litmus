@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	grpc2 "litmus/litmus-portal/authentication/api/presenter/protos"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -10,7 +11,17 @@ import (
 
 // GetProjectGRPCSvcClient returns an RPC client for Project service
 func GetProjectGRPCSvcClient(conn *grpc.ClientConn) (grpc2.ProjectClient, *grpc.ClientConn) {
-	conn, err := grpc.Dial(LitmusSvcEndpoint+LitmusSvcGRPCPort, grpc.WithInsecure(), grpc.WithBlock())
+	litmusGqlGrpcEndpoint := os.Getenv("LITMUS_GQL_GRPC_ENDPOINT")
+	litmusGqlGrpcPort := os.Getenv("LITMUS_GQL_GRPC_PORT")
+
+	if litmusGqlGrpcEndpoint == "" {
+		litmusGqlGrpcEndpoint = DefaultLitmusGqlGrpcEndpoint
+	}
+	if litmusGqlGrpcPort == "" {
+		litmusGqlGrpcPort = DefaultLitmusGqlGrpcPort
+	}
+	
+	conn, err := grpc.Dial(litmusGqlGrpcEndpoint+litmusGqlGrpcPort, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		logrus.Fatalf("did not connect: %s", err)
 	}

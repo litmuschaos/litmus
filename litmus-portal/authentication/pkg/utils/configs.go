@@ -28,8 +28,8 @@ var (
 	ProjectCollection      = "project"
 	UsernameField          = "username"
 	PasswordEncryptionCost = 15
-	LitmusSvcGRPCPort      = ":8000"
-	LitmusSvcEndpoint      = os.Getenv("LITMUS_SVC_ENDPOINT")
+	DefaultLitmusGqlGrpcEndpoint      = ":8000"
+	DefaultLitmusGqlGrpcPort      = "localhost"
 )
 
 func getEnvAsInt(name string, defaultVal int) int {
