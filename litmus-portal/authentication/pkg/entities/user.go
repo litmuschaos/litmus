@@ -50,7 +50,7 @@ type UserPassword struct {
 // UpdateUserState defines structure to deactivate or reactivate user
 type UpdateUserState struct {
 	Username     string `json:"username"`
-	IsDeactivate bool   `json:"is_deactivate"`
+	IsDeactivate *bool  `json:"is_deactivate"`
 }
 
 // APIStatus defines structure for APIroute status
