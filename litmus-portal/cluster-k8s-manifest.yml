@@ -578,13 +578,24 @@ spec:
             [
               "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
+      volumes:
+        - name: gitops-storage
+          emptyDir: {}
+        - name: hub-storage
+          emptyDir: {}
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
+          volumeMounts:
+            - mountPath: /tmp/gitops
+              name: gitops-storage
+            - mountPath: /data/tmp
+              name: hub-storage
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -699,6 +710,7 @@ spec:
             runAsUser: 2000
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
