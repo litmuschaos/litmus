@@ -18,6 +18,8 @@ var (
 	ErrUpdatingAdmin                 AppError = errors.New("cannot remove admin")
 	ErrUserDeactivated               AppError = errors.New("your account has been deactivated")
 	ErrUserAlreadyDeactivated        AppError = errors.New("user already deactivated")
+	ErrEmptyProjectName              AppError = errors.New("invalid project name")
+	ErrInvalidRole                   AppError = errors.New("invalid role")
 )
 
 // ErrorStatusCodes holds the http status codes for every AppError
@@ -33,6 +35,8 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUpdatingAdmin:                 400,
 	ErrUserDeactivated:               400,
 	ErrUserAlreadyDeactivated:        400,
+	ErrEmptyProjectName:              400,
+	ErrInvalidRole:                   400,
 }
 
 // ErrorDescriptions holds detailed error description for every AppError
@@ -43,4 +47,6 @@ var ErrorDescriptions = map[AppError]string{
 	ErrUnauthorized:                  "The user does not have requested authorization to access this resource",
 	ErrUserExists:                    "This username is already assigned to another user",
 	ErrStrictPasswordPolicyViolation: "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
+	ErrEmptyProjectName:              "Project name can't be empty",
+	ErrInvalidRole:                   "Role is invalid",
 }
