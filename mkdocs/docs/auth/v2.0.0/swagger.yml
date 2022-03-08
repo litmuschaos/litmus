@@ -7,7 +7,7 @@ schemes:
 info:
   title: Litmus Portal Authentication API
   description: |
-    Litmus Portal Authentication APIs are used to authenticate the idenity of a user and to perform several user-specific tasks like:
+    Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like:
      <li>Update Profile</li>
      <li>Change Password</li>
      <li>Reset Password</li>
@@ -107,12 +107,12 @@ paths:
           description: OK
           examples:
             application/json:
-              - _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
-                username: admin
-                email: user1@litmus.com
-                name: user1
-                role: admin
-                created_at: "1627040098"
+              _id: f8036c51-0d79-4cd7-a7d0-45dcadb80eeb
+              username: admin
+              email: user1@litmus.com
+              name: user1
+              role: admin
+              created_at: "1627040098"
           schema:
             type: object
       produces:
@@ -130,7 +130,7 @@ paths:
           <tr>
             <td>username</td>
             <td>admin</td>
-            <td>Mandatory</td>
+            <td>Optional</td>
           </tr>
           <tr>
             <td>old_password</td>
@@ -192,12 +192,12 @@ paths:
           <tr>
             <td>email</td>
             <td>user1@gmail.com</td>
-            <td>Mandatory</td>
+            <td>Optional</td>
           </tr>
           <tr>
             <td>name</td>
             <td>admin</td>
-            <td>Mandatory</td>
+            <td>Optional</td>
           </tr>
         </table>
       responses:
@@ -379,13 +379,9 @@ paths:
                   [
                     {
                       UserID: "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
-                      UserName: "admin",
-                      Name: "",
                       Role: "Owner",
-                      Email: "",
                       Invitation: "Accepted",
                       JoinedAt: "1640676874",
-                      DeactivatedAt: "",
                     },
                   ]
                 State: active
@@ -463,13 +459,9 @@ paths:
                         [
                           {
                             UserID: c0b43e3f-8e7f-475e-9aa3-c2393a0f408b,
-                            UserName: admin,
-                            Name: "",
                             Role: Owner,
-                            Email: "",
                             Invitation: Accepted,
                             JoinedAt: "1640676874",
-                            DeactivatedAt: "",
                           },
                         ],
                       State: active,
@@ -501,19 +493,47 @@ paths:
                       [
                         {
                           UserID: "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
-                          UserName: "admin",
-                          Name: "",
                           Role: "Owner",
-                          Email: "",
                           Invitation: "Accepted",
                           JoinedAt: "1640676874",
-                          DeactivatedAt: "",
                         },
                       ],
                     State: active,
                     CreatedAt: "1627040799",
                     UpdatedAt: "1627040799",
                     RemovedAt: "",
+                  },
+                ]
+          schema:
+            type: object
+      parameters: []
+      produces:
+        - application/json
+  "/get_projects_stats":
+    get:
+      description: |
+        This API is used to get overall stats for all the projects(accessible only to admin).
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              data:
+                [
+                  {
+                    Name: admin's project,
+                    ProjectId: "430baca1-cdea-4886-bd80-9cfa204ea81f",
+                    Members:
+                      {
+                        Owner:
+                          [
+                            {
+                              UserId: "6abec0cf-7263-4519-bd69-7e02e26837fa",
+                              Username: admin,
+                            },
+                          ],
+                        Total: 2,
+                      },
                   },
                 ]
           schema:
