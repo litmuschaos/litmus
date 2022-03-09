@@ -5,6 +5,13 @@ enum AuthType {
 	ssh
 }
 
+enum FileType {
+    EXPERIMENT
+    ENGINE
+    WORKFLOW
+    CSV
+}
+
 type MyHub {
 	id: ID!
 	RepoURL: String!
@@ -138,7 +145,7 @@ input ExperimentInput {
 	ChartName: String!
 	ExperimentName: String!
 	HubName: String!
-	FileType: String
+	FileType: FileType!
 }
 
 input CloningInput {

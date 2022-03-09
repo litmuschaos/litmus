@@ -149,6 +149,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 ProjectID: projectID,
                 ChartName: 'predefined',
                 ExperimentName: (value as ChooseWorkflowRadio).id,
+                FileType: 'CSV',
               },
             },
           });

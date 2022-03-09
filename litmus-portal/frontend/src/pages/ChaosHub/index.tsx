@@ -109,6 +109,7 @@ const MyHub: React.FC = () => {
     deleteRepo({
       variables: {
         hub_id: deleteHub.hubID,
+        projectID,
       },
     });
     setDeleteHub({
@@ -136,6 +137,7 @@ const MyHub: React.FC = () => {
     refreshRepo({
       variables: {
         id: hubId,
+        projectID,
       },
     });
   };
