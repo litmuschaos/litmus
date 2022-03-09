@@ -310,10 +310,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
                 variables: {
                   experimentInput: {
                     ProjectID: selectedProjectID,
-                    ChartName: '',
+                    ChartName: 'predefined',
                     ExperimentName: (value as WorkflowDetailsProps).CRDLink,
                     HubName: hub as string,
-                    FileType: '',
+                    FileType: 'WORKFLOW',
                   },
                 },
               });
@@ -381,7 +381,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           HubName: hubName,
           ChartName: selectedExp.split('/')[0],
           ExperimentName: selectedExp.split('/')[1],
-          FileType: 'experiment',
+          FileType: 'EXPERIMENT',
         },
       },
     });
@@ -392,7 +392,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           HubName: hubName,
           ChartName: selectedExp.split('/')[0],
           ExperimentName: selectedExp.split('/')[1],
-          FileType: 'engine',
+          FileType: 'ENGINE',
         },
       },
     });
