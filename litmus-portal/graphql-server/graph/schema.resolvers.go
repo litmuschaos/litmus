@@ -131,8 +131,14 @@ func (r *mutationResolver) SaveMyHub(ctx context.Context, myhubInput model.Creat
 	return myhub.SaveMyHub(ctx, myhubInput, projectID)
 }
 
-func (r *mutationResolver) SyncHub(ctx context.Context, id string) ([]*model.MyHubStatus, error) {
-	return myhub.SyncHub(ctx, id)
+func (r *mutationResolver) SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+	return myhub.SyncHub(ctx, id, projectID)
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
@@ -171,8 +177,14 @@ func (r *mutationResolver) UpdateMyHub(ctx context.Context, myhubInput model.Upd
 	return myhub.UpdateMyHub(ctx, myhubInput, projectID)
 }
 
-func (r *mutationResolver) DeleteMyHub(ctx context.Context, hubID string) (bool, error) {
-	return myhub.DeleteMyHub(ctx, hubID)
+func (r *mutationResolver) DeleteMyHub(ctx context.Context, hubID string, projectID string) (bool, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.DeleteMyHub],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return false, err
+	}
+	return myhub.DeleteMyHub(ctx, hubID, projectID)
 }
 
 func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
@@ -415,14 +427,32 @@ func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*
 }
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
+		authorization.MutationRbacRules[authorization.GetYAMLData],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return "", err
+	}
 	return myhub.GetYAMLData(ctx, experimentInput)
 }
 
 func (r *queryResolver) GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.PredefinedWorkflowOperations],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
 	return myhub.GetPredefinedWorkflowList(hubName, projectID)
 }
 
 func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
+		authorization.MutationRbacRules[authorization.PredefinedWorkflowOperations],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return "", err
+	}
 	return myhub.GetPredefinedExperimentYAMLData(ctx, experimentInput)
 }
 
