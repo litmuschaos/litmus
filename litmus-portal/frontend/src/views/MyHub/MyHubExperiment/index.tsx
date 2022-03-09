@@ -45,6 +45,7 @@ const MyHub = () => {
         ProjectID: projectID,
         ChartName: paramData.chart,
         ExperimentName: paramData.experiment,
+        FileType: 'CSV',
       },
     },
     fetchPolicy: 'cache-and-network',
