@@ -3,12 +3,13 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
