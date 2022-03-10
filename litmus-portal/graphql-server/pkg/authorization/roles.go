@@ -11,6 +11,9 @@ const (
 	UserClusterReg               RoleQuery = "userClusterReg"
 	CreateChaosWorkFlow          RoleQuery = "CreateChaosWorkFlow"
 	ReRunChaosWorkFlow           RoleQuery = "ReRunChaosWorkFlow"
+	DeleteChaosWorkflow          RoleQuery = "DeleteChaosWorkflow"
+	TerminateChaosWorkflow       RoleQuery = "TerminateChaosWorkflow"
+	SyncWorkflow                 RoleQuery = "SyncWorkflow"
 	SendInvitation               RoleQuery = "SendInvitation"
 	AcceptInvitation             RoleQuery = "AcceptInvitation"
 	DeclineInvitation            RoleQuery = "DeclineInvitation"
@@ -20,6 +23,7 @@ const (
 	AddMyHub                     RoleQuery = "AddMyHub"
 	SyncHub                      RoleQuery = "SyncHub"
 	UpdateChaosWorkflow          RoleQuery = "UpdateChaosWorkflow"
+	DeleteClusterReg             RoleQuery = "DeleteClusterReg"
 	UpdateMyHub                  RoleQuery = "UpdateMyHub"
 	DeleteMyHub                  RoleQuery = "DeleteMyHub"
 	EnableGitOps                 RoleQuery = "EnableGitOps"
@@ -28,6 +32,9 @@ const (
 	CreateDataSource             RoleQuery = "CreateDataSource"
 	CreateDashBoard              RoleQuery = "CreateDashBoard"
 	UpdateDataSource             RoleQuery = "UpdateDataSource"
+	UpdateDashboard              RoleQuery = "UpdateDashboard"
+	DeleteDashboard              RoleQuery = "DeleteDashboard"
+	DeleteDataSource             RoleQuery = "DeleteDataSource"
 	GetWorkflowRuns              RoleQuery = "GetWorkflowRuns"
 	GetCluster                   RoleQuery = "GetCluster"
 	GetManifest                  RoleQuery = "GetManifest"
@@ -43,8 +50,21 @@ const (
 	ListWorkflow                 RoleQuery = "ListWorkflow"
 	SaveMyHub                    RoleQuery = "SaveMyHub"
 	CreateManifestTemplate       RoleQuery = "CreateManifestTemplate"
+	DeleteManifestTemplate       RoleQuery = "DeleteManifestTemplate"
+	CreateImageRegistry          RoleQuery = "CreateImageRegistry"
+	UpdateImageRegistry          RoleQuery = "UpdateImageRegistry"
+	DeleteImageRegistry          RoleQuery = "DeleteImageRegistry"
 	GetYAMLData                  RoleQuery = "GetYAMLData"
 	PredefinedWorkflowOperations RoleQuery = "PredefinedWorkflowOperations"
+	GetPredefinedWorkflowList    RoleQuery = "GetPredefinedWorkflowList"
+	GetPredefinedExperimentYaml  RoleQuery = "GetPredefinedExperimentYaml"
+	ListDataSource               RoleQuery = "ListDataSource"
+	ListDashboard                RoleQuery = "ListDashboard"
+	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
+	ListManifestTemplate         RoleQuery = "ListManifestTemplate"
+	GetTemplateManifestByID      RoleQuery = "GetTemplateManifestByID"
+	ListImageRegistry            RoleQuery = "ListImageRegistry"
+	GetImageRegistry             RoleQuery = "GetImageRegistry"
 
 	MemberRoleOwnerString  = string(model.MemberRoleOwner)
 	MemberRoleEditorString = string(model.MemberRoleEditor)
@@ -52,27 +72,34 @@ const (
 )
 
 var MutationRbacRules = map[RoleQuery][]string{
-	UserClusterReg:      {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateChaosWorkFlow: {MemberRoleOwnerString, MemberRoleEditorString},
-	ReRunChaosWorkFlow:  {MemberRoleOwnerString, MemberRoleEditorString},
-	SendInvitation:      {MemberRoleOwnerString},
-	AcceptInvitation:    {MemberRoleViewerString, MemberRoleEditorString},
-	DeclineInvitation:   {MemberRoleViewerString, MemberRoleEditorString},
-	RemoveInvitation:    {MemberRoleOwnerString},
-	LeaveProject:        {MemberRoleViewerString, MemberRoleEditorString},
-	UpdateProjectName:   {MemberRoleOwnerString},
-	AddMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
-	SyncHub:             {MemberRoleOwnerString, MemberRoleEditorString},
-	UpdateChaosWorkflow: {MemberRoleOwnerString, MemberRoleEditorString},
-	UpdateMyHub:         {MemberRoleOwnerString, MemberRoleEditorString},
-	DeleteMyHub:         {MemberRoleOwnerString, MemberRoleEditorString},
-	EnableGitOps:        {MemberRoleOwnerString},
-	DisableGitOps:       {MemberRoleOwnerString},
-	UpdateGitOps:        {MemberRoleOwnerString},
-	CreateDataSource:    {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateDashBoard:     {MemberRoleOwnerString, MemberRoleEditorString},
-	UpdateDataSource:    {MemberRoleOwnerString, MemberRoleEditorString},
-	GetWorkflowRuns:     {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	UserClusterReg:         {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateChaosWorkFlow:    {MemberRoleOwnerString, MemberRoleEditorString},
+	ReRunChaosWorkFlow:     {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteChaosWorkflow:    {MemberRoleOwnerString, MemberRoleEditorString},
+	TerminateChaosWorkflow: {MemberRoleOwnerString, MemberRoleEditorString},
+	SyncWorkflow:           {MemberRoleOwnerString, MemberRoleEditorString},
+	SendInvitation:         {MemberRoleOwnerString},
+	AcceptInvitation:       {MemberRoleViewerString, MemberRoleEditorString},
+	DeclineInvitation:      {MemberRoleViewerString, MemberRoleEditorString},
+	RemoveInvitation:       {MemberRoleOwnerString},
+	LeaveProject:           {MemberRoleViewerString, MemberRoleEditorString},
+	UpdateProjectName:      {MemberRoleOwnerString},
+	AddMyHub:               {MemberRoleOwnerString, MemberRoleEditorString},
+	SyncHub:                {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateChaosWorkflow:    {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteClusterReg:       {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
+	EnableGitOps:           {MemberRoleOwnerString},
+	DisableGitOps:          {MemberRoleOwnerString},
+	UpdateGitOps:           {MemberRoleOwnerString},
+	CreateDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateDashBoard:        {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
+	GetWorkflowRuns:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetCluster: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
 	GetManifest:     {MemberRoleOwnerString, MemberRoleEditorString},
@@ -89,6 +116,19 @@ var MutationRbacRules = map[RoleQuery][]string{
 	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	SaveMyHub:                    {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
-	GetYAMLData:                  {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateImageRegistry:          {MemberRoleOwnerString},
+	UpdateImageRegistry:          {MemberRoleOwnerString},
+	DeleteImageRegistry:          {MemberRoleOwnerString},
+	GetYAMLData:                  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	PredefinedWorkflowOperations: {MemberRoleOwnerString, MemberRoleEditorString},
+	GetPredefinedWorkflowList:    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetPredefinedExperimentYaml:  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListDataSource:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListDashboard:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetGitOpsDetails:             {MemberRoleOwnerString},
+	ListManifestTemplate:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetTemplateManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListImageRegistry:            {MemberRoleOwnerString},
+	GetImageRegistry:             {MemberRoleOwnerString},
 }

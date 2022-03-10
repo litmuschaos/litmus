@@ -71,8 +71,11 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 	}, nil
 }
 
-func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
-	query := bson.D{{"workflow_id", workflow_id}}
+func DeleteWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
+	query := bson.D{
+		{"workflow_id", workflowID},
+		{"project_id", projectID},
+	}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
@@ -86,11 +89,11 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 		return false, err
 	}
 
-	if *workflow_id != "" && *workflowRunID != "" {
-		for _, workflow_run := range workflow.WorkflowRuns {
-			if workflow_run.WorkflowRunID == *workflowRunID {
+	if *workflowID != "" && *workflowRunID != "" {
+		for _, workflowRun := range workflow.WorkflowRuns {
+			if workflowRun.WorkflowRunID == *workflowRunID {
 				bool_true := true
-				workflow_run.IsRemoved = &bool_true
+				workflowRun.IsRemoved = &bool_true
 			}
 		}
 
@@ -101,7 +104,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 
 		return true, nil
 
-	} else if *workflow_id != "" && *workflowRunID == "" {
+	} else if *workflowID != "" && *workflowRunID == "" {
 		wf := model.ChaosWorkFlowInput{
 			ProjectID:    workflow.ProjectID,
 			WorkflowID:   &workflow.WorkflowID,
@@ -127,8 +130,11 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 	return false, err
 }
 
-func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
-	query := bson.D{{"workflow_id", workflow_id}}
+func TerminateWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
+	query := bson.D{
+		{"workflow_id", workflowID},
+		{"project_id", projectID},
+	}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
@@ -142,7 +148,7 @@ func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *
 		return false, err
 	}
 
-	if *workflow_id != "" && *workflowRunID != "" {
+	if *workflowID != "" && *workflowRunID != "" {
 		for _, workflow_run := range workflow.WorkflowRuns {
 			if workflow_run.WorkflowRunID == *workflowRunID {
 				workflow_run.Completed = true
@@ -817,8 +823,13 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 }
 
 // ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
-func ReRunWorkflow(workflowID string, username string) (string, error) {
-	query := bson.D{{"workflow_id", workflowID}, {"isRemoved", false}}
+func ReRunWorkflow(projectID string, workflowID string, username string) (string, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"workflow_id", workflowID},
+		{"isRemoved", false},
+	}
+
 	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
 		log.Print("Could not get workflow :", err)
@@ -964,8 +975,11 @@ func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.M
 }
 
 // DeleteWorkflowTemplate is used to delete the workflow template (update the is_removed field as true)
-func DeleteWorkflowTemplate(ctx context.Context, templateID string) (bool, error) {
-	query := bson.D{{"template_id", templateID}}
+func DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"template_id", templateID},
+	}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
@@ -989,21 +1003,24 @@ func IsTemplateAvailable(ctx context.Context, templateName string, projectID str
 	return false, nil
 }
 
-func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID string, r *store.StateData) (bool, error) {
+func SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string, r *store.StateData) (bool, error) {
 
-	query := bson.D{{"workflow_id", workflow_id}}
+	query := bson.D{
+		{"workflow_id", workflowID},
+		{"project_id", projectID},
+	}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
 
-	for _, workflow_run := range workflow.WorkflowRuns {
+	for _, workflowRun := range workflow.WorkflowRuns {
 		if workflow.IsRemoved == true {
 			return false, errors.New("workflow has been removed")
 		}
 
-		if workflow_run.WorkflowRunID == workflowRunID && !workflow_run.Completed && workflow.IsRemoved == false {
-			err = ops.ProcessWorkflowRunSync(workflow_id, &workflowRunID, workflow, r)
+		if workflowRun.WorkflowRunID == workflowRunID && !workflowRun.Completed && workflow.IsRemoved == false {
+			err = ops.ProcessWorkflowRunSync(workflowID, &workflowRunID, workflow, r)
 			if err != nil {
 				return false, err
 			}
