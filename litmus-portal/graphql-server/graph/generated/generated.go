@@ -249,7 +249,7 @@ type ComplexityRoot struct {
 		DeleteDataSource       func(childComplexity int, input model.DeleteDSInput) int
 		DeleteImageRegistry    func(childComplexity int, imageRegistryID string, projectID string) int
 		DeleteManifestTemplate func(childComplexity int, templateID string) int
-		DeleteMyHub            func(childComplexity int, hubID string) int
+		DeleteMyHub            func(childComplexity int, hubID string, projectID string) int
 		DisableGitOps          func(childComplexity int, projectID string) int
 		EnableGitOps           func(childComplexity int, config model.GitConfig) int
 		GeneraterSSHKey        func(childComplexity int) int
@@ -259,7 +259,7 @@ type ComplexityRoot struct {
 		PodLog                 func(childComplexity int, log model.PodLog) int
 		ReRunChaosWorkFlow     func(childComplexity int, workflowID string) int
 		SaveMyHub              func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		SyncHub                func(childComplexity int, id string) int
+		SyncHub                func(childComplexity int, id string, projectID string) int
 		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
 		TerminateChaosWorkflow func(childComplexity int, workflowid *string, workflowRunID *string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
@@ -665,12 +665,12 @@ type MutationResolver interface {
 	KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
-	SyncHub(ctx context.Context, id string) ([]*model.MyHubStatus, error)
+	SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error)
 	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	DeleteClusterReg(ctx context.Context, clusterID string) (string, error)
 	GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error)
 	UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error)
-	DeleteMyHub(ctx context.Context, hubID string) (bool, error)
+	DeleteMyHub(ctx context.Context, hubID string, projectID string) (bool, error)
 	GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
 	EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
@@ -1744,7 +1744,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["hub_id"].(string)), true
+		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["hub_id"].(string), args["projectID"].(string)), true
 
 	case "Mutation.disableGitOps":
 		if e.complexity.Mutation.DisableGitOps == nil {
@@ -1859,7 +1859,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string), args["projectID"].(string)), true
 
 	case "Mutation.syncWorkflow":
 		if e.complexity.Mutation.SyncWorkflow == nil {
@@ -4334,6 +4334,13 @@ type ImageRegistryResponse {
 	ssh
 }
 
+enum FileType {
+    EXPERIMENT
+    ENGINE
+    WORKFLOW
+    CSV
+}
+
 type MyHub {
 	id: ID!
 	RepoURL: String!
@@ -4467,7 +4474,7 @@ input ExperimentInput {
 	ChartName: String!
 	ExperimentName: String!
 	HubName: String!
-	FileType: String
+	FileType: FileType!
 }
 
 input CloningInput {
@@ -4878,7 +4885,7 @@ type Mutation {
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(id: ID!): [MyHubStatus!]! @authorized
+  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
@@ -4889,7 +4896,7 @@ type Mutation {
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hub_id: String!): Boolean! @authorized
+  deleteMyHub(hub_id: String!, projectID: String!): Boolean! @authorized
 
   # Gitops
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
@@ -5393,6 +5400,14 @@ func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context,
 		}
 	}
 	args["hub_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -5535,6 +5550,14 @@ func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, raw
 		}
 	}
 	args["id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -10985,7 +11008,7 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncHub(rctx, args["id"].(string))
+			return ec.resolvers.Mutation().SyncHub(rctx, args["id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -11283,7 +11306,7 @@ func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["hub_id"].(string))
+			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["hub_id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -22900,7 +22923,7 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 			}
 		case "FileType":
 			var err error
-			it.FileType, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.FileType, err = ec.unmarshalNFileType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFileType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -28461,6 +28484,15 @@ func (ec *executionContext) marshalNExperiments2ᚖgithubᚗcomᚋlitmuschaosᚋ
 		return graphql.Null
 	}
 	return ec._Experiments(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFileType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFileType(ctx context.Context, v interface{}) (model.FileType, error) {
+	var res model.FileType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNFileType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFileType(ctx context.Context, sel ast.SelectionSet, v model.FileType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {

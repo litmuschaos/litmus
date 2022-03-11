@@ -81,8 +81,13 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 			{"members", bson.D{
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
-					{"invitation", bson.D{
-						{"$ne", entities.DeclinedInvitation},
+					{"$and", bson.A{
+						bson.D{{"invitation", bson.D{
+							{"$ne", entities.DeclinedInvitation},
+						}}},
+						bson.D{{"invitation", bson.D{
+							{"$ne", entities.ExitedProject},
+						}}},
 					}},
 				}},
 			}}}

@@ -364,7 +364,7 @@ type Mutation {
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(id: ID!): [MyHubStatus!]! @authorized
+  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
@@ -375,7 +375,7 @@ type Mutation {
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hub_id: String!): Boolean! @authorized
+  deleteMyHub(hub_id: String!, projectID: String!): Boolean! @authorized
 
   # Gitops
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!

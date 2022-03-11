@@ -524,7 +524,7 @@ spec:
           resources:
             requests:
               memory: "150Mi"
-              cpu: "25m"
+              cpu: "125m"
               ephemeral-storage: "500Mi"
             limits:
               memory: "512Mi"
@@ -587,13 +587,24 @@ spec:
               memory: "512Mi"
               cpu: "250m"
               ephemeral-storage: "1Gi"
+      volumes:
+        - name: gitops-storage
+          emptyDir: {}
+        - name: hub-storage
+          emptyDir: {}
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
+          volumeMounts:
+            - mountPath: /tmp/gitops
+              name: gitops-storage
+            - mountPath: /tmp/version
+              name: hub-storage
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
@@ -719,6 +730,7 @@ spec:
             runAsUser: 2000
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
           envFrom:
             - configMapRef:
                 name: litmus-portal-admin-config
