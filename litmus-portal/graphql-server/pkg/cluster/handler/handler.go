@@ -190,21 +190,22 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 			}`,
 		}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, _ := authorization.GetUsername(tkn)
+		tkn := ctx.Value(authorization.AuthKey).(string)
+		username, _ := authorization.GetUsername(tkn)
 
-	for _, request := range requests {
-		SendRequestToSubscriber(clusterOps.SubscriberRequests{
-			K8sManifest: request,
-			RequestType: "delete",
-			ProjectID:   cluster.ProjectID,
-			ClusterID:   clusterID,
-			Namespace:   *cluster.AgentNamespace,
-			Username:    &username,
-		}, r)
+		for _, request := range requests {
+			SendRequestToSubscriber(clusterOps.SubscriberRequests{
+				K8sManifest: request,
+				RequestType: "delete",
+				ProjectID:   cluster.ProjectID,
+				ClusterID:   cluster.ClusterID,
+				Namespace:   *cluster.AgentNamespace,
+				Username:    &username,
+			}, r)
+		}
+
 	}
-
-	return "Successfully deleted cluster", nil
+	return "Successfully deleted clusters", nil
 }
 
 // QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters
