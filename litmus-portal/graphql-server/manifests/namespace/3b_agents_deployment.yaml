@@ -44,6 +44,9 @@ spec:
               cpu: 200m
               memory: 500Mi
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           envFrom:
             - configMapRef:
                 name: agent-config
@@ -52,6 +55,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -76,6 +88,9 @@ spec:
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           name: litmus-event-tracker
           envFrom:
             - configMapRef:
@@ -85,3 +100,12 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"

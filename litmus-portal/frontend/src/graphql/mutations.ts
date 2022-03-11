@@ -92,8 +92,8 @@ export const UPDATE_MY_HUB = gql`
 `;
 
 export const SYNC_REPO = gql`
-  mutation syncHub($id: ID!) {
-    syncHub(id: $id) {
+  mutation syncHub($id: ID!, $projectID: String!) {
+    syncHub(id: $id, projectID: $projectID) {
       id
       RepoURL
       RepoBranch
@@ -105,8 +105,8 @@ export const SYNC_REPO = gql`
 `;
 
 export const DELETE_HUB = gql`
-  mutation deleteMyHub($hub_id: String!) {
-    deleteMyHub(hub_id: $hub_id)
+  mutation deleteMyHub($hub_id: String!, $projectID: String!) {
+    deleteMyHub(hub_id: $hub_id, projectID: $projectID)
   }
 `;
 
