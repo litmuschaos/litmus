@@ -58,10 +58,12 @@ spec:
           resources:
             requests:
               memory: "300Mi"
-              cpu: "25m"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
             limits:
-              memory: "300Mi"
-              cpu: "25m"
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -101,7 +103,9 @@ spec:
           resources:
             requests:
               memory: "300Mi"
-              cpu: "25m"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
             limits:
-              memory: "300Mi"
-              cpu: "25m"
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
