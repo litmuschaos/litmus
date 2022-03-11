@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -188,15 +190,18 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 			}`,
 		}
 
-		for _, request := range requests {
-			SendRequestToSubscriber(clusterOps.SubscriberRequests{
-				K8sManifest: request,
-				RequestType: "delete",
-				ProjectID:   cluster.ProjectID,
-				ClusterID:   cluster.ClusterID,
-				Namespace:   *cluster.AgentNamespace,
-			}, r)
-		}
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, _ := authorization.GetUsername(tkn)
+
+	for _, request := range requests {
+		SendRequestToSubscriber(clusterOps.SubscriberRequests{
+			K8sManifest: request,
+			RequestType: "delete",
+			ProjectID:   cluster.ProjectID,
+			ClusterID:   clusterID,
+			Namespace:   *cluster.AgentNamespace,
+			Username:    &username,
+		}, r)
 	}
 
 	return "Successfully deleted cluster", nil
