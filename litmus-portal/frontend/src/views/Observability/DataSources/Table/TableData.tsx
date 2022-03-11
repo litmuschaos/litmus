@@ -84,6 +84,7 @@ const TableData: React.FC<TableDataProps> = ({
     if (mutate === true) {
       deleteDataSource({
         variables: {
+          projectID: getProjectID(),
           deleteDSInput: {
             ds_id: data.ds_id,
             force_delete: false,
