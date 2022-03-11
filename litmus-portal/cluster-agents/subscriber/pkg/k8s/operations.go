@@ -252,6 +252,10 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]string) {
 	newLabels := obj.GetLabels()
 
+	if len(newLabels) == 0 {
+		newLabels = make(map[string]string)
+	}
+
 	for label, value := range customLabels {
 		newLabels[label] = value
 	}
