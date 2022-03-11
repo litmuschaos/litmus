@@ -108,6 +108,7 @@ export interface UpdateDashboardInput {
 }
 
 export interface DeleteDashboardInput {
+  projectID: string;
   dbID: string;
 }
 

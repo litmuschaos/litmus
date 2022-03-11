@@ -167,7 +167,11 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
-      variables: { workflowid: wfid, workflow_run_id: '' },
+      variables: {
+        projectID: getProjectID(),
+        workflowID: wfid,
+        workflow_run_id: '',
+      },
     });
   };
   return (

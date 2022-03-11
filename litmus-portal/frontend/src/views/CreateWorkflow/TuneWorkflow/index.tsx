@@ -329,6 +329,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           ) {
             getTemplate({
               variables: {
+                projectID: getProjectID(),
                 data: (value as ChooseWorkflowRadio).id,
               },
             });
