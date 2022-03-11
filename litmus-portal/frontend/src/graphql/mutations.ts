@@ -22,8 +22,8 @@ export const ADD_WORKFLOW_TEMPLATE = gql`
 `;
 
 export const DELETE_WORKFLOW_TEMPLATE = gql`
-  mutation deleteManifestTemplate($data: String!) {
-    deleteManifestTemplate(template_id: $data)
+  mutation deleteManifestTemplate($projectID: String!, $data: String!) {
+    deleteManifestTemplate(projectID: $projectID, template_id: $data)
   }
 `;
 
@@ -119,9 +119,9 @@ export const GENERATE_SSH = gql`
   }
 `;
 
-export const DELETE_CLUSTER = gql`
-  mutation deleteCluster($cluster_id: String!) {
-    deleteClusterReg(cluster_id: $cluster_id)
+export const DELETE_CLUSTERS = gql`
+  mutation deleteClusters($projectID: String!, $cluster_ids: [String]!) {
+    deleteClusters(projectID: $projectID, cluster_ids: $cluster_ids)
   }
 `;
 
@@ -144,8 +144,8 @@ export const DISABLE_GITOPS = gql`
 `;
 
 export const RERUN_CHAOS_WORKFLOW = gql`
-  mutation rerunChaosWorkflow($data: String!) {
-    reRunChaosWorkFlow(workflowID: $data)
+  mutation rerunChaosWorkflow($projectID: String!, $data: String!) {
+    reRunChaosWorkFlow(projectID: $projectID, workflowID: $data)
   }
 `;
 
@@ -195,8 +195,11 @@ export const UPDATE_DATASOURCE = gql`
 `;
 
 export const DELETE_DATASOURCE = gql`
-  mutation deleteDataSource($deleteDSInput: deleteDSInput!) {
-    deleteDataSource(input: $deleteDSInput)
+  mutation deleteDataSource(
+    $projectID: String!
+    $deleteDSInput: deleteDSInput!
+  ) {
+    deleteDataSource(projectID: $projectID, input: $deleteDSInput)
   }
 `;
 
@@ -210,10 +213,12 @@ export const CREATE_DASHBOARD = gql`
 
 export const UPDATE_DASHBOARD = gql`
   mutation updateDashboard(
+    $projectID: String!
     $updateDBInput: updateDBInput!
     $chaosQueryUpdate: Boolean!
   ) {
     updateDashboard(
+      projectID: $projectID
       dashboard: $updateDBInput
       chaosQueryUpdate: $chaosQueryUpdate
     )
@@ -221,8 +226,8 @@ export const UPDATE_DASHBOARD = gql`
 `;
 
 export const DELETE_DASHBOARD = gql`
-  mutation deleteDashboard($dbID: String) {
-    deleteDashboard(db_id: $dbID)
+  mutation deleteDashboard($projectID: String!, $dbID: String) {
+    deleteDashboard(projectID: $projectID, db_id: $dbID)
   }
 `;
 
@@ -273,24 +278,42 @@ export const UPDATE_IMAGE_REGISTRY = gql`
 `;
 
 export const SYNC_WORKFLOW = gql`
-  mutation syncWorkflow($workflowid: String!, $workflow_run_id: String!) {
-    syncWorkflow(workflowid: $workflowid, workflow_run_id: $workflow_run_id)
+  mutation syncWorkflow(
+    $projectID: String!
+    $workflowID: String!
+    $workflow_run_id: String!
+  ) {
+    syncWorkflow(
+      projectID: $projectID
+      workflowID: $workflowID
+      workflow_run_id: $workflow_run_id
+    )
   }
 `;
 
 export const DELETE_WORKFLOW = gql`
-  mutation deleteWorkflow($workflowid: String!, $workflow_run_id: String!) {
+  mutation deleteWorkflow(
+    $projectID: String!
+    $workflowID: String
+    $workflow_run_id: String
+  ) {
     deleteChaosWorkflow(
-      workflowid: $workflowid
+      projectID: $projectID
+      workflowID: $workflowID
       workflow_run_id: $workflow_run_id
     )
   }
 `;
 
 export const TERMINATE_WORKFLOW = gql`
-  mutation terminateWorkflow($workflowid: String!, $workflow_run_id: String) {
+  mutation terminateWorkflow(
+    $projectID: String!
+    $workflowID: String
+    $workflow_run_id: String
+  ) {
     terminateChaosWorkflow(
-      workflowid: $workflowid
+      projectID: $projectID
+      workflowID: $workflowID
       workflow_run_id: $workflow_run_id
     )
   }

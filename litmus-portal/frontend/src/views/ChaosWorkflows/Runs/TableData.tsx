@@ -10,6 +10,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import {
@@ -21,7 +22,6 @@ import {
 } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TimePopOver from '../../../components/TimePopOver';
 import {
   DELETE_WORKFLOW,
@@ -39,8 +39,8 @@ import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
-import useStyles from './styles';
 import ManifestModal from './ManifestModal';
+import useStyles from './styles';
 
 interface TableDataProps {
   data: Partial<WorkflowRun>;
@@ -232,7 +232,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 onClick={() => {
                   syncWorkflow({
                     variables: {
-                      workflowid: data.workflow_id,
+                      projectID: getProjectID(),
+                      workflowID: data.workflow_id,
                       workflow_run_id: data.workflow_run_id,
                     },
                   });
@@ -247,7 +248,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 onClick={() => {
                   deleteWorkflow({
                     variables: {
-                      workflowid: data.workflow_id,
+                      projectID: getProjectID(),
+                      workflowID: data.workflow_id,
                       workflow_run_id: data.workflow_run_id,
                     },
                   });
@@ -519,7 +521,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               onClick={() => {
                 terminateWorkflow({
                   variables: {
-                    workflowid: data.workflow_id,
+                    projectID: getProjectID(),
+                    workflowID: data.workflow_id,
                     workflow_run_id: data.workflow_run_id,
                   },
                 });
