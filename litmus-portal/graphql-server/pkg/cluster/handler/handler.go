@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
@@ -148,7 +150,7 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 }
 
 // DeleteCluster takes clusterID and r parameters, deletes the cluster from the database and sends a request to the subscriber for clean-up
-func DeleteCluster(clusterID string, r store.StateData) (string, error) {
+func DeleteCluster(ctx context.Context, clusterID string, r store.StateData) (string, error) {
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
 	query := bson.D{{"cluster_id", clusterID}}
@@ -182,6 +184,9 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 		}`,
 	}
 
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, _ := authorization.GetUsername(tkn)
+
 	for _, request := range requests {
 		SendRequestToSubscriber(clusterOps.SubscriberRequests{
 			K8sManifest: request,
@@ -189,6 +194,7 @@ func DeleteCluster(clusterID string, r store.StateData) (string, error) {
 			ProjectID:   cluster.ProjectID,
 			ClusterID:   clusterID,
 			Namespace:   *cluster.AgentNamespace,
+			Username:    &username,
 		}, r)
 	}
 
