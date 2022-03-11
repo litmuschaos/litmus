@@ -384,7 +384,7 @@ type Mutation {
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(projectID: String!, cluster_ids: [String]!): String!
+  deleteClusters(projectID: String!, cluster_ids: [String]!): String!
     @authorized
 
   generaterSSHKey: SSHKey! @authorized

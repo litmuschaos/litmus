@@ -120,8 +120,8 @@ export const GENERATE_SSH = gql`
 `;
 
 export const DELETE_CLUSTERS = gql`
-  mutation deleteCluster($projectID: String!, $cluster_ids: [String]!) {
-    deleteClusterReg(projectID: $projectID, cluster_ids: $cluster_ids)
+  mutation deleteClusters($projectID: String!, $cluster_ids: [String]!) {
+    deleteClusters(projectID: $projectID, cluster_ids: $cluster_ids)
   }
 `;
 

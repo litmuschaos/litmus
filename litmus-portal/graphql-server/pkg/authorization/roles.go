@@ -23,7 +23,7 @@ const (
 	AddMyHub                     RoleQuery = "AddMyHub"
 	SyncHub                      RoleQuery = "SyncHub"
 	UpdateChaosWorkflow          RoleQuery = "UpdateChaosWorkflow"
-	DeleteClusterReg             RoleQuery = "DeleteClusterReg"
+	DeleteClusters               RoleQuery = "DeleteClusters"
 	UpdateMyHub                  RoleQuery = "UpdateMyHub"
 	DeleteMyHub                  RoleQuery = "DeleteMyHub"
 	EnableGitOps                 RoleQuery = "EnableGitOps"
@@ -87,7 +87,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	AddMyHub:               {MemberRoleOwnerString, MemberRoleEditorString},
 	SyncHub:                {MemberRoleOwnerString, MemberRoleEditorString},
 	UpdateChaosWorkflow:    {MemberRoleOwnerString, MemberRoleEditorString},
-	DeleteClusterReg:       {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteClusters:         {MemberRoleOwnerString, MemberRoleEditorString},
 	UpdateMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
 	EnableGitOps:           {MemberRoleOwnerString},

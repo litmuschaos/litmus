@@ -244,7 +244,7 @@ type ComplexityRoot struct {
 		CreateImageRegistry    func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
 		CreateManifestTemplate func(childComplexity int, templateInput *model.TemplateInput) int
 		DeleteChaosWorkflow    func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
-		DeleteClusterReg       func(childComplexity int, projectID string, clusterIds []*string) int
+		DeleteClusters         func(childComplexity int, projectID string, clusterIds []*string) int
 		DeleteDashboard        func(childComplexity int, projectID string, dbID *string) int
 		DeleteDataSource       func(childComplexity int, projectID string, input model.DeleteDSInput) int
 		DeleteImageRegistry    func(childComplexity int, imageRegistryID string, projectID string) int
@@ -667,7 +667,7 @@ type MutationResolver interface {
 	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error)
 	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
-	DeleteClusterReg(ctx context.Context, projectID string, clusterIds []*string) (string, error)
+	DeleteClusters(ctx context.Context, projectID string, clusterIds []*string) (string, error)
 	GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error)
 	UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error)
 	DeleteMyHub(ctx context.Context, hubID string, projectID string) (bool, error)
@@ -1674,17 +1674,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["projectID"].(string), args["workflowID"].(*string), args["workflow_run_id"].(*string)), true
 
-	case "Mutation.deleteClusterReg":
-		if e.complexity.Mutation.DeleteClusterReg == nil {
+	case "Mutation.deleteClusters":
+		if e.complexity.Mutation.DeleteClusters == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteClusterReg_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteClusters_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteClusterReg(childComplexity, args["projectID"].(string), args["cluster_ids"].([]*string)), true
+		return e.complexity.Mutation.DeleteClusters(childComplexity, args["projectID"].(string), args["cluster_ids"].([]*string)), true
 
 	case "Mutation.deleteDashboard":
 		if e.complexity.Mutation.DeleteDashboard == nil {
@@ -4905,7 +4905,7 @@ type Mutation {
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(projectID: String!, cluster_ids: [String]!): String!
+  deleteClusters(projectID: String!, cluster_ids: [String]!): String!
     @authorized
 
   generaterSSHKey: SSHKey! @authorized
@@ -5338,7 +5338,7 @@ func (ec *executionContext) field_Mutation_deleteChaosWorkflow_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteClusterReg_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteClusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -11204,7 +11204,7 @@ func (ec *executionContext) _Mutation_updateChaosWorkflow(ctx context.Context, f
 	return ec.marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deleteClusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11220,7 +11220,7 @@ func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, fiel
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteClusterReg_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deleteClusters_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -11229,7 +11229,7 @@ func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteClusterReg(rctx, args["projectID"].(string), args["cluster_ids"].([]*string))
+			return ec.resolvers.Mutation().DeleteClusters(rctx, args["projectID"].(string), args["cluster_ids"].([]*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -25735,8 +25735,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteClusterReg":
-			out.Values[i] = ec._Mutation_deleteClusterReg(ctx, field)
+		case "deleteClusters":
+			out.Values[i] = ec._Mutation_deleteClusters(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

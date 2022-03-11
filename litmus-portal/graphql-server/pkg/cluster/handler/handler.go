@@ -147,8 +147,8 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
 }
 
-// DeleteCluster takes clusterID and r parameters, deletes the cluster from the database and sends a request to the subscriber for clean-up
-func DeleteCluster(ctx context.Context, projectID string, clusterIds []*string, r store.StateData) (string, error) {
+// DeleteClusters takes clusterIDs and r parameters, deletes the clusters from the database and sends a request to the subscriber for clean-up
+func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string, r store.StateData) (string, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"cluster_id", bson.D{

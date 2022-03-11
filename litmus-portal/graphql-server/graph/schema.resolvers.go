@@ -167,15 +167,15 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model
 	return wfHandler.UpdateWorkflow(ctx, input, data_store.Store)
 }
 
-func (r *mutationResolver) DeleteClusterReg(ctx context.Context, projectID string, clusterIds []*string) (string, error) {
+func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string, clusterIds []*string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.DeleteClusterReg],
+		authorization.MutationRbacRules[authorization.DeleteClusters],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err
 	}
 
-	return clusterHandler.DeleteCluster(ctx, projectID, clusterIds, *data_store.Store)
+	return clusterHandler.DeleteClusters(ctx, projectID, clusterIds, *data_store.Store)
 }
 
 func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
