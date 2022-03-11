@@ -589,7 +589,7 @@ spec:
           volumeMounts:
             - mountPath: /tmp/gitops
               name: gitops-storage
-            - mountPath: /data/tmp
+            - mountPath: /tmp/version
               name: hub-storage
           securityContext:
             runAsUser: 2000
