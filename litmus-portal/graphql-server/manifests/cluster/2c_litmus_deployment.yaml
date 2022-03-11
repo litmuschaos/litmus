@@ -101,6 +101,7 @@ spec:
           env:
             - name: TSDB_SCRAPE_INTERVAL
               value: '10'
+          resources:
             requests:
               memory: "300Mi"
               cpu: "125m"
