@@ -234,7 +234,7 @@ func UpdateDataSource(datasource model.DSInput) (*model.DSResponse, error) {
 }
 
 // UpdateDashBoard function updates the dashboard based on it's ID
-func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
+func UpdateDashBoard(projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	if dashboard.DbID == "" {
@@ -242,6 +242,7 @@ func UpdateDashBoard(dashboard model.UpdateDBInput, chaosQueryUpdate bool) (stri
 	}
 
 	query := bson.D{
+		{"project_id", projectID},
 		{"db_id", dashboard.DbID},
 		{"is_removed", false},
 	}
@@ -500,10 +501,11 @@ func UpdatePanel(panels []*model.Panel) (string, error) {
 	return "successfully updated", nil
 }
 
-func DeleteDashboard(db_id *string) (bool, error) {
+func DeleteDashboard(projectID string, dbID *string) (bool, error) {
 
 	dashboardQuery := bson.D{
-		{"db_id", db_id},
+		{"project_id", projectID},
+		{"db_id", dbID},
 		{"is_removed", false},
 	}
 	dashboard, err := dbOperationsAnalytics.GetDashboard(dashboardQuery)
@@ -542,7 +544,7 @@ func DeleteDashboard(db_id *string) (bool, error) {
 
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
-	query := bson.D{{"db_id", db_id}}
+	query := bson.D{{"db_id", dbID}}
 	update := bson.D{{"$set", bson.D{
 		{"is_removed", true},
 		{"updated_at", time},
@@ -556,11 +558,12 @@ func DeleteDashboard(db_id *string) (bool, error) {
 	return true, nil
 }
 
-func DeleteDataSource(input model.DeleteDSInput) (bool, error) {
+func DeleteDataSource(projectID string, input model.DeleteDSInput) (bool, error) {
 
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
 	listDBQuery := bson.D{
+		{"project_id", projectID},
 		{"ds_id", input.DsID},
 		{"is_removed", false},
 	}

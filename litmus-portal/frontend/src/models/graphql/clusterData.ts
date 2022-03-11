@@ -56,6 +56,7 @@ export interface ClusterVars {
   project_id: string;
 }
 
-export interface DeleteCluster {
-  cluster_id: string;
+export interface DeleteClusters {
+  projectID: string;
+  cluster_ids: string;
 }
