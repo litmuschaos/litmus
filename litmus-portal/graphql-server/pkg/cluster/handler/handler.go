@@ -149,56 +149,63 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
 }
 
-// DeleteCluster takes clusterID and r parameters, deletes the cluster from the database and sends a request to the subscriber for clean-up
-func DeleteCluster(ctx context.Context, clusterID string, r store.StateData) (string, error) {
-	time := strconv.FormatInt(time.Now().Unix(), 10)
-
-	query := bson.D{{"cluster_id", clusterID}}
-	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
+// DeleteClusters takes clusterIDs and r parameters, deletes the clusters from the database and sends a request to the subscriber for clean-up
+func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string, r store.StateData) (string, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"cluster_id", bson.D{
+			{"$in", clusterIds},
+		}},
+	}
+	// Update cluster info in db
+	updatedAtTime := strconv.FormatInt(time.Now().Unix(), 10)
+	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", updatedAtTime}}}}
 
 	err := dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {
 		return "", err
 	}
-	cluster, err := dbOperationsCluster.GetCluster(clusterID)
+	clusters, err := dbOperationsCluster.GetClusters(ctx, query)
 	if err != nil {
 		return "", nil
 	}
 
-	requests := []string{
-		`{
-		   "apiVersion": "v1",
-		   "kind": "ConfigMap",
-		   "metadata": {
-			  "name": "agent-config",
-			  "namespace": ` + *cluster.AgentNamespace + `
-		   }
-		}`,
-		`{
-			"apiVersion": "apps/v1",
-			"kind": "Deployment",
-			"metadata": {
-				"name": "subscriber",
-				"namespace": ` + *cluster.AgentNamespace + `
-			}
-		}`,
+	for _, cluster := range clusters {
+		requests := []string{
+			`{
+		   		"apiVersion": "v1",
+		   		"kind": "ConfigMap",
+		   		"metadata": {
+					"name": "agent-config",
+					"namespace": ` + *cluster.AgentNamespace + `
+		   		}
+			}`,
+			`{
+				"apiVersion": "apps/v1",
+				"kind": "Deployment",
+				"metadata": {
+					"name": "subscriber",
+					"namespace": ` + *cluster.AgentNamespace + `
+				}
+			}`,
+		}
+
+		tkn := ctx.Value(authorization.AuthKey).(string)
+		username, _ := authorization.GetUsername(tkn)
+
+		for _, request := range requests {
+			SendRequestToSubscriber(clusterOps.SubscriberRequests{
+				K8sManifest: request,
+				RequestType: "delete",
+				ProjectID:   cluster.ProjectID,
+				ClusterID:   cluster.ClusterID,
+				Namespace:   *cluster.AgentNamespace,
+				Username:    &username,
+			}, r)
+		}
+
 	}
-
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, _ := authorization.GetUsername(tkn)
-
-	for _, request := range requests {
-		SendRequestToSubscriber(clusterOps.SubscriberRequests{
-			K8sManifest: request,
-			RequestType: "delete",
-			ProjectID:   cluster.ProjectID,
-			ClusterID:   clusterID,
-			Namespace:   *cluster.AgentNamespace,
-			Username:    &username,
-		}, r)
-	}
-
-	return "Successfully deleted cluster", nil
+	return "Successfully deleted clusters", nil
 }
 
 // QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters

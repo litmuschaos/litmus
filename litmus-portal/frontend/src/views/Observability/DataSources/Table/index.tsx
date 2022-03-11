@@ -490,6 +490,7 @@ const DataSourceTable: React.FC = () => {
               onClick={() =>
                 deleteDataSource({
                   variables: {
+                    projectID: getProjectID(),
                     deleteDSInput: {
                       ds_id: forceDeleteVars.dsID,
                       force_delete: true,

@@ -243,7 +243,11 @@ const TuneTheQueries = forwardRef(
         cluster_id: dashboardVars.agentID ?? '',
       };
       updateDashboard({
-        variables: { updateDBInput: dashboardInput, chaosQueryUpdate: false },
+        variables: {
+          projectID: getProjectID(),
+          updateDBInput: dashboardInput,
+          chaosQueryUpdate: false,
+        },
       });
     };
 

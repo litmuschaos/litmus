@@ -23,14 +23,14 @@ import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { ExperimentDetail } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import * as ImageRegistryActions from '../../../redux/actions/image_registry';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../utils/validate';
-import * as ImageRegistryActions from '../../../redux/actions/image_registry';
-import useStyles from './styles';
 import parsed from '../../../utils/yamlUtils';
+import useStyles from './styles';
 
 const WorkflowSettings = forwardRef((_, ref) => {
   const classes = useStyles();
@@ -160,6 +160,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
       if ((value as ChooseWorkflowRadio).selected === 'B') {
         getSavedTemplateDetails({
           variables: {
+            projectID: getProjectID(),
             data: (value as ChooseWorkflowRadio).id,
           },
         });
