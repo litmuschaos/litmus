@@ -152,7 +152,7 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model
 }
 
 func (r *mutationResolver) DeleteClusterReg(ctx context.Context, clusterID string) (string, error) {
-	return clusterHandler.DeleteCluster(clusterID, *data_store.Store)
+	return clusterHandler.DeleteCluster(ctx, clusterID, *data_store.Store)
 }
 
 func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
