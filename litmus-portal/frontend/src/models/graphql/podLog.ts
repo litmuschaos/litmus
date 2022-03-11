@@ -16,6 +16,23 @@ export interface PodLogResponse {
   log: string;
 }
 
+export interface ProbeResponse {
+  name: string;
+  type: string;
+  status: Object;
+}
+
+export interface ChaosResultResponse {
+  phase: string;
+  verdict: string;
+  failStep: string;
+  probeSuccessPercentage: string;
+  probeStatus: ProbeResponse[];
+  passedRuns: number;
+  failedRuns: number;
+  stoppedRuns: number;
+}
+
 export interface PodLogVars {
   podDetails: PodLogRequest;
 }

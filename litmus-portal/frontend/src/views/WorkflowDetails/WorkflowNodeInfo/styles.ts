@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 
   rightPanel: {
+    position: 'relative',
     width: '70%',
     height: '14.125rem',
   },

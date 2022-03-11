@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { Typography } from '@material-ui/core';
-import { ButtonOutlined, Modal } from 'litmus-ui';
+import { Typography, useTheme } from '@material-ui/core';
+import { Icon, Modal } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -37,6 +37,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
   workflow_name,
 }) => {
   const classes = useStyles();
+  const { palette } = useTheme();
   const { t } = useTranslation();
   const nodeSelection = useActions(NodeSelectionActions);
   const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
@@ -68,9 +69,13 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
       open={logsOpen}
       onClose={handleClose}
       modalActions={
-        <ButtonOutlined className={classes.closeButton} onClick={handleClose}>
-          &#x2715;
-        </ButtonOutlined>
+        <Icon
+          onClick={handleClose}
+          name="closeWrapped"
+          size="2xl"
+          style={{ cursor: 'pointer' }}
+          color={palette.text.hint}
+        />
       }
     >
       <div className={classes.root}>
