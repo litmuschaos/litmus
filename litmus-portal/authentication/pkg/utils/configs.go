@@ -28,8 +28,8 @@ var (
 	ProjectCollection            = "project"
 	UsernameField                = "username"
 	PasswordEncryptionCost       = 15
-	DefaultLitmusGqlGrpcEndpoint = ":8000"
-	DefaultLitmusGqlGrpcPort     = "localhost"
+	DefaultLitmusGqlGrpcEndpoint = "localhost"
+	DefaultLitmusGqlGrpcPort     = ":8000"
 )
 
 func getEnvAsInt(name string, defaultVal int) int {

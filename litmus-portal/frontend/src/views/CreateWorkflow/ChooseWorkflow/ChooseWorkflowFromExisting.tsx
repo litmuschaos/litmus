@@ -150,7 +150,10 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
                         <IconButton
                           onClick={() => {
                             deleteTemplate({
-                              variables: { data: templateData.template_id },
+                              variables: {
+                                projectID: getProjectID(),
+                                data: templateData.template_id,
+                              },
                             });
                           }}
                           className={classes.deleteButton}

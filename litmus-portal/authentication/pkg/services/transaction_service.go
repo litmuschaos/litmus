@@ -38,7 +38,7 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 
 		var deactivateTime string
 
-		if userRequest.IsDeactivate {
+		if *userRequest.IsDeactivate {
 			deactivateTime = strconv.FormatInt(time.Now().Unix(), 10)
 
 			// Checking if user is already deactivated
@@ -48,7 +48,7 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 		}
 
 		// Updating details in user collection
-		err = a.UpdateUserState(userRequest.Username, userRequest.IsDeactivate, deactivateTime)
+		err = a.UpdateUserState(userRequest.Username, *userRequest.IsDeactivate, deactivateTime)
 		if err != nil {
 			log.Info(err)
 			return utils.ErrServerError

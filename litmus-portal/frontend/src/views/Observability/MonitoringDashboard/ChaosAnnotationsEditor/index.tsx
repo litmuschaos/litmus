@@ -16,6 +16,7 @@ import {
   DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
   DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
 } from '../../../../pages/MonitoringDashboard/constants';
+import { getProjectID } from '../../../../utils/getSearchParams';
 import QueryEditor from './QueryEditor';
 import useStyles from './styles';
 
@@ -230,6 +231,7 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
               onClick={() =>
                 updateDashboard({
                   variables: {
+                    projectID: getProjectID(),
                     updateDBInput: {
                       db_id: dashboardVars.id ?? '',
                       chaos_event_query_template:

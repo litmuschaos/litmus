@@ -281,11 +281,13 @@ type Query {
 
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-  getYAMLData(experimentInput: ExperimentInput!): String!
+  getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
+    @authorized
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+    @authorized
 
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
@@ -313,7 +315,10 @@ type Query {
   # Manifest Template
   ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
 
-  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
+  GetTemplateManifestByID(
+    projectID: String!
+    template_id: String!
+  ): ManifestTemplate! @authorized
 
   #Image Registry Queries
   ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
@@ -335,18 +340,28 @@ type Mutation {
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
+    @authorized
 
   # removes workflow from cluster and db
-  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
-    @authorized
+  deleteChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflow_run_id: String
+  ): Boolean! @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
-    @authorized
+  terminateChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflow_run_id: String
+  ): Boolean! @authorized
 
-  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
-    @authorized
+  syncWorkflow(
+    projectID: String!
+    workflowID: String!
+    workflow_run_id: String!
+  ): Boolean! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -364,18 +379,19 @@ type Mutation {
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(id: ID!): [MyHubStatus!]! @authorized
+  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(cluster_id: String!): String! @authorized
+  deleteClusters(projectID: String!, cluster_ids: [String]!): String!
+    @authorized
 
   generaterSSHKey: SSHKey! @authorized
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hub_id: String!): Boolean! @authorized
+  deleteMyHub(hub_id: String!, projectID: String!): Boolean! @authorized
 
   # Gitops
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
@@ -394,21 +410,24 @@ type Mutation {
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
   updateDashboard(
+    projectID: String!
     dashboard: updateDBInput!
     chaosQueryUpdate: Boolean!
   ): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
-  deleteDashboard(db_id: String): Boolean! @authorized
+  deleteDashboard(projectID: String!, db_id: String): Boolean! @authorized
 
-  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  deleteDataSource(projectID: String!, input: deleteDSInput!): Boolean!
+    @authorized
 
   # Manifest Template
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
     @authorized
 
-  deleteManifestTemplate(template_id: String!): Boolean! @authorized
+  deleteManifestTemplate(projectID: String!, template_id: String!): Boolean!
+    @authorized
 
   #Image Registry Mutations
   createImageRegistry(
