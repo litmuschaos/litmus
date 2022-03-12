@@ -154,7 +154,7 @@ func main() {
 	router.Handle("/query", authorization.Middleware(srv))
 	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
 	router.HandleFunc("/status", handlers.StatusHandler)
-
+	router.HandleFunc("/readiness", handlers.ReadinessHandler)
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
 	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))

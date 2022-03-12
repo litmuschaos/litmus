@@ -36,6 +36,7 @@ type repository struct {
 // GetProject returns a project based on a query or filter value
 func (r repository) GetProjectByProjectID(projectID string) (*entities.Project, error) {
 	var project = new(entities.Project)
+
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.D{{"_id", projectID}}).Decode(&project)
 	if findOneErr != nil {
 		return nil, findOneErr

@@ -613,6 +613,23 @@ spec:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
+          livenessProbe:
+            grpc:
+              port: 8080
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+          readinessProbe:
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+            httpGet:
+              path: /readiness
+              port: 8000
           resources:
             requests:
               memory: "350Mi"
@@ -696,6 +713,10 @@ spec:
             - containerPort: 3000
             - containerPort: 3030
           imagePullPolicy: Always
+          livenessProbe:
+            grpc:
+              port: 3030
+            initialDelaySeconds: 10
           resources:
             requests:
               memory: "150Mi"
