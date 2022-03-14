@@ -27,6 +27,7 @@ type Repository interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
+	GetOwnerProjects(userID string) ([]string, error)
 }
 
 type repository struct {
@@ -322,6 +323,44 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 	}
 
 	return nil
+}
+
+// GetOwnerProjects takes a userID to retrieve the project IDs in which user is the owner
+func (r repository) GetOwnerProjects(userID string) ([]string, error) {
+	filter := bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", userID},
+				{"role", bson.D{
+					{"$eq", entities.RoleOwner},
+				}},
+			}},
+		}}}
+
+	pipeline := mongo.Pipeline{
+		bson.D{{"$match", filter}},
+		bson.D{{"$project", bson.M{
+			"_id": 1,
+		}}},
+	}
+
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []bson.M
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+
+	var projects []string
+
+	for _, result := range results {
+		projects = append(projects, result["_id"].(string))
+	}
+
+	return projects, nil
 }
 
 // NewRepo creates a new instance of this repository

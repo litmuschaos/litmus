@@ -613,3 +613,57 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		})
 	}
 }
+
+func GetOwnerProject(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
+		res, err := service.GetOwnerProjects(uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"data": res,
+		})
+
+	}
+}
+
+func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
+		projectID := c.Param("project_id")
+		var role string
+		err := validations.RbacValidator(uid,
+			projectID,
+			validations.MutationRbacRules["getProject"],
+			string(entities.AcceptedInvitation),
+			service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		project, err := service.GetProjectByProjectID(projectID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		for _, projectMember := range project.Members {
+			if projectMember.UserID == uid {
+				role = string(projectMember.Role)
+			}
+		}
+
+		c.JSON(200, gin.H{
+			"role": role,
+		})
+
+	}
+}

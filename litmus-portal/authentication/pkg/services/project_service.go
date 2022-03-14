@@ -20,6 +20,7 @@ type projectService interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
+	GetOwnerProjects(userID string) ([]string, error)
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -64,4 +65,7 @@ func (a applicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *
 
 func (a applicationService) UpdateProjectState(userID string, deactivateTime string) error {
 	return a.projectRepository.UpdateProjectState(userID, deactivateTime)
+}
+func (a applicationService) GetOwnerProjects(userID string) ([]string, error) {
+	return a.projectRepository.GetOwnerProjects(userID)
 }
