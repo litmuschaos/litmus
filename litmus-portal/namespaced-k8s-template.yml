@@ -7,36 +7,36 @@ kind: Role
 metadata:
   name: argo-role-for-litmusportal-server
 rules:
-- apiGroups: [""]
-  resources: [pods, pods/exec]
-  verbs: [create, get, list, watch, update, patch, delete]
-- apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, watch, list]
-- apiGroups: [""]
-  resources: [persistentvolumeclaims]
-  verbs: [create, delete]
-- apiGroups: [argoproj.io]
-  resources: [workflows, workflows/finalizers]
-  verbs: [get, list, watch, update, patch, delete, create]
-- apiGroups: [argoproj.io]
-  resources: [workflowtemplates, workflowtemplates/finalizers,workflowtasksets]
-  verbs: [get, list, watch]
-- apiGroups: [""]
-  resources: [serviceaccounts]
-  verbs: [get, list]
-- apiGroups: [""]
-  resources: [secrets]
-  verbs: [get]
-- apiGroups: [argoproj.io]
-  resources: [cronworkflows, cronworkflows/finalizers]
-  verbs: [get, list, watch, update, patch, delete]
-- apiGroups: [""]
-  resources: [events]
-  verbs: [create, patch]
-- apiGroups: [policy]
-  resources: [poddisruptionbudgets]
-  verbs: [create, get, delete]
+  - apiGroups: [""]
+    resources: [pods, pods/exec]
+    verbs: [create, get, list, watch, update, patch, delete]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, watch, list]
+  - apiGroups: [""]
+    resources: [persistentvolumeclaims]
+    verbs: [create, delete]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers]
+    verbs: [get, list, watch, update, patch, delete, create]
+  - apiGroups: [argoproj.io]
+    resources: [workflowtemplates, workflowtemplates/finalizers,workflowtasksets]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [serviceaccounts]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get]
+  - apiGroups: [argoproj.io]
+    resources: [cronworkflows, cronworkflows/finalizers]
+    verbs: [get, list, watch, update, patch, delete]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, patch]
+  - apiGroups: [policy]
+    resources: [poddisruptionbudgets]
+    verbs: [create, get, delete]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -65,27 +65,27 @@ metadata:
     app.kubernetes.io/managed-by: kubectl
     name: litmus-namespace-scope-for-litmusportal-server
 rules:
-- apiGroups: [""]
-  resources: [replicationcontrollers, secrets]
-  verbs: [get, list]
-- apiGroups: [apps.openshift.io]
-  resources: [deploymentconfigs]
-  verbs: [get, list]
-- apiGroups: [apps]
-  resources: [deployments, daemonsets, replicasets, statefulsets]
-  verbs: [get, list, update]
-- apiGroups: [batch]
-  resources: [jobs]
-  verbs: [get, list, create, deletecollection]
-- apiGroups: [argoproj.io]
-  resources: [rollouts]
-  verbs: [get, list]
-- apiGroups: [""]
-  resources: [pods, pods/exec, configmaps, events, services]
-  verbs: [get, create, update, patch, delete, list, watch, deletecollection]
-- apiGroups: [litmuschaos.io]
-  resources: [chaosengines, chaosexperiments, chaosresults]
-  verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [""]
+    resources: [replicationcontrollers, secrets]
+    verbs: [get, list]
+  - apiGroups: [apps.openshift.io]
+    resources: [deploymentconfigs]
+    verbs: [get, list]
+  - apiGroups: [apps]
+    resources: [deployments, daemonsets, replicasets, statefulsets]
+    verbs: [get, list, update]
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [get, list, create, deletecollection]
+  - apiGroups: [argoproj.io]
+    resources: [rollouts]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [pods, pods/exec, configmaps, events, services]
+    verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [litmuschaos.io]
+    resources: [chaosengines, chaosexperiments, chaosresults]
+    verbs: [get, create, update, patch, delete, list, watch, deletecollection]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -323,15 +323,15 @@ kind: Role
 metadata:
   name: event-tracker-role-for-litmusportal-server
 rules:
-- apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolicies]
-  verbs: [create, delete, get, list, patch, update, watch]
-- apiGroups: [eventtracker.litmuschaos.io] 
-  resources: [eventtrackerpolicies/status]
-  verbs: [get, patch, update]
-- apiGroups: ["", extensions, apps]
-  resources: [deployments, daemonsets, statefulsets, pods, configmaps]
-  verbs: [get, list, watch]
+  - apiGroups: [eventtracker.litmuschaos.io]
+    resources: [eventtrackerpolicies]
+    verbs: [create, delete, get, list, patch, update, watch]
+  - apiGroups: [eventtracker.litmuschaos.io]
+    resources: [eventtrackerpolicies/status]
+    verbs: [get, patch, update]
+  - apiGroups: ["", extensions, apps]
+    resources: [deployments, daemonsets, statefulsets, pods, configmaps]
+    verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -557,7 +557,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             [
-              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+                "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
           resources:
             requests:
@@ -633,23 +633,6 @@ spec:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
-          livenessProbe:
-            grpc:
-              port: 8080
-            initialDelaySeconds: 300
-            periodSeconds: 30
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 1
-          readinessProbe:
-            initialDelaySeconds: 300
-            periodSeconds: 30
-            timeoutSeconds: 1
-            successThreshold: 1
-            failureThreshold: 1
-            httpGet:
-              path: /readiness
-              port: 8000
           resources:
             requests:
               memory: "250Mi"
@@ -679,7 +662,7 @@ spec:
       targetPort: 3000
     - name: auth-rpc-server
       port: 3030
-      targetPort: 3030   
+      targetPort: 3030
   selector:
     component: litmusportal-server
 ---
@@ -706,7 +689,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             [
-              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+                "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
           resources:
             requests:
@@ -745,10 +728,6 @@ spec:
             - containerPort: 3000
             - containerPort: 3030
           imagePullPolicy: Always
-          livenessProbe:
-            grpc:
-              port: 3030
-            initialDelaySeconds: 10
           resources:
             requests:
               memory: "250Mi"
@@ -771,7 +750,7 @@ spec:
       targetPort: 3000
     - name: auth-rpc-server
       port: 3030
-      targetPort: 3030   
+      targetPort: 3030
   selector:
     component: litmusportal-auth-server
 ---
@@ -797,7 +776,7 @@ spec:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
           securityContext:
-#            runAsUser: 2000
+            #            runAsUser: 2000
             allowPrivilegeEscalation: false
           args: ["--ipv6"]
           ports:
