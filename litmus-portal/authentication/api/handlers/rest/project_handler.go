@@ -613,3 +613,48 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		})
 	}
 }
+
+// GetOwnerProject returns an array of project IDs in which user is an owner
+func GetOwnerProjectIDs(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
+		res, err := service.GetOwnerProjectIDs(c, uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data": res,
+		})
+
+	}
+}
+
+// GetProjectRole returns the role of a user in the project
+func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.MustGet("uid").(string)
+		projectID := c.Param("project_id")
+		role := "N/A"
+		res, err := service.GetProjectRole(projectID, uid)
+		if err != nil {
+			log.Error(err)
+			if err == mongo.ErrNoDocuments {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrProjectNotFound], presenter.CreateErrorResponse(utils.ErrProjectNotFound))
+				return
+			}
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		if res != nil {
+			role = string(*res)
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"role": role,
+		})
+
+	}
+}
