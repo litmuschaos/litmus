@@ -7,6 +7,7 @@ import (
 	grpcPresenter "litmus/litmus-portal/authentication/api/presenter/protos"
 	"litmus/litmus-portal/authentication/api/routes"
 	"litmus/litmus-portal/authentication/pkg/entities"
+	"litmus/litmus-portal/authentication/pkg/misc"
 	"litmus/litmus-portal/authentication/pkg/project"
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/user"
@@ -53,10 +54,12 @@ func main() {
 
 	flag.Parse()
 
-	db, err := utils.DatabaseConnection()
+	client, err := utils.MongoConnection()
 	if err != nil {
 		log.Fatal("database connection error $s", err)
 	}
+
+	db := client.Database(utils.DBName)
 
 	// Creating User Collection
 	err = utils.CreateCollection(utils.UserCollection, db)
@@ -81,7 +84,9 @@ func main() {
 	projectCollection := db.Collection(utils.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
-	applicationService := services.NewService(userRepo, projectRepo, db)
+	miscRepo := misc.NewRepo(db, client)
+
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, db)
 
 	validatedAdminSetup(applicationService)
 
@@ -145,6 +150,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	if utils.DexEnabled {
 		routes.DexRouter(app, applicationService)
 	}
+	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
 
