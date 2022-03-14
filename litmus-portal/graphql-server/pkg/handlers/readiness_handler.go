@@ -39,7 +39,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 		if err != nil {
 			db_flag = "down"
 		}
-		
+
 		if !contains(dbs, "litmus") {
 			db_flag = "down"
 		}
