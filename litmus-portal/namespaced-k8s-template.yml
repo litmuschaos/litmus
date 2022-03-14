@@ -568,7 +568,6 @@ spec:
               memory: "512Mi"
               cpu: "250m"
               ephemeral-storage: "1Gi"
----
       volumes:
         - name: gitops-storage
           emptyDir: {}
@@ -580,7 +579,7 @@ spec:
           volumeMounts:
             - mountPath: /tmp/gitops
               name: gitops-storage
-            - mountPath: /data/tmp
+            - mountPath: /tmp/version
               name: hub-storage
           securityContext:
             runAsUser: 2000
@@ -701,7 +700,6 @@ spec:
               memory: "512Mi"
               cpu: "250m"
               ephemeral-storage: "1Gi"
----
       containers:
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
