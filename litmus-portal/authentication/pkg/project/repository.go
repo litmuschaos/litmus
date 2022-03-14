@@ -366,7 +366,6 @@ func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]st
 
 // GetProjectRole returns the role of a user in the project
 func (r repository) GetProjectRole(projectID string, userID string) (*entities.MemberRole, error) {
-
 	filter := bson.D{
 		{"_id", projectID},
 	}
