@@ -36,11 +36,19 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 		)
 
 		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mclient)
+		if err != nil {
+			db_flag = "down"
+		}
+		
 		if !contains(dbs, "litmus") {
 			db_flag = "down"
 		}
 
 		cols, err := mongodb.Operator.ListCollection(context.Background(), mclient)
+		if err != nil {
+			col_flag = "down"
+		}
+
 		if !contains(cols, "gitops-collection") || !contains(cols, "server-config-collection") || !contains(cols, "workflow-collection") {
 			col_flag = "down"
 		}

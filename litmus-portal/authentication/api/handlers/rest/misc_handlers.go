@@ -62,7 +62,7 @@ func Readiness(service services.ApplicationService) gin.HandlerFunc {
 
 		if err != nil {
 			log.Error(err)
-			c.JSON(500, ReadinessAPIStatus{"unknown", "down"})
+			c.JSON(500, ReadinessAPIStatus{db_flag, "down"})
 			return
 		}
 
