@@ -5,7 +5,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
-	"strconv"
 )
 
 func contains(s []string, str string) bool {
@@ -39,27 +38,25 @@ func Status(service services.ApplicationService) gin.HandlerFunc {
 
 func Readiness(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		log.Print("here")
 		var (
-			db_flag  = true
-			col_flag = true
+			db_flag  = "up"
+			col_flag = "up"
 		)
-		//dbs, err := service.ListDataBase()
-		////if !contains(dbs, "auth") {
-		////	db_flag = false
-		////}
-		//
-		//log.Print("here1")
-		//
-		//if err != nil {
-		//	log.Error(err)
-		//	c.JSON(500, ReadinessAPIStatus{"down", "unknown"})
-		//	return
-		//}
+
+		dbs, err := service.ListDataBase()
+		if !contains(dbs, "auth") {
+			db_flag = "down"
+		}
+
+		if err != nil {
+			log.Error(err)
+			c.JSON(500, ReadinessAPIStatus{"down", "unknown"})
+			return
+		}
 
 		cols, err := service.ListCollection()
-		if !contains(cols, "project") && !contains(cols, "users") {
-			col_flag = false
+		if !contains(cols, "project") || !contains(cols, "users") {
+			col_flag = "down"
 		}
 
 		if err != nil {
@@ -68,8 +65,6 @@ func Readiness(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		//log.Println(cols, dbs)
-
-		c.JSON(200, ReadinessAPIStatus{strconv.FormatBool(db_flag), strconv.FormatBool(col_flag)})
+		c.JSON(200, ReadinessAPIStatus{db_flag, col_flag})
 	}
 }

@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// DatabaseConnection creates a connection to the mongo database
-func DatabaseConnection() (*mongo.Database, error) {
+// MongoConnection creates a connection to the mongo
+func MongoConnection() (*mongo.Client, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	mongoCredentials := options.Credential{
 		Username: DBUser,
@@ -22,8 +22,8 @@ func DatabaseConnection() (*mongo.Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	db := client.Database(DBName)
-	return db, nil
+
+	return client, nil
 }
 
 // CreateIndex creates a unique index for the given field in the collectionName

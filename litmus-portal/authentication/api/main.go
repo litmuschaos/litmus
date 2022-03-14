@@ -54,10 +54,12 @@ func main() {
 
 	flag.Parse()
 
-	db, err := utils.DatabaseConnection()
+	client, err := utils.MongoConnection()
 	if err != nil {
 		log.Fatal("database connection error $s", err)
 	}
+
+	db := client.Database(utils.DBName)
 
 	// Creating User Collection
 	err = utils.CreateCollection(utils.UserCollection, db)
@@ -82,7 +84,7 @@ func main() {
 	projectCollection := db.Collection(utils.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
-	miscRepo := misc.NewRepo()
+	miscRepo := misc.NewRepo(db, client)
 
 	applicationService := services.NewService(userRepo, projectRepo, miscRepo, db)
 

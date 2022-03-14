@@ -2,7 +2,6 @@ package misc
 
 import (
 	"context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -14,9 +13,8 @@ type Repository interface {
 }
 
 type repository struct {
-	Collection *mongo.Collection
-	DataBase   *mongo.Database
-	Client     *mongo.Client
+	DataBase *mongo.Database
+	Client   *mongo.Client
 }
 
 func (r repository) ListCollection() ([]string, error) {
@@ -26,7 +24,6 @@ func (r repository) ListCollection() ([]string, error) {
 		return nil, err
 	}
 
-	fmt.Println(cols)
 	return cols, nil
 }
 
@@ -37,11 +34,12 @@ func (r repository) ListDataBase() ([]string, error) {
 		return nil, err
 	}
 
-	fmt.Println(dbs)
-
 	return dbs, nil
 }
 
-func NewRepo() Repository {
-	return &repository{}
+func NewRepo(db *mongo.Database, client *mongo.Client) Repository {
+	return &repository{
+		DataBase: db,
+		Client:   client,
+	}
 }
