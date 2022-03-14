@@ -30,7 +30,7 @@ const (
 // MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
 // and a initAllCollection method to initialize all DB Collections
 type MongoInterface interface {
-	Initialize() *MongoClient
+	Initialize(client *mongo.Client) *MongoClient
 	initAllCollection()
 }
 
@@ -74,8 +74,7 @@ var (
 	backgroundContext = context.Background()
 )
 
-// Initialize initializes database connection
-func (m *MongoClient) Initialize() *MongoClient {
+func MongoConnection() (*mongo.Client, error) {
 	var (
 		dbServer   = os.Getenv("DB_SERVER")
 		dbUser     = os.Getenv("DB_USER")
@@ -107,6 +106,11 @@ func (m *MongoClient) Initialize() *MongoClient {
 		logrus.Print("Connected To MongoDB")
 	}
 
+	return client, nil
+}
+
+// Initialize initializes database connection
+func (m *MongoClient) Initialize(client *mongo.Client) *MongoClient {
 	m.Database = client.Database(dbName)
 	m.initAllCollection()
 	return m
