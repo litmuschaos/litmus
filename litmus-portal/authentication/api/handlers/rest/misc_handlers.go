@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 func contains(s []string, str string) bool {

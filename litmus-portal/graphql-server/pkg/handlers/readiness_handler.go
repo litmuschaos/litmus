@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/mongo"
-	"net/http"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
