@@ -6,8 +6,6 @@ metadata:
   namespace: #{AGENT-NAMESPACE}
 data:
   SERVER_ADDR: #{SERVER_ADDR}
-  CLUSTER_ID: #{CLUSTER_ID}
-  ACCESS_KEY: #{ACCESS_KEY}
   AGENT_SCOPE: #{AGENT-SCOPE}
   VERSION: #{VERSION}
   START_TIME: #{START_TIME}
@@ -16,6 +14,15 @@ data:
   IS_CLUSTER_CONFIRMED: #{IS_CLUSTER_CONFIRMED}
   COMPONENTS: |
     DEPLOYMENTS: #{AGENT-DEPLOYMENTS}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: agent-secret
+  namespace: #{AGENT-NAMESPACE}
+stringData:
+  CLUSTER_ID: #{CLUSTER_ID}
+  ACCESS_KEY: #{ACCESS_KEY}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,6 +53,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: agent-config
+            - secretRef:
+                name: agent-secret
           env:
             - name: AGENT_NAMESPACE
               valueFrom:
@@ -54,10 +63,12 @@ spec:
           resources:
             requests:
               memory: "300Mi"
-              cpu: "25m"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
             limits:
-              memory: "300Mi"
-              cpu: "25m"
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -89,6 +100,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: agent-config
+            - secretRef:
+                name: agent-secret
           env:
             - name: AGENT_NAMESPACE
               valueFrom:
@@ -97,7 +110,9 @@ spec:
           resources:
             requests:
               memory: "300Mi"
-              cpu: "25m"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
             limits:
-              memory: "300Mi"
-              cpu: "25m"
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"

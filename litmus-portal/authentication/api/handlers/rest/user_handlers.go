@@ -266,6 +266,10 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		if userRequest.IsDeactivate == nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
 
 		var adminUser entities.User
 		adminUser.UserName = c.MustGet("username").(string)
