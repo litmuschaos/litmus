@@ -3,10 +3,9 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
-	"strconv"
-
-	dbMiscCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/misc"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
@@ -27,29 +26,33 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func ReadinessHandler(w http.ResponseWriter, r *http.Request) {
-	var (
-		db_flag  = true
-		col_flag = true
-	)
+func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler {
 
-	dbs, err := dbMiscCluster.ListDataBase(context.Background())
-	if !contains(dbs, "litmus") {
-		db_flag = false
-	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var (
+			db_flag  = "up"
+			col_flag = "up"
+		)
 
-	cols, err := dbMiscCluster.ListCollection(context.Background())
-	if !contains(cols, "gitops-collection") && !contains(cols, "server-config-collection") && !contains(cols, "workflow-collection") {
-		col_flag = false
-	}
+		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mclient)
+		if !contains(dbs, "litmus") {
+			db_flag = "down"
+		}
 
-	var status = ReadinessAPIStatus{Collections: strconv.FormatBool(db_flag), DataBase: strconv.FormatBool(col_flag)}
-	statusByte, err := json.Marshal(status)
-	if err != nil {
-		logrus.Error(status)
-		utils.WriteHeaders(&w, 400)
-	}
+		cols, err := mongodb.Operator.ListCollection(context.Background(), mclient)
+		if !contains(cols, "gitops-collection") || !contains(cols, "server-config-collection") || !contains(cols, "workflow-collection") {
+			col_flag = "down"
+		}
 
-	utils.WriteHeaders(&w, 200)
-	w.Write(statusByte)
+		var status = ReadinessAPIStatus{Collections: col_flag, DataBase: db_flag}
+		statusByte, err := json.Marshal(status)
+		if err != nil {
+			logrus.Error(status)
+			utils.WriteHeaders(&w, 400)
+		}
+
+		utils.WriteHeaders(&w, 200)
+		w.Write(statusByte)
+	})
+
 }

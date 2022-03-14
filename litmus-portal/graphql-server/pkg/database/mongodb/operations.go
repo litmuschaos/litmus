@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"context"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -22,8 +21,8 @@ type MongoOperator interface {
 	CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error)
 	Aggregate(ctx context.Context, collectionType int, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error)
 	GetCollection(collectionType int) (*mongo.Collection, error)
-	ListDataBase(ctx context.Context) ([]string, error)
-	ListCollection(ctx context.Context) ([]string, error)
+	ListCollection(ctx context.Context, mclient *mongo.Client) ([]string, error)
+	ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error)
 }
 
 type MongoOperations struct{}
@@ -175,9 +174,8 @@ func (m *MongoOperations) GetCollection(collectionType int) (*mongo.Collection, 
 	return GetCollectionClient.getCollection(collectionType)
 }
 
-func (m *MongoOperations) ListDataBase(ctx context.Context) ([]string, error) {
-	var mgo *mongo.Client
-	dbs, err := mgo.ListDatabaseNames(ctx, bson.D{})
+func (m *MongoOperations) ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error) {
+	dbs, err := mclient.ListDatabaseNames(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
@@ -185,9 +183,8 @@ func (m *MongoOperations) ListDataBase(ctx context.Context) ([]string, error) {
 	return dbs, nil
 }
 
-func (m *MongoOperations) ListCollection(ctx context.Context) ([]string, error) {
-	var mgo *mongo.Database
-	cols, err := mgo.ListCollectionNames(ctx, bson.D{})
+func (m *MongoOperations) ListCollection(ctx context.Context, mclient *mongo.Client) ([]string, error) {
+	cols, err := mclient.Database("litmus").ListCollectionNames(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
