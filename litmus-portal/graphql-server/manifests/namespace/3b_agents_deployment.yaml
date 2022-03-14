@@ -104,6 +104,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: agent-config
+            - secretRef:
+                name: agent-secret
           env:
             - name: AGENT_NAMESPACE
               valueFrom:
