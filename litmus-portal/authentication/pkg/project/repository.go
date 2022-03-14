@@ -27,6 +27,8 @@ type Repository interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
+	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
+	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 }
 
 type repository struct {
@@ -36,6 +38,7 @@ type repository struct {
 // GetProject returns a project based on a query or filter value
 func (r repository) GetProjectByProjectID(projectID string) (*entities.Project, error) {
 	var project = new(entities.Project)
+
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.D{{"_id", projectID}}).Decode(&project)
 	if findOneErr != nil {
 		return nil, findOneErr
@@ -322,6 +325,72 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 	}
 
 	return nil
+}
+
+// GetOwnerProjectIDs takes a userID to retrieve the project IDs in which user is the owner
+func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error) {
+	filter := bson.D{
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", userID},
+				{"role", bson.D{
+					{"$eq", entities.RoleOwner},
+				}},
+			}},
+		}}}
+
+	pipeline := mongo.Pipeline{
+		bson.D{{"$match", filter}},
+		bson.D{{"$project", bson.M{
+			"_id": 1,
+		}}},
+	}
+
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []bson.M
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	var projects []string
+
+	for _, result := range results {
+		projects = append(projects, result["_id"].(string))
+	}
+
+	return projects, nil
+}
+
+// GetProjectRole returns the role of a user in the project
+func (r repository) GetProjectRole(projectID string, userID string) (*entities.MemberRole, error) {
+	filter := bson.D{
+		{"_id", projectID},
+	}
+	projection := bson.D{
+		{"_id", 0},
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"user_id", userID},
+			}},
+		}},
+	}
+
+	var res struct {
+		Members []*entities.Member `bson:"members"`
+	}
+	findOneErr := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
+	if findOneErr != nil {
+		return nil, findOneErr
+	}
+
+	if len(res.Members) == 0 {
+		return nil, nil
+	}
+	return &(res.Members[0].Role), nil
 }
 
 // NewRepo creates a new instance of this repository
