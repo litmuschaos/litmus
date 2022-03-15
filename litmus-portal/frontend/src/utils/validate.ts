@@ -95,12 +95,15 @@ export const isValidWebUrl = (value: string) => {
     /^http:\/\/((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}:([0-9]){1,4}$/g;
   const sshRegEx =
     /^([A-Za-z0-9]+@|http(|s)\:\/\/)([-a-zA-Z0-9@:%._\+~#=]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git)?$/i;
+  const gitlabRegEx =
+    /gitlab-git([-a-zA-Z0-9@:%._\+~#=]+(:\d+)?)(?::|\/)([\d\/\w.-]+?)(\.git)?$/i;
   if (
     value.match(regEx) ||
     value.match(regExLocal) ||
     value.match(regExIpv4) ||
     value.match(regExIpv6) ||
-    value.match(sshRegEx)
+    value.match(sshRegEx) ||
+    value.match(gitlabRegEx)
   )
     return true;
   return false;
