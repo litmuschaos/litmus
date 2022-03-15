@@ -375,6 +375,7 @@ func (r repository) GetProjectRole(projectID string, userID string) (*entities.M
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
 				{"user_id", userID},
+				{"invitation", entities.AcceptedInvitation},
 			}},
 		}},
 	}
