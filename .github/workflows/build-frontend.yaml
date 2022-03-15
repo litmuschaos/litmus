@@ -1,0 +1,50 @@
+name: Docker Image CI
+on:
+  pull_request:
+    branches:
+      - master
+      - v*
+env:
+  DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    # Set job outputs to values from filter step
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'litmus-portal/frontend/**'
+  
+  frontend-checks:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Frontend checks
+        shell: bash
+        run: |
+          cd litmus-portal
+          make frontend-services-checks
+          
+  docker-build-frontend:
+    runs-on: ubuntu-latest
+    needs:
+      - frontend-checks
+      - changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build frontend docker image
+        shell: bash
+        run: |
+          cd litmus-portal/frontend
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
