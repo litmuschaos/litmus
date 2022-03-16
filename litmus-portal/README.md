@@ -22,10 +22,10 @@ Litmus-Portal provides console and UI experience for managing, monitoring, and e
 
 #### Applying k8s manifest
 
-> Litmus-2.6.0 (Stable) Cluster Scope manifest
+> Litmus-2.7.0 (Stable) Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.6.0/mkdocs/docs/2.6.0/litmus-2.6.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.7.0/mkdocs/docs/2.7.0/litmus-2.7.0.yaml
 ```
 
 Or
@@ -43,8 +43,8 @@ Or
 ```bash
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.6.0/litmus-portal/litmus-portal-crds.yml
-curl https://raw.githubusercontent.com/litmuschaos/litmus/2.6.0/mkdocs/docs/2.6.0/litmus-namespaced-2.6.0.yaml --output litmus-portal-namespaced-k8s-template.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.7.0/litmus-portal/litmus-portal-crds.yml
+curl https://raw.githubusercontent.com/litmuschaos/litmus/2.7.0/mkdocs/docs/2.7.0/litmus-namespaced-2.7.0.yaml --output litmus-portal-namespaced-k8s-template.yml
 envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 ```
@@ -90,7 +90,7 @@ Litmus-Portal provides console or UI experience for managing, monitoring, and ev
 
 View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
-### **Upgrade from 2.5.0 to 2.6.0**
+### **Upgrade from 2.6.0 to 2.7.0**
 
 You can upgrade using the steps from [section here](https://docs.litmuschaos.io/docs/user-guides/upgrade)
 
