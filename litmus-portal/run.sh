@@ -33,9 +33,9 @@ if  [ "$count" -lt 2 ] || [ "${dir[-2]}" != "litmus" ] || [ "${dir[-1]}" != "lit
 fi
 
 
-if [ $1 = "gql" ]; then
+if [[ $1 = "gql" ]]; then
   cd ./graphql-server && go run server.go;
-elif [ $1 = "auth" ]; then
+elif [[ $1 = "auth" ]]; then
   cd ./authentication && go run api/main.go;
 else printf "Error: Wrong Server Try Again\nUsage: \n  - bash run.sh gql\n  - bash run.sh auth\n";
 fi
