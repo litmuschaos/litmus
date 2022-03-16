@@ -657,12 +657,6 @@ spec:
     - name: graphql-rpc-server
       port: 8000
       targetPort: 8000
-    - name: auth-server
-      port: 9003
-      targetPort: 3000
-    - name: auth-rpc-server
-      port: 3030
-      targetPort: 3030
   selector:
     component: litmusportal-server
 ---
