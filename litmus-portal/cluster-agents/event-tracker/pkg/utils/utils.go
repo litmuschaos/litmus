@@ -37,6 +37,7 @@ const (
 	ExternAgentConfigName = "agent-config"
 	ConditionPassed       = "ConditionPassed"
 	//ConditionFailed       = "ConditionFailed"
+	// combining the consts blocks into one
 	StateFulSet = "statefulset"
 	Deployment  = "deployment"
 	DaemonSet   = "daemonset"
