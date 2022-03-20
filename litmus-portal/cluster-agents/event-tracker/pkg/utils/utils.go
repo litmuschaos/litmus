@@ -37,9 +37,6 @@ const (
 	ExternAgentConfigName = "agent-config"
 	ConditionPassed       = "ConditionPassed"
 	//ConditionFailed       = "ConditionFailed"
-)
-
-const (
 	StateFulSet = "statefulset"
 	Deployment  = "deployment"
 	DaemonSet   = "daemonset"
