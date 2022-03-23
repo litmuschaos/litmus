@@ -1,0 +1,90 @@
+## Policy for Self-agent Subscriber
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: subscriber-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: subscriber
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        # gql-server --> self-agent, Accepting workflow requests from gql-server
+        - podSelector:
+            matchLabels:
+              component: litmusportal-server
+
+        # external-agent --> gql-server connection, please commentout & update as per requirements
+        # - ipBlock:
+        #     cidr: 10.0.0.0/24
+
+  egress:
+    # Needs access to kube-api-server for applying the workflows & for sending events/requests to gql-server
+    - {}
+---
+#Policy for event-tracker
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: event-tracker-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: event-tracker
+  policyTypes:
+    - Egress
+  # Needs access to kube-api-server for reconcilation on workflows & target-applications annoted for gitOps
+  egress:
+    - {}
+---
+#Policy for workflow-controller
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: workflow-controller-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: workflow-controller
+  policyTypes:
+    - Egress
+  egress:
+    # Needs access to kube-api-server for reconcilation & running the scheduled workflows on the cluster
+    - {}
+---
+#Policy for chaos-operator
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chaos-operator-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: operator
+  policyTypes:
+    - Egress
+  egress:
+    # Needs access to kube-api-server for reconcilation & running the chaos-injection
+    - {}
+---
+#Policy for chaos-exporter
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chaos-exporter-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: chaos-exporter
+  policyTypes:
+    - Egress
+    - Ingress
+  Ingress:
+    # Prometheus needs access for fetching metrics. PORT - 8080
+    - {}
+  egress:
+    # Needs access to kube-api-server for metrics
+    - {}
