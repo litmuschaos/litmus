@@ -30,7 +30,7 @@ metadata:
     name: litmus-namespace-scope
 rules:
   - apiGroups: [""]
-    resources: ["replicationcontrollers", "secrets"]
+    resources: ["replicationcontrollers"]
     verbs: ["get", "list"]
   - apiGroups: ["apps.openshift.io"]
     resources: ["deploymentconfigs"]
@@ -45,7 +45,7 @@ rules:
     resources: ["rollouts"]
     verbs: ["get", "list"]
   - apiGroups: [""]
-    resources: ["pods", "pods/exec", "configmaps", "events", "services"]
+    resources: ["pods", "pods/exec", "events", "services"]
     verbs:
       [
         "get",

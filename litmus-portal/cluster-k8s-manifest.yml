@@ -11,9 +11,6 @@ rules:
   resources: [pods, pods/exec]
   verbs: [create, get, list, watch, update, patch, delete]
 - apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, watch, list]
-- apiGroups: [""]
   resources: [persistentvolumeclaims]
   verbs: [create, delete]
 - apiGroups: [argoproj.io]
@@ -64,7 +61,7 @@ metadata:
     name: litmus-cluster-scope-for-litmusportal-server
 rules:
   - apiGroups: [""]
-    resources: [replicationcontrollers, secrets]
+    resources: [replicationcontrollers]
     verbs: [get, list]
   - apiGroups: [apps.openshift.io]
     resources: [deploymentconfigs]
@@ -79,7 +76,7 @@ rules:
     resources: [rollouts]
     verbs: [get, list]
   - apiGroups: [""]
-    resources: [pods, configmaps, events, services]
+    resources: [pods, events, services]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
@@ -129,11 +126,6 @@ rules:
 - apiGroups: [""]
   resources: [pods,events]
   verbs: [create, delete, get, list, patch, update, deletecollection]
-
-  # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-- apiGroups: [""]
-  resources: [secrets, configmaps]
-  verbs: [get, list]
 
   # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
 - apiGroups: [""]
@@ -244,7 +236,7 @@ rules:
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
-    resources: [pods/log, secrets, configmaps]
+    resources: [pods/log]
     verbs: [get, watch, create, delete, patch]
 
   # for creation & deletion of application in predefined workflows
@@ -279,9 +271,6 @@ metadata:
     name: subscriber-cr-for-litmusportal-server
 rules:
 - apiGroups: [""]
-  resources: [configmaps]
-  verbs: [get, create, delete, update]
-- apiGroups: [""]
   resources: [pods/log]
   verbs: [get, list, watch]
 - apiGroups: [""]
@@ -315,6 +304,32 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: subscriber-role-for-litmusportal-server
+  namespace: litmus
+  labels:
+    name: subscriber-role-for-litmusportal-server
+rules:
+- apiGroups: [""]
+  resources: [configmaps]
+  verbs: [get, create, delete, update]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: subscriber-rb-for-litmusportal-server
+  namespace: litmus
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: litmus
+roleRef:
+  kind: Role
+  name: subscriber-role-for-litmusportal-server
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: event-tracker-cr-for-litmusportal-server
@@ -326,7 +341,7 @@ rules:
   resources: [eventtrackerpolicies/status]
   verbs: [get, patch, update]
 - apiGroups: ["", extensions, apps]
-  resources: [deployments, daemonsets, statefulsets, pods, configmaps]
+  resources: [deployments, daemonsets, statefulsets, pods]
   verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -341,9 +356,31 @@ subjects:
   - kind: ServiceAccount
     name: litmus-server-account
     namespace: litmus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: event-tracker-role-for-litmusportal-server
+rules:
+- apiGroups: [""]
+  resources: [configmaps]
+  verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: event-tracker-rb-for-litmusportal-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: event-tracker-role-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: litmus
+---
 # litmus-server-cr is used by the litmusportal-server
 # If SELF_CLUSTER=false, then only litmus-server-cr and litmus-server-crb are required.
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -383,8 +420,29 @@ subjects:
   - kind: ServiceAccount
     name: litmus-server-account
     namespace: litmus
-## Control plane manifests
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: litmus-server-role
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get]
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litmus-server-rb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-server-role
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: litmus
+---
+## Control plane manifests
 apiVersion: v1
 kind: Namespace
 metadata:

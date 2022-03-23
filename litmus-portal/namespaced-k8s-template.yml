@@ -11,9 +11,6 @@ rules:
     resources: [pods, pods/exec]
     verbs: [create, get, list, watch, update, patch, delete]
   - apiGroups: [""]
-    resources: [configmaps]
-    verbs: [get, watch, list]
-  - apiGroups: [""]
     resources: [persistentvolumeclaims]
     verbs: [create, delete]
   - apiGroups: [argoproj.io]
@@ -25,9 +22,6 @@ rules:
   - apiGroups: [""]
     resources: [serviceaccounts]
     verbs: [get, list]
-  - apiGroups: [""]
-    resources: [secrets]
-    verbs: [get]
   - apiGroups: [argoproj.io]
     resources: [cronworkflows, cronworkflows/finalizers]
     verbs: [get, list, watch, update, patch, delete]
@@ -66,7 +60,7 @@ metadata:
     name: litmus-namespace-scope-for-litmusportal-server
 rules:
   - apiGroups: [""]
-    resources: [replicationcontrollers, secrets]
+    resources: [replicationcontrollers]
     verbs: [get, list]
   - apiGroups: [apps.openshift.io]
     resources: [deploymentconfigs]
@@ -81,7 +75,7 @@ rules:
     resources: [rollouts]
     verbs: [get, list]
   - apiGroups: [""]
-    resources: [pods, pods/exec, configmaps, events, services]
+    resources: [pods, pods/exec, events, services]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
@@ -176,11 +170,6 @@ rules:
   - apiGroups: [""]
     resources: [pods, events]
     verbs: [create, delete, get, list, patch, update, deletecollection]
-
-    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-  - apiGroups: [""]
-    resources: [secrets, configmaps]
-    verbs: [get, list]
 
     # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
   - apiGroups: [""]
@@ -291,7 +280,7 @@ rules:
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
-    resources: [pods/log, secrets, configmaps]
+    resources: [pods/log]
     verbs: [get, watch, create, delete, patch]
 
   # for creation & deletion of application in predefined workflows

@@ -29,7 +29,7 @@ metadata:
     name: litmus-cluster-scope
 rules:
   - apiGroups: [""]
-    resources: ["replicationcontrollers", "secrets"]
+    resources: ["replicationcontrollers"]
     verbs: ["get", "list"]
   - apiGroups: ["apps.openshift.io"]
     resources: ["deploymentconfigs"]
@@ -44,7 +44,7 @@ rules:
     resources: ["rollouts"]
     verbs: ["get", "list"]
   - apiGroups: [""]
-    resources: ["pods", "configmaps", "events", "services"]
+    resources: ["pods", "events", "services"]
     verbs:
       [
         "get",

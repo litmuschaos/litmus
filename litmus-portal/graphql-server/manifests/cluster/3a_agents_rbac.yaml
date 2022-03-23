@@ -27,11 +27,6 @@ rules:
   resources: ["pods","events"]
   verbs: ["create","delete","get","list","patch","update", "deletecollection"]
 
-  # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-- apiGroups: [""]
-  resources: ["secrets","configmaps"]
-  verbs: ["get","list"]
-
   # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
 - apiGroups: [""]
   resources: ["pods/log"]
@@ -147,7 +142,7 @@ rules:
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: ['']
-    resources: ['pods/log', 'secrets', 'configmaps']
+    resources: ['pods/log']
     verbs: ['get', 'watch', 'create', 'delete', 'patch']
 
   # for creation & deletion of application in predefined workflows
@@ -181,10 +176,6 @@ metadata:
   labels:
     name: subscriber-cluster-role
 rules:
-- apiGroups: [""]
-  resources: ["configmaps"]
-  verbs: ["get","create","delete","update"]
-
 - apiGroups: [""]
   resources: ["pods/log"]
   verbs: ["get","list","watch"]
@@ -263,7 +254,6 @@ rules:
       - daemonsets
       - statefulsets
       - pods
-      - configmaps
     verbs:
       - get
       - list
@@ -281,3 +271,57 @@ subjects:
   - kind: ServiceAccount
     name: event-tracker-sa
     namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: event-tracker-role
+rules:
+  # This role is used to access agent-config
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: event-tracker-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: event-tracker-role
+subjects:
+  - kind: ServiceAccount
+    name: event-tracker-sa
+    namespace: #{AGENT-NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: subscriber-role
+  namespace: #{AGENT-NAMESPACE}
+  labels:
+    name: subscriber-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get","create","delete","update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: subscriber-role-binding
+  namespace: #{AGENT-NAMESPACE}
+subjects:
+  - kind: ServiceAccount
+    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
+    namespace: #{AGENT-NAMESPACE}
+roleRef:
+  kind: Role
+  name: subscriber-role
+  apiGroup: rbac.authorization.k8s.io

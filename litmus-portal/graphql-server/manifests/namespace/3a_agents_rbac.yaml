@@ -87,11 +87,6 @@ rules:
     verbs:
       ["create", "delete", "get", "list", "patch", "update", "deletecollection"]
 
-    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-  - apiGroups: [""]
-    resources: ["secrets", "configmaps"]
-    verbs: ["get", "list"]
-
     # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
   - apiGroups: [""]
     resources: ["pods/log"]
@@ -210,7 +205,7 @@ rules:
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: ['']
-    resources: ['pods/log', 'secrets', 'configmaps']
+    resources: ['pods/log']
     verbs: ['get', 'watch', 'create', 'delete', 'patch']
 
   # for creation & deletion of application in predefined workflows
