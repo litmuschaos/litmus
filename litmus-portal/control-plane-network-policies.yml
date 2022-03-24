@@ -1,20 +1,3 @@
-# ---
-# Default policy for denying all Ingress/Egress rules in given namespace (FOR TESTING, If applied, users will have to add rules for allowing traffic to DNS servers)
-# apiVersion: networking.k8s.io/v1
-# kind: NetworkPolicy
-# metadata:
-#   name: default-deny-ingress
-# spec:
-#   podSelector: {}
-#   egress:
-#     - ports:
-#         - port: 53
-#           protocol: UDP
-#         - port: 53
-#           protocol: TCP
-#   policyTypes:
-#     - Ingress
-#     - Egress
 ---
 # Policy for Mongo Database
 apiVersion: networking.k8s.io/v1

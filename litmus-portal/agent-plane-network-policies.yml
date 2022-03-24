@@ -82,7 +82,7 @@ spec:
   policyTypes:
     - Egress
     - Ingress
-  Ingress:
+  ingress:
     # Prometheus needs access for fetching metrics. PORT - 8080
     - {}
   egress:
