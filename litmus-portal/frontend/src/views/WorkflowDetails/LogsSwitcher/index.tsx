@@ -1,5 +1,12 @@
 import { useQuery, useSubscription } from '@apollo/client';
-import { Tabs, Typography, useTheme } from '@material-ui/core';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Tabs,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
 import { ButtonFilled, Icon } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -110,8 +117,17 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     stoppedRuns: 0,
   });
   const [stringResponse, setStringResponse] = useState<string>('');
+  const [expandedOne, setExpandedOne] = React.useState<boolean>(true);
+  const [expandedTwo, setExpandedTwo] = React.useState<boolean>(true);
+  const [expandedThree, setExpandedThree] = React.useState<boolean>(true);
 
   const toggleView = () => setToggledChaosResultView((prev: boolean) => !prev);
+
+  const handleAccordionChange = (option: string) => {
+    if (option === 'one') setExpandedOne((prev: boolean) => !prev);
+    if (option === 'two') setExpandedTwo((prev: boolean) => !prev);
+    if (option === 'three') setExpandedThree((prev: boolean) => !prev);
+  };
 
   useEffect(() => {
     if (workflow !== undefined) {
@@ -346,60 +362,146 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
                   typeof chaosResult !== 'string' &&
                   toggledChaosResultView === false ? (
                     <>
-                      <Typography className={classes.title}>
-                        Overall Node Result
-                      </Typography>
-                      <Typography>
-                        Experiment Verdict: {chaosResult.verdict}
-                      </Typography>
-                      <Typography>Phase: {chaosResult.phase}</Typography>
-                      <Typography>Fail Step: {chaosResult.failStep}</Typography>
-                      <hr />
-                      <Typography className={classes.title}>
-                        Chaos Engine Result
-                      </Typography>
-                      <Typography>
-                        Passed Runs: {chaosResult.passedRuns}
-                      </Typography>
-                      <Typography>
-                        Failed Runs: {chaosResult.failedRuns}
-                      </Typography>
-                      <Typography>
-                        Stopped Runs: {chaosResult.stoppedRuns}
-                      </Typography>
-                      {chaosResult.probeStatus.length > 0 ? (
-                        <>
-                          <hr />
+                      <Accordion
+                        expanded={expandedOne}
+                        className={classes.accordion}
+                        onChange={() => handleAccordionChange('one')}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel1d-content"
+                          id="panel1d-header"
+                          className={classes.summary}
+                          expandIcon={
+                            <Icon
+                              name="chevronRight"
+                              size="lg"
+                              color={theme.palette.common.white}
+                            />
+                          }
+                        >
                           <Typography className={classes.title}>
-                            Probe Result
+                            Overall Node Result
                           </Typography>
-                          <Typography>
-                            Probe Success Percentage:{' '}
-                            {chaosResult.probeSuccessPercentage}%
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <div className={classes.subText}>
+                            <Typography>
+                              Experiment Verdict:{' '}
+                              {chaosResult.verdict.toLowerCase() === 'pass' ? (
+                                <span className={classes.success}>
+                                  {chaosResult.verdict}
+                                </span>
+                              ) : (
+                                <span className={classes.failed}>
+                                  {chaosResult.verdict}
+                                </span>
+                              )}
+                            </Typography>
+                            <Typography>Phase: {chaosResult.phase}</Typography>
+                            <Typography>
+                              Fail Step: {chaosResult.failStep}
+                            </Typography>
+                          </div>
+                        </AccordionDetails>
+                      </Accordion>
+                      <hr className={classes.line} />
+                      <Accordion
+                        expanded={expandedTwo}
+                        className={classes.accordion}
+                        onChange={() => handleAccordionChange('two')}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel1d-content"
+                          id="panel1d-header"
+                          className={classes.summary}
+                          expandIcon={
+                            <Icon
+                              name="chevronRight"
+                              size="lg"
+                              color={theme.palette.common.white}
+                            />
+                          }
+                        >
+                          <Typography className={classes.title}>
+                            Chaos Engine Result
                           </Typography>
-                          <Typography>
-                            Probe Status:{' '}
-                            {chaosResult.probeStatus.map(
-                              (probe: ProbeResponse) => (
-                                <div className={classes.probeStatus}>
-                                  <Typography>Name: {probe.name}</Typography>
-                                  <Typography>Type: {probe.type}</Typography>
-                                  <Typography>
-                                    {YAML.stringify(probe.status)}
-                                  </Typography>
-                                  <br />
-                                </div>
-                              )
-                            )}
-                          </Typography>
-                        </>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <div className={classes.subText}>
+                            <Typography>
+                              Passed Runs: {chaosResult.passedRuns}
+                            </Typography>
+                            <Typography>
+                              Failed Runs: {chaosResult.failedRuns}
+                            </Typography>
+                            <Typography>
+                              Stopped Runs: {chaosResult.stoppedRuns}
+                            </Typography>
+                          </div>
+                        </AccordionDetails>
+                      </Accordion>
+                      {chaosResult.probeStatus.length > 0 ? (
+                        <div>
+                          <hr className={classes.line} />
+                          <Accordion
+                            expanded={expandedThree}
+                            className={classes.accordion}
+                            onChange={() => handleAccordionChange('three')}
+                          >
+                            <AccordionSummary
+                              aria-controls="panel1d-content"
+                              id="panel1d-header"
+                              className={classes.summary}
+                              expandIcon={
+                                <Icon
+                                  name="chevronRight"
+                                  size="lg"
+                                  color={theme.palette.common.white}
+                                />
+                              }
+                            >
+                              <Typography className={classes.title}>
+                                Probe Result
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <div className={classes.subText}>
+                                <Typography>
+                                  Probe Success Percentage:{' '}
+                                  <span className={classes.success}>
+                                    {chaosResult.probeSuccessPercentage}%
+                                  </span>
+                                </Typography>
+                                <Typography>
+                                  Probe Status:{' '}
+                                  {chaosResult.probeStatus.map(
+                                    (probe: ProbeResponse) => (
+                                      <div className={classes.probeStatus}>
+                                        <Typography>
+                                          Name: {probe.name}
+                                        </Typography>
+                                        <Typography>
+                                          Type: {probe.type}
+                                        </Typography>
+                                        <Typography>
+                                          {YAML.stringify(probe.status)}
+                                        </Typography>
+                                        <br />
+                                      </div>
+                                    )
+                                  )}
+                                </Typography>
+                              </div>
+                            </AccordionDetails>
+                          </Accordion>
+                        </div>
                       ) : null}
                     </>
                   ) : (
                     stringResponse
                   )
                 ) : (
-                  'Please wait while the node finishes execution'
+                  'Please wait for the node execution to finish'
                 )}
               </Typography>
             </div>
