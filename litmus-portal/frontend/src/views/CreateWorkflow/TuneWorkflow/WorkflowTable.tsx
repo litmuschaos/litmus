@@ -1,5 +1,12 @@
 /* eslint-disable no-const-assign */
-import { IconButton, Popover, Typography, useTheme } from '@material-ui/core';
+import {
+  IconButton,
+  Popover,
+  Tooltip,
+  Typography,
+  useTheme,
+  Zoom,
+} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -63,6 +70,7 @@ const WorkflowTable = forwardRef(
       useState<boolean>(false);
     const [engineIndex, setEngineIndex] = useState<number>(0);
     const [selected, setSelected] = useState<string>('');
+    const [editOpen, setEditOpen] = useState<boolean>(false);
     const manifest = useSelector(
       (state: RootState) => state.workflowManifest.manifest
     );
@@ -239,6 +247,13 @@ const WorkflowTable = forwardRef(
     };
 
     useEffect(() => {
+      if (experiments.length > 0) {
+        setEditOpen(true);
+        setTimeout(() => setEditOpen(false), 6000);
+      }
+    }, [experiments]);
+
+    useEffect(() => {
       if (manifest.length) {
         parsing(manifest);
       }
@@ -372,7 +387,10 @@ const WorkflowTable = forwardRef(
                 <TableBody>
                   {experiments.length > 0 ? (
                     experiments.map((experiment: ChaosCRDTable, index) => (
-                      <TableRow key={experiment.Name}>
+                      <TableRow
+                        style={{ position: 'relative' }}
+                        key={experiment.Name}
+                      >
                         <TableCell component="th" scope="row">
                           {index + 1}
                         </TableCell>
@@ -397,22 +415,51 @@ const WorkflowTable = forwardRef(
                         </TableCell>
                         <TableCell align="left">{experiment.Probes}</TableCell>
                         <TableCell>
-                          <IconButton
-                            onClick={() => {
-                              setDisplayStepper(true);
-                              setEngineIndex(experiment.StepIndex);
-                              workflow.setWorkflowManifest({
-                                engineYAML: experiment.ChaosEngine,
-                              });
-                            }}
-                            size="medium"
-                          >
-                            <Icon
-                              name="pencil"
-                              size="md"
-                              color={theme.palette.text.hint}
-                            />
-                          </IconButton>
+                          {editOpen && index === experiments.length - 1 ? (
+                            <Tooltip
+                              arrow
+                              TransitionComponent={Zoom}
+                              open={editOpen}
+                              placement="bottom-start"
+                              className={classes.tooltip}
+                              title="Click here to edit the experiment"
+                              onClose={() => setEditOpen(false)}
+                            >
+                              <IconButton
+                                onClick={() => {
+                                  setDisplayStepper(true);
+                                  setEngineIndex(experiment.StepIndex);
+                                  workflow.setWorkflowManifest({
+                                    engineYAML: experiment.ChaosEngine,
+                                  });
+                                }}
+                                size="medium"
+                              >
+                                <Icon
+                                  name="pencil"
+                                  size="md"
+                                  color={theme.palette.primary.main}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                          ) : (
+                            <IconButton
+                              onClick={() => {
+                                setDisplayStepper(true);
+                                setEngineIndex(experiment.StepIndex);
+                                workflow.setWorkflowManifest({
+                                  engineYAML: experiment.ChaosEngine,
+                                });
+                              }}
+                              size="medium"
+                            >
+                              <Icon
+                                name="pencil"
+                                size="md"
+                                color={theme.palette.primary.main}
+                              />
+                            </IconButton>
+                          )}
                         </TableCell>
                         <TableCell>
                           <IconButton
