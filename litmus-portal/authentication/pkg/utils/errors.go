@@ -12,8 +12,8 @@ var (
 	ErrStrictPasswordPolicyViolation AppError = errors.New("password_policy_violation")
 	ErrUnauthorized                  AppError = errors.New("unauthorized")
 	ErrUserExists                    AppError = errors.New("user_exists")
-	ErrUserNotFound                  AppError = errors.New("user does not exists")
-	ErrProjectNotFound               AppError = errors.New("project does not exists")
+	ErrUserNotFound                  AppError = errors.New("user does not exist")
+	ErrProjectNotFound               AppError = errors.New("project does not exist")
 	ErrWrongPassword                 AppError = errors.New("password doesn't match")
 	ErrUpdatingAdmin                 AppError = errors.New("cannot remove admin")
 	ErrUserDeactivated               AppError = errors.New("your account has been deactivated")
@@ -49,4 +49,5 @@ var ErrorDescriptions = map[AppError]string{
 	ErrStrictPasswordPolicyViolation: "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
 	ErrEmptyProjectName:              "Project name can't be empty",
 	ErrInvalidRole:                   "Role is invalid",
+	ErrProjectNotFound:               "This project does not exist",
 }

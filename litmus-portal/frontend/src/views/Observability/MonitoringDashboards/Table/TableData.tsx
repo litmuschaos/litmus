@@ -44,6 +44,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [dashboardSelectedForDeleting, setDashboardSelectedForDeleting] =
     React.useState<DeleteDashboardInput>({
+      projectID: '',
       dbID: '',
     });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -177,7 +178,10 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   useEffect(() => {
     if (mutate === true) {
       deleteDashboard({
-        variables: { dbID: dashboardSelectedForDeleting.dbID },
+        variables: {
+          projectID: getProjectID(),
+          dbID: dashboardSelectedForDeleting.dbID,
+        },
       });
     }
   }, [mutate]);
@@ -353,6 +357,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             value="Delete"
             onClick={() => {
               setDashboardSelectedForDeleting({
+                projectID: getProjectID(),
                 dbID: data.db_id,
               });
               setOpenModal(true);
