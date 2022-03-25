@@ -1,5 +1,5 @@
 ### RBAC Manifests
-## If SELF_CLUSTER="true" then these permissions are required to apply 
+## If SELF_AGENT="true" then these permissions are required to apply 
 ## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -346,7 +346,7 @@ subjects:
     name: litmus-server-account
     namespace: ${LITMUS_PORTAL_NAMESPACE}
 # litmus-server-role is used by the litmusportal-server
-# If SELF_CLUSTER=false, then only litmus-server-role and litmus-server-rb are required.
+# If SELF_AGENT=false, then only litmus-server-role and litmus-server-rb are required.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -596,7 +596,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: SELF_CLUSTER
+            - name: SELF_AGENT
               value: "true"
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64

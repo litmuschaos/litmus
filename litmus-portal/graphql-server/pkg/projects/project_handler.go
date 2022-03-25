@@ -42,7 +42,7 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 func ProjectInitializer(ctx context.Context, projectID string, role string) error {
 
 	var (
-		selfCluster = os.Getenv("SELF_CLUSTER")
+		selfCluster = os.Getenv("SELF_AGENT")
 		bl_true     = true
 	)
 

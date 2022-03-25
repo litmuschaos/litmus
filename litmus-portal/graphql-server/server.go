@@ -44,7 +44,7 @@ type Config struct {
 	AgentDeployments            string `required:"true" split_words:"true"`
 	DbServer                    string `required:"true" split_words:"true"`
 	JwtSecret                   string `required:"true" split_words:"true"`
-	SelfCluster                 string `required:"true" split_words:"true"`
+	SelfAgent                   string `required:"true" split_words:"true"`
 	AgentScope                  string `required:"true" split_words:"true"`
 	AgentNamespace              string `required:"true" split_words:"true"`
 	LitmusPortalNamespace       string `required:"true" split_words:"true"`
