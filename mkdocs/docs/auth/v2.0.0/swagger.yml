@@ -6,6 +6,7 @@ schemes:
   - http
 info:
   title: Litmus Portal Authentication API
+  version: 2.7.0
   description: |
     Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like:
      <li>Update Profile</li>
@@ -115,6 +116,12 @@ paths:
               created_at: "1627040098"
           schema:
             type: object
+      parameters:
+        - name: user_id
+          required: true
+          description: ID of the user
+          in: path
+          type: string
       produces:
         - application/json
   "/update/password":
@@ -432,7 +439,12 @@ paths:
                 RemovedAt: ""
           schema:
             type: object
-      parameters: []
+      parameters:
+        - name: project_id
+          required: true
+          description: ID of the project
+          in: path
+          type: string
       produces:
         - application/json
   "/get_user_with_project/{username}":
@@ -472,7 +484,12 @@ paths:
                   ]
           schema:
             type: object
-      parameters: []
+      parameters:
+        - name: username
+          required: true
+          description: username of the user
+          in: path
+          type: string
       produces:
         - application/json
   "/list_projects":
