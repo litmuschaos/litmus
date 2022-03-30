@@ -58,6 +58,28 @@ type ApplicationMetadataResponse struct {
 	Applications []*ResourceResponse `json:"applications"`
 }
 
+// Defines the details for a chaos workflow
+type ChaosWorkFlowInput struct {
+	// ID of the workflow
+	WorkflowID *string `json:"workflowID"`
+	// Manifest of the workflow
+	WorkflowManifest string `json:"workflowManifest"`
+	// Cron syntax of the workflow schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Description of the workflow
+	WorkflowDescription string `json:"workflowDescription"`
+	// Array containing weightage and name of each chaos experiment in the workflow
+	Weightages []*WeightagesInput `json:"weightages"`
+	// Bool value indicating whether the workflow is a custom workflow or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
+	// ID of the project under which the workflow is scheduled
+	ProjectID string `json:"projectID"`
+	// ID of the target cluster in which the workflow will run
+	ClusterID string `json:"clusterID"`
+}
+
 // Defines the response received for querying the details of chaos workflow
 type ChaosWorkFlowResponse struct {
 	// ID of the workflow
@@ -310,9 +332,12 @@ type DataVars struct {
 	RefreshInterval int    `json:"refreshInterval"`
 }
 
+// Defines the start date and end date for the filtering the data
 type DateRange struct {
-	StartDate string  `json:"startDate"`
-	EndDate   *string `json:"endDate"`
+	// Start date
+	StartDate string `json:"startDate"`
+	// End date
+	EndDate *string `json:"endDate"`
 }
 
 type DeleteDSInput struct {
@@ -345,18 +370,28 @@ type Experiments struct {
 	Desc string `json:"desc"`
 }
 
+// Defines the details for workflow runs
 type GetWorkflowRunsInput struct {
-	ProjectID      string                  `json:"projectID"`
-	WorkflowRunIDs []*string               `json:"workflowRunIDs"`
-	WorkflowIDs    []*string               `json:"workflowIDs"`
-	Pagination     *Pagination             `json:"pagination"`
-	Sort           *WorkflowRunSortInput   `json:"sort"`
-	Filter         *WorkflowRunFilterInput `json:"filter"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Array of workflow run IDs for which details will be fetched
+	WorkflowRunIDs []*string `json:"workflowRunIDs"`
+	// Array of workflow IDs for which details will be fetched
+	WorkflowIDs []*string `json:"workflowIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *WorkflowRunSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *WorkflowRunFilterInput `json:"filter"`
 }
 
+// Defines the details of a workflow to sent as response
 type GetWorkflowsOutput struct {
-	TotalNoOfWorkflowRuns int            `json:"totalNoOfWorkflowRuns"`
-	WorkflowRuns          []*WorkflowRun `json:"workflowRuns"`
+	// Total number of workflow runs
+	TotalNoOfWorkflowRuns int `json:"totalNoOfWorkflowRuns"`
+	// Defines details of workflow runs
+	WorkflowRuns []*WorkflowRun `json:"workflowRuns"`
 }
 
 // Details of setting a Git repository
@@ -528,17 +563,26 @@ type ListDashboardResponse struct {
 	ViewedAt                  *string                        `json:"viewedAt"`
 }
 
+// Defines the details for a workflow
 type ListWorkflowsInput struct {
-	ProjectID   string               `json:"projectID"`
-	WorkflowIDs []*string            `json:"workflowIDs"`
-	Pagination  *Pagination          `json:"pagination"`
-	Sort        *WorkflowSortInput   `json:"sort"`
-	Filter      *WorkflowFilterInput `json:"filter"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Array of workflow IDs for which details will be fetched
+	WorkflowIDs []*string `json:"workflowIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *WorkflowSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *WorkflowFilterInput `json:"filter"`
 }
 
+// Defines the details for a workflow with total workflow count
 type ListWorkflowsOutput struct {
-	TotalNoOfWorkflows int         `json:"totalNoOfWorkflows"`
-	Workflows          []*Workflow `json:"workflows"`
+	// Total number of workflows
+	TotalNoOfWorkflows int `json:"totalNoOfWorkflows"`
+	// Details related to the workflows
+	Workflows []*Workflow `json:"workflows"`
 }
 
 // Defines the details of the maintainer
@@ -673,8 +717,11 @@ type PackageInformation struct {
 	Experiments []*Experiments `json:"experiments"`
 }
 
+// Defines data required to fetch paginated data
 type Pagination struct {
-	Page  int `json:"page"`
+	// Page number for which data will be fetched
+	Page int `json:"page"`
+	// Number of data to be fetched
 	Limit int `json:"limit"`
 }
 
@@ -1003,9 +1050,12 @@ type UsageSortInput struct {
 	Descending bool `json:"descending"`
 }
 
+// Defines the details of the weightages of each chaos experiment in the workflow
 type Weightages struct {
+	// Name of the experiment
 	ExperimentName string `json:"experimentName"`
-	Weightage      int    `json:"weightage"`
+	// Weightage of the experiment
+	Weightage int `json:"weightage"`
 }
 
 // Defines the details of the weightages of each chaos experiment in the workflow
@@ -1016,48 +1066,86 @@ type WeightagesInput struct {
 	Weightage int `json:"weightage"`
 }
 
+// Defines the details for a workflow
 type Workflow struct {
-	WorkflowID          string        `json:"workflowID"`
-	WorkflowManifest    string        `json:"workflowManifest"`
-	CronSyntax          string        `json:"cronSyntax"`
-	ClusterName         string        `json:"clusterName"`
-	WorkflowName        string        `json:"workflowName"`
-	WorkflowDescription string        `json:"workflowDescription"`
-	Weightages          []*Weightages `json:"weightages"`
-	IsCustomWorkflow    bool          `json:"isCustomWorkflow"`
-	UpdatedAt           string        `json:"updatedAt"`
-	CreatedAt           string        `json:"createdAt"`
-	ProjectID           string        `json:"projectID"`
-	ClusterID           string        `json:"clusterID"`
-	ClusterType         string        `json:"clusterType"`
-	IsRemoved           bool          `json:"isRemoved"`
+	// ID of the workflow
+	WorkflowID string `json:"workflowID"`
+	// Manifest of the workflow
+	WorkflowManifest string `json:"workflowManifest"`
+	// Cron syntax of the workflow schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the target cluster in which the workflow is running
+	ClusterName string `json:"clusterName"`
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Description of the workflow
+	WorkflowDescription string `json:"workflowDescription"`
+	// Array containing weightage and name of each chaos experiment in the workflow
+	Weightages []*Weightages `json:"weightages"`
+	// Bool value indicating whether the workflow is a custom workflow or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
+	// Timestamp when the workflow was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the workflow was created
+	CreatedAt string `json:"createdAt"`
+	// ID of the project under which the workflow is scheduled
+	ProjectID string `json:"projectID"`
+	// ID of the target cluster in which the workflow will run
+	ClusterID string `json:"clusterID"`
+	// Cluster type : Internal or External
+	ClusterType string `json:"clusterType"`
+	// Bool value indicating if the workflow has removed
+	IsRemoved bool `json:"isRemoved"`
 }
 
+// Defines filter options for workflows
 type WorkflowFilterInput struct {
+	// Name of the workflow
 	WorkflowName *string `json:"workflowName"`
-	ClusterName  *string `json:"clusterName"`
+	// Name of the cluster agent in which the workflow is running
+	ClusterName *string `json:"clusterName"`
 }
 
+// Defines the details of a workflow run
 type WorkflowRun struct {
-	WorkflowRunID      string        `json:"workflowRunID"`
-	WorkflowID         string        `json:"workflowID"`
-	ClusterName        string        `json:"clusterName"`
-	Weightages         []*Weightages `json:"weightages"`
-	LastUpdated        string        `json:"lastUpdated"`
-	ProjectID          string        `json:"projectID"`
-	ClusterID          string        `json:"clusterID"`
-	WorkflowName       string        `json:"workflowName"`
-	ClusterType        *string       `json:"clusterType"`
-	Phase              string        `json:"phase"`
-	ResiliencyScore    *float64      `json:"resiliencyScore"`
-	ExperimentsPassed  *int          `json:"experimentsPassed"`
-	ExperimentsFailed  *int          `json:"experimentsFailed"`
-	ExperimentsAwaited *int          `json:"experimentsAwaited"`
-	ExperimentsStopped *int          `json:"experimentsStopped"`
-	ExperimentsNa      *int          `json:"experimentsNa"`
-	TotalExperiments   *int          `json:"totalExperiments"`
-	ExecutionData      string        `json:"executionData"`
-	IsRemoved          *bool         `json:"isRemoved"`
+	// ID of the workflow run which is to be queried
+	WorkflowRunID string `json:"workflowRunID"`
+	// ID of the workflow
+	WorkflowID string `json:"workflowID"`
+	// Name of the cluster agent in which the workflow is running
+	ClusterName string `json:"clusterName"`
+	// Array containing weightage and name of each chaos experiment in the workflow
+	Weightages []*Weightages `json:"weightages"`
+	// Timestamp at which workflow run was last updated
+	LastUpdated string `json:"lastUpdated"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// ID of the target cluster in which the workflow is running
+	ClusterID string `json:"clusterID"`
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Cluster type : Internal or External
+	ClusterType *string `json:"clusterType"`
+	// Phase of the workflow run
+	Phase string `json:"phase"`
+	// Resiliency score of the workflow
+	ResiliencyScore *float64 `json:"resiliencyScore"`
+	// Number of experiments passed
+	ExperimentsPassed *int `json:"experimentsPassed"`
+	// Number of experiments failed
+	ExperimentsFailed *int `json:"experimentsFailed"`
+	// Number of experiments awaited
+	ExperimentsAwaited *int `json:"experimentsAwaited"`
+	// Number of experiments stopped
+	ExperimentsStopped *int `json:"experimentsStopped"`
+	// Number of experiments which are not available
+	ExperimentsNa *int `json:"experimentsNa"`
+	// Total number of experiments
+	TotalExperiments *int `json:"totalExperiments"`
+	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+	ExecutionData string `json:"executionData"`
+	// Bool value indicating if the workflow run has removed
+	IsRemoved *bool `json:"isRemoved"`
 }
 
 type WorkflowRunDetails struct {
@@ -1065,11 +1153,16 @@ type WorkflowRunDetails struct {
 	DateStamp float64 `json:"dateStamp"`
 }
 
+// Defines input type for workflow run filter
 type WorkflowRunFilterInput struct {
-	WorkflowName   *string            `json:"workflowName"`
-	ClusterName    *string            `json:"clusterName"`
+	// Name of the workflow
+	WorkflowName *string `json:"workflowName"`
+	// Name of the cluster agent
+	ClusterName *string `json:"clusterName"`
+	// Status of the workflow run
 	WorkflowStatus *WorkflowRunStatus `json:"workflowStatus"`
-	DateRange      *DateRange         `json:"dateRange"`
+	// Date range for filtering purpose
+	DateRange *DateRange `json:"dateRange"`
 }
 
 // Defines the details for a workflow run
@@ -1082,7 +1175,7 @@ type WorkflowRunInput struct {
 	WorkflowName string `json:"workflowName"`
 	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
 	ExecutionData string `json:"executionData"`
-	// ID of the cluster in which the workflow is running
+	// ID of the cluster agent in which the workflow is running
 	ClusterID *ClusterIdentity `json:"clusterID"`
 	// Bool value indicating if the workflow run has completed
 	Completed bool `json:"completed"`
@@ -1090,9 +1183,12 @@ type WorkflowRunInput struct {
 	IsRemoved *bool `json:"isRemoved"`
 }
 
+// Defines sorting options for workflow runs
 type WorkflowRunSortInput struct {
-	Field      WorkflowSortingField `json:"field"`
-	Descending *bool                `json:"descending"`
+	// Field in which sorting will be done
+	Field WorkflowSortingField `json:"field"`
+	// Bool value indicating whether the sorting will be done in descending order
+	Descending *bool `json:"descending"`
 }
 
 type WorkflowRunStatsRequest struct {
@@ -1123,9 +1219,12 @@ type WorkflowRunsData struct {
 	WorkflowRunDetail *WorkflowRunDetails `json:"workflowRunDetail"`
 }
 
+// Defines sorting options for workflow
 type WorkflowSortInput struct {
-	Field      WorkflowSortingField `json:"field"`
-	Descending *bool                `json:"descending"`
+	// Field in which sorting will be done
+	Field WorkflowSortingField `json:"field"`
+	// Bool value indicating whether the sorting will be done in descending order
+	Descending *bool `json:"descending"`
 }
 
 // Defines details of workflow statistics
@@ -1141,28 +1240,6 @@ type WorkflowStat struct {
 type WorkflowStats struct {
 	Date  float64 `json:"date"`
 	Value int     `json:"value"`
-}
-
-// Defines the details for a chaos workflow
-type ChaosWorkFlowInput struct {
-	// ID of the workflow
-	WorkflowID *string `json:"workflowID"`
-	// Manifest of the workflow
-	WorkflowManifest string `json:"workflowManifest"`
-	// Cron syntax of the workflow schedule
-	CronSyntax string `json:"cronSyntax"`
-	// Name of the workflow
-	WorkflowName string `json:"workflowName"`
-	// Description of the workflow
-	WorkflowDescription string `json:"workflowDescription"`
-	// Array containing weightage and name of each chaos experiment in the workflow
-	Weightages []*WeightagesInput `json:"weightages"`
-	// Bool value indicating whether the workflow is a custom workflow or not
-	IsCustomWorkflow bool `json:"isCustomWorkflow"`
-	// ID of the project under which the workflow is scheduled
-	ProjectID string `json:"projectID"`
-	// ID of the target cluster in which the workflow will run
-	ClusterID string `json:"clusterID"`
 }
 
 type AuthType string

@@ -4205,6 +4205,319 @@ type PortalDashboardData {
     name: String!
     dashboardData: String!
 }`, BuiltIn: false},
+	&ast.Source{Name: "graph/cluster.graphqls", Input: `"""
+Defines the details for a cluster
+"""
+type Cluster {
+    """
+    ID of the cluster
+    """
+    clusterID: ID!
+    """
+    Project ID the cluster is being connected to
+    """
+    projectID: ID!
+    """
+    Name of the cluster
+    """
+    clusterName: String!
+    """
+    Description of the cluster
+    """
+    description: String
+    """
+    Cluster Platform Name eg. GKE,AWS, Others
+    """
+    platformName: String!
+
+    accessKey: String!
+    """
+    Bool value indicating if the cluster agent is registered or not
+    """
+    isRegistered: Boolean!
+    """
+    Bool value indicating if the cluster agent is confirmed or not
+    """
+    isClusterConfirmed: Boolean!
+    """
+    Bool value indicating if the cluster agent is active or not
+    """
+    isActive: Boolean!
+    """
+    Timestamp when the cluster agent was last updated
+    """
+    updatedAt: String!
+    """
+    Timestamp when the cluster agent was created
+    """
+    createdAt: String!
+    """
+    Cluster type : Internal or External
+    """
+    clusterType: String!
+    """
+    Number of schedules created in the cluster agent
+    """
+    noOfSchedules: Int
+    """
+    Number of workflows run in the cluster agent
+    """
+    noOfWorkflows: Int
+    """
+    Token used to verify and retrieve the cluster agent manifest
+    """
+    token: String!
+    """
+    Namespace where the cluster agent is being installed
+    """
+    agentNamespace: String
+    """
+    Name of service account used by cluster agent
+    """
+    serviceAccount: String
+    """
+    Scope of the cluster agent : ns or cluster
+    """
+    agentScope: String!
+    """
+    Bool value indicating whether agent ns used already exists on cluster or not
+    """
+    agentNsExists: Boolean
+    """
+    Bool value indicating whether service account used already exists on cluster or not
+    """
+    agentSaExists: Boolean
+    """
+    Timestamp of the last workflow run in the cluster agent
+    """
+    lastWorkflowTimestamp: String!
+    """
+    Timestamp when the cluster agent got connected
+    """
+    startTime: String!
+    """
+    Version of the cluster agent
+    """
+    version: String!
+}
+
+"""
+Defines the details for the new cluster being connected
+"""
+input ClusterInput {
+    """
+    Name of the cluster
+    """
+    clusterName: String!
+    """
+    Description of the cluster
+    """
+    description: String
+    """
+    Cluster Platform Name eg. GKE,AWS, Others
+    """
+    platformName: String!
+    """
+    Project ID the cluster is being connected to
+    """
+    projectID: ID!
+    """
+    Cluster type : Internal or External
+    """
+    clusterType: String!
+    """
+    Namespace where the cluster agent is being installed
+    """
+    agentNamespace: String
+    """
+    Name of service account used by cluster agent
+    """
+    serviceAccount: String
+    """
+    Scope of the cluster agent : ns or cluster
+    """
+    agentScope: String!
+    """
+    Bool value indicating whether agent ns used already exists on cluster or not
+    """
+    agentNsExists: Boolean
+    """
+    Bool value indicating whether service account used already exists on cluster or not
+    """
+    agentSaExists: Boolean
+    """
+    Bool value indicating whether agent will skip ssl checks or not
+    """
+    skipSsl: Boolean
+    """
+    Node selectors used by cluster agent
+    """
+    nodeSelector: String
+    """
+    Node tolerations used by cluster agent
+    """
+    tolerations: [Toleration]
+}
+
+input Toleration {
+    tolerationSeconds: Int
+    key: String
+    operator: String
+    effect: String
+    value: String
+}
+
+type ClusterEvent {
+    eventID: ID!
+    eventType: String!
+    eventName: String!
+    description: String!
+    cluster: Cluster!
+}
+
+type ActionPayload {
+    requestType: String!
+    k8sManifest: String!
+    namespace: String!
+    externalData: String
+}
+
+type ClusterAction {
+    projectID: ID!
+    action: ActionPayload!
+}
+
+input ClusterEventInput {
+    eventName: String!
+    description: String!
+    clusterID: String!
+    accessKey: String!
+}
+
+input ClusterIdentity {
+    clusterID: String!
+    accessKey: String!
+    version: String!
+}
+
+type ClusterConfirmResponse {
+    isClusterConfirmed: Boolean!
+    newAccessKey: String
+    clusterID: String
+}
+
+"""
+Response received for registering a new cluster
+"""
+type ClusterRegResponse {
+    """
+    Token used to verify and retrieve the cluster agent manifest
+    """
+    token: String!
+    """
+    Unique ID for the newly registered cluster
+    """
+    clusterID: String!
+    """
+    Cluster name as sent in request
+    """
+    clusterName: String!
+}
+`, BuiltIn: false},
+	&ast.Source{Name: "graph/gitops.graphqls", Input: `
+"""
+Defines the SSHKey details
+"""
+type SSHKey {
+    """
+    Public SSH key authenticating into git repository
+    """
+    publicKey: String!
+    """
+    Private SSH key authenticating into git repository
+    """
+    privateKey: String!
+}
+
+"""
+Details of setting a Git repository
+"""
+input GitConfig {
+    """
+    ID of the project where GitOps is configured
+    """
+    projectID: String!
+    """
+    Git branch where the chaos charts will be pushed and synced
+    """
+    branch: String!
+    """
+    URL of the Git repository
+    """
+    repoURL: String!
+    """
+    Type of authentication used: 	BASIC, SSH,	TOKEN
+    """
+    authType: AuthType!
+    """
+    Token used for private repository
+    """
+    token: String
+    """
+    Git username
+    """
+    userName: String
+    """
+    Git password
+    """
+    password: String
+    """
+    Private SSH key authenticating into git repository
+    """
+    sshPrivateKey: String
+}
+
+"""
+Response received after configuring GitOps
+"""
+type GitConfigResponse {
+    """
+    Bool value indicating whether GitOps is enabled or not
+    """
+    enabled: Boolean!
+    """
+    ID of the project where GitOps is configured
+    """
+    projectID: String!
+    """
+    Git branch where the chaos charts will be pushed and synced
+    """
+    branch: String
+    """
+    URL of the Git repository
+    """
+    repoURL: String
+    """
+    Type of authentication used: 	BASIC, SSH,	TOKEN
+    """
+    authType: AuthType
+    """
+    Token used for private repository
+    """
+    token: String
+    """
+    Git username
+    """
+    userName: String
+    """
+    Git password
+    """
+    password: String
+    """
+    Private SSH key authenticating into git repository
+    """
+    sshPrivateKey: String
+}`, BuiltIn: false},
 	&ast.Source{Name: "graph/image_registry.graphqls", Input: `"""
 Defines details for image registry
 """
@@ -4305,6 +4618,60 @@ type ImageRegistryResponse {
   Bool value indicating if the image registry has been removed
   """
   isRemoved: Boolean
+}
+`, BuiltIn: false},
+	&ast.Source{Name: "graph/k8s.graphqls", Input: `
+"""
+Response received for querying Kubernetes Object
+"""
+type KubeObjectResponse {
+    """
+    ID of the cluster in which the Kubernetes object is present
+    """
+    clusterID: ID!
+    """
+    Type of the Kubernetes object
+    """
+    kubeObj: String!
+}
+
+"""
+Defines the details of Kubernetes object
+"""
+input KubeObjectData {
+    """
+    Unique request ID for fetching Kubernetes object details
+    """
+    requestID: ID!
+    """
+    ID of the cluster in which the Kubernetes object is present
+    """
+    clusterID: ClusterIdentity!
+    """
+    Type of the Kubernetes object
+    """
+    kubeObj: String!
+}
+
+"""
+Defines details for fetching Kubernetes object data
+"""
+input KubeObjectRequest {
+    """
+    ID of the cluster in which the Kubernetes object is present
+    """
+    clusterID: ID!
+    """
+    Type of the Kubernetes object to be fetched
+    """
+    objectType: String!
+    kubeObjRequest: KubeGVRRequest!
+}
+
+input KubeGVRRequest {
+    group: String!
+    version: String!
+    resource: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
@@ -4705,646 +5072,6 @@ enum MemberRole {
 
 directive @authorized on FIELD_DEFINITION
 
-"""
-Defines the details for a cluster
-"""
-type Cluster {
-  """
-  ID of the cluster
-  """
-  clusterID: ID!
-  """
-  Project ID the cluster is being connected to
-  """
-  projectID: ID!
-  """
-  Name of the cluster
-  """
-  clusterName: String!
-  """
-  Description of the cluster
-  """
-  description: String
-  """
-  Cluster Platform Name eg. GKE,AWS, Others
-  """
-  platformName: String!
-
-  accessKey: String!
-  """
-  Bool value indicating if the cluster agent is registered or not
-  """
-  isRegistered: Boolean!
-  """
-  Bool value indicating if the cluster agent is confirmed or not
-  """
-  isClusterConfirmed: Boolean!
-  """
-  Bool value indicating if the cluster agent is active or not
-  """
-  isActive: Boolean!
-  """
-  Timestamp when the cluster agent was last updated
-  """
-  updatedAt: String!
-  """
-  Timestamp when the cluster agent was created
-  """
-  createdAt: String!
-  """
-  Cluster type : Internal or External
-  """
-  clusterType: String!
-  """
-  Number of schedules created in the cluster agent
-  """
-  noOfSchedules: Int
-  """
-  Number of workflows run in the cluster agent
-  """
-  noOfWorkflows: Int
-  """
-  Token used to verify and retrieve the cluster agent manifest
-  """
-  token: String!
-  """
-  Namespace where the cluster agent is being installed
-  """
-  agentNamespace: String
-  """
-  Name of service account used by cluster agent
-  """
-  serviceAccount: String
-  """
-  Scope of the cluster agent : ns or cluster
-  """
-  agentScope: String!
-  """
-  Bool value indicating whether agent ns used already exists on cluster or not
-  """
-  agentNsExists: Boolean
-  """
-  Bool value indicating whether service account used already exists on cluster or not
-  """
-  agentSaExists: Boolean
-  """
-  Timestamp of the last workflow run in the cluster agent
-  """
-  lastWorkflowTimestamp: String!
-  """
-  Timestamp when the cluster agent got connected
-  """
-  startTime: String!
-  """
-  Version of the cluster agent
-  """
-  version: String!
-}
-
-"""
-Defines the details for the new cluster being connected
-"""
-input ClusterInput {
-  """
-  Name of the cluster
-  """
-  clusterName: String!
-  """
-  Description of the cluster
-  """
-  description: String
-  """
-  Cluster Platform Name eg. GKE,AWS, Others
-  """
-  platformName: String!
-  """
-  Project ID the cluster is being connected to
-  """
-  projectID: ID!
-  """
-  Cluster type : Internal or External
-  """
-  clusterType: String!
-  """
-  Namespace where the cluster agent is being installed
-  """
-  agentNamespace: String
-  """
-  Name of service account used by cluster agent
-  """
-  serviceAccount: String
-  """
-  Scope of the cluster agent : ns or cluster
-  """
-  agentScope: String!
-  """
-  Bool value indicating whether agent ns used already exists on cluster or not
-  """
-  agentNsExists: Boolean
-  """
-  Bool value indicating whether service account used already exists on cluster or not
-  """
-  agentSaExists: Boolean
-  """
-  Bool value indicating whether agent will skip ssl checks or not
-  """
-  skipSsl: Boolean
-  """
-  Node selectors used by cluster agent
-  """
-  nodeSelector: String
-  """
-  Node tolerations used by cluster agent
-  """
-  tolerations: [Toleration]
-}
-
-input Toleration {
-  tolerationSeconds: Int
-  key: String
-  operator: String
-  effect: String
-  value: String
-}
-
-type ClusterEvent {
-  eventID: ID!
-  eventType: String!
-  eventName: String!
-  description: String!
-  cluster: Cluster!
-}
-
-type ActionPayload {
-  requestType: String!
-  k8sManifest: String!
-  namespace: String!
-  externalData: String
-}
-
-type ClusterAction {
-  projectID: ID!
-  action: ActionPayload!
-}
-
-input ClusterEventInput {
-  eventName: String!
-  description: String!
-  clusterID: String!
-  accessKey: String!
-}
-
-input ClusterIdentity {
-  clusterID: String!
-  accessKey: String!
-  version: String!
-}
-
-type ClusterConfirmResponse {
-  isClusterConfirmed: Boolean!
-  newAccessKey: String
-  clusterID: String
-}
-
-"""
-Defines the details of the weightages of each chaos experiment in the workflow
-"""
-input WeightagesInput {
-  """
-  Name of the experiment
-  """
-  experimentName: String!
-  """
-  Weightage of the experiment
-  """
-  weightage: Int!
-}
-
-"""
-Defines the details for a chaos workflow
-"""
-input chaosWorkFlowInput {
-  """
-  ID of the workflow
-  """
-  workflowID: String
-  """
-  Manifest of the workflow
-  """
-  workflowManifest: String!
-  """
-  Cron syntax of the workflow schedule
-  """
-  cronSyntax: String!
-  """
-  Name of the workflow
-  """
-  workflowName: String!
-  """
-  Description of the workflow
-  """
-  workflowDescription: String!
-  """
-  Array containing weightage and name of each chaos experiment in the workflow
-  """
-  weightages: [WeightagesInput!]!
-  """
-  Bool value indicating whether the workflow is a custom workflow or not
-  """
-  isCustomWorkflow: Boolean!
-  """
-  ID of the project under which the workflow is scheduled
-  """
-  projectID: ID!
-  """
-  ID of the target cluster in which the workflow will run
-  """
-  clusterID: ID!
-}
-
-"""
-Defines the response received for querying the details of chaos workflow
-"""
-type ChaosWorkFlowResponse {
-  """
-  ID of the workflow
-  """
-  workflowID: String!
-  """
-  Cron syntax of the workflow schedule
-  """
-  cronSyntax: String!
-  """
-  Name of the workflow
-  """
-  workflowName: String!
-  """
-  Description of the workflow
-  """
-  workflowDescription: String!
-  """
-  Bool value indicating whether the workflow is a custom workflow or not
-  """
-  isCustomWorkflow: Boolean!
-}
-
-"""
-Defines the details for a workflow run
-"""
-input WorkflowRunInput {
-  """
-  ID of the workflow
-  """
-  workflowID: ID!
-  """
-  ID of the workflow run which is to be queried
-  """
-  workflowRunID: ID!
-  """
-  Name of the workflow
-  """
-  workflowName: String!
-  """
-  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
-  """
-  executionData: String!
-  """
-  ID of the cluster in which the workflow is running
-  """
-  clusterID: ClusterIdentity!
-  """
-  Bool value indicating if the workflow run has completed
-  """
-  completed: Boolean!
-  """
-  Bool value indicating if the workflow run has removed
-  """
-  isRemoved: Boolean
-}
-
-"""
-Defines the response received for querying querying the pod logs
-"""
-type PodLogResponse {
-  """
-  ID of the workflow run which is to be queried
-  """
-  workflowRunID: ID!
-  """
-  Name of the pod for which logs are queried
-  """
-  podName: String!
-  """
-  Type of the pod: chaosengine
-  """
-  podType: String!
-  """
-  Logs for the pod
-  """
-  log: String!
-}
-
-"""
-Response received for querying pod logs
-"""
-input PodLog {
-  """
-  ID of the cluster
-  """
-  clusterID: ClusterIdentity!
-  """
-  Unique request ID of a particular node which is being queried
-  """
-  requestID: ID!
-  """
-  ID of a workflow run
-  """
-  workflowRunID: ID!
-  """
-  Name of the pod for which logs are required
-  """
-  podName: String!
-  """
-  Type of the pod: chaosengine
-  """
-  podType: String!
-  """
-  Logs for the pod
-  """
-  log: String!
-}
-
-"""
-Defines the details for fetching the pod logs
-"""
-input PodLogRequest {
-  """
-  ID of the cluster
-  """
-  clusterID: ID!
-  """
-  ID of a workflow run
-  """
-  workflowRunID: ID!
-  """
-  Name of the pod for which logs are required
-  """
-  podName: String!
-  """
-  Namespace where the pod is running
-  """
-  podNamespace: String!
-  """
-  Type of the pod: chaosengine or not pod
-  """
-  podType: String!
-  """
-  Name of the experiment pod fetched from execution data
-  """
-  expPod: String
-  """
-  Name of the runner pod fetched from execution data
-  """
-  runnerPod: String
-  """
-  Namespace where the experiment is executing
-  """
-  chaosNamespace: String
-}
-
-"""
-Response received for registering a new cluster
-"""
-type ClusterRegResponse {
-  """
-  Token used to verify and retrieve the cluster agent manifest
-  """
-  token: String!
-  """
-  Unique ID for the newly registered cluster
-  """
-  clusterID: String!
-  """
-  Cluster name as sent in request
-  """
-  clusterName: String!
-}
-
-"""
-Defines the SSHKey details
-"""
-type SSHKey {
-  """
-  Public SSH key authenticating into git repository
-  """
-  publicKey: String!
-  """
-  Private SSH key authenticating into git repository
-  """
-  privateKey: String!
-}
-
-"""
-Details of setting a Git repository
-"""
-input GitConfig {
-  """
-  ID of the project where GitOps is configured
-  """
-  projectID: String!
-  """
-  Git branch where the chaos charts will be pushed and synced
-  """
-  branch: String!
-  """
-  URL of the Git repository
-  """
-  repoURL: String!
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType!
-  """
-  Token used for private repository
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  """
-  Private SSH key authenticating into git repository
-  """
-  sshPrivateKey: String
-}
-
-"""
-Response received after configuring GitOps
-"""
-type GitConfigResponse {
-  """
-  Bool value indicating whether GitOps is enabled or not
-  """
-  enabled: Boolean!
-  """
-  ID of the project where GitOps is configured
-  """
-  projectID: String!
-  """
-  Git branch where the chaos charts will be pushed and synced
-  """
-  branch: String
-  """
-  URL of the Git repository
-  """
-  repoURL: String
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType
-  """
-  Token used for private repository
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  """
-  Private SSH key authenticating into git repository
-  """
-  sshPrivateKey: String
-}
-
-"""
-Details for a workflow template
-"""
-type ManifestTemplate {
-  """
-  ID of the template
-  """
-  templateID: ID!
-  """
-  Workflow manifest in JSON escaped string
-  """
-  manifest: String!
-  """
-  Name of the template
-  """
-  templateName: String!
-  """
-  Description of the template
-  """
-  templateDescription: String!
-  """
-  ID of the project
-  """
-  projectID: String!
-  """
-  Name of the project
-  """
-  projectName: String!
-  """
-  Time at which the manifest template was created
-  """
-  createdAt: String!
-  """
-  Bool value indicating if the workflow template has removed
-  """
-  isRemoved: Boolean!
-  """
-  Bool value indicating whether the workflow template is a custom or not
-  """
-  isCustomWorkflow: Boolean!
-}
-
-"""
-Details for saving the template
-"""
-input TemplateInput {
-  """
-  Workflow manifest in JSON escaped format
-  """
-  manifest: String!
-  """
-  Name of the template
-  """
-  templateName: String!
-  """
-  Description of the template
-  """
-  templateDescription: String!
-  """
-  Name of the project
-  """
-  projectID: String!
-  """
-  Bool value indicating whether the workflow is a custom workflow or not
-  """
-  isCustomWorkflow: Boolean!
-}
-
-"""
-Response received for querying Kubernetes Object
-"""
-type KubeObjectResponse {
-  """
-  ID of the cluster in which the Kubernetes object is present
-  """
-  clusterID: ID!
-  """
-  Type of the Kubernetes object
-  """
-  kubeObj: String!
-}
-
-"""
-Defines the details of Kubernetes object
-"""
-input KubeObjectData {
-  """
-  Unique request ID for fetching Kubernetes object details
-  """
-  requestID: ID!
-  """
-  ID of the cluster in which the Kubernetes object is present
-  """
-  clusterID: ClusterIdentity!
-  """
-  Type of the Kubernetes object
-  """
-  kubeObj: String!
-}
-
-"""
-Defines details for fetching Kubernetes object data
-"""
-input KubeObjectRequest {
-  """
-  ID of the cluster in which the Kubernetes object is present
-  """
-  clusterID: ID!
-  """
-  Type of the Kubernetes object to be fetched
-  """
-  objectType: String!
-  kubeObjRequest: KubeGVRRequest!
-}
-
-input KubeGVRRequest {
-  group: String!
-  version: String!
-  resource: String!
-}
-
 type Query {
   getWorkflowRuns(
     workflowRunsInput: GetWorkflowRunsInput!
@@ -5448,7 +5175,7 @@ type Mutation {
 
   ## Workflow APIs
   # It is used to create chaosworkflow
-  createChaosWorkFlow(input: chaosWorkFlowInput!): ChaosWorkFlowResponse!
+  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
   reRunChaosWorkFlow(workflowID: String!): String! @authorized
@@ -5488,7 +5215,7 @@ type Mutation {
 
   syncHub(id: ID!): [MyHubStatus!]! @authorized
 
-  updateChaosWorkflow(input: chaosWorkFlowInput): ChaosWorkFlowResponse!
+  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
   deleteClusterReg(clusterID: String!): String! @authorized
@@ -5715,7 +5442,214 @@ input UsageQuery {
   searchProject: String
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `
+"""
+Defines the details of the weightages of each chaos experiment in the workflow
+"""
+input WeightagesInput {
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Weightage of the experiment
+  """
+  weightage: Int!
+}
+
+"""
+Defines the details for a chaos workflow
+"""
+input ChaosWorkFlowInput {
+  """
+  ID of the workflow
+  """
+  workflowID: String
+  """
+  Manifest of the workflow
+  """
+  workflowManifest: String!
+  """
+  Cron syntax of the workflow schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
+  weightages: [WeightagesInput!]!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
+  isCustomWorkflow: Boolean!
+  """
+  ID of the project under which the workflow is scheduled
+  """
+  projectID: ID!
+  """
+  ID of the target cluster in which the workflow will run
+  """
+  clusterID: ID!
+}
+
+"""
+Defines the response received for querying the details of chaos workflow
+"""
+type ChaosWorkFlowResponse {
+  """
+  ID of the workflow
+  """
+  workflowID: String!
+  """
+  Cron syntax of the workflow schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
+  isCustomWorkflow: Boolean!
+}
+
+"""
+Defines the details for a workflow run
+"""
+input WorkflowRunInput {
+  """
+  ID of the workflow
+  """
+  workflowID: ID!
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+  """
+  executionData: String!
+  """
+  ID of the cluster agent in which the workflow is running
+  """
+  clusterID: ClusterIdentity!
+  """
+  Bool value indicating if the workflow run has completed
+  """
+  completed: Boolean!
+  """
+  Bool value indicating if the workflow run has removed
+  """
+  isRemoved: Boolean
+}
+
+"""
+Defines the response received for querying querying the pod logs
+"""
+type PodLogResponse {
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are queried
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Response received for querying pod logs
+"""
+input PodLog {
+  """
+  ID of the cluster
+  """
+  clusterID: ClusterIdentity!
+  """
+  Unique request ID of a particular node which is being queried
+  """
+  requestID: ID!
+  """
+  ID of a workflow run
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Defines the details for fetching the pod logs
+"""
+input PodLogRequest {
+  """
+  ID of the cluster
+  """
+  clusterID: ID!
+  """
+  ID of a workflow run
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Namespace where the pod is running
+  """
+  podNamespace: String!
+  """
+  Type of the pod: chaosengine or not pod
+  """
+  podType: String!
+  """
+  Name of the experiment pod fetched from execution data
+  """
+  expPod: String
+  """
+  Name of the runner pod fetched from execution data
+  """
+  runnerPod: String
+  """
+  Namespace where the experiment is executing
+  """
+  chaosNamespace: String
+}
+
+enum WorkflowRunStatus {
   ALL
   FAILED
   RUNNING
@@ -5723,20 +5657,53 @@ input UsageQuery {
   TERMINATED
 }
 
+"""
+Defines the start date and end date for the filtering the data
+"""
 input DateRange {
+  """
+  Start date
+  """
   startDate: String!
+  """
+  End date
+  """
   endDate: String
 }
 
+"""
+Defines input type for workflow run filter
+"""
 input WorkflowRunFilterInput {
+  """
+  Name of the workflow
+  """
   workflowName: String
+  """
+  Name of the cluster agent
+  """
   clusterName: String
+  """
+  Status of the workflow run
+  """
   workflowStatus: WorkflowRunStatus
+  """
+  Date range for filtering purpose
+  """
   dateRange: DateRange
 }
 
+"""
+Defines data required to fetch paginated data
+"""
 input Pagination {
+  """
+  Page number for which data will be fetched
+  """
   page: Int!
+  """
+  Number of data to be fetched
+  """
   limit: Int!
 }
 
@@ -5745,90 +5712,357 @@ enum WorkflowSortingField {
   TIME
 }
 
+"""
+Defines sorting options for workflow runs
+"""
 input WorkflowRunSortInput {
+  """
+  Field in which sorting will be done
+  """
   field: WorkflowSortingField!
+  """
+  Bool value indicating whether the sorting will be done in descending order
+  """
   descending: Boolean
 }
 
+"""
+Defines the details for workflow runs
+"""
 input GetWorkflowRunsInput {
+  """
+  ID of the project
+  """
   projectID: ID!
+  """
+  Array of workflow run IDs for which details will be fetched
+  """
   workflowRunIDs: [ID]
+  """
+  Array of workflow IDs for which details will be fetched
+  """
   workflowIDs: [ID]
+  """
+  Details for fetching paginated data
+  """
   pagination: Pagination
+  """
+  Details for fetching sorted data
+  """
   sort: WorkflowRunSortInput
+  """
+  Details for fetching filtered data
+  """
   filter: WorkflowRunFilterInput
 }
 
+"""
+Defines the details of the weightages of each chaos experiment in the workflow
+"""
 type Weightages {
+  """
+  Name of the experiment
+  """
   experimentName: String!
+  """
+  Weightage of the experiment
+  """
   weightage: Int!
 }
 
+"""
+Defines the details of a workflow run
+"""
 type WorkflowRun {
+  """
+  ID of the workflow run which is to be queried
+  """
   workflowRunID: ID!
+  """
+  ID of the workflow
+  """
   workflowID: ID!
+  """
+  Name of the cluster agent in which the workflow is running
+  """
   clusterName: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
   weightages: [Weightages!]!
+  """
+  Timestamp at which workflow run was last updated
+  """
   lastUpdated: String!
+  """
+  ID of the project
+  """
   projectID: ID!
+  """
+  ID of the target cluster in which the workflow is running
+  """
   clusterID: ID!
+  """
+  Name of the workflow
+  """
   workflowName: String!
+  """
+  Cluster type : Internal or External
+  """
   clusterType: String
+  """
+  Phase of the workflow run
+  """
   phase: String!
+  """
+  Resiliency score of the workflow
+  """
   resiliencyScore: Float
+  """
+  Number of experiments passed
+  """
   experimentsPassed: Int
+  """
+  Number of experiments failed
+  """
   experimentsFailed: Int
+  """
+  Number of experiments awaited
+  """
   experimentsAwaited: Int
+  """
+  Number of experiments stopped
+  """
   experimentsStopped: Int
+  """
+  Number of experiments which are not available
+  """
   experimentsNa: Int
+  """
+  Total number of experiments
+  """
   totalExperiments: Int
+  """
+  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+  """
   executionData: String!
+  """
+  Bool value indicating if the workflow run has removed
+  """
   isRemoved: Boolean
 }
 
+"""
+Defines the details of a workflow to sent as response
+"""
 type GetWorkflowsOutput {
+  """
+  Total number of workflow runs
+  """
   totalNoOfWorkflowRuns: Int!
+  """
+  Defines details of workflow runs
+  """
   workflowRuns: [WorkflowRun]!
 }
 
+"""
+Defines filter options for workflows
+"""
 input WorkflowFilterInput {
+  """
+  Name of the workflow
+  """
   workflowName: String
+  """
+  Name of the cluster agent in which the workflow is running
+  """
   clusterName: String
 }
 
+"""
+Defines the details for a workflow
+"""
 input ListWorkflowsInput {
+  """
+  ID of the project
+  """
   projectID: ID!
+  """
+  Array of workflow IDs for which details will be fetched
+  """
   workflowIDs: [ID]
+  """
+  Details for fetching paginated data
+  """
   pagination: Pagination
+  """
+  Details for fetching sorted data
+  """
   sort: WorkflowSortInput
+  """
+  Details for fetching filtered data
+  """
   filter: WorkflowFilterInput
 }
 
+"""
+Defines sorting options for workflow
+"""
 input WorkflowSortInput {
+  """
+  Field in which sorting will be done
+  """
   field: WorkflowSortingField!
+  """
+  Bool value indicating whether the sorting will be done in descending order
+  """
   descending: Boolean
 }
 
+"""
+Defines the details for a workflow
+"""
 type Workflow {
+  """
+  ID of the workflow
+  """
   workflowID: String!
+  """
+  Manifest of the workflow
+  """
   workflowManifest: String!
+  """
+  Cron syntax of the workflow schedule
+  """
   cronSyntax: String!
+  """
+  Name of the target cluster in which the workflow is running
+  """
   clusterName: String!
+  """
+  Name of the workflow
+  """
   workflowName: String!
+  """
+  Description of the workflow
+  """
   workflowDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
   weightages: [Weightages!]!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
   isCustomWorkflow: Boolean!
+  """
+  Timestamp when the workflow was last updated
+  """
   updatedAt: String!
+  """
+  Timestamp when the workflow was created
+  """
   createdAt: String!
+  """
+  ID of the project under which the workflow is scheduled
+  """
   projectID: ID!
+  """
+  ID of the target cluster in which the workflow will run
+  """
   clusterID: ID!
+  """
+  Cluster type : Internal or External
+  """
   clusterType: String!
+  """
+  Bool value indicating if the workflow has removed
+  """
   isRemoved: Boolean!
 }
 
+"""
+Defines the details for a workflow with total workflow count
+"""
 type ListWorkflowsOutput {
+  """
+  Total number of workflows
+  """
   totalNoOfWorkflows: Int!
+  """
+  Details related to the workflows
+  """
   workflows: [Workflow]!
+}
+`, BuiltIn: false},
+	&ast.Source{Name: "graph/workflow_template.graphqls", Input: `
+"""
+Details for a workflow template
+"""
+type ManifestTemplate {
+    """
+    ID of the template
+    """
+    templateID: ID!
+    """
+    Workflow manifest in JSON escaped string
+    """
+    manifest: String!
+    """
+    Name of the template
+    """
+    templateName: String!
+    """
+    Description of the template
+    """
+    templateDescription: String!
+    """
+    ID of the project
+    """
+    projectID: String!
+    """
+    Name of the project
+    """
+    projectName: String!
+    """
+    Time at which the manifest template was created
+    """
+    createdAt: String!
+    """
+    Bool value indicating if the workflow template has removed
+    """
+    isRemoved: Boolean!
+    """
+    Bool value indicating whether the workflow template is a custom or not
+    """
+    isCustomWorkflow: Boolean!
+}
+
+"""
+Details for saving the template
+"""
+input TemplateInput {
+    """
+    Workflow manifest in JSON escaped format
+    """
+    manifest: String!
+    """
+    Name of the template
+    """
+    templateName: String!
+    """
+    Description of the template
+    """
+    templateDescription: String!
+    """
+    Name of the project
+    """
+    projectID: String!
+    """
+    Bool value indicating whether the workflow is a custom workflow or not
+    """
+    isCustomWorkflow: Boolean!
 }
 `, BuiltIn: false},
 }
@@ -5893,7 +6127,7 @@ func (ec *executionContext) field_Mutation_createChaosWorkFlow_args(ctx context.
 	args := map[string]interface{}{}
 	var arg0 model.ChaosWorkFlowInput
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNchaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+		arg0, err = ec.unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6271,7 +6505,7 @@ func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.
 	args := map[string]interface{}{}
 	var arg0 *model.ChaosWorkFlowInput
 	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalOchaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+		arg0, err = ec.unmarshalOChaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -22804,6 +23038,72 @@ func (ec *executionContext) unmarshalInputApplicationMetadata(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context, obj interface{}) (model.ChaosWorkFlowInput, error) {
+	var it model.ChaosWorkFlowInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "workflowID":
+			var err error
+			it.WorkflowID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workflowManifest":
+			var err error
+			it.WorkflowManifest, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cronSyntax":
+			var err error
+			it.CronSyntax, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workflowName":
+			var err error
+			it.WorkflowName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workflowDescription":
+			var err error
+			it.WorkflowDescription, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "weightages":
+			var err error
+			it.Weightages, err = ec.unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isCustomWorkflow":
+			var err error
+			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "projectID":
+			var err error
+			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "clusterID":
+			var err error
+			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj interface{}) (model.CloningInput, error) {
 	var it model.CloningInput
 	var asMap = obj.(map[string]interface{})
@@ -24769,72 +25069,6 @@ func (ec *executionContext) unmarshalInputWorkflowSortInput(ctx context.Context,
 		case "descending":
 			var err error
 			it.Descending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputchaosWorkFlowInput(ctx context.Context, obj interface{}) (model.ChaosWorkFlowInput, error) {
-	var it model.ChaosWorkFlowInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "workflowID":
-			var err error
-			it.WorkflowID, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "workflowManifest":
-			var err error
-			it.WorkflowManifest, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "cronSyntax":
-			var err error
-			it.CronSyntax, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "workflowName":
-			var err error
-			it.WorkflowName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "workflowDescription":
-			var err error
-			it.WorkflowDescription, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "weightages":
-			var err error
-			it.Weightages, err = ec.unmarshalNWeightagesInput2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isCustomWorkflow":
-			var err error
-			it.IsCustomWorkflow, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "projectID":
-			var err error
-			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "clusterID":
-			var err error
-			it.ClusterID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -28403,6 +28637,10 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
+	return ec.unmarshalInputChaosWorkFlowInput(ctx, v)
+}
+
 func (ec *executionContext) marshalNChaosWorkFlowResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v model.ChaosWorkFlowResponse) graphql.Marshaler {
 	return ec._ChaosWorkFlowResponse(ctx, sel, &v)
 }
@@ -30187,10 +30425,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalNchaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
-	return ec.unmarshalInputchaosWorkFlowInput(ctx, v)
-}
-
 func (ec *executionContext) marshalOAnnotationsPromResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx context.Context, sel ast.SelectionSet, v model.AnnotationsPromResponse) graphql.Marshaler {
 	return ec._AnnotationsPromResponse(ctx, sel, &v)
 }
@@ -30461,6 +30695,18 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalOChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
+	return ec.unmarshalInputChaosWorkFlowInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOChaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (*model.ChaosWorkFlowInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalOCreateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateDBInput(ctx context.Context, v interface{}) (model.CreateDBInput, error) {
@@ -32019,18 +32265,6 @@ func (ec *executionContext) marshalO__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgen�
 		return graphql.Null
 	}
 	return ec.___Type(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOchaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
-	return ec.unmarshalInputchaosWorkFlowInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalOchaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (*model.ChaosWorkFlowInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOchaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, v)
-	return &res, err
 }
 
 // endregion ***************************** type.gotpl *****************************

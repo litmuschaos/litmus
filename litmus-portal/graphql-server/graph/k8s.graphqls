@@ -1,0 +1,53 @@
+
+"""
+Response received for querying Kubernetes Object
+"""
+type KubeObjectResponse {
+    """
+    ID of the cluster in which the Kubernetes object is present
+    """
+    clusterID: ID!
+    """
+    Type of the Kubernetes object
+    """
+    kubeObj: String!
+}
+
+"""
+Defines the details of Kubernetes object
+"""
+input KubeObjectData {
+    """
+    Unique request ID for fetching Kubernetes object details
+    """
+    requestID: ID!
+    """
+    ID of the cluster in which the Kubernetes object is present
+    """
+    clusterID: ClusterIdentity!
+    """
+    Type of the Kubernetes object
+    """
+    kubeObj: String!
+}
+
+"""
+Defines details for fetching Kubernetes object data
+"""
+input KubeObjectRequest {
+    """
+    ID of the cluster in which the Kubernetes object is present
+    """
+    clusterID: ID!
+    """
+    Type of the Kubernetes object to be fetched
+    """
+    objectType: String!
+    kubeObjRequest: KubeGVRRequest!
+}
+
+input KubeGVRRequest {
+    group: String!
+    version: String!
+    resource: String!
+}

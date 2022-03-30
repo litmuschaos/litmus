@@ -1,3 +1,210 @@
+
+"""
+Defines the details of the weightages of each chaos experiment in the workflow
+"""
+input WeightagesInput {
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Weightage of the experiment
+  """
+  weightage: Int!
+}
+
+"""
+Defines the details for a chaos workflow
+"""
+input ChaosWorkFlowInput {
+  """
+  ID of the workflow
+  """
+  workflowID: String
+  """
+  Manifest of the workflow
+  """
+  workflowManifest: String!
+  """
+  Cron syntax of the workflow schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
+  weightages: [WeightagesInput!]!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
+  isCustomWorkflow: Boolean!
+  """
+  ID of the project under which the workflow is scheduled
+  """
+  projectID: ID!
+  """
+  ID of the target cluster in which the workflow will run
+  """
+  clusterID: ID!
+}
+
+"""
+Defines the response received for querying the details of chaos workflow
+"""
+type ChaosWorkFlowResponse {
+  """
+  ID of the workflow
+  """
+  workflowID: String!
+  """
+  Cron syntax of the workflow schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
+  isCustomWorkflow: Boolean!
+}
+
+"""
+Defines the details for a workflow run
+"""
+input WorkflowRunInput {
+  """
+  ID of the workflow
+  """
+  workflowID: ID!
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+  """
+  executionData: String!
+  """
+  ID of the cluster agent in which the workflow is running
+  """
+  clusterID: ClusterIdentity!
+  """
+  Bool value indicating if the workflow run has completed
+  """
+  completed: Boolean!
+  """
+  Bool value indicating if the workflow run has removed
+  """
+  isRemoved: Boolean
+}
+
+"""
+Defines the response received for querying querying the pod logs
+"""
+type PodLogResponse {
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are queried
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Response received for querying pod logs
+"""
+input PodLog {
+  """
+  ID of the cluster
+  """
+  clusterID: ClusterIdentity!
+  """
+  Unique request ID of a particular node which is being queried
+  """
+  requestID: ID!
+  """
+  ID of a workflow run
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Defines the details for fetching the pod logs
+"""
+input PodLogRequest {
+  """
+  ID of the cluster
+  """
+  clusterID: ID!
+  """
+  ID of a workflow run
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Namespace where the pod is running
+  """
+  podNamespace: String!
+  """
+  Type of the pod: chaosengine or not pod
+  """
+  podType: String!
+  """
+  Name of the experiment pod fetched from execution data
+  """
+  expPod: String
+  """
+  Name of the runner pod fetched from execution data
+  """
+  runnerPod: String
+  """
+  Namespace where the experiment is executing
+  """
+  chaosNamespace: String
+}
+
 enum WorkflowRunStatus {
   ALL
   FAILED
