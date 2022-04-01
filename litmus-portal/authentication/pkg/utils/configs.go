@@ -6,30 +6,30 @@ import (
 )
 
 var (
-	JwtSecret              = os.Getenv("JWT_SECRET")
-	AdminName              = os.Getenv("ADMIN_USERNAME")
-	AdminPassword          = os.Getenv("ADMIN_PASSWORD")
-	DBUrl                  = os.Getenv("DB_SERVER")
-	DBUser                 = os.Getenv("DB_USER")
-	DBPassword             = os.Getenv("DB_PASSWORD")
-	JWTExpiryDuration      = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
-	OAuthJWTExpDuration    = getEnvAsInt("OAUTH_JWT_EXP_MINS", 5)
-	OAuthJwtSecret         = os.Getenv("OAUTH_SECRET")
-	StrictPasswordPolicy   = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
-	DexEnabled             = getEnvAsBool("DEX_ENABLED", false)
-	DexCallBackURL         = os.Getenv("DEX_OAUTH_CALLBACK_URL")
-	DexClientID            = os.Getenv("DEX_OAUTH_CLIENT_ID")
-	DexClientSecret        = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
-	DexOIDCIssuer          = os.Getenv("OIDC_ISSUER")
-	DBName                 = "auth"
-	Port                   = ":3000"
-	GrpcPort               = ":3030"
-	UserCollection         = "users"
-	ProjectCollection      = "project"
-	UsernameField          = "username"
-	PasswordEncryptionCost = 15
-	LitmusSvcGRPCPort      = ":8000"
-	LitmusSvcEndpoint      = os.Getenv("LITMUS_SVC_ENDPOINT")
+	JwtSecret                    = os.Getenv("JWT_SECRET")
+	AdminName                    = os.Getenv("ADMIN_USERNAME")
+	AdminPassword                = os.Getenv("ADMIN_PASSWORD")
+	DBUrl                        = os.Getenv("DB_SERVER")
+	DBUser                       = os.Getenv("DB_USER")
+	DBPassword                   = os.Getenv("DB_PASSWORD")
+	JWTExpiryDuration            = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
+	OAuthJWTExpDuration          = getEnvAsInt("OAUTH_JWT_EXP_MINS", 5)
+	OAuthJwtSecret               = os.Getenv("OAUTH_SECRET")
+	StrictPasswordPolicy         = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
+	DexEnabled                   = getEnvAsBool("DEX_ENABLED", false)
+	DexCallBackURL               = os.Getenv("DEX_OAUTH_CALLBACK_URL")
+	DexClientID                  = os.Getenv("DEX_OAUTH_CLIENT_ID")
+	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
+	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
+	DBName                       = "auth"
+	Port                         = ":3000"
+	GrpcPort                     = ":3030"
+	UserCollection               = "users"
+	ProjectCollection            = "project"
+	UsernameField                = "username"
+	PasswordEncryptionCost       = 15
+	DefaultLitmusGqlGrpcEndpoint = "localhost"
+	DefaultLitmusGqlGrpcPort     = ":8000"
 )
 
 func getEnvAsInt(name string, defaultVal int) int {

@@ -152,6 +152,7 @@ const TableData: React.FC<TableDataProps> = ({
   const reRunSchedule = () => {
     reRunChaosWorkFlow({
       variables: {
+        projectID: getProjectID(),
         data: data.workflow_id,
       },
     });
@@ -220,6 +221,11 @@ const TableData: React.FC<TableDataProps> = ({
           >
             {data.cluster_name}
           </span>
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography className={classes.clusterData}>
+          <span>{data.last_updated_by || '-'}</span>
         </Typography>
       </TableCell>
       <TableCell>

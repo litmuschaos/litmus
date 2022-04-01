@@ -486,6 +486,7 @@ spec:
       labels:
         component: litmusportal-frontend
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:ci
@@ -506,6 +507,15 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "300Mi"
+              cpu: "25m"
+              ephemeral-storage: "1Gi"
       volumes:
         - name: nginx-config
           configMap:
@@ -542,7 +552,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:latest
+          image: litmuschaos/curl:2.6.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -580,21 +590,28 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.4.0"
+              value: "litmuschaos/chaos-operator:2.6.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.4.0"
+              value: "litmuschaos/chaos-runner:2.6.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.4.0"
+              value: "litmuschaos/chaos-exporter:2.6.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.4.x"
+              value: "v2.6.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "127.0.0.1"
           ports:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "350Mi"
+              cpu: "25m"
+            limits:
+              memory: "350Mi"
+              cpu: "25m"
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:ci
           resources:
@@ -619,6 +636,13 @@ spec:
             - containerPort: 3000
             - containerPort: 3030
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+            limits:
+              memory: "150Mi"
+              cpu: "25m"
       serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
@@ -660,6 +684,7 @@ spec:
       labels:
         component: database
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
@@ -685,6 +710,13 @@ spec:
                 secretKeyRef:
                   name: litmus-portal-admin-secret
                   key: DB_PASSWORD
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "75m"
+            limits:
+              memory: "500Mi"
+              cpu: "250m"
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
@@ -728,9 +760,14 @@ spec:
         - name: litmusportal-production-frontend
           image: litmuschaos/litmusportal-frontend:ci
           resources:
+            requests:
+              memory: "300Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
             limits:
-              cpu: 100m
-              memory: 100Mi
+              memory: "300Mi"
+              cpu: "25m"
+              ephemeral-storage: "1Gi"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

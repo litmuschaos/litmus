@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
@@ -248,11 +249,25 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	return nil, fmt.Errorf("err: %v\n", "Invalid Request")
 }
 
+func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]string) {
+	newLabels := obj.GetLabels()
+
+	if len(newLabels) == 0 {
+		newLabels = make(map[string]string)
+	}
+
+	for label, value := range customLabels {
+		newLabels[label] = value
+	}
+
+	obj.SetLabels(newLabels)
+}
+
 // This function handles cluster operations
-func ClusterOperations(manifest string, requestType string, namespace string) (*unstructured.Unstructured, error) {
+func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
-	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
+	yamlStr, err := yaml_converter.JSONToYAML([]byte(clusterAction.K8SManifest))
 	if err != nil {
 		return nil, err
 	}
@@ -273,6 +288,8 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 		return nil, err
 	}
 
+	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Username})
+
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
@@ -282,13 +299,13 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(clusterAction.Namespace)
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	return applyRequest(requestType, obj)
+	return applyRequest(clusterAction.RequestType, obj)
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {

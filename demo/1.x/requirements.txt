@@ -1,3 +1,0 @@
-PyYAML==5.1.2
-reportlab==3.5.53
-awscli==1.18.157

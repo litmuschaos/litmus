@@ -22,6 +22,8 @@ type MongoOperator interface {
 	CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error)
 	Aggregate(ctx context.Context, collectionType int, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error)
 	GetCollection(collectionType int) (*mongo.Collection, error)
+	ListCollection(ctx context.Context, mclient *mongo.Client) ([]string, error)
+	ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error)
 }
 
 type MongoOperations struct{}
@@ -37,10 +39,12 @@ func (m *MongoOperations) Create(ctx context.Context, collectionType int, docume
 	if err != nil {
 		return err
 	}
+
 	_, err = collection.InsertOne(ctx, document)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -73,10 +77,12 @@ func (m *MongoOperations) List(ctx context.Context, collectionType int, query bs
 	if err != nil {
 		return nil, err
 	}
+
 	result, err := collection.Find(ctx, query)
 	if err != nil {
 		return nil, err
 	}
+
 	return result, nil
 }
 
@@ -167,4 +173,22 @@ func (m *MongoOperations) Aggregate(ctx context.Context, collectionType int, pip
 // GetCollection fetches the correct collection based on the collection type
 func (m *MongoOperations) GetCollection(collectionType int) (*mongo.Collection, error) {
 	return GetCollectionClient.getCollection(collectionType)
+}
+
+func (m *MongoOperations) ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error) {
+	dbs, err := mclient.ListDatabaseNames(ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	return dbs, nil
+}
+
+func (m *MongoOperations) ListCollection(ctx context.Context, mclient *mongo.Client) ([]string, error) {
+	cols, err := mclient.Database("litmus").ListCollectionNames(ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	return cols, nil
 }

@@ -1095,7 +1095,8 @@ type Workflow struct {
 	// Cluster type : Internal or External
 	ClusterType string `json:"clusterType"`
 	// Bool value indicating if the workflow has removed
-	IsRemoved bool `json:"isRemoved"`
+	IsRemoved     bool    `json:"isRemoved"`
+	LastUpdatedBy *string `json:"last_updated_by"`
 }
 
 // Defines filter options for workflows
@@ -1145,7 +1146,8 @@ type WorkflowRun struct {
 	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
 	ExecutionData string `json:"executionData"`
 	// Bool value indicating if the workflow run has removed
-	IsRemoved *bool `json:"isRemoved"`
+	IsRemoved  *bool  `json:"isRemoved"`
+	ExecutedBy string `json:"executed_by"`
 }
 
 type WorkflowRunDetails struct {
@@ -1284,6 +1286,51 @@ func (e *AuthType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FileType string
+
+const (
+	FileTypeExperiment FileType = "EXPERIMENT"
+	FileTypeEngine     FileType = "ENGINE"
+	FileTypeWorkflow   FileType = "WORKFLOW"
+	FileTypeCsv        FileType = "CSV"
+)
+
+var AllFileType = []FileType{
+	FileTypeExperiment,
+	FileTypeEngine,
+	FileTypeWorkflow,
+	FileTypeCsv,
+}
+
+func (e FileType) IsValid() bool {
+	switch e {
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
+		return true
+	}
+	return false
+}
+
+func (e FileType) String() string {
+	return string(e)
+}
+
+func (e *FileType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FileType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FileType", str)
+	}
+	return nil
+}
+
+func (e FileType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -81,7 +81,10 @@ type Query {
   # Manifest Template
   listManifestTemplate(projectID: String!): [ManifestTemplate]! @authorized
 
-  getTemplateManifestByID(templateID: String!): ManifestTemplate! @authorized
+  GetTemplateManifestByID(
+    projectID: String!
+    templateID: String!
+  ): ManifestTemplate! @authorized
 
   # Image Registry Queries
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
@@ -110,18 +113,28 @@ type Mutation {
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
+    @authorized
 
   # removes workflow from cluster and db
-  deleteChaosWorkflow(workflowID: String, workflowRunID: String): Boolean!
-    @authorized
+  deleteChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflowRunID: String
+  ): Boolean! @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowID: String, workflowRunID: String): Boolean!
-    @authorized
+  terminateChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflowRunID: String
+  ): Boolean! @authorized
 
-  syncWorkflow(workflowID: String!, workflowRunID: String!): Boolean!
-    @authorized
+  syncWorkflow(
+    projectID: String!
+    workflowID: String!
+    workflowRunID: String!
+  ): Boolean! @authorized
 
   # It is used to confirm the subscriber registration
   # authorized directive not required
@@ -145,18 +158,18 @@ type Mutation {
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(id: ID!): [MyHubStatus!]! @authorized
+  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(clusterID: String!): String! @authorized
+  deleteClusters(projectID: String!, clusterIDs: [String]!): String! @authorized
 
   generaterSSHKey: SSHKey! @authorized
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hubID: String!): Boolean! @authorized
+  deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # Gitops
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
@@ -175,21 +188,24 @@ type Mutation {
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
   updateDashboard(
+    projectID: String!
     dashboard: UpdateDBInput!
     chaosQueryUpdate: Boolean!
   ): String! @authorized
 
   updatePanel(panelInput: [Panel]): String! @authorized
 
-  deleteDashboard(dbID: String): Boolean! @authorized
+  deleteDashboard(projectID: String!, dbID: String): Boolean! @authorized
 
-  deleteDataSource(input: DeleteDSInput!): Boolean! @authorized
+  deleteDataSource(projectID: String!, input: DeleteDSInput!): Boolean!
+    @authorized
 
   # Manifest Template
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
     @authorized
 
-  deleteManifestTemplate(templateID: String!): Boolean! @authorized
+  deleteManifestTemplate(projectID: String!, templateID: String!): Boolean!
+    @authorized
 
   # Image Registry Mutations
   createImageRegistry(

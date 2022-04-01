@@ -44,7 +44,7 @@ type Config struct {
 	AgentDeployments            string `required:"true" split_words:"true"`
 	DbServer                    string `required:"true" split_words:"true"`
 	JwtSecret                   string `required:"true" split_words:"true"`
-	SelfCluster                 string `required:"true" split_words:"true"`
+	SelfAgent                   string `required:"true" split_words:"true"`
 	AgentScope                  string `required:"true" split_words:"true"`
 	AgentNamespace              string `required:"true" split_words:"true"`
 	LitmusPortalNamespace       string `required:"true" split_words:"true"`
@@ -113,8 +113,12 @@ func main() {
 		rpcPort = utils.DefaultRPCPort
 	}
 
-	// Initialize the mongo client
-	mongodb.Client = mongodb.Client.Initialize()
+	client, err := mongodb.MongoConnection()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	mongodb.Client = mongodb.Client.Initialize(client)
 
 	if err := validateVersion(); err != nil {
 		logrus.Fatal(err)
@@ -150,12 +154,15 @@ func main() {
 	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
+	// routers
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
+	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
+	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
+
 	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
 	router.HandleFunc("/status", handlers.StatusHandler)
 
-	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
 	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))
 }

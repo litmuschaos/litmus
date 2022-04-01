@@ -406,6 +406,7 @@ type WorkflowRun {
   Bool value indicating if the workflow run has removed
   """
   isRemoved: Boolean
+  executed_by: String!
 }
 
 """
@@ -536,6 +537,7 @@ type Workflow {
   Bool value indicating if the workflow has removed
   """
   isRemoved: Boolean!
+  last_updated_by: String
 }
 
 """

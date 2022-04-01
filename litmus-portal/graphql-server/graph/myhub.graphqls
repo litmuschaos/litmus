@@ -5,6 +5,13 @@ enum AuthType {
   TOKEN
 }
 
+enum FileType {
+  EXPERIMENT
+  ENGINE
+  WORKFLOW
+  CSV
+}
+
 type MyHub {
   """
   ID of the chaos hub

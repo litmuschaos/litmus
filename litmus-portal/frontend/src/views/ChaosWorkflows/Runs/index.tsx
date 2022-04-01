@@ -376,6 +376,13 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                   </div>
                 </TableCell>
 
+                {/* Executed By */}
+                <TableCell>
+                  <Typography className={classes.executedBy}>
+                    {t('chaosWorkflows.browseWorkflows.executedBy')}
+                  </Typography>
+                </TableCell>
+
                 {/* Menu Cell */}
                 <TableCell />
               </TableRow>
@@ -385,7 +392,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
             <TableBody>
               {error ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={9}>
                     <Typography data-cy="browseWorkflowError" align="center">
                       Unable to fetch data
                     </Typography>
@@ -402,7 +409,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={9}>
                     <Typography data-cy="browseWorkflowNoData" align="center">
                       No records available
                     </Typography>

@@ -174,6 +174,11 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           </div>
         </div>
       </StyledTableCell>
+      <StyledTableCell className={classes.headSpacing}>
+        <div className={classes.nameContent}>
+          {t('observability.tableHead5')}
+        </div>
+      </StyledTableCell>
       <StyledTableCell />
     </TableRow>
   );

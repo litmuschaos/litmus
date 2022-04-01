@@ -29,6 +29,8 @@ type Repository interface {
 
 type repository struct {
 	Collection *mongo.Collection
+	DataBase   *mongo.Database
+	Client     *mongo.Client
 }
 
 // LoginUser helps to Login the user via OAuth, if user does not exists, creates a new user

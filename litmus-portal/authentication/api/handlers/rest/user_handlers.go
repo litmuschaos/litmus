@@ -14,20 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Status will request users list and return, if successful,
-// an http code 200
-func Status(service services.ApplicationService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		_, err := service.GetUsers()
-		if err != nil {
-			log.Error(err)
-			c.JSON(500, entities.APIStatus{"down"})
-			return
-		}
-		c.JSON(200, entities.APIStatus{"up"})
-	}
-}
-
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -277,6 +263,10 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Info(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if userRequest.IsDeactivate == nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}

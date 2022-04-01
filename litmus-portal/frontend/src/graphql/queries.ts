@@ -15,6 +15,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
         execution_data
         resiliency_score
         isRemoved
+        executed_by
       }
     }
   }
@@ -42,6 +43,7 @@ export const WORKFLOW_DETAILS = gql`
         experiments_na
         total_experiments
         isRemoved
+        executed_by
       }
     }
   }
@@ -67,6 +69,7 @@ export const WORKFLOW_RUN_DETAILS = gql`
         experiments_passed
         total_experiments
         isRemoved
+        executed_by
       }
     }
   }
@@ -126,6 +129,7 @@ export const WORKFLOW_LIST_DETAILS = gql`
         cluster_id
         cluster_type
         isRemoved
+        last_updated_by
       }
     }
   }
@@ -548,8 +552,8 @@ export const PROM_SERIES_LIST = gql`
 `;
 
 export const GET_TEMPLATE_BY_ID = gql`
-  query GetManifestTemplate($data: String!) {
-    GetTemplateManifestByID(template_id: $data) {
+  query GetManifestTemplate($projectID: String!, $data: String!) {
+    GetTemplateManifestByID(projectID: $projectID, template_id: $data) {
       template_id
       template_name
       template_description

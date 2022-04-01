@@ -35,6 +35,9 @@ spec:
       containers:
         - name: chaos-operator
           image: #{LITMUS-CHAOS-OPERATOR}
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           resources:
             limits:
               cpu: 150m
@@ -59,6 +62,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -85,6 +97,9 @@ spec:
         - image: #{LITMUS-CHAOS-EXPORTER}
           imagePullPolicy: Always
           name: chaos-exporter
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
               name: tcp
@@ -93,6 +108,15 @@ spec:
               value: '10'
             - name: WATCH_NAMESPACE
               value: #{AGENT-NAMESPACE}
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
       serviceAccountName: litmus-namespace-scope
 ---
 apiVersion: v1
