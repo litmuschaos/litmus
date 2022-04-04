@@ -42,6 +42,7 @@ import {
   updateEngineName,
   updateManifestImage,
   updateNamespace,
+  validateExperimentNames,
 } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 import WorkflowPreview from './WorkflowPreview';
@@ -108,6 +109,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isEditorSaveAlertOpen, setIsEditorSaveAlertOpen] = useState(false);
+  const [isExpNameValid, setIsExpNameValid] = useState(false);
   const [isConfigurationAlertOpen, setIsConfigurationAlertOpen] =
     useState(false);
   const [yamlValid, setYamlValid] = useState(true);
@@ -610,6 +612,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
   }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
+    const parsedManifest =
+      manifest !== '' ? YAML.parse(manifest) : generatedYAML;
+    const nameValidation = validateExperimentNames(parsedManifest);
+    if (!nameValidation) {
+      setIsExpNameValid(true);
+      return false;
+    }
     if (YAMLModal) {
       setIsEditorSaveAlertOpen(true);
       return false;
@@ -651,6 +660,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   return (
     <>
+      <AlertBox
+        isOpen={isExpNameValid}
+        setOpen={setIsExpNameValid}
+        message="Multiple steps with same name, update the steps to continue forward."
+        type="error"
+      />
       <AlertBox
         isOpen={isEditorSaveAlertOpen}
         setOpen={setIsEditorSaveAlertOpen}
