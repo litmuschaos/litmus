@@ -182,7 +182,7 @@ observability:
   tableHead5: Last Updated By
   workflowInfoStats:
     noRuns: No completed runs yet
-    back: Back to Observability
+    back: Back to Analytics
   workflowRunDetailsTable:
     tableHead0: Test Name
     tableHead1: Experiment Name
@@ -199,7 +199,7 @@ observability:
     experimentVerdict: Experiment Verdict
 
 monitoringDashboard:
-  heading: Observability
+  heading: Analytics
   overview: Overview
   monitoringDashboardPage:
     loadingText: Loading monitoring dashboard ...

@@ -185,7 +185,7 @@ const TableData: React.FC<TableDataProps> = ({
                 selectedDataSourceName: data.ds_name,
               });
               history.push({
-                pathname: '/observability/datasource/configure',
+                pathname: '/analytics/datasource/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
