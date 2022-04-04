@@ -210,6 +210,7 @@ const useStyles = makeStyles((theme) => ({
   // Form Select Properties
   formControl: {
     margin: theme.spacing(0.5),
+    marginLeft: theme.spacing(2),
     height: '2.6rem',
     minWidth: '9rem',
   },

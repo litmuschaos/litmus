@@ -243,6 +243,19 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
                 )}
               </RadioGroup>
             )}
+            <div className={classes.morePredefined}>
+              <Typography className={classes.morePredefinedText}>
+                {t('createWorkflow.chooseWorkflow.morePredefined')}{' '}
+                <a
+                  href="https://github.com/chaoscarnival/bootcamps"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  here
+                </a>
+                .
+              </Typography>
+            </div>
           </div>
           {/* Bottom Blur */}
           <div className={classes.blur} />
