@@ -94,7 +94,9 @@ const TableData: React.FC<TableDataProps> = ({
             )}
           </Tooltip>
 
-          <Typography>{row.username}</Typography>
+          <Typography style={{ wordBreak: 'break-word' }}>
+            {row.username}
+          </Typography>
         </div>
       </TableCell>
 
