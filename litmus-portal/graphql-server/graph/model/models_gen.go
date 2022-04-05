@@ -13,6 +13,7 @@ type ActionPayload struct {
 	K8sManifest  string  `json:"k8sManifest"`
 	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"externalData"`
+	Username     *string `json:"username"`
 }
 
 // Defines details of agent statistics
@@ -1095,8 +1096,9 @@ type Workflow struct {
 	// Cluster type : Internal or External
 	ClusterType string `json:"clusterType"`
 	// Bool value indicating if the workflow has removed
-	IsRemoved     bool    `json:"isRemoved"`
-	LastUpdatedBy *string `json:"last_updated_by"`
+	IsRemoved bool `json:"isRemoved"`
+	// Provides audit context to workflow i.e who ran the workflow
+	LastUpdatedBy *string `json:"lastUpdatedBy"`
 }
 
 // Defines filter options for workflows
@@ -1146,8 +1148,9 @@ type WorkflowRun struct {
 	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
 	ExecutionData string `json:"executionData"`
 	// Bool value indicating if the workflow run has removed
-	IsRemoved  *bool  `json:"isRemoved"`
-	ExecutedBy string `json:"executed_by"`
+	IsRemoved *bool `json:"isRemoved"`
+	// Provides audit context to workflow run i.e who ran the workflow
+	ExecutedBy string `json:"executedBy"`
 }
 
 type WorkflowRunDetails struct {
@@ -1175,6 +1178,8 @@ type WorkflowRunInput struct {
 	WorkflowRunID string `json:"workflowRunID"`
 	// Name of the workflow
 	WorkflowName string `json:"workflowName"`
+	// Provides audit context to workflow run i.e who ran the workflow
+	ExecutedBy string `json:"executedBy"`
 	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
 	ExecutionData string `json:"executionData"`
 	// ID of the cluster agent in which the workflow is running

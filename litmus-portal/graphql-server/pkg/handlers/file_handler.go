@@ -103,7 +103,7 @@ func GetManifest(token string) ([]byte, int, error) {
 	}
 }
 
-// Returns manifest for a given cluster
+// GetManifestWithClusterID returns manifest for a given cluster
 func GetManifestWithClusterID(id string, key string) ([]byte, error) {
 
 	reqCluster, err := dbOperationsCluster.GetCluster(id)

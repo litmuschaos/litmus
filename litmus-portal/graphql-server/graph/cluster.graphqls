@@ -173,6 +173,7 @@ type ActionPayload {
     k8sManifest: String!
     namespace: String!
     externalData: String
+    username: String
 }
 
 type ClusterAction {

@@ -234,7 +234,7 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 func GetExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
 	var ExperimentPath string
 
-	if strings.ToLower(experimentInput.FileType.String()) != "csv" {
+	if strings.ToLower(*experimentInput.FileType) != "csv" {
 		return nil, errors.New("invalid file type")
 	}
 	ExperimentPath = handler.GetCSVData(experimentInput)
@@ -285,7 +285,7 @@ func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.MyHu
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
 func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
-	if strings.ToLower(experimentInput.FileType.String()) == "csv" || strings.ToLower(experimentInput.FileType.String()) == "workflow" {
+	if strings.ToLower(*experimentInput.FileType) == "csv" || strings.ToLower(*experimentInput.FileType) == "workflow" {
 		return "", errors.New("invalid file type")
 	}
 	YAMLPath := handler.GetExperimentYAMLPath(ctx, experimentInput)
@@ -299,10 +299,10 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 // GetPredefinedExperimentYAMLData is responsible for sending the workflow.yaml for a given pre-defined workflow.
 func GetPredefinedExperimentYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
 	var YAMLPath string
-	if strings.ToLower(experimentInput.FileType.String()) != "workflow" {
+	if strings.ToLower(*experimentInput.FileType) != "workflow" {
 		return "", errors.New("invalid file type")
 	}
-	if strings.ToLower(experimentInput.ChartName) == "predefined" && strings.ToLower(experimentInput.FileType.String()) == "workflow" {
+	if strings.ToLower(experimentInput.ChartName) == "predefined" && strings.ToLower(*experimentInput.FileType) == "workflow" {
 		YAMLPath = handler.GetPredefinedExperimentManifest(ctx, experimentInput)
 	}
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)

@@ -4,7 +4,7 @@
 export DB_SERVER=mongodb://localhost:27017
 export JWT_SECRET=litmus-portal@123
 export PORTAL_ENDPOINT=http://localhost:8080
-export SELF_CLUSTER=false # self-cluster needs k8s env
+export SELF_AGENT=false # self-cluster needs k8s env
 export AGENT_SCOPE=cluster
 export AGENT_NAMESPACE=litmus
 export LITMUS_PORTAL_NAMESPACE=litmus

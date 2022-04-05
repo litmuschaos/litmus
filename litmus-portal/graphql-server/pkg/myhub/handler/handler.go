@@ -118,7 +118,7 @@ func GetExperimentYAMLPath(ctx context.Context, experimentInput model.Experiment
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
 	fileType := experimentInput.FileType
-	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + strings.ToLower(fileType.String()) + ".yaml"
+	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + strings.ToLower(*fileType) + ".yaml"
 	return ExperimentYAMLPath
 }
 
