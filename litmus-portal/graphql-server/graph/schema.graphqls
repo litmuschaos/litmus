@@ -14,13 +14,13 @@ type Mutation {
   ): ClusterRegResponse! @authorized
 
   """
-  Used to confirm the subscriber's registration
+  Confirms the subscriber's registration with the control plane
   """
   # authorized directive not required
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
   """
-  Used to send cluster related events from the subscriber
+  Sends cluster related events to the subscriber
   """
   # authorized directive not required
   newClusterEvent(clusterEvent: ClusterEventInput!): String!
@@ -32,50 +32,78 @@ type Mutation {
 
   # WORKFLOW OPERATIONS
   """
-  Creates a new choasworkflow and applies its manifest
+  Creates a new workflow and applies its manifest
   """
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
   @authorized
 
+  """
+  Reruns the workflow and applies its manifest
+  """
   reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
   @authorized
 
+  """
+  Updates the workflow
+  """
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
   @authorized
 
-  # removes workflow from cluster and db
+  """
+  Removes a workflow from cluster
+  """
   deleteChaosWorkflow(
     projectID: String!
     workflowID: String
     workflowRunID: String
   ): Boolean! @authorized
 
-  # removes workflow run from the cluster only
+  """
+  Removes workflow run from the cluster only
+  """
   terminateChaosWorkflow(
     projectID: String!
     workflowID: String
     workflowRunID: String
   ): Boolean! @authorized
 
+  """
+  Manually sync the status of the workflow run
+  """
   syncWorkflow(
     projectID: String!
     workflowID: String!
     workflowRunID: String!
   ): Boolean! @authorized
 
+  """
+  Creates a new workflow run and sends it to subscriber
+  """
   # authorized directive not required
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
+  """
+  Receives pod logs for experiments from agent
+  """
   # authorized directive not required
   podLog(log: PodLog!): String!
 
+  """
+  Receives kubernetes object data from subscriber
+  """
   # authorized directive not required
   kubeObj(kubeData: KubeObjectData!): String!
 
   # WORKFLOW TEMPLATE OPERATIONS
+  """
+  Creates a workflow template manifest
+  """
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
   @authorized
 
+  """
+  Removes a workflow template manifest
+  """
   deleteManifestTemplate(projectID: String!, templateID: String!): Boolean!
   @authorized
 
@@ -93,31 +121,64 @@ type Mutation {
   deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # GIT-OPS OPERATIONS
+  """
+  Sends workflow events to subscriber
+  """
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
 
+  """
+  Enables gitops settings in the project
+  """
   enableGitOps(config: GitConfig!): Boolean! @authorized
 
+  """
+  Disables gitops settings in the project
+  """
   disableGitOps(projectID: String!): Boolean! @authorized
 
+  """
+  Updates gitops settings in the project
+  """
   updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # ANALYTICS OPERATIONS
+  """
+  Creates a new datasource
+  """
   createDataSource(datasource: DSInput): DSResponse @authorized
 
+  """
+  Creates a new analytics dashboard
+  """
   createDashBoard(dashboard: CreateDBInput): ListDashboardResponse! @authorized
 
+  """
+  Updates a datasource
+  """
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
+  """
+  Updates a dashboard
+  """
   updateDashboard(
     projectID: String!
     dashboard: UpdateDBInput!
     chaosQueryUpdate: Boolean!
   ): String! @authorized
 
+  """
+  Updates a dashboard panel
+  """
   updatePanel(panelInput: [Panel]): String! @authorized
 
+  """
+  Deletes a dashboard
+  """
   deleteDashboard(projectID: String!, dbID: String): Boolean! @authorized
 
+  """
+  Deletes a datasource
+  """
   deleteDataSource(projectID: String!, input: DeleteDSInput!): Boolean!
   @authorized
 
@@ -181,8 +242,14 @@ type Query {
   @authorized
 
   # WORKFLOW TEMPLATE OPERATIONS
+  """
+  Returns all the workflow templates for the projectID
+  """
   listManifestTemplate(projectID: String!): [ManifestTemplate]! @authorized
 
+  """
+  Returns a single workflow templates given a projectID and a templateID
+  """
   GetTemplateManifestByID(
     projectID: String!
     templateID: String!
@@ -198,6 +265,9 @@ type Query {
   getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   # GIT-OPS OPERATIONS
+  """
+  Returns the git configuration for gitops
+  """
   getGitOpsDetails(projectID: String!): GitConfigResponse! @authorized
 
   # ANALYTICS OPERATIONS
@@ -226,21 +296,39 @@ type Query {
     workflowRunStatsRequest: WorkflowRunStatsRequest!
   ): WorkflowRunStatsResponse! @authorized
 
+  """
+  Returns all the data sources for the projectID
+  """
   listDataSource(projectID: String!): [DSResponse]! @authorized
 
+  """
+  Takes prometheus queries and returns response for annotations and metrics with a query map
+  """
   getPromQuery(query: PromInput): PromResponse! @authorized
 
+  """
+  Return the prometheus labels and values for a given input
+  """
   getPromLabelNamesAndValues(series: PromSeriesInput): PromSeriesResponse!
     @authorized
 
+  """
+  Return a list of all the prometheus series
+  """
   getPromSeriesList(dsDetails: DsDetails): PromSeriesListResponse! @authorized
 
+  """
+  Returns a list of all the dashboards given an input
+  """
   listDashboard(
     projectID: String!
     clusterID: String
     dbID: String
   ): [ListDashboardResponse] @authorized
 
+  """
+  Returns the portal dashboard data from the ChaosHub
+  """
   portalDashboardData(
     projectID: String!
     hubName: String!
@@ -255,28 +343,48 @@ type Query {
   ): ImageRegistryResponse! @authorized
 
   # USAGE OPERATIONS
+  """
+  Returns the portal's usage overview
+  """
   usageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Subscription {
   # CLUSTER OPERATIONS
-  # It is used to listen cluster events from the graphql server
+  """
+  Listens cluster events from the graphql server
+  """
   clusterEventListener(projectID: String!): ClusterEvent! @authorized
 
-  # It is used to listen cluster operation request from the graphql server
+  """
+  Listens cluster operation request from the graphql server
+  """
   # authorized directive not required
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
   # WORKFLOW OPERATIONS
+  """
+  Sends workflow events to the subscriber
+  """
   workflowEventListener(projectID: String!): WorkflowRun! @authorized
 
+  """
+  Returns experiment logs from the pods
+  """
   getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
   # K8S OPERATIONS
+  """
+  Returns a kubernetes object given an input
+  """
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
   # ANALYTICS OPERATIONS
+  """
+  Takes a dashboard view id, prometheus queries, dashboard query map
+  and data variables to query prometheus and send data periodically to the subscribed client
+  """
   viewDashboard(
     dashboardID: String
     promQueries: [PromQueryInput!]!

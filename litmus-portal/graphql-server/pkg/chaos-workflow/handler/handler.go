@@ -1030,27 +1030,3 @@ func SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, w
 
 	return true, nil
 }
-
-// GetWorkflowByID is used to fetch a Workflow details for a given workflow id
-func GetWorkflowByID(ctx context.Context, workflowID string) (*model.Workflow, error) {
-	workflowInput, err := dbOperationsWorkflow.GetWorkflow(bson.D{{"workflow_id", workflowID}})
-	if err != nil {
-		return nil, err
-	}
-	workflow := model.Workflow{
-		WorkflowID:          workflowInput.WorkflowID,
-		WorkflowName:        workflowInput.WorkflowName,
-		WorkflowDescription: workflowInput.WorkflowDescription,
-		ProjectID:           workflowInput.ProjectID,
-		ClusterID:           workflowInput.ClusterID,
-		ClusterName:         workflowInput.ClusterName,
-		ClusterType:         workflowInput.ClusterType,
-		IsRemoved:           workflowInput.IsRemoved,
-		IsCustomWorkflow:    workflowInput.IsCustomWorkflow,
-		CronSyntax:          workflowInput.CronSyntax,
-		CreatedAt:           workflowInput.CreatedAt,
-		LastUpdatedBy:       &workflowInput.LastUpdatedBy,
-	}
-
-	return &workflow, nil
-}

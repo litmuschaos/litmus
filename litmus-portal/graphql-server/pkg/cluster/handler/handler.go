@@ -129,7 +129,7 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 	return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
 }
 
-// NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
+// NewEvent takes an event from a subscriber, validates identity and broadcasts the event to the users
 func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
 	cluster, err := dbOperationsCluster.GetCluster(clusterEvent.ClusterID)
 	if err != nil {
