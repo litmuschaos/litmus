@@ -149,7 +149,7 @@ func HubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, err
 			RepoURL:    hub.RepoURL,
 			RepoBranch: hub.RepoBranch,
 		}
-		ChartsPath := handler.GetChartsPath(ctx, chartsInput)
+		ChartsPath := handler.GetChartsPath(chartsInput)
 		ChartData, err := handler.GetChartsData(ChartsPath)
 		if err != nil {
 			isConfirmed = false
@@ -214,7 +214,7 @@ func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.
 		}
 	}
 
-	ChartsPath := handler.GetChartsPath(ctx, chartsInput)
+	ChartsPath := handler.GetChartsPath(chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
 		err = myHubOps.GitClone(chartsInput)
@@ -284,11 +284,11 @@ func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.MyHu
 }
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
-func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+func GetYAMLData(experimentInput model.ExperimentInput) (string, error) {
 	if strings.ToLower(*experimentInput.FileType) == "csv" || strings.ToLower(*experimentInput.FileType) == "workflow" {
 		return "", errors.New("invalid file type")
 	}
-	YAMLPath := handler.GetExperimentYAMLPath(ctx, experimentInput)
+	YAMLPath := handler.GetExperimentYAMLPath(experimentInput)
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
 	if err != nil {
 		return "", err
@@ -297,13 +297,13 @@ func GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (st
 }
 
 // GetPredefinedExperimentYAMLData is responsible for sending the workflow.yaml for a given pre-defined workflow.
-func GetPredefinedExperimentYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
+func GetPredefinedExperimentYAMLData(experimentInput model.ExperimentInput) (string, error) {
 	var YAMLPath string
 	if strings.ToLower(*experimentInput.FileType) != "workflow" {
 		return "", errors.New("invalid file type")
 	}
 	if strings.ToLower(experimentInput.ChartName) == "predefined" && strings.ToLower(*experimentInput.FileType) == "workflow" {
-		YAMLPath = handler.GetPredefinedExperimentManifest(ctx, experimentInput)
+		YAMLPath = handler.GetPredefinedExperimentManifest(experimentInput)
 	}
 	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
 	if err != nil {

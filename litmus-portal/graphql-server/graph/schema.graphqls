@@ -108,16 +108,34 @@ type Mutation {
   @authorized
 
   # CHAOS-HUB OPERATIONS
+  """
+  Add a ChaosHub (includes the git clone operation)
+  """
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Save a ChaosHub configuration without cloning it
+  """
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Sync changes from the Git repository of a ChaosHub
+  """
   syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
+  """
+  Generates Private and Public key for SSH authentication
+  """
   generaterSSHKey: SSHKey! @authorized
 
+  """
+  Update the configuration of a ChaosHub
+  """
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Delete the ChaosHub
+  """
   deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # GIT-OPS OPERATIONS
@@ -183,17 +201,26 @@ type Mutation {
   @authorized
 
   # IMAGE REGISTRY OPERATIONS
+  """
+  Create an Image Registry configuration
+  """
   createImageRegistry(
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
+  """
+  Update the Image Registry configuration
+  """
   updateImageRegistry(
     imageRegistryID: String!
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
+  """
+  Delete the Image Registry
+  """
   deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
   @authorized
 }
@@ -256,12 +283,24 @@ type Query {
   ): ManifestTemplate! @authorized
 
   # CHAOS-HUB OPERATIONS
+  """
+  Get the Charts details of a ChaosHub
+  """
   getCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
 
+  """
+  Get the Experiment list from a ChaosHub
+  """
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
+  """
+  Get the status of all the connected ChaosHub
+  """
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
+  """
+  Get the YAML manifest of ChaosEngine/ChaosExperiment
+  """
   getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   # GIT-OPS OPERATIONS

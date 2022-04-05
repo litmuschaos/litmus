@@ -179,7 +179,7 @@ type ComplexityRoot struct {
 	}
 
 	Experiments struct {
-		CSv  func(childComplexity int) int
+		Csv  func(childComplexity int) int
 		Desc func(childComplexity int) int
 		Name func(childComplexity int) int
 	}
@@ -1321,12 +1321,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DashboardPromResponse.DashboardMetricsResponse(childComplexity), true
 
-	case "Experiments.cSV":
-		if e.complexity.Experiments.CSv == nil {
+	case "Experiments.CSV":
+		if e.complexity.Experiments.Csv == nil {
 			break
 		}
 
-		return e.complexity.Experiments.CSv(childComplexity), true
+		return e.complexity.Experiments.Csv(childComplexity), true
 
 	case "Experiments.desc":
 		if e.complexity.Experiments.Desc == nil {
@@ -4838,7 +4838,7 @@ type PackageInformation {
 
 type Experiments {
   name: String!
-  cSV: String!
+  CSV: String!
   desc: String!
 }
 
@@ -5100,13 +5100,13 @@ type Mutation {
   ): ClusterRegResponse! @authorized
 
   """
-  Used to confirm the subscriber's registration
+  Confirms the subscriber's registration with the control plane
   """
   # authorized directive not required
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
 
   """
-  Used to send cluster related events from the subscriber
+  Sends cluster related events to the subscriber
   """
   # authorized directive not required
   newClusterEvent(clusterEvent: ClusterEventInput!): String!
@@ -5118,107 +5118,195 @@ type Mutation {
 
   # WORKFLOW OPERATIONS
   """
-  Creates a new choasworkflow and applies its manifest
+  Creates a new workflow and applies its manifest
   """
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
   @authorized
 
+  """
+  Reruns the workflow and applies its manifest
+  """
   reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
   @authorized
 
+  """
+  Updates the workflow
+  """
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
   @authorized
 
-  # removes workflow from cluster and db
+  """
+  Removes a workflow from cluster
+  """
   deleteChaosWorkflow(
     projectID: String!
     workflowID: String
     workflowRunID: String
   ): Boolean! @authorized
 
-  # removes workflow run from the cluster only
+  """
+  Removes workflow run from the cluster only
+  """
   terminateChaosWorkflow(
     projectID: String!
     workflowID: String
     workflowRunID: String
   ): Boolean! @authorized
 
+  """
+  Manually sync the status of the workflow run
+  """
   syncWorkflow(
     projectID: String!
     workflowID: String!
     workflowRunID: String!
   ): Boolean! @authorized
 
+  """
+  Creates a new workflow run and sends it to subscriber
+  """
   # authorized directive not required
   chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
 
+  """
+  Receives pod logs for experiments from agent
+  """
   # authorized directive not required
   podLog(log: PodLog!): String!
 
+  """
+  Receives kubernetes object data from subscriber
+  """
   # authorized directive not required
   kubeObj(kubeData: KubeObjectData!): String!
 
   # WORKFLOW TEMPLATE OPERATIONS
+  """
+  Creates a workflow template manifest
+  """
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
   @authorized
 
+  """
+  Removes a workflow template manifest
+  """
   deleteManifestTemplate(projectID: String!, templateID: String!): Boolean!
   @authorized
 
   # CHAOS-HUB OPERATIONS
+  """
+  Add a ChaosHub (includes the git clone operation)
+  """
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Save a ChaosHub configuration without cloning it
+  """
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Sync changes from the Git repository of a ChaosHub
+  """
   syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
+  """
+  Generates Private and Public key for SSH authentication
+  """
   generaterSSHKey: SSHKey! @authorized
 
+  """
+  Update the configuration of a ChaosHub
+  """
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Delete the ChaosHub
+  """
   deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # GIT-OPS OPERATIONS
+  """
+  Sends workflow events to subscriber
+  """
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
 
+  """
+  Enables gitops settings in the project
+  """
   enableGitOps(config: GitConfig!): Boolean! @authorized
 
+  """
+  Disables gitops settings in the project
+  """
   disableGitOps(projectID: String!): Boolean! @authorized
 
+  """
+  Updates gitops settings in the project
+  """
   updateGitOps(config: GitConfig!): Boolean! @authorized
 
   # ANALYTICS OPERATIONS
+  """
+  Creates a new datasource
+  """
   createDataSource(datasource: DSInput): DSResponse @authorized
 
+  """
+  Creates a new analytics dashboard
+  """
   createDashBoard(dashboard: CreateDBInput): ListDashboardResponse! @authorized
 
+  """
+  Updates a datasource
+  """
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
+  """
+  Updates a dashboard
+  """
   updateDashboard(
     projectID: String!
     dashboard: UpdateDBInput!
     chaosQueryUpdate: Boolean!
   ): String! @authorized
 
+  """
+  Updates a dashboard panel
+  """
   updatePanel(panelInput: [Panel]): String! @authorized
 
+  """
+  Deletes a dashboard
+  """
   deleteDashboard(projectID: String!, dbID: String): Boolean! @authorized
 
+  """
+  Deletes a datasource
+  """
   deleteDataSource(projectID: String!, input: DeleteDSInput!): Boolean!
   @authorized
 
   # IMAGE REGISTRY OPERATIONS
+  """
+  Create an Image Registry configuration
+  """
   createImageRegistry(
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
+  """
+  Update the Image Registry configuration
+  """
   updateImageRegistry(
     imageRegistryID: String!
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
+  """
+  Delete the Image Registry
+  """
   deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
   @authorized
 }
@@ -5267,23 +5355,44 @@ type Query {
   @authorized
 
   # WORKFLOW TEMPLATE OPERATIONS
+  """
+  Returns all the workflow templates for the projectID
+  """
   listManifestTemplate(projectID: String!): [ManifestTemplate]! @authorized
 
+  """
+  Returns a single workflow templates given a projectID and a templateID
+  """
   GetTemplateManifestByID(
     projectID: String!
     templateID: String!
   ): ManifestTemplate! @authorized
 
   # CHAOS-HUB OPERATIONS
+  """
+  Get the Charts details of a ChaosHub
+  """
   getCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
 
+  """
+  Get the Experiment list from a ChaosHub
+  """
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
+  """
+  Get the status of all the connected ChaosHub
+  """
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
+  """
+  Get the YAML manifest of ChaosEngine/ChaosExperiment
+  """
   getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   # GIT-OPS OPERATIONS
+  """
+  Returns the git configuration for gitops
+  """
   getGitOpsDetails(projectID: String!): GitConfigResponse! @authorized
 
   # ANALYTICS OPERATIONS
@@ -5312,21 +5421,39 @@ type Query {
     workflowRunStatsRequest: WorkflowRunStatsRequest!
   ): WorkflowRunStatsResponse! @authorized
 
+  """
+  Returns all the data sources for the projectID
+  """
   listDataSource(projectID: String!): [DSResponse]! @authorized
 
+  """
+  Takes prometheus queries and returns response for annotations and metrics with a query map
+  """
   getPromQuery(query: PromInput): PromResponse! @authorized
 
+  """
+  Return the prometheus labels and values for a given input
+  """
   getPromLabelNamesAndValues(series: PromSeriesInput): PromSeriesResponse!
     @authorized
 
+  """
+  Return a list of all the prometheus series
+  """
   getPromSeriesList(dsDetails: DsDetails): PromSeriesListResponse! @authorized
 
+  """
+  Returns a list of all the dashboards given an input
+  """
   listDashboard(
     projectID: String!
     clusterID: String
     dbID: String
   ): [ListDashboardResponse] @authorized
 
+  """
+  Returns the portal dashboard data from the ChaosHub
+  """
   portalDashboardData(
     projectID: String!
     hubName: String!
@@ -5341,28 +5468,48 @@ type Query {
   ): ImageRegistryResponse! @authorized
 
   # USAGE OPERATIONS
+  """
+  Returns the portal's usage overview
+  """
   usageQuery(query: UsageQuery!): UsageData! @authorized
 }
 
 type Subscription {
   # CLUSTER OPERATIONS
-  # It is used to listen cluster events from the graphql server
+  """
+  Listens cluster events from the graphql server
+  """
   clusterEventListener(projectID: String!): ClusterEvent! @authorized
 
-  # It is used to listen cluster operation request from the graphql server
+  """
+  Listens cluster operation request from the graphql server
+  """
   # authorized directive not required
   clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
 
   # WORKFLOW OPERATIONS
+  """
+  Sends workflow events to the subscriber
+  """
   workflowEventListener(projectID: String!): WorkflowRun! @authorized
 
+  """
+  Returns experiment logs from the pods
+  """
   getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
 
   # K8S OPERATIONS
+  """
+  Returns a kubernetes object given an input
+  """
   getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
   # ANALYTICS OPERATIONS
+  """
+  Takes a dashboard view id, prometheus queries, dashboard query map
+  and data variables to query prometheus and send data periodically to the subscribed client
+  """
   viewDashboard(
     dashboardID: String
     promQueries: [PromQueryInput!]!
@@ -10299,7 +10446,7 @@ func (ec *executionContext) _Experiments_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Experiments_cSV(ctx context.Context, field graphql.CollectedField, obj *model.Experiments) (ret graphql.Marshaler) {
+func (ec *executionContext) _Experiments_CSV(ctx context.Context, field graphql.CollectedField, obj *model.Experiments) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10316,7 +10463,7 @@ func (ec *executionContext) _Experiments_cSV(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CSv, nil
+		return obj.Csv, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25966,8 +26113,8 @@ func (ec *executionContext) _Experiments(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "cSV":
-			out.Values[i] = ec._Experiments_cSV(ctx, field, obj)
+		case "CSV":
+			out.Values[i] = ec._Experiments_CSV(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

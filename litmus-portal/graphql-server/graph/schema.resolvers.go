@@ -450,7 +450,7 @@ func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experim
 	if err != nil {
 		return "", err
 	}
-	return myhub.GetPredefinedExperimentYAMLData(ctx, experimentInput)
+	return myhub.GetPredefinedExperimentYAMLData(experimentInput)
 }
 
 func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
@@ -516,7 +516,7 @@ func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.E
 		return "", err
 	}
 
-	return myhub.GetYAMLData(ctx, experimentInput)
+	return myhub.GetYAMLData(experimentInput)
 }
 
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
