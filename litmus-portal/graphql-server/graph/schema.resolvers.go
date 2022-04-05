@@ -32,15 +32,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
-	err := authorization.ValidateRole(ctx, clusterInput.ProjectID,
+func (r *mutationResolver) RegisterCluster(ctx context.Context, request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UserClusterReg],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return clusterHandler.ClusterRegister(clusterInput)
+	return clusterHandler.RegisterCluster(request)
 }
 
 func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {

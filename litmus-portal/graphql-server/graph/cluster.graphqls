@@ -97,7 +97,7 @@ type Cluster {
 """
 Defines the details for the new cluster being connected
 """
-input ClusterInput {
+input RegisterClusterRequest {
     """
     Name of the cluster
     """
@@ -203,7 +203,7 @@ type ClusterConfirmResponse {
 """
 Response received for registering a new cluster
 """
-type ClusterRegResponse {
+type RegisterClusterResponse {
     """
     Token used to verify and retrieve the cluster agent manifest
     """

@@ -26,17 +26,17 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
-// ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
-func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
+// RegisterCluster creates an entry for a new cluster in DB and generates the url used to apply manifest
+func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
 	clusterID := uuid.New().String()
 
 	token, err := clusterOps.ClusterCreateJWT(clusterID)
 	if err != nil {
-		return &model.ClusterRegResponse{}, err
+		return &model.RegisterClusterResponse{}, err
 	}
 
-	if input.NodeSelector != nil {
-		selectors := strings.Split(*input.NodeSelector, ",")
+	if request.NodeSelector != nil {
+		selectors := strings.Split(*request.NodeSelector, ",")
 
 		for _, el := range selectors {
 			kv := strings.Split(el, "=")
@@ -50,42 +50,42 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		}
 	}
 	var tolerations []*dbSchemaCluster.Toleration
-	err = copier.Copy(&tolerations, input.Tolerations)
+	err = copier.Copy(&tolerations, request.Tolerations)
 	if err != nil {
-		return &model.ClusterRegResponse{}, err
+		return &model.RegisterClusterResponse{}, err
 	}
 
 	newCluster := dbSchemaCluster.Cluster{
 		ClusterID:      clusterID,
-		ClusterName:    input.ClusterName,
-		Description:    input.Description,
-		ProjectID:      input.ProjectID,
+		ClusterName:    request.ClusterName,
+		Description:    request.Description,
+		ProjectID:      request.ProjectID,
 		AccessKey:      utils.RandomString(32),
-		ClusterType:    input.ClusterType,
-		PlatformName:   input.PlatformName,
-		AgentNamespace: input.AgentNamespace,
-		Serviceaccount: input.ServiceAccount,
-		AgentScope:     input.AgentScope,
-		AgentNsExists:  input.AgentNsExists,
-		AgentSaExists:  input.AgentSaExists,
+		ClusterType:    request.ClusterType,
+		PlatformName:   request.PlatformName,
+		AgentNamespace: request.AgentNamespace,
+		Serviceaccount: request.ServiceAccount,
+		AgentScope:     request.AgentScope,
+		AgentNsExists:  request.AgentNsExists,
+		AgentSaExists:  request.AgentSaExists,
 		CreatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		Token:          token,
 		IsRemoved:      false,
-		NodeSelector:   input.NodeSelector,
+		NodeSelector:   request.NodeSelector,
 		Tolerations:    tolerations,
-		SkipSSL:        input.SkipSsl,
+		SkipSSL:        request.SkipSsl,
 		StartTime:      strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
 	if err != nil {
-		return &model.ClusterRegResponse{}, err
+		return &model.RegisterClusterResponse{}, err
 	}
 
-	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", input.ProjectID)
+	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", request.ProjectID)
 
-	return &model.ClusterRegResponse{
+	return &model.RegisterClusterResponse{
 		ClusterID:   newCluster.ClusterID,
 		Token:       token,
 		ClusterName: newCluster.ClusterName,

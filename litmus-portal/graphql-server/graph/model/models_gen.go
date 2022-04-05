@@ -206,46 +206,6 @@ type ClusterIdentity struct {
 	Version   string `json:"version"`
 }
 
-// Defines the details for the new cluster being connected
-type ClusterInput struct {
-	// Name of the cluster
-	ClusterName string `json:"clusterName"`
-	// Description of the cluster
-	Description *string `json:"description"`
-	// Cluster Platform Name eg. GKE,AWS, Others
-	PlatformName string `json:"platformName"`
-	// Project ID the cluster is being connected to
-	ProjectID string `json:"projectID"`
-	// Cluster type : Internal or External
-	ClusterType string `json:"clusterType"`
-	// Namespace where the cluster agent is being installed
-	AgentNamespace *string `json:"agentNamespace"`
-	// Name of service account used by cluster agent
-	ServiceAccount *string `json:"serviceAccount"`
-	// Scope of the cluster agent : ns or cluster
-	AgentScope string `json:"agentScope"`
-	// Bool value indicating whether agent ns used already exists on cluster or not
-	AgentNsExists *bool `json:"agentNsExists"`
-	// Bool value indicating whether service account used already exists on cluster or not
-	AgentSaExists *bool `json:"agentSaExists"`
-	// Bool value indicating whether agent will skip ssl checks or not
-	SkipSsl *bool `json:"skipSsl"`
-	// Node selectors used by cluster agent
-	NodeSelector *string `json:"nodeSelector"`
-	// Node tolerations used by cluster agent
-	Tolerations []*Toleration `json:"tolerations"`
-}
-
-// Response received for registering a new cluster
-type ClusterRegResponse struct {
-	// Token used to verify and retrieve the cluster agent manifest
-	Token string `json:"token"`
-	// Unique ID for the newly registered cluster
-	ClusterID string `json:"clusterID"`
-	// Cluster name as sent in request
-	ClusterName string `json:"clusterName"`
-}
-
 type CreateDBInput struct {
 	DsID                      string                 `json:"dsID"`
 	DbName                    string                 `json:"dbName"`
@@ -898,6 +858,46 @@ type QueryMapForPanel struct {
 type QueryMapForPanelGroup struct {
 	PanelGroupID  string              `json:"panelGroupID"`
 	PanelQueryMap []*QueryMapForPanel `json:"panelQueryMap"`
+}
+
+// Defines the details for the new cluster being connected
+type RegisterClusterRequest struct {
+	// Name of the cluster
+	ClusterName string `json:"clusterName"`
+	// Description of the cluster
+	Description *string `json:"description"`
+	// Cluster Platform Name eg. GKE,AWS, Others
+	PlatformName string `json:"platformName"`
+	// Project ID the cluster is being connected to
+	ProjectID string `json:"projectID"`
+	// Cluster type : Internal or External
+	ClusterType string `json:"clusterType"`
+	// Namespace where the cluster agent is being installed
+	AgentNamespace *string `json:"agentNamespace"`
+	// Name of service account used by cluster agent
+	ServiceAccount *string `json:"serviceAccount"`
+	// Scope of the cluster agent : ns or cluster
+	AgentScope string `json:"agentScope"`
+	// Bool value indicating whether agent ns used already exists on cluster or not
+	AgentNsExists *bool `json:"agentNsExists"`
+	// Bool value indicating whether service account used already exists on cluster or not
+	AgentSaExists *bool `json:"agentSaExists"`
+	// Bool value indicating whether agent will skip ssl checks or not
+	SkipSsl *bool `json:"skipSsl"`
+	// Node selectors used by cluster agent
+	NodeSelector *string `json:"nodeSelector"`
+	// Node tolerations used by cluster agent
+	Tolerations []*Toleration `json:"tolerations"`
+}
+
+// Response received for registering a new cluster
+type RegisterClusterResponse struct {
+	// Token used to verify and retrieve the cluster agent manifest
+	Token string `json:"token"`
+	// Unique ID for the newly registered cluster
+	ClusterID string `json:"clusterID"`
+	// Cluster name as sent in request
+	ClusterName string `json:"clusterName"`
 }
 
 type Resource struct {

@@ -9,9 +9,9 @@ type Mutation {
   """
   Registers a new cluster for a user in a specified project
   """
-  userClusterReg(
-    clusterInput: ClusterInput!
-  ): ClusterRegResponse! @authorized
+  registerCluster(
+    request: RegisterClusterRequest!
+  ): RegisterClusterResponse! @authorized
 
   """
   Confirms the subscriber's registration with the control plane
