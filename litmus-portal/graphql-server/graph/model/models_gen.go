@@ -327,7 +327,7 @@ type ExperimentInput struct {
 
 type Experiments struct {
 	Name string `json:"name"`
-	CSv  string `json:"cSV"`
+	Csv  string `json:"CSV"`
 	Desc string `json:"desc"`
 }
 

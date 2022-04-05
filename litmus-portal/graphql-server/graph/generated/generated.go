@@ -173,7 +173,7 @@ type ComplexityRoot struct {
 	}
 
 	Experiments struct {
-		CSv  func(childComplexity int) int
+		Csv  func(childComplexity int) int
 		Desc func(childComplexity int) int
 		Name func(childComplexity int) int
 	}
@@ -1300,12 +1300,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DashboardPromResponse.DashboardMetricsResponse(childComplexity), true
 
-	case "Experiments.cSV":
-		if e.complexity.Experiments.CSv == nil {
+	case "Experiments.CSV":
+		if e.complexity.Experiments.Csv == nil {
 			break
 		}
 
-		return e.complexity.Experiments.CSv(childComplexity), true
+		return e.complexity.Experiments.Csv(childComplexity), true
 
 	case "Experiments.desc":
 		if e.complexity.Experiments.Desc == nil {
@@ -4838,7 +4838,7 @@ type PackageInformation {
 
 type Experiments {
   name: String!
-  cSV: String!
+  CSV: String!
   desc: String!
 }
 
@@ -5194,16 +5194,34 @@ type Mutation {
   @authorized
 
   # CHAOS-HUB OPERATIONS
+  """
+  Add a ChaosHub (includes the git clone operation)
+  """
   addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Save a ChaosHub configuration without cloning it
+  """
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Sync changes from the Git repository of a ChaosHub
+  """
   syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
+  """
+  Generates Private and Public key for SSH authentication
+  """
   generaterSSHKey: SSHKey! @authorized
 
+  """
+  Update the configuration of a ChaosHub
+  """
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
+  """
+  Delete the ChaosHub
+  """
   deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # GIT-OPS OPERATIONS
@@ -5269,17 +5287,26 @@ type Mutation {
   @authorized
 
   # IMAGE REGISTRY OPERATIONS
+  """
+  Create an Image Registry configuration
+  """
   createImageRegistry(
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
+  """
+  Update the Image Registry configuration
+  """
   updateImageRegistry(
     imageRegistryID: String!
     projectID: String!
     imageRegistryInfo: ImageRegistryInput!
   ): ImageRegistryResponse! @authorized
 
+  """
+  Delete the Image Registry
+  """
   deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
   @authorized
 }
@@ -5342,12 +5369,24 @@ type Query {
   ): ManifestTemplate! @authorized
 
   # CHAOS-HUB OPERATIONS
+  """
+  Get the Charts details of a ChaosHub
+  """
   getCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
 
+  """
+  Get the Experiment list from a ChaosHub
+  """
   getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
 
+  """
+  Get the status of all the connected ChaosHub
+  """
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
+  """
+  Get the YAML manifest of ChaosEngine/ChaosExperiment
+  """
   getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   # GIT-OPS OPERATIONS
@@ -10305,7 +10344,7 @@ func (ec *executionContext) _Experiments_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Experiments_cSV(ctx context.Context, field graphql.CollectedField, obj *model.Experiments) (ret graphql.Marshaler) {
+func (ec *executionContext) _Experiments_CSV(ctx context.Context, field graphql.CollectedField, obj *model.Experiments) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10322,7 +10361,7 @@ func (ec *executionContext) _Experiments_cSV(ctx context.Context, field graphql.
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CSv, nil
+		return obj.Csv, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26037,8 +26076,8 @@ func (ec *executionContext) _Experiments(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "cSV":
-			out.Values[i] = ec._Experiments_cSV(ctx, field, obj)
+		case "CSV":
+			out.Values[i] = ec._Experiments_CSV(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
