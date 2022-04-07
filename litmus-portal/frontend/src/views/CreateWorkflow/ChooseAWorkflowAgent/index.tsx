@@ -1,5 +1,6 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { RadioGroup, Typography, useTheme } from '@material-ui/core';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import {
   ButtonOutlined,
   LitmusCard,
@@ -8,15 +9,15 @@ import {
   Search,
 } from 'litmus-ui';
 import React, {
-  lazy,
   forwardRef,
+  lazy,
   useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import Loader from '../../../components/Loader';
 import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
@@ -31,7 +32,6 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-import Loader from '../../../components/Loader';
 
 const AgentDeployModal = lazy(
   () => import('../../../components/AgentDeployModal')
@@ -172,6 +172,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   // Rendering once to get the cluster data
   useEffect(() => {
     getCluster({ variables: { project_id: selectedProjectID } });
+    workflow.setLitmusCoreVersion();
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

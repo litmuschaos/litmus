@@ -4,7 +4,7 @@
 export DB_SERVER=mongodb://localhost:27017
 export JWT_SECRET=litmus-portal@123
 export PORTAL_ENDPOINT=http://localhost:8080
-export SELF_CLUSTER=false # self-cluster needs k8s env
+export SELF_AGENT=false # self-agent needs k8s env
 export AGENT_SCOPE=cluster
 export AGENT_NAMESPACE=litmus
 export LITMUS_PORTAL_NAMESPACE=litmus
@@ -22,6 +22,7 @@ export ADMIN_PASSWORD=litmus
 export DB_USER=admin
 export DB_PASSWORD=1234
 export VERSION=ci
+export LITMUS_CORE_VERSION="2.7.0"
 export HUB_BRANCH_NAME=v2.0.x
 export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]" 
 # Dependency Checks

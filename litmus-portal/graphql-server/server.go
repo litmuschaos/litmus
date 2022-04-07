@@ -162,6 +162,7 @@ func main() {
 
 	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
 	router.HandleFunc("/status", handlers.StatusHandler)
+	router.HandleFunc("/litmus_core_version", handlers.LitmusCoreComponentVersionHandler)
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
 	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))
