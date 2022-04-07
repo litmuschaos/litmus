@@ -135,18 +135,18 @@ type ComplexityRoot struct {
 		ProjectID func(childComplexity int) int
 	}
 
-	ClusterConfirmResponse struct {
-		ClusterID          func(childComplexity int) int
-		IsClusterConfirmed func(childComplexity int) int
-		NewAccessKey       func(childComplexity int) int
-	}
-
 	ClusterEvent struct {
 		Cluster     func(childComplexity int) int
 		Description func(childComplexity int) int
 		EventID     func(childComplexity int) int
 		EventName   func(childComplexity int) int
 		EventType   func(childComplexity int) int
+	}
+
+	ConfirmClusterRegistrationResponse struct {
+		ClusterID          func(childComplexity int) int
+		IsClusterConfirmed func(childComplexity int) int
+		NewAccessKey       func(childComplexity int) int
 	}
 
 	DSResponse struct {
@@ -310,41 +310,41 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddMyHub               func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		ChaosWorkflowRun       func(childComplexity int, workflowData model.WorkflowRunInput) int
-		ClusterConfirm         func(childComplexity int, identity model.ClusterIdentity) int
-		CreateChaosWorkFlow    func(childComplexity int, input model.ChaosWorkFlowInput) int
-		CreateDashBoard        func(childComplexity int, dashboard *model.CreateDBInput) int
-		CreateDataSource       func(childComplexity int, datasource *model.DSInput) int
-		CreateImageRegistry    func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		CreateManifestTemplate func(childComplexity int, templateInput *model.TemplateInput) int
-		DeleteChaosWorkflow    func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
-		DeleteClusters         func(childComplexity int, projectID string, clusterIDs []*string) int
-		DeleteDashboard        func(childComplexity int, projectID string, dbID *string) int
-		DeleteDataSource       func(childComplexity int, projectID string, input model.DeleteDSInput) int
-		DeleteImageRegistry    func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteManifestTemplate func(childComplexity int, projectID string, templateID string) int
-		DeleteMyHub            func(childComplexity int, projectID string, hubID string) int
-		DisableGitOps          func(childComplexity int, projectID string) int
-		EnableGitOps           func(childComplexity int, config model.GitConfig) int
-		GeneraterSSHKey        func(childComplexity int) int
-		GitopsNotifer          func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
-		KubeObj                func(childComplexity int, kubeData model.KubeObjectData) int
-		NewClusterEvent        func(childComplexity int, clusterEvent model.ClusterEventInput) int
-		PodLog                 func(childComplexity int, log model.PodLog) int
-		ReRunChaosWorkFlow     func(childComplexity int, projectID string, workflowID string) int
-		RegisterCluster        func(childComplexity int, request model.RegisterClusterRequest) int
-		SaveMyHub              func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		SyncHub                func(childComplexity int, id string, projectID string) int
-		SyncWorkflow           func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
-		TerminateChaosWorkflow func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
-		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
-		UpdateDashboard        func(childComplexity int, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
-		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
-		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
-		UpdateImageRegistry    func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		UpdateMyHub            func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
-		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
+		AddMyHub                   func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
+		ChaosWorkflowRun           func(childComplexity int, workflowData model.WorkflowRunInput) int
+		ConfirmClusterRegistration func(childComplexity int, request model.ClusterIdentity) int
+		CreateChaosWorkFlow        func(childComplexity int, input model.ChaosWorkFlowInput) int
+		CreateDashBoard            func(childComplexity int, dashboard *model.CreateDBInput) int
+		CreateDataSource           func(childComplexity int, datasource *model.DSInput) int
+		CreateImageRegistry        func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		CreateManifestTemplate     func(childComplexity int, templateInput *model.TemplateInput) int
+		DeleteChaosWorkflow        func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
+		DeleteClusters             func(childComplexity int, projectID string, clusterIDs []*string) int
+		DeleteDashboard            func(childComplexity int, projectID string, dbID *string) int
+		DeleteDataSource           func(childComplexity int, projectID string, input model.DeleteDSInput) int
+		DeleteImageRegistry        func(childComplexity int, imageRegistryID string, projectID string) int
+		DeleteManifestTemplate     func(childComplexity int, projectID string, templateID string) int
+		DeleteMyHub                func(childComplexity int, projectID string, hubID string) int
+		DisableGitOps              func(childComplexity int, projectID string) int
+		EnableGitOps               func(childComplexity int, config model.GitConfig) int
+		GeneraterSSHKey            func(childComplexity int) int
+		GitopsNotifer              func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
+		KubeObj                    func(childComplexity int, kubeData model.KubeObjectData) int
+		NewClusterEvent            func(childComplexity int, request model.NewClusterEventRequest) int
+		PodLog                     func(childComplexity int, log model.PodLog) int
+		ReRunChaosWorkFlow         func(childComplexity int, projectID string, workflowID string) int
+		RegisterCluster            func(childComplexity int, request model.RegisterClusterRequest) int
+		SaveMyHub                  func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
+		SyncHub                    func(childComplexity int, id string, projectID string) int
+		SyncWorkflow               func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
+		TerminateChaosWorkflow     func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
+		UpdateChaosWorkflow        func(childComplexity int, input *model.ChaosWorkFlowInput) int
+		UpdateDashboard            func(childComplexity int, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
+		UpdateDataSource           func(childComplexity int, datasource model.DSInput) int
+		UpdateGitOps               func(childComplexity int, config model.GitConfig) int
+		UpdateImageRegistry        func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		UpdateMyHub                func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
+		UpdatePanel                func(childComplexity int, panelInput []*model.Panel) int
 	}
 
 	MyHub struct {
@@ -633,8 +633,8 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	RegisterCluster(ctx context.Context, request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error)
-	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
-	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
+	ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error)
+	NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error)
 	DeleteClusters(ctx context.Context, projectID string, clusterIDs []*string) (string, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
 	ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error)
@@ -1125,27 +1125,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ClusterAction.ProjectID(childComplexity), true
 
-	case "ClusterConfirmResponse.clusterID":
-		if e.complexity.ClusterConfirmResponse.ClusterID == nil {
-			break
-		}
-
-		return e.complexity.ClusterConfirmResponse.ClusterID(childComplexity), true
-
-	case "ClusterConfirmResponse.isClusterConfirmed":
-		if e.complexity.ClusterConfirmResponse.IsClusterConfirmed == nil {
-			break
-		}
-
-		return e.complexity.ClusterConfirmResponse.IsClusterConfirmed(childComplexity), true
-
-	case "ClusterConfirmResponse.newAccessKey":
-		if e.complexity.ClusterConfirmResponse.NewAccessKey == nil {
-			break
-		}
-
-		return e.complexity.ClusterConfirmResponse.NewAccessKey(childComplexity), true
-
 	case "ClusterEvent.cluster":
 		if e.complexity.ClusterEvent.Cluster == nil {
 			break
@@ -1180,6 +1159,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ClusterEvent.EventType(childComplexity), true
+
+	case "ConfirmClusterRegistrationResponse.clusterID":
+		if e.complexity.ConfirmClusterRegistrationResponse.ClusterID == nil {
+			break
+		}
+
+		return e.complexity.ConfirmClusterRegistrationResponse.ClusterID(childComplexity), true
+
+	case "ConfirmClusterRegistrationResponse.isClusterConfirmed":
+		if e.complexity.ConfirmClusterRegistrationResponse.IsClusterConfirmed == nil {
+			break
+		}
+
+		return e.complexity.ConfirmClusterRegistrationResponse.IsClusterConfirmed(childComplexity), true
+
+	case "ConfirmClusterRegistrationResponse.newAccessKey":
+		if e.complexity.ConfirmClusterRegistrationResponse.NewAccessKey == nil {
+			break
+		}
+
+		return e.complexity.ConfirmClusterRegistrationResponse.NewAccessKey(childComplexity), true
 
 	case "DSResponse.accessType":
 		if e.complexity.DSResponse.AccessType == nil {
@@ -1905,17 +1905,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ChaosWorkflowRun(childComplexity, args["workflowData"].(model.WorkflowRunInput)), true
 
-	case "Mutation.clusterConfirm":
-		if e.complexity.Mutation.ClusterConfirm == nil {
+	case "Mutation.confirmClusterRegistration":
+		if e.complexity.Mutation.ConfirmClusterRegistration == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_clusterConfirm_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_confirmClusterRegistration_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ClusterConfirm(childComplexity, args["identity"].(model.ClusterIdentity)), true
+		return e.complexity.Mutation.ConfirmClusterRegistration(childComplexity, args["request"].(model.ClusterIdentity)), true
 
 	case "Mutation.createChaosWorkFlow":
 		if e.complexity.Mutation.CreateChaosWorkFlow == nil {
@@ -2126,7 +2126,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.NewClusterEvent(childComplexity, args["clusterEvent"].(model.ClusterEventInput)), true
+		return e.complexity.Mutation.NewClusterEvent(childComplexity, args["request"].(model.NewClusterEventRequest)), true
 
 	case "Mutation.podLog":
 		if e.complexity.Mutation.PodLog == nil {
@@ -4398,7 +4398,7 @@ type ClusterAction {
     action: ActionPayload!
 }
 
-input ClusterEventInput {
+input NewClusterEventRequest {
     eventName: String!
     description: String!
     clusterID: String!
@@ -4411,7 +4411,7 @@ input ClusterIdentity {
     version: String!
 }
 
-type ClusterConfirmResponse {
+type ConfirmClusterRegistrationResponse {
     isClusterConfirmed: Boolean!
     newAccessKey: String
     clusterID: String
@@ -5103,13 +5103,13 @@ type Mutation {
   Confirms the subscriber's registration with the control plane
   """
   # authorized directive not required
-  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+  confirmClusterRegistration(request: ClusterIdentity!): ConfirmClusterRegistrationResponse!
 
   """
   Sends cluster related events to the subscriber
   """
   # authorized directive not required
-  newClusterEvent(clusterEvent: ClusterEventInput!): String!
+  newClusterEvent(request: NewClusterEventRequest!): String!
 
   """
   Disconnects a cluster/agent and deletes its agent configuration from the control plane
@@ -6340,17 +6340,17 @@ func (ec *executionContext) field_Mutation_chaosWorkflowRun_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_clusterConfirm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_confirmClusterRegistration_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.ClusterIdentity
-	if tmp, ok := rawArgs["identity"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["identity"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6661,14 +6661,14 @@ func (ec *executionContext) field_Mutation_kubeObj_args(ctx context.Context, raw
 func (ec *executionContext) field_Mutation_newClusterEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.ClusterEventInput
-	if tmp, ok := rawArgs["clusterEvent"]; ok {
-		arg0, err = ec.unmarshalNClusterEventInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventInput(ctx, tmp)
+	var arg0 model.NewClusterEventRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNNewClusterEventRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐNewClusterEventRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["clusterEvent"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -9511,102 +9511,6 @@ func (ec *executionContext) _ClusterAction_action(ctx context.Context, field gra
 	return ec.marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterConfirmResponse_isClusterConfirmed(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ClusterConfirmResponse",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsClusterConfirmed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ClusterConfirmResponse_newAccessKey(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ClusterConfirmResponse",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.NewAccessKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ClusterConfirmResponse_clusterID(ctx context.Context, field graphql.CollectedField, obj *model.ClusterConfirmResponse) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ClusterConfirmResponse",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ClusterID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ClusterEvent_eventID(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9775,6 +9679,102 @@ func (ec *executionContext) _ClusterEvent_cluster(ctx context.Context, field gra
 	res := resTmp.(*model.Cluster)
 	fc.Result = res
 	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ConfirmClusterRegistrationResponse_isClusterConfirmed(ctx context.Context, field graphql.CollectedField, obj *model.ConfirmClusterRegistrationResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ConfirmClusterRegistrationResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsClusterConfirmed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ConfirmClusterRegistrationResponse_newAccessKey(ctx context.Context, field graphql.CollectedField, obj *model.ConfirmClusterRegistrationResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ConfirmClusterRegistrationResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NewAccessKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ConfirmClusterRegistrationResponse_clusterID(ctx context.Context, field graphql.CollectedField, obj *model.ConfirmClusterRegistrationResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ConfirmClusterRegistrationResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _DSResponse_dsID(ctx context.Context, field graphql.CollectedField, obj *model.DSResponse) (ret graphql.Marshaler) {
@@ -13097,7 +13097,7 @@ func (ec *executionContext) _Mutation_registerCluster(ctx context.Context, field
 	return ec.marshalNRegisterClusterResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐRegisterClusterResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_confirmClusterRegistration(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13113,7 +13113,7 @@ func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field 
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_clusterConfirm_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_confirmClusterRegistration_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13121,7 +13121,7 @@ func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ClusterConfirm(rctx, args["identity"].(model.ClusterIdentity))
+		return ec.resolvers.Mutation().ConfirmClusterRegistration(rctx, args["request"].(model.ClusterIdentity))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13133,9 +13133,9 @@ func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ClusterConfirmResponse)
+	res := resTmp.(*model.ConfirmClusterRegistrationResponse)
 	fc.Result = res
-	return ec.marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx, field.Selections, res)
+	return ec.marshalNConfirmClusterRegistrationResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐConfirmClusterRegistrationResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -13162,7 +13162,7 @@ func (ec *executionContext) _Mutation_newClusterEvent(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().NewClusterEvent(rctx, args["clusterEvent"].(model.ClusterEventInput))
+		return ec.resolvers.Mutation().NewClusterEvent(rctx, args["request"].(model.NewClusterEventRequest))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23517,42 +23517,6 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputClusterEventInput(ctx context.Context, obj interface{}) (model.ClusterEventInput, error) {
-	var it model.ClusterEventInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "eventName":
-			var err error
-			it.EventName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "description":
-			var err error
-			it.Description, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "clusterID":
-			var err error
-			it.ClusterID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "accessKey":
-			var err error
-			it.AccessKey, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputClusterIdentity(ctx context.Context, obj interface{}) (model.ClusterIdentity, error) {
 	var it model.ClusterIdentity
 	var asMap = obj.(map[string]interface{})
@@ -24282,6 +24246,42 @@ func (ec *executionContext) unmarshalInputListWorkflowsInput(ctx context.Context
 		case "filter":
 			var err error
 			it.Filter, err = ec.unmarshalOWorkflowFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowFilterInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputNewClusterEventRequest(ctx context.Context, obj interface{}) (model.NewClusterEventRequest, error) {
+	var it model.NewClusterEventRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "eventName":
+			var err error
+			it.EventName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "clusterID":
+			var err error
+			it.ClusterID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "accessKey":
+			var err error
+			it.AccessKey, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25898,37 +25898,6 @@ func (ec *executionContext) _ClusterAction(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var clusterConfirmResponseImplementors = []string{"ClusterConfirmResponse"}
-
-func (ec *executionContext) _ClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterConfirmResponse) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, clusterConfirmResponseImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ClusterConfirmResponse")
-		case "isClusterConfirmed":
-			out.Values[i] = ec._ClusterConfirmResponse_isClusterConfirmed(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "newAccessKey":
-			out.Values[i] = ec._ClusterConfirmResponse_newAccessKey(ctx, field, obj)
-		case "clusterID":
-			out.Values[i] = ec._ClusterConfirmResponse_clusterID(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var clusterEventImplementors = []string{"ClusterEvent"}
 
 func (ec *executionContext) _ClusterEvent(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterEvent) graphql.Marshaler {
@@ -25965,6 +25934,37 @@ func (ec *executionContext) _ClusterEvent(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var confirmClusterRegistrationResponseImplementors = []string{"ConfirmClusterRegistrationResponse"}
+
+func (ec *executionContext) _ConfirmClusterRegistrationResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ConfirmClusterRegistrationResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, confirmClusterRegistrationResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ConfirmClusterRegistrationResponse")
+		case "isClusterConfirmed":
+			out.Values[i] = ec._ConfirmClusterRegistrationResponse_isClusterConfirmed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "newAccessKey":
+			out.Values[i] = ec._ConfirmClusterRegistrationResponse_newAccessKey(ctx, field, obj)
+		case "clusterID":
+			out.Values[i] = ec._ConfirmClusterRegistrationResponse_clusterID(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26795,8 +26795,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "clusterConfirm":
-			out.Values[i] = ec._Mutation_clusterConfirm(ctx, field)
+		case "confirmClusterRegistration":
+			out.Values[i] = ec._Mutation_confirmClusterRegistration(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -29113,20 +29113,6 @@ func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._ClusterAction(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterConfirmResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterConfirmResponse) graphql.Marshaler {
-	return ec._ClusterConfirmResponse(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNClusterConfirmResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterConfirmResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterConfirmResponse) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ClusterConfirmResponse(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {
 	return ec._ClusterEvent(ctx, sel, &v)
 }
@@ -29141,10 +29127,6 @@ func (ec *executionContext) marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaos�
 	return ec._ClusterEvent(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNClusterEventInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventInput(ctx context.Context, v interface{}) (model.ClusterEventInput, error) {
-	return ec.unmarshalInputClusterEventInput(ctx, v)
-}
-
 func (ec *executionContext) unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx context.Context, v interface{}) (model.ClusterIdentity, error) {
 	return ec.unmarshalInputClusterIdentity(ctx, v)
 }
@@ -29155,6 +29137,20 @@ func (ec *executionContext) unmarshalNClusterIdentity2ᚖgithubᚗcomᚋlitmusch
 	}
 	res, err := ec.unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx, v)
 	return &res, err
+}
+
+func (ec *executionContext) marshalNConfirmClusterRegistrationResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐConfirmClusterRegistrationResponse(ctx context.Context, sel ast.SelectionSet, v model.ConfirmClusterRegistrationResponse) graphql.Marshaler {
+	return ec._ConfirmClusterRegistrationResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNConfirmClusterRegistrationResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐConfirmClusterRegistrationResponse(ctx context.Context, sel ast.SelectionSet, v *model.ConfirmClusterRegistrationResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ConfirmClusterRegistrationResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateMyHub(ctx context.Context, v interface{}) (model.CreateMyHub, error) {
@@ -29783,6 +29779,10 @@ func (ec *executionContext) marshalNMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋ
 		return graphql.Null
 	}
 	return ec._MyHubStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNNewClusterEventRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐNewClusterEventRequest(ctx context.Context, v interface{}) (model.NewClusterEventRequest, error) {
+	return ec.unmarshalInputNewClusterEventRequest(ctx, v)
 }
 
 func (ec *executionContext) marshalNPackageInformation2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPackageInformation(ctx context.Context, sel ast.SelectionSet, v model.PackageInformation) graphql.Marshaler {

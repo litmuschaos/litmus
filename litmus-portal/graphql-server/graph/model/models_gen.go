@@ -179,12 +179,6 @@ type ClusterAction struct {
 	Action    *ActionPayload `json:"action"`
 }
 
-type ClusterConfirmResponse struct {
-	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
-	NewAccessKey       *string `json:"newAccessKey"`
-	ClusterID          *string `json:"clusterID"`
-}
-
 type ClusterEvent struct {
 	EventID     string   `json:"eventID"`
 	EventType   string   `json:"eventType"`
@@ -193,17 +187,16 @@ type ClusterEvent struct {
 	Cluster     *Cluster `json:"cluster"`
 }
 
-type ClusterEventInput struct {
-	EventName   string `json:"eventName"`
-	Description string `json:"description"`
-	ClusterID   string `json:"clusterID"`
-	AccessKey   string `json:"accessKey"`
-}
-
 type ClusterIdentity struct {
 	ClusterID string `json:"clusterID"`
 	AccessKey string `json:"accessKey"`
 	Version   string `json:"version"`
+}
+
+type ConfirmClusterRegistrationResponse struct {
+	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
+	NewAccessKey       *string `json:"newAccessKey"`
+	ClusterID          *string `json:"clusterID"`
 }
 
 type CreateDBInput struct {
@@ -667,6 +660,13 @@ type MyHubStatus struct {
 	SSHPublicKey *string `json:"sshPublicKey"`
 	// Timestamp when the chaos hub was last synced
 	LastSyncedAt string `json:"lastSyncedAt"`
+}
+
+type NewClusterEventRequest struct {
+	EventName   string `json:"eventName"`
+	Description string `json:"description"`
+	ClusterID   string `json:"clusterID"`
+	AccessKey   string `json:"accessKey"`
 }
 
 type Option struct {

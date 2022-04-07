@@ -43,12 +43,12 @@ func (r *mutationResolver) RegisterCluster(ctx context.Context, request model.Re
 	return clusterHandler.RegisterCluster(request)
 }
 
-func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return clusterHandler.ConfirmClusterRegistration(identity, *data_store.Store)
+func (r *mutationResolver) ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error) {
+	return clusterHandler.ConfirmClusterRegistration(request, *data_store.Store)
 }
 
-func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return clusterHandler.NewEvent(clusterEvent, *data_store.Store)
+func (r *mutationResolver) NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error) {
+	return clusterHandler.NewClusterEvent(request, *data_store.Store)
 }
 
 func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string, clusterIDs []*string) (string, error) {

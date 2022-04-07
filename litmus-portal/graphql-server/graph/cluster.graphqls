@@ -181,7 +181,7 @@ type ClusterAction {
     action: ActionPayload!
 }
 
-input ClusterEventInput {
+input NewClusterEventRequest {
     eventName: String!
     description: String!
     clusterID: String!
@@ -194,7 +194,7 @@ input ClusterIdentity {
     version: String!
 }
 
-type ClusterConfirmResponse {
+type ConfirmClusterRegistrationResponse {
     isClusterConfirmed: Boolean!
     newAccessKey: String
     clusterID: String

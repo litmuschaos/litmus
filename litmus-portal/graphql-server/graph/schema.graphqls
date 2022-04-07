@@ -17,13 +17,13 @@ type Mutation {
   Confirms the subscriber's registration with the control plane
   """
   # authorized directive not required
-  clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
+  confirmClusterRegistration(request: ClusterIdentity!): ConfirmClusterRegistrationResponse!
 
   """
   Sends cluster related events to the subscriber
   """
   # authorized directive not required
-  newClusterEvent(clusterEvent: ClusterEventInput!): String!
+  newClusterEvent(request: NewClusterEventRequest!): String!
 
   """
   Disconnects a cluster/agent and deletes its agent configuration from the control plane
