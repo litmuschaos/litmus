@@ -27,8 +27,9 @@ import (
 )
 
 const (
-	ExternAgentConfigName = "agent-config"
-	LiveCheckMaxTries     = 6
+	AgentConfigName   = "agent-config"
+	AgentSecretName   = "agent-secret"
+	LiveCheckMaxTries = 6
 )
 
 type AgentComponents struct {
@@ -132,7 +133,7 @@ func IsClusterConfirmed() (bool, string, error) {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ctx, ExternAgentConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ctx, AgentConfigName, metav1.GetOptions{})
 	if k8s_errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
@@ -146,16 +147,13 @@ func IsClusterConfirmed() (bool, string, error) {
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
 func ClusterRegister(clusterData map[string]string) (bool, error) {
-	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
 
 	newConfigMapData := map[string]string{
-		"ACCESS_KEY":           clusterData["ACCESS_KEY"],
 		"IS_CLUSTER_CONFIRMED": clusterData["IS_CLUSTER_CONFIRMED"],
-		"CLUSTER_ID":           clusterData["CLUSTER_ID"],
 		"SERVER_ADDR":          clusterData["SERVER_ADDR"],
 		"AGENT_SCOPE":          clusterData["AGENT_SCOPE"],
 		"COMPONENTS":           clusterData["COMPONENTS"],
@@ -165,17 +163,35 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"CUSTOM_TLS_CERT":      clusterData["CUSTOM_TLS_CERT"],
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(ctx, &corev1.ConfigMap{
+	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(context.TODO(), &corev1.ConfigMap{
 		Data: newConfigMapData,
 		ObjectMeta: metav1.ObjectMeta{
-			Name: ExternAgentConfigName,
+			Name: AgentConfigName,
 		},
 	}, metav1.UpdateOptions{})
 	if err != nil {
 		return false, err
 	}
 
-	logrus.Info(ExternAgentConfigName + " has been updated")
+	logrus.Info(AgentConfigName + " has been updated")
+
+	newSecretData := map[string]string{
+		"ACCESS_KEY": clusterData["ACCESS_KEY"],
+		"CLUSTER_ID": clusterData["CLUSTER_ID"],
+	}
+
+	_, err = clientset.CoreV1().Secrets(AgentNamespace).Update(context.TODO(), &corev1.Secret{
+		StringData: newSecretData,
+		ObjectMeta: metav1.ObjectMeta{
+			Name: AgentConfigName,
+		},
+	}, metav1.UpdateOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	logrus.Info(AgentSecretName + " has been updated")
+
 	return true, nil
 }
 
