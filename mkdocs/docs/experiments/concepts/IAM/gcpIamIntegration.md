@@ -1,23 +1,23 @@
 # IAM integration for Litmus service accounts
 
-To execute LitmusChaos GCP experiments, one needs to authenticate with the GCP by means of a service account before trying to access the target resources. Usually you have only one way of providing the service account credentials to the experiment, using a service account key, but if you're using a GKE cluster you have a keyless medium of authentication as well. 
+To execute LitmusChaos GCP experiments, one needs to authenticate with the GCP by means of a service account before trying to access the target resources. Usually, you have only one way of providing the service account credentials to the experiment, using a service account key, but if you're using a GKE cluster you have a keyless medium of authentication as well. 
 
 Therefore you have two ways of providing the service account credentials to your GKE cluster:
 
-- **Using Secrets**: As you would normally do, you can create a secret containing the GCP service account in your GKE cluster, which gets utilized by the experiment for authenticating with your GCP resources.
+- **Using Secrets**: As you would normally do, you can create a secret containing the GCP service account in your GKE cluster, which gets utilized by the experiment for authentication to access your GCP resources.
 
 - **IAM Integration**: When you're using a GKE cluster, you can bind a GCP service account to a Kubernetes service account as an IAM policy, which can be then used by the experiment for keyless authentication using [GCP Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity). We’ll discuss more on this method in the following sections.
 
 ## Why use IAM integration for GCP authentication?
-A Google API request can be made using a GCP IAM service account, which is an identity that an application uses to make calls to Google APIs. You might create individual IAM service accounts for each application as an application developer, then download and save the keys as a Kubernetes secret that you manually rotate. Not only is this a time-consuming process, but service account keys only last ten years (or until you manually rotate them). An unaccounted-for key could give an attacker extended access in the event of a breach or compromise. Using service account keys as secrets is a less than optimal way for authenticating GKE workloads due to this potential blind spot and the management cost of key inventory and rotation.
+A Google API request can be made using a GCP IAM service account, which is an identity that an application uses to make calls to Google APIs. You might create individual IAM service accounts for each application as an application developer, then download and save the keys as a Kubernetes secret that you manually rotate. Not only is this a time-consuming process, but service account keys only last ten years (or until you manually rotate them). An unaccounted-for key could give an attacker extended access in the event of a breach or compromise. Using service account keys as secrets is not an optimal way of authenticating GKE workloads due to this potential blind spot and the management cost of key inventory and rotation.
 
-Workload Identity allows you to restrict the possible "blast radius" of a breach or compromise while also enforcing the principle of least privilege across your environment. It accomplishes this by automating workload authentication best practices, eliminating the need for workarounds, and making it simple to implement recommended security best practices.
+Workload Identity allows you to restrict the possible "blast radius" of a breach or compromise while enforcing the principle of least privilege across your environment. It accomplishes this by automating workload authentication best practices, eliminating the need for workarounds, and making it simple to implement recommended security best practices.
 
 - Your tasks will only have the permissions they require to fulfil their role with the principle of least privilege. It minimizes the breadth of a potential compromise by not granting broad permissions.
 
 - Unlike the 10-year lifetime service account keys, credentials supplied to the Workload Identity are only valid for a short time, decreasing the blast radius in the case of a compromise.
 
-- The risk of unintentional disclosure of credentials due to human mistake is greatly reduced because Google controls the namespace service account credentials for you. This also eliminates the need for you to manually rotate these credentials.
+- The risk of unintentional disclosure of credentials due to a human mistake is greatly reduced because Google controls the namespace service account credentials for you. It also eliminates the need for you to manually rotate these credentials.
   
 ## How to enable service accounts to access GCP resources?
 We will be following the steps from the [GCP Documentation for Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)
