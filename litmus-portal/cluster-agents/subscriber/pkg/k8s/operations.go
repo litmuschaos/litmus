@@ -183,7 +183,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 	_, err = clientset.CoreV1().Secrets(AgentNamespace).Update(context.TODO(), &corev1.Secret{
 		StringData: newSecretData,
 		ObjectMeta: metav1.ObjectMeta{
-			Name: AgentConfigName,
+			Name: AgentSecretName,
 		},
 	}, metav1.UpdateOptions{})
 	if err != nil {
