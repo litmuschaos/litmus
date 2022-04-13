@@ -8,7 +8,11 @@ import YAML from 'yaml';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import { addWeights, updateNamespaceForUpload } from '../../../utils/yamlUtils';
+import {
+  addWeights,
+  updateNamespaceForUpload,
+  validateExperimentNames,
+} from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 interface ChooseWorkflowRadio {
@@ -48,6 +52,11 @@ const UploadYAML = () => {
         try {
           setUploadError(false);
           const wfmanifest = updateNamespaceForUpload(readFile, namespace);
+          const nameValidation = validateExperimentNames(wfmanifest);
+          if (!nameValidation) {
+            setUploadError(true);
+            setErrorText('Workflow contains multiple steps with same name.');
+          }
           addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
           workflowAction.setWorkflowManifest({
             manifest: YAML.stringify(wfmanifest, { prettyErrors: true }),
@@ -78,6 +87,11 @@ const UploadYAML = () => {
         try {
           setUploadError(false);
           const wfmanifest = updateNamespaceForUpload(response, namespace);
+          const nameValidation = validateExperimentNames(wfmanifest);
+          if (!nameValidation) {
+            setUploadError(true);
+            setErrorText('Workflow contains multiple steps with same name.');
+          }
           addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
           workflowAction.setWorkflowManifest({
             manifest: YAML.stringify(wfmanifest, { prettyErrors: true }),
