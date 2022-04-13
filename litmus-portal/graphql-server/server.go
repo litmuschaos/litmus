@@ -60,6 +60,7 @@ type Config struct {
 	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
 	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
 	HubBranchName               string `required:"true" split_words:"true"`
+	LitmusCoreVersion           string `required:"true" split_words:"true"`
 }
 
 const defaultPort = "8080"
