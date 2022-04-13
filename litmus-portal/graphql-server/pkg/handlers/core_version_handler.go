@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"net/http"
 	"os"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type LitmusCoreComponentVersion struct {
@@ -16,9 +18,11 @@ func LitmusCoreComponentVersionHandler(w http.ResponseWriter, r *http.Request) {
 	version := LitmusCoreComponentVersion{CoreVersion: versionDetails}
 	versionByte, err := json.Marshal(version)
 	if err != nil {
-		utils.WriteHeaders(&w, 400)
+		logrus.Error(err)
+		utils.WriteHeaders(&w, http.StatusBadRequest)
+		return
 	}
 
-	utils.WriteHeaders(&w, 200)
+	utils.WriteHeaders(&w, http.StatusOK)
 	w.Write(versionByte)
 }
