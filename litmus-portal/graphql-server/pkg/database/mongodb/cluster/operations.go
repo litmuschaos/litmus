@@ -6,6 +6,8 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -27,6 +29,23 @@ func InsertCluster(cluster Cluster) error {
 func GetCluster(clusterID string) (Cluster, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{"cluster_id", clusterID}}
+
+	var cluster Cluster
+	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
+	err = result.Decode(&cluster)
+	if err != nil {
+		return Cluster{}, err
+	}
+
+	return cluster, nil
+}
+
+// GetAgentDetails takes a agentName and projectID to retrieve the cluster details from the database
+func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (Cluster, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"cluster_id", clusterID},
+	}
 
 	var cluster Cluster
 	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
@@ -95,4 +114,14 @@ func GetClusters(ctx context.Context, query bson.D) ([]*Cluster, error) {
 		return []*Cluster{}, err
 	}
 	return clusters, nil
+}
+
+// GetAggregateProjects takes a mongo pipeline to retrieve the project details from the database
+func GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
+	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ClusterCollection, pipeline, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

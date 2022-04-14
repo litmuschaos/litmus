@@ -31,6 +31,7 @@ spec:
         name: chaos-operator
     spec:
       serviceAccountName: litmus-cluster-scope
+      #{tolerations}
       #{nodeselector}
       containers:
         - name: chaos-operator
@@ -38,6 +39,9 @@ spec:
           command:
             - chaos-operator
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           env:
             - name: CHAOS_RUNNER_IMAGE
               value: #{LITMUS-CHAOS-RUNNER}
@@ -53,6 +57,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -73,17 +86,30 @@ spec:
         app: chaos-exporter
         release: prometheus-stack
     spec:
+      #{tolerations}
       #{nodeselector}
       containers:
         - image: #{LITMUS-CHAOS-EXPORTER}
           imagePullPolicy: Always
           name: chaos-exporter
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           ports:
             - containerPort: 8080
               name: tcp
           env:
             - name: TSDB_SCRAPE_INTERVAL
               value: '10'
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
       serviceAccountName: litmus-cluster-scope
 ---
 apiVersion: v1

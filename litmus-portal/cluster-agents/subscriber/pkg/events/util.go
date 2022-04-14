@@ -1,14 +1,15 @@
 package events
 
 import (
+	"context"
 	"errors"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
-	v1alpha13 "github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
-	wfclientset "github.com/argoproj/argo/pkg/client/clientset/versioned"
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	v1alpha13 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
@@ -124,6 +125,7 @@ func StrConvTime(time int64) string {
 }
 
 func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
+	ctx := context.TODO()
 	conf, err := k8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
@@ -131,7 +133,7 @@ func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 
 	// create the events client
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(AgentNamespace)
-	listWf, err := wfClient.List(metav1.ListOptions{})
+	listWf, err := wfClient.List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +160,7 @@ func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent 
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, execution_data:\"` + processed[1:len(processed)-1] + `\"}`
+	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, executed_by:\"` + wfEvent.ExecutedBy + `\", execution_data:\"` + processed[1:len(processed)-1] + `\"}`
 	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(workflowData:` + mutation + ` )}"}`)
 	return payload, nil
 }

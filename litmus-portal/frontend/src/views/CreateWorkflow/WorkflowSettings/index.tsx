@@ -15,6 +15,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import YAML from 'yaml';
 import config from '../../../config';
 import { GET_EXPERIMENT_DATA, GET_TEMPLATE_BY_ID } from '../../../graphql';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
@@ -22,12 +23,13 @@ import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { ExperimentDetail } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
+import * as ImageRegistryActions from '../../../redux/actions/image_registry';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateWorkflowName } from '../../../utils/validate';
-import * as ImageRegistryActions from '../../../redux/actions/image_registry';
+import parsed from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 const WorkflowSettings = forwardRef((_, ref) => {
@@ -46,7 +48,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
   // Actions
   const workflowAction = useActions(WorkflowActions);
   const workflowData = useSelector((state: RootState) => state.workflowData);
-  const { manifest } = useSelector(
+  const { manifest, isUploaded } = useSelector(
     (state: RootState) => state.workflowManifest
   );
   const imageRegistry = useActions(ImageRegistryActions);
@@ -83,6 +85,13 @@ const WorkflowSettings = forwardRef((_, ref) => {
         setDescription(data.GetTemplateManifestByID.template_description);
         setIcon('./avatars/litmus.svg');
         setCRDLink(data.GetTemplateManifestByID.template_id);
+        const savedTemplate = data.GetTemplateManifestByID.manifest;
+        if (parsed(savedTemplate).length === 0) {
+          workflowAction.setWorkflowManifest({
+            manifest: savedTemplate,
+            isUploaded: true,
+          });
+        }
       }
     },
   });
@@ -140,6 +149,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
                 ProjectID: projectID,
                 ChartName: 'predefined',
                 ExperimentName: (value as ChooseWorkflowRadio).id,
+                FileType: 'CSV',
               },
             },
           });
@@ -150,6 +160,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
       if ((value as ChooseWorkflowRadio).selected === 'B') {
         getSavedTemplateDetails({
           variables: {
+            projectID: getProjectID(),
             data: (value as ChooseWorkflowRadio).id,
           },
         });
@@ -164,7 +175,10 @@ const WorkflowSettings = forwardRef((_, ref) => {
         setDisplayRegChange(true);
       }
       if ((value as ChooseWorkflowRadio).selected === 'D') {
-        setName('chaos-workflow');
+        const wfName = `custom-workflow-${Math.round(
+          new Date().getTime() / 1000
+        )}`;
+        setName(wfName);
         setDescription('Chaos Workflow');
         setIcon('./avatars/litmus.svg');
         setDisplayRegChange(false);
@@ -222,11 +236,19 @@ const WorkflowSettings = forwardRef((_, ref) => {
       icon,
       CRDLink,
     };
+
     localforage.setItem('workflow', workflowDetails);
     imageRegistry.selectImageRegistry({
       ...imageRegistryData,
       update_registry: updateRegistry,
     });
+    if (isUploaded) {
+      const workflow = YAML.parse(manifest);
+      workflow.metadata.name = name;
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(workflow),
+      });
+    }
     if (!name.length) {
       alert.changeAlertState(true); // Workflow Name is empty and user clicked on Next
       return false;

@@ -57,9 +57,11 @@ func GetHubs(ctx context.Context) ([]MyHub, error) {
 }
 
 // GetHubByID returns a single chaosHub based on the hubID
-func GetHubByID(ctx context.Context, hubID string) (MyHub, error) {
+func GetHubByID(ctx context.Context, hubID string, projectID string) (MyHub, error) {
 	var myHub MyHub
-	result, err := mongodb.Operator.Get(ctx, mongodb.MyHubCollection, bson.D{{"myhub_id", hubID}})
+	result, err := mongodb.Operator.Get(ctx, mongodb.MyHubCollection, bson.D{{"myhub_id", hubID}, {
+		"project_id", projectID,
+	}})
 	err = result.Decode(&myHub)
 	if err != nil {
 		return MyHub{}, err

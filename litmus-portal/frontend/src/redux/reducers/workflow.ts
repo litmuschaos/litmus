@@ -29,6 +29,7 @@ const init: WorkflowManifest = {
   manifest: '',
   engineYAML: '',
   isCustomWorkflow: false,
+  isUploaded: false,
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {

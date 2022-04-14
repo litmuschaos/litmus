@@ -16,8 +16,8 @@
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code> kafka-broker-pod-failure </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/kafka/kafka-broker-pod-failure/experiment.yaml">here</a>
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code> kafka-broker-pod-failure </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kafka/kafka-broker-pod-failure/experiment.yaml">here</a>
     - Ensure that Kafka & Zookeeper are deployed as Statefulsets
     - If Confluent/Kudo Operators have been used to deploy Kafka, note the instance name, which will be 
       used as the value of `KAFKA_INSTANCE_NAME` experiment environment variable 
@@ -58,24 +58,38 @@
             name: kafka-broker-pod-failure-sa
             app.kubernetes.io/part-of: litmus
         rules:
-        - apiGroups: [""]
-          resources: ["pods","events"]
-          verbs: ["create","list","get","patch","update","delete","deletecollection"]
-        - apiGroups: [""]
-          resources: ["pods/exec","pods/log"]
-          verbs: ["create","list","get"]
-        - apiGroups: ["batch"]
-          resources: ["jobs"]
-          verbs: ["create","list","get","delete","deletecollection"]
-        - apiGroups: ["apps"]
-          resources: ["deployments","statefulsets"]
-          verbs: ["list","get"]
-        - apiGroups: ["litmuschaos.io"]
-          resources: ["chaosengines","chaosexperiments","chaosresults"]
-          verbs: ["create","list","get","patch","update"]
-        - apiGroups: [""]
-          resources: ["nodes"]
-          verbs: ["get","list"]
+          # Create and monitor the experiment & helper pods
+          - apiGroups: [""]
+            resources: ["pods"]
+            verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+          # Performs CRUD operations on the events inside chaosengine and chaosresult
+          - apiGroups: [""]
+            resources: ["events"]
+            verbs: ["create","get","list","patch","update"]
+          # Fetch configmaps & secrets details and mount it to the experiment pod (if specified)
+          - apiGroups: [""]
+            resources: ["secrets","configmaps"]
+            verbs: ["get","list",]
+          # Track and get the runner, experiment, and helper pods log 
+          - apiGroups: [""]
+            resources: ["pods/log"]
+            verbs: ["get","list","watch"]  
+          # for creating and managing to execute comands inside target container
+          - apiGroups: [""]
+            resources: ["pods/exec"]
+            verbs: ["get","list","create"]
+          # for deriving the parent/owner details of the pod   
+          - apiGroups: ["apps"]
+            resources: ["deployments","statefulsets"]
+            verbs: ["list","get"]
+          # for configuring and monitor the experiment job by the chaos-runner pod
+          - apiGroups: ["batch"]
+            resources: ["jobs"]
+            verbs: ["create","list","get","delete","deletecollection"]
+          # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+          - apiGroups: ["litmuschaos.io"]
+            resources: ["chaosengines","chaosexperiments","chaosresults"]
+            verbs: ["create","list","get","patch","update","delete"]
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding

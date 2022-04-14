@@ -10,12 +10,12 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { ReactComponent as ObservabilityIcon } from '../../svg/observability-sidebar.svg';
 import { ReactComponent as CodeIcon } from '../../svg/code.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
+import { ReactComponent as ObservabilityIcon } from '../../svg/observability-sidebar.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as UsageIcon } from '../../svg/usage.svg';
@@ -101,19 +101,21 @@ const SideBar: React.FC = () => {
             <WorkflowsIcon />
           </CustomisedListItem>
         </div>
-        <CustomisedListItem
-          key="targets"
-          handleClick={() => {
-            history.push({
-              pathname: `/targets`,
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
-          }}
-          label="ChaosAgents"
-          selected={['targets', 'target-connect'].includes(pathName)}
-        >
-          <TargetsIcon />
-        </CustomisedListItem>
+        <div data-cy="targets">
+          <CustomisedListItem
+            key="targets"
+            handleClick={() => {
+              history.push({
+                pathname: `/targets`,
+                search: `?projectID=${projectID}&projectRole=${projectRole}`,
+              });
+            }}
+            label="ChaosAgents"
+            selected={['targets', 'target-connect'].includes(pathName)}
+          >
+            <TargetsIcon />
+          </CustomisedListItem>
+        </div>
         <div data-cy="myHub">
           <CustomisedListItem
             key="myhub"
@@ -130,15 +132,15 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         </div>
         <CustomisedListItem
-          key="observability"
+          key="analytics"
           handleClick={() => {
             history.push({
-              pathname: `/observability`,
+              pathname: `/analytics`,
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Observability"
-          selected={pathName === 'observability'}
+          label="Analytics"
+          selected={pathName === 'Analytics'}
         >
           <ObservabilityIcon />
         </CustomisedListItem>

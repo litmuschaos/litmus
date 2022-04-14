@@ -114,7 +114,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
         >
           {data?.getWorkflowRuns.workflow_runs.map((workflow) => {
             return (
-              <WorkflowRunCard key={workflow.workflow_id} data={workflow} />
+              <WorkflowRunCard key={workflow.workflow_run_id} data={workflow} />
             );
           })}
         </RecentOverviewContainer>
@@ -146,7 +146,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
               onClick={() => {
                 tabs.changeHubTabs(0);
                 history.push({
-                  pathname: '/myhub/Chaos%20Hub',
+                  pathname: '/myhub/Litmus%20ChaosHub',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}

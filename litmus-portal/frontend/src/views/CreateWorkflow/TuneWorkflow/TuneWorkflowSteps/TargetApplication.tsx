@@ -47,7 +47,6 @@ interface TargetApplicationData {
   appkind: string;
   applabel: string;
   annotationCheck: boolean;
-  jobCleanUpPolicy: string;
 }
 
 interface TargetApplicationProp {
@@ -86,7 +85,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
       typeof engineManifest.spec.annotationCheck === 'boolean'
         ? engineManifest.spec.annotationCheck
         : engineManifest.spec.annotationCheck === 'true',
-    jobCleanUpPolicy: engineManifest.spec.jobCleanUpPolicy ?? 'retain',
   });
   const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
     !!engineManifest.spec.experiments[0].spec.components['nodeSelector']
@@ -151,7 +149,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
     ) {
       delete engineManifest.spec.experiments[0].spec.components['nodeSelector'];
     }
-    engineManifest.spec.jobCleanUpPolicy = targetApp.jobCleanUpPolicy;
 
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
@@ -254,7 +251,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   }, []);
 
   return (
-    <div>
+    <div data-cy="TargetApplication">
       <Typography className={classes.annotationInfo}>
         {t('createWorkflow.tuneWorkflow.verticalStepper.annotationInfo')}
       </Typography>
@@ -270,6 +267,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
             exclusive
             onChange={handleAlignment}
             aria-label="text alignment"
+            data-cy="AnnotationCheckToggle"
           >
             <ToggleButton
               className={classes.annotationToggleBtn}
@@ -361,6 +359,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                         ''
                       )
                     }
+                    data-cy="Appns"
                   />
                 )}
               />
@@ -394,6 +393,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                     });
                   }}
                   label={constants.appKind}
+                  data-cy="AppKind"
                 >
                   <MenuItem aria-label="None" value="" />
                   {gvrData.map((gvr) => {
@@ -447,26 +447,13 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                     }
                     {...params}
                     label={constants.appLabel}
+                    data-cy="AppLabel"
                   />
                 )}
               />
               <br />
             </>
           )}
-
-          {/* JobCleanUpPolicy textfield */}
-          <InputField
-            label={constants.jobCleanUp}
-            width="auto"
-            value={targetApp.jobCleanUpPolicy}
-            onChange={(event) => {
-              setTargetApp({
-                ...targetApp,
-                jobCleanUpPolicy: event.target.value,
-              });
-            }}
-          />
-          <br />
 
           {/* Checkbox for adding NodeSelector */}
           <FormControlLabel
@@ -479,6 +466,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                 className={classes.checkBoxDefault}
                 name="checkedB"
                 color="primary"
+                data-cy="NodeSelector"
               />
             }
             label={
@@ -506,7 +494,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
       </div>
       <br />
 
-      <div>
+      <div data-cy="TargetControlButtons">
         <Button onClick={() => gotoStep(0)} className={classes.button}>
           {t('workflowStepper.back')}
         </Button>

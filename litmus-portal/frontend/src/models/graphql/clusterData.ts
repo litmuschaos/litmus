@@ -20,6 +20,7 @@ export interface Cluster {
   agent_ns_exists: boolean;
   agent_sa_exists: boolean;
   last_workflow_timestamp: string;
+  version: string;
 }
 
 export interface Clusters {
@@ -55,6 +56,7 @@ export interface ClusterVars {
   project_id: string;
 }
 
-export interface DeleteCluster {
-  cluster_id: string;
+export interface DeleteClusters {
+  projectID: string;
+  cluster_ids: string;
 }

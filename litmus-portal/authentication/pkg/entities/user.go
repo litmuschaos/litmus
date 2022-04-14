@@ -2,10 +2,22 @@ package entities
 
 import (
 	"litmus/litmus-portal/authentication/pkg/utils"
+	"net/mail"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
+)
+
+// Role states the role of the user in the portal
+type Role string
+
+const (
+	// RoleAdmin gives the admin permissions to a user
+	RoleAdmin Role = "admin"
+
+	//RoleUser gives the normal user permissions to a user
+	RoleUser Role = "user"
 )
 
 // User contains the user information
@@ -39,7 +51,7 @@ type UserPassword struct {
 // UpdateUserState defines structure to deactivate or reactivate user
 type UpdateUserState struct {
 	Username     string `json:"username"`
-	IsDeactivate bool   `json:"is_deactivate"`
+	IsDeactivate *bool  `json:"is_deactivate"`
 }
 
 // APIStatus defines structure for APIroute status
@@ -47,21 +59,36 @@ type APIStatus struct {
 	Status string `json:"status"`
 }
 
-// Role states the role of the user in the portal
-type Role string
+type UserWithProject struct {
+	ID        string     `bson:"_id"`
+	Username  string     `bson:"username"`
+	CreatedAt string     `bson:"created_at"`
+	Email     string     `bson:"email"`
+	Name      string     `bson:"name"`
+	Projects  []*Project `bson:"projects"`
+}
 
-const (
-	// RoleAdmin gives the admin permissions to a user
-	RoleAdmin Role = "admin"
+func (user User) GetUserWithProject() *UserWithProject {
 
-	//RoleUser gives the normal user permissions to a user
-	RoleUser Role = "user"
-)
+	return &UserWithProject{
+		ID:        user.ID,
+		Username:  user.UserName,
+		Name:      user.Name,
+		CreatedAt: *user.CreatedAt,
+		Email:     user.Email,
+	}
+}
 
 // SanitizedUser returns the user object without sensitive information
 func (user *User) SanitizedUser() *User {
 	user.Password = ""
 	return user
+}
+
+// IsEmailValid validates the email
+func (user *User) IsEmailValid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
 
 // GetSignedJWT generates the JWT Token for the user object

@@ -20,8 +20,8 @@
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-latency/experiment.yaml">here</a> 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>pod-network-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-latency/experiment.yaml">here</a> 
     
 ## Default Validations
 
@@ -56,27 +56,50 @@
             name: pod-network-latency-sa
             app.kubernetes.io/part-of: litmus
         rules:
-        - apiGroups: [""]
-          resources: ["pods","events"]
-          verbs: ["create","list","get","patch","update","delete","deletecollection"]
-        - apiGroups: [""]
-          resources: ["pods/exec","pods/log","replicationcontrollers"]
-          verbs: ["create","list","get"]
-        - apiGroups: ["batch"]
-          resources: ["jobs"]
-          verbs: ["create","list","get","delete","deletecollection"]
-        - apiGroups: ["apps"]
-          resources: ["deployments","statefulsets","daemonsets","replicasets"]
-          verbs: ["list","get"]
-        - apiGroups: ["apps.openshift.io"]
-          resources: ["deploymentconfigs"]
-          verbs: ["list","get"]
-        - apiGroups: ["argoproj.io"]
-          resources: ["rollouts"]
-          verbs: ["list","get"]
-        - apiGroups: ["litmuschaos.io"]
-          resources: ["chaosengines","chaosexperiments","chaosresults"]
-          verbs: ["create","list","get","patch","update"]
+          # Create and monitor the experiment & helper pods
+          - apiGroups: [""]
+            resources: ["pods"]
+            verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+          # Performs CRUD operations on the events inside chaosengine and chaosresult
+          - apiGroups: [""]
+            resources: ["events"]
+            verbs: ["create","get","list","patch","update"]
+          # Fetch configmaps details and mount it to the experiment pod (if specified)
+          - apiGroups: [""]
+            resources: ["configmaps"]
+            verbs: ["get","list",]
+          # Track and get the runner, experiment, and helper pods log 
+          - apiGroups: [""]
+            resources: ["pods/log"]
+            verbs: ["get","list","watch"]  
+          # for creating and managing to execute comands inside target container
+          - apiGroups: [""]
+            resources: ["pods/exec"]
+            verbs: ["get","list","create"]
+          # deriving the parent/owner details of the pod(if parent is anyof {deployment, statefulset, daemonsets})
+          - apiGroups: ["apps"]
+            resources: ["deployments","statefulsets","replicasets", "daemonsets"]
+            verbs: ["list","get"]
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          - apiGroups: ["apps.openshift.io"]
+            resources: ["deploymentconfigs"]
+            verbs: ["list","get"]
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
+          - apiGroups: [""]
+            resources: ["replicationcontrollers"]
+            verbs: ["get","list"]
+          # deriving the parent/owner details of the pod(if parent is argo-rollouts)
+          - apiGroups: ["argoproj.io"]
+            resources: ["rollouts"]
+            verbs: ["list","get"]
+          # for configuring and monitor the experiment job by the chaos-runner pod
+          - apiGroups: ["batch"]
+            resources: ["jobs"]
+            verbs: ["create","list","get","delete","deletecollection"]
+          # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+          - apiGroups: ["litmuschaos.io"]
+            resources: ["chaosengines","chaosexperiments","chaosresults"]
+            verbs: ["create","list","get","patch","update","delete"]
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
@@ -296,6 +319,37 @@ spec:
           value: 'eth0'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
+```
+
+### Jitter
+
+It defines the jitter (in ms), a parameter that allows introducing a network delay variation. It can be tuned via `JITTER` ENV. Its default value is `0`.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-latency/network-latency-jitter.yaml yaml)
+```yaml
+# provide the network latency jitter
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-latency-sa
+  experiments:
+  - name: pod-network-latency
+    spec:
+      components:
+        env:
+        # value of the network latency jitter (in ms) 
+        - name: JITTER
+          value: '200'
 ```
 
 ### Container Runtime Socket Path

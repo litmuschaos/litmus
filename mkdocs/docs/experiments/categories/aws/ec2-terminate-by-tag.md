@@ -16,8 +16,8 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a herf="https://docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>ec2-terminate-by-tag</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a herf="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/experiment.yaml">here</a>
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>ec2-terminate-by-tag</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/experiment.yaml">here</a>
     - Ensure that you have sufficient AWS access to stop and start an ec2 instance. 
     - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
@@ -74,21 +74,38 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
             name: ec2-terminate-by-tag-sa
             app.kubernetes.io/part-of: litmus
         rules:
-        - apiGroups: [""]
-          resources: ["pods","events","secrets"]
-          verbs: ["create","list","get","patch","update","delete","deletecollection"]
-        - apiGroups: [""]
-          resources: ["pods/exec","pods/log"]
-          verbs: ["create","list","get"]
-        - apiGroups: ["batch"]
-          resources: ["jobs"]
-          verbs: ["create","list","get","delete","deletecollection"]
-        - apiGroups: ["litmuschaos.io"]
-          resources: ["chaosengines","chaosexperiments","chaosresults"]
-          verbs: ["create","list","get","patch","update"]
-        - apiGroups: [""]
-          resources: ["nodes"]
-          verbs: ["patch","get","list"]
+          # Create and monitor the experiment & helper pods
+          - apiGroups: [""]
+            resources: ["pods"]
+            verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+          # Performs CRUD operations on the events inside chaosengine and chaosresult
+          - apiGroups: [""]
+            resources: ["events"]
+            verbs: ["create","get","list","patch","update"]
+          # Fetch configmaps & secrets details and mount it to the experiment pod (if specified)
+          - apiGroups: [""]
+            resources: ["secrets","configmaps"]
+            verbs: ["get","list",]
+          # Track and get the runner, experiment, and helper pods log 
+          - apiGroups: [""]
+            resources: ["pods/log"]
+            verbs: ["get","list","watch"]  
+          # for creating and managing to execute comands inside target container
+          - apiGroups: [""]
+            resources: ["pods/exec"]
+            verbs: ["get","list","create"]
+          # for configuring and monitor the experiment job by the chaos-runner pod
+          - apiGroups: ["batch"]
+            resources: ["jobs"]
+            verbs: ["create","list","get","delete","deletecollection"]
+          # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+          - apiGroups: ["litmuschaos.io"]
+            resources: ["chaosengines","chaosexperiments","chaosresults"]
+            verbs: ["create","list","get","patch","update","delete"]
+          # for experiment to perform node status checks
+          - apiGroups: [""]
+            resources: ["nodes"]
+            verbs: ["get","list"]
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
@@ -106,6 +123,7 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
           name: ec2-terminate-by-tag-sa
           namespace: default
         ```
+        
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables

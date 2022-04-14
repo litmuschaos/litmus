@@ -45,11 +45,16 @@ import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 import TableData from './TableData';
 
-interface FilterOption extends WorkflowFilterInput {
-  suspended?: string;
+interface BrowseScheduleProps {
+  setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const BrowseSchedule: React.FC = () => {
+interface FilterOption extends WorkflowFilterInput {
+  suspended?: string;
+  workflow_type?: string;
+}
+
+const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const { t } = useTranslation();
@@ -65,6 +70,7 @@ const BrowseSchedule: React.FC = () => {
     workflow_name: '',
     cluster_name: 'All',
     suspended: 'All',
+    workflow_type: 'All',
   });
 
   // State for sorting
@@ -151,19 +157,33 @@ const BrowseSchedule: React.FC = () => {
     }
   );
 
-  const filteredWorkflows = data?.ListWorkflow.workflows.filter((dataRow) =>
-    filters.suspended === 'All'
-      ? true
-      : filters.suspended === 'true'
-      ? YAML.parse(dataRow.workflow_manifest).spec.suspend === true
-      : filters.suspended === 'false'
-      ? YAML.parse(dataRow.workflow_manifest).spec.suspend === undefined
-      : false
-  );
+  const filteredWorkflows = data?.ListWorkflow.workflows
+    .filter((dataRow) =>
+      filters.suspended === 'All'
+        ? true
+        : filters.suspended === 'true'
+        ? YAML.parse(dataRow.workflow_manifest).spec.suspend === true
+        : filters.suspended === 'false'
+        ? YAML.parse(dataRow.workflow_manifest).spec.suspend === undefined
+        : false
+    )
+    .filter((dataRow) =>
+      filters.workflow_type === 'All'
+        ? true
+        : filters.workflow_type === 'workflow'
+        ? dataRow.cronSyntax.length === 0 || dataRow.cronSyntax === ''
+        : filters.workflow_type === 'cronworkflow'
+        ? dataRow.cronSyntax.length > 0
+        : false
+    );
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
-      variables: { workflowid: wfid, workflow_run_id: '' },
+      variables: {
+        projectID: getProjectID(),
+        workflowID: wfid,
+        workflow_run_id: '',
+      },
     });
   };
   return (
@@ -190,7 +210,36 @@ const BrowseSchedule: React.FC = () => {
           />
 
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel className={classes.selectText}>Name</InputLabel>
+            <InputLabel className={classes.selectText}>
+              Schedule Type
+            </InputLabel>
+            <Select
+              value={filters.workflow_type}
+              onChange={(event) =>
+                setFilters({
+                  ...filters,
+                  workflow_type: event.target.value as string,
+                })
+              }
+              label="Schedule Type"
+              className={classes.selectText}
+            >
+              <MenuItem value="All">
+                {t('chaosWorkflows.browseSchedules.options.all')}
+              </MenuItem>
+              <MenuItem value="workflow">
+                {t('chaosWorkflows.browseSchedules.options.workflow')}
+              </MenuItem>
+              <MenuItem value="cronworkflow">
+                {t('chaosWorkflows.browseSchedules.options.cronworkflow')}
+              </MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel className={classes.selectText}>
+              Schedule Status
+            </InputLabel>
             <Select
               value={filters.suspended}
               onChange={(event) =>
@@ -199,7 +248,7 @@ const BrowseSchedule: React.FC = () => {
                   suspended: event.target.value as string,
                 })
               }
-              label="Name"
+              label="Schedule Status"
               className={classes.selectText}
             >
               <MenuItem value="All">
@@ -292,6 +341,13 @@ const BrowseSchedule: React.FC = () => {
                   </Typography>
                 </TableCell>
 
+                {/* Last Updated By */}
+                <TableCell>
+                  <Typography className={classes.lastUpdatedBy}>
+                    {t('chaosWorkflows.browseSchedules.lastUpdatedBy')}
+                  </Typography>
+                </TableCell>
+
                 {/* Show Experiments */}
                 <TableCell>
                   <Typography className={classes.showExp}>
@@ -312,20 +368,25 @@ const BrowseSchedule: React.FC = () => {
                     {t('chaosWorkflows.browseSchedules.nextRun')}
                   </Typography>
                 </TableCell>
-
+                {/* List Experiments */}
+                <TableCell>
+                  <Typography>
+                    {t('chaosWorkflows.browseSchedules.wfRuns')}
+                  </Typography>
+                </TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={8}>
                     <Loader />
                   </TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleError" colSpan={7}>
+                  <TableCell data-cy="browseScheduleError" colSpan={8}>
                     <Typography align="center">Unable to fetch data</Typography>
                   </TableCell>
                 </TableRow>
@@ -338,13 +399,14 @@ const BrowseSchedule: React.FC = () => {
                     <TableData
                       data={data}
                       deleteRow={deleteRow}
+                      setWorkflowName={setWorkflowName}
                       handleToggleSchedule={handleToggleSchedule}
                     />
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell data-cy="browseScheduleNoData" colSpan={7}>
+                  <TableCell data-cy="browseScheduleNoData" colSpan={8}>
                     <Typography align="center">No records available</Typography>
                   </TableCell>
                 </TableRow>

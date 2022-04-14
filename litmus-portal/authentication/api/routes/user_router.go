@@ -1,23 +1,22 @@
 package routes
 
 import (
-	"litmus/litmus-portal/authentication/api/handlers"
+	"litmus/litmus-portal/authentication/api/handlers/rest"
 	"litmus/litmus-portal/authentication/api/middleware"
-	"litmus/litmus-portal/authentication/pkg/user"
+	"litmus/litmus-portal/authentication/pkg/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 // UserRouter creates all the required routes for user authentications purposes.
-func UserRouter(router *gin.Engine, service user.Service) {
-	router.GET("/status", handlers.Status(service))
-	router.POST("/login", handlers.LoginUser(service))
+func UserRouter(router *gin.Engine, service services.ApplicationService) {
+	router.POST("/login", rest.LoginUser(service))
 	router.Use(middleware.JwtMiddleware())
-	router.POST("/update/password", handlers.UpdatePassword(service))
-	router.POST("/reset/password", handlers.ResetPassword(service))
-	router.POST("/create", handlers.CreateUser(service))
-	router.POST("/update/details", handlers.UpdateUser(service))
-	router.GET("/getUser/:uid", handlers.GetUser(service))
-	router.GET("/users", handlers.FetchUsers(service))
-	router.POST("/updatestate", handlers.UpdateUserState(service))
+	router.POST("/update/password", rest.UpdatePassword(service))
+	router.POST("/reset/password", rest.ResetPassword(service))
+	router.POST("/create", rest.CreateUser(service))
+	router.POST("/update/details", rest.UpdateUser(service))
+	router.GET("/getUser/:uid", rest.GetUser(service))
+	router.GET("/users", rest.FetchUsers(service))
+	router.POST("/update/state", rest.UpdateUserState(service))
 }

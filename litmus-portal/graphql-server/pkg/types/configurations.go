@@ -15,4 +15,5 @@ type SubscriberConfigurationVars struct {
 	ContainerRuntimeExecutor string
 	AgentDeployments         string
 	Version                  string
+	TLSCert                  string
 }

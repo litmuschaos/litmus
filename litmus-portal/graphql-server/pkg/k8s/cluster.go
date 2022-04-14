@@ -1,22 +1,23 @@
 package k8s
 
 import (
+	"context"
+	"encoding/base64"
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 
-	"errors"
-
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
+	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/restmapper"
-
-	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	memory "k8s.io/client-go/discovery/cached"
 )
 
 var (
@@ -28,6 +29,7 @@ var (
 // This function handles cluster operations
 func ClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
 	// Getting dynamic and discovery client
+	ctx := context.TODO()
 	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
@@ -58,7 +60,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	response, err := dr.Create(obj, metaV1.CreateOptions{})
+	response, err := dr.Create(ctx, obj, metaV1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// This doesnt ever happen even if it does already exist
 		log.Print("Already exists")
@@ -95,14 +97,14 @@ func GetServerEndpoint() (string, error) {
 		Ingress           = os.Getenv("INGRESS")
 		IngressName       = os.Getenv("INGRESS_NAME")
 	)
-
+	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return "", err
 	}
 
 	if Ingress == "true" {
-		getIng, err := clientset.ExtensionsV1beta1().Ingresses(LitmusPortalNS).Get(IngressName, metaV1.GetOptions{})
+		getIng, err := clientset.NetworkingV1().Ingresses(LitmusPortalNS).Get(ctx, IngressName, metaV1.GetOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -116,6 +118,8 @@ func GetServerEndpoint() (string, error) {
 			IPAddress = getIng.Spec.Rules[0].Host
 		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].IP != "" {
 			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].Hostname != "" {
+			IPAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
 		} else {
 			return "", errors.New("IP Address or HostName not generated")
 		}
@@ -126,7 +130,7 @@ func GetServerEndpoint() (string, error) {
 
 		for _, rule := range getIng.Spec.Rules {
 			for _, path := range rule.HTTP.Paths {
-				if path.Backend.ServiceName == ServerServiceName {
+				if path.Backend.Service.Name == ServerServiceName {
 					f := func(c rune) bool {
 						return c == '/'
 					}
@@ -153,11 +157,11 @@ func GetServerEndpoint() (string, error) {
 			Scheme = "http"
 		}
 
-		FinalUrl = Scheme + "://" + IPAddress + "/" + IngressPath
+		FinalUrl = Scheme + "://" + wrapIPV6(IPAddress) + "/" + IngressPath
 
 	} else if Ingress == "false" || Ingress == "" {
 
-		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ServerServiceName, metaV1.GetOptions{})
+		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ctx, ServerServiceName, metaV1.GetOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -183,9 +187,9 @@ func GetServerEndpoint() (string, error) {
 			} else {
 				return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 			}
-			FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(Port)) + "/query"
+			FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
-			nodeIP, err := clientset.CoreV1().Nodes().Get(NodeName, metaV1.GetOptions{})
+			nodeIP, err := clientset.CoreV1().Nodes().Get(ctx, NodeName, metaV1.GetOptions{})
 			if err != nil {
 				return "", err
 			}
@@ -200,9 +204,9 @@ func GetServerEndpoint() (string, error) {
 
 			// Whichever one of External IP and Internal IP is present, that will be selected for Server Endpoint
 			if IPAddress != "" {
-				FinalUrl = "http://" + IPAddress + ":" + strconv.Itoa(int(NodePort)) + "/query"
+				FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else if InternalIP != "" {
-				FinalUrl = "http://" + InternalIP + ":" + strconv.Itoa(int(NodePort)) + "/query"
+				FinalUrl = "http://" + wrapIPV6(InternalIP) + ":" + strconv.Itoa(int(NodePort)) + "/query"
 			} else {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
@@ -211,7 +215,7 @@ func GetServerEndpoint() (string, error) {
 			if svc.Spec.ClusterIP == "" {
 				return "", errors.New("ClusterIP is not present")
 			}
-			FinalUrl = "http://" + svc.Spec.ClusterIP + ":" + strconv.Itoa(int(Port)) + "/query"
+			FinalUrl = "http://" + wrapIPV6(svc.Spec.ClusterIP) + ":" + strconv.Itoa(int(Port)) + "/query"
 		default:
 			return "", errors.New("No service type found")
 		}
@@ -222,4 +226,27 @@ func GetServerEndpoint() (string, error) {
 	log.Print("Server endpoint: ", FinalUrl)
 
 	return FinalUrl, nil
+}
+
+func wrapIPV6(addr string) string {
+	if strings.Count(addr, ":") > 0 {
+		return "[" + addr + "]"
+	}
+	return addr
+}
+
+func GetTLSCert(secretName string) (string, error) {
+	ctx := context.TODO()
+	clientset, err := GetGenericK8sClient()
+	if err != nil {
+		return "", err
+	}
+	secret, err := clientset.CoreV1().Secrets(os.Getenv("LITMUS_PORTAL_NAMESPACE")).Get(ctx, secretName, metaV1.GetOptions{})
+	if err != nil {
+		return "", err
+	}
+	if cert, ok := secret.Data["tls.crt"]; ok {
+		return base64.StdEncoding.EncodeToString(cert), nil
+	}
+	return "", fmt.Errorf("could not find tls.crt value in provided TLS Secret %v", secretName)
 }

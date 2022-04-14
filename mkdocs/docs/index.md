@@ -1,1 +1,3 @@
+---
 template: home.html
+---

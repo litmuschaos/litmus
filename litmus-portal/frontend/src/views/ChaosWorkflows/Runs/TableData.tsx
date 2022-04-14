@@ -7,14 +7,21 @@ import {
   Popover,
   TableCell,
   Typography,
+  useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonFilled, OutlinedPills } from 'litmus-ui';
+import {
+  ButtonFilled,
+  ButtonOutlined,
+  Icon,
+  Modal,
+  OutlinedPills,
+} from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TimePopOver from '../../../components/TimePopOver';
 import {
   DELETE_WORKFLOW,
@@ -32,6 +39,7 @@ import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import ExperimentPoints from '../BrowseSchedule/ExperimentPoints';
+import ManifestModal from './ManifestModal';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -44,6 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const projectID = getProjectID();
   const projectRole = getProjectRole();
   const { t } = useTranslation();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const nodeSelection = useActions(NodeSelectionActions);
@@ -53,6 +62,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [manifestModal, setManifestModal] = React.useState(false);
 
   // Function to capitalize the first letter of the word
   // eg: internal to Internal
@@ -166,6 +176,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
     }
   };
 
+  const handleCloseManifest = () => {
+    setManifestModal(false);
+  };
+
   return (
     <>
       {/* Table cell for warning (if the workflow is in running state from 20 mins) */}
@@ -218,7 +232,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 onClick={() => {
                   syncWorkflow({
                     variables: {
-                      workflowid: data.workflow_id,
+                      projectID: getProjectID(),
+                      workflowID: data.workflow_id,
                       workflow_run_id: data.workflow_run_id,
                     },
                   });
@@ -233,7 +248,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 onClick={() => {
                   deleteWorkflow({
                     variables: {
-                      workflowid: data.workflow_id,
+                      projectID: getProjectID(),
+                      workflowID: data.workflow_id,
                       workflow_run_id: data.workflow_run_id,
                     },
                   });
@@ -254,6 +270,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           size="small"
           variant={getVariant(data.phase?.toLowerCase())}
           label={data.phase ?? ''}
+          data-cy="WorkflowStatus"
         />
       </TableCell>
       <TableCell
@@ -279,102 +296,132 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Typography>
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
-        <Typography>
-          <span>{t('chaosWorkflows.browseWorkflows.tableData.overallRR')}</span>
-          {data.resiliency_score === undefined ||
-          data.resiliency_score === null ? (
-            <span className={classes.less}>
-              {t('chaosWorkflows.browseWorkflows.tableData.na')}
-            </span>
-          ) : (
-            <span
-              className={`${classes.boldText} ${getResiliencyScoreColor(
-                data.resiliency_score
-              )}`}
-            >
-              {data.resiliency_score}%
-            </span>
-          )}
-        </Typography>
-        <Typography>
-          <span>
-            {t('chaosWorkflows.browseWorkflows.tableData.experimentsPassed')}
-          </span>
-          {data.experiments_passed === undefined ||
-          data.experiments_passed === null ||
-          data.total_experiments === undefined ||
-          data.total_experiments === null ||
-          data.total_experiments === 0 ||
-          data.resiliency_score === undefined ||
-          data.resiliency_score === null ? (
-            <span className={classes.less}>
-              {t('chaosWorkflows.browseWorkflows.tableData.na')}
-            </span>
-          ) : (
-            <span
-              className={`${classes.boldText} ${getResiliencyScoreColor(
-                data.resiliency_score
-              )}`}
-            >
-              {data.experiments_passed}/{data.total_experiments}
-            </span>
-          )}
-        </Typography>
+        {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
+          ?.experiment_name !== '' ? (
+          <>
+            <Typography data-cy="ResScore">
+              <span>
+                {t('chaosWorkflows.browseWorkflows.tableData.overallRR')}
+              </span>
+              {data.resiliency_score === undefined ||
+              data.resiliency_score === null ? (
+                <span className={classes.less}>
+                  {t('chaosWorkflows.browseWorkflows.tableData.na')}
+                </span>
+              ) : (
+                <span
+                  className={`${classes.boldText} ${getResiliencyScoreColor(
+                    data.resiliency_score
+                  )}`}
+                >
+                  {data.resiliency_score}%
+                </span>
+              )}
+            </Typography>
+            <Typography data-cy="ExperimentsPassed">
+              <span>
+                {t(
+                  'chaosWorkflows.browseWorkflows.tableData.experimentsPassed'
+                )}
+              </span>
+              {data.experiments_passed === undefined ||
+              data.experiments_passed === null ||
+              data.total_experiments === undefined ||
+              data.total_experiments === null ||
+              data.total_experiments === 0 ||
+              data.resiliency_score === undefined ||
+              data.resiliency_score === null ? (
+                <span className={classes.less}>
+                  {t('chaosWorkflows.browseWorkflows.tableData.na')}
+                </span>
+              ) : (
+                <span
+                  className={`${classes.boldText} ${getResiliencyScoreColor(
+                    data.resiliency_score
+                  )}`}
+                >
+                  {data.experiments_passed}/{data.total_experiments}
+                </span>
+              )}
+            </Typography>
+          </>
+        ) : (
+          <Typography style={{ marginLeft: 30 }}>
+            {t('chaosWorkflows.browseWorkflows.tableData.na')}
+          </Typography>
+        )}
       </TableCell>
       <TableCell>
         <div>
-          <Button
-            onClick={handlePopOverClick}
-            className={classes.buttonTransform}
-          >
-            <Typography className={classes.boldText}>
-              {t('chaosWorkflows.browseWorkflows.tableData.showExperiments')}(
-              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
-                .length ?? 0}
-              )
+          {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
+            ?.experiment_name !== '' ? (
+            <>
+              <Button
+                onClick={handlePopOverClick}
+                className={classes.buttonTransform}
+              >
+                <Typography className={classes.boldText}>
+                  {t(
+                    'chaosWorkflows.browseWorkflows.tableData.showExperiments'
+                  )}
+                  (
+                  {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
+                    .length ?? 0}
+                  )
+                </Typography>
+                <div className={classes.experimentDetails}>
+                  {isOpen ? (
+                    <KeyboardArrowDownIcon className={classes.arrowMargin} />
+                  ) : (
+                    <ChevronRightIcon className={classes.arrowMargin} />
+                  )}
+                </div>
+              </Button>
+              <Popover
+                id={id}
+                open={isOpen}
+                anchorEl={popAnchorEl}
+                onClose={handlePopOverClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+              >
+                <div className={classes.popover}>
+                  {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
+                    (weightEntry) => (
+                      <div
+                        key={weightEntry.experiment_name}
+                        style={{ marginBottom: 8 }}
+                      >
+                        <ExperimentPoints
+                          expName={weightEntry.experiment_name}
+                          weight={weightEntry.weightage}
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </Popover>
+            </>
+          ) : (
+            <Typography style={{ marginLeft: 30 }}>
+              {t('chaosWorkflows.browseWorkflows.tableData.na')}
             </Typography>
-            <div className={classes.experimentDetails}>
-              {isOpen ? (
-                <KeyboardArrowDownIcon className={classes.arrowMargin} />
-              ) : (
-                <ChevronRightIcon className={classes.arrowMargin} />
-              )}
-            </div>
-          </Button>
-          <Popover
-            id={id}
-            open={isOpen}
-            anchorEl={popAnchorEl}
-            onClose={handlePopOverClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'center',
-            }}
-          >
-            <div className={classes.popover}>
-              {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
-                (weightEntry) => (
-                  <div
-                    key={weightEntry.experiment_name}
-                    style={{ marginBottom: 8 }}
-                  >
-                    <ExperimentPoints
-                      expName={weightEntry.experiment_name}
-                      weight={weightEntry.weightage}
-                    />
-                  </div>
-                )
-              )}
-            </div>
-          </Popover>
+          )}
         </div>
       </TableCell>
       <TableCell>
         <TimePopOver unixTime={data.last_updated ?? ''} />
+      </TableCell>
+      <TableCell>
+        <Typography className={classes.executedBy}>
+          {data.executed_by || '-'}
+        </Typography>
       </TableCell>
       <TableCell>
         <IconButton
@@ -421,7 +468,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Analysis"
             onClick={() => {
               history.push({
-                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                pathname: `/analytics/workflowStatistics/${data.workflow_id}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -439,13 +486,43 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               </Typography>
             </div>
           </MenuItem>
+          <MenuItem
+            value="ViewWorkflow"
+            onClick={() => {
+              setManifestModal(true);
+            }}
+          >
+            <div className={classes.expDiv} data-cy="viewWorkflow">
+              <Icon name="document" color={`${theme.palette.common.black}`} />
+              <Typography className={classes.btnText}>
+                {t('chaosWorkflows.browseWorkflows.tableData.viewManifest')}
+              </Typography>
+            </div>
+          </MenuItem>
+          <Modal
+            width="60%"
+            open={manifestModal}
+            onClose={handleCloseManifest}
+            disableBackdropClick
+            modalActions={
+              <ButtonOutlined onClick={handleCloseManifest}>
+                &#x2715;
+              </ButtonOutlined>
+            }
+          >
+            <ManifestModal
+              project_id={projectID}
+              workflow_id={data.workflow_id}
+            />
+          </Modal>
           {data.phase?.toLowerCase() === 'running' && (
             <MenuItem
               value="Terminate"
               onClick={() => {
                 terminateWorkflow({
                   variables: {
-                    workflowid: data.workflow_id,
+                    projectID: getProjectID(),
+                    workflowID: data.workflow_id,
                     workflow_run_id: data.workflow_run_id,
                   },
                 });

@@ -77,7 +77,7 @@ const TuneTheQueries = forwardRef(
           setProceed(true);
           onDashboardLoadRoutine(data.createDashBoard?.db_id ?? '').then(() => {
             history.push({
-              pathname: '/observability/monitoring-dashboard',
+              pathname: '/analytics/monitoring-dashboard',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           });
@@ -97,7 +97,7 @@ const TuneTheQueries = forwardRef(
           setProceed(true);
           onDashboardLoadRoutine(dashboardVars.id ?? '').then(() => {
             history.push({
-              pathname: '/observability/monitoring-dashboard',
+              pathname: '/analytics/monitoring-dashboard',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           });
@@ -243,7 +243,11 @@ const TuneTheQueries = forwardRef(
         cluster_id: dashboardVars.agentID ?? '',
       };
       updateDashboard({
-        variables: { updateDBInput: dashboardInput, chaosQueryUpdate: false },
+        variables: {
+          projectID: getProjectID(),
+          updateDBInput: dashboardInput,
+          chaosQueryUpdate: false,
+        },
       });
     };
 

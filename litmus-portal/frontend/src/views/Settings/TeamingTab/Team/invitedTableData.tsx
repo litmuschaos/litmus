@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Avatar,
   IconButton,
@@ -11,23 +10,12 @@ import {
 import { ButtonFilled, LightPills } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ALL_USERS,
-  GET_PROJECT,
-  GET_USER,
-  SEND_INVITE,
-} from '../../../../graphql';
-import {
-  InvitationStatus,
-  MemberInviteNew,
-} from '../../../../models/graphql/invite';
-import {
-  CurrentUserDedtailsVars,
-  CurrentUserDetails,
-  Member,
-  Role,
-} from '../../../../models/graphql/user';
+import config from '../../../../config';
+// import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../graphql';
+import { InvitationStatus } from '../../../../models/graphql/invite';
+import { Member, Role } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
+import { getToken } from '../../../../utils/auth';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import { userInitials } from '../../../../utils/userInitials';
 import RemoveMemberModal from './removeMemberModal';
@@ -37,55 +25,78 @@ interface TableDataProps {
   row: Member;
   index: number;
   showModal: () => void;
+  fetchData: () => void;
 }
-const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
+const InvitedTableData: React.FC<TableDataProps> = ({
+  row,
+  showModal,
+  fetchData,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
 
   const { t } = useTranslation();
-  const [role, setRole] = useState<string>(row.role);
+  const [role, setRole] = useState<string>(row.Role);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const [SendInvite] = useMutation<MemberInviteNew>(SEND_INVITE, {
-    onCompleted: () => {
-      window.location.reload();
-    },
-    refetchQueries: [
-      {
-        query: GET_PROJECT,
-        variables: { projectID },
+  const SendInvite = (userid: string, role: string) => {
+    fetch(`${config.auth.url}/send_invitation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
       },
-      {
-        query: ALL_USERS,
-      },
-    ],
-  });
+      body: JSON.stringify({
+        project_id: projectID,
+        user_id: userid,
+        role,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data);
+        } else {
+          fetchData();
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
   const [cancelInviteOpen, setCancelInviteOpen] = useState<boolean>(false);
 
-  // Query to get user details
-  useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
-    variables: { username: row.user_name },
-    onCompleted: (data) => {
-      setMemberDetails({
-        // TODO: Check if all are being used
-        name: data.getUser.name,
-        uid: data.getUser.id,
-        username: data.getUser.username,
-        role: data.getUser.role,
-        email: data.getUser.email,
+  React.useEffect(() => {
+    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMemberDetails({
+          // TODO: Check if all are being used
+          name: data.first_name,
+          uid: data._id,
+          username: data.username,
+          role: data.role,
+          email: data.email,
+        });
       });
-    },
-  });
+  }, []);
+
   return (
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -95,23 +106,23 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             data-cy="avatar"
             alt="User"
             className={`${
-              row.deactivated_at ? classes.darkBg : classes.avatarBackground
+              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
             } `}
           >
-            {userInitials(memberDetails ? memberDetails.username : '')}
+            {memberDetails?.username && userInitials(memberDetails.username)}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={row.deactivated_at !== ''}
+            disabled={row.DeactivatedAt !== null}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -186,7 +197,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
@@ -194,16 +205,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       <TableCell className={classes.otherTC}>
         <LightPills
           variant={
-            row.invitation === InvitationStatus.pending ? 'warning' : 'danger'
+            row.Invitation === InvitationStatus.pending ? 'warning' : 'danger'
           }
-          label={row.invitation}
+          label={row.Invitation}
         />
       </TableCell>
 
-      <TableCell className={classes.buttonTC} key={row.user_id}>
+      <TableCell className={classes.buttonTC} key={row.UserID}>
         <div className={classes.lastCell}>
-          {row.invitation !== InvitationStatus.exited &&
-            row.invitation !== InvitationStatus.declined && (
+          {row.Invitation !== InvitationStatus.exited &&
+            row.Invitation !== InvitationStatus.declined && (
               <IconButton onClick={() => setCancelInviteOpen(true)}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
@@ -212,24 +223,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             classes={{
               tooltip: classes.tooltip,
             }}
-            disableHoverListener={!row.deactivated_at}
+            disableHoverListener={!row.DeactivatedAt}
             disableFocusListener
             placement="bottom"
             title="User has been deactivated"
           >
-            <div>
+            <div data-cy="resendButton">
               <ButtonFilled
-                disabled={row.deactivated_at !== ''}
+                disabled={row.DeactivatedAt !== null}
                 onClick={() => {
-                  SendInvite({
-                    variables: {
-                      member: {
-                        project_id: projectID,
-                        user_id: row.user_id,
-                        role,
-                      },
-                    },
-                  });
+                  SendInvite(row.UserID, role);
                 }}
               >
                 {t('settings.teamingTab.invitation.sentInvitation.resend')}

@@ -101,6 +101,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
     color: theme.palette.text.disabled,
   },
+  lastUpdatedBy: {
+    paddingLeft: theme.spacing(5),
+    color: theme.palette.text.disabled,
+  },
   clusterStartDate: {
     paddingLeft: theme.spacing(10),
   },
@@ -294,6 +298,9 @@ const useStyles = makeStyles((theme) => ({
   cancelIcon: {
     fontSize: '1rem',
     marginRight: theme.spacing(1),
+  },
+  runs: {
+    fontSize: '0.75rem',
   },
 }));
 

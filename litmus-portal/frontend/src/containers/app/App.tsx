@@ -1,17 +1,11 @@
-import { useQuery } from '@apollo/client';
 import { LitmusThemeProvider } from 'litmus-ui';
-import React, { lazy, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
-import { GET_PROJECT, LIST_PROJECTS } from '../../graphql';
-import {
-  Member,
-  ProjectDetail,
-  Projects,
-  UserRole,
-} from '../../models/graphql/user';
+import config from '../../config';
+import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { getToken, getUserId, getUserRole } from '../../utils/auth';
+import { getToken, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import Scaffold from '../layouts/Scaffold';
 
@@ -54,29 +48,41 @@ const Routes: React.FC = () => {
   const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
-  const [isProjectMember, setIsProjectMember] = useState<boolean>(false);
-  const userID = getUserId();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const { loading } = useQuery<Projects>(LIST_PROJECTS, {
-    skip: (projectID !== '' && projectID !== undefined) || getToken() === '',
-    onCompleted: (data) => {
-      if (data.listProjects) {
-        data.listProjects.forEach((project): void => {
-          project.members.forEach((member: Member): void => {
-            if (member.user_id === userID && member.role === 'Owner') {
-              setprojectID(project.id);
-              setprojectRole(member.role);
-              history.push({
-                pathname: `/${baseRoute}`,
-                search: `?projectID=${project.id}&projectRole=${member.role}`,
-              });
-            }
+  const getOwnerProjects = () => {
+    setLoading(true);
+    fetch(`${config.auth.url}/get_owner_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.data) {
+          setprojectID(data.data[0]);
+          setprojectRole('Owner');
+          history.push({
+            pathname: `/${baseRoute}`,
+            search: `?projectID=${data.data[0]}&projectRole=Owner`,
           });
-        });
-      }
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+        }
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (!((projectID !== '' && projectID !== undefined) || getToken() === '')) {
+      getOwnerProjects();
+    }
+  }, [projectID]);
 
   history.listen((location) => {
     if (location.pathname !== '/login') {
@@ -85,31 +91,47 @@ const Routes: React.FC = () => {
     }
   });
 
-  const { loading: projectValidation } = useQuery<ProjectDetail>(GET_PROJECT, {
-    skip: getToken() === '',
-    variables: { projectID },
-    onCompleted: (data) => {
-      if (data?.getProject) {
-        data.getProject.members.forEach((member: Member) => {
-          if (member.user_id === userID) {
-            setIsProjectMember(true);
-            setprojectID(data.getProject.id);
-            setprojectRole(member.role);
-          }
-        });
-        if (!isProjectMember) {
+  const [projectValidation, setProjectValidation] = useState<boolean>(false);
+
+  const getProjectValidation = () => {
+    setProjectValidation(true);
+    fetch(`${config.auth.url}/get_project_role/${projectID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
           setprojectID('');
           setprojectRole('');
         }
-      }
-    },
-    onError: () => {
-      if (!isProjectMember) {
+        if (data.role !== 'N/A') {
+          setprojectRole(data.role);
+          if (data.role !== projectRole)
+            history.push({
+              pathname: `/${baseRoute}`,
+              search: `?projectID=${projectID}&projectRole=${data.role}`,
+            });
+        } else {
+          setprojectID('');
+          setprojectRole('');
+        }
+        setProjectValidation(false);
+      })
+      .catch((err) => {
+        console.error(err);
         setprojectID('');
         setprojectRole('');
-      }
-    },
-  });
+      });
+  };
+  useEffect(() => {
+    if (getToken() !== '' && projectID) {
+      getProjectValidation();
+    }
+  }, []);
 
   if (getToken() === '') {
     return (
@@ -143,42 +165,42 @@ const Routes: React.FC = () => {
   return (
     <>
       {!projectValidation && !loading && (
-        <Scaffold>
-          <SuspenseLoader style={{ height: '80vh' }}>
+        <SuspenseLoader style={{ height: '80vh' }}>
+          <Scaffold>
             <Switch>
               <Route exact path="/home" component={HomePage} />
               <Redirect exact path="/" to="/home" />
               <Route exact path="/workflows" component={Workflows} />
               <Route
                 exact
-                path="/observability"
+                path="/analytics"
                 component={ObservabilityDashboard}
               />
               <Route
                 exact
-                path="/observability/datasource/create"
+                path="/analytics/datasource/create"
                 component={() => <DataSourceConfigurePage configure={false} />}
               />
               <Route
                 exact
-                path="/observability/datasource/configure"
+                path="/analytics/datasource/configure"
                 component={() => <DataSourceConfigurePage configure />}
               />
               <Route
                 exact
-                path="/observability/dashboard/create"
+                path="/analytics/dashboard/create"
                 component={() => (
                   <ChooseAndConfigureDashboards configure={false} />
                 )}
               />
               <Route
                 exact
-                path="/observability/dashboard/configure"
+                path="/analytics/dashboard/configure"
                 component={() => <ChooseAndConfigureDashboards configure />}
               />
               <Route
                 exact
-                path="/observability/monitoring-dashboard"
+                path="/analytics/monitoring-dashboard"
                 component={() => <DashboardPage />}
               />
               <Route exact path="/create-workflow" component={CreateWorkflow} />
@@ -199,7 +221,7 @@ const Routes: React.FC = () => {
               />
               <Route
                 exact
-                path="/observability/workflowStatistics/:workflowId"
+                path="/analytics/workflowStatistics/:workflowId"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -237,31 +259,19 @@ const Routes: React.FC = () => {
               <Redirect exact path="/getStarted" to="/home" />
               <Redirect exact path="/workflows/schedule" to="/workflows" />
               <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/analytics/overview" to="/analytics" />
               <Redirect
                 exact
-                path="/observability/overview"
-                to="/observability"
+                path="/analytics/litmusdashboard"
+                to="/analytics"
               />
-              <Redirect
-                exact
-                path="/observability/litmusdashboard"
-                to="/observability"
-              />
-              <Redirect
-                exact
-                path="/observability/datasource"
-                to="/observability"
-              />
-              <Redirect
-                exact
-                path="/observability/dashboard"
-                to="/observability"
-              />
+              <Redirect exact path="/analytics/datasource" to="/analytics" />
+              <Redirect exact path="/analytics/dashboard" to="/analytics" />
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
               <Redirect to="/404" />
             </Switch>
-          </SuspenseLoader>
-        </Scaffold>
+          </Scaffold>
+        </SuspenseLoader>
       )}
     </>
   );

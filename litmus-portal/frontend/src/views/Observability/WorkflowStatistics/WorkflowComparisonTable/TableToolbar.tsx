@@ -2,8 +2,6 @@ import {
   Button,
   FormControl,
   IconButton,
-  InputAdornment,
-  InputBase,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -11,11 +9,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import SearchIcon from '@material-ui/icons/Search';
-import { ButtonOutlined } from 'litmus-ui';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import { ButtonOutlined, Search } from 'litmus-ui';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
@@ -45,6 +42,8 @@ interface TableToolBarProps {
     token?: string
   ) => void;
   clusters: string[];
+  workflowType: string;
+  workflowTypeFilterHandler: (value: string) => void;
   callbackToSetCluster: ClusterCallBackType;
   callbackToSetRange: RangeCallBackType;
   callbackToCompare: CompareCallBackType;
@@ -63,6 +62,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   handleSearch,
   searchToken,
   clusters,
+  workflowType,
+  workflowTypeFilterHandler,
   callbackToSetCluster,
   callbackToSetRange,
   callbackToCompare,
@@ -89,6 +90,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   ) => {
     setCluster(event.target.value as String);
     callbackToSetCluster(event.target.value as string);
+  };
+
+  const handleWorkflowTypeChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    workflowTypeFilterHandler(event.target.value as string);
   };
 
   const CallbackFromRangeSelector = (
@@ -131,21 +138,14 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
   return (
     <div className={classes.headerSection}>
-      <InputBase
-        id="input-with-icon-adornment"
-        placeholder="Search"
-        className={classes.search}
-        value={searchToken}
-        onChange={handleSearch}
-        classes={{
-          input: classes.input,
-        }}
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        }
-      />
+      <div className={classes.search}>
+        <Search
+          id="input-with-icon-textfield"
+          placeholder="Search"
+          value={searchToken}
+          onChange={handleSearch}
+        />
+      </div>
 
       {numSelected > 0 && comparisonState === false ? (
         <span>
@@ -171,7 +171,9 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       )}
 
       <Button
-        className={classes.selectDate}
+        className={`${classes.selectDate} ${
+          isDateRangeSelectorPopoverOpen ? classes.selectDateFocused : ''
+        }`}
         onClick={() => setDateRangeSelectorPopoverOpen(true)}
         ref={dateRangeSelectorRef}
         aria-label="time range"
@@ -188,13 +190,53 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
 
           <IconButton className={classes.rangeSelectorIcon}>
             {isDateRangeSelectorPopoverOpen ? (
-              <KeyboardArrowDownIcon />
+              <KeyboardArrowUpIcon />
             ) : (
-              <ChevronRightIcon />
+              <KeyboardArrowDownIcon />
             )}
           </IconButton>
         </Typography>
       </Button>
+      <DateRangeSelector
+        anchorEl={dateRangeSelectorRef.current as HTMLElement}
+        isOpen={isDateRangeSelectorPopoverOpen}
+        onClose={() => setDateRangeSelectorPopoverOpen(false)}
+        callbackToSetRange={CallbackFromRangeSelector}
+      />
+
+      <FormControl variant="outlined" className={classes.formControl}>
+        <InputLabel className={classes.selectText}>Workflow Type</InputLabel>
+        <Select
+          label="Workflow Type"
+          value={workflowType}
+          onChange={handleWorkflowTypeChange}
+          className={classes.selectText}
+          input={<OutlinedInput classes={outlinedInputClasses} />}
+          IconComponent={KeyboardArrowDownIcon}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            getContentAnchorEl: null,
+            classes: { paper: classes.menuList },
+          }}
+        >
+          <MenuItem value="All">
+            {t('chaosWorkflows.browseSchedules.options.all')}
+          </MenuItem>
+          <MenuItem value="workflow">
+            {t('chaosWorkflows.browseSchedules.options.workflow')}
+          </MenuItem>
+          <MenuItem value="cronworkflow">
+            {t('chaosWorkflows.browseSchedules.options.cronworkflow')}
+          </MenuItem>
+        </Select>
+      </FormControl>
 
       <FormControl variant="outlined" className={classes.formControl}>
         <InputLabel className={classes.selectText}>
@@ -206,12 +248,28 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           onChange={handleClusterChange}
           className={classes.selectText}
           input={<OutlinedInput classes={outlinedInputClasses} />}
+          IconComponent={KeyboardArrowDownIcon}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            getContentAnchorEl: null,
+            classes: { paper: classes.menuList },
+          }}
         >
-          <MenuItem value="All">All</MenuItem>
+          <MenuItem value="All" className={classes.menuListItem}>
+            All
+          </MenuItem>
           {clusters.map((cluster: string) => (
             <MenuItem
               key={`${cluster}-litmusDashboard-workflowComparison-toolBar`}
               value={cluster}
+              className={classes.menuListItem}
             >
               {cluster}
             </MenuItem>
@@ -246,14 +304,6 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           </ButtonOutlined>
         )}
       </div>
-      <DateRangeSelector
-        anchorEl={dateRangeSelectorRef.current as HTMLElement}
-        isOpen={isDateRangeSelectorPopoverOpen}
-        onClose={() => {
-          setDateRangeSelectorPopoverOpen(false);
-        }}
-        callbackToSetRange={CallbackFromRangeSelector}
-      />
     </div>
   );
 };

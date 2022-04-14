@@ -15,12 +15,12 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
-import { DELETE_CLUSTER, GET_CLUSTER } from '../../../graphql';
+import { DELETE_CLUSTERS, GET_CLUSTER } from '../../../graphql';
 import {
   Cluster,
   Clusters,
   ClusterVars,
-  DeleteCluster,
+  DeleteClusters,
 } from '../../../models/graphql/clusterData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
@@ -77,7 +77,7 @@ const BrowseCluster: React.FC = () => {
   );
 
   // Apollo mutation to delete the selected Target Cluster
-  const [deleteCluster] = useMutation<DeleteCluster>(DELETE_CLUSTER);
+  const [deleteClusters] = useMutation<DeleteClusters>(DELETE_CLUSTERS);
 
   const [dateRange, setDateRange] = React.useState<DateData>({
     dateValue: 'Select a period',
@@ -203,8 +203,8 @@ const BrowseCluster: React.FC = () => {
   const { t } = useTranslation();
 
   const deleteRow = (clid: string) => {
-    deleteCluster({
-      variables: { cluster_id: clid },
+    deleteClusters({
+      variables: { projectID: getProjectID(), cluster_ids: [clid] },
     });
   };
 
@@ -298,15 +298,14 @@ const BrowseCluster: React.FC = () => {
 
                 {/* No of Workflows */}
                 <TableCell>
-                  <Typography>
-                    {t('workflowCluster.header.formControl.noWorkflows')}
-                  </Typography>
+                  {t('workflowCluster.header.formControl.noSchedules')}
+                  <Typography />
                 </TableCell>
 
                 {/* No of Schedules */}
                 <TableCell>
                   <Typography>
-                    {t('workflowCluster.header.formControl.noSchedules')}
+                    {t('workflowCluster.header.formControl.noWorkflows')}
                   </Typography>
                 </TableCell>
 
@@ -316,13 +315,7 @@ const BrowseCluster: React.FC = () => {
                     {t('workflowCluster.header.formControl.run')}
                   </Typography>
                 </TableCell>
-
-                {/* Delete Cluster */}
-                <TableCell>
-                  <Typography>
-                    {t('workflowCluster.header.formControl.disconnect')}
-                  </Typography>
-                </TableCell>
+                <TableCell />
               </TableRow>
             </TableHead>
 

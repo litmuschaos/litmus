@@ -71,7 +71,7 @@ const ObservabilityDashboard = () => {
           />
           <StyledTab
             label={t('monitoringDashboard.monitoringDashboard')}
-            data-cy="kubernetesDashboard"
+            data-cy="monitoringDashboard"
           />
           <StyledTab
             label={t('monitoringDashboard.dataSource')}

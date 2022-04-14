@@ -151,7 +151,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
   };
 
   return (
-    <div className={classes.buttons}>
+    <div className={classes.buttons} data-cy="infoButton">
       {navButtonStates.isInfoToggled ? (
         <ButtonFilled
           onClick={() => {
@@ -253,7 +253,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
               activePanelID: '',
             });
             history.push({
-              pathname: '/observability/dashboard/configure',
+              pathname: '/analytics/dashboard/configure',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
@@ -316,7 +316,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
           </div>
         </MenuItem>
 
-        <MenuItem
+        {/* <MenuItem
           value="Export pdf"
           onClick={() => {}}
           className={classes.menuItem}
@@ -335,7 +335,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
               {t('monitoringDashboard.monitoringDashboardPage.options.pdf')}
             </Typography>
           </div>
-        </MenuItem>
+        </MenuItem> */}
       </StyledMenu>
       {cloneModalOpen ? (
         <DashboardCloneModal

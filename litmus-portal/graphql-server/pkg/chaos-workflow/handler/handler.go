@@ -9,6 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	grpc2 "google.golang.org/grpc"
+
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 
@@ -23,7 +27,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/project"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
@@ -45,7 +48,15 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowCreation(input, wfType, r)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return nil, err
+	}
+
+	err = ops.ProcessWorkflowCreation(input, username, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow: ", err)
 		return nil, err
@@ -60,29 +71,40 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 	}, nil
 }
 
-func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
-	query := bson.D{{"workflow_id", workflow_id}}
+func DeleteWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
+	query := bson.D{
+		{"workflow_id", workflowID},
+		{"project_id", projectID},
+	}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
 
-	if *workflow_id != "" && *workflowRunID != "" {
-		for _, workflow_run := range workflow.WorkflowRuns {
-			if workflow_run.WorkflowRunID == *workflowRunID {
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return false, err
+	}
+
+	if *workflowID != "" && *workflowRunID != "" {
+		for _, workflowRun := range workflow.WorkflowRuns {
+			if workflowRun.WorkflowRunID == *workflowRunID {
 				bool_true := true
-				workflow_run.IsRemoved = &bool_true
+				workflowRun.IsRemoved = &bool_true
 			}
 		}
 
-		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, username, r)
 		if err != nil {
 			return false, err
 		}
 
 		return true, nil
 
-	} else if *workflow_id != "" && *workflowRunID == "" {
+	} else if *workflowID != "" && *workflowRunID == "" {
 		wf := model.ChaosWorkFlowInput{
 			ProjectID:    workflow.ProjectID,
 			WorkflowID:   &workflow.WorkflowID,
@@ -96,7 +118,7 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 			return false, err
 		}
 
-		err = ops.ProcessWorkflowDelete(query, workflow, r)
+		err = ops.ProcessWorkflowDelete(query, workflow, username, r)
 		if err != nil {
 			return false, err
 		}
@@ -108,14 +130,25 @@ func DeleteWorkflow(ctx context.Context, workflow_id *string, workflowRunID *str
 	return false, err
 }
 
-func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *string, r *store.StateData) (bool, error) {
-	query := bson.D{{"workflow_id", workflow_id}}
+func TerminateWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
+	query := bson.D{
+		{"workflow_id", workflowID},
+		{"project_id", projectID},
+	}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
 
-	if *workflow_id != "" && *workflowRunID != "" {
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return false, err
+	}
+
+	if *workflowID != "" && *workflowRunID != "" {
 		for _, workflow_run := range workflow.WorkflowRuns {
 			if workflow_run.WorkflowRunID == *workflowRunID {
 				workflow_run.Completed = true
@@ -123,7 +156,7 @@ func TerminateWorkflow(ctx context.Context, workflow_id *string, workflowRunID *
 			}
 		}
 
-		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, r)
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, username, r)
 		if err != nil {
 			return false, err
 		}
@@ -141,6 +174,14 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	if err != nil {
+		log.Print("Error getting username: ", err)
+		return nil, err
+	}
+
 	// GitOps Update
 	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
 	if err != nil {
@@ -148,7 +189,7 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowUpdate(input, wfType, r)
+	err = ops.ProcessWorkflowUpdate(input, username, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow update: ", err)
 		return nil, err
@@ -439,6 +480,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 			ClusterName:        workflow.ClusterName,
 			ClusterType:        &workflow.ClusterType,
 			IsRemoved:          workflowRun.IsRemoved,
+			ExecutedBy:         workflowRun.ExecutedBy,
 		}
 		result = append(result, &newWorkflowRun)
 	}
@@ -636,6 +678,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 			ClusterName:         cluster.ClusterName,
 			ClusterID:           cluster.ClusterID,
 			ClusterType:         cluster.ClusterType,
+			LastUpdatedBy:       &workflow.LastUpdatedBy,
 		}
 		result = append(result, &newChaosWorkflows)
 	}
@@ -671,7 +714,10 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	var workflowRunMetrics types.WorkflowRunMetrics
 	// Resiliency Score will be calculated only if workflow execution is completed
 	if input.Completed {
-		workflowRunMetrics = ops.ProcessCompletedWorkflowRun(executionData, input.WorkflowID)
+		workflowRunMetrics, err = ops.ProcessCompletedWorkflowRun(executionData, input.WorkflowID)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	count := 0
@@ -690,6 +736,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		ExecutionData:      input.ExecutionData,
 		Completed:          input.Completed,
 		IsRemoved:          &isRemoved,
+		ExecutedBy:         input.ExecutedBy,
 	})
 
 	if err != nil {
@@ -719,6 +766,7 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 		ExecutionData:      input.ExecutionData,
 		WorkflowID:         input.WorkflowID,
 		IsRemoved:          &isRemoved,
+		ExecutedBy:         input.ExecutedBy,
 	}, &r)
 
 	return "Workflow Run Accepted", nil
@@ -775,8 +823,13 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 }
 
 // ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
-func ReRunWorkflow(workflowID string) (string, error) {
-	query := bson.D{{"workflow_id", workflowID}, {"isRemoved", false}}
+func ReRunWorkflow(projectID string, workflowID string, username string) (string, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"workflow_id", workflowID},
+		{"isRemoved", false},
+	}
+
 	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
 		log.Print("Could not get workflow :", err)
@@ -790,6 +843,15 @@ func ReRunWorkflow(workflowID string) (string, error) {
 		return "", errors.New("cronworkflows cannot be re-run")
 	}
 
+	cluster, err := dbOperationsCluster.GetCluster(workflows[0].ClusterID)
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+	if cluster.IsActive != true {
+		log.Print("Agent not active to re-run the workflow")
+		return "", errors.New("Agent not active to re-run the selected workflow.")
+	}
+
 	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))
 	if err != nil {
 		log.Print("Failed to updated workflow name [re-run] :", err)
@@ -800,7 +862,7 @@ func ReRunWorkflow(workflowID string) (string, error) {
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, nil, "create", store.Store)
+	}, &username, nil, "create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
@@ -859,7 +921,12 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 	if IsExist == true {
 		return nil, errors.New("Template already exists")
 	}
-	projectData, err := dbOperationsProject.GetProject(ctx, bson.D{{"_id", templateInput.ProjectID}})
+
+	var conn *grpc2.ClientConn
+	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	defer conn.Close()
+
+	projectData, err := grpc.GetProjectById(client, templateInput.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -908,8 +975,11 @@ func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.M
 }
 
 // DeleteWorkflowTemplate is used to delete the workflow template (update the is_removed field as true)
-func DeleteWorkflowTemplate(ctx context.Context, templateID string) (bool, error) {
-	query := bson.D{{"template_id", templateID}}
+func DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"template_id", templateID},
+	}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
@@ -933,21 +1003,24 @@ func IsTemplateAvailable(ctx context.Context, templateName string, projectID str
 	return false, nil
 }
 
-func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID string, r *store.StateData) (bool, error) {
+func SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string, r *store.StateData) (bool, error) {
 
-	query := bson.D{{"workflow_id", workflow_id}}
+	query := bson.D{
+		{"workflow_id", workflowID},
+		{"project_id", projectID},
+	}
 	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
 
-	for _, workflow_run := range workflow.WorkflowRuns {
+	for _, workflowRun := range workflow.WorkflowRuns {
 		if workflow.IsRemoved == true {
 			return false, errors.New("workflow has been removed")
 		}
 
-		if workflow_run.WorkflowRunID == workflowRunID && !workflow_run.Completed && workflow.IsRemoved == false {
-			err = ops.ProcessWorkflowRunSync(workflow_id, &workflowRunID, workflow, r)
+		if workflowRun.WorkflowRunID == workflowRunID && !workflowRun.Completed && workflow.IsRemoved == false {
+			err = ops.ProcessWorkflowRunSync(workflowID, &workflowRunID, workflow, r)
 			if err != nil {
 				return false, err
 			}
@@ -956,4 +1029,28 @@ func SyncWorkflowRun(ctx context.Context, workflow_id string, workflowRunID stri
 	}
 
 	return true, nil
+}
+
+// GetWorkflowByID is used to fetch a Workflow details for a given workflow id
+func GetWorkflowByID(ctx context.Context, workflowID string) (*model.Workflow, error) {
+	workflowInput, err := dbOperationsWorkflow.GetWorkflow(bson.D{{"workflow_id", workflowID}})
+	if err != nil {
+		return nil, err
+	}
+	workflow := model.Workflow{
+		WorkflowID:          workflowInput.WorkflowID,
+		WorkflowName:        workflowInput.WorkflowName,
+		WorkflowDescription: workflowInput.WorkflowDescription,
+		ProjectID:           workflowInput.ProjectID,
+		ClusterID:           workflowInput.ClusterID,
+		ClusterName:         workflowInput.ClusterName,
+		ClusterType:         workflowInput.ClusterType,
+		IsRemoved:           workflowInput.IsRemoved,
+		IsCustomWorkflow:    workflowInput.IsCustomWorkflow,
+		CronSyntax:          workflowInput.CronSyntax,
+		CreatedAt:           workflowInput.CreatedAt,
+		LastUpdatedBy:       &workflowInput.LastUpdatedBy,
+	}
+
+	return &workflow, nil
 }

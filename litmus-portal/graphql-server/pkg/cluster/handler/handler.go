@@ -1,12 +1,15 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
@@ -38,13 +41,18 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		for _, el := range selectors {
 			kv := strings.Split(el, "=")
 			if len(kv) != 2 {
-				return nil, errors.New("nodeselector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
+				return nil, errors.New("node selector environment variable is not correct. Correct format: \"key1=value2,key2=value2\"")
 			}
 
 			if strings.Contains(kv[0], "\"") || strings.Contains(kv[1], "\"") {
-				return nil, errors.New("nodeselector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
+				return nil, errors.New("node selector environment variable contains escape character(s). Correct format: \"key1=value2,key2=value2\"")
 			}
 		}
+	}
+	var tolerations []*dbSchemaCluster.Toleration
+	err = copier.Copy(&tolerations, input.Tolerations)
+	if err != nil {
+		return &model.ClusterRegResponse{}, err
 	}
 
 	newCluster := dbSchemaCluster.Cluster{
@@ -65,6 +73,9 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		Token:          token,
 		IsRemoved:      false,
 		NodeSelector:   input.NodeSelector,
+		Tolerations:    tolerations,
+		SkipSSL:        input.SkipSsl,
+		StartTime:      strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
@@ -138,52 +149,63 @@ func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, 
 	return "", errors.New("ERROR WITH CLUSTER EVENT")
 }
 
-// DeleteCluster takes clusterID and r parameters, deletes the cluster from the database and sends a request to the subscriber for clean-up
-func DeleteCluster(clusterID string, r store.StateData) (string, error) {
-	time := strconv.FormatInt(time.Now().Unix(), 10)
-
-	query := bson.D{{"cluster_id", clusterID}}
-	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", time}}}}
+// DeleteClusters takes clusterIDs and r parameters, deletes the clusters from the database and sends a request to the subscriber for clean-up
+func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string, r store.StateData) (string, error) {
+	query := bson.D{
+		{"project_id", projectID},
+		{"cluster_id", bson.D{
+			{"$in", clusterIds},
+		}},
+	}
+	// Update cluster info in db
+	updatedAtTime := strconv.FormatInt(time.Now().Unix(), 10)
+	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", updatedAtTime}}}}
 
 	err := dbOperationsCluster.UpdateCluster(query, update)
 	if err != nil {
 		return "", err
 	}
-	cluster, err := dbOperationsCluster.GetCluster(clusterID)
+	clusters, err := dbOperationsCluster.GetClusters(ctx, query)
 	if err != nil {
 		return "", nil
 	}
 
-	requests := []string{
-		`{
-		   "apiVersion": "v1",
-		   "kind": "ConfigMap",
-		   "metadata": {
-			  "name": "agent-config",
-			  "namespace": ` + *cluster.AgentNamespace + `
-		   }
-		}`,
-		`{
-			"apiVersion": "apps/v1",
-			"kind": "Deployment",
-			"metadata": {
-				"name": "subscriber",
-				"namespace": ` + *cluster.AgentNamespace + `
-			}
-		}`,
-	}
+	for _, cluster := range clusters {
+		requests := []string{
+			`{
+		   		"apiVersion": "v1",
+		   		"kind": "ConfigMap",
+		   		"metadata": {
+					"name": "agent-config",
+					"namespace": ` + *cluster.AgentNamespace + `
+		   		}
+			}`,
+			`{
+				"apiVersion": "apps/v1",
+				"kind": "Deployment",
+				"metadata": {
+					"name": "subscriber",
+					"namespace": ` + *cluster.AgentNamespace + `
+				}
+			}`,
+		}
 
-	for _, request := range requests {
-		SendRequestToSubscriber(clusterOps.SubscriberRequests{
-			K8sManifest: request,
-			RequestType: "delete",
-			ProjectID:   cluster.ProjectID,
-			ClusterID:   clusterID,
-			Namespace:   *cluster.AgentNamespace,
-		}, r)
-	}
+		tkn := ctx.Value(authorization.AuthKey).(string)
+		username, _ := authorization.GetUsername(tkn)
 
-	return "Successfully deleted cluster", nil
+		for _, request := range requests {
+			SendRequestToSubscriber(clusterOps.SubscriberRequests{
+				K8sManifest: request,
+				RequestType: "delete",
+				ProjectID:   cluster.ProjectID,
+				ClusterID:   cluster.ClusterID,
+				Namespace:   *cluster.AgentNamespace,
+				Username:    &username,
+			}, r)
+		}
+
+	}
+	return "Successfully deleted clusters", nil
 }
 
 // QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters
@@ -255,6 +277,7 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 			Namespace:    subscriberRequest.Namespace,
 			RequestType:  subscriberRequest.RequestType,
 			ExternalData: subscriberRequest.ExternalData,
+			Username:     subscriberRequest.Username,
 		},
 	}
 
@@ -265,4 +288,21 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	}
 
 	r.Mutex.Unlock()
+}
+
+// GetAgentDetails fetches agent details from the DB
+func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
+	cluster, err := dbOperationsCluster.GetAgentDetails(ctx, clusterID, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	newCluster := model.Cluster{}
+
+	err = copier.Copy(&newCluster, &cluster)
+	if err != nil {
+		return nil, err
+	}
+
+	return &newCluster, nil
 }

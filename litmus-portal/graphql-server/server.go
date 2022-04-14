@@ -3,11 +3,19 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+
+	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -22,11 +30,37 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/file_handlers"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/rs/cors"
+	"google.golang.org/grpc"
 )
+
+type Config struct {
+	Port                        string
+	Version                     string `required:"true"`
+	AgentDeployments            string `required:"true" split_words:"true"`
+	DbServer                    string `required:"true" split_words:"true"`
+	JwtSecret                   string `required:"true" split_words:"true"`
+	SelfAgent                   string `required:"true" split_words:"true"`
+	AgentScope                  string `required:"true" split_words:"true"`
+	AgentNamespace              string `required:"true" split_words:"true"`
+	LitmusPortalNamespace       string `required:"true" split_words:"true"`
+	DbUser                      string `required:"true" split_words:"true"`
+	DbPassword                  string `required:"true" split_words:"true"`
+	PortalScope                 string `required:"true" split_words:"true"`
+	SubscriberImage             string `required:"true" split_words:"true"`
+	EventTrackerImage           string `required:"true" split_words:"true"`
+	ArgoWorkflowControllerImage string `required:"true" split_words:"true"`
+	ArgoWorkflowExecutorImage   string `required:"true" split_words:"true"`
+	LitmusChaosOperatorImage    string `required:"true" split_words:"true"`
+	LitmusChaosRunnerImage      string `required:"true" split_words:"true"`
+	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
+	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
+	HubBranchName               string `required:"true" split_words:"true"`
+}
 
 const defaultPort = "8080"
 
@@ -34,8 +68,18 @@ func init() {
 	logrus.Printf("Go Version: %s", runtime.Version())
 	logrus.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
-	if os.Getenv("VERSION") == "" || os.Getenv("AGENT_DEPLOYMENTS") == "" || os.Getenv("DB_SERVER") == "" || os.Getenv("JWT_SECRET") == "" || os.Getenv("SELF_CLUSTER") == "" || os.Getenv("AGENT_SCOPE") == "" || os.Getenv("AGENT_NAMESPACE") == "" || os.Getenv("LITMUS_PORTAL_NAMESPACE") == "" || os.Getenv("DB_USER") == "" || os.Getenv("DB_PASSWORD") == "" || os.Getenv("PORTAL_SCOPE") == "" || os.Getenv("SUBSCRIBER_IMAGE") == "" || os.Getenv("EVENT_TRACKER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE") == "" || os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE") == "" || os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE") == "" || os.Getenv("CONTAINER_RUNTIME_EXECUTOR") == "" || os.Getenv("HUB_BRANCH_NAME") == "" {
-		logrus.Fatal("Some environment variable are not setup")
+	var c Config
+
+	err := envconfig.Process("", &c)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	// confirm version env is valid
+	if !strings.Contains(strings.ToLower(c.Version), cluster.CIVersion) {
+		splitCPVersion := strings.Split(c.Version, ".")
+		if len(splitCPVersion) != 3 {
+			logrus.Fatal("version doesn't follow semver semantic")
+		}
 	}
 }
 
@@ -50,6 +94,7 @@ func validateVersion() error {
 		if err != nil {
 			return fmt.Errorf("failed to insert current version in db, error = %w", err)
 		}
+		return nil
 	}
 	if dbVersion.Value.(string) != currentVersion {
 		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
@@ -58,16 +103,28 @@ func validateVersion() error {
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	httpPort := os.Getenv("HTTP_PORT")
+	if httpPort == "" {
+		httpPort = utils.DefaultHTTPPort
 	}
-	// Initialize the mongo client
-	mongodb.Client = mongodb.Client.Initialize()
+
+	rpcPort := os.Getenv("RPC_PORT")
+	if rpcPort == "" {
+		rpcPort = utils.DefaultRPCPort
+	}
+
+	client, err := mongodb.MongoConnection()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	mongodb.Client = mongodb.Client.Initialize(client)
 
 	if err := validateVersion(); err != nil {
 		logrus.Fatal(err)
 	}
+
+	go startGRPCServer(rpcPort) // start GRPC server
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
@@ -97,11 +154,31 @@ func main() {
 	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
+	// routers
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
-	router.HandleFunc("/file/{key}{path:.yaml}", file_handlers.FileHandler)
+	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
-	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	logrus.Fatal(http.ListenAndServe(":"+port, router))
 
+	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
+	router.HandleFunc("/status", handlers.StatusHandler)
+
+	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
+	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))
+}
+
+// startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
+func startGRPCServer(port string) {
+	lis, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		logrus.Fatal("failed to listen: %w", err)
+	}
+
+	grpcServer := grpc.NewServer()
+
+	// Register services
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{})
+
+	logrus.Printf("GRPC server listening on %v", lis.Addr())
+	logrus.Fatal(grpcServer.Serve(lis))
 }

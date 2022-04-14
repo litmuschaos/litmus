@@ -5,12 +5,30 @@ import (
 	"os"
 	"strings"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
 	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions"
 	"go.uber.org/zap"
 )
 
+type Config struct {
+	Version    string `required:"true"`
+	DbServer   string `required:"true" split_words:"true"`
+	DbUser     string `required:"true" split_words:"true"`
+	DbPassword string `required:"true" split_words:"true"`
+}
+
+func init() {
+	var c Config
+
+	err := envconfig.Process("", &c)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func main() {
+	// logging level, dev mode enables debug logs
 	dev := os.Getenv("DEV_MODE")
 	var logger *zap.Logger
 	var err error

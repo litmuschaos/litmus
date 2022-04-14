@@ -284,7 +284,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
           <Typography className={classes.subHeading}>
             {t('monitoringDashboard.dataSourceForm.authenticationInfo')}
           </Typography>
-          <FormGroup>
+          <FormGroup data-cy="authRadioGroup">
             <div className={classes.inputDivRadioButton}>
               <FormControlLabel
                 control={
@@ -302,6 +302,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
                 control={
                   <RadioButton
                     color="primary"
+                    disabled
                     checked={dataSourceDetails.basicAuth}
                     onChange={handleAuthChange}
                     name="basicAuth"

@@ -32,6 +32,7 @@ import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { history } from '../../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import { sortNumAsc } from '../../../utils/sort';
 import { MonitoringDashboardCard } from './MonitoringDashboardCard';
 import useStyles from './styles';
 import { WorkflowStatisticsCard } from './WorkflowStatisticsCard';
@@ -164,7 +165,7 @@ const Overview: React.FC = () => {
             onClick={() => {
               tabs.changeHubTabs(0);
               history.push({
-                pathname: '/myhub/Chaos%20Hub',
+                pathname: '/myhub/Litmus%20ChaosHub',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -192,7 +193,13 @@ const Overview: React.FC = () => {
   let filteredDashboardListData;
   // Select the latest 3 dashboards
   if (monitoringDashboardCount > 0) {
-    filteredDashboardListData = dashboardListData?.ListDashboard.slice(-3);
+    filteredDashboardListData = dashboardListData?.ListDashboard.slice()
+      .sort((a, b) => {
+        const x = b.viewed_at as unknown as number;
+        const y = a.viewed_at as unknown as number;
+        return sortNumAsc(x, y);
+      })
+      .slice(0, 3);
   }
 
   // Generic Apollo error:
@@ -219,7 +226,7 @@ const Overview: React.FC = () => {
             <ButtonFilled
               onClick={() => {
                 history.push({
-                  pathname: '/observability/datasource/create',
+                  pathname: '/analytics/datasource/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -257,7 +264,7 @@ const Overview: React.FC = () => {
               style={{ marginLeft: '0' }}
               onClick={() => {
                 history.push({
-                  pathname: '/observability/dashboard/create',
+                  pathname: '/analytics/dashboard/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -319,7 +326,7 @@ const Overview: React.FC = () => {
       {monitoringDashboardCount > 0 && (
         <RecentOverviewContainer
           heading="Recently viewed monitoring dashboards"
-          buttonLink="/observability/dashboard/create"
+          buttonLink="/analytics/dashboard/create"
           buttonImgSrc="./icons/cloudWhite.svg"
           buttonImgAlt="Create dashboard"
           buttonText="Create dashbaord"
@@ -352,7 +359,7 @@ const Overview: React.FC = () => {
                 className={classes.infoContainerButton}
                 onClick={() => {
                   history.push({
-                    pathname: '/observability/datasource/create',
+                    pathname: '/analytics/datasource/create',
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

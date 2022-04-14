@@ -36,10 +36,10 @@ frontend-services-checks:
 	@echo "--> checking code style [frontend]"
 	@echo "------------------"
 	cd frontend && npm i eslint --no-save && npm run lint
-	@echo "------------------"
-	@echo "--> Check litmusportal frontend [depcheck]"
-	@echo "------------------"
-	cd frontend && npm i depcheck --no-save && node_modules/.bin/depcheck --skip-missing .
+# @echo "------------------"
+# @echo "--> Check litmusportal frontend [depcheck]"
+# @echo "------------------"
+# cd frontend && npm i depcheck --no-save && node_modules/.bin/depcheck --skip-missing .
 
 backend-services-checks:
 	@echo "------------------"
@@ -82,6 +82,15 @@ backend-services-checks:
 	@echo "--> Check litmusportal event tracker [go mod tidy]"
 	@echo "------------------"
 	@tidyRes=$$(cd cluster-agents/event-tracker && go mod tidy); \
+	if [ -n "$${tidyRes}" ]; then \
+		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
+		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
+		&& exit 1; \
+	fi
+	@echo "------------------"
+	@echo "--> Check litmusportal upgrade agent [go mod tidy]"
+	@echo "------------------"
+	@tidyRes=$$(cd upgrade-agents/control-plane && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
@@ -135,6 +144,6 @@ push-frontend-amd64: docker-build-frontend-amd64 docker-push-frontend-amd64
 docker-build-frontend-amd64:
 	@cd frontend && \
     docker build . -f Dockerfile -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) --build-arg TARGETARCH=amd64 --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) \
-		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x
+		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x"
 docker-push-frontend-amd64:
 	@docker push $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG)

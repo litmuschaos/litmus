@@ -1,10 +1,10 @@
-import { useQuery } from '@apollo/client';
 import { Box, Paper, Tab, Tabs, useTheme } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LIST_PROJECTS } from '../../../../graphql';
-import { Member, Projects } from '../../../../models/graphql/user';
-import { getUserId } from '../../../../utils/auth';
+import config from '../../../../config';
+// import { LIST_PROJECTS } from '../../../../graphql';
+import { Member, Project } from '../../../../models/graphql/user';
+import { getToken, getUserId } from '../../../../utils/auth';
 import AcceptedInvitations from './AcceptedInvitations';
 import ReceivedInvitations from './ReceivedInvitations';
 import useStyles from './styles';
@@ -42,8 +42,12 @@ function tabProps(index: any) {
   };
 }
 
+interface InvitationProps {
+  getProjectDetail: () => void;
+}
+
 // NewUserModal displays a modal on creating a new user
-const Invitation: React.FC = () => {
+const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
   const classes = useStyles();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -54,38 +58,52 @@ const Invitation: React.FC = () => {
   const [projectOtherCount, setProjectOtherCount] = useState<number>(0);
   const [invitationsCount, setInvitationCount] = useState<number>(0);
 
-  const { data: dataProject, refetch } = useQuery<Projects>(LIST_PROJECTS, {
-    onCompleted: () => {
-      if (dataProject?.listProjects) {
-        let otherCount = 0;
-        let inviteCount = 0;
-        dataProject.listProjects.forEach((project) => {
-          project.members.forEach((member: Member) => {
-            if (member.user_id === userID && member.invitation === 'Pending') {
-              inviteCount++;
-            } else if (
-              member.user_id === userID &&
-              member.role !== 'Owner' &&
-              member.invitation === 'Accepted'
-            ) {
-              otherCount++;
-            }
+  function fetchProjectData() {
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.data);
+        } else {
+          let otherCount = 0;
+          let inviteCount = 0;
+          data.data.forEach((project: Project): void => {
+            project.Members.forEach((member: Member) => {
+              if (member.UserID === userID && member.Invitation === 'Pending') {
+                inviteCount++;
+              } else if (
+                member.UserID === userID &&
+                member.Role !== 'Owner' &&
+                member.Invitation === 'Accepted'
+              ) {
+                otherCount++;
+              }
+            });
           });
-        });
-        setInvitationCount(inviteCount);
-        setProjectOtherCount(otherCount);
-      }
-    },
-    onError: () => {
-      setInvitationCount(0);
-      setProjectOtherCount(0);
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+          setInvitationCount(inviteCount);
+          setProjectOtherCount(otherCount);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setInvitationCount(0);
+        setProjectOtherCount(0);
+      });
+  }
+
+  useEffect(() => {
+    fetchProjectData();
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
-    refetch();
+    fetchProjectData();
   };
 
   return (
@@ -131,10 +149,16 @@ const Invitation: React.FC = () => {
         </Tabs>
       </Paper>
       <TabPanel value={activeTab} index={0}>
-        <AcceptedInvitations />
+        <AcceptedInvitations
+          fetchData={fetchProjectData}
+          getProjectDetail={getProjectDetail}
+        />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <ReceivedInvitations />
+        <ReceivedInvitations
+          fetchData={fetchProjectData}
+          getProjectDetail={getProjectDetail}
+        />
       </TabPanel>
     </div>
   );

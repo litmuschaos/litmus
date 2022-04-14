@@ -16,6 +16,7 @@ type WorkflowEvent struct {
 	StartedAt         string          `json:"startedAt"`
 	FinishedAt        string          `json:"finishedAt"`
 	Nodes             map[string]Node `json:"nodes"`
+	ExecutedBy        string          `json:"executed_by"`
 }
 
 // each node/step data

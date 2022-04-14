@@ -1,15 +1,10 @@
-import { useQuery } from '@apollo/client';
 import { Avatar, IconButton, TableCell } from '@material-ui/core';
 import moment from 'moment';
-import React, { useState } from 'react';
-import { GET_USER } from '../../../../graphql';
-import {
-  CurrentUserDedtailsVars,
-  CurrentUserDetails,
-  Member,
-  Role,
-} from '../../../../models/graphql/user';
+import React, { useEffect, useState } from 'react';
+import config from '../../../../config';
+import { Member, Role } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
+import { getToken } from '../../../../utils/auth';
 import { userInitials } from '../../../../utils/userInitials';
 import RemoveMemberModal from './removeMemberModal';
 import useStyles from './styles';
@@ -32,23 +27,32 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
 
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
 
-  useQuery<CurrentUserDetails, CurrentUserDedtailsVars>(GET_USER, {
-    variables: { username: row.user_name },
-    onCompleted: (data) => {
-      setMemberDetails({
-        name: data.getUser.name,
-        uid: data.getUser.id,
-        username: data.getUser.username,
-        role: data.getUser.role,
-        email: data.getUser.email,
+  useEffect(() => {
+    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setMemberDetails({
+          // TODO: Check if all are being used
+          name: data.first_name,
+          uid: data._id,
+          username: data.username,
+          role: data.role,
+          email: data.email,
+        });
       });
-    },
-  });
+  }, []);
+
   return (
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -58,31 +62,31 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             data-cy="avatar"
             alt="User"
             className={`${
-              row.deactivated_at ? classes.darkBg : classes.avatarBackground
+              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
             } `}
           >
-            {userInitials(memberDetails ? memberDetails.username : '')}
+            {memberDetails?.username && userInitials(memberDetails.username)}
           </Avatar>
           {memberDetails ? memberDetails.username : ''}
         </div>
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
-        {row.role}
+        {row.Role}
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivated_at ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         <div className={classes.dateDiv}>
@@ -91,25 +95,25 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             src="./icons/calendarIcon.svg"
             alt="calendar"
           />
-          {formatDate(row.joined_at)}
+          {formatDate(row.JoinedAt)}
         </div>
       </TableCell>
 
-      {row.role !== Role.owner ? (
+      {row.Role !== Role.owner ? (
         <TableCell
           className={`${classes.otherTC} ${
-            row.deactivated_at ? classes.dark : ''
+            row.DeactivatedAt ? classes.dark : ''
           }`}
-          key={row.user_id}
+          key={row.UserID}
         >
-          <IconButton onClick={() => setOpen(true)}>
+          <IconButton data-cy="removeMember" onClick={() => setOpen(true)}>
             <img alt="delete" src="./icons/removeMember.svg" height="50" />
           </IconButton>
         </TableCell>
       ) : (
         <TableCell
           className={`${classes.otherTC} ${
-            row.deactivated_at ? classes.dark : ''
+            row.DeactivatedAt ? classes.dark : ''
           }`}
         />
       )}

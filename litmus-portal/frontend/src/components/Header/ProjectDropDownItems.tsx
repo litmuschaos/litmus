@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/client';
 import {
   IconButton,
   List,
@@ -6,14 +5,16 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  useTheme,
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
+import { Icon } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LIST_PROJECTS } from '../../graphql';
-import { Member, Project, Projects } from '../../models/graphql/user';
+import config from '../../config';
+import { Member, Project } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { getUserId } from '../../utils/auth';
+import { getToken, getUserId } from '../../utils/auth';
 import { getProjectID } from '../../utils/getSearchParams';
 import Loader from '../Loader';
 import useStyles from './styles';
@@ -37,6 +38,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
   selected,
 }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const [copying, setCopying] = useState<boolean>(false);
 
   function fallbackCopyTextToClipboard(text: string) {
@@ -59,6 +61,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 
   return (
     <ListItem
+      data-cy="projectDropDownItem"
       button
       selected={selected}
       onClick={handleClick}
@@ -66,9 +69,17 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
     >
       <ListItemIcon>
         {selected ? (
-          <img src="./icons/selectedProject.svg" alt="Selected Project" />
+          <div className={classes.selectedWrapper}>
+            <Icon name="check" size="md" color={theme.palette.success.main} />
+          </div>
         ) : (
-          <img src="./icons/nonSelectedproject.svg" alt="Un-selected Project" />
+          <div className={classes.notSelectedWrapper}>
+            <Icon
+              name="project"
+              size="md"
+              color={theme.palette.background.paper}
+            />
+          </div>
         )}
       </ListItemIcon>
       <ListItemText
@@ -82,7 +93,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
           aria-label="copyProject"
         >
           {!copying ? (
-            <img src="./icons/copyProjectID.svg" alt="Copy project ID" />
+            <Icon name="copy" size="lg" color={theme.palette.primary.main} />
           ) : (
             <DoneIcon />
           )}
@@ -95,8 +106,7 @@ const CustomisedListItem: React.FC<CustomisedListItemProps> = ({
 const ProjectDropdownItems: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { data, loading } = useQuery<Projects>(LIST_PROJECTS);
-  const projects = data?.listProjects ?? [];
+  const [loading, setLoading] = useState<boolean>(true);
 
   const baseRoute = window.location.pathname
     .replace(process.env.PUBLIC_URL, '')
@@ -104,39 +114,59 @@ const ProjectDropdownItems: React.FC = () => {
 
   const userID = getUserId();
   const projectID = getProjectID();
+  const [projects, setProjects] = useState<Project[]>([]);
 
   const [myProjects, setMyProjects] = useState<Project[]>([]);
   const [otherProjects, setOtherProjects] = useState<OtherProjectsType[]>([]);
+
+  useEffect(() => {
+    fetch(`${config.auth.url}/list_projects`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ('error' in data) {
+          console.error(data.data);
+        } else {
+          setProjects(data.data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   useEffect(() => {
     const projectOwner: Project[] = [];
     const projectOther: OtherProjectsType[] = [];
 
     projects.map((project) => {
-      return project.members.forEach((member: Member) => {
-        if (member.user_id === userID && member.role === 'Owner') {
+      return project.Members.forEach((member: Member) => {
+        if (member.UserID === userID && member.Role === 'Owner') {
           projectOwner.push(project);
         } else if (
-          member.user_id === userID &&
-          member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
+          member.UserID === userID &&
+          member.Role !== 'Owner' &&
+          member.Invitation === 'Accepted'
         ) {
           projectOther.push({
             projectDetails: project,
-            currentUserProjectRole: member.role,
+            currentUserProjectRole: member.Role,
           });
         }
       });
     });
     setMyProjects(projectOwner);
     setOtherProjects(projectOther);
-  }, [data]);
+  }, [projects]);
 
   return (
-    <div
-      className={classes.projectPopover}
-      data-cy="headerProjectDropdownItems"
-    >
+    <div className={classes.projectPopover}>
       {loading ? (
         <Loader />
       ) : (
@@ -161,12 +191,12 @@ const ProjectDropdownItems: React.FC = () => {
                   handleClick={() => {
                     history.push({
                       pathname: `/${baseRoute}`,
-                      search: `?projectID=${project.id}&projectRole=Owner`,
+                      search: `?projectID=${project.ID}&projectRole=Owner`,
                     });
                   }}
-                  label={project.name}
-                  secondaryLabel={project.id}
-                  selected={projectID === project.id}
+                  label={project.Name}
+                  secondaryLabel={project.ID}
+                  selected={projectID === project.ID}
                 />
               );
             })
@@ -191,12 +221,12 @@ const ProjectDropdownItems: React.FC = () => {
                   handleClick={() => {
                     history.push({
                       pathname: `/home`,
-                      search: `?projectID=${project.projectDetails.id}&projectRole=${project.currentUserProjectRole}`,
+                      search: `?projectID=${project.projectDetails.ID}&projectRole=${project.currentUserProjectRole}`,
                     });
                   }}
-                  label={project.projectDetails.name}
-                  secondaryLabel={project.projectDetails.id}
-                  selected={projectID === project.projectDetails.id}
+                  label={project.projectDetails.Name}
+                  secondaryLabel={project.projectDetails.ID}
+                  selected={projectID === project.projectDetails.ID}
                 />
               );
             })

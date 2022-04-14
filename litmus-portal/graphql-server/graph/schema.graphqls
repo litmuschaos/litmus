@@ -26,6 +26,8 @@ type Cluster {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
+  start_time: String!
+  version: String!
 }
 
 input ClusterInput {
@@ -39,7 +41,17 @@ input ClusterInput {
   agent_scope: String!
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
+  skip_ssl: Boolean
   node_selector: String
+  tolerations: [Toleration]
+}
+
+input Toleration {
+  tolerationSeconds: Int
+  key: String
+  operator: String
+  effect: String
+  value: String
 }
 
 type ClusterEvent {
@@ -55,6 +67,7 @@ type ActionPayload {
   k8s_manifest: String!
   namespace: String!
   external_data: String
+  username: String
 }
 
 type ClusterAction {
@@ -115,6 +128,7 @@ input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
+  executed_by: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
@@ -231,15 +245,15 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-  getUser(username: String!): User! @authorized
+  # Query to fetch manifest
+  getManifest(
+    projectID: String!
+    clusterID: String!
+    accessKey: String!
+  ): String! @authorized
 
-  #It is used to get projects by projectID
-  getProject(projectID: String!): Project! @authorized
-
-  #It is used to get projects by userID
-  listProjects: [Project!]! @authorized
-
-  users: [User!]! @authorized
+  # Query to fetch agent details based on project_id and agent_name
+  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
 
   # Query to fetch workflow data for heatmap
   getHeatmapData(
@@ -267,11 +281,13 @@ type Query {
 
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-  getYAMLData(experimentInput: ExperimentInput!): String!
+  getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
+    @authorized
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+    @authorized
 
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
@@ -285,11 +301,13 @@ type Query {
   ListDashboard(
     project_id: String!
     cluster_id: String
-    db_id: String): [listDashboardResponse] @authorized
+    db_id: String
+  ): [listDashboardResponse] @authorized
 
-  PortalDashboardData (
+  PortalDashboardData(
     project_id: String!
-    hub_name: String!) : [PortalDashboardData!]! @authorized
+    hub_name: String!
+  ): [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -297,7 +315,10 @@ type Query {
   # Manifest Template
   ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
 
-  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
+  GetTemplateManifestByID(
+    projectID: String!
+    template_id: String!
+  ): ManifestTemplate! @authorized
 
   #Image Registry Queries
   ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
@@ -314,53 +335,33 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  # Used to create a user
-  createUser(user: CreateUserInput!): User! @authorized
-
-  # Used to disable a user
-  updateUserState(uid: String!, isDeactivate: Boolean!): String!
-    @authorized
-
-  # It is used to create a project
-  createProject(projectName: String!): Project! @authorized
-
-  updateUser(user: UpdateUserInput!): String! @authorized
-
   ## Workflow APIs
   # It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
+    @authorized
 
   # removes workflow from cluster and db
-  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
-    @authorized
+  deleteChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflow_run_id: String
+  ): Boolean! @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+  terminateChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflow_run_id: String
+  ): Boolean! @authorized
 
-  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
-    @authorized
-
-  #Used for sending invitation
-  sendInvitation(member: MemberInput!): Member @authorized
-
-  #Used for accepting invitation
-  acceptInvitation(member: MemberInput!): String! @authorized
-
-  #Used for declining the invitation
-  declineInvitation(member: MemberInput!): String! @authorized
-
-  #Used for cancelling the sent invitation
-  removeInvitation(member: MemberInput!): String! @authorized
-
-  #Used for leaving a project
-  leaveProject(member: MemberInput!): String! @authorized
-
-  #Used to update project name
-  updateProjectName(projectID: String!, projectName: String!): String!
-    @authorized
+  syncWorkflow(
+    projectID: String!
+    workflowID: String!
+    workflow_run_id: String!
+  ): Boolean! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -378,18 +379,19 @@ type Mutation {
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(id: ID!): [MyHubStatus!]! @authorized
+  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(cluster_id: String!): String! @authorized
+  deleteClusters(projectID: String!, cluster_ids: [String]!): String!
+    @authorized
 
   generaterSSHKey: SSHKey! @authorized
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hub_id: String!): Boolean! @authorized
+  deleteMyHub(hub_id: String!, projectID: String!): Boolean! @authorized
 
   # Gitops
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
@@ -408,20 +410,24 @@ type Mutation {
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
   updateDashboard(
+    projectID: String!
     dashboard: updateDBInput!
-    chaosQueryUpdate: Boolean!): String! @authorized
+    chaosQueryUpdate: Boolean!
+  ): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
-  deleteDashboard(db_id: String): Boolean! @authorized
+  deleteDashboard(projectID: String!, db_id: String): Boolean! @authorized
 
-  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  deleteDataSource(projectID: String!, input: deleteDSInput!): Boolean!
+    @authorized
 
   # Manifest Template
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
     @authorized
 
-  deleteManifestTemplate(template_id: String!): Boolean! @authorized
+  deleteManifestTemplate(projectID: String!, template_id: String!): Boolean!
+    @authorized
 
   #Image Registry Mutations
   createImageRegistry(
@@ -457,5 +463,6 @@ type Subscription {
     dashboardID: String
     promQueries: [promQueryInput!]!
     dashboardQueryMap: [queryMapForPanelGroup!]!
-    dataVariables: dataVars!): dashboardPromResponse! @authorized
+    dataVariables: dataVars!
+  ): dashboardPromResponse! @authorized
 }

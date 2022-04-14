@@ -1,10 +1,12 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-param-reassign */
-import YAML from 'yaml';
+import localforage from 'localforage';
 import { v4 as uuidv4 } from 'uuid';
+import YAML from 'yaml';
 import { constants } from '../constants';
 import { ImageRegistryInfo } from '../models/redux/image_registry';
+import { experimentMap } from '../models/redux/workflow';
 
 const validateNamespace = (chaosEngine: any) => {
   // Condition to check the namespace
@@ -141,6 +143,35 @@ export const updateWorkflowNameLabel = (
   }
 };
 
+export const getInstanceID = (parsedYaml: any) => {
+  let instance_id: string = '';
+  try {
+    if (parsedYaml.spec !== undefined) {
+      const yamlData =
+        parsedYaml.kind === constants.workflow
+          ? parsedYaml.spec
+          : parsedYaml.spec.workflowSpec;
+      yamlData.templates.forEach((template: any) => {
+        if (template.inputs && template.inputs.artifacts) {
+          template.inputs.artifacts.forEach((artifact: any) => {
+            const chaosEngine = YAML.parse(artifact.raw.data);
+            // Condition to check for the kind as ChaosEngine
+            if (chaosEngine.kind === 'ChaosEngine') {
+              if (chaosEngine.metadata.labels !== undefined) {
+                instance_id += `${chaosEngine.metadata.labels['instance_id']}, `;
+              }
+            }
+          });
+        }
+      });
+    }
+    return instance_id;
+  } catch (err) {
+    console.error(err);
+    return '';
+  }
+};
+
 const parsed = (yaml: string) => {
   const file = yaml;
   if (file === 'error') {
@@ -192,6 +223,24 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const addWeights = (manifest: string) => {
+  const arr: experimentMap[] = [];
+  const hashMap = new Map();
+  const tests = parsed(manifest);
+  if (tests.length) {
+    tests.forEach((test) => {
+      let value = 10;
+      if (hashMap.has(test)) {
+        value = hashMap.get(test);
+      }
+      arr.push({ experimentName: test, weight: value });
+    });
+  } else {
+    arr.push({ experimentName: '', weight: 0 });
+  }
+  localforage.setItem('weights', arr);
+};
+
 export const fetchWorkflowNameFromManifest = (manifest: string) => {
   return YAML.parse(manifest).metadata.name;
 };
@@ -235,6 +284,15 @@ export const updateNamespace = (manifest: string, namespace: string) => {
         }
       }
     );
+  return updatedManifest;
+};
+
+export const updateNamespaceForUpload = (
+  manifest: string,
+  namespace: string
+) => {
+  const updatedManifest = YAML.parse(manifest, { prettyErrors: true });
+  updatedManifest.metadata.namespace = namespace;
   return updatedManifest;
 };
 
@@ -342,4 +400,48 @@ export const updateManifestImage = (
     }
   }
   return YAML.stringify(parsedYaml);
+};
+
+export const isCronWorkflow = (manifest: any): boolean => {
+  if (manifest.kind.toLowerCase() === 'workflow') {
+    return false;
+  }
+  if (manifest.kind.toLowerCase() === 'cronworkflow') {
+    return true;
+  }
+  return false;
+};
+
+export const validateExperimentNames = (manifest: any): boolean => {
+  const value: any = [];
+  if (manifest.spec !== undefined) {
+    const yamlData =
+      manifest.kind === constants.workflow
+        ? manifest.spec
+        : manifest.spec.workflowSpec;
+    yamlData.templates[0].steps.forEach((step: any) => {
+      step.forEach((values: any) => {
+        // if exp name exists append the count
+        if (value[`${values.name}`]) {
+          const val = value[`${values.name}`] + 1;
+          value[`${values.name}`] = val;
+        }
+        // else set the default count as 1
+        else {
+          value[`${values.name}`] = 1;
+        }
+      });
+    });
+  }
+
+  // filter the experiment if it is occuring more than 1
+  const exp = Object.entries(value).filter(
+    ([, value]) => (value as number) > 1
+  ).length;
+
+  // if any experiment exists (with more than 1 occurance)
+  if (exp > 0) {
+    return false;
+  }
+  return true;
 };

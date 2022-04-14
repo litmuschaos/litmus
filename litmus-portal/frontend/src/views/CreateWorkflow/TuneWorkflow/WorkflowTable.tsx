@@ -1,5 +1,5 @@
 /* eslint-disable no-const-assign */
-import { IconButton, Typography, useTheme } from '@material-ui/core';
+import { IconButton, Popover, Typography, useTheme } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,11 +7,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import InfoIcon from '@material-ui/icons/Info';
+import { Icon } from 'litmus-ui';
 import localforage from 'localforage';
 import React, {
-  lazy,
   forwardRef,
+  lazy,
   useEffect,
   useImperativeHandle,
   useState,
@@ -19,6 +20,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import SwitchButton from '../../../components/SwitchButton';
 import Row from '../../../containers/layouts/Row';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { experimentMap } from '../../../models/redux/workflow';
@@ -31,6 +33,7 @@ import useStyles from './styles';
 const ConfigurationStepper = lazy(
   () => import('./ConfigurationStepper/ConfigurationStepper')
 );
+const AdvanceTuning = lazy(() => import('./AdvanceTuning/index'));
 
 interface WorkflowTableProps {
   isCustom: boolean | undefined;
@@ -56,6 +59,8 @@ const WorkflowTable = forwardRef(
     const [experiments, setExperiments] = useState<ChaosCRDTable[]>([]);
     const [revertChaos, setRevertChaos] = useState<boolean>(true);
     const [displayStepper, setDisplayStepper] = useState<boolean>(false);
+    const [displayAdvanceTune, setDisplayAdvanceTune] =
+      useState<boolean>(false);
     const [engineIndex, setEngineIndex] = useState<number>(0);
     const [selected, setSelected] = useState<string>('');
     const manifest = useSelector(
@@ -64,6 +69,25 @@ const WorkflowTable = forwardRef(
     const imageRegistryData = useSelector(
       (state: RootState) => state.selectedImageRegistry
     );
+
+    /**
+     * State variables to manage popover actions
+     */
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+      null
+    );
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
     const addWeights = (manifest: string) => {
       const arr: experimentMap[] = [];
       const hashMap = new Map();
@@ -210,11 +234,8 @@ const WorkflowTable = forwardRef(
       setDisplayStepper(false);
     };
 
-    const handleChange = (
-      event: React.MouseEvent<HTMLElement>,
-      newValue: boolean
-    ) => {
-      setRevertChaos(newValue);
+    const handleChange = () => {
+      setRevertChaos(!revertChaos);
     };
 
     useEffect(() => {
@@ -309,13 +330,21 @@ const WorkflowTable = forwardRef(
       return true; // Should not show any alert
     }
 
+    function configurationStepperRef() {
+      if (displayStepper) {
+        return false; // Should show alert
+      }
+      return true;
+    }
+
     useImperativeHandle(ref, () => ({
       onNext,
+      configurationStepperRef,
     }));
 
     return (
       <div>
-        {!displayStepper ? (
+        {!displayStepper && !displayAdvanceTune ? (
           <>
             <TableContainer className={classes.table} component={Paper}>
               <Table aria-label="simple table">
@@ -336,7 +365,8 @@ const WorkflowTable = forwardRef(
                     <TableCell align="left">
                       {t('createWorkflow.chooseWorkflow.table.head5')}
                     </TableCell>
-                    <TableCell />
+                    <TableCell className={classes.emptyCell} />
+                    <TableCell className={classes.emptyCell} />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -368,13 +398,33 @@ const WorkflowTable = forwardRef(
                         <TableCell align="left">{experiment.Probes}</TableCell>
                         <TableCell>
                           <IconButton
+                            onClick={() => {
+                              setDisplayStepper(true);
+                              setEngineIndex(experiment.StepIndex);
+                              workflow.setWorkflowManifest({
+                                engineYAML: experiment.ChaosEngine,
+                              });
+                            }}
+                            size="medium"
+                          >
+                            <Icon
+                              name="pencil"
+                              size="md"
+                              color={theme.palette.text.hint}
+                            />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
                             onClick={() =>
                               deleteExperiment(experiment.StepIndex)
                             }
+                            size="medium"
                           >
-                            <img
-                              src="./icons/bin-red.svg"
-                              alt="delete experiment"
+                            <Icon
+                              name="trash"
+                              size="md"
+                              color={theme.palette.error.main}
                             />
                           </IconButton>
                         </TableCell>
@@ -382,7 +432,7 @@ const WorkflowTable = forwardRef(
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5}>
+                      <TableCell colSpan={7}>
                         <Typography align="center">
                           {t('createWorkflow.chooseWorkflow.pleaseAddExp')}
                         </Typography>
@@ -393,60 +443,99 @@ const WorkflowTable = forwardRef(
               </Table>
             </TableContainer>
             {selected === 'C' && (
-              <TableContainer className={classes.revertChaos} component={Paper}>
-                <Row className={classes.wrapper}>
-                  <div className={classes.key}>
-                    <Typography>
-                      {t('createWorkflow.chooseWorkflow.revertSchedule')}
-                    </Typography>
-                  </div>
-                  <div>
-                    <ToggleButtonGroup
-                      value={revertChaos}
-                      exclusive
-                      onChange={handleChange}
-                      aria-label="text alignment"
-                    >
-                      <ToggleButton
-                        value
-                        style={{
-                          backgroundColor: revertChaos
-                            ? theme.palette.success.main
-                            : theme.palette.disabledBackground,
-                          color: revertChaos
-                            ? theme.palette.common.white
-                            : theme.palette.text.disabled,
-                        }}
-                        aria-label="centered"
-                      >
-                        {t('createWorkflow.chooseWorkflow.trueValue')}
-                      </ToggleButton>
-                      <ToggleButton
-                        value={false}
-                        style={{
-                          backgroundColor: !revertChaos
-                            ? theme.palette.error.main
-                            : theme.palette.disabledBackground,
-                          color: !revertChaos
-                            ? theme.palette.common.white
-                            : theme.palette.text.disabled,
-                        }}
-                        aria-label="centered"
-                      >
-                        {t('createWorkflow.chooseWorkflow.falseValue')}
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  </div>
-                </Row>
-              </TableContainer>
+              <>
+                <TableContainer
+                  className={classes.revertChaos}
+                  component={Paper}
+                >
+                  <Row className={classes.advanceTune}>
+                    <div className={classes.key}>
+                      <div>
+                        <div style={{ display: 'flex' }}>
+                          <Typography className={classes.advanceText}>
+                            {t('createWorkflow.chooseWorkflow.revertSchedule')}
+                          </Typography>
+                          <IconButton
+                            className={classes.iconBtn}
+                            onClick={handleClick}
+                            aria-label="info"
+                          >
+                            <InfoIcon />
+                          </IconButton>
+                          <Popover
+                            id={id}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                              vertical: 'top',
+                              horizontal: 'center',
+                            }}
+                          >
+                            <Typography className={classes.infoText}>
+                              {t('createWorkflow.chooseWorkflow.retainLogs')}
+                            </Typography>
+                          </Popover>
+                        </div>
+                        <Typography className={classes.advanceDesc}>
+                          {t('createWorkflow.chooseWorkflow.retainLogsDesc')}
+                        </Typography>
+                      </div>
+                    </div>
+                    <div data-cy="revertChaosSwitch">
+                      <SwitchButton
+                        checked={revertChaos}
+                        handleChange={handleChange}
+                      />
+                    </div>
+                  </Row>
+                </TableContainer>
+                <TableContainer
+                  className={classes.revertChaos}
+                  component={Paper}
+                >
+                  <Row className={classes.wrapper}>
+                    <div className={classes.advanceTune}>
+                      <div>
+                        <Typography className={classes.advanceText}>
+                          {t('createWorkflow.chooseWorkflow.advance')}
+                        </Typography>
+                        <Typography className={classes.advanceDesc}>
+                          {t('createWorkflow.chooseWorkflow.advanceDesc')}
+                        </Typography>
+                      </div>
+                      <div>
+                        <IconButton
+                          className={classes.tuneBtn}
+                          onClick={() => setDisplayAdvanceTune(true)}
+                        >
+                          <Icon name="chevronRight" />
+                        </IconButton>
+                      </div>
+                    </div>
+                  </Row>
+                </TableContainer>
+              </>
             )}
           </>
-        ) : (
+        ) : displayStepper && !displayAdvanceTune ? (
           <ConfigurationStepper
             experimentIndex={engineIndex}
             closeStepper={closeConfigurationStepper}
             isCustom={isCustom}
           />
+        ) : !displayStepper && displayAdvanceTune ? (
+          <AdvanceTuning
+            closeAdvanceTuning={() => {
+              setDisplayAdvanceTune(false);
+            }}
+          />
+        ) : (
+          <></>
         )}
       </div>
     );

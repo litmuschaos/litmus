@@ -1,4 +1,4 @@
-# power-off the vmware vm
+# power-off the VMWare VM
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -12,8 +12,9 @@ spec:
     spec:
       components:
         env:
-        # moid of the vm instance
-        - name: APP_VM_MOID
-          value: 'vm-5365'
+        # MOID of the VM
+        - name: APP_VM_MOIDS
+          value: 'vm-53,vm-65'
+
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

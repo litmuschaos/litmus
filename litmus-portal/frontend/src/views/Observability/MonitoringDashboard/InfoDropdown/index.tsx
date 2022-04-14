@@ -85,7 +85,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'monitoringDashboard.monitoringDashboardPage.infoDropdown.metaData1'
               )}
             </Typography>
-            <Typography className={classes.infoValue}>
+            <Typography className={classes.infoValue} data-cy="name">
               {dashboardConfigurationDetails.name}
             </Typography>
           </div>
@@ -105,7 +105,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 alt="dashboard Icon"
                 className={classes.inlineIcon}
               />
-              <Typography className={classes.infoValue}>
+              <Typography className={classes.infoValue} data-cy="typeName">
                 {dashboardConfigurationDetails.typeName}
               </Typography>
             </div>
@@ -125,7 +125,10 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
               endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
               classes={{ label: classes.buttonLabel }}
             >
-              <Typography className={classes.infoValue}>
+              <Typography
+                className={classes.infoValue}
+                data-cy="dataSourceName"
+              >
                 {dashboardConfigurationDetails.dataSourceName}
               </Typography>
             </TextButton>
@@ -136,7 +139,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                 'monitoringDashboard.monitoringDashboardPage.infoDropdown.metaData4'
               )}
             </Typography>
-            <Typography className={classes.infoValue}>
+            <Typography className={classes.infoValue} data-cy="agentName">
               {dashboardConfigurationDetails.agentName}
             </Typography>
           </div>
@@ -203,6 +206,7 @@ const InfoDropdown: React.FC<InfoDropdownProps> = ({
                     checked={selectedMetrics.includes(metric.id)}
                     onChange={() => handleMetricSelect(metric.id)}
                     name={metric.name}
+                    data-cy={metric.name}
                   />
                 }
                 label={

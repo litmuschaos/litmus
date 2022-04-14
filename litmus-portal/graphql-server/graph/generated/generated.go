@@ -52,6 +52,7 @@ type ComplexityRoot struct {
 		K8sManifest  func(childComplexity int) int
 		Namespace    func(childComplexity int) int
 		RequestType  func(childComplexity int) int
+		Username     func(childComplexity int) int
 	}
 
 	AgentStat struct {
@@ -110,8 +111,10 @@ type ComplexityRoot struct {
 		PlatformName          func(childComplexity int) int
 		ProjectID             func(childComplexity int) int
 		Serviceaccount        func(childComplexity int) int
+		StartTime             func(childComplexity int) int
 		Token                 func(childComplexity int) int
 		UpdatedAt             func(childComplexity int) int
+		Version               func(childComplexity int) int
 	}
 
 	ClusterAction struct {
@@ -220,17 +223,6 @@ type ComplexityRoot struct {
 		TemplateName        func(childComplexity int) int
 	}
 
-	Member struct {
-		DeactivatedAt func(childComplexity int) int
-		Email         func(childComplexity int) int
-		Invitation    func(childComplexity int) int
-		JoinedAt      func(childComplexity int) int
-		Name          func(childComplexity int) int
-		Role          func(childComplexity int) int
-		UserID        func(childComplexity int) int
-		UserName      func(childComplexity int) int
-	}
-
 	MemberStat struct {
 		Owner func(childComplexity int) int
 		Total func(childComplexity int) int
@@ -243,7 +235,6 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AcceptInvitation       func(childComplexity int, member model.MemberInput) int
 		AddMyHub               func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		ChaosWorkflowRun       func(childComplexity int, workflowData model.WorkflowRunInput) int
 		ClusterConfirm         func(childComplexity int, identity model.ClusterIdentity) int
@@ -252,41 +243,32 @@ type ComplexityRoot struct {
 		CreateDataSource       func(childComplexity int, datasource *model.DSInput) int
 		CreateImageRegistry    func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
 		CreateManifestTemplate func(childComplexity int, templateInput *model.TemplateInput) int
-		CreateProject          func(childComplexity int, projectName string) int
-		CreateUser             func(childComplexity int, user model.CreateUserInput) int
-		DeclineInvitation      func(childComplexity int, member model.MemberInput) int
-		DeleteChaosWorkflow    func(childComplexity int, workflowid *string, workflowRunID *string) int
-		DeleteClusterReg       func(childComplexity int, clusterID string) int
-		DeleteDashboard        func(childComplexity int, dbID *string) int
-		DeleteDataSource       func(childComplexity int, input model.DeleteDSInput) int
+		DeleteChaosWorkflow    func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
+		DeleteClusters         func(childComplexity int, projectID string, clusterIds []*string) int
+		DeleteDashboard        func(childComplexity int, projectID string, dbID *string) int
+		DeleteDataSource       func(childComplexity int, projectID string, input model.DeleteDSInput) int
 		DeleteImageRegistry    func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteManifestTemplate func(childComplexity int, templateID string) int
-		DeleteMyHub            func(childComplexity int, hubID string) int
+		DeleteManifestTemplate func(childComplexity int, projectID string, templateID string) int
+		DeleteMyHub            func(childComplexity int, hubID string, projectID string) int
 		DisableGitOps          func(childComplexity int, projectID string) int
 		EnableGitOps           func(childComplexity int, config model.GitConfig) int
 		GeneraterSSHKey        func(childComplexity int) int
 		GitopsNotifer          func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
 		KubeObj                func(childComplexity int, kubeData model.KubeObjectData) int
-		LeaveProject           func(childComplexity int, member model.MemberInput) int
 		NewClusterEvent        func(childComplexity int, clusterEvent model.ClusterEventInput) int
 		PodLog                 func(childComplexity int, log model.PodLog) int
-		ReRunChaosWorkFlow     func(childComplexity int, workflowID string) int
-		RemoveInvitation       func(childComplexity int, member model.MemberInput) int
+		ReRunChaosWorkFlow     func(childComplexity int, projectID string, workflowID string) int
 		SaveMyHub              func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		SendInvitation         func(childComplexity int, member model.MemberInput) int
-		SyncHub                func(childComplexity int, id string) int
-		SyncWorkflow           func(childComplexity int, workflowid string, workflowRunID string) int
-		TerminateChaosWorkflow func(childComplexity int, workflowid *string, workflowRunID *string) int
+		SyncHub                func(childComplexity int, id string, projectID string) int
+		SyncWorkflow           func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
+		TerminateChaosWorkflow func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
 		UpdateChaosWorkflow    func(childComplexity int, input *model.ChaosWorkFlowInput) int
-		UpdateDashboard        func(childComplexity int, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
+		UpdateDashboard        func(childComplexity int, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource       func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps           func(childComplexity int, config model.GitConfig) int
 		UpdateImageRegistry    func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
 		UpdateMyHub            func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
 		UpdatePanel            func(childComplexity int, panelInput []*model.Panel) int
-		UpdateProjectName      func(childComplexity int, projectID string, projectName string) int
-		UpdateUser             func(childComplexity int, user model.UpdateUserInput) int
-		UpdateUserState        func(childComplexity int, uid string, isDeactivate bool) int
 		UserClusterReg         func(childComplexity int, clusterInput model.ClusterInput) int
 	}
 
@@ -349,20 +331,8 @@ type ComplexityRoot struct {
 		Name          func(childComplexity int) int
 	}
 
-	Project struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Members   func(childComplexity int) int
-		Name      func(childComplexity int) int
-		RemovedAt func(childComplexity int) int
-		State     func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-	}
-
 	ProjectData struct {
 		Agents    func(childComplexity int) int
-		Members   func(childComplexity int) int
-		Name      func(childComplexity int) int
 		ProjectID func(childComplexity int) int
 		Workflows func(childComplexity int) int
 	}
@@ -372,6 +342,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetAgentDetails             func(childComplexity int, clusterID string, projectID string) int
 		GetCharts                   func(childComplexity int, hubName string, projectID string) int
 		GetCluster                  func(childComplexity int, projectID string, clusterType *string) int
 		GetGitOpsDetails            func(childComplexity int, projectID string) int
@@ -379,14 +350,13 @@ type ComplexityRoot struct {
 		GetHubExperiment            func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetHubStatus                func(childComplexity int, projectID string) int
 		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
+		GetManifest                 func(childComplexity int, projectID string, clusterID string, accessKey string) int
 		GetPredefinedExperimentYaml func(childComplexity int, experimentInput model.ExperimentInput) int
 		GetPredefinedWorkflowList   func(childComplexity int, hubName string, projectID string) int
-		GetProject                  func(childComplexity int, projectID string) int
 		GetPromLabelNamesAndValues  func(childComplexity int, series *model.PromSeriesInput) int
 		GetPromQuery                func(childComplexity int, query *model.PromInput) int
 		GetPromSeriesList           func(childComplexity int, dsDetails *model.DsDetails) int
-		GetTemplateManifestByID     func(childComplexity int, templateID string) int
-		GetUser                     func(childComplexity int, username string) int
+		GetTemplateManifestByID     func(childComplexity int, projectID string, templateID string) int
 		GetWorkflowRunStats         func(childComplexity int, workflowRunStatsRequest model.WorkflowRunStatsRequest) int
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
 		GetWorkflowStats            func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
@@ -395,11 +365,9 @@ type ComplexityRoot struct {
 		ListDataSource              func(childComplexity int, projectID string) int
 		ListImageRegistry           func(childComplexity int, projectID string) int
 		ListManifestTemplate        func(childComplexity int, projectID string) int
-		ListProjects                func(childComplexity int) int
 		ListWorkflow                func(childComplexity int, workflowInput model.ListWorkflowsInput) int
 		PortalDashboardData         func(childComplexity int, projectID string, hubName string) int
 		UsageQuery                  func(childComplexity int, query model.UsageQuery) int
-		Users                       func(childComplexity int) int
 	}
 
 	SSHKey struct {
@@ -444,20 +412,6 @@ type ComplexityRoot struct {
 		TotalEntries func(childComplexity int) int
 	}
 
-	User struct {
-		CompanyName     func(childComplexity int) int
-		CreatedAt       func(childComplexity int) int
-		DeactivatedAt   func(childComplexity int) int
-		Email           func(childComplexity int) int
-		ID              func(childComplexity int) int
-		IsEmailVerified func(childComplexity int) int
-		Name            func(childComplexity int) int
-		Projects        func(childComplexity int) int
-		Role            func(childComplexity int) int
-		UpdatedAt       func(childComplexity int) int
-		Username        func(childComplexity int) int
-	}
-
 	Workflow struct {
 		ClusterID           func(childComplexity int) int
 		ClusterName         func(childComplexity int) int
@@ -466,6 +420,7 @@ type ComplexityRoot struct {
 		CronSyntax          func(childComplexity int) int
 		IsCustomWorkflow    func(childComplexity int) int
 		IsRemoved           func(childComplexity int) int
+		LastUpdatedBy       func(childComplexity int) int
 		ProjectID           func(childComplexity int) int
 		UpdatedAt           func(childComplexity int) int
 		Weightages          func(childComplexity int) int
@@ -479,6 +434,7 @@ type ComplexityRoot struct {
 		ClusterID          func(childComplexity int) int
 		ClusterName        func(childComplexity int) int
 		ClusterType        func(childComplexity int) int
+		ExecutedBy         func(childComplexity int) int
 		ExecutionData      func(childComplexity int) int
 		ExperimentsAwaited func(childComplexity int) int
 		ExperimentsFailed  func(childComplexity int) int
@@ -697,21 +653,11 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error)
-	CreateUser(ctx context.Context, user model.CreateUserInput) (*model.User, error)
-	UpdateUserState(ctx context.Context, uid string, isDeactivate bool) (string, error)
-	CreateProject(ctx context.Context, projectName string) (*model.Project, error)
-	UpdateUser(ctx context.Context, user model.UpdateUserInput) (string, error)
 	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
-	ReRunChaosWorkFlow(ctx context.Context, workflowID string) (string, error)
-	DeleteChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
-	TerminateChaosWorkflow(ctx context.Context, workflowid *string, workflowRunID *string) (bool, error)
-	SyncWorkflow(ctx context.Context, workflowid string, workflowRunID string) (bool, error)
-	SendInvitation(ctx context.Context, member model.MemberInput) (*model.Member, error)
-	AcceptInvitation(ctx context.Context, member model.MemberInput) (string, error)
-	DeclineInvitation(ctx context.Context, member model.MemberInput) (string, error)
-	RemoveInvitation(ctx context.Context, member model.MemberInput) (string, error)
-	LeaveProject(ctx context.Context, member model.MemberInput) (string, error)
-	UpdateProjectName(ctx context.Context, projectID string, projectName string) (string, error)
+	ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error)
+	DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error)
+	TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error)
+	SyncWorkflow(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error)
 	ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error)
 	NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error)
 	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
@@ -719,12 +665,12 @@ type MutationResolver interface {
 	KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
-	SyncHub(ctx context.Context, id string) ([]*model.MyHubStatus, error)
+	SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error)
 	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
-	DeleteClusterReg(ctx context.Context, clusterID string) (string, error)
+	DeleteClusters(ctx context.Context, projectID string, clusterIds []*string) (string, error)
 	GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error)
 	UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error)
-	DeleteMyHub(ctx context.Context, hubID string) (bool, error)
+	DeleteMyHub(ctx context.Context, hubID string, projectID string) (bool, error)
 	GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
 	EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
@@ -732,12 +678,12 @@ type MutationResolver interface {
 	CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error)
 	CreateDashBoard(ctx context.Context, dashboard *model.CreateDBInput) (*model.ListDashboardResponse, error)
 	UpdateDataSource(ctx context.Context, datasource model.DSInput) (*model.DSResponse, error)
-	UpdateDashboard(ctx context.Context, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error)
+	UpdateDashboard(ctx context.Context, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) (string, error)
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
-	DeleteDashboard(ctx context.Context, dbID *string) (bool, error)
-	DeleteDataSource(ctx context.Context, input model.DeleteDSInput) (bool, error)
+	DeleteDashboard(ctx context.Context, projectID string, dbID *string) (bool, error)
+	DeleteDataSource(ctx context.Context, projectID string, input model.DeleteDSInput) (bool, error)
 	CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error)
-	DeleteManifestTemplate(ctx context.Context, templateID string) (bool, error)
+	DeleteManifestTemplate(ctx context.Context, projectID string, templateID string) (bool, error)
 	CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
@@ -745,10 +691,8 @@ type MutationResolver interface {
 type QueryResolver interface {
 	GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error)
 	GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
-	GetUser(ctx context.Context, username string) (*model.User, error)
-	GetProject(ctx context.Context, projectID string) (*model.Project, error)
-	ListProjects(ctx context.Context) ([]*model.Project, error)
-	Users(ctx context.Context) ([]*model.User, error)
+	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
+	GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error)
 	GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error)
 	GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error)
 	GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error)
@@ -767,7 +711,7 @@ type QueryResolver interface {
 	PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
-	GetTemplateManifestByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error)
+	GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.ManifestTemplate, error)
 	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
 	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
 	UsageQuery(ctx context.Context, query model.UsageQuery) (*model.UsageData, error)
@@ -823,6 +767,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActionPayload.RequestType(childComplexity), true
+
+	case "ActionPayload.username":
+		if e.complexity.ActionPayload.Username == nil {
+			break
+		}
+
+		return e.complexity.ActionPayload.Username(childComplexity), true
 
 	case "AgentStat.Active":
 		if e.complexity.AgentStat.Active == nil {
@@ -1104,6 +1055,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Cluster.Serviceaccount(childComplexity), true
 
+	case "Cluster.start_time":
+		if e.complexity.Cluster.StartTime == nil {
+			break
+		}
+
+		return e.complexity.Cluster.StartTime(childComplexity), true
+
 	case "Cluster.token":
 		if e.complexity.Cluster.Token == nil {
 			break
@@ -1117,6 +1075,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.UpdatedAt(childComplexity), true
+
+	case "Cluster.version":
+		if e.complexity.Cluster.Version == nil {
+			break
+		}
+
+		return e.complexity.Cluster.Version(childComplexity), true
 
 	case "ClusterAction.action":
 		if e.complexity.ClusterAction.Action == nil {
@@ -1566,62 +1531,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManifestTemplate.TemplateName(childComplexity), true
 
-	case "Member.deactivated_at":
-		if e.complexity.Member.DeactivatedAt == nil {
-			break
-		}
-
-		return e.complexity.Member.DeactivatedAt(childComplexity), true
-
-	case "Member.email":
-		if e.complexity.Member.Email == nil {
-			break
-		}
-
-		return e.complexity.Member.Email(childComplexity), true
-
-	case "Member.invitation":
-		if e.complexity.Member.Invitation == nil {
-			break
-		}
-
-		return e.complexity.Member.Invitation(childComplexity), true
-
-	case "Member.joined_at":
-		if e.complexity.Member.JoinedAt == nil {
-			break
-		}
-
-		return e.complexity.Member.JoinedAt(childComplexity), true
-
-	case "Member.name":
-		if e.complexity.Member.Name == nil {
-			break
-		}
-
-		return e.complexity.Member.Name(childComplexity), true
-
-	case "Member.role":
-		if e.complexity.Member.Role == nil {
-			break
-		}
-
-		return e.complexity.Member.Role(childComplexity), true
-
-	case "Member.user_id":
-		if e.complexity.Member.UserID == nil {
-			break
-		}
-
-		return e.complexity.Member.UserID(childComplexity), true
-
-	case "Member.user_name":
-		if e.complexity.Member.UserName == nil {
-			break
-		}
-
-		return e.complexity.Member.UserName(childComplexity), true
-
 	case "MemberStat.Owner":
 		if e.complexity.MemberStat.Owner == nil {
 			break
@@ -1656,18 +1565,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Metadata.Version(childComplexity), true
-
-	case "Mutation.acceptInvitation":
-		if e.complexity.Mutation.AcceptInvitation == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_acceptInvitation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.AcceptInvitation(childComplexity, args["member"].(model.MemberInput)), true
 
 	case "Mutation.addMyHub":
 		if e.complexity.Mutation.AddMyHub == nil {
@@ -1765,42 +1662,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateManifestTemplate(childComplexity, args["templateInput"].(*model.TemplateInput)), true
 
-	case "Mutation.createProject":
-		if e.complexity.Mutation.CreateProject == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createProject_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateProject(childComplexity, args["projectName"].(string)), true
-
-	case "Mutation.createUser":
-		if e.complexity.Mutation.CreateUser == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateUser(childComplexity, args["user"].(model.CreateUserInput)), true
-
-	case "Mutation.declineInvitation":
-		if e.complexity.Mutation.DeclineInvitation == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_declineInvitation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeclineInvitation(childComplexity, args["member"].(model.MemberInput)), true
-
 	case "Mutation.deleteChaosWorkflow":
 		if e.complexity.Mutation.DeleteChaosWorkflow == nil {
 			break
@@ -1811,19 +1672,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["workflowid"].(*string), args["workflow_run_id"].(*string)), true
+		return e.complexity.Mutation.DeleteChaosWorkflow(childComplexity, args["projectID"].(string), args["workflowID"].(*string), args["workflow_run_id"].(*string)), true
 
-	case "Mutation.deleteClusterReg":
-		if e.complexity.Mutation.DeleteClusterReg == nil {
+	case "Mutation.deleteClusters":
+		if e.complexity.Mutation.DeleteClusters == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteClusterReg_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteClusters_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteClusterReg(childComplexity, args["cluster_id"].(string)), true
+		return e.complexity.Mutation.DeleteClusters(childComplexity, args["projectID"].(string), args["cluster_ids"].([]*string)), true
 
 	case "Mutation.deleteDashboard":
 		if e.complexity.Mutation.DeleteDashboard == nil {
@@ -1835,7 +1696,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteDashboard(childComplexity, args["db_id"].(*string)), true
+		return e.complexity.Mutation.DeleteDashboard(childComplexity, args["projectID"].(string), args["db_id"].(*string)), true
 
 	case "Mutation.deleteDataSource":
 		if e.complexity.Mutation.DeleteDataSource == nil {
@@ -1847,7 +1708,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteDataSource(childComplexity, args["input"].(model.DeleteDSInput)), true
+		return e.complexity.Mutation.DeleteDataSource(childComplexity, args["projectID"].(string), args["input"].(model.DeleteDSInput)), true
 
 	case "Mutation.deleteImageRegistry":
 		if e.complexity.Mutation.DeleteImageRegistry == nil {
@@ -1871,7 +1732,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteManifestTemplate(childComplexity, args["template_id"].(string)), true
+		return e.complexity.Mutation.DeleteManifestTemplate(childComplexity, args["projectID"].(string), args["template_id"].(string)), true
 
 	case "Mutation.deleteMyHub":
 		if e.complexity.Mutation.DeleteMyHub == nil {
@@ -1883,7 +1744,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["hub_id"].(string)), true
+		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["hub_id"].(string), args["projectID"].(string)), true
 
 	case "Mutation.disableGitOps":
 		if e.complexity.Mutation.DisableGitOps == nil {
@@ -1940,18 +1801,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.KubeObj(childComplexity, args["kubeData"].(model.KubeObjectData)), true
 
-	case "Mutation.leaveProject":
-		if e.complexity.Mutation.LeaveProject == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_leaveProject_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.LeaveProject(childComplexity, args["member"].(model.MemberInput)), true
-
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
 			break
@@ -1986,19 +1835,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ReRunChaosWorkFlow(childComplexity, args["workflowID"].(string)), true
-
-	case "Mutation.removeInvitation":
-		if e.complexity.Mutation.RemoveInvitation == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_removeInvitation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RemoveInvitation(childComplexity, args["member"].(model.MemberInput)), true
+		return e.complexity.Mutation.ReRunChaosWorkFlow(childComplexity, args["projectID"].(string), args["workflowID"].(string)), true
 
 	case "Mutation.saveMyHub":
 		if e.complexity.Mutation.SaveMyHub == nil {
@@ -2012,18 +1849,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SaveMyHub(childComplexity, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string)), true
 
-	case "Mutation.sendInvitation":
-		if e.complexity.Mutation.SendInvitation == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_sendInvitation_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.SendInvitation(childComplexity, args["member"].(model.MemberInput)), true
-
 	case "Mutation.syncHub":
 		if e.complexity.Mutation.SyncHub == nil {
 			break
@@ -2034,7 +1859,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string), args["projectID"].(string)), true
 
 	case "Mutation.syncWorkflow":
 		if e.complexity.Mutation.SyncWorkflow == nil {
@@ -2046,7 +1871,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["workflowid"].(string), args["workflow_run_id"].(string)), true
+		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["projectID"].(string), args["workflowID"].(string), args["workflow_run_id"].(string)), true
 
 	case "Mutation.terminateChaosWorkflow":
 		if e.complexity.Mutation.TerminateChaosWorkflow == nil {
@@ -2058,7 +1883,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.TerminateChaosWorkflow(childComplexity, args["workflowid"].(*string), args["workflow_run_id"].(*string)), true
+		return e.complexity.Mutation.TerminateChaosWorkflow(childComplexity, args["projectID"].(string), args["workflowID"].(*string), args["workflow_run_id"].(*string)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -2082,7 +1907,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool)), true
+		return e.complexity.Mutation.UpdateDashboard(childComplexity, args["projectID"].(string), args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool)), true
 
 	case "Mutation.updateDataSource":
 		if e.complexity.Mutation.UpdateDataSource == nil {
@@ -2143,42 +1968,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePanel(childComplexity, args["panelInput"].([]*model.Panel)), true
-
-	case "Mutation.updateProjectName":
-		if e.complexity.Mutation.UpdateProjectName == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateProjectName_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateProjectName(childComplexity, args["projectID"].(string), args["projectName"].(string)), true
-
-	case "Mutation.updateUser":
-		if e.complexity.Mutation.UpdateUser == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateUser_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["user"].(model.UpdateUserInput)), true
-
-	case "Mutation.updateUserState":
-		if e.complexity.Mutation.UpdateUserState == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateUserState_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateUserState(childComplexity, args["uid"].(string), args["isDeactivate"].(bool)), true
 
 	case "Mutation.userClusterReg":
 		if e.complexity.Mutation.UserClusterReg == nil {
@@ -2479,75 +2268,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PortalDashboardData.Name(childComplexity), true
 
-	case "Project.created_at":
-		if e.complexity.Project.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.Project.CreatedAt(childComplexity), true
-
-	case "Project.id":
-		if e.complexity.Project.ID == nil {
-			break
-		}
-
-		return e.complexity.Project.ID(childComplexity), true
-
-	case "Project.members":
-		if e.complexity.Project.Members == nil {
-			break
-		}
-
-		return e.complexity.Project.Members(childComplexity), true
-
-	case "Project.name":
-		if e.complexity.Project.Name == nil {
-			break
-		}
-
-		return e.complexity.Project.Name(childComplexity), true
-
-	case "Project.removed_at":
-		if e.complexity.Project.RemovedAt == nil {
-			break
-		}
-
-		return e.complexity.Project.RemovedAt(childComplexity), true
-
-	case "Project.state":
-		if e.complexity.Project.State == nil {
-			break
-		}
-
-		return e.complexity.Project.State(childComplexity), true
-
-	case "Project.updated_at":
-		if e.complexity.Project.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.Project.UpdatedAt(childComplexity), true
-
 	case "ProjectData.Agents":
 		if e.complexity.ProjectData.Agents == nil {
 			break
 		}
 
 		return e.complexity.ProjectData.Agents(childComplexity), true
-
-	case "ProjectData.Members":
-		if e.complexity.ProjectData.Members == nil {
-			break
-		}
-
-		return e.complexity.ProjectData.Members(childComplexity), true
-
-	case "ProjectData.Name":
-		if e.complexity.ProjectData.Name == nil {
-			break
-		}
-
-		return e.complexity.ProjectData.Name(childComplexity), true
 
 	case "ProjectData.ProjectId":
 		if e.complexity.ProjectData.ProjectID == nil {
@@ -2569,6 +2295,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Provider.Name(childComplexity), true
+
+	case "Query.getAgentDetails":
+		if e.complexity.Query.GetAgentDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getAgentDetails_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetAgentDetails(childComplexity, args["cluster_id"].(string), args["projectID"].(string)), true
 
 	case "Query.getCharts":
 		if e.complexity.Query.GetCharts == nil {
@@ -2654,6 +2392,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetImageRegistry(childComplexity, args["image_registry_id"].(string), args["project_id"].(string)), true
 
+	case "Query.getManifest":
+		if e.complexity.Query.GetManifest == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getManifest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetManifest(childComplexity, args["projectID"].(string), args["clusterID"].(string), args["accessKey"].(string)), true
+
 	case "Query.GetPredefinedExperimentYAML":
 		if e.complexity.Query.GetPredefinedExperimentYaml == nil {
 			break
@@ -2677,18 +2427,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetPredefinedWorkflowList(childComplexity, args["HubName"].(string), args["projectID"].(string)), true
-
-	case "Query.getProject":
-		if e.complexity.Query.GetProject == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getProject_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetProject(childComplexity, args["projectID"].(string)), true
 
 	case "Query.GetPromLabelNamesAndValues":
 		if e.complexity.Query.GetPromLabelNamesAndValues == nil {
@@ -2736,19 +2474,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetTemplateManifestByID(childComplexity, args["template_id"].(string)), true
-
-	case "Query.getUser":
-		if e.complexity.Query.GetUser == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getUser_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetUser(childComplexity, args["username"].(string)), true
+		return e.complexity.Query.GetTemplateManifestByID(childComplexity, args["projectID"].(string), args["template_id"].(string)), true
 
 	case "Query.getWorkflowRunStats":
 		if e.complexity.Query.GetWorkflowRunStats == nil {
@@ -2846,13 +2572,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListManifestTemplate(childComplexity, args["project_id"].(string)), true
 
-	case "Query.listProjects":
-		if e.complexity.Query.ListProjects == nil {
-			break
-		}
-
-		return e.complexity.Query.ListProjects(childComplexity), true
-
 	case "Query.ListWorkflow":
 		if e.complexity.Query.ListWorkflow == nil {
 			break
@@ -2888,13 +2607,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.UsageQuery(childComplexity, args["query"].(model.UsageQuery)), true
-
-	case "Query.users":
-		if e.complexity.Query.Users == nil {
-			break
-		}
-
-		return e.complexity.Query.Users(childComplexity), true
 
 	case "SSHKey.privateKey":
 		if e.complexity.SSHKey.PrivateKey == nil {
@@ -3115,83 +2827,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UsageData.TotalEntries(childComplexity), true
 
-	case "User.company_name":
-		if e.complexity.User.CompanyName == nil {
-			break
-		}
-
-		return e.complexity.User.CompanyName(childComplexity), true
-
-	case "User.created_at":
-		if e.complexity.User.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.User.CreatedAt(childComplexity), true
-
-	case "User.deactivated_at":
-		if e.complexity.User.DeactivatedAt == nil {
-			break
-		}
-
-		return e.complexity.User.DeactivatedAt(childComplexity), true
-
-	case "User.email":
-		if e.complexity.User.Email == nil {
-			break
-		}
-
-		return e.complexity.User.Email(childComplexity), true
-
-	case "User.id":
-		if e.complexity.User.ID == nil {
-			break
-		}
-
-		return e.complexity.User.ID(childComplexity), true
-
-	case "User.is_email_verified":
-		if e.complexity.User.IsEmailVerified == nil {
-			break
-		}
-
-		return e.complexity.User.IsEmailVerified(childComplexity), true
-
-	case "User.name":
-		if e.complexity.User.Name == nil {
-			break
-		}
-
-		return e.complexity.User.Name(childComplexity), true
-
-	case "User.projects":
-		if e.complexity.User.Projects == nil {
-			break
-		}
-
-		return e.complexity.User.Projects(childComplexity), true
-
-	case "User.role":
-		if e.complexity.User.Role == nil {
-			break
-		}
-
-		return e.complexity.User.Role(childComplexity), true
-
-	case "User.updated_at":
-		if e.complexity.User.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.User.UpdatedAt(childComplexity), true
-
-	case "User.username":
-		if e.complexity.User.Username == nil {
-			break
-		}
-
-		return e.complexity.User.Username(childComplexity), true
-
 	case "Workflow.cluster_id":
 		if e.complexity.Workflow.ClusterID == nil {
 			break
@@ -3240,6 +2875,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Workflow.IsRemoved(childComplexity), true
+
+	case "Workflow.last_updated_by":
+		if e.complexity.Workflow.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Workflow.LastUpdatedBy(childComplexity), true
 
 	case "Workflow.project_id":
 		if e.complexity.Workflow.ProjectID == nil {
@@ -3310,6 +2952,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowRun.ClusterType(childComplexity), true
+
+	case "WorkflowRun.executed_by":
+		if e.complexity.WorkflowRun.ExecutedBy == nil {
+			break
+		}
+
+		return e.complexity.WorkflowRun.ExecutedBy(childComplexity), true
 
 	case "WorkflowRun.execution_data":
 		if e.complexity.WorkflowRun.ExecutionData == nil {
@@ -4295,7 +3944,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
   ds_id: String
   ds_name: String!
   ds_type: String!
@@ -4648,7 +4297,7 @@ type PortalDashboardData {
     name: String!
     dashboard_data: String!
 }`, BuiltIn: false},
-	{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
+	&ast.Source{Name: "graph/image_registry.graphqls", Input: `type imageRegistry {
     is_default: Boolean
     image_registry_name: String!
     image_repo_name: String!
@@ -4678,11 +4327,18 @@ type ImageRegistryResponse {
     is_removed: Boolean
 }
 `, BuiltIn: false},
-	{Name: "graph/myhub.graphqls", Input: `enum AuthType {
+	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
 	none
 	basic
 	token
 	ssh
+}
+
+enum FileType {
+    EXPERIMENT
+    ENGINE
+    WORKFLOW
+    CSV
 }
 
 type MyHub {
@@ -4818,7 +4474,7 @@ input ExperimentInput {
 	ChartName: String!
 	ExperimentName: String!
 	HubName: String!
-	FileType: String
+	FileType: FileType!
 }
 
 input CloningInput {
@@ -4852,31 +4508,9 @@ input UpdateMyHub {
 	SSHPublicKey: String
 }
 `, BuiltIn: false},
-	{Name: "graph/project.graphqls", Input: `type Project {
-  id: ID!
-  name: String!
-  members: [Member!]!
-  state: String
-  created_at: String!
-  updated_at: String!
-  removed_at: String!
-}
-
-type Member {
-  user_id: ID!
-  user_name: String!
-  name: String!
-  email: String!
-  role: MemberRole!
-  invitation: String!
-  joined_at: String!
-  deactivated_at: String!
-}
-
-input MemberInput {
-  project_id: ID!
-  user_id: String!
-  role: MemberRole
+	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
+  Accepted
+  Pending
 }
 
 enum MemberRole {
@@ -4885,7 +4519,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
+	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -4913,6 +4547,8 @@ type Cluster {
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
   last_workflow_timestamp: String!
+  start_time: String!
+  version: String!
 }
 
 input ClusterInput {
@@ -4926,7 +4562,17 @@ input ClusterInput {
   agent_scope: String!
   agent_ns_exists: Boolean
   agent_sa_exists: Boolean
+  skip_ssl: Boolean
   node_selector: String
+  tolerations: [Toleration]
+}
+
+input Toleration {
+  tolerationSeconds: Int
+  key: String
+  operator: String
+  effect: String
+  value: String
 }
 
 type ClusterEvent {
@@ -4942,6 +4588,7 @@ type ActionPayload {
   k8s_manifest: String!
   namespace: String!
   external_data: String
+  username: String
 }
 
 type ClusterAction {
@@ -5002,6 +4649,7 @@ input WorkflowRunInput {
   workflow_id: ID!
   workflow_run_id: ID!
   workflow_name: String!
+  executed_by: String!
   execution_data: String!
   cluster_id: ClusterIdentity!
   completed: Boolean!
@@ -5118,15 +4766,15 @@ type Query {
 
   getCluster(project_id: String!, cluster_type: String): [Cluster!]! @authorized
 
-  getUser(username: String!): User! @authorized
+  # Query to fetch manifest
+  getManifest(
+    projectID: String!
+    clusterID: String!
+    accessKey: String!
+  ): String! @authorized
 
-  #It is used to get projects by projectID
-  getProject(projectID: String!): Project! @authorized
-
-  #It is used to get projects by userID
-  listProjects: [Project!]! @authorized
-
-  users: [User!]! @authorized
+  # Query to fetch agent details based on project_id and agent_name
+  getAgentDetails(cluster_id: String!, projectID: String!): Cluster! @authorized
 
   # Query to fetch workflow data for heatmap
   getHeatmapData(
@@ -5154,11 +4802,13 @@ type Query {
 
   getHubStatus(projectID: String!): [MyHubStatus]! @authorized
 
-  getYAMLData(experimentInput: ExperimentInput!): String!
+  getYAMLData(experimentInput: ExperimentInput!): String! @authorized
 
   GetPredefinedWorkflowList(HubName: String!, projectID: String!): [String!]!
+    @authorized
 
   GetPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
+    @authorized
 
   ListDataSource(project_id: String!): [DSResponse]! @authorized
 
@@ -5172,11 +4822,13 @@ type Query {
   ListDashboard(
     project_id: String!
     cluster_id: String
-    db_id: String): [listDashboardResponse] @authorized
+    db_id: String
+  ): [listDashboardResponse] @authorized
 
-  PortalDashboardData (
+  PortalDashboardData(
     project_id: String!
-    hub_name: String!) : [PortalDashboardData!]! @authorized
+    hub_name: String!
+  ): [PortalDashboardData!]! @authorized
 
   # Git Ops
   getGitOpsDetails(project_id: String!): GitConfigResponse! @authorized
@@ -5184,7 +4836,10 @@ type Query {
   # Manifest Template
   ListManifestTemplate(project_id: String!): [ManifestTemplate]! @authorized
 
-  GetTemplateManifestByID(template_id: String!): ManifestTemplate! @authorized
+  GetTemplateManifestByID(
+    projectID: String!
+    template_id: String!
+  ): ManifestTemplate! @authorized
 
   #Image Registry Queries
   ListImageRegistry(project_id: String!): [ImageRegistryResponse!] @authorized
@@ -5201,53 +4856,33 @@ type Mutation {
   #It is used to create external cluster.
   userClusterReg(clusterInput: ClusterInput!): clusterRegResponse! @authorized
 
-  # Used to create a user
-  createUser(user: CreateUserInput!): User! @authorized
-
-  # Used to disable a user
-  updateUserState(uid: String!, isDeactivate: Boolean!): String!
-    @authorized
-
-  # It is used to create a project
-  createProject(projectName: String!): Project! @authorized
-
-  updateUser(user: UpdateUserInput!): String! @authorized
-
   ## Workflow APIs
   # It is used to create chaosworkflow
   createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
     @authorized
 
-  reRunChaosWorkFlow(workflowID: String!): String! @authorized
+  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
+    @authorized
 
   # removes workflow from cluster and db
-  deleteChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean!
-    @authorized
+  deleteChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflow_run_id: String
+  ): Boolean! @authorized
 
   # removes workflow run from the cluster only
-  terminateChaosWorkflow(workflowid: String, workflow_run_id: String): Boolean! @authorized
+  terminateChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflow_run_id: String
+  ): Boolean! @authorized
 
-  syncWorkflow(workflowid: String!, workflow_run_id: String!): Boolean!
-    @authorized
-
-  #Used for sending invitation
-  sendInvitation(member: MemberInput!): Member @authorized
-
-  #Used for accepting invitation
-  acceptInvitation(member: MemberInput!): String! @authorized
-
-  #Used for declining the invitation
-  declineInvitation(member: MemberInput!): String! @authorized
-
-  #Used for cancelling the sent invitation
-  removeInvitation(member: MemberInput!): String! @authorized
-
-  #Used for leaving a project
-  leaveProject(member: MemberInput!): String! @authorized
-
-  #Used to update project name
-  updateProjectName(projectID: String!, projectName: String!): String!
-    @authorized
+  syncWorkflow(
+    projectID: String!
+    workflowID: String!
+    workflow_run_id: String!
+  ): Boolean! @authorized
 
   #It is used to confirm the subscriber registration
   clusterConfirm(identity: ClusterIdentity!): ClusterConfirmResponse!
@@ -5265,18 +4900,19 @@ type Mutation {
 
   saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
 
-  syncHub(id: ID!): [MyHubStatus!]! @authorized
+  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
 
   updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
     @authorized
 
-  deleteClusterReg(cluster_id: String!): String! @authorized
+  deleteClusters(projectID: String!, cluster_ids: [String]!): String!
+    @authorized
 
   generaterSSHKey: SSHKey! @authorized
 
   updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
 
-  deleteMyHub(hub_id: String!): Boolean! @authorized
+  deleteMyHub(hub_id: String!, projectID: String!): Boolean! @authorized
 
   # Gitops
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflow_id: String!): String!
@@ -5295,20 +4931,24 @@ type Mutation {
   updateDataSource(datasource: DSInput!): DSResponse! @authorized
 
   updateDashboard(
+    projectID: String!
     dashboard: updateDBInput!
-    chaosQueryUpdate: Boolean!): String! @authorized
+    chaosQueryUpdate: Boolean!
+  ): String! @authorized
 
   updatePanel(panelInput: [panel]): String! @authorized
 
-  deleteDashboard(db_id: String): Boolean! @authorized
+  deleteDashboard(projectID: String!, db_id: String): Boolean! @authorized
 
-  deleteDataSource(input: deleteDSInput!): Boolean! @authorized
+  deleteDataSource(projectID: String!, input: deleteDSInput!): Boolean!
+    @authorized
 
   # Manifest Template
   createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
     @authorized
 
-  deleteManifestTemplate(template_id: String!): Boolean! @authorized
+  deleteManifestTemplate(projectID: String!, template_id: String!): Boolean!
+    @authorized
 
   #Image Registry Mutations
   createImageRegistry(
@@ -5344,106 +4984,78 @@ type Subscription {
     dashboardID: String
     promQueries: [promQueryInput!]!
     dashboardQueryMap: [queryMapForPanelGroup!]!
-    dataVariables: dataVars!): dashboardPromResponse! @authorized
+    dataVariables: dataVars!
+  ): dashboardPromResponse! @authorized
 }
 `, BuiltIn: false},
-	{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
-    Schedules : Int!
-    Runs      : Int!
-    ExpRuns   : Int!
+	&ast.Source{Name: "graph/usage.graphqls", Input: `type WorkflowStat {
+  Schedules: Int!
+  Runs: Int!
+  ExpRuns: Int!
 }
 
-type AgentStat{
-    Ns      : Int!
-    Cluster : Int!
-    Total   : Int!
-    Active  : Int!
+type AgentStat {
+  Ns: Int!
+  Cluster: Int!
+  Total: Int!
+  Active: Int!
 }
 
 type Owner {
-    UserId   : ID!
-    Username : String!
-    Name     : String!
+  UserId: ID!
+  Username: String!
+  Name: String!
 }
 
 type MemberStat {
-    Owner : Owner!
-    Total : Int!
+  Owner: Owner!
+  Total: Int!
 }
 
 type ProjectData {
-    Name      : String!
-    Workflows : WorkflowStat!
-    Agents    : AgentStat!
-    ProjectId : String!
-    Members   : MemberStat!
+  # Name: String!
+  Workflows: WorkflowStat!
+  Agents: AgentStat!
+  ProjectId: String!
+  # Members   : MemberStat!
 }
 
-type TotalCount{
-    Projects  : Int!
-    Users     : Int!
-    Agents    : AgentStat!
-    Workflows : WorkflowStat!
+type TotalCount {
+  Projects: Int!
+  Users: Int!
+  Agents: AgentStat!
+  Workflows: WorkflowStat!
 }
 
 type UsageData {
-    Projects   : [ProjectData]!
-    TotalEntries : Int!
-    TotalCount : TotalCount!
+  Projects: [ProjectData]!
+  TotalEntries: Int!
+  TotalCount: TotalCount!
 }
 
 enum UsageSort {
-    Project
-    Owner
-    Agents
-    Schedules
-    WorkflowRuns
-    ExperimentRuns
-    TeamMembers
+  Project
+  Owner
+  Agents
+  Schedules
+  WorkflowRuns
+  ExperimentRuns
+  TeamMembers
 }
 
 input UsageSortInput {
-    Field: UsageSort!
-    Descending: Boolean!
+  Field: UsageSort!
+  Descending: Boolean!
 }
 
-input UsageQuery{
-    Pagination: Pagination
-    DateRange: DateRange!
-    Sort: UsageSortInput
-    SearchProject: String
-}`, BuiltIn: false},
-	{Name: "graph/usermanagement.graphqls", Input: `type User {
-  id: ID!
-  username: String!
-  email: String
-  is_email_verified: Boolean
-  company_name: String
-  name: String
-  projects: [Project!]!
-  role: String
-  created_at: String!
-  updated_at: String!
-  deactivated_at: String!
-}
-
-input CreateUserInput {
-  username: String!
-  email: String
-  company_name: String
-  name: String
-  userID: String!
-  role: String!
-}
-
-input UpdateUserInput {
-  id: ID!
-  name: String
-  email: String
-  company_name: String
+input UsageQuery {
+  Pagination: Pagination
+  DateRange: DateRange!
+  Sort: UsageSortInput
+  SearchProject: String
 }
 `, BuiltIn: false},
-	{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
+	&ast.Source{Name: "graph/workflow.graphqls", Input: `enum WorkflowRunStatus {
   All
   Failed
   Running
@@ -5512,6 +5124,7 @@ type WorkflowRun {
   total_experiments: Int
   execution_data: String!
   isRemoved: Boolean
+  executed_by: String!
 }
 
 type GetWorkflowsOutput {
@@ -5552,6 +5165,7 @@ type Workflow {
   cluster_id: ID!
   cluster_type: String!
   isRemoved: Boolean!
+  last_updated_by: String
 }
 
 type ListWorkflowsOutput {
@@ -5565,20 +5179,6 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
-
-func (ec *executionContext) field_Mutation_acceptInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.MemberInput
-	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["member"] = arg0
-	return args, nil
-}
 
 func (ec *executionContext) field_Mutation_addMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -5708,109 +5308,99 @@ func (ec *executionContext) field_Mutation_createManifestTemplate_args(ctx conte
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["projectName"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["projectName"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.CreateUserInput
-	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["user"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_declineInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.MemberInput
-	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["member"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["workflowid"]; ok {
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["workflowid"] = arg0
+	args["projectID"] = arg0
 	var arg1 *string
-	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+	if tmp, ok := rawArgs["workflowID"]; ok {
 		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflow_run_id"] = arg1
+	args["workflowID"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_run_id"] = arg2
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteClusterReg_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteClusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["cluster_id"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["cluster_id"] = arg0
+	args["projectID"] = arg0
+	var arg1 []*string
+	if tmp, ok := rawArgs["cluster_ids"]; ok {
+		arg1, err = ec.unmarshalNString2ᚕᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_ids"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_deleteDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["db_id"]; ok {
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["db_id"] = arg0
+	args["projectID"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["db_id"]; ok {
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["db_id"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_deleteDataSource_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.DeleteDSInput
-	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNdeleteDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDeleteDSInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["projectID"] = arg0
+	var arg1 model.DeleteDSInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg1, err = ec.unmarshalNdeleteDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDeleteDSInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -5840,13 +5430,21 @@ func (ec *executionContext) field_Mutation_deleteManifestTemplate_args(ctx conte
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["template_id"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["template_id"] = arg0
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["template_id"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["template_id"] = arg1
 	return args, nil
 }
 
@@ -5861,6 +5459,14 @@ func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context,
 		}
 	}
 	args["hub_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -5928,20 +5534,6 @@ func (ec *executionContext) field_Mutation_kubeObj_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_leaveProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.MemberInput
-	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["member"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_newClusterEvent_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -5974,27 +5566,21 @@ func (ec *executionContext) field_Mutation_reRunChaosWorkFlow_args(ctx context.C
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["workflowID"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflowID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_removeInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.MemberInput
-	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["workflowID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["member"] = arg0
+	args["workflowID"] = arg1
 	return args, nil
 }
 
@@ -6020,20 +5606,6 @@ func (ec *executionContext) field_Mutation_saveMyHub_args(ctx context.Context, r
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_sendInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.MemberInput
-	if tmp, ok := rawArgs["member"]; ok {
-		arg0, err = ec.unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["member"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6045,6 +5617,14 @@ func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, raw
 		}
 	}
 	args["id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -6052,43 +5632,59 @@ func (ec *executionContext) field_Mutation_syncWorkflow_args(ctx context.Context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["workflowid"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflowid"] = arg0
+	args["projectID"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+	if tmp, ok := rawArgs["workflowID"]; ok {
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflow_run_id"] = arg1
+	args["workflowID"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_run_id"] = arg2
 	return args, nil
 }
 
 func (ec *executionContext) field_Mutation_terminateChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["workflowid"]; ok {
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflowid"] = arg0
+	args["projectID"] = arg0
 	var arg1 *string
-	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+	if tmp, ok := rawArgs["workflowID"]; ok {
 		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflow_run_id"] = arg1
+	args["workflowID"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["workflow_run_id"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflow_run_id"] = arg2
 	return args, nil
 }
 
@@ -6109,22 +5705,30 @@ func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.
 func (ec *executionContext) field_Mutation_updateDashboard_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.UpdateDBInput
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 model.UpdateDBInput
 	if tmp, ok := rawArgs["dashboard"]; ok {
-		arg0, err = ec.unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
+		arg1, err = ec.unmarshalNupdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["dashboard"] = arg0
-	var arg1 bool
+	args["dashboard"] = arg1
+	var arg2 bool
 	if tmp, ok := rawArgs["chaosQueryUpdate"]; ok {
-		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		arg2, err = ec.unmarshalNBoolean2bool(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["chaosQueryUpdate"] = arg1
+	args["chaosQueryUpdate"] = arg2
 	return args, nil
 }
 
@@ -6219,64 +5823,6 @@ func (ec *executionContext) field_Mutation_updatePanel_args(ctx context.Context,
 		}
 	}
 	args["panelInput"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateProjectName_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectName"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectName"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateUserState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["uid"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["uid"] = arg0
-	var arg1 bool
-	if tmp, ok := rawArgs["isDeactivate"]; ok {
-		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["isDeactivate"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.UpdateUserInput
-	if tmp, ok := rawArgs["user"]; ok {
-		arg0, err = ec.unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["user"] = arg0
 	return args, nil
 }
 
@@ -6398,13 +5944,21 @@ func (ec *executionContext) field_Query_GetTemplateManifestByID_args(ctx context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["template_id"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["template_id"] = arg0
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["template_id"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["template_id"] = arg1
 	return args, nil
 }
 
@@ -6544,6 +6098,28 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getAgentDetails_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["cluster_id"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cluster_id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getCharts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6660,7 +6236,7 @@ func (ec *executionContext) field_Query_getHubStatus_args(ctx context.Context, r
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getManifest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -6671,20 +6247,22 @@ func (ec *executionContext) field_Query_getProject_args(ctx context.Context, raw
 		}
 	}
 	args["projectID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["username"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg1 string
+	if tmp, ok := rawArgs["clusterID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["username"] = arg0
+	args["clusterID"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["accessKey"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accessKey"] = arg2
 	return args, nil
 }
 
@@ -7024,6 +6602,37 @@ func (ec *executionContext) _ActionPayload_external_data(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ExternalData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ActionPayload_username(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ActionPayload",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8428,6 +8037,74 @@ func (ec *executionContext) _Cluster_last_workflow_timestamp(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.LastWorkflowTimestamp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_start_time(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Cluster_version(ctx context.Context, field graphql.CollectedField, obj *model.Cluster) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Cluster",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10542,278 +10219,6 @@ func (ec *executionContext) _ManifestTemplate_isCustomWorkflow(ctx context.Conte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Member_user_id(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_user_name(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_name(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_email(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Email, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_role(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Role, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.MemberRole)
-	fc.Result = res
-	return ec.marshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_invitation(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Invitation, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_joined_at(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.JoinedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Member_deactivated_at(ctx context.Context, field graphql.CollectedField, obj *model.Member) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Member",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeactivatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _MemberStat_Owner(ctx context.Context, field graphql.CollectedField, obj *model.MemberStat) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11045,250 +10450,6 @@ func (ec *executionContext) _Mutation_userClusterReg(ctx context.Context, field 
 	return ec.marshalNclusterRegResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterRegResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createUser_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateUser(rctx, args["user"].(model.CreateUserInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.User); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_updateUserState(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateUserState_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateUserState(rctx, args["uid"].(string), args["isDeactivate"].(bool))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_createProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createProject_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateProject(rctx, args["projectName"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.Project); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Project)
-	fc.Result = res
-	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateUser_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateUser(rctx, args["user"].(model.UpdateUserInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11375,7 +10536,7 @@ func (ec *executionContext) _Mutation_reRunChaosWorkFlow(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().ReRunChaosWorkFlow(rctx, args["workflowID"].(string))
+			return ec.resolvers.Mutation().ReRunChaosWorkFlow(rctx, args["projectID"].(string), args["workflowID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -11436,7 +10597,7 @@ func (ec *executionContext) _Mutation_deleteChaosWorkflow(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["workflowid"].(*string), args["workflow_run_id"].(*string))
+			return ec.resolvers.Mutation().DeleteChaosWorkflow(rctx, args["projectID"].(string), args["workflowID"].(*string), args["workflow_run_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -11497,7 +10658,7 @@ func (ec *executionContext) _Mutation_terminateChaosWorkflow(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().TerminateChaosWorkflow(rctx, args["workflowid"].(*string), args["workflow_run_id"].(*string))
+			return ec.resolvers.Mutation().TerminateChaosWorkflow(rctx, args["projectID"].(string), args["workflowID"].(*string), args["workflow_run_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -11558,7 +10719,7 @@ func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncWorkflow(rctx, args["workflowid"].(string), args["workflow_run_id"].(string))
+			return ec.resolvers.Mutation().SyncWorkflow(rctx, args["projectID"].(string), args["workflowID"].(string), args["workflow_run_id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -11592,369 +10753,6 @@ func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field gr
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_sendInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_sendInvitation_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SendInvitation(rctx, args["member"].(model.MemberInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.Member); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Member`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Member)
-	fc.Result = res
-	return ec.marshalOMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_acceptInvitation_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AcceptInvitation(rctx, args["member"].(model.MemberInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_declineInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_declineInvitation_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeclineInvitation(rctx, args["member"].(model.MemberInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_removeInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_removeInvitation_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().RemoveInvitation(rctx, args["member"].(model.MemberInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_leaveProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_leaveProject_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().LeaveProject(rctx, args["member"].(model.MemberInput))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_updateProjectName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateProjectName_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateProjectName(rctx, args["projectID"].(string), args["projectName"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_clusterConfirm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -12309,7 +11107,7 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncHub(rctx, args["id"].(string))
+			return ec.resolvers.Mutation().SyncHub(rctx, args["id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -12406,7 +11204,7 @@ func (ec *executionContext) _Mutation_updateChaosWorkflow(ctx context.Context, f
 	return ec.marshalNChaosWorkFlowResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deleteClusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -12422,7 +11220,7 @@ func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, fiel
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteClusterReg_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deleteClusters_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -12431,7 +11229,7 @@ func (ec *executionContext) _Mutation_deleteClusterReg(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteClusterReg(rctx, args["cluster_id"].(string))
+			return ec.resolvers.Mutation().DeleteClusters(rctx, args["projectID"].(string), args["cluster_ids"].([]*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -12607,7 +11405,7 @@ func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["hub_id"].(string))
+			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["hub_id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13072,7 +11870,7 @@ func (ec *executionContext) _Mutation_updateDashboard(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool))
+			return ec.resolvers.Mutation().UpdateDashboard(rctx, args["projectID"].(string), args["dashboard"].(model.UpdateDBInput), args["chaosQueryUpdate"].(bool))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13194,7 +11992,7 @@ func (ec *executionContext) _Mutation_deleteDashboard(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteDashboard(rctx, args["db_id"].(*string))
+			return ec.resolvers.Mutation().DeleteDashboard(rctx, args["projectID"].(string), args["db_id"].(*string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13255,7 +12053,7 @@ func (ec *executionContext) _Mutation_deleteDataSource(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteDataSource(rctx, args["input"].(model.DeleteDSInput))
+			return ec.resolvers.Mutation().DeleteDataSource(rctx, args["projectID"].(string), args["input"].(model.DeleteDSInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13377,7 +12175,7 @@ func (ec *executionContext) _Mutation_deleteManifestTemplate(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteManifestTemplate(rctx, args["template_id"].(string))
+			return ec.resolvers.Mutation().DeleteManifestTemplate(rctx, args["projectID"].(string), args["template_id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -14963,275 +13761,6 @@ func (ec *executionContext) _PortalDashboardData_dashboard_data(ctx context.Cont
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Project_id(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Project_name(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Project_members(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Members, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Member)
-	fc.Result = res
-	return ec.marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Project_state(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.State, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Project_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Project_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Project_removed_at(ctx context.Context, field graphql.CollectedField, obj *model.Project) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Project",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RemovedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ProjectData_Name(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ProjectData",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ProjectData_Workflows(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15332,40 +13861,6 @@ func (ec *executionContext) _ProjectData_ProjectId(ctx context.Context, field gr
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ProjectData_Members(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ProjectData",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Members, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.MemberStat)
-	fc.Result = res
-	return ec.marshalNMemberStat2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberStat(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Provider_Name(ctx context.Context, field graphql.CollectedField, obj *model.Provider) (ret graphql.Marshaler) {
@@ -15524,7 +14019,7 @@ func (ec *executionContext) _Query_getCluster(ctx context.Context, field graphql
 	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getManifest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -15540,7 +14035,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getUser_args(ctx, rawArgs)
+	args, err := ec.field_Query_getManifest_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -15549,7 +14044,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetUser(rctx, args["username"].(string))
+			return ec.resolvers.Query().GetManifest(rctx, args["projectID"].(string), args["clusterID"].(string), args["accessKey"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -15565,10 +14060,10 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.User); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15580,12 +14075,12 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.User)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getAgentDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -15601,7 +14096,7 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getProject_args(ctx, rawArgs)
+	args, err := ec.field_Query_getAgentDetails_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -15610,7 +14105,7 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetProject(rctx, args["projectID"].(string))
+			return ec.resolvers.Query().GetAgentDetails(rctx, args["cluster_id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -15626,10 +14121,10 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.Project); ok {
+		if data, ok := tmp.(*model.Cluster); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15641,117 +14136,9 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Project)
+	res := resTmp.(*model.Cluster)
 	fc.Result = res
-	return ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_listProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListProjects(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*model.Project); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Project`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Project)
-	fc.Result = res
-	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().Users(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*model.User); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.User`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getHeatmapData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -16204,8 +14591,28 @@ func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphq
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetYAMLData(rctx, args["experimentInput"].(model.ExperimentInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16245,8 +14652,28 @@ func (ec *executionContext) _Query_GetPredefinedWorkflowList(ctx context.Context
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPredefinedWorkflowList(rctx, args["HubName"].(string), args["projectID"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPredefinedWorkflowList(rctx, args["HubName"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16286,8 +14713,28 @@ func (ec *executionContext) _Query_GetPredefinedExperimentYAML(ctx context.Conte
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["experimentInput"].(model.ExperimentInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["experimentInput"].(model.ExperimentInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16814,7 +15261,7 @@ func (ec *executionContext) _Query_GetTemplateManifestByID(ctx context.Context, 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetTemplateManifestByID(rctx, args["template_id"].(string))
+			return ec.resolvers.Query().GetTemplateManifestByID(rctx, args["projectID"].(string), args["template_id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -18216,365 +16663,6 @@ func (ec *executionContext) _UsageData_TotalCount(ctx context.Context, field gra
 	return ec.marshalNTotalCount2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTotalCount(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_username(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Username, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Email, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_is_email_verified(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsEmailVerified, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_company_name(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CompanyName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_projects(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Projects, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Project)
-	fc.Result = res
-	return ec.marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_role(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Role, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_created_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_deactivated_at(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "User",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeactivatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Workflow_workflow_id(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19049,6 +17137,37 @@ func (ec *executionContext) _Workflow_isRemoved(ctx context.Context, field graph
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Workflow_last_updated_by(ctx context.Context, field graphql.CollectedField, obj *model.Workflow) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Workflow",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRun_workflow_run_id(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
@@ -19668,6 +17787,40 @@ func (ec *executionContext) _WorkflowRun_isRemoved(ctx context.Context, field gr
 	res := resTmp.(*bool)
 	fc.Result = res
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowRun_executed_by(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExecutedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkflowRunDetails_no_of_runs(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowRunDetails) (ret graphql.Marshaler) {
@@ -24693,9 +22846,21 @@ func (ec *executionContext) unmarshalInputClusterInput(ctx context.Context, obj 
 			if err != nil {
 				return it, err
 			}
+		case "skip_ssl":
+			var err error
+			it.SkipSsl, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "node_selector":
 			var err error
 			it.NodeSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tolerations":
+			var err error
+			it.Tolerations, err = ec.unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -24768,54 +22933,6 @@ func (ec *executionContext) unmarshalInputCreateMyHub(ctx context.Context, obj i
 		case "SSHPublicKey":
 			var err error
 			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj interface{}) (model.CreateUserInput, error) {
-	var it model.CreateUserInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "username":
-			var err error
-			it.Username, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "email":
-			var err error
-			it.Email, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "company_name":
-			var err error
-			it.CompanyName, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "userID":
-			var err error
-			it.UserID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "role":
-			var err error
-			it.Role, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -24965,7 +23082,7 @@ func (ec *executionContext) unmarshalInputExperimentInput(ctx context.Context, o
 			}
 		case "FileType":
 			var err error
-			it.FileType, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.FileType, err = ec.unmarshalNFileType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFileType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25215,36 +23332,6 @@ func (ec *executionContext) unmarshalInputListWorkflowsInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputMemberInput(ctx context.Context, obj interface{}) (model.MemberInput, error) {
-	var it model.MemberInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "project_id":
-			var err error
-			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "user_id":
-			var err error
-			it.UserID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "role":
-			var err error
-			it.Role, err = ec.unmarshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj interface{}) (model.Pagination, error) {
 	var it model.Pagination
 	var asMap = obj.(map[string]interface{})
@@ -25419,6 +23506,48 @@ func (ec *executionContext) unmarshalInputTemplateInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputToleration(ctx context.Context, obj interface{}) (model.Toleration, error) {
+	var it model.Toleration
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "tolerationSeconds":
+			var err error
+			it.TolerationSeconds, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "key":
+			var err error
+			it.Key, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operator":
+			var err error
+			it.Operator, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "effect":
+			var err error
+			it.Effect, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+			it.Value, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateMyHub(ctx context.Context, obj interface{}) (model.UpdateMyHub, error) {
 	var it model.UpdateMyHub
 	var asMap = obj.(map[string]interface{})
@@ -25488,42 +23617,6 @@ func (ec *executionContext) unmarshalInputUpdateMyHub(ctx context.Context, obj i
 		case "SSHPublicKey":
 			var err error
 			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj interface{}) (model.UpdateUserInput, error) {
-	var it model.UpdateUserInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-			it.ID, err = ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "email":
-			var err error
-			it.Email, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "company_name":
-			var err error
-			it.CompanyName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25698,6 +23791,12 @@ func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, 
 		case "workflow_name":
 			var err error
 			it.WorkflowName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "executed_by":
+			var err error
+			it.ExecutedBy, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26583,6 +24682,8 @@ func (ec *executionContext) _ActionPayload(ctx context.Context, sel ast.Selectio
 			}
 		case "external_data":
 			out.Values[i] = ec._ActionPayload_external_data(ctx, field, obj)
+		case "username":
+			out.Values[i] = ec._ActionPayload_username(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26901,6 +25002,16 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Cluster_agent_sa_exists(ctx, field, obj)
 		case "last_workflow_timestamp":
 			out.Values[i] = ec._Cluster_last_workflow_timestamp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "start_time":
+			out.Values[i] = ec._Cluster_start_time(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+			out.Values[i] = ec._Cluster_version(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27465,68 +25576,6 @@ func (ec *executionContext) _ManifestTemplate(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var memberImplementors = []string{"Member"}
-
-func (ec *executionContext) _Member(ctx context.Context, sel ast.SelectionSet, obj *model.Member) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, memberImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Member")
-		case "user_id":
-			out.Values[i] = ec._Member_user_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "user_name":
-			out.Values[i] = ec._Member_user_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Member_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "email":
-			out.Values[i] = ec._Member_email(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "role":
-			out.Values[i] = ec._Member_role(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "invitation":
-			out.Values[i] = ec._Member_invitation(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "joined_at":
-			out.Values[i] = ec._Member_joined_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "deactivated_at":
-			out.Values[i] = ec._Member_deactivated_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var memberStatImplementors = []string{"MemberStat"}
 
 func (ec *executionContext) _MemberStat(ctx context.Context, sel ast.SelectionSet, obj *model.MemberStat) graphql.Marshaler {
@@ -27616,26 +25665,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "createUser":
-			out.Values[i] = ec._Mutation_createUser(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updateUserState":
-			out.Values[i] = ec._Mutation_updateUserState(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "createProject":
-			out.Values[i] = ec._Mutation_createProject(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updateUser":
-			out.Values[i] = ec._Mutation_updateUser(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "createChaosWorkFlow":
 			out.Values[i] = ec._Mutation_createChaosWorkFlow(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -27658,33 +25687,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "syncWorkflow":
 			out.Values[i] = ec._Mutation_syncWorkflow(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "sendInvitation":
-			out.Values[i] = ec._Mutation_sendInvitation(ctx, field)
-		case "acceptInvitation":
-			out.Values[i] = ec._Mutation_acceptInvitation(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "declineInvitation":
-			out.Values[i] = ec._Mutation_declineInvitation(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "removeInvitation":
-			out.Values[i] = ec._Mutation_removeInvitation(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "leaveProject":
-			out.Values[i] = ec._Mutation_leaveProject(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updateProjectName":
-			out.Values[i] = ec._Mutation_updateProjectName(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27733,8 +25735,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteClusterReg":
-			out.Values[i] = ec._Mutation_deleteClusterReg(ctx, field)
+		case "deleteClusters":
+			out.Values[i] = ec._Mutation_deleteClusters(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28151,60 +26153,6 @@ func (ec *executionContext) _PortalDashboardData(ctx context.Context, sel ast.Se
 	return out
 }
 
-var projectImplementors = []string{"Project"}
-
-func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *model.Project) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, projectImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Project")
-		case "id":
-			out.Values[i] = ec._Project_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Project_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "members":
-			out.Values[i] = ec._Project_members(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "state":
-			out.Values[i] = ec._Project_state(ctx, field, obj)
-		case "created_at":
-			out.Values[i] = ec._Project_created_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updated_at":
-			out.Values[i] = ec._Project_updated_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "removed_at":
-			out.Values[i] = ec._Project_removed_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var projectDataImplementors = []string{"ProjectData"}
 
 func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionSet, obj *model.ProjectData) graphql.Marshaler {
@@ -28216,11 +26164,6 @@ func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionS
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ProjectData")
-		case "Name":
-			out.Values[i] = ec._ProjectData_Name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "Workflows":
 			out.Values[i] = ec._ProjectData_Workflows(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -28233,11 +26176,6 @@ func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionS
 			}
 		case "ProjectId":
 			out.Values[i] = ec._ProjectData_ProjectId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "Members":
-			out.Values[i] = ec._ProjectData_Members(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28322,7 +26260,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getUser":
+		case "getManifest":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -28330,13 +26268,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getUser(ctx, field)
+				res = ec._Query_getManifest(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getProject":
+		case "getAgentDetails":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -28344,35 +26282,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getProject(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "listProjects":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_listProjects(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "users":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_users(ctx, field)
+				res = ec._Query_getAgentDetails(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -28915,68 +26825,6 @@ func (ec *executionContext) _UsageData(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
-var userImplementors = []string{"User"}
-
-func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("User")
-		case "id":
-			out.Values[i] = ec._User_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "username":
-			out.Values[i] = ec._User_username(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "email":
-			out.Values[i] = ec._User_email(ctx, field, obj)
-		case "is_email_verified":
-			out.Values[i] = ec._User_is_email_verified(ctx, field, obj)
-		case "company_name":
-			out.Values[i] = ec._User_company_name(ctx, field, obj)
-		case "name":
-			out.Values[i] = ec._User_name(ctx, field, obj)
-		case "projects":
-			out.Values[i] = ec._User_projects(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "role":
-			out.Values[i] = ec._User_role(ctx, field, obj)
-		case "created_at":
-			out.Values[i] = ec._User_created_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updated_at":
-			out.Values[i] = ec._User_updated_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "deactivated_at":
-			out.Values[i] = ec._User_deactivated_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var workflowImplementors = []string{"Workflow"}
 
 func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet, obj *model.Workflow) graphql.Marshaler {
@@ -29058,6 +26906,8 @@ func (ec *executionContext) _Workflow(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "last_updated_by":
+			out.Values[i] = ec._Workflow_last_updated_by(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -29148,6 +26998,11 @@ func (ec *executionContext) _WorkflowRun(ctx context.Context, sel ast.SelectionS
 			}
 		case "isRemoved":
 			out.Values[i] = ec._WorkflowRun_isRemoved(ctx, field, obj)
+		case "executed_by":
+			out.Values[i] = ec._WorkflowRun_executed_by(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -30668,10 +28523,6 @@ func (ec *executionContext) unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋl
 	return ec.unmarshalInputCreateMyHub(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
-	return ec.unmarshalInputCreateUserInput(ctx, v)
-}
-
 func (ec *executionContext) unmarshalNDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDSInput(ctx context.Context, v interface{}) (model.DSInput, error) {
 	return ec.unmarshalInputDSInput(ctx, v)
 }
@@ -30792,6 +28643,15 @@ func (ec *executionContext) marshalNExperiments2ᚖgithubᚗcomᚋlitmuschaosᚋ
 		return graphql.Null
 	}
 	return ec._Experiments(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFileType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFileType(ctx context.Context, v interface{}) (model.FileType, error) {
+	var res model.FileType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNFileType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐFileType(ctx context.Context, sel ast.SelectionSet, v model.FileType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
@@ -31128,84 +28988,6 @@ func (ec *executionContext) marshalNManifestTemplate2ᚖgithubᚗcomᚋlitmuscha
 	return ec._ManifestTemplate(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNMember2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
-	return ec._Member(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMember2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Member) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Member(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNMemberInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberInput(ctx context.Context, v interface{}) (model.MemberInput, error) {
-	return ec.unmarshalInputMemberInput(ctx, v)
-}
-
-func (ec *executionContext) unmarshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
-	var res model.MemberRole
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalNMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v model.MemberRole) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) marshalNMemberStat2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberStat(ctx context.Context, sel ast.SelectionSet, v model.MemberStat) graphql.Marshaler {
-	return ec._MemberStat(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMemberStat2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberStat(ctx context.Context, sel ast.SelectionSet, v *model.MemberStat) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._MemberStat(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNMetadata2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetadata(ctx context.Context, sel ast.SelectionSet, v model.Metadata) graphql.Marshaler {
 	return ec._Metadata(ctx, sel, &v)
 }
@@ -31423,57 +29205,6 @@ func (ec *executionContext) marshalNPortalDashboardData2ᚖgithubᚗcomᚋlitmus
 	return ec._PortalDashboardData(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNProject2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v model.Project) graphql.Marshaler {
-	return ec._Project(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNProject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Project) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNProject2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProject(ctx context.Context, sel ast.SelectionSet, v *model.Project) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Project(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNProjectData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectData(ctx context.Context, sel ast.SelectionSet, v []*model.ProjectData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -31582,6 +29313,35 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
+func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalNTimeFrequency2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTimeFrequency(ctx context.Context, v interface{}) (model.TimeFrequency, error) {
 	var res model.TimeFrequency
 	return res, res.UnmarshalGQL(v)
@@ -31609,10 +29369,6 @@ func (ec *executionContext) unmarshalNUpdateMyHub2githubᚗcomᚋlitmuschaosᚋl
 	return ec.unmarshalInputUpdateMyHub(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (model.UpdateUserInput, error) {
-	return ec.unmarshalInputUpdateUserInput(ctx, v)
-}
-
 func (ec *executionContext) marshalNUsageData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUsageData(ctx context.Context, sel ast.SelectionSet, v model.UsageData) graphql.Marshaler {
 	return ec._UsageData(ctx, sel, &v)
 }
@@ -31638,57 +29394,6 @@ func (ec *executionContext) unmarshalNUsageSort2githubᚗcomᚋlitmuschaosᚋlit
 
 func (ec *executionContext) marshalNUsageSort2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUsageSort(ctx context.Context, sel ast.SelectionSet, v model.UsageSort) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNUser2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
-	return ec._User(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUser2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.User) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._User(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNWeightagesInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWeightagesInput(ctx context.Context, v interface{}) (model.WeightagesInput, error) {
@@ -32729,41 +30434,6 @@ func (ec *executionContext) marshalOManifestTemplate2ᚖgithubᚗcomᚋlitmuscha
 	return ec._ManifestTemplate(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOMember2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v model.Member) graphql.Marshaler {
-	return ec._Member(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOMember2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMember(ctx context.Context, sel ast.SelectionSet, v *model.Member) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Member(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (model.MemberRole, error) {
-	var res model.MemberRole
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v model.MemberRole) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) unmarshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, v interface{}) (*model.MemberRole, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalOMemberRole2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalOMemberRole2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMemberRole(ctx context.Context, sel ast.SelectionSet, v *model.MemberRole) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
 func (ec *executionContext) marshalOMyHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v model.MyHubStatus) graphql.Marshaler {
 	return ec._MyHubStatus(ctx, sel, &v)
 }
@@ -32862,6 +30532,38 @@ func (ec *executionContext) unmarshalOTemplateInput2ᚖgithubᚗcomᚋlitmuschao
 		return nil, nil
 	}
 	res, err := ec.unmarshalOTemplateInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTemplateInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOToleration2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) (model.Toleration, error) {
+	return ec.unmarshalInputToleration(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOToleration2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) ([]*model.Toleration, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.Toleration, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOToleration2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOToleration2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx context.Context, v interface{}) (*model.Toleration, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOToleration2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐToleration(ctx, v)
 	return &res, err
 }
 

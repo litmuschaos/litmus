@@ -1,0 +1,151 @@
+package handlers
+
+import (
+	"errors"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/gorilla/mux"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+)
+
+const (
+	clusterScope   string = "cluster"
+	namespaceScope string = "namespace"
+)
+
+var subscriberConfiguration = &types.SubscriberConfigurationVars{
+	AgentNamespace:           os.Getenv("AGENT_NAMESPACE"),
+	AgentScope:               os.Getenv("AGENT_SCOPE"),
+	AgentDeployments:         os.Getenv("AGENT_DEPLOYMENTS"),
+	SubscriberImage:          os.Getenv("SUBSCRIBER_IMAGE"),
+	EventTrackerImage:        os.Getenv("EVENT_TRACKER_IMAGE"),
+	WorkflowControllerImage:  os.Getenv("ARGO_WORKFLOW_CONTROLLER_IMAGE"),
+	ChaosOperatorImage:       os.Getenv("LITMUS_CHAOS_OPERATOR_IMAGE"),
+	WorkflowExecutorImage:    os.Getenv("ARGO_WORKFLOW_EXECUTOR_IMAGE"),
+	ChaosRunnerImage:         os.Getenv("LITMUS_CHAOS_RUNNER_IMAGE"),
+	ChaosExporterImage:       os.Getenv("LITMUS_CHAOS_EXPORTER_IMAGE"),
+	ContainerRuntimeExecutor: os.Getenv("CONTAINER_RUNTIME_EXECUTOR"),
+	Version:                  os.Getenv("VERSION"),
+}
+
+// FileHandler dynamically generates the manifest file and sends it as a response
+func FileHandler(w http.ResponseWriter, r *http.Request) {
+	var (
+		vars  = mux.Vars(r)
+		token = vars["key"]
+	)
+
+	response, statusCode, err := GetManifest(token)
+	if err != nil {
+		log.Print("error: ", err)
+		utils.WriteHeaders(&w, statusCode)
+	}
+
+	utils.WriteHeaders(&w, statusCode)
+	w.Write(response)
+}
+
+func GetManifest(token string) ([]byte, int, error) {
+
+	id, err := cluster.ClusterValidateJWT(token)
+	if err != nil {
+		return nil, 404, err
+	}
+
+	reqCluster, err := dbOperationsCluster.GetCluster(id)
+	if err != nil {
+		return nil, 500, err
+	}
+
+	scope := os.Getenv("PORTAL_SCOPE")
+	if scope == clusterScope {
+		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+		if err != nil {
+			return nil, 500, err
+		}
+	} else if scope == namespaceScope {
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
+		subscriberConfiguration.TLSCert = os.Getenv("TLS_CERT_B64")
+	}
+
+	secretName := os.Getenv("TLS_SECRET_NAME")
+	if scope == clusterScope && secretName != "" {
+		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(secretName)
+		if err != nil {
+			return nil, 500, err
+		}
+	}
+
+	if !reqCluster.IsRegistered {
+		var respData []byte
+
+		if reqCluster.AgentScope == "cluster" {
+			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
+		} else if reqCluster.AgentScope == "namespace" {
+			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
+		} else {
+			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+		}
+		if err != nil {
+			return nil, 500, err
+		}
+
+		return respData, 200, nil
+	} else {
+		return []byte("Cluster is already registered"), 409, nil
+	}
+}
+
+// Returns manifest for a given cluster
+func GetManifestWithClusterID(id string, key string) ([]byte, error) {
+
+	reqCluster, err := dbOperationsCluster.GetCluster(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Checking if cluster with given clusterID and accesskey is present
+	if reqCluster.AccessKey != key {
+		return nil, errors.New("Invalid access key")
+	}
+	scope := os.Getenv("PORTAL_SCOPE")
+	if scope == clusterScope {
+		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+		if err != nil {
+			return nil, err
+		}
+	} else if scope == namespaceScope {
+		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
+		subscriberConfiguration.TLSCert = os.Getenv("TLS_CERT_B64")
+	}
+
+	secretName := os.Getenv("TLS_SECRET_NAME")
+	if scope == clusterScope && secretName != "" {
+		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(secretName)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var respData []byte
+
+	if reqCluster.AgentScope == clusterScope {
+		respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
+	} else if reqCluster.AgentScope == namespaceScope {
+		respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
+	} else {
+		log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return respData, nil
+}

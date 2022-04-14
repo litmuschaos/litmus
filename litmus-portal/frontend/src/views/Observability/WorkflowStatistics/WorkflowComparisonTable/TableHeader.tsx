@@ -1,4 +1,4 @@
-import { IconButton, TableHead, TableRow } from '@material-ui/core';
+import { IconButton, TableRow } from '@material-ui/core';
 import ExpandLessTwoToneIcon from '@material-ui/icons/ExpandLessTwoTone';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
 import React, { useEffect, useState } from 'react';
@@ -45,139 +45,142 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   }, [sortData]);
 
   return (
-    <TableHead>
-      <TableRow className={classes.tableHead}>
-        <StyledTableCell padding="checkbox" className={classes.checkbox}>
-          {comparisonState === false ? (
-            <CheckBox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-              inputProps={{ 'aria-label': 'select all desserts' }}
-            />
-          ) : (
-            <div />
-          )}
-        </StyledTableCell>
-        <StyledTableCell className={classes.workflowName}>
-          <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('observability.tableHead1')} </b>&nbsp;
-            </div>
-            <div className={classes.nameContentIcons}>
-              <IconButton
-                aria-label="sort name ascending"
-                size="small"
-                onClick={() =>
-                  setSortData({
-                    ...sortData,
-                    name: { sort: true, ascending: true },
-                    startDate: { sort: false, ascending: true },
-                    cluster: { sort: false, ascending: true },
-                  })
-                }
-              >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
-              </IconButton>
-              <IconButton
-                aria-label="sort name descending"
-                size="small"
-                onClick={() =>
-                  setSortData({
-                    ...sortData,
-                    name: { sort: true, ascending: false },
-                    startDate: { sort: false, ascending: true },
-                    cluster: { sort: false, ascending: true },
-                  })
-                }
-              >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
-              </IconButton>
-            </div>
+    <TableRow className={classes.tableHead}>
+      <StyledTableCell padding="checkbox" className={classes.checkbox}>
+        {comparisonState === false ? (
+          <CheckBox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{ 'aria-label': 'select all desserts' }}
+          />
+        ) : (
+          <div />
+        )}
+      </StyledTableCell>
+      <StyledTableCell className={classes.workflowName}>
+        <div className={classes.nameContent}>
+          <div className={classes.workflowNameHead}>
+            {t('observability.tableHead1')} &nbsp;
           </div>
-        </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('observability.tableHead2')}</b>&nbsp;
-            </div>
-            <div className={classes.nameContentIcons}>
-              <IconButton
-                aria-label="sort date ascending"
-                size="small"
-                onClick={() =>
-                  setSortData({
-                    ...sortData,
-                    name: { sort: false, ascending: true },
-                    startDate: { sort: true, ascending: true },
-                    cluster: { sort: false, ascending: true },
-                  })
-                }
-              >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
-              </IconButton>
-              <IconButton
-                aria-label="sort date descending"
-                size="small"
-                onClick={() =>
-                  setSortData({
-                    ...sortData,
-                    name: { sort: false, ascending: true },
-                    startDate: { sort: true, ascending: false },
-                    cluster: { sort: false, ascending: true },
-                  })
-                }
-              >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
-              </IconButton>
-            </div>
+          <div className={classes.nameContentIcons}>
+            <IconButton
+              aria-label="sort name ascending"
+              size="small"
+              onClick={() =>
+                setSortData({
+                  ...sortData,
+                  name: { sort: true, ascending: true },
+                  startDate: { sort: false, ascending: true },
+                  cluster: { sort: false, ascending: true },
+                })
+              }
+            >
+              <ExpandLessTwoToneIcon className={classes.markerIcon} />
+            </IconButton>
+            <IconButton
+              aria-label="sort name descending"
+              size="small"
+              onClick={() =>
+                setSortData({
+                  ...sortData,
+                  name: { sort: true, ascending: false },
+                  startDate: { sort: false, ascending: true },
+                  cluster: { sort: false, ascending: true },
+                })
+              }
+            >
+              <ExpandMoreTwoToneIcon className={classes.markerIcon} />
+            </IconButton>
           </div>
-        </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <b>{t('observability.tableHead3')}</b>&nbsp;
+        </div>
+      </StyledTableCell>
+      <StyledTableCell className={classes.headSpacing}>
+        <div className={classes.nameContent}>
+          <div className={classes.workflowNameHead}>
+            {t('observability.tableHead2')}&nbsp;
           </div>
-        </StyledTableCell>
-        <StyledTableCell className={classes.headSpacing}>
-          <div className={classes.nameContent}>
-            <div className={classes.workflowNameHead}>
-              <b>{t('observability.tableHead4')}</b>&nbsp;
-            </div>
-            <div className={classes.nameContentIcons}>
-              <IconButton
-                aria-label="sort cluster ascending"
-                size="small"
-                onClick={() =>
-                  setSortData({
-                    ...sortData,
-                    name: { sort: false, ascending: true },
-                    startDate: { sort: false, ascending: true },
-                    cluster: { sort: true, ascending: true },
-                  })
-                }
-              >
-                <ExpandLessTwoToneIcon className={classes.markerIconUp} />
-              </IconButton>
-              <IconButton
-                aria-label="sort cluster descending"
-                size="small"
-                onClick={() =>
-                  setSortData({
-                    ...sortData,
-                    name: { sort: false, ascending: true },
-                    startDate: { sort: false, ascending: true },
-                    cluster: { sort: true, ascending: false },
-                  })
-                }
-              >
-                <ExpandMoreTwoToneIcon className={classes.markerIconDown} />
-              </IconButton>
-            </div>
+          <div className={classes.nameContentIcons}>
+            <IconButton
+              aria-label="sort date ascending"
+              size="small"
+              onClick={() =>
+                setSortData({
+                  ...sortData,
+                  name: { sort: false, ascending: true },
+                  startDate: { sort: true, ascending: true },
+                  cluster: { sort: false, ascending: true },
+                })
+              }
+            >
+              <ExpandLessTwoToneIcon className={classes.markerIcon} />
+            </IconButton>
+            <IconButton
+              aria-label="sort date descending"
+              size="small"
+              onClick={() =>
+                setSortData({
+                  ...sortData,
+                  name: { sort: false, ascending: true },
+                  startDate: { sort: true, ascending: false },
+                  cluster: { sort: false, ascending: true },
+                })
+              }
+            >
+              <ExpandMoreTwoToneIcon className={classes.markerIcon} />
+            </IconButton>
           </div>
-        </StyledTableCell>
-        <StyledTableCell />
-      </TableRow>
-    </TableHead>
+        </div>
+      </StyledTableCell>
+      <StyledTableCell className={classes.headSpacing}>
+        <div className={classes.nameContent}>
+          {t('observability.tableHead3')}&nbsp;
+        </div>
+      </StyledTableCell>
+      <StyledTableCell className={classes.headSpacing}>
+        <div className={classes.nameContent}>
+          <div className={classes.workflowNameHead}>
+            {t('observability.tableHead4')}&nbsp;
+          </div>
+          <div className={classes.nameContentIcons}>
+            <IconButton
+              aria-label="sort cluster ascending"
+              size="small"
+              onClick={() =>
+                setSortData({
+                  ...sortData,
+                  name: { sort: false, ascending: true },
+                  startDate: { sort: false, ascending: true },
+                  cluster: { sort: true, ascending: true },
+                })
+              }
+            >
+              <ExpandLessTwoToneIcon className={classes.markerIcon} />
+            </IconButton>
+            <IconButton
+              aria-label="sort cluster descending"
+              size="small"
+              onClick={() =>
+                setSortData({
+                  ...sortData,
+                  name: { sort: false, ascending: true },
+                  startDate: { sort: false, ascending: true },
+                  cluster: { sort: true, ascending: false },
+                })
+              }
+            >
+              <ExpandMoreTwoToneIcon className={classes.markerIcon} />
+            </IconButton>
+          </div>
+        </div>
+      </StyledTableCell>
+      <StyledTableCell className={classes.headSpacing}>
+        <div className={classes.nameContent}>
+          {t('observability.tableHead5')}
+        </div>
+      </StyledTableCell>
+      <StyledTableCell />
+    </TableRow>
   );
 };
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 
@@ -95,22 +96,18 @@ func GetChartsPath(ctx context.Context, chartsInput model.CloningInput) string {
 	return ChartsPath
 }
 
-// GetExperimentChartsVersionYamlPath is used to construct path for given chartsversion.yaml.
-func GetExperimentChartsVersionYamlPath(ctx context.Context, experimentInput model.ExperimentInput) string {
+// GetCSVData returns the ChartServiceYAML details according to the given filetype
+func GetCSVData(experimentInput model.ExperimentInput) string {
+	var ExperimentPath string
 	ProjectID := experimentInput.ProjectID
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
-	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
-	return ExperimentPath
-}
-
-// GetPredefinedWorkflowCSVPath is used to construct path for given chartsversion.yaml for pre-defined workflow.
-func GetPreDefinedWorkflowCSVPath(ctx context.Context, experimentInput model.ExperimentInput) string {
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
-	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	if strings.ToLower(experimentInput.ChartName) == "predefined" {
+		ExperimentPath = defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	} else {
+		ExperimentPath = defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
+	}
 	return ExperimentPath
 }
 
@@ -120,8 +117,8 @@ func GetExperimentYAMLPath(ctx context.Context, experimentInput model.Experiment
 	HubName := experimentInput.HubName
 	experimentName := experimentInput.ExperimentName
 	chartName := experimentInput.ChartName
-	fileType := *experimentInput.FileType
-	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + fileType + ".yaml"
+	fileType := experimentInput.FileType
+	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + strings.ToLower(fileType.String()) + ".yaml"
 	return ExperimentYAMLPath
 }
 

@@ -15,6 +15,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
         execution_data
         resiliency_score
         isRemoved
+        executed_by
       }
     }
   }
@@ -42,6 +43,7 @@ export const WORKFLOW_DETAILS = gql`
         experiments_na
         total_experiments
         isRemoved
+        executed_by
       }
     }
   }
@@ -67,6 +69,7 @@ export const WORKFLOW_RUN_DETAILS = gql`
         experiments_passed
         total_experiments
         isRemoved
+        executed_by
       }
     }
   }
@@ -126,6 +129,7 @@ export const WORKFLOW_LIST_DETAILS = gql`
         cluster_id
         cluster_type
         isRemoved
+        last_updated_by
       }
     }
   }
@@ -165,47 +169,6 @@ export const GET_WORKFLOW_RUNS_STATS = gql`
   }
 `;
 
-export const GET_USER = gql`
-  query getUser($username: String!) {
-    getUser(username: $username) {
-      username
-      email
-      id
-      name
-      projects {
-        members {
-          user_id
-          user_name
-          role
-          invitation
-          name
-          email
-          joined_at
-        }
-        name
-        id
-      }
-      company_name
-      updated_at
-      created_at
-      deactivated_at
-      is_email_verified
-      role
-    }
-  }
-`;
-
-export const GET_USER_INFO = gql`
-  query getUser($username: String!) {
-    getUser(username: $username) {
-      username
-      email
-      id
-      name
-    }
-  }
-`;
-
 export const GET_CLUSTER = gql`
   query getClusters($project_id: String!, $cluster_type: String) {
     getCluster(project_id: $project_id, cluster_type: $cluster_type) {
@@ -224,6 +187,7 @@ export const GET_CLUSTER = gql`
       last_workflow_timestamp
       agent_namespace
       agent_scope
+      version
     }
   }
 `;
@@ -380,54 +344,6 @@ export const LIST_MANIFEST_TEMPLATE = gql`
       template_description
       template_name
       isCustomWorkflow
-    }
-  }
-`;
-
-export const LIST_PROJECTS = gql`
-  query listProjects {
-    listProjects {
-      id
-      name
-      members {
-        user_name
-        user_id
-        role
-        invitation
-        joined_at
-        deactivated_at
-      }
-      created_at
-      updated_at
-      removed_at
-    }
-  }
-`;
-
-export const GET_PROJECT = gql`
-  query getProject($projectID: String!) {
-    getProject(projectID: $projectID) {
-      id
-      name
-      members {
-        user_id
-        user_name
-        role
-        invitation
-        joined_at
-        deactivated_at
-      }
-      created_at
-      updated_at
-      removed_at
-    }
-  }
-`;
-
-export const GET_PROJECT_NAME = gql`
-  query getProject($projectID: String!) {
-    getProject(projectID: $projectID) {
-      name
     }
   }
 `;
@@ -636,8 +552,8 @@ export const PROM_SERIES_LIST = gql`
 `;
 
 export const GET_TEMPLATE_BY_ID = gql`
-  query GetManifestTemplate($data: String!) {
-    GetTemplateManifestByID(template_id: $data) {
+  query GetManifestTemplate($projectID: String!, $data: String!) {
+    GetTemplateManifestByID(projectID: $projectID, template_id: $data) {
       template_id
       template_name
       template_description
@@ -715,7 +631,7 @@ export const GLOBAL_PROJECT_DATA = gql`
         Projects
       }
       Projects {
-        Name
+        ProjectId
         Workflows {
           Schedules
           ExpRuns
@@ -725,13 +641,6 @@ export const GLOBAL_PROJECT_DATA = gql`
           Total
           Ns
           Cluster
-        }
-        Members {
-          Owner {
-            Name
-            Username
-          }
-          Total
         }
       }
     }

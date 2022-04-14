@@ -1,6 +1,7 @@
 import jwtDecode from 'jsonwebtoken';
 import { history } from '../redux/configureStore';
 import { getJWTToken, setCookie, setJWTToken } from './cookies';
+import { getJwtTokenFromURL } from './getSearchParams';
 
 interface UserDetails {
   role: string;
@@ -14,29 +15,36 @@ interface UserDetails {
 
 // Logs out the user and unsets the jwt token
 export function logout() {
-  setCookie({ name: 'token', value: '', exhours: 1 });
+  setCookie({ name: 'litmus-cc-token', value: '', exhours: 1 });
   window.location.reload();
-}
-
-// Returns the jwt token
-export function getToken(): string {
-  const jwtToken = getJWTToken('token');
-
-  // Logout user if jwt is expired
-  if (jwtToken === '') {
-    history.push('/login');
-  }
-
-  return jwtToken;
 }
 
 // Sets the jwt token in the cookie
 export function setUserDetails(token: string) {
   setJWTToken({
     token,
-    cookieName: 'token',
+    cookieName: 'litmus-cc-token',
     errorMessage: 'ERROR IN SETTING USER DETAILS: ',
   });
+}
+
+// Returns the jwt token
+export function getToken(): string {
+  let jwtToken = getJWTToken('litmus-cc-token');
+
+  if (jwtToken === '') {
+    const _tokenFromUrl = getJwtTokenFromURL();
+    if (_tokenFromUrl !== '') {
+      jwtToken = _tokenFromUrl;
+      setUserDetails(jwtToken);
+      window.location.assign('/getStarted');
+    } else {
+      // Going to login page
+      history.push('/login');
+    }
+  }
+
+  return jwtToken;
 }
 
 // Returns the details of a user from jwt token

@@ -77,11 +77,16 @@ const TableData: React.FC<TableDataProps> = ({
           &nbsp;{data.cluster_name}
         </Typography>
       </StyledTableCell>
-      <StyledTableCell>
+      <StyledTableCell style={{ width: '10rem' }}>
+        <Typography className={classes.tableObjects}>
+          &nbsp;{data.last_updated_by || '-'}
+        </Typography>
+      </StyledTableCell>
+      <StyledTableCell style={{ width: '10rem' }}>
         <Typography className={classes.tableObjects}>
           <strong>
             {t(
-              'chaosWorkflows.browseStatistics.workFlowComparisonTable.seeStatistics'
+              'chaosWorkflows.browseStatistics.workFlowComparisonTable.statistics'
             )}
           </strong>
           <IconButton
@@ -90,11 +95,12 @@ const TableData: React.FC<TableDataProps> = ({
             aria-haspopup="true"
             onClick={() => {
               history.push({
-                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                pathname: `/analytics/workflowStatistics/${data.workflow_id}`,
                 search: `?projectID=${projectID}&projectRole=${userRole}`,
               });
             }}
             className={classes.buttonSeeStatistics}
+            data-cy="statsButton"
           >
             <ExpandMoreTwoToneIcon htmlColor="black" />
           </IconButton>

@@ -38,7 +38,15 @@ import HeaderSection from './HeaderSection';
 import useStyles from './styles';
 import TableData from './TableData';
 
-const BrowseWorkflow: React.FC = () => {
+interface BrowseWorkflowProps {
+  workflowName: string;
+  setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
+  workflowName,
+  setWorkflowName,
+}) => {
   const classes = useStyles();
   const projectID = getProjectID();
   const { t } = useTranslation();
@@ -51,7 +59,7 @@ const BrowseWorkflow: React.FC = () => {
 
   // States for filters
   const [filters, setFilters] = useState<WorkflowRunFilterInput>({
-    workflow_name: '',
+    workflow_name: workflowName,
     cluster_name: 'All',
     workflow_status: 'All',
     date_range: {
@@ -190,6 +198,7 @@ const BrowseWorkflow: React.FC = () => {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     setFilters({ ...filters, workflow_name: event.target.value as string });
+    setWorkflowName(event.target.value as string);
     setPaginationData({ ...paginationData, page: 0 });
   };
 
@@ -367,6 +376,13 @@ const BrowseWorkflow: React.FC = () => {
                   </div>
                 </TableCell>
 
+                {/* Executed By */}
+                <TableCell>
+                  <Typography className={classes.executedBy}>
+                    {t('chaosWorkflows.browseWorkflows.executedBy')}
+                  </Typography>
+                </TableCell>
+
                 {/* Menu Cell */}
                 <TableCell />
               </TableRow>
@@ -376,7 +392,7 @@ const BrowseWorkflow: React.FC = () => {
             <TableBody>
               {error ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={9}>
                     <Typography data-cy="browseWorkflowError" align="center">
                       Unable to fetch data
                     </Typography>
@@ -385,7 +401,7 @@ const BrowseWorkflow: React.FC = () => {
               ) : workflowRuns && workflowRuns.length ? (
                 workflowRuns.map((dataRow) => (
                   <TableRow
-                    data-cy="WorkflowRunsTableRow"
+                    data-cy={dataRow.workflow_name}
                     key={dataRow.workflow_run_id}
                   >
                     <TableData data={dataRow} refetchQuery={refetch} />
@@ -393,7 +409,7 @@ const BrowseWorkflow: React.FC = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7}>
+                  <TableCell colSpan={9}>
                     <Typography data-cy="browseWorkflowNoData" align="center">
                       No records available
                     </Typography>

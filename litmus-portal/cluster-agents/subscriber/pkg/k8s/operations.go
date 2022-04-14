@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
@@ -77,12 +78,13 @@ func CheckComponentStatus(componentEnv string) error {
 }
 
 func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
+	ctx := context.TODO()
 	downCount := 0
 	retries := 0
 	defer wait.Done()
 	for retries < LiveCheckMaxTries {
 		for _, dep := range components.Deployments {
-			podList, err := clientset.CoreV1().Pods(AgentNamespace).List(metav1.ListOptions{LabelSelector: dep})
+			podList, err := clientset.CoreV1().Pods(AgentNamespace).List(ctx, metav1.ListOptions{LabelSelector: dep})
 			if err != nil {
 				logrus.Errorf("failed to get deployment pods %v , err : %v", dep, err.Error())
 				downCount += 1
@@ -124,12 +126,13 @@ func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Cl
 }
 
 func IsClusterConfirmed() (bool, string, error) {
+	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ExternAgentConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ctx, ExternAgentConfigName, metav1.GetOptions{})
 	if k8s_errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
@@ -143,6 +146,7 @@ func IsClusterConfirmed() (bool, string, error) {
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
 func ClusterRegister(clusterData map[string]string) (bool, error) {
+	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, err
@@ -157,14 +161,16 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"COMPONENTS":           clusterData["COMPONENTS"],
 		"START_TIME":           clusterData["START_TIME"],
 		"VERSION":              clusterData["VERSION"],
+		"SKIP_SSL_VERIFY":      clusterData["SKIP_SSL_VERIFY"],
+		"CUSTOM_TLS_CERT":      clusterData["CUSTOM_TLS_CERT"],
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(&corev1.ConfigMap{
+	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(ctx, &corev1.ConfigMap{
 		Data: newConfigMapData,
 		ObjectMeta: metav1.ObjectMeta{
 			Name: ExternAgentConfigName,
 		},
-	})
+	}, metav1.UpdateOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -174,8 +180,9 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 }
 
 func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstructured.Unstructured, error) {
+	ctx := context.TODO()
 	if requestType == "create" {
-		response, err := dr.Create(obj, metav1.CreateOptions{})
+		response, err := dr.Create(ctx, obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
 			// This doesnt ever happen even if it does already exist
 			logrus.Info("Already exists")
@@ -189,7 +196,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		logrus.Info("successfully created for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "update" {
-		getObj, err := dr.Get(obj.GetName(), metav1.GetOptions{})
+		getObj, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
@@ -202,7 +209,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 
 		obj.SetResourceVersion(getObj.GetResourceVersion())
 
-		response, err := dr.Update(obj, metav1.UpdateOptions{})
+		response, err := dr.Update(ctx, obj, metav1.UpdateOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -210,7 +217,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		logrus.Info("successfully updated for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "delete" {
-		err := dr.Delete(obj.GetName(), &metav1.DeleteOptions{})
+		err := dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
@@ -224,7 +231,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
-		response, err := dr.Get(obj.GetName(), metav1.GetOptions{})
+		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
 			// This doesnt ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
@@ -242,11 +249,25 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	return nil, fmt.Errorf("err: %v\n", "Invalid Request")
 }
 
+func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]string) {
+	newLabels := obj.GetLabels()
+
+	if len(newLabels) == 0 {
+		newLabels = make(map[string]string)
+	}
+
+	for label, value := range customLabels {
+		newLabels[label] = value
+	}
+
+	obj.SetLabels(newLabels)
+}
+
 // This function handles cluster operations
-func ClusterOperations(manifest string, requestType string, namespace string) (*unstructured.Unstructured, error) {
+func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
-	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
+	yamlStr, err := yaml_converter.JSONToYAML([]byte(clusterAction.K8SManifest))
 	if err != nil {
 		return nil, err
 	}
@@ -267,6 +288,8 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 		return nil, err
 	}
 
+	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Username})
+
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
@@ -276,13 +299,13 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(clusterAction.Namespace)
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	return applyRequest(requestType, obj)
+	return applyRequest(clusterAction.RequestType, obj)
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {

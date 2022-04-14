@@ -86,13 +86,13 @@ const useStyles = makeStyles((theme) => ({
   },
   revertChaos: {
     margin: theme.spacing(3, 0),
-    minWidth: '40rem',
   },
   wrapper: {
     padding: theme.spacing(1, 0),
   },
   key: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(1, 0),
+    display: 'flex',
   },
   selection: {
     cursor: 'pointer',
@@ -224,6 +224,40 @@ const useStyles = makeStyles((theme) => ({
   },
   experimentName: {
     fontSize: '1rem',
+  },
+  infoText: {
+    padding: theme.spacing(2),
+    width: '15.625rem',
+  },
+  iconBtn: {
+    marginTop: theme.spacing(-1.5),
+  },
+  emptyCell: {
+    width: '1.5rem',
+  },
+
+  /**
+   * Advance Tune
+   */
+  advanceTune: {
+    padding: theme.spacing(1.25, 2.5),
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  advanceText: {
+    fontWeight: 500,
+    fontSize: '1rem',
+    marginBottom: theme.spacing(1.25),
+  },
+  advanceDesc: {
+    fontSize: '0.875rem',
+    color: theme.palette.text.hint,
+  },
+  tuneBtn: {
+    width: '3rem',
+    height: '3rem',
   },
 }));
 

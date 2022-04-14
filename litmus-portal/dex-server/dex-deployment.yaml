@@ -1,0 +1,139 @@
+# ConfigMap for DexServer
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dex-server-admin-config
+  namespace: litmus
+data:
+  config.yaml: |
+    issuer: http://<Your Domain>:32000  # Replace your domain here
+
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+
+    web:
+      http: 0.0.0.0:5556
+
+    staticClients:
+      - id: LitmusPortalAuthBackend
+        redirectURIs:
+          - '/auth/dex/callback'
+          - 'http://localhost:8080/auth/dex/callback' # Included for local testing purposes
+        name: 'LitmusPortalAuthBackend'
+        secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+
+    oauth2:
+        skipApprovalScreen: true
+
+    connectors:
+      - type: google
+        id: google
+        name: Google
+        config:
+          clientID: # Add your Google Client ID here
+          clientSecret: # Add your Google Client Secret here
+          redirectURI: http://<Your Domain>:32000 # Replace your domain here
+
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: # Add your GitHub Client ID here
+          clientSecret: # Add your GitHub Client Secret here
+          redirectURI: http://<Your Domain>:32000/callback  # Replace your domain here
+
+---
+# ClusterRole for DexServer
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: litmus-dex-server
+rules:
+  - apiGroups: [dex.coreos.com]
+    resources:
+      [
+        authcodes,
+        authrequests,
+        connectors,
+        devicerequests,
+        connectors,
+        devicerequests,
+        devicetokens,
+        oauth2clients,
+        offlinesessionses,
+        passwords,
+        refreshtokens,
+        signingkeies,
+      ]
+    verbs: [delete, deletecollection, get, list, patch, create, update, watch]
+---
+# ClusterRoleBinding for DexServer
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: litmus-dex-server-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: litmus-dex-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: litmus
+---
+# Deployment for DexServer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-dex-server
+  namespace: litmus
+  labels:
+    component: litmusportal-dex-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-dex-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-dex-server
+    spec:
+      serviceAccountName: litmus-server-account
+      containers:
+        - name: litmus-dex
+          imagePullPolicy: IfNotPresent
+          image: litmuschaos/litmusportal-dex-server:ci
+          command: ["/usr/local/bin/dex", "serve", "/etc/dex/cfg/config.yaml"]
+          ports:
+            - containerPort: 5556
+          volumeMounts:
+            - name: config
+              mountPath: /etc/dex/cfg
+      volumes:
+        - name: config
+          configMap:
+            name: dex-server-admin-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+---
+# Exposed service for DexServer
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-dex-service
+  namespace: litmus
+spec:
+  type: NodePort
+  ports:
+    - name: dex-server
+      port: 80
+      protocol: TCP
+      targetPort: 5556
+      nodePort: 32000
+  selector:
+    component: litmusportal-dex-server

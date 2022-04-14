@@ -1,6 +1,11 @@
 import { useQuery } from '@apollo/client';
-import { Typography, useTheme } from '@material-ui/core';
-import { LineMetricSeries, StackBar, StackBarMetric } from 'litmus-ui';
+import { Typography } from '@material-ui/core';
+import {
+  BarDateValue,
+  LineMetricSeries,
+  StackBar,
+  StackBarMetric,
+} from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
 import Loader from '../../../components/Loader';
@@ -16,6 +21,7 @@ import useStyles from './styles';
 
 interface StackedBarGraphProps {
   date: number;
+  averageResiliency: number;
   workflowID: string;
   handleTableOpen: () => void;
   handleTableClose: () => void;
@@ -23,6 +29,7 @@ interface StackedBarGraphProps {
 }
 const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   date,
+  averageResiliency,
   workflowID,
   handleTableOpen,
   handleTableClose,
@@ -30,7 +37,6 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
 }) => {
   const projectID = getProjectID();
   const classes = useStyles();
-  const theme = useTheme();
   const [workflowRunID, setWorkflowRunID] = useState<string>('');
   const stackBarData: Array<StackBarMetric> = [];
 
@@ -38,6 +44,20 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     metricName: 'Resiliency Score',
     data: [],
     baseColor: '#5469D4',
+  };
+
+  const getValueStr = (dataPoint: BarDateValue, metricName: string) => {
+    if (dataPoint) {
+      if (typeof dataPoint.value === 'number') {
+        if (metricName === 'resiliencyScore') {
+          return dataPoint.value.toFixed(2).toString();
+        }
+
+        return dataPoint.value.toFixed(0).toString();
+      }
+      return dataPoint.value;
+    }
+    return '';
   };
 
   const { data, loading } = useQuery<Workflow, WorkflowDataVars>(
@@ -99,6 +119,19 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     return 'Date not available';
   };
 
+  function metricName(name: string): string {
+    switch (name) {
+      case 'resiliencyScore':
+        return 'Resiliency Score';
+      case 'passCount':
+        return 'Pass Count';
+      case 'failCount':
+        return 'Fail Count';
+      default:
+        return '';
+    }
+  }
+
   return (
     <div>
       <Typography className={classes.stackbarHeader}>
@@ -108,11 +141,16 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
         <Typography>{formatDate(date.toString())}</Typography>
         <hr className={classes.divider} />
       </div>
-      <Typography className={classes.stackbarHelperText}>
-        Click on a bar to see the details of the workflow run
-      </Typography>
+      <div className={classes.stackbarHelperTextArea}>
+        <Typography className={classes.stackbarHelperText}>
+          Click on a bar to see the details of the workflow run
+        </Typography>
+        <Typography className={classes.resiliencyScore}>
+          Resiliency score: {Math.round(averageResiliency)}%
+        </Typography>
+      </div>
       {/* Border Starts */}
-      <div style={{ border: `1px solid ${theme.palette.border.main}` }}>
+      <div className={classes.stackbarBorder}>
         {/* Stackbar parent */}
         <div className={classes.stackbarParent}>
           {/* Stackbar Area */}
@@ -128,6 +166,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 width: '62rem',
                 height: '20rem',
               }}
+              data-cy="statsBarGraph"
             >
               <StackBar
                 openSeries={openSeries}
@@ -136,6 +175,27 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
                 yLabel="Resiliency Score in %"
                 yLabelOffset={60}
                 xAxistimeFormat="HH:mm"
+                StackBarTooltip={({ tooltipData }) => {
+                  return (
+                    <div style={{ lineHeight: '1.3rem' }}>
+                      {tooltipData.map((linedata) => (
+                        <div key={`tooltipName-value- ${linedata.metricName}`}>
+                          <span>{`${metricName(
+                            linedata.metricName
+                          )}: ${getValueStr(
+                            linedata.data,
+                            linedata.metricName
+                          )}`}</span>
+                        </div>
+                      ))}
+                      <span>
+                        {moment
+                          .unix(tooltipData[0].data.date / 1000)
+                          .format('DD MMM, HH:mm')}
+                      </span>
+                    </div>
+                  );
+                }}
                 handleBarClick={(barData: any) => {
                   if (barData) {
                     handleTableOpen();

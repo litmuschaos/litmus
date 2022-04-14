@@ -35,7 +35,7 @@ const WorkflowGraphs: React.FC = () => {
   const graphData: RadialChartMetric[] = [
     {
       value: data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
-      label: 'Completed',
+      label: 'Succeeded',
       baseColor: theme.palette.status.workflow.completed,
     },
     {
@@ -65,11 +65,11 @@ const WorkflowGraphs: React.FC = () => {
             ) : (
               <RadialChart
                 radialData={graphData}
-                legendTableHeight={105}
+                legendTableHeight={140}
                 heading={
                   data?.getWorkflowRunStats.total_workflow_runs !== 1
-                    ? 'Workflow Runs'
-                    : 'Workflow Run'
+                    ? 'Runs'
+                    : 'Run'
                 }
                 showCenterHeading
               />

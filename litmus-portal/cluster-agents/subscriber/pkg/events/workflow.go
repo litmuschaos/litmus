@@ -10,9 +10,9 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 
-	"github.com/argoproj/argo/pkg/apis/workflow/v1alpha1"
-	"github.com/argoproj/argo/pkg/client/clientset/versioned"
-	"github.com/argoproj/argo/pkg/client/informers/externalversions"
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
+	"github.com/argoproj/argo-workflows/v3/pkg/client/informers/externalversions"
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
@@ -136,7 +136,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 		)
 
 		// considering chaos events has only 1 artifact with manifest as raw data
-		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 {
+		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 && nodeStatus.Inputs.Artifacts[0].Raw != nil {
 			//extracts chaos data
 			nodeType, cd, err = CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
 			if err != nil {
@@ -176,6 +176,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 		StartedAt:         StrConvTime(workflowObj.Status.StartedAt.Unix()),
 		FinishedAt:        StrConvTime(workflowObj.Status.FinishedAt.Unix()),
 		Nodes:             nodes,
+		ExecutedBy:        workflowObj.Labels["executed_by"],
 	}
 
 	if experimentFail == 1 {

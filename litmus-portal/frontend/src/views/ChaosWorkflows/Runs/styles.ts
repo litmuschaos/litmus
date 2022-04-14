@@ -96,6 +96,10 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(5),
   },
 
+  executedBy: {
+    paddingLeft: theme.spacing(5),
+  },
+
   sortDiv: {
     display: 'flex',
     flexDirection: 'column',
@@ -236,6 +240,17 @@ const useStyles = makeStyles((theme) => ({
   terminateText: {
     backgroundColor: 'transparent !important',
     color: theme.palette.primary.main,
+  },
+  workflowModalRoot: {
+    margin: theme.spacing(8, 5, 5, 5),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  editor: {
+    width: '100%',
+    marginTop: theme.spacing(2),
   },
 }));
 

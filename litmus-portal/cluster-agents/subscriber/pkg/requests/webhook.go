@@ -7,17 +7,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/utils"
-
 	"github.com/gorilla/websocket"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
 func ClusterConnect(clusterData map[string]string) {
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     namespace\n     }\n  }\n}\n"}`
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     username\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
+	if err != nil {
+		logrus.WithError(err).Fatal("failed to parse url")
+	}
 	scheme := "ws"
 	if serverURL.Scheme == "https" {
 		scheme = "wss"
@@ -28,7 +30,7 @@ func ClusterConnect(clusterData map[string]string) {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		logrus.Fatal("dial:", err)
+		logrus.WithError(err).Fatal("failed to open websocket connection")
 	}
 	defer c.Close()
 
@@ -39,12 +41,12 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		data, err := json.Marshal(payload)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to marshal message")
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to write message after init")
 			return
 		}
 
@@ -54,9 +56,13 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 
 		data, err = json.Marshal(payload)
+		if err != nil {
+			logrus.WithError(err).Fatal("failed to marshal message")
+		}
+
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message")
+			logrus.WithError(err).Fatal("failed to write message after start")
 			return
 		}
 	}()
@@ -70,7 +76,8 @@ func ClusterConnect(clusterData map[string]string) {
 		var r types.RawData
 		err = json.Unmarshal(message, &r)
 		if err != nil {
-			logrus.WithError(err).Fatal("error un-marshaling request payload")
+			logrus.WithError(err).Error("error un-marshaling request payload")
+			continue
 		}
 
 		if r.Type == "connection_ack" {
@@ -80,12 +87,13 @@ func ClusterConnect(clusterData map[string]string) {
 			continue
 		}
 		if r.Payload.Errors != nil {
-			logrus.Fatal("graphql error : ", string(message))
+			logrus.Error("graphql error : ", string(message))
+			continue
 		}
 
 		err = RequestProcessor(clusterData, r)
 		if err != nil {
-			logrus.WithError(err).Fatal("error on processing request")
+			logrus.WithError(err).Error("error on processing request")
 		}
 	}
 }
@@ -120,12 +128,12 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 		logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData)
 		k8s.SendPodLogs(clusterData, podRequest)
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action.K8SManifest, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.Namespace)
+		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action)
 		if err != nil {
 			return errors.New("error performing cluster operation: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_sync", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		err := utils.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData)
+		err := utils.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData, r.Payload.Data.ClusterConnect.Action.Username)
 		if err != nil {
 			return errors.New("error performing events operation: " + err.Error())
 		}

@@ -13,6 +13,7 @@ type ActionPayload struct {
 	K8sManifest  string  `json:"k8s_manifest"`
 	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"external_data"`
+	Username     *string `json:"username"`
 }
 
 type AgentStat struct {
@@ -98,6 +99,8 @@ type Cluster struct {
 	AgentNsExists         *bool   `json:"agent_ns_exists"`
 	AgentSaExists         *bool   `json:"agent_sa_exists"`
 	LastWorkflowTimestamp string  `json:"last_workflow_timestamp"`
+	StartTime             string  `json:"start_time"`
+	Version               string  `json:"version"`
 }
 
 type ClusterAction struct {
@@ -138,17 +141,19 @@ type ClusterIdentity struct {
 }
 
 type ClusterInput struct {
-	ClusterName    string  `json:"cluster_name"`
-	Description    *string `json:"description"`
-	PlatformName   string  `json:"platform_name"`
-	ProjectID      string  `json:"project_id"`
-	ClusterType    string  `json:"cluster_type"`
-	AgentNamespace *string `json:"agent_namespace"`
-	Serviceaccount *string `json:"serviceaccount"`
-	AgentScope     string  `json:"agent_scope"`
-	AgentNsExists  *bool   `json:"agent_ns_exists"`
-	AgentSaExists  *bool   `json:"agent_sa_exists"`
-	NodeSelector   *string `json:"node_selector"`
+	ClusterName    string        `json:"cluster_name"`
+	Description    *string       `json:"description"`
+	PlatformName   string        `json:"platform_name"`
+	ProjectID      string        `json:"project_id"`
+	ClusterType    string        `json:"cluster_type"`
+	AgentNamespace *string       `json:"agent_namespace"`
+	Serviceaccount *string       `json:"serviceaccount"`
+	AgentScope     string        `json:"agent_scope"`
+	AgentNsExists  *bool         `json:"agent_ns_exists"`
+	AgentSaExists  *bool         `json:"agent_sa_exists"`
+	SkipSsl        *bool         `json:"skip_ssl"`
+	NodeSelector   *string       `json:"node_selector"`
+	Tolerations    []*Toleration `json:"tolerations"`
 }
 
 type CreateMyHub struct {
@@ -162,15 +167,6 @@ type CreateMyHub struct {
 	Password      *string  `json:"Password"`
 	SSHPrivateKey *string  `json:"SSHPrivateKey"`
 	SSHPublicKey  *string  `json:"SSHPublicKey"`
-}
-
-type CreateUserInput struct {
-	Username    string  `json:"username"`
-	Email       *string `json:"email"`
-	CompanyName *string `json:"company_name"`
-	Name        *string `json:"name"`
-	UserID      string  `json:"userID"`
-	Role        string  `json:"role"`
 }
 
 type DSInput struct {
@@ -212,11 +208,11 @@ type DateRange struct {
 }
 
 type ExperimentInput struct {
-	ProjectID      string  `json:"ProjectID"`
-	ChartName      string  `json:"ChartName"`
-	ExperimentName string  `json:"ExperimentName"`
-	HubName        string  `json:"HubName"`
-	FileType       *string `json:"FileType"`
+	ProjectID      string   `json:"ProjectID"`
+	ChartName      string   `json:"ChartName"`
+	ExperimentName string   `json:"ExperimentName"`
+	HubName        string   `json:"HubName"`
+	FileType       FileType `json:"FileType"`
 }
 
 type Experiments struct {
@@ -334,23 +330,6 @@ type ManifestTemplate struct {
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
-type Member struct {
-	UserID        string     `json:"user_id"`
-	UserName      string     `json:"user_name"`
-	Name          string     `json:"name"`
-	Email         string     `json:"email"`
-	Role          MemberRole `json:"role"`
-	Invitation    string     `json:"invitation"`
-	JoinedAt      string     `json:"joined_at"`
-	DeactivatedAt string     `json:"deactivated_at"`
-}
-
-type MemberInput struct {
-	ProjectID string      `json:"project_id"`
-	UserID    string      `json:"user_id"`
-	Role      *MemberRole `json:"role"`
-}
-
 type MemberStat struct {
 	Owner *Owner `json:"Owner"`
 	Total int    `json:"Total"`
@@ -446,22 +425,10 @@ type PortalDashboardData struct {
 	DashboardData string `json:"dashboard_data"`
 }
 
-type Project struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Members   []*Member `json:"members"`
-	State     *string   `json:"state"`
-	CreatedAt string    `json:"created_at"`
-	UpdatedAt string    `json:"updated_at"`
-	RemovedAt string    `json:"removed_at"`
-}
-
 type ProjectData struct {
-	Name      string        `json:"Name"`
 	Workflows *WorkflowStat `json:"Workflows"`
 	Agents    *AgentStat    `json:"Agents"`
 	ProjectID string        `json:"ProjectId"`
-	Members   *MemberStat   `json:"Members"`
 }
 
 type Provider struct {
@@ -496,6 +463,14 @@ type TemplateInput struct {
 	IsCustomWorkflow    bool   `json:"isCustomWorkflow"`
 }
 
+type Toleration struct {
+	TolerationSeconds *int    `json:"tolerationSeconds"`
+	Key               *string `json:"key"`
+	Operator          *string `json:"operator"`
+	Effect            *string `json:"effect"`
+	Value             *string `json:"value"`
+}
+
 type TotalCount struct {
 	Projects  int           `json:"Projects"`
 	Users     int           `json:"Users"`
@@ -517,13 +492,6 @@ type UpdateMyHub struct {
 	SSHPublicKey  *string  `json:"SSHPublicKey"`
 }
 
-type UpdateUserInput struct {
-	ID          string  `json:"id"`
-	Name        *string `json:"name"`
-	Email       *string `json:"email"`
-	CompanyName *string `json:"company_name"`
-}
-
 type UsageData struct {
 	Projects     []*ProjectData `json:"Projects"`
 	TotalEntries int            `json:"TotalEntries"`
@@ -540,20 +508,6 @@ type UsageQuery struct {
 type UsageSortInput struct {
 	Field      UsageSort `json:"Field"`
 	Descending bool      `json:"Descending"`
-}
-
-type User struct {
-	ID              string     `json:"id"`
-	Username        string     `json:"username"`
-	Email           *string    `json:"email"`
-	IsEmailVerified *bool      `json:"is_email_verified"`
-	CompanyName     *string    `json:"company_name"`
-	Name            *string    `json:"name"`
-	Projects        []*Project `json:"projects"`
-	Role            *string    `json:"role"`
-	CreatedAt       string     `json:"created_at"`
-	UpdatedAt       string     `json:"updated_at"`
-	DeactivatedAt   string     `json:"deactivated_at"`
 }
 
 type WeightagesInput struct {
@@ -576,6 +530,7 @@ type Workflow struct {
 	ClusterID           string        `json:"cluster_id"`
 	ClusterType         string        `json:"cluster_type"`
 	IsRemoved           bool          `json:"isRemoved"`
+	LastUpdatedBy       *string       `json:"last_updated_by"`
 }
 
 type WorkflowFilterInput struct {
@@ -603,6 +558,7 @@ type WorkflowRun struct {
 	TotalExperiments   *int          `json:"total_experiments"`
 	ExecutionData      string        `json:"execution_data"`
 	IsRemoved          *bool         `json:"isRemoved"`
+	ExecutedBy         string        `json:"executed_by"`
 }
 
 type WorkflowRunDetails struct {
@@ -621,6 +577,7 @@ type WorkflowRunInput struct {
 	WorkflowID    string           `json:"workflow_id"`
 	WorkflowRunID string           `json:"workflow_run_id"`
 	WorkflowName  string           `json:"workflow_name"`
+	ExecutedBy    string           `json:"executed_by"`
 	ExecutionData string           `json:"execution_data"`
 	ClusterID     *ClusterIdentity `json:"cluster_id"`
 	Completed     bool             `json:"completed"`
@@ -1018,6 +975,92 @@ func (e *AuthType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FileType string
+
+const (
+	FileTypeExperiment FileType = "EXPERIMENT"
+	FileTypeEngine     FileType = "ENGINE"
+	FileTypeWorkflow   FileType = "WORKFLOW"
+	FileTypeCsv        FileType = "CSV"
+)
+
+var AllFileType = []FileType{
+	FileTypeExperiment,
+	FileTypeEngine,
+	FileTypeWorkflow,
+	FileTypeCsv,
+}
+
+func (e FileType) IsValid() bool {
+	switch e {
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
+		return true
+	}
+	return false
+}
+
+func (e FileType) String() string {
+	return string(e)
+}
+
+func (e *FileType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FileType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FileType", str)
+	}
+	return nil
+}
+
+func (e FileType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Invitation string
+
+const (
+	InvitationAccepted Invitation = "Accepted"
+	InvitationPending  Invitation = "Pending"
+)
+
+var AllInvitation = []Invitation{
+	InvitationAccepted,
+	InvitationPending,
+}
+
+func (e Invitation) IsValid() bool {
+	switch e {
+	case InvitationAccepted, InvitationPending:
+		return true
+	}
+	return false
+}
+
+func (e Invitation) String() string {
+	return string(e)
+}
+
+func (e *Invitation) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Invitation(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Invitation", str)
+	}
+	return nil
+}
+
+func (e Invitation) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

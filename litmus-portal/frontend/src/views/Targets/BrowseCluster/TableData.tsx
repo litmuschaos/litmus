@@ -1,12 +1,28 @@
-import { IconButton, TableCell, Tooltip, Typography } from '@material-ui/core';
-import { ButtonFilled, ButtonOutlined, LightPills, Modal } from 'litmus-ui';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  TableCell,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
+import DoneIcon from '@material-ui/icons/Done';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import {
+  ButtonFilled,
+  ButtonOutlined,
+  Icon,
+  LightPills,
+  Modal,
+} from 'litmus-ui';
 import moment from 'moment';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Cluster } from '../../../models/graphql/clusterData';
 import capitalize from '../../../utils/capitalize';
 import timeDifferenceForDate from '../../../utils/datesModifier';
-import { getProjectRole } from '../../../utils/getSearchParams';
+import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface TableDataProps {
@@ -26,18 +42,52 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
     return 'Date not available';
   };
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const userRole = getProjectRole();
-
-  const [open, setOpen] = React.useState(false);
+  const menuOpen = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
+  const [copying, setCopying] = useState<boolean>(false);
 
   const handleClick = () => {
     setOpen(true);
+    setAnchorEl(null);
   };
 
   const handleClose = () => {
     deleteRow(data.cluster_id);
     setOpen(false);
   };
+
+  const handleOptClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleOptClose = () => {
+    setAnchorEl(null);
+  };
+
+  function fallbackCopyTextToClipboard(text: string) {
+    // eslint-disable-next-line no-alert
+    window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+  }
+
+  function copyTextToClipboard(text: string) {
+    if (!navigator.clipboard) {
+      fallbackCopyTextToClipboard(text);
+      return;
+    }
+    setCopying(true);
+    navigator.clipboard
+      .writeText(text)
+      .catch((err) => console.error('Async: Could not copy text: ', err));
+    setTimeout(() => setCopying(false), 3000);
+  }
+  const version = process.env.REACT_APP_KB_CHAOS_VERSION;
+  const [upgradeModal, setUpgradeModal] = React.useState(false);
+  const theme = useTheme();
+  const codeSnippet = `litmusctl upgrade agent --cluster-id="${
+    data.cluster_id
+  }" --project-id="${getProjectID()}"`;
 
   return (
     <>
@@ -81,93 +131,217 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
           timeDifferenceForDate(data.last_workflow_timestamp)
         )}
       </TableCell>
-      <TableCell>
-        <Tooltip
-          classes={{
-            tooltip: classes.customTooltip,
-          }}
-          disableFocusListener
-          disableHoverListener={userRole !== 'Viewer'}
-          placement="bottom"
-          title="Insufficient Permissions"
+      <TableCell className={classes.menuCell}>
+        <IconButton
+          aria-label="more"
+          aria-controls="long-menu"
+          aria-haspopup="true"
+          onClick={handleOptClick}
+          className={classes.optionBtn}
+          data-cy="browseScheduleOptions"
         >
-          <div className={classes.deleteCluster}>
-            <div className={classes.targetsIcon}>
-              <IconButton
-                disabled={userRole === 'Viewer'}
-                onClick={handleClick}
-              >
-                <img alt="delete" src="./icons/ClusterDisconnect.svg" />
-              </IconButton>
+          <MoreVertIcon />
+        </IconButton>
+
+        <Menu
+          id="long-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={menuOpen}
+          onClose={handleOptClose}
+          data-cy="agentMenu"
+        >
+          <MenuItem
+            value="Copy_ID"
+            onClick={() => copyTextToClipboard(data.cluster_id)}
+          >
+            <div className={classes.expDiv}>
+              <Typography data-cy="Copy_ID" className={classes.btnText}>
+                {t('targets.options.copyTargetID')}
+              </Typography>
             </div>
-            <div>
-              <Typography>{t('targets.modalDelete.disconnect')}</Typography>
-            </div>
-          </div>
-        </Tooltip>
+          </MenuItem>
+          <Tooltip
+            classes={{
+              tooltip: classes.customTooltip,
+            }}
+            disableFocusListener
+            disableHoverListener={userRole !== 'Viewer'}
+            placement="bottom"
+            title="Insufficient Permissions"
+          >
+            <MenuItem
+              value="upgrade"
+              onClick={() => {
+                setUpgradeModal(true);
+                setAnchorEl(null);
+              }}
+              disabled={
+                userRole === 'Viewer' ||
+                data.version === version ||
+                data.version === ''
+              }
+            >
+              <div className={classes.expDiv}>
+                <Typography data-cy="upgrade" className={classes.btnText}>
+                  {t('targets.options.upgrade')}
+                </Typography>
+              </div>
+            </MenuItem>
+          </Tooltip>
+          <Tooltip
+            classes={{
+              tooltip: classes.customTooltip,
+            }}
+            disableFocusListener
+            disableHoverListener={userRole !== 'Viewer'}
+            placement="bottom"
+            title="Insufficient Permissions"
+          >
+            <MenuItem
+              value="disconnect"
+              disabled={userRole === 'Viewer'}
+              onClick={handleClick}
+            >
+              <div className={classes.expDiv}>
+                <Typography data-cy="disconnect" className={classes.btnText}>
+                  {t('targets.modalDelete.disconnect')}
+                </Typography>
+              </div>
+            </MenuItem>
+          </Tooltip>
+        </Menu>
+      </TableCell>
+      {open && (
         <div>
-          {open && (
-            <div>
-              <Modal
-                open={open}
-                onClose={() => {
+          <Modal
+            open={open}
+            onClose={() => {
+              setOpen(false);
+            }}
+            width="60%"
+            modalActions={
+              <ButtonOutlined
+                onClick={() => {
                   setOpen(false);
                 }}
-                width="60%"
-                modalActions={
-                  <ButtonOutlined
-                    onClick={() => {
-                      setOpen(false);
-                    }}
-                  >
-                    &#x2715;
-                  </ButtonOutlined>
-                }
               >
-                <div className={classes.body}>
-                  <img src="./icons/DisconnectIcon.svg" alt="disconnect" />
-                  <div className={classes.text}>
-                    <Typography className={classes.typo} align="center">
-                      {t('targets.modalDelete.head1')} <br />
-                      {t('targets.modalDelete.head2')}
-                      <br />
-                      <strong>
-                        {data.cluster_name} {t('targets.modalDelete.head4')}
-                      </strong>
-                    </Typography>
-                  </div>
-                  <div className={classes.textSecond}>
-                    <Typography
-                      className={classes.disconnectForever}
-                      align="center"
-                    >
-                      {t('targets.modalDelete.head3')}
-                    </Typography>
-                  </div>
-                  <div className={classes.buttonGroup}>
-                    <ButtonOutlined
-                      onClick={() => {
-                        setOpen(false);
-                      }}
-                    >
-                      <> {t('targets.modalDelete.no')}</>
-                    </ButtonOutlined>
+                &#x2715;
+              </ButtonOutlined>
+            }
+          >
+            <div className={classes.body}>
+              <img src="./icons/DisconnectIcon.svg" alt="disconnect" />
+              <div className={classes.text}>
+                <Typography className={classes.typo} align="center">
+                  {t('targets.modalDelete.head1')} <br />
+                  {t('targets.modalDelete.head2')}
+                  <br />
+                  <strong>
+                    {data.cluster_name} {t('targets.modalDelete.head4')}
+                  </strong>
+                </Typography>
+              </div>
+              <div className={classes.textSecond}>
+                <Typography
+                  className={classes.disconnectForever}
+                  align="center"
+                >
+                  {t('targets.modalDelete.head3')}
+                </Typography>
+              </div>
+              <div className={classes.buttonGroup}>
+                <ButtonOutlined
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  <> {t('targets.modalDelete.no')}</>
+                </ButtonOutlined>
 
-                    <ButtonFilled
-                      disabled={userRole === 'Viewer'}
-                      variant="error"
-                      onClick={handleClose}
-                      className={classes.w7}
-                    >
-                      <>{t('targets.modalDelete.yes')}</>
-                    </ButtonFilled>
-                  </div>
-                </div>
-              </Modal>
+                <ButtonFilled
+                  disabled={userRole === 'Viewer'}
+                  variant="error"
+                  onClick={handleClose}
+                  className={classes.w7}
+                >
+                  {t('targets.modalDelete.yes')}
+                </ButtonFilled>
+              </div>
             </div>
-          )}
+          </Modal>
         </div>
-      </TableCell>
+      )}
+      {upgradeModal && (
+        <div>
+          <Modal
+            open={upgradeModal}
+            onClose={() => {
+              setUpgradeModal(false);
+            }}
+            width="50%"
+            height="45%"
+            modalActions={
+              <ButtonOutlined
+                size="small"
+                onClick={() => {
+                  setUpgradeModal(false);
+                }}
+              >
+                &#x2715;
+              </ButtonOutlined>
+            }
+          >
+            <div className={classes.upgradeModalBody}>
+              <Typography
+                style={{
+                  fontWeight: 700,
+                  fontSize: '1.5rem',
+                }}
+              >
+                {t('targets.modalUpgrade.head1')}
+              </Typography>
+              <Typography className={classes.bodyText}>
+                {t('targets.modalUpgrade.copyUpgradeCommand')}
+              </Typography>
+              <div className={classes.editorText}>
+                <Typography
+                  style={{
+                    textAlign: 'start',
+                    width: '70%',
+                  }}
+                >
+                  {codeSnippet}
+                </Typography>
+                <IconButton
+                  onClick={() => copyTextToClipboard(codeSnippet)}
+                  edge="end"
+                  aria-label="copyProject"
+                >
+                  {!copying ? (
+                    <Icon
+                      name="copy"
+                      size="lg"
+                      color={theme.palette.primary.main}
+                    />
+                  ) : (
+                    <DoneIcon />
+                  )}
+                </IconButton>
+              </div>
+
+              <ButtonFilled
+                onClick={() => setUpgradeModal(false)}
+                style={{
+                  marginLeft: 'auto',
+                }}
+              >
+                {t('targets.modalUpgrade.done')}
+              </ButtonFilled>
+            </div>
+          </Modal>
+        </div>
+      )}
     </>
   );
 };
