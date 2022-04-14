@@ -97,7 +97,7 @@ type Cluster {
 """
 Defines the details for the new cluster being connected
 """
-input ClusterInput {
+input RegisterClusterRequest {
     """
     Name of the cluster
     """
@@ -173,6 +173,7 @@ type ActionPayload {
     k8sManifest: String!
     namespace: String!
     externalData: String
+    username: String
 }
 
 type ClusterAction {
@@ -180,7 +181,7 @@ type ClusterAction {
     action: ActionPayload!
 }
 
-input ClusterEventInput {
+input NewClusterEventRequest {
     eventName: String!
     description: String!
     clusterID: String!
@@ -193,7 +194,7 @@ input ClusterIdentity {
     version: String!
 }
 
-type ClusterConfirmResponse {
+type ConfirmClusterRegistrationResponse {
     isClusterConfirmed: Boolean!
     newAccessKey: String
     clusterID: String
@@ -202,7 +203,7 @@ type ClusterConfirmResponse {
 """
 Response received for registering a new cluster
 """
-type ClusterRegResponse {
+type RegisterClusterResponse {
     """
     Token used to verify and retrieve the cluster agent manifest
     """

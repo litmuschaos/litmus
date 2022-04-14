@@ -13,6 +13,7 @@ type ActionPayload struct {
 	K8sManifest  string  `json:"k8sManifest"`
 	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"externalData"`
+	Username     *string `json:"username"`
 }
 
 // Defines details of agent statistics
@@ -178,12 +179,6 @@ type ClusterAction struct {
 	Action    *ActionPayload `json:"action"`
 }
 
-type ClusterConfirmResponse struct {
-	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
-	NewAccessKey       *string `json:"newAccessKey"`
-	ClusterID          *string `json:"clusterID"`
-}
-
 type ClusterEvent struct {
 	EventID     string   `json:"eventID"`
 	EventType   string   `json:"eventType"`
@@ -192,57 +187,16 @@ type ClusterEvent struct {
 	Cluster     *Cluster `json:"cluster"`
 }
 
-type ClusterEventInput struct {
-	EventName   string `json:"eventName"`
-	Description string `json:"description"`
-	ClusterID   string `json:"clusterID"`
-	AccessKey   string `json:"accessKey"`
-}
-
 type ClusterIdentity struct {
 	ClusterID string `json:"clusterID"`
 	AccessKey string `json:"accessKey"`
 	Version   string `json:"version"`
 }
 
-// Defines the details for the new cluster being connected
-type ClusterInput struct {
-	// Name of the cluster
-	ClusterName string `json:"clusterName"`
-	// Description of the cluster
-	Description *string `json:"description"`
-	// Cluster Platform Name eg. GKE,AWS, Others
-	PlatformName string `json:"platformName"`
-	// Project ID the cluster is being connected to
-	ProjectID string `json:"projectID"`
-	// Cluster type : Internal or External
-	ClusterType string `json:"clusterType"`
-	// Namespace where the cluster agent is being installed
-	AgentNamespace *string `json:"agentNamespace"`
-	// Name of service account used by cluster agent
-	ServiceAccount *string `json:"serviceAccount"`
-	// Scope of the cluster agent : ns or cluster
-	AgentScope string `json:"agentScope"`
-	// Bool value indicating whether agent ns used already exists on cluster or not
-	AgentNsExists *bool `json:"agentNsExists"`
-	// Bool value indicating whether service account used already exists on cluster or not
-	AgentSaExists *bool `json:"agentSaExists"`
-	// Bool value indicating whether agent will skip ssl checks or not
-	SkipSsl *bool `json:"skipSsl"`
-	// Node selectors used by cluster agent
-	NodeSelector *string `json:"nodeSelector"`
-	// Node tolerations used by cluster agent
-	Tolerations []*Toleration `json:"tolerations"`
-}
-
-// Response received for registering a new cluster
-type ClusterRegResponse struct {
-	// Token used to verify and retrieve the cluster agent manifest
-	Token string `json:"token"`
-	// Unique ID for the newly registered cluster
-	ClusterID string `json:"clusterID"`
-	// Cluster name as sent in request
-	ClusterName string `json:"clusterName"`
+type ConfirmClusterRegistrationResponse struct {
+	IsClusterConfirmed bool    `json:"isClusterConfirmed"`
+	NewAccessKey       *string `json:"newAccessKey"`
+	ClusterID          *string `json:"clusterID"`
 }
 
 type CreateDBInput struct {
@@ -366,7 +320,7 @@ type ExperimentInput struct {
 
 type Experiments struct {
 	Name string `json:"name"`
-	CSv  string `json:"cSV"`
+	Csv  string `json:"CSV"`
 	Desc string `json:"desc"`
 }
 
@@ -708,6 +662,13 @@ type MyHubStatus struct {
 	LastSyncedAt string `json:"lastSyncedAt"`
 }
 
+type NewClusterEventRequest struct {
+	EventName   string `json:"eventName"`
+	Description string `json:"description"`
+	ClusterID   string `json:"clusterID"`
+	AccessKey   string `json:"accessKey"`
+}
+
 type Option struct {
 	Name string `json:"name"`
 }
@@ -897,6 +858,46 @@ type QueryMapForPanel struct {
 type QueryMapForPanelGroup struct {
 	PanelGroupID  string              `json:"panelGroupID"`
 	PanelQueryMap []*QueryMapForPanel `json:"panelQueryMap"`
+}
+
+// Defines the details for the new cluster being connected
+type RegisterClusterRequest struct {
+	// Name of the cluster
+	ClusterName string `json:"clusterName"`
+	// Description of the cluster
+	Description *string `json:"description"`
+	// Cluster Platform Name eg. GKE,AWS, Others
+	PlatformName string `json:"platformName"`
+	// Project ID the cluster is being connected to
+	ProjectID string `json:"projectID"`
+	// Cluster type : Internal or External
+	ClusterType string `json:"clusterType"`
+	// Namespace where the cluster agent is being installed
+	AgentNamespace *string `json:"agentNamespace"`
+	// Name of service account used by cluster agent
+	ServiceAccount *string `json:"serviceAccount"`
+	// Scope of the cluster agent : ns or cluster
+	AgentScope string `json:"agentScope"`
+	// Bool value indicating whether agent ns used already exists on cluster or not
+	AgentNsExists *bool `json:"agentNsExists"`
+	// Bool value indicating whether service account used already exists on cluster or not
+	AgentSaExists *bool `json:"agentSaExists"`
+	// Bool value indicating whether agent will skip ssl checks or not
+	SkipSsl *bool `json:"skipSsl"`
+	// Node selectors used by cluster agent
+	NodeSelector *string `json:"nodeSelector"`
+	// Node tolerations used by cluster agent
+	Tolerations []*Toleration `json:"tolerations"`
+}
+
+// Response received for registering a new cluster
+type RegisterClusterResponse struct {
+	// Token used to verify and retrieve the cluster agent manifest
+	Token string `json:"token"`
+	// Unique ID for the newly registered cluster
+	ClusterID string `json:"clusterID"`
+	// Cluster name as sent in request
+	ClusterName string `json:"clusterName"`
 }
 
 type Resource struct {
@@ -1095,8 +1096,9 @@ type Workflow struct {
 	// Cluster type : Internal or External
 	ClusterType string `json:"clusterType"`
 	// Bool value indicating if the workflow has removed
-	IsRemoved     bool    `json:"isRemoved"`
-	LastUpdatedBy *string `json:"last_updated_by"`
+	IsRemoved bool `json:"isRemoved"`
+	// Provides audit context to workflow i.e who ran the workflow
+	LastUpdatedBy *string `json:"lastUpdatedBy"`
 }
 
 // Defines filter options for workflows
@@ -1146,8 +1148,9 @@ type WorkflowRun struct {
 	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
 	ExecutionData string `json:"executionData"`
 	// Bool value indicating if the workflow run has removed
-	IsRemoved  *bool  `json:"isRemoved"`
-	ExecutedBy string `json:"executed_by"`
+	IsRemoved *bool `json:"isRemoved"`
+	// Provides audit context to workflow run i.e who ran the workflow
+	ExecutedBy string `json:"executedBy"`
 }
 
 type WorkflowRunDetails struct {
@@ -1175,6 +1178,8 @@ type WorkflowRunInput struct {
 	WorkflowRunID string `json:"workflowRunID"`
 	// Name of the workflow
 	WorkflowName string `json:"workflowName"`
+	// Provides audit context to workflow run i.e who ran the workflow
+	ExecutedBy string `json:"executedBy"`
 	// Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
 	ExecutionData string `json:"executionData"`
 	// ID of the cluster agent in which the workflow is running

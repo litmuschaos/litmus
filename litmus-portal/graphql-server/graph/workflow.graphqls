@@ -98,6 +98,10 @@ input WorkflowRunInput {
   """
   workflowName: String!
   """
+  Provides audit context to workflow run i.e who ran the workflow
+  """
+  executedBy: String!
+  """
   Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
   """
   executionData: String!
@@ -406,7 +410,10 @@ type WorkflowRun {
   Bool value indicating if the workflow run has removed
   """
   isRemoved: Boolean
-  executed_by: String!
+  """
+  Provides audit context to workflow run i.e who ran the workflow
+  """
+  executedBy: String!
 }
 
 """
@@ -537,7 +544,10 @@ type Workflow {
   Bool value indicating if the workflow has removed
   """
   isRemoved: Boolean!
-  last_updated_by: String
+  """
+  Provides audit context to workflow i.e who ran the workflow
+  """
+  lastUpdatedBy: String
 }
 
 """

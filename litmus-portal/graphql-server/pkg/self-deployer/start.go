@@ -43,7 +43,7 @@ func StartDeployer(projectID string) {
 		tolerations = nil
 	}
 
-	clusterInput := model.ClusterInput{
+	clusterInput := model.RegisterClusterRequest{
 		ProjectID:      projectID,
 		ClusterName:    "Self-Agent",
 		ClusterType:    "internal",

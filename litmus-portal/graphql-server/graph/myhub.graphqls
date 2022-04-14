@@ -151,7 +151,7 @@ type PackageInformation {
 
 type Experiments {
   name: String!
-  cSV: String!
+  CSV: String!
   desc: String!
 }
 
