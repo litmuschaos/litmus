@@ -13,7 +13,7 @@ import { WORKFLOW_DETAILS } from '../../../graphql';
 import { Role } from '../../../models/graphql/user';
 import {
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -50,12 +50,12 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     setModalOpen(true);
   };
 
-  const { data, loading, error } = useQuery<Workflow, WorkflowDataVars>(
+  const { data, loading, error } = useQuery<Workflow, WorkflowDataRequest>(
     WORKFLOW_DETAILS,
     {
       variables: {
-        workflowRunsInput: {
-          project_id: projectID,
+        workflowRunsRequest: {
+          projectID: projectID,
           pagination: {
             page: 0,
             limit: 3,
@@ -66,7 +66,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     }
   );
 
-  const workflowRunCount = data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0;
+  const workflowRunCount = data?.getWorkflowRuns.totalNoOfWorkflowRuns ?? 0;
 
   if (error) {
     console.error('Error fetching Workflow Data');
@@ -112,9 +112,9 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             'homeViews.agentConfiguredHome.recentWorkflowRuns.schedule'
           )}
         >
-          {data?.getWorkflowRuns.workflow_runs.map((workflow) => {
+          {data?.getWorkflowRuns.workflowRuns.map((workflow) => {
             return (
-              <WorkflowRunCard key={workflow.workflow_run_id} data={workflow} />
+              <WorkflowRunCard key={workflow.workflowRunID} data={workflow} />
             );
           })}
         </RecentOverviewContainer>

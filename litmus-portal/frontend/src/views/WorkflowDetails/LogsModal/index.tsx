@@ -18,10 +18,10 @@ import useStyles from './styles';
 interface NodeLogsModalProps {
   logsOpen: boolean;
   handleClose: () => void;
-  cluster_id: string;
-  workflow_run_id: string;
+  clusterID: string;
+  workflowRunID: string;
   data: ExecutionData;
-  workflow_name: string;
+  workflowName: string;
 }
 
 interface SelectedNodeType extends Node {
@@ -31,22 +31,22 @@ interface SelectedNodeType extends Node {
 const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
   logsOpen,
   handleClose,
-  cluster_id,
-  workflow_run_id,
+  clusterID,
+  workflowRunID,
   data,
-  workflow_name,
+  workflowName,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const nodeSelection = useActions(NodeSelectionActions);
   const [nodesArray, setNodesArray] = useState<SelectedNodeType[]>([]);
 
-  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
+  const { podName } = useSelector((state: RootState) => state.selectedNode);
 
   const changeNodeLogs = (selectedKey: string) => {
     nodeSelection.selectNode({
       ...data.nodes[selectedKey],
-      pod_name: selectedKey,
+      podName: selectedKey,
     });
   };
 
@@ -76,7 +76,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
       <div className={classes.root}>
         <div className={classes.header}>
           <Typography className={classes.title}>
-            {t('workflowDetailsView.headerDesc')} {workflow_name}
+            {t('workflowDetailsView.headerDesc')} {workflowName}
           </Typography>
         </div>
         <div className={classes.section}>
@@ -84,7 +84,7 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
             {nodesArray.map((node: SelectedNodeType) => (
               <div
                 className={`${classes.nodeData}
-                  ${node.id === pod_name && classes.selectedNode}`}
+                  ${node.id === podName && classes.selectedNode}`}
                 onClick={() => changeNodeLogs(node.id)}
                 key={node.id}
               >
@@ -115,10 +115,10 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   />
                 </span>
                 <Typography className={classes.nodeName}>
-                  <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>
+                  <strong>{trimstring(data.nodes[podName].name, 30)}</strong>
                 </Typography>
               </div>
-              <WorkflowStatus phase={data.nodes[pod_name].phase} />
+              <WorkflowStatus phase={data.nodes[podName].phase} />
               <div>
                 <Typography className={classes.subLogsHeader}>
                   <strong>
@@ -126,9 +126,9 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   </strong>
                 </Typography>
                 <Typography>
-                  {data.nodes[pod_name].phase === 'Pending'
+                  {data.nodes[podName].phase === 'Pending'
                     ? '- -'
-                    : timeDifference(data.nodes[pod_name].startedAt)}
+                    : timeDifference(data.nodes[podName].startedAt)}
                 </Typography>
               </div>
               <div>
@@ -138,11 +138,11 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
                   </strong>
                 </Typography>
                 <Typography>
-                  {data.nodes[pod_name].finishedAt === '' ? (
+                  {data.nodes[podName].finishedAt === '' ? (
                     <span>- -</span>
                   ) : (
                     <span>
-                      {timeDifference(data.nodes[pod_name].finishedAt)}
+                      {timeDifference(data.nodes[podName].finishedAt)}
                     </span>
                   )}
                 </Typography>
@@ -150,11 +150,11 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
             </div>
             <div className={classes.logsHeight}>
               <LogsSwitcher
-                cluster_id={cluster_id}
-                workflow_run_id={workflow_run_id}
-                pod_namespace={data.namespace}
-                pod_name={pod_name}
-                pod_type={data.nodes[pod_name].type}
+                clusterID={clusterID}
+                workflowRunID={workflowRunID}
+                podNamespace={data.namespace}
+                podName={podName}
+                podType={data.nodes[podName].type}
               />
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { useLazyQuery, useQuery } from '@apollo/client';
 import { RadioGroup, Typography, useTheme } from '@material-ui/core';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import {
   ButtonOutlined,
   LitmusCard,
@@ -8,15 +9,15 @@ import {
   Search,
 } from 'litmus-ui';
 import React, {
-  lazy,
   forwardRef,
+  lazy,
   useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import Loader from '../../../components/Loader';
 import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
@@ -31,17 +32,16 @@ import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
 import useStyles from './styles';
-import Loader from '../../../components/Loader';
 
 const AgentDeployModal = lazy(
   () => import('../../../components/AgentDeployModal')
 );
 
 interface Cluster {
-  cluster_name: string;
-  is_active: boolean;
-  cluster_id: string;
-  agent_namespace: string;
+  clusterName: string;
+  isActive: boolean;
+  clusterID: string;
+  agentNamespace: string;
 }
 
 const ChooseWorkflowAgent = forwardRef((_, ref) => {
@@ -124,13 +124,13 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
       const clusters: Cluster[] = [];
       if (data && data.getCluster.length !== 0) {
         data.getCluster.forEach((e: Cluster) => {
-          if (e.is_active === true) {
+          if (e.isActive === true) {
             // Populating all the cluster data in the clusters[] array
             clusters.push({
-              cluster_name: e.cluster_name,
-              is_active: e.is_active,
-              cluster_id: e.cluster_id,
-              agent_namespace: e.agent_namespace,
+              clusterName: e.clusterName,
+              isActive: e.isActive,
+              clusterID: e.clusterID,
+              agentNamespace: e.agentNamespace,
             });
             // Setting the initial workflow yaml to be of type Workflow
             workflow.setWorkflowDetails({
@@ -181,7 +181,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   // Filter the clusters based on search results
   const filteredCluster = clusterData.filter((cluster: Cluster) => {
     if (search === null) return cluster;
-    if (cluster.cluster_name.toLowerCase().includes(search.toLowerCase()))
+    if (cluster.clusterName.toLowerCase().includes(search.toLowerCase()))
       return cluster;
     return null;
   });
@@ -190,12 +190,12 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   useEffect(() => {
     if (currentlySelectedAgent !== '') {
       clusterData.forEach((cluster) => {
-        if (currentlySelectedAgent === cluster.cluster_id) {
+        if (currentlySelectedAgent === cluster.clusterID) {
           workflow.setWorkflowDetails({
-            clusterid: cluster.cluster_id,
-            project_id: selectedProjectID,
-            clustername: cluster.cluster_name,
-            namespace: cluster.agent_namespace,
+            clusterid: cluster.clusterID,
+            projectID: selectedProjectID,
+            clustername: cluster.clusterName,
+            namespace: cluster.agentNamespace,
           });
         }
       });
@@ -284,25 +284,25 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
               {filteredCluster?.length > 0 ? (
                 filteredCluster.map((cluster) => (
                   <LitmusCard
-                    key={cluster.cluster_id}
-                    glow={currentlySelectedAgent === cluster.cluster_id}
+                    key={cluster.clusterID}
+                    glow={currentlySelectedAgent === cluster.clusterID}
                     width="40%"
                     height="4rem"
                     className={classes.litmusCard}
                     borderColor={
-                      currentlySelectedAgent === cluster.cluster_id
+                      currentlySelectedAgent === cluster.clusterID
                         ? palette.primary.main
                         : palette.border.main
                     }
                   >
                     <RadioButton
-                      value={cluster.cluster_id}
+                      value={cluster.clusterID}
                       className={classes.agentRadioButton}
-                      data-cy={cluster.cluster_name}
+                      data-cy={cluster.clusterName}
                     >
                       <div>
-                        <Typography>{cluster.cluster_name}</Typography>
-                        <Typography>{cluster.cluster_id}</Typography>
+                        <Typography>{cluster.clusterName}</Typography>
+                        <Typography>{cluster.clusterID}</Typography>
                       </div>
                     </RadioButton>
                   </LitmusCard>

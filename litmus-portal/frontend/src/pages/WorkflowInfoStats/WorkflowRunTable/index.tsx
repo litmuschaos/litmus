@@ -19,7 +19,7 @@ import {
   ExecutionData,
   Pagination,
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
   WorkflowRunFilterInput,
 } from '../../../models/graphql/workflowData';
 import {
@@ -60,13 +60,13 @@ interface WorkFlowTests {
 }
 
 interface WorkflowRunTableProps {
-  workflowId: string;
-  workflowRunId: string;
+  workflowID: string;
+  workflowRunID: string;
 }
 
 const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
-  workflowId,
-  workflowRunId,
+  workflowID,
+  workflowRunID,
 }) => {
   // get ProjectID
   const projectID = getProjectID();
@@ -76,11 +76,11 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
   const [wfRunData, setWfRunData] = React.useState<WorkFlowTests[]>([]);
 
   const [dateRange, setDateRange] = React.useState<WorkflowRunFilterInput>({
-    workflow_name: '',
-    cluster_name: 'All',
-    workflow_status: 'All',
-    date_range: {
-      start_date: new Date(0).valueOf().toString(),
+    workflowName: '',
+    clusterName: 'All',
+    workflowStatus: 'All',
+    dateRange: {
+      startDate: new Date(0).valueOf().toString(),
     },
   });
 
@@ -144,19 +144,19 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     error: errorWeightage,
   } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(WORKFLOW_LIST_DETAILS, {
     variables: {
-      workflowInput: { project_id: projectID, workflow_ids: [workflowId] },
+      workflowInput: { projectID: projectID, workflowIDs: [workflowID] },
     },
   });
 
   const { loading: loadWfRun, error: errorWfRun } = useQuery<
     Workflow,
-    WorkflowDataVars
+    WorkflowDataRequest
   >(WORKFLOW_RUN_DETAILS, {
     variables: {
-      workflowRunsInput: {
-        project_id: projectID,
-        workflow_ids: [workflowId],
-        workflow_run_ids: [workflowRunId],
+      workflowRunsRequest: {
+        projectID: projectID,
+        workflowIDs: [workflowID],
+        workflowRunIDs: [workflowRunID],
         pagination: {
           page: paginationData.page,
           limit: paginationData.limit,
@@ -166,9 +166,9 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     },
     onCompleted: (data) => {
       const workflowTestsArray: WorkFlowTests[] = [];
-      if (data.getWorkflowRuns.workflow_runs.length > 0) {
+      if (data.getWorkflowRuns.workflowRuns.length > 0) {
         const executionData: ExecutionData = JSON.parse(
-          data?.getWorkflowRuns?.workflow_runs[0]?.execution_data
+          data?.getWorkflowRuns?.workflowRuns[0]?.executionData
         );
         const { nodes } = executionData;
         let index: number = 1;
@@ -178,11 +178,11 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
             if (node.chaosData) {
               const { chaosData } = node;
               const weightageMap: WeightageMap[] = weightageDetail
-                ? weightageDetail?.ListWorkflow.workflows[0]?.weightages
+                ? weightageDetail?.listWorkflow.workflows[0]?.weightages
                 : [];
               /* eslint-disable no-loop-func */
               weightageMap.forEach((weightage) => {
-                if (weightage.experiment_name === node.name) {
+                if (weightage.experimentName === node.name) {
                   workflowTestsArray.push({
                     test_id: index,
                     test_name: node.name,
@@ -274,12 +274,12 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     // Change filter value for date range
     setDateRange({
       ...dateRange,
-      date_range: {
-        start_date: new Date(selectStartDate)
+      dateRange: {
+        startDate: new Date(selectStartDate)
           .setHours(0, 0, 0)
           .valueOf()
           .toString(),
-        end_date: new Date(selectEndDate)
+        endDate: new Date(selectEndDate)
           .setHours(23, 59, 59)
           .valueOf()
           .toString(),

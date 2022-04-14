@@ -8,36 +8,36 @@ import YAML from 'yaml';
 import { StyledTab, TabPanel } from '../../../components/Tabs';
 import {
   WORKFLOW_DETAILS_WITH_EXEC_DATA,
-  WORKFLOW_LOGS,
+  WORKFLOW_LOGS
 } from '../../../graphql';
 import {
   PodLog,
   PodLogRequest,
-  PodLogVars,
+  PodLogVars
 } from '../../../models/graphql/podLog';
 import {
   ExecutionData,
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest
 } from '../../../models/graphql/workflowData';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
 interface ChaosDataVar {
-  exp_pod: string;
-  runner_pod: string;
-  chaos_namespace: string;
+  expPod: string;
+  runnerPod: string;
+  chaosNamespace: string;
 }
 
 interface LogsSwitcherProps extends PodLogRequest {}
 
 const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
-  cluster_id,
-  workflow_run_id,
-  pod_namespace,
-  pod_name,
-  pod_type,
+  clusterID,
+  workflowRunID,
+  podNamespace,
+  podName,
+  podType,
 }) => {
   const theme = useTheme();
   const { type } = useSelector((state: RootState) => state.selectedNode);
@@ -50,70 +50,70 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   const { t } = useTranslation();
   const projectID = getProjectID();
 
-  const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
+  const { data: workflow_data } = useQuery<Workflow, WorkflowDataRequest>(
     WORKFLOW_DETAILS_WITH_EXEC_DATA,
     {
       variables: {
-        workflowRunsInput: {
-          project_id: projectID,
-          workflow_run_ids: [workflow_run_id],
+        workflowRunsRequest: {
+          projectID: projectID,
+          workflowRunIDs: [workflowRunID],
         },
       },
     }
   );
 
-  const workflow = workflow_data?.getWorkflowRuns.workflow_runs[0];
+  const workflow = workflow_data?.getWorkflowRuns.workflowRuns[0];
 
   const [chaosData, setChaosData] = useState<ChaosDataVar>({
-    exp_pod: '',
-    runner_pod: '',
-    chaos_namespace: '',
+    expPod: '',
+    runnerPod: '',
+    chaosNamespace: '',
   });
 
   useEffect(() => {
     if (workflow !== undefined) {
-      const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
-        .nodes[pod_name];
+      const nodeData = (JSON.parse(workflow.executionData) as ExecutionData)
+        .nodes[podName];
       if (nodeData && nodeData.chaosData)
         setChaosData({
-          exp_pod: nodeData.chaosData.experimentPod,
-          runner_pod: nodeData.chaosData.runnerPod,
-          chaos_namespace: nodeData.chaosData.namespace,
+          expPod: nodeData.chaosData.experimentPod,
+          runnerPod: nodeData.chaosData.runnerPod,
+          chaosNamespace: nodeData.chaosData.namespace,
         });
       else
         setChaosData({
-          exp_pod: '',
-          runner_pod: '',
-          chaos_namespace: '',
+          expPod: '',
+          runnerPod: '',
+          chaosNamespace: '',
         });
     }
-  }, [workflow_data, pod_name]);
+  }, [workflow_data, podName]);
 
   const [chaosResult, setChaosResult] = useState('');
 
   useEffect(() => {
     if (workflow !== undefined) {
-      const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
-        .nodes[pod_name];
+      const nodeData = (JSON.parse(workflow.executionData) as ExecutionData)
+        .nodes[podName];
       if (nodeData?.chaosData?.chaosResult) {
         setChaosResult(YAML.stringify(nodeData.chaosData?.chaosResult));
       } else {
         setChaosResult('Chaos Result Not available');
       }
     }
-  }, [workflow_data, pod_name]);
+  }, [workflow_data, podName]);
 
   const { data } = useSubscription<PodLog, PodLogVars>(WORKFLOW_LOGS, {
     variables: {
       podDetails: {
-        cluster_id,
-        workflow_run_id,
-        pod_name,
-        pod_namespace,
-        pod_type,
-        exp_pod: chaosData.exp_pod,
-        runner_pod: chaosData.runner_pod,
-        chaos_namespace: chaosData.chaos_namespace,
+        clusterID,
+        workflowRunID,
+        podName,
+        podNamespace,
+        podType,
+        expPod: chaosData.expPod,
+        runnerPod: chaosData.runnerPod,
+        chaosNamespace: chaosData.chaosNamespace,
       },
     },
   });
@@ -129,7 +129,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     }
     if (
       workflow !== undefined &&
-      (JSON.parse(workflow.execution_data) as ExecutionData).nodes[pod_name]
+      (JSON.parse(workflow.executionData) as ExecutionData).nodes[podName]
         .type === 'ChaosEngine'
     ) {
       return t('workflowDetailsView.nodeLogs.chaosLogs');
@@ -162,11 +162,11 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
         <div data-cy="LogsWindow">
           <div>
             {workflow !== undefined &&
-            JSON.parse(workflow?.execution_data).nodes[pod_name].type ===
+            JSON.parse(workflow?.executionData).nodes[podName].type ===
               'ChaosEngine' ? (
               <ButtonFilled
                 onClick={() => {
-                  downloadLogs(podLogs, pod_name);
+                  downloadLogs(podLogs, podName);
                 }}
                 className={classes.downloadLogsBtn}
               >

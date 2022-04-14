@@ -1,39 +1,39 @@
 export interface Member {
-  Email: string;
-  FirstName: string;
-  Invitation: string;
-  JoinedAt: string;
-  Role: string;
-  UserID: string;
-  UserName: string;
-  DeactivatedAt: string;
+  email: string;
+  firstName: string;
+  invitation: string;
+  joinedAt: string;
+  role: string;
+  userID: string;
+  userName: string;
+  deactivatedAt: string;
 }
 
 export interface Project {
-  Members: Member[];
-  Name: string;
-  UID: string;
-  ID: string;
-  State: string;
-  CreatedAt: string;
-  UpdatedAt: string;
-  RemovedAt: string;
+  members: Member[];
+  name: string;
+  uid: string;
+  id: string;
+  state: string;
+  createdAt: string;
+  updatedAt: string;
+  removedAt: string;
 }
 
 export interface Owner {
-  UserId: string;
-  Username: string;
+  userID: string;
+  username: string;
 }
 
 export interface MemberData {
-  Owner: Owner[];
-  Total: number;
+  owner: Owner[];
+  total: number;
 }
 
 export interface ProjectStats {
-  Name: string;
-  ProjectId: string;
-  Members: MemberData;
+  name: string;
+  projectID: string;
+  members: MemberData;
 }
 
 export interface UserDetails {
@@ -42,19 +42,19 @@ export interface UserDetails {
   name: string;
   email: string;
   id: string;
-  company_name: string;
-  updated_at: string;
-  created_at: string;
-  removed_at: string;
-  is_email_verified: string;
+  companyName: string;
+  updatedAt: string;
+  createdAt: string;
+  removedAt: string;
+  isEmailVerified: string;
   role: string;
 }
 
 export interface MyHubDetail {
   id: string;
-  HubName: string;
-  RepoBranch: string;
-  RepoURL: string;
+  hubName: string;
+  repoBranch: string;
+  repoURL: string;
 }
 
 export interface CurrentUserDetails {
@@ -86,10 +86,10 @@ export interface UserData {
   username: string;
   email: string;
   name: string;
-  logged_in: boolean;
-  created_at: string;
-  updated_at: string;
-  deactivated_at: string;
+  loggedIn: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deactivatedAt: string;
 }
 
 export interface UpdateUserStateInput {
@@ -108,42 +108,42 @@ export interface SSHKeys {
 
 export interface MyHubInput {
   id?: string;
-  HubName: string;
-  RepoURL: string;
-  RepoBranch: string;
-  IsPrivate: Boolean;
-  AuthType: MyHubType;
-  Token?: string;
-  UserName?: string;
-  Password?: string;
-  SSHPrivateKey?: string;
-  SSHPublicKey?: string;
+  hubName: string;
+  repoURL: string;
+  repoBranch: string;
+  isPrivate: Boolean;
+  authType: MyHubType;
+  token?: string;
+  userName?: string;
+  password?: string;
+  sshPrivateKey?: string;
+  sshPublicKey?: string;
 }
 
 export interface MyHubData {
   id: string;
-  RepoURL: string;
-  RepoBranch: string;
-  ProjectID: string;
-  HubName: string;
-  CreatedAt: string;
-  UpdatedAt: string;
+  repoURL: string;
+  repoBranch: string;
+  projectID: string;
+  hubName: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateMyHub {
-  MyHubDetails: MyHubInput;
+  myHubDetails: MyHubInput;
   projectID: string;
 }
 
 export enum MyHubType {
-  basic = 'basic',
-  token = 'token',
-  ssh = 'ssh',
-  none = 'none',
+  BASIC = 'BASIC',
+  TOKEN = 'TOKEN',
+  SSH = 'SSH',
+  NONE = 'NONE',
 }
 
 export interface Projects {
-  listProjects: Project[];
+  getProjects: Project[];
 }
 
 export interface ProjectDetail {
@@ -155,23 +155,23 @@ export interface ProjectDetailVars {
 }
 
 export enum Role {
-  viewer = 'Viewer',
-  editor = 'Editor',
-  owner = 'Owner',
+  VIEWER = 'VIEWER',
+  EDITOR = 'EDITOR',
+  OWNER = 'OWNER',
 }
 
 export enum UserRole {
-  admin = 'admin',
-  user = 'user',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 
 export enum InvitationStatus {
-  PENDING = 'Pending',
-  ACCEPTED = 'Accepted',
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
 }
 
 export enum UserStatus {
-  DELETED = 'deleted',
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
+  DELETED = 'DELETED',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }

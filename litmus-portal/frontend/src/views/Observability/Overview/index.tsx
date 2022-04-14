@@ -15,7 +15,7 @@ import {
   LIST_DATASOURCE_OVERVIEW,
   WORKFLOW_DETAILS,
 } from '../../../graphql';
-import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
+import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
   DashboardList,
   ListDashboardVars,
@@ -26,7 +26,7 @@ import {
 } from '../../../models/graphql/dataSourceDetails';
 import {
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -54,9 +54,9 @@ const Overview: React.FC = () => {
   // Query to check if agent is present or not
   const { data: agentList, loading: agentListLoading } = useQuery<
     Clusters,
-    ClusterVars
+    ClusterRequest
   >(GET_CLUSTER_LENGTH, {
-    variables: { project_id: getProjectID() },
+    variables: { projectID: getProjectID() },
     fetchPolicy: 'network-only',
   });
 
@@ -88,10 +88,10 @@ const Overview: React.FC = () => {
     data: workflowData,
     loading: workflowLoading,
     error: workflowError,
-  } = useQuery<Workflow, WorkflowDataVars>(WORKFLOW_DETAILS, {
+  } = useQuery<Workflow, WorkflowDataRequest>(WORKFLOW_DETAILS, {
     variables: {
-      workflowRunsInput: {
-        project_id: projectID,
+      workflowRunsRequest: {
+        projectID: projectID,
         pagination: {
           page: 0,
           limit: 3,
@@ -103,7 +103,7 @@ const Overview: React.FC = () => {
 
   // Get count for workflowData length to render conditionally
   if (workflowData) {
-    WorkflowStatisticsCount = workflowData.getWorkflowRuns.workflow_runs.length;
+    WorkflowStatisticsCount = workflowData.getWorkflowRuns.workflowRuns.length;
   }
 
   // Fetch data to display for the monitoring dashboard cards
@@ -287,10 +287,10 @@ const Overview: React.FC = () => {
               <Loader />
             </Center>
           ) : (
-            workflowData?.getWorkflowRuns.workflow_runs.map((workflow) => {
+            workflowData?.getWorkflowRuns.workflowRuns.map((workflow) => {
               return (
                 <WorkflowStatisticsCard
-                  key={workflow.workflow_id}
+                  key={workflow.workflowID}
                   data={workflow}
                 />
               );

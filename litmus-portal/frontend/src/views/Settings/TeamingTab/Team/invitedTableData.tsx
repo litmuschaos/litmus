@@ -5,13 +5,12 @@ import {
   MenuItem,
   TableCell,
   Tooltip,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { ButtonFilled, LightPills } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
-// import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../graphql';
 import { InvitationStatus } from '../../../../models/graphql/invite';
 import { Member, Role } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';

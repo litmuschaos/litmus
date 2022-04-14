@@ -19,7 +19,7 @@ import { ScheduleWorkflow } from '../../models/graphql/scheduleData';
 import {
   ExecutionData,
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
   WorkflowSubscription,
   WorkflowSubscriptionInput,
 } from '../../models/graphql/workflowData';
@@ -46,7 +46,7 @@ const NodeTable = lazy(
 );
 
 interface URLParams {
-  workflowRunId: string;
+  workflowRunID: string;
 }
 
 const WorkflowDetails: React.FC = () => {
@@ -70,25 +70,25 @@ const WorkflowDetails: React.FC = () => {
     (state: RootState) => state.tabNumber.node
   );
 
-  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
+  const { podName } = useSelector((state: RootState) => state.selectedNode);
 
-  const { workflowRunId }: URLParams = useParams();
+  const { workflowRunID }: URLParams = useParams();
 
   // Query to get workflows
-  const { subscribeToMore, data, error } = useQuery<Workflow, WorkflowDataVars>(
-    WORKFLOW_DETAILS_WITH_EXEC_DATA,
-    {
-      variables: {
-        workflowRunsInput: {
-          project_id: projectID,
-          workflow_run_ids: [workflowRunId],
-        },
+  const { subscribeToMore, data, error } = useQuery<
+    Workflow,
+    WorkflowDataRequest
+  >(WORKFLOW_DETAILS_WITH_EXEC_DATA, {
+    variables: {
+      workflowRunsRequest: {
+        projectID: projectID,
+        workflowRunIDs: [workflowRunID],
       },
-      fetchPolicy: 'cache-and-network',
-    }
-  );
+    },
+    fetchPolicy: 'cache-and-network',
+  });
 
-  const workflowRun = data?.getWorkflowRuns.workflow_runs[0];
+  const workflowRun = data?.getWorkflowRuns.workflowRuns[0];
 
   const { data: workflowData, loading } = useQuery<
     ScheduledWorkflows,
@@ -96,8 +96,8 @@ const WorkflowDetails: React.FC = () => {
   >(WORKFLOW_LIST_DETAILS, {
     variables: {
       workflowInput: {
-        project_id: projectID,
-        workflow_ids: [workflowRun?.workflow_id ?? ' '],
+        projectID: projectID,
+        workflowIDs: [workflowRun?.workflowID ?? ' '],
       },
     },
     fetchPolicy: 'cache-and-network',
@@ -113,22 +113,19 @@ const WorkflowDetails: React.FC = () => {
           if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
             return prev;
 
-          const modifiedWorkflows = prev.getWorkflowRuns.workflow_runs.slice();
+          const modifiedWorkflows = prev.getWorkflowRuns.workflowRuns.slice();
           const newWorkflow = subscriptionData.data.workflowEventListener;
 
           // Update only the required workflowRun
-          if (
-            modifiedWorkflows[0].workflow_run_id === newWorkflow.workflow_run_id
-          )
+          if (modifiedWorkflows[0].workflowRunID === newWorkflow.workflowRunID)
             modifiedWorkflows[0] = newWorkflow;
 
-          const totalNoOfWorkflows =
-            prev.getWorkflowRuns.total_no_of_workflow_runs;
+          const totalNoOfWorkflows = prev.getWorkflowRuns.totalNoOfWorkflowRuns;
 
           return {
             getWorkflowRuns: {
-              total_no_of_workflow_runs: totalNoOfWorkflows,
-              workflow_runs: modifiedWorkflows,
+              totalNoOfWorkflowRuns: totalNoOfWorkflows,
+              workflowRuns: modifiedWorkflows,
             },
           };
         },
@@ -141,10 +138,12 @@ const WorkflowDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    const scheduledWorkflow = workflowData?.ListWorkflow.workflows;
+    const scheduledWorkflow = workflowData?.listWorkflow.workflows;
     if (scheduledWorkflow) {
       setworkflowSchedulesDetails(
-        (scheduledWorkflow[0] ? scheduledWorkflow[0] : null) as ScheduleWorkflow
+        (scheduledWorkflow[0]
+          ? scheduledWorkflow[0]
+          : null) as unknown as ScheduleWorkflow
       );
     }
   }, [workflowData]);
@@ -156,21 +155,19 @@ const WorkflowDetails: React.FC = () => {
 
   // Setting NodeId of first Node in redux for selection of first node in Argo graph by default
   useEffect(() => {
-    if (workflowRun !== undefined && pod_name === '') {
+    if (workflowRun !== undefined && podName === '') {
       if (
-        JSON.parse(workflowRun.execution_data as string).nodes !== null &&
-        Object.keys(JSON.parse(workflowRun.execution_data as string).nodes)
+        JSON.parse(workflowRun.executionData as string).nodes !== null &&
+        Object.keys(JSON.parse(workflowRun.executionData as string).nodes)
           .length
       ) {
-        const firstNodeId = JSON.parse(workflowRun.execution_data as string)
+        const firstNodeId = JSON.parse(workflowRun.executionData as string)
           .nodes[
-          Object.keys(JSON.parse(workflowRun.execution_data as string).nodes)[0]
+          Object.keys(JSON.parse(workflowRun.executionData as string).nodes)[0]
         ].name;
         nodeSelection.selectNode({
-          ...JSON.parse(workflowRun.execution_data as string).nodes[
-            firstNodeId
-          ],
-          pod_name: firstNodeId,
+          ...JSON.parse(workflowRun.executionData as string).nodes[firstNodeId],
+          podName: firstNodeId,
         });
       } else {
         setWorkflowFailed(true);
@@ -185,10 +182,10 @@ const WorkflowDetails: React.FC = () => {
           <BackButton />
         </div>
         {/* If workflowRun data is present then display the workflowRun details */}
-        {workflowRun && pod_name !== '' && !loading ? (
+        {workflowRun && podName !== '' && !loading ? (
           <div>
             <Typography data-cy="wfName" className={classes.title}>
-              {t('workflowDetailsView.headerDesc')} {workflowRun.workflow_name}
+              {t('workflowDetailsView.headerDesc')} {workflowRun.workflowName}
             </Typography>
 
             {/* AppBar */}
@@ -220,7 +217,7 @@ const WorkflowDetails: React.FC = () => {
                 {/* Argo Workflow DAG Graph */}
                 <ArgoWorkflow
                   nodes={
-                    (JSON.parse(workflowRun.execution_data) as ExecutionData)
+                    (JSON.parse(workflowRun.executionData) as ExecutionData)
                       .nodes
                   }
                   setIsInfoToggled={setIsInfoToggled}
@@ -229,10 +226,10 @@ const WorkflowDetails: React.FC = () => {
                   {/* Workflow Details and Experiment Logs */}
                   {isInfoToggled ? (
                     <div>
-                      {pod_name !==
-                      JSON.parse(workflowRun.execution_data).nodes[
+                      {podName !==
+                      JSON.parse(workflowRun.executionData).nodes[
                         Object.keys(
-                          JSON.parse(workflowRun.execution_data as string).nodes
+                          JSON.parse(workflowRun.executionData as string).nodes
                         )[0]
                       ].name ? (
                         /* Node details and Logs */
@@ -241,11 +238,11 @@ const WorkflowDetails: React.FC = () => {
                             workflowSchedulesDetails?.workflow_manifest as string
                           }
                           setIsInfoToggled={setIsInfoToggled}
-                          cluster_id={workflowRun.cluster_id}
-                          workflow_run_id={workflowRun.workflow_run_id}
+                          clusterID={workflowRun.clusterID}
+                          workflowRunID={workflowRun.workflowRunID}
                           data={
                             JSON.parse(
-                              workflowRun.execution_data
+                              workflowRun.executionData
                             ) as ExecutionData
                           }
                         />
@@ -254,14 +251,14 @@ const WorkflowDetails: React.FC = () => {
                         <WorkflowInfo
                           tab={1}
                           setIsInfoToggled={setIsInfoToggled}
-                          workflow_phase={workflowRun.phase}
-                          cluster_name={workflowRun.cluster_name}
+                          workflowPhase={workflowRun.phase}
+                          clusterName={workflowRun.clusterName}
                           data={
                             JSON.parse(
-                              workflowRun.execution_data
+                              workflowRun.executionData
                             ) as ExecutionData
                           }
-                          resiliency_score={workflowRun.resiliency_score}
+                          resiliencyScore={workflowRun.resiliencyScore}
                         />
                       )}
                     </div>
@@ -274,27 +271,27 @@ const WorkflowDetails: React.FC = () => {
                 {/* Workflow Info */}
                 <WorkflowInfo
                   tab={2}
-                  workflow_phase={workflowRun.phase}
-                  cluster_name={workflowRun.cluster_name}
-                  data={JSON.parse(workflowRun.execution_data) as ExecutionData}
-                  resiliency_score={workflowRun.resiliency_score}
+                  workflowPhase={workflowRun.phase}
+                  clusterName={workflowRun.clusterName}
+                  data={JSON.parse(workflowRun.executionData) as ExecutionData}
+                  resiliencyScore={workflowRun.resiliencyScore}
                 />
                 {/* Table for all Node details */}
                 <NodeTable
                   manifest={
                     workflowSchedulesDetails?.workflow_manifest as string
                   }
-                  data={JSON.parse(workflowRun.execution_data) as ExecutionData}
+                  data={JSON.parse(workflowRun.executionData) as ExecutionData}
                   handleClose={() => setLogsModalOpen(true)}
                 />
                 {/* Modal for viewing logs of a node */}
                 <NodeLogsModal
                   logsOpen={logsModalOpen}
                   handleClose={() => setLogsModalOpen(false)}
-                  cluster_id={workflowRun.cluster_id}
-                  workflow_run_id={workflowRun.workflow_run_id}
-                  data={JSON.parse(workflowRun.execution_data) as ExecutionData}
-                  workflow_name={workflowRun.workflow_name}
+                  clusterID={workflowRun.clusterID}
+                  workflowRunID={workflowRun.workflowRunID}
+                  data={JSON.parse(workflowRun.executionData) as ExecutionData}
+                  workflowName={workflowRun.workflowName}
                 />
               </SuspenseLoader>
             </TabPanel>

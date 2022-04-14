@@ -14,8 +14,8 @@ import { GET_CLUSTER, KUBE_OBJ } from '../../../../../../graphql';
 import { DashboardDetails } from '../../../../../../models/dashboardsData';
 import {
   Cluster,
+  ClusterRequest,
   Clusters,
-  ClusterVars,
 } from '../../../../../../models/graphql/clusterData';
 import {
   GVRRequest,
@@ -184,8 +184,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
     data: agentList,
     loading,
     error,
-  } = useQuery<Clusters, ClusterVars>(GET_CLUSTER, {
-    variables: { project_id: projectID },
+  } = useQuery<Clusters, ClusterRequest>(GET_CLUSTER, {
+    variables: { projectID: projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -295,16 +295,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   useEffect(() => {
     const availableAgents = (agentList?.getCluster ?? []).filter((cluster) => {
       return (
-        cluster.is_active &&
-        cluster.is_cluster_confirmed &&
-        cluster.is_registered
+        cluster.isActive && cluster.isClusterConfirmed && cluster.isRegistered
       );
     });
     setActiveAgents(availableAgents);
     if (dashboardDetails.agentID === '' && !configure) {
       setDashboardDetails({
         ...dashboardDetails,
-        agentID: availableAgents.length ? availableAgents[0].cluster_id : '',
+        agentID: availableAgents.length ? availableAgents[0].clusterID : '',
       });
       setUpdate(true);
     }
@@ -471,8 +469,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             data-cy="agentName"
           >
             {activeAgents.map((agent: Cluster) => (
-              <MenuItem key={agent.cluster_id} value={agent.cluster_id}>
-                {agent.cluster_name}
+              <MenuItem key={agent.clusterID} value={agent.clusterID}>
+                {agent.clusterName}
               </MenuItem>
             ))}
           </Select>
@@ -484,10 +482,10 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             </Typography>
           ) : !(agentList?.getCluster ?? []).filter((cluster) => {
               return (
-                cluster.cluster_id === dashboardDetails.agentID &&
-                cluster.is_active &&
-                cluster.is_cluster_confirmed &&
-                cluster.is_registered
+                cluster.clusterID === dashboardDetails.agentID &&
+                cluster.isActive &&
+                cluster.isClusterConfirmed &&
+                cluster.isRegistered
               );
             }).length && agentList?.getCluster.length ? (
             <Typography className={classes.formErrorText}>

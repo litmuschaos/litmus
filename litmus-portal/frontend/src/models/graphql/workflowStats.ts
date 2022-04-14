@@ -4,9 +4,9 @@ export type DateValue = {
 };
 
 export enum Filter {
-  Monthly = 'Monthly',
-  Daily = 'Daily',
-  Hourly = 'Hourly',
+  MONTHLY = 'MONTHLY',
+  DAILY = 'DAILY',
+  HOURLY = 'HOURLY',
 }
 
 export interface WorkflowStatsResponse {
@@ -15,6 +15,6 @@ export interface WorkflowStatsResponse {
 
 export interface WorkflowStatsVars {
   filter: Filter;
-  project_id: string;
-  show_workflow_runs: boolean;
+  projectID: string;
+  showWorkflowRuns: boolean;
 }

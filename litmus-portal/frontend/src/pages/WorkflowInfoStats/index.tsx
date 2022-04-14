@@ -27,7 +27,7 @@ import {
   HeatmapDataResponse,
   HeatmapDataVars,
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
 } from '../../models/graphql/workflowData';
 import {
   ListWorkflowsInput,
@@ -65,7 +65,7 @@ const TestCalendarHeatmapTooltip = ({
 };
 
 interface URLParams {
-  workflowId: string;
+  workflowID: string;
 }
 
 const valueThreshold = [13, 26, 39, 49, 59, 69, 79, 89, 100];
@@ -76,7 +76,7 @@ const WorkflowInfoStats: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const { workflowId }: URLParams = useParams();
+  const { workflowID }: URLParams = useParams();
 
   // Keep track of whether workflow has run or not
   const [hasWorkflowRun, setHasWorkflowRun] = useState<boolean>(true);
@@ -86,34 +86,35 @@ const WorkflowInfoStats: React.FC = () => {
     WORKFLOW_LIST_DETAILS,
     {
       variables: {
-        workflowInput: { project_id: projectID, workflow_ids: [workflowId] },
+        workflowInput: { projectID: projectID, workflowIDs: [workflowID] },
       },
       fetchPolicy: 'cache-and-network',
     }
   );
 
-  const { data: workflowRunData } = useQuery<Workflow, WorkflowDataVars>(
+  // TODO: shift out
+  const { data: workflowRunData } = useQuery<Workflow, WorkflowDataRequest>(
     gql`
-      query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
+      query workflowDetails($workflowRunsRequest: GetWorkflowRunsInput!) {
         getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
-          total_no_of_workflow_runs
-          workflow_runs {
-            workflow_run_id
+          totalNoOfWorkflowRuns
+          workflowRuns {
+            workflowRunID
           }
         }
       }
     `,
     {
       variables: {
-        workflowRunsInput: {
-          project_id: projectID,
-          workflow_ids: [workflowId],
+        workflowRunsRequest: {
+          projectID: projectID,
+          workflowIDs: [workflowID],
         },
       },
       onCompleted: () => {
         setHasWorkflowRun(
           workflowRunData !== undefined &&
-            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs > 0
+            workflowRunData.getWorkflowRuns.totalNoOfWorkflowRuns > 0
         );
       },
       fetchPolicy: 'cache-and-network',
@@ -121,7 +122,7 @@ const WorkflowInfoStats: React.FC = () => {
   );
 
   const workflowRunID =
-    workflowRunData?.getWorkflowRuns?.workflow_runs[0]?.workflow_run_id ?? '';
+    workflowRunData?.getWorkflowRuns?.workflowRuns[0]?.workflowRunID ?? '';
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -136,6 +137,7 @@ const WorkflowInfoStats: React.FC = () => {
     setShowTable(false);
   };
 
+  // TODO: shift out
   // Apollo query to get the heatmap data
   const { data: heatmapData, loading } = useQuery<
     HeatmapDataResponse,
@@ -164,8 +166,8 @@ const WorkflowInfoStats: React.FC = () => {
     `,
     {
       variables: {
-        project_id: projectID,
-        workflow_id: workflowId,
+        projectID: projectID,
+        workflowID: workflowID,
         year,
       },
       fetchPolicy: 'cache-and-network',
@@ -215,7 +217,7 @@ const WorkflowInfoStats: React.FC = () => {
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
           <Typography className={classes.heading} data-cy="statsWorkflowName">
-            {data?.ListWorkflow.workflows[0].workflow_name}
+            {data?.listWorkflow.workflows[0].workflowName}
           </Typography>
           <Typography className={classes.subHeading}>
             Here’s the statistics of the selected workflow
@@ -232,16 +234,16 @@ const WorkflowInfoStats: React.FC = () => {
         <InfoSection
           data={data}
           workflowRunLength={
-            workflowRunData.getWorkflowRuns.total_no_of_workflow_runs
+            workflowRunData.getWorkflowRuns.totalNoOfWorkflowRuns
           }
         />
       )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
-      {data?.ListWorkflow.workflows[0].cronSyntax !== '' ||
-      (workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs &&
-        workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs > 1) ? (
+      {data?.listWorkflow.workflows[0].cronSyntax !== '' ||
+      (workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns &&
+        workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns > 1) ? (
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
@@ -253,7 +255,7 @@ const WorkflowInfoStats: React.FC = () => {
             <div className={classes.formControlParent}>
               <Typography>
                 Total runs till date:{' '}
-                {workflowRunData?.getWorkflowRuns.total_no_of_workflow_runs}
+                {workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns}
               </Typography>
               <FormControl
                 className={classes.formControl}
@@ -329,7 +331,7 @@ const WorkflowInfoStats: React.FC = () => {
             <StackedBarGraph
               date={workflowRunDate}
               averageResiliency={binResiliencyScore}
-              workflowID={workflowId}
+              workflowID={workflowID}
               handleTableOpen={handleTableOpen}
               handleTableClose={handleTableClose}
               showTable={showTable}
@@ -345,8 +347,8 @@ const WorkflowInfoStats: React.FC = () => {
         </div>
       ) : (
         <WorkflowRunTable
-          workflowId={workflowId}
-          workflowRunId={workflowRunID}
+          workflowID={workflowID}
+          workflowRunID={workflowRunID}
         />
       )}
     </Wrapper>

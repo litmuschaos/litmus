@@ -1,25 +1,25 @@
 export interface Cluster {
-  cluster_id: string;
-  project_id: string;
-  cluster_name: string;
+  clusterID: string;
+  projectID: string;
+  clusterName: string;
   description: string;
-  platform_name: string;
-  access_key: string;
-  is_registered: boolean;
-  is_cluster_confirmed: boolean;
-  is_active: boolean;
-  updated_at: string;
-  created_at: string;
-  cluster_type: string;
-  no_of_workflows: number;
-  no_of_schedules: number;
+  platformName: string;
+  accessKey: string;
+  isRegistered: boolean;
+  isClusterConfirmed: boolean;
+  isActive: boolean;
+  updatedAt: string;
+  createdAt: string;
+  clusterType: string;
+  noOfWorkflows: number;
+  noOfSchedules: number;
   token: string;
-  agent_namespace: string;
-  serviceaccount: string;
-  agent_scope: string;
-  agent_ns_exists: boolean;
-  agent_sa_exists: boolean;
-  last_workflow_timestamp: string;
+  agentNamespace: string;
+  serviceAccount: string;
+  agentScope: string;
+  agentNSExists: boolean;
+  agentSAExists: boolean;
+  lastWorkflowTimestamp: string;
   version: string;
 }
 
@@ -27,36 +27,26 @@ export interface Clusters {
   getCluster: Cluster[];
 }
 
-export interface CreateClusterInput {
-  ClusterInput: {
-    cluster_name: string;
+export interface CreateClusterRequest {
+  request: {
+    clusterName: string;
     description: string;
-    platform_name: string;
-    project_id: string;
-    cluster_type: string;
-    agent_namespace: string;
-    serviceaccount: string;
-    agent_scope: string;
-    agent_ns_exists: boolean;
-    agent_sa_exists: boolean;
+    platformName: string;
+    projectID: string;
+    clusterType: string;
+    agentNamespace: string;
+    serviceAccount: string;
+    agentScope: string;
+    agentNSExists: boolean;
+    agentSAExists: boolean;
   };
 }
 
-export interface clusterRegResponse {
-  token: string;
-  cluster_id: string;
-  cluster_name: string;
-}
-
-export interface CreateClusterInputResponse {
-  userClusterReg: clusterRegResponse;
-}
-
-export interface ClusterVars {
-  project_id: string;
+export interface ClusterRequest {
+  projectID: string;
 }
 
 export interface DeleteClusters {
   projectID: string;
-  cluster_ids: string;
+  clusterIDs: string;
 }

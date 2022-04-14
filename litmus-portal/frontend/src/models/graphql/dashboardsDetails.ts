@@ -1,54 +1,54 @@
 export interface PanelOption {
   points: boolean;
   grids: boolean;
-  left_axis: boolean;
+  leftAxis: boolean;
 }
 
 export interface PromQuery {
-  queryid: string;
-  prom_query_name: string;
+  queryID: string;
+  promQueryName: string;
   legend: string;
   resolution: string;
   minstep: string;
   line: boolean;
-  close_area: boolean;
+  closeArea: boolean;
 }
 
 export interface Panel {
-  panel_id?: string;
-  created_at?: string;
-  panel_group_id?: string;
-  prom_queries: PromQuery[];
-  panel_options: PanelOption;
-  panel_name: string;
-  y_axis_left: string;
-  y_axis_right: string;
-  x_axis_down: string;
+  panelID?: string;
+  createdAt?: string;
+  panelGroupID?: string;
+  promQueries: PromQuery[];
+  panelOptions: PanelOption;
+  panelName: string;
+  yAxisLeft: string;
+  yAxisRight: string;
+  xAxisDown: string;
   unit: string;
 }
 
 export interface PanelGroup {
-  panel_group_id?: string;
-  panel_group_name: string;
+  panelGroupID?: string;
+  panelGroupName: string;
   panels: Panel[];
 }
 
 export interface PanelResponse {
-  panel_id: string;
-  created_at: string;
-  prom_queries: PromQuery[];
-  panel_options: PanelOption;
-  panel_name: string;
-  y_axis_left: string;
-  y_axis_right: string;
-  x_axis_down: string;
+  panelID: string;
+  createdAt: string;
+  promQueries: PromQuery[];
+  panelOptions: PanelOption;
+  panelName: string;
+  yAxisLeft: string;
+  yAxisRight: string;
+  xAxisDown: string;
   unit: string;
 }
 
 export interface PanelGroupResponse {
   panels: PanelResponse[];
-  panel_group_name: string;
-  panel_group_id: string;
+  panelGroupName: string;
+  panelGroupID: string;
 }
 
 export interface Resource {
@@ -61,73 +61,73 @@ export interface ApplicationMetadata {
   applications: Resource[];
 }
 
-export interface CreateDashboardInput {
-  createDBInput: {
-    ds_id: string;
-    db_name: string;
-    db_type_id: string;
-    db_type_name: string;
-    db_information: string;
-    chaos_event_query_template: string;
-    chaos_verdict_query_template: string;
-    application_metadata_map: ApplicationMetadata[];
-    panel_groups: PanelGroup[];
-    end_time: string;
-    start_time: string;
-    project_id: string;
-    cluster_id: string;
-    refresh_rate: string;
+export interface CreateDashboardRequest {
+  request: {
+    dsID: string;
+    dbName: string;
+    dbTypeID: string;
+    dbTypeName: string;
+    dbInformation: string;
+    chaosEventQueryTemplate: string;
+    chaosVerdictQueryTemplate: string;
+    applicationMetadataMap: ApplicationMetadata[];
+    panelGroups: PanelGroup[];
+    endTime: string;
+    startTime: string;
+    projectID: string;
+    clusterID: string;
+    refreshRate: string;
   };
-  createDashBoard?: ListDashboardResponse;
+  createDashBoard?: GetDashboardResponse;
 }
 
-export interface updatePanelGroupInput {
-  panel_group_name: string;
-  panel_group_id: string;
+export interface UpdatePanelGroupRequest {
+  panelGroupID: string;
+  panelGroupName: string;
   panels: Panel[];
 }
 
-export interface UpdateDashboardInput {
-  updateDBInput: {
-    db_id: string;
-    ds_id?: string;
-    db_name?: string;
-    db_type_id?: string;
-    db_type_name?: string;
-    db_information?: string;
-    chaos_event_query_template?: string;
-    chaos_verdict_query_template?: string;
-    application_metadata_map?: ApplicationMetadata[];
-    end_time?: string;
-    start_time?: string;
-    cluster_id?: string;
-    refresh_rate?: string;
-    panel_groups?: updatePanelGroupInput[];
+export interface UpdateDashboardRequest {
+  request: {
+    dbID: string;
+    dsID?: string;
+    dbName?: string;
+    dbTypeID?: string;
+    dbTypeName?: string;
+    dbInformation?: string;
+    chaosEventQueryTemplate?: string;
+    chaosVerdictQueryTemplate?: string;
+    applicationMetadataMap?: ApplicationMetadata[];
+    endTime?: string;
+    startTime?: string;
+    clusterID?: string;
+    refreshRate?: string;
+    panelGroups?: UpdatePanelGroupRequest[];
   };
   chaosQueryUpdate: boolean;
 }
 
-export interface DeleteDashboardInput {
+export interface DeleteDashboardRequest {
   projectID: string;
   dbID: string;
 }
 
-export interface UpdatePanelInput {
-  panelInput: Panel[];
+export interface UpdatePanelRequest {
+  request: Panel[];
 }
 
-export interface PortalDashboardsVars {
+export interface PortalDashboardsRequest {
   projectID: string;
   hubName: string;
 }
 
 export interface PortalDashboardsResponse {
   name: string;
-  dashboard_data: string;
+  dashboardData: string;
 }
 
-export interface PortalDashboardList {
-  PortalDashboardData: PortalDashboardsResponse[];
+export interface GetPortalDashboard {
+  portalDashboardData: PortalDashboardsResponse[];
 }
 
 export interface ResourceResponse {
@@ -140,39 +140,39 @@ export interface ApplicationMetadataResponse {
   applications: ResourceResponse[];
 }
 
-export interface ListDashboardResponse {
-  db_id: string;
-  ds_id: string;
-  db_name: string;
-  db_type: string;
-  cluster_name: string;
-  ds_name: string;
-  ds_type: string;
-  ds_url: string;
-  ds_health_status: string;
-  db_type_id: string;
-  db_type_name: string;
-  db_information: string;
-  chaos_event_query_template: string;
-  chaos_verdict_query_template: string;
-  application_metadata_map: ApplicationMetadataResponse[];
-  panel_groups: PanelGroupResponse[];
-  end_time: string;
-  start_time: string;
-  refresh_rate: string;
-  project_id: string;
-  cluster_id: string;
-  created_at: string;
-  updated_at: string;
-  viewed_at: string;
+export interface GetDashboardResponse {
+  dbID: string;
+  dsID: string;
+  dbName: string;
+  dbType: string;
+  clusterName: string;
+  dsName: string;
+  dsType: string;
+  dsURL: string;
+  dsHealthStatus: string;
+  dbTypeID: string;
+  dbTypeName: string;
+  dbInformation: string;
+  chaosEventQueryTemplate: string;
+  chaosVerdictQueryTemplate: string;
+  applicationMetadataMap: ApplicationMetadataResponse[];
+  panelGroups: PanelGroupResponse[];
+  endTime: string;
+  startTime: string;
+  refreshRate: string;
+  projectID: string;
+  clusterID: string;
+  createdAt: string;
+  updatedAt: string;
+  viewedAt: string;
 }
 
-export interface ListDashboardVars {
+export interface GetDashboardRequest {
   projectID: string;
   clusterID?: string;
   dbID?: string;
 }
 
-export interface DashboardList {
-  ListDashboard: ListDashboardResponse[];
+export interface GetDashboard {
+  getDashboard: GetDashboardResponse[];
 }
