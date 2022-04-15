@@ -42,7 +42,7 @@ func WorkflowRequest(clusterData map[string]string, requestType string, external
 
 		// If Workflow is delete/not present in the cluster
 		if wfOb == nil {
-			logrus.Info("workflow not available for workflowid:" + extData.WorkflowID + ", workflow_run_id:" + extData.WorkflowRunID)
+			logrus.Info("Workflow not found for workflowid:" + extData.WorkflowID + ", workflow_run_id:" + extData.WorkflowRunID)
 			var evt = types.WorkflowEvent{
 				Namespace:    clusterData["AGENT_NAMESPACE"],
 				WorkflowType: "events",
@@ -57,7 +57,7 @@ func WorkflowRequest(clusterData map[string]string, requestType string, external
 				return err
 			}
 
-			logrus.Print("response from sync workflow:", response)
+			logrus.Print("Response from sync workflow:", response)
 
 			return nil
 		}
@@ -78,7 +78,7 @@ func WorkflowRequest(clusterData map[string]string, requestType string, external
 			return err
 		}
 
-		logrus.Print("response from sync workflow: ", response)
+		logrus.Print("Response from sync workflow: ", response)
 	}
 
 	return nil
