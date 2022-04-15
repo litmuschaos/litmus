@@ -114,7 +114,6 @@ func init() {
 			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
 
-			logrus.Print("here1", clusterData)
 			_, err = k8s.ClusterRegister(clusterData)
 			if err != nil {
 				logrus.Fatal(err)
@@ -140,7 +139,6 @@ func main() {
 	//streams the event data to graphql server
 	go events.WorkflowUpdates(clusterData, stream)
 
-	logrus.Info("here-2", clusterData)
 	// listen for cluster actions
 	go requests.ClusterConnect(clusterData)
 

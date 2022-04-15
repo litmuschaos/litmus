@@ -140,10 +140,8 @@ func IsClusterConfirmed() (bool, string, error) {
 		if err != nil {
 			return false, "", err
 		}
-		logrus.Info("here3", getSecret.StringData)
-		logrus.Info("here4", getSecret.StringData["ACCESS_KEY"])
 
-		return true, getSecret.StringData["ACCESS_KEY"], nil
+		return true, string(getSecret.Data["ACCESS_KEY"]), nil
 	} else if err != nil {
 		return false, "", err
 	}
