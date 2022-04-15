@@ -264,6 +264,7 @@ rules:
       - statefulsets
       - pods
       - configmaps
+      - secrets
     verbs:
       - get
       - list
