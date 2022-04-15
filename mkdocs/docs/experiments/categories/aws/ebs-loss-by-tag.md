@@ -133,6 +133,11 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
         <td> Provide the common tag for target volumes. It'll be in form of <code>key:value</code> (Ex: 'team:devops')</td>
         <td>  </td>
       </tr>
+      <tr>
+        <td> REGION </td>
+        <td> The region name for the target volumes</td>
+        <td> </td>
+      </tr>
     </table>
     
     <h2>Optional Fields</h2>
@@ -158,11 +163,6 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
         <td> The time duration between the attachment and detachment of the volumes (sec) </td>
         <td> Defaults to 30s </td>
       </tr>  
-      <tr>
-        <td> REGION </td>
-        <td> The region name for the target volumes</td>
-        <td> </td>
-      </tr>
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple volumes</td>
