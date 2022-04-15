@@ -134,10 +134,14 @@ func IsClusterConfirmed() (bool, string, error) {
 
 	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
 	if k8s_errors.IsNotFound(err) {
-		return false, "", nil
+		return false, "", errors.New(AgentConfigName + " configmap not found")
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
 		getSecret, err := clientset.CoreV1().Secrets(AgentNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
 		if err != nil {
+			return false, "", errors.New(AgentSecretName + " secret not found")
+		}
+
+		if k8s_errors.IsNotFound(err) {
 			return false, "", err
 		}
 
