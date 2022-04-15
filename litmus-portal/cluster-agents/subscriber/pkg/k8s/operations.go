@@ -137,7 +137,12 @@ func IsClusterConfirmed() (bool, string, error) {
 	if k8s_errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
-		return true, getCM.Data["ACCESS_KEY"], nil
+		getSecret, err := clientset.CoreV1().Secrets(AgentNamespace).Get(ctx, AgentSecretName, metav1.GetOptions{})
+		if err != nil {
+			return false, "", err
+		}
+
+		return true, getSecret.StringData["ACCESS_KEY"], nil
 	} else if err != nil {
 		return false, "", err
 	}
