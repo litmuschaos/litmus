@@ -96,9 +96,9 @@ func init() {
 		logrus.WithError(err).Fatal("failed to check cluster confirmed status")
 	}
 
-	if isConfirmed == true {
+	if isConfirmed {
 		clusterData["ACCESS_KEY"] = newKey
-	} else if isConfirmed == false {
+	} else if !isConfirmed {
 		clusterConfirmByte, err := k8s.ClusterConfirm(clusterData)
 		if err != nil {
 			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("failed to confirm cluster")
@@ -110,10 +110,11 @@ func init() {
 			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("failed to parse cluster confirm data")
 		}
 
-		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed == true {
+		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed {
 			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
 
+			logrus.Print("here1", clusterData)
 			_, err = k8s.ClusterRegister(clusterData)
 			if err != nil {
 				logrus.Fatal(err)
@@ -139,6 +140,7 @@ func main() {
 	//streams the event data to graphql server
 	go events.WorkflowUpdates(clusterData, stream)
 
+	logrus.Info("here-2", clusterData)
 	// listen for cluster actions
 	go requests.ClusterConnect(clusterData)
 

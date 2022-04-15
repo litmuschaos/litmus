@@ -127,21 +127,19 @@ func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Cl
 }
 
 func IsClusterConfirmed() (bool, string, error) {
-	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ctx, AgentConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
 	if k8s_errors.IsNotFound(err) {
 		return false, "", nil
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
-		getSecret, err := clientset.CoreV1().Secrets(AgentNamespace).Get(ctx, AgentSecretName, metav1.GetOptions{})
+		getSecret, err := clientset.CoreV1().Secrets(AgentNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
 		if err != nil {
 			return false, "", err
 		}
-
 		return true, getSecret.StringData["ACCESS_KEY"], nil
 	} else if err != nil {
 		return false, "", err
