@@ -594,7 +594,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: imrajdas/server:latest
+          image: litmuschaos/litmusportal-server:ci
           volumeMounts:
             - mountPath: /tmp/gitops
               name: gitops-storage
@@ -623,7 +623,7 @@ spec:
             - name: PORTAL_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "imrajdas/subscriber:latest"
+              value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
