@@ -113,7 +113,7 @@ func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Cl
 			}
 		}
 		if downCount == 0 {
-			logrus.Info("all deployments up")
+			logrus.Info("All agent deployments are up")
 			return
 		} else {
 			retries += 1
@@ -213,7 +213,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			return nil, err
 		}
 
-		logrus.Info("successfully created for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
+		logrus.Info("Successfully created for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "update" {
 		getObj, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})

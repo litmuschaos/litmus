@@ -18,7 +18,7 @@ func ClusterConnect(clusterData map[string]string) {
 	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     username\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to parse url")
+		logrus.WithError(err).Fatal("Failed to parse URL")
 	}
 	scheme := "ws"
 	if serverURL.Scheme == "https" {
@@ -26,11 +26,11 @@ func ClusterConnect(clusterData map[string]string) {
 	}
 
 	u := url.URL{Scheme: scheme, Host: serverURL.Host, Path: serverURL.Path}
-	logrus.Info("connecting to " + u.String())
+	logrus.Info("Connecting to " + u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to open websocket connection")
+		logrus.WithError(err).Fatal("Failed to established websocket connection")
 	}
 	defer c.Close()
 
@@ -41,12 +41,12 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		data, err := json.Marshal(payload)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to marshal message")
+			logrus.WithError(err).Fatal("Failed to marshal message")
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message after init")
+			logrus.WithError(err).Fatal("Failed to write message after init")
 			return
 		}
 
@@ -57,12 +57,12 @@ func ClusterConnect(clusterData map[string]string) {
 
 		data, err = json.Marshal(payload)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to marshal message")
+			logrus.WithError(err).Fatal("Failed to marshal message")
 		}
 
 		err = c.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to write message after start")
+			logrus.WithError(err).Fatal("Failed to write message after start")
 			return
 		}
 	}()
@@ -70,30 +70,30 @@ func ClusterConnect(clusterData map[string]string) {
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			logrus.WithError(err).Fatal("failed to read message")
+			logrus.WithError(err).Fatal("Failed to read message")
 		}
 
 		var r types.RawData
 		err = json.Unmarshal(message, &r)
 		if err != nil {
-			logrus.WithError(err).Error("error un-marshaling request payload")
+			logrus.WithError(err).Error("Error while parsing the server response")
 			continue
 		}
 
 		if r.Type == "connection_ack" {
-			logrus.Info("Cluster Connect Established, Listening....")
+			logrus.Info("Server connection established, Listening....")
 		}
 		if r.Type != "data" {
 			continue
 		}
 		if r.Payload.Errors != nil {
-			logrus.Error("graphql error : ", string(message))
+			logrus.Error("Error response from the server : ", string(message))
 			continue
 		}
 
 		err = RequestProcessor(clusterData, r)
 		if err != nil {
-			logrus.WithError(err).Error("error on processing request")
+			logrus.WithError(err).Error("Error on processing request")
 		}
 	}
 }
@@ -124,8 +124,7 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 			return errors.New("error reading cluster-action request [external-data]: " + err.Error())
 		}
 
-		// send pod logs
-		logrus.Print("LOG REQUEST ", r.Payload.Data.ClusterConnect.Action.ExternalData)
+		logrus.Print("Log Request: ", r.Payload.Data.ClusterConnect.Action.ExternalData)
 		k8s.SendPodLogs(clusterData, podRequest)
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
 		_, err := k8s.ClusterOperations(r.Payload.Data.ClusterConnect.Action)

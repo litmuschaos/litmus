@@ -72,7 +72,7 @@ func init() {
 	} else if clusterData["CUSTOM_TLS_CERT"] != "" {
 		cert, err := base64.StdEncoding.DecodeString(clusterData["CUSTOM_TLS_CERT"])
 		if err != nil {
-			logrus.Fatalf("failed to parse custom tls cert %v", err)
+			logrus.Fatalf("Failed to parse custom tls cert %v", err)
 		}
 		caCertPool := x509.NewCertPool()
 		caCertPool.AppendCertsFromPEM(cert)
@@ -89,11 +89,11 @@ func init() {
 		logrus.Fatal(err)
 	}
 
-	logrus.Info("all components live...starting up subscriber")
+	logrus.Info("Starting the subscriber")
 
 	isConfirmed, newKey, err := k8s.IsClusterConfirmed()
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to check cluster confirmed status")
+		logrus.WithError(err).Fatal("Failed to check cluster confirmed status")
 	}
 
 	if isConfirmed {
@@ -101,13 +101,13 @@ func init() {
 	} else if !isConfirmed {
 		clusterConfirmByte, err := k8s.ClusterConfirm(clusterData)
 		if err != nil {
-			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("failed to confirm cluster")
+			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("Failed to confirm cluster")
 		}
 
 		var clusterConfirmInterface types.Payload
 		err = json.Unmarshal(clusterConfirmByte, &clusterConfirmInterface)
 		if err != nil {
-			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("failed to parse cluster confirm data")
+			logrus.WithError(err).WithField("data", string(clusterConfirmByte)).Fatal("Failed to parse cluster confirm data")
 		}
 
 		if clusterConfirmInterface.Data.ClusterConfirm.IsClusterConfirmed {
@@ -118,12 +118,11 @@ func init() {
 			if err != nil {
 				logrus.Fatal(err)
 			}
-			logrus.Info(clusterData["CLUSTER_ID"] + " has been confirmed")
+			logrus.Info("ClusterID: ", clusterData["CLUSTER_ID"]+" has been confirmed")
 		} else {
-			logrus.Info(clusterData["CLUSTER_ID"] + " hasn't been confirmed")
+			logrus.Info("ClusterID: ", clusterData["CLUSTER_ID"]+" hasn't been confirmed")
 		}
 	}
-
 }
 
 func main() {
