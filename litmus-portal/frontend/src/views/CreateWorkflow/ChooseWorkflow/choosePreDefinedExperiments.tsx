@@ -247,7 +247,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
               <Typography className={classes.morePredefinedText}>
                 {t('createWorkflow.chooseWorkflow.morePredefined')}{' '}
                 <a
-                  href="https://github.com/chaoscarnival/bootcamps"
+                  href="https://github.com/chaoscarnival/bootcamps/tree/main/workflows"
                   target="_blank"
                   rel="noreferrer"
                 >
