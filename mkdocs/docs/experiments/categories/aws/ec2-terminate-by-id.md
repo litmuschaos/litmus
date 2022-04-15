@@ -142,6 +142,11 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <td> Instance ID of the target ec2 instance. Multiple IDs can also be provided as a comma(,) separated values</td>
         <td> Multiple IDs can be provided as `id1,id2` </td>
       </tr>
+      <tr>
+        <td> REGION </td>
+        <td> The region name of the target instace</td>
+        <td> </td>
+      </tr> 
     </table>
     
     <h2>Optional Fields</h2>
@@ -177,11 +182,6 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <td> Period to wait before and after injection of chaos in sec </td>
         <td> </td>
       </tr>    
-      <tr>
-        <td> REGION </td>
-        <td> The region name of the target instace</td>
-        <td> </td>
-      </tr> 
     </table>
 
 ## Experiment Examples
