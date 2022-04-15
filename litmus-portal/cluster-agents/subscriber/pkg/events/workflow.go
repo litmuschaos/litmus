@@ -42,7 +42,7 @@ var (
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, clusterData map[string]string) {
 	startTime, err := strconv.Atoi(clusterData["START_TIME"])
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to parse startTime")
+		logrus.WithError(err).Fatal("failed to parse START_TIME")
 	}
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
@@ -126,7 +126,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	}
 
 	nodes := make(map[string]types.Node)
-	logrus.Print("WORKFLOW EVENT ", workflowObj.UID, " ", eventType)
+	logrus.Print("workflow event ", workflowObj.UID, " ", eventType)
 
 	for _, nodeStatus := range workflowObj.Status.Nodes {
 
@@ -215,7 +215,7 @@ func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEven
 	}
 
 	if err != nil {
-		return "", errors.New(err.Error() + ": ERROR PARSING WORKFLOW EVENT")
+		return "", errors.New(err.Error() + ": Error while parsing workflow")
 	}
 
 	body, err := graphql.SendRequest(clusterData["SERVER_ADDR"], payload)
@@ -234,6 +234,6 @@ func WorkflowUpdates(clusterData map[string]string, event chan types.WorkflowEve
 			logrus.Print(err.Error())
 		}
 
-		logrus.Print("RESPONSE ", response)
+		logrus.Print("Server Response: ", response)
 	}
 }
