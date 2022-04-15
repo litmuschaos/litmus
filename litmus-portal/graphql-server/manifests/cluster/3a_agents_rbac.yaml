@@ -182,7 +182,7 @@ metadata:
     name: subscriber-cluster-role
 rules:
 - apiGroups: [""]
-  resources: ["configmaps"]
+  resources: ["configmaps", "secrets"]
   verbs: ["get","create","delete","update"]
 
 - apiGroups: [""]

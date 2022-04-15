@@ -173,34 +173,34 @@ const Routes: React.FC = () => {
               <Route exact path="/workflows" component={Workflows} />
               <Route
                 exact
-                path="/observability"
+                path="/analytics"
                 component={ObservabilityDashboard}
               />
               <Route
                 exact
-                path="/observability/datasource/create"
+                path="/analytics/datasource/create"
                 component={() => <DataSourceConfigurePage configure={false} />}
               />
               <Route
                 exact
-                path="/observability/datasource/configure"
+                path="/analytics/datasource/configure"
                 component={() => <DataSourceConfigurePage configure />}
               />
               <Route
                 exact
-                path="/observability/dashboard/create"
+                path="/analytics/dashboard/create"
                 component={() => (
                   <ChooseAndConfigureDashboards configure={false} />
                 )}
               />
               <Route
                 exact
-                path="/observability/dashboard/configure"
+                path="/analytics/dashboard/configure"
                 component={() => <ChooseAndConfigureDashboards configure />}
               />
               <Route
                 exact
-                path="/observability/monitoring-dashboard"
+                path="/analytics/monitoring-dashboard"
                 component={() => <DashboardPage />}
               />
               <Route exact path="/create-workflow" component={CreateWorkflow} />
@@ -221,7 +221,7 @@ const Routes: React.FC = () => {
               />
               <Route
                 exact
-                path="/observability/workflowStatistics/:workflowId"
+                path="/analytics/workflowStatistics/:workflowId"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -259,26 +259,14 @@ const Routes: React.FC = () => {
               <Redirect exact path="/getStarted" to="/home" />
               <Redirect exact path="/workflows/schedule" to="/workflows" />
               <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/analytics/overview" to="/analytics" />
               <Redirect
                 exact
-                path="/observability/overview"
-                to="/observability"
+                path="/analytics/litmusdashboard"
+                to="/analytics"
               />
-              <Redirect
-                exact
-                path="/observability/litmusdashboard"
-                to="/observability"
-              />
-              <Redirect
-                exact
-                path="/observability/datasource"
-                to="/observability"
-              />
-              <Redirect
-                exact
-                path="/observability/dashboard"
-                to="/observability"
-              />
+              <Redirect exact path="/analytics/datasource" to="/analytics" />
+              <Redirect exact path="/analytics/dashboard" to="/analytics" />
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
               <Redirect to="/404" />
             </Switch>
