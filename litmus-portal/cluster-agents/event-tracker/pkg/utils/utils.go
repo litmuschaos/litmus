@@ -34,8 +34,10 @@ var (
 )
 
 const (
-	ExternAgentConfigName = "agent-config"
-	ConditionPassed       = "ConditionPassed"
+	AgentConfigName = "agent-config"
+	AgentSecretName = "agent-secret"
+
+	ConditionPassed = "ConditionPassed"
 	//ConditionFailed       = "ConditionFailed"
 )
 
@@ -292,16 +294,24 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 }
 
 func getAgentConfigMapData() (string, string, string, error) {
-	clientset, err := k8s.K8sClient()
+	clientSet, err := k8s.K8sClient()
 	if err != nil {
 		return "", "", "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), ExternAgentConfigName, metav1.GetOptions{})
+	getCM, err := clientSet.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
 	if k8sErrors.IsNotFound(err) {
-		return "", "", "", errors.New(ExternAgentConfigName + " configmap not found")
+		return "", "", "", errors.New(AgentConfigName + " configmap not found")
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
-		return getCM.Data["ACCESS_KEY"], getCM.Data["CLUSTER_ID"], getCM.Data["SERVER_ADDR"], nil
+		getSecret, err := clientSet.CoreV1().Secrets(AgentNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
+		if err != nil {
+			return "", "", "", err
+		}
+		if k8sErrors.IsNotFound(err) {
+			return "", "", "", errors.New(AgentSecretName + " secret not found")
+		}
+
+		return string(getSecret.Data["ACCESS_KEY"]), string(getSecret.Data["CLUSTER_ID"]), getCM.Data["SERVER_ADDR"], nil
 	} else if err != nil {
 		return "", "", "", err
 	}
