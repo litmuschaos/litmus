@@ -2771,6 +2771,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#node-label-filter-for-selecting-the-target-pods" class="md-nav__link">
+    Node Label Filter For Selecting The Target Pods
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2898,6 +2905,71 @@
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEFAULT_APP_HEALTH_CHECK</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;false&#39;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="node-label-filter-for-selecting-the-target-pods">Node Label Filter For Selecting The Target Pods<a class="headerlink" href="#node-label-filter-for-selecting-the-target-pods" title="Permanent link">&para;</a></h3>
+<p>It defines the target application pod selection from a specific node. It is helpful for the scenarios where you want to select the pods scheduled on specific nodes as chaos candidates considering the pod affected percentage. It can be tuned via <code>NODE_LABEL</code> ENV.</p>
+<p><b>NOTE: This feature requires having node-level permission or clusterrole service account for filtering pods on a specific node.</b></p>
+<table>
+  <tr>
+    <th>APP_LABEL</th>
+    <th>TARGET_PODS</th>
+    <th>NODE_LABEL</th>
+    <th>SELECTED PODS</th>
+  </tr>
+  <tr>
+    <td>Provided</td>
+    <td>Provided</td>
+    <td>Provided</td>
+    <td>The target pods that are filtered from applabel and resides on node containing the given node label and also provided in TARGET_PODS env is selected</td>
+  </tr>
+   <tr>
+    <td>Provided</td>
+    <td>Not Provided</td>
+    <td>Provided</td>
+    <td>The pods that are filtered from applabel and resides on node containing the given node label is selected </td>
+  </tr>
+   <tr>
+    <td>Not Provided</td>
+    <td>Provided</td>
+    <td>Provided</td>
+    <td>The target pods are selected that resides on node with given node label </td>
+  </tr>
+    </tr>
+   <tr>
+    <td>Not Provided</td>
+    <td>Not Provided</td>
+    <td>Provided</td>
+    <td>Invalid</td>
+  </tr>
+   <tr>
+    <td>Not Provided</td>
+    <td>Not Provided</td>
+    <td>Not Provided</td>
+    <td>Invalid</td>
+  </tr>
+</table>
+
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## node label to filter target pods</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NODE_LABEL</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;kubernetes.io/hostname=worker-01&#39;</span><span class="w"></span>
 </code></pre></div>
 
               
