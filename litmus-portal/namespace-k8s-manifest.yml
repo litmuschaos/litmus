@@ -49,7 +49,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -107,7 +106,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 #these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -152,7 +150,6 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 roleRef:
   kind: Role
   name: subscriber-role-for-litmusportal-server
@@ -277,7 +274,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -316,7 +312,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -344,7 +339,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 # litmus-server-role is used by the litmusportal-server
 # If SELF_AGENT=false, then only litmus-server-role and litmus-server-rb are required.
 ---
@@ -383,7 +377,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-    namespace: ${LITMUS_PORTAL_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -405,7 +398,6 @@ metadata:
   name: litmus-portal-admin-config
 data:
   AGENT_SCOPE: namespace
-  AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
   DB_SERVER: "mongodb://mongo-service:27017"
   VERSION: "ci"
   SKIP_SSL_VERIFY: "false"
@@ -596,8 +588,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: AGENT_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: SELF_AGENT
               value: "true"
+            - name: SELF_AGENT_NODE_SELECTOR
+              value: ""
+            - name: SELF_AGENT_TOLERATIONS
+              value: ""
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64
               value: ""
@@ -605,10 +605,6 @@ spec:
               value: "namespace"
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
-            - name: SELF_AGENT_NODE_SELECTOR
-              value: ""
-            - name: SELF_AGENT_TOLERATIONS
-              value: ""
             - name: PORTAL_ENDPOINT
               value: "http://litmusportal-server-service:9002"
             - name: SUBSCRIBER_IMAGE
