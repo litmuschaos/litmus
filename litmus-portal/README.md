@@ -38,15 +38,15 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 
 Or
 
-> Master (Latest) Namespaced scope. Replace `<namespace>` with the desired namespace.
+> Master (Latest) Namespaced scope.
 
 ```bash
-export LITMUS_PORTAL_NAMESPACE="<namespace>"
-kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
+#Create a namespace eg: litmus
+kubectl create ns litmus
+#Install CRDs, if SELF_AGENT env is set to TRUE
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/litmus-portal/litmus-portal-crds.yml
-curl https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/mkdocs/docs/2.8.0/litmus-namespaced-2.8.0.yaml --output litmus-portal-namespaced-k8s-template.yml
-envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
-kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
+#Install ChaosCenter
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespace-k8s-manifest.yml -n litmus
 ```
 
 #### Configuration Options for Cluster scope.
@@ -57,13 +57,6 @@ kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 
 - All environment variables.
 
-#### Configuration Options for Namespace scope.
-
-- `litmus-portal-operations-config` configmap.
-
-  > `AgentNamespace: ${LITMUS_PORTAL_NAMESPACE}`
-
-- All environment variables.
 
 #### Retrieving external url to access the litmus portal
 
