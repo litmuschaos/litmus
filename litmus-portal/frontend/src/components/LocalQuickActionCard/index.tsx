@@ -40,7 +40,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
           alt: 'data source',
           onClick: () =>
             history.push({
-              pathname: '/observability/datasource/select',
+              pathname: '/analytics/datasource/select',
               search: `?projectID=${projectID}&projectRole=${userRole}`,
             }),
           text: t('quickActionCard.addDataSource'),

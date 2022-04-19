@@ -67,6 +67,7 @@ interface Filter {
   range: RangeType;
   selectedCluster: string;
   sortData: SortData;
+  workflowType: string;
   searchTokens: string[];
 }
 
@@ -106,6 +107,7 @@ const WorkflowComparisonTable = () => {
   const [filter, setFilter] = React.useState<Filter>({
     range: { startDate: 'all', endDate: 'all' },
     selectedCluster: 'All',
+    workflowType: 'All',
     sortData: {
       name: { sort: false, ascending: true },
       startDate: { sort: true, ascending: true },
@@ -603,6 +605,15 @@ const WorkflowComparisonTable = () => {
                   )
                 ).getTime();
       })
+      .filter((dataRow) =>
+        filter.workflowType === 'All'
+          ? true
+          : filter.workflowType === 'workflow'
+          ? dataRow.cronSyntax.length === 0 || dataRow.cronSyntax === ''
+          : filter.workflowType === 'cronworkflow'
+          ? dataRow.cronSyntax.length > 0
+          : false
+      )
       .sort((a, b) => {
         // Sorting based on unique fields
         if (filter.sortData.name.sort) {
@@ -691,6 +702,13 @@ const WorkflowComparisonTable = () => {
                 })
               }
               clusters={clusters}
+              workflowType={filter.workflowType}
+              workflowTypeFilterHandler={(value: string) => {
+                setFilter({
+                  ...filter,
+                  workflowType: value,
+                });
+              }}
               callbackToSetCluster={(clusterName: string) => {
                 setFilter({
                   ...filter,

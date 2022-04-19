@@ -1,5 +1,9 @@
 ### RBAC Manifests
+<<<<<<< HEAD
 ## If SELF_CLUSTER="true" then these permissions are required to apply
+=======
+## If SELF_AGENT="true" then these permissions are required to apply
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 ## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -279,7 +283,7 @@ metadata:
     name: subscriber-cr-for-litmusportal-server
 rules:
 - apiGroups: [""]
-  resources: [configmaps]
+  resources: [configmaps, secrets]
   verbs: [get, create, delete, update]
 - apiGroups: [""]
   resources: [pods/log]
@@ -326,7 +330,7 @@ rules:
   resources: [eventtrackerpolicies/status]
   verbs: [get, patch, update]
 - apiGroups: ["", extensions, apps]
-  resources: [deployments, daemonsets, statefulsets, pods, configmaps]
+  resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
   verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -342,7 +346,7 @@ subjects:
     name: litmus-server-account
     namespace: litmus
 # litmus-server-cr is used by the litmusportal-server
-# If SELF_CLUSTER=false, then only litmus-server-cr and litmus-server-crb are required.
+# If SELF_AGENT=false, then only litmus-server-cr and litmus-server-crb are required.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -572,7 +576,11 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
+<<<<<<< HEAD
           image: litmuschaos/curl:2.6.0
+=======
+          image: litmuschaos/curl:2.7.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -611,7 +619,7 @@ spec:
             - secretRef:
                 name: litmus-portal-admin-secret
           env:
-            - name: SELF_CLUSTER
+            - name: SELF_AGENT
               value: "true"
             # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
             - name: TLS_SECRET_NAME
@@ -627,15 +635,23 @@ spec:
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v3.2.3"
+              value: "litmuschaos/workflow-controller:v3.2.9"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v3.2.3"
+              value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
+<<<<<<< HEAD
               value: "litmuschaos/chaos-operator:2.6.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:2.6.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:2.6.0"
+=======
+              value: "litmuschaos/chaos-operator:2.7.0"
+            - name: LITMUS_CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:2.7.0"
+            - name: LITMUS_CHAOS_EXPORTER_IMAGE
+              value: "litmuschaos/chaos-exporter:2.7.0"
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -644,6 +660,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: SELF_AGENT_NODE_SELECTOR
+              value: ""
+            - name: SELF_AGENT_TOLERATIONS
+              value: ""
             - name: INGRESS
               value: "false"
             - name: INGRESS_NAME
@@ -651,7 +671,11 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
+<<<<<<< HEAD
               value: "v2.6.x"
+=======
+              value: "v2.7.x"
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
@@ -708,7 +732,11 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
+<<<<<<< HEAD
           image: litmuschaos/curl:2.6.0
+=======
+          image: litmuschaos/curl:2.7.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
           command: ["/bin/sh", "-c"]
           args:
             [

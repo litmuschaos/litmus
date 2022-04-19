@@ -24,6 +24,15 @@ import (
 func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		username := c.Param("username")
+
+		// Validating logged in user
+		if c.MustGet("username").(string) != username {
+			log.Error("auth error: unauthorized")
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		user, err := service.FindUserByUsername(username)
 		if err != nil {
 			log.Error(err)

@@ -226,7 +226,7 @@ const Overview: React.FC = () => {
             <ButtonFilled
               onClick={() => {
                 history.push({
-                  pathname: '/observability/datasource/create',
+                  pathname: '/analytics/datasource/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -264,7 +264,7 @@ const Overview: React.FC = () => {
               style={{ marginLeft: '0' }}
               onClick={() => {
                 history.push({
-                  pathname: '/observability/dashboard/create',
+                  pathname: '/analytics/dashboard/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -326,7 +326,7 @@ const Overview: React.FC = () => {
       {monitoringDashboardCount > 0 && (
         <RecentOverviewContainer
           heading="Recently viewed monitoring dashboards"
-          buttonLink="/observability/dashboard/create"
+          buttonLink="/analytics/dashboard/create"
           buttonImgSrc="./icons/cloudWhite.svg"
           buttonImgAlt="Create dashboard"
           buttonText="Create dashbaord"
@@ -359,7 +359,7 @@ const Overview: React.FC = () => {
                 className={classes.infoContainerButton}
                 onClick={() => {
                   history.push({
-                    pathname: '/observability/datasource/create',
+                    pathname: '/analytics/datasource/create',
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

@@ -20,6 +20,10 @@ var (
 	ErrUserAlreadyDeactivated        AppError = errors.New("user already deactivated")
 	ErrEmptyProjectName              AppError = errors.New("invalid project name")
 	ErrInvalidRole                   AppError = errors.New("invalid role")
+<<<<<<< HEAD
+=======
+	ErrInvalidEmail                  AppError = errors.New("invalid email")
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 )
 
 // ErrorStatusCodes holds the http status codes for every AppError
@@ -37,6 +41,10 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUserAlreadyDeactivated:        400,
 	ErrEmptyProjectName:              400,
 	ErrInvalidRole:                   400,
+<<<<<<< HEAD
+=======
+	ErrInvalidEmail:                  400,
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 }
 
 // ErrorDescriptions holds detailed error description for every AppError
@@ -50,4 +58,8 @@ var ErrorDescriptions = map[AppError]string{
 	ErrEmptyProjectName:              "Project name can't be empty",
 	ErrInvalidRole:                   "Role is invalid",
 	ErrProjectNotFound:               "This project does not exist",
+<<<<<<< HEAD
+=======
+	ErrInvalidEmail:                  "Email address is invalid",
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 }

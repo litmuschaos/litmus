@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: '8.5rem',
   },
   firstCol: {
+    flexWrap: 'wrap',
     display: 'flex',
     alignItems: 'center',
     marginLeft: theme.spacing(3),

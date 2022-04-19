@@ -42,6 +42,8 @@ interface TableToolBarProps {
     token?: string
   ) => void;
   clusters: string[];
+  workflowType: string;
+  workflowTypeFilterHandler: (value: string) => void;
   callbackToSetCluster: ClusterCallBackType;
   callbackToSetRange: RangeCallBackType;
   callbackToCompare: CompareCallBackType;
@@ -60,6 +62,8 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   handleSearch,
   searchToken,
   clusters,
+  workflowType,
+  workflowTypeFilterHandler,
   callbackToSetCluster,
   callbackToSetRange,
   callbackToCompare,
@@ -86,6 +90,12 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
   ) => {
     setCluster(event.target.value as String);
     callbackToSetCluster(event.target.value as string);
+  };
+
+  const handleWorkflowTypeChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    workflowTypeFilterHandler(event.target.value as string);
   };
 
   const CallbackFromRangeSelector = (
@@ -193,6 +203,40 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
         onClose={() => setDateRangeSelectorPopoverOpen(false)}
         callbackToSetRange={CallbackFromRangeSelector}
       />
+
+      <FormControl variant="outlined" className={classes.formControl}>
+        <InputLabel className={classes.selectText}>Workflow Type</InputLabel>
+        <Select
+          label="Workflow Type"
+          value={workflowType}
+          onChange={handleWorkflowTypeChange}
+          className={classes.selectText}
+          input={<OutlinedInput classes={outlinedInputClasses} />}
+          IconComponent={KeyboardArrowDownIcon}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            getContentAnchorEl: null,
+            classes: { paper: classes.menuList },
+          }}
+        >
+          <MenuItem value="All">
+            {t('chaosWorkflows.browseSchedules.options.all')}
+          </MenuItem>
+          <MenuItem value="workflow">
+            {t('chaosWorkflows.browseSchedules.options.workflow')}
+          </MenuItem>
+          <MenuItem value="cronworkflow">
+            {t('chaosWorkflows.browseSchedules.options.cronworkflow')}
+          </MenuItem>
+        </Select>
+      </FormControl>
 
       <FormControl variant="outlined" className={classes.formControl}>
         <InputLabel className={classes.selectText}>
