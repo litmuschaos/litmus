@@ -23,10 +23,17 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 #### Applying k8s manifest
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 > Litmus-2.7.0 (Stable) Cluster Scope manifest
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.7.0/mkdocs/docs/2.7.0/litmus-2.7.0.yaml
+=======
+> Litmus-2.8.0 (Stable) Cluster Scope manifest
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/mkdocs/docs/2.8.0/litmus-2.8.0.yaml
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
 > Litmus-2.8.0 (Stable) Cluster Scope manifest
 
@@ -49,6 +56,7 @@ Or
 
 ```bash
 <<<<<<< HEAD
+<<<<<<< HEAD
 export LITMUS_PORTAL_NAMESPACE="<namespace>"
 kubectl create ns ${LITMUS_PORTAL_NAMESPACE}
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.7.0/litmus-portal/litmus-portal-crds.yml
@@ -56,12 +64,17 @@ curl https://raw.githubusercontent.com/litmuschaos/litmus/2.7.0/mkdocs/docs/2.7.
 envsubst '${LITMUS_PORTAL_NAMESPACE}' < litmus-portal-namespaced-k8s-template.yml > ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml
 kubectl apply -f ${LITMUS_PORTAL_NAMESPACE}-ns-scoped-litmus-portal-manifest.yml -n ${LITMUS_PORTAL_NAMESPACE}
 =======
+=======
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/litmus-portal/litmus-portal-crds.yml
 #Install ChaosCenter
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespace-k8s-manifest.yml -n litmus
+<<<<<<< HEAD
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+=======
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 ```
 
@@ -100,7 +113,11 @@ Litmus-Portal provides console or UI experience for managing, monitoring, and ev
 View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ### **Upgrade from 2.6.0 to 2.7.0**
+=======
+### **Upgrade from 2.7.0 to 2.8.0**
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
 ### **Upgrade from 2.7.0 to 2.8.0**
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80

@@ -8,7 +8,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -27,7 +31,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -68,7 +76,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80

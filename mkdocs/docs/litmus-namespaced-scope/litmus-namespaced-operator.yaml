@@ -8,7 +8,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -27,7 +31,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -68,7 +76,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -94,7 +106,11 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
     app.kubernetes.io/version: v2.7.0
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -114,7 +130,11 @@ spec:
         # provide unique instance-id if applicable
         # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
         app.kubernetes.io/version: v2.7.0
+=======
+        app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
         app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -127,7 +147,11 @@ spec:
       containers:
         - name: chaos-operator
 <<<<<<< HEAD
+<<<<<<< HEAD
           image: litmuschaos/chaos-operator:2.7.0
+=======
+          image: litmuschaos/chaos-operator:2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
           image: litmuschaos/chaos-operator:2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -137,7 +161,11 @@ spec:
           env:
             - name: CHAOS_RUNNER_IMAGE
 <<<<<<< HEAD
+<<<<<<< HEAD
               value: "litmuschaos/chaos-runner:2.7.0"
+=======
+              value: "litmuschaos/chaos-runner:2.8.0"
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
               value: "litmuschaos/chaos-runner:2.8.0"
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80

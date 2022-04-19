@@ -130,8 +130,11 @@ spec:
         - name: DEFAULT_APP_HEALTH_CHECK
           value: 'false'
 <<<<<<< HEAD
+<<<<<<< HEAD
 ```
 =======
+=======
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 ```
 
 ### Node Label Filter For Selecting The Target Pods
@@ -206,4 +209,7 @@ spec:
         - name: NODE_LABEL
           value: 'kubernetes.io/hostname=worker-01'
 ```
+<<<<<<< HEAD
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+=======
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80

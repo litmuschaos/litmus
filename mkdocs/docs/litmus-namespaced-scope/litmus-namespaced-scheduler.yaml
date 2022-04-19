@@ -17,7 +17,11 @@ spec:
         - name: chaos-scheduler
           # Replace this with the built image name
 <<<<<<< HEAD
+<<<<<<< HEAD
           image: litmuschaos/chaos-scheduler:2.7.0
+=======
+          image: litmuschaos/chaos-scheduler:2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
 =======
           image: litmuschaos/chaos-scheduler:2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
