@@ -278,7 +278,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
             setIsAlertOpen(false);
             if (success) {
               history.push({
-                pathname: '/observability',
+                pathname: '/analytics',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }
@@ -289,7 +289,7 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
               setIsAlertOpen(false);
               if (success) {
                 history.push({
-                  pathname: '/observability',
+                  pathname: '/analytics',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }

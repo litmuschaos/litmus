@@ -100,7 +100,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
               <IconButton
                 onClick={() => {
                   history.push({
-                    pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                    pathname: `/analytics/workflowStatistics/${data.workflow_id}`,
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}
