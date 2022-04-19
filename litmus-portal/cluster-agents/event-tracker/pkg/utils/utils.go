@@ -36,6 +36,16 @@ var (
 const (
 	AgentConfigName = "agent-config"
 	AgentSecretName = "agent-secret"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+
+	ConditionPassed = "ConditionPassed"
+	//ConditionFailed       = "ConditionFailed"
+)
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
 
 	ConditionPassed = "ConditionPassed"
 	//ConditionFailed       = "ConditionFailed"

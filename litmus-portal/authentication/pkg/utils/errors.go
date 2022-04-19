@@ -21,6 +21,13 @@ var (
 	ErrEmptyProjectName              AppError = errors.New("invalid project name")
 	ErrInvalidRole                   AppError = errors.New("invalid role")
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+	ErrInvalidEmail                  AppError = errors.New("invalid email")
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
 =======
 	ErrInvalidEmail                  AppError = errors.New("invalid email")
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -42,6 +49,13 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrEmptyProjectName:              400,
 	ErrInvalidRole:                   400,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+	ErrInvalidEmail:                  400,
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
 =======
 	ErrInvalidEmail:                  400,
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
@@ -59,6 +73,13 @@ var ErrorDescriptions = map[AppError]string{
 	ErrInvalidRole:                   "Role is invalid",
 	ErrProjectNotFound:               "This project does not exist",
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+	ErrInvalidEmail:                  "Email address is invalid",
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
 =======
 	ErrInvalidEmail:                  "Email address is invalid",
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80

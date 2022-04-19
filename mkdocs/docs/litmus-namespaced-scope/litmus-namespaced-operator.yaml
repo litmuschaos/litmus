@@ -8,10 +8,20 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
     app.kubernetes.io/version: v2.7.0
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
     app.kubernetes.io/component: operator-serviceaccount
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -27,10 +37,20 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
     app.kubernetes.io/version: v2.7.0
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
     app.kubernetes.io/component: operator-role
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -68,10 +88,20 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
     app.kubernetes.io/version: v2.7.0
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
     app.kubernetes.io/component: operator-rolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -94,10 +124,20 @@ metadata:
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
     app.kubernetes.io/version: v2.7.0
 =======
     app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+    app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
     app.kubernetes.io/component: operator
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -114,10 +154,20 @@ spec:
         # provide unique instance-id if applicable
         # app.kubernetes.io/instance: litmus-abcxzy
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
         app.kubernetes.io/version: v2.7.0
 =======
         app.kubernetes.io/version: v2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+        app.kubernetes.io/version: v2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
         app.kubernetes.io/component: operator
         app.kubernetes.io/part-of: litmus
         app.kubernetes.io/managed-by: kubectl
@@ -127,20 +177,40 @@ spec:
       containers:
         - name: chaos-operator
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
           image: litmuschaos/chaos-operator:2.7.0
 =======
           image: litmuschaos/chaos-operator:2.8.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+          image: litmuschaos/chaos-operator:2.8.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
           command:
           - chaos-operator
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
               value: "litmuschaos/chaos-runner:2.7.0"
 =======
               value: "litmuschaos/chaos-runner:2.8.0"
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+              value: "litmuschaos/chaos-runner:2.8.0"
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:

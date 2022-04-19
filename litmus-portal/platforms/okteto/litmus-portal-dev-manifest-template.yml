@@ -591,6 +591,10 @@ spec:
               value: "litmuschaos/argoexec:v3.2.3"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
               value: "litmuschaos/chaos-operator:2.6.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:2.6.0"
@@ -601,6 +605,11 @@ spec:
             - name: HUB_BRANCH_NAME
               value: "v2.6.x"
 =======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
               value: "litmuschaos/chaos-operator:2.7.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:2.7.0"
@@ -610,6 +619,12 @@ spec:
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
               value: "v2.7.x"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+=======
+>>>>>>> litmuschaos-master
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "127.0.0.1"

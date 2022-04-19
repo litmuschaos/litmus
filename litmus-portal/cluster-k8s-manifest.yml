@@ -1,9 +1,19 @@
 ### RBAC Manifests
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
 ## If SELF_CLUSTER="true" then these permissions are required to apply
 =======
 ## If SELF_AGENT="true" then these permissions are required to apply
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+## If SELF_AGENT="true" then these permissions are required to apply
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
 ## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -577,10 +587,20 @@ spec:
       initContainers:
         - name: wait-for-mongodb
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
           image: litmuschaos/curl:2.6.0
 =======
           image: litmuschaos/curl:2.7.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+          image: litmuschaos/curl:2.7.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -640,6 +660,10 @@ spec:
               value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
               value: "litmuschaos/chaos-operator:2.6.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
               value: "litmuschaos/chaos-runner:2.6.0"
@@ -652,6 +676,16 @@ spec:
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:2.7.0"
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+              value: "litmuschaos/chaos-operator:2.7.0"
+            - name: LITMUS_CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:2.7.0"
+            - name: LITMUS_CHAOS_EXPORTER_IMAGE
+              value: "litmuschaos/chaos-exporter:2.7.0"
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -672,10 +706,20 @@ spec:
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
               value: "v2.6.x"
 =======
               value: "v2.7.x"
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+              value: "v2.7.x"
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
@@ -733,10 +777,20 @@ spec:
       initContainers:
         - name: wait-for-mongodb
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> litmuschaos-master
           image: litmuschaos/curl:2.6.0
 =======
           image: litmuschaos/curl:2.7.0
 >>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+<<<<<<< HEAD
+=======
+=======
+          image: litmuschaos/curl:2.7.0
+>>>>>>> c772697a063fd6b82635d397a36d961a37923c80
+>>>>>>> litmuschaos-master
           command: ["/bin/sh", "-c"]
           args:
             [
