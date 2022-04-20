@@ -69,16 +69,16 @@ export interface ScheduledWorkflow {
   lastUpdatedBy: string;
 }
 
-export interface WorkflowList {
-  listWorkflow: ScheduledWorkflow[];
+export interface GetWorkflow {
+  getWorkflow: ScheduledWorkflow[];
 }
 
-export interface WorkflowListDataVars {
+export interface GetWorkflowDataRequest {
   projectID: string;
   workflowIDs: string[];
 }
 
-export interface ListManifestTemplateArray {
+export interface GetManifestTemplateArray {
   templateID: string;
   manifest: string;
   projectName: string;
@@ -92,34 +92,35 @@ export interface Pagination {
   limit: number;
 }
 
-export interface ListManifestTemplate {
-  listManifestTemplate: ListManifestTemplateArray[];
+export interface GetManifestTemplate {
+  getManifestTemplate: GetManifestTemplateArray[];
 }
 
-export interface SortInput {
+export interface SortRequest {
   field: 'Name' | 'Time';
   descending?: Boolean;
 }
 
-export interface WorkflowFilterInput {
+export interface WorkflowFilterRequest {
   workflowName?: string;
   clusterName?: string;
 }
-export interface ListWorkflowsInput {
-  workflowInput: {
+
+export interface GetWorkflowsRequest {
+  request: {
     projectID: string;
     workflowIDs?: string[];
     pagination?: Pagination;
-    sort?: SortInput;
-    filter?: WorkflowFilterInput;
+    sort?: SortRequest;
+    filter?: WorkflowFilterRequest;
   };
 }
 
-export interface ListWorkflowsOutput {
+export interface GetWorkflowsResponse {
   totalNoOfWorkflows: number;
   workflows: ScheduledWorkflow[];
 }
 
 export interface ScheduledWorkflows {
-  listWorkflow: ListWorkflowsOutput;
+  getWorkflow: GetWorkflowsResponse;
 }

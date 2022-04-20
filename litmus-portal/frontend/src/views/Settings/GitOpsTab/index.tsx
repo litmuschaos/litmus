@@ -18,7 +18,7 @@ import {
   UPDATE_GITOPS,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
-import { GitOpsDetail } from '../../../models/graphql/gitOps';
+import { GetGitOpsDetailRequest } from '../../../models/graphql/gitOps';
 import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
@@ -84,10 +84,13 @@ const GitOpsTab = () => {
   };
 
   // Query to fetch GitOps Data
-  const { data, refetch, loading } = useQuery<GitOpsDetail>(GET_GITOPS_DATA, {
-    variables: { data: projectID },
-    fetchPolicy: 'cache-and-network',
-  });
+  const { data, refetch, loading } = useQuery<GetGitOpsDetailRequest>(
+    GET_GITOPS_DATA,
+    {
+      variables: { data: projectID },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
   // Mutation to generate SSH key
   const [generateSSHKey, { loading: sshLoading }] = useMutation<SSHKeys>(
@@ -201,8 +204,8 @@ const GitOpsTab = () => {
   const onConfirmEdit = () => {
     setIsGitOpsEnabled(false);
     setGitHub({
-      GitURL: data?.getGitOpsDetails.RepoURL || '',
-      GitBranch: data?.getGitOpsDetails.Branch || '',
+      GitURL: data?.gitOpsDetails.repoURL || '',
+      GitBranch: data?.gitOpsDetails.branch || '',
     });
     setPrivateHub('');
     setAccessToken('');
@@ -220,7 +223,7 @@ const GitOpsTab = () => {
   // UseEffect to set the initial state of radio-buttons
   useEffect(() => {
     if (data !== undefined) {
-      if (data.getGitOpsDetails.Enabled) {
+      if (data.gitOpsDetails.enabled) {
         setValue('enabled');
         setIsGitOpsEnabled(true);
       } else {
@@ -234,7 +237,7 @@ const GitOpsTab = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (value === 'enabled') {
-      if (data?.getGitOpsDetails.Enabled === false) {
+      if (data?.gitOpsDetails.enabled === false) {
         enableGitOps({
           variables: {
             gitConfig: {
@@ -243,10 +246,10 @@ const GitOpsTab = () => {
               Branch: gitHub.GitBranch,
               AuthType:
                 privateHub === 'token'
-                  ? MyHubType.token
+                  ? MyHubType.TOKEN
                   : privateHub === 'ssh'
-                  ? MyHubType.ssh
-                  : MyHubType.none,
+                  ? MyHubType.SSH
+                  : MyHubType.NONE,
               Token: accessToken,
               UserName: 'user',
               Password: 'user',
@@ -255,7 +258,7 @@ const GitOpsTab = () => {
           },
         });
       }
-      if (data?.getGitOpsDetails.Enabled === true) {
+      if (data?.gitOpsDetails.enabled === true) {
         updateGitOps({
           variables: {
             gitConfig: {
@@ -264,19 +267,19 @@ const GitOpsTab = () => {
               Branch: gitHub.GitBranch,
               AuthType:
                 privateHub === ''
-                  ? data?.getGitOpsDetails.AuthType
+                  ? data?.gitOpsDetails.authType
                   : privateHub === 'token'
-                  ? MyHubType.token
+                  ? MyHubType.TOKEN
                   : privateHub === 'ssh'
-                  ? MyHubType.ssh
-                  : MyHubType.none,
+                  ? MyHubType.SSH
+                  : MyHubType.NONE,
               Token:
-                privateHub === '' ? data?.getGitOpsDetails.Token : accessToken,
+                privateHub === '' ? data?.gitOpsDetails.token : accessToken,
               UserName: 'user',
               Password: 'user',
               SSHPrivateKey:
                 privateHub === ''
-                  ? data?.getGitOpsDetails.SSHPrivateKey
+                  ? data?.gitOpsDetails.sshPrivateKey
                   : sshKey.privateKey,
             },
           },
@@ -316,7 +319,7 @@ const GitOpsTab = () => {
                     }
                   />
                   {value === 'disabled' &&
-                  data?.getGitOpsDetails.Enabled === true ? (
+                  data?.gitOpsDetails.enabled === true ? (
                     <div>
                       <Typography className={classes.disconnectText}>
                         {t('settings.gitopsTab.disconnect')}
@@ -471,7 +474,7 @@ const GitOpsTab = () => {
                                         <Loader size={20} />
                                       ) : (
                                         <Typography>
-                                          {data?.getGitOpsDetails.Enabled
+                                          {data?.gitOpsDetails.enabled
                                             ? 'Update'
                                             : t('settings.gitopsTab.connect')}
                                         </Typography>

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-// listManifestTemplate
-export const LIST_MANIFEST_TEMPLATE = gql`
+// GetManifestTemplate
+export const GET_MANIFEST_TEMPLATE = gql`
   query ListManifestTemplate($data: String!) {
     ListManifestTemplate(projectID: $data) {
       templateID

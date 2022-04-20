@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-// listImageRegistry
-export const LIST_IMAGE_REGISTRY = gql`
+// GetImageRegistry
+export const GET_IMAGE_REGISTRY_BY_PROJECT_ID = gql`
   query ListImageRegistry($data: String!) {
     listImageRegistry(projectID: $data) {
       imageRegistryInfo {

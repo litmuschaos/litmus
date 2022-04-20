@@ -19,7 +19,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
 import { DELETE_DATASOURCE } from '../../../../graphql';
-import { LIST_DATASOURCE } from '../../../../graphql/queries';
+import { GET_DATASOURCE } from '../../../../graphql/queries';
 import {
   DataSourceList,
   DeleteDataSourceInput,
@@ -108,7 +108,7 @@ const DataSourceTable: React.FC = () => {
   const { data, loading, error, refetch } = useQuery<
     DataSourceList,
     ListDataSourceVars
-  >(LIST_DATASOURCE, {
+  >(GET_DATASOURCE, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
     pollInterval: 10000,

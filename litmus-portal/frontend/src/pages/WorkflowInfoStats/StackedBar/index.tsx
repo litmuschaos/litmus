@@ -65,7 +65,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     {
       variables: {
         workflowRunsRequest: {
-          projectID: projectID,
+          projectID,
           workflowIDs: [workflowID],
           sort: {
             field: 'Time',

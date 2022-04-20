@@ -69,7 +69,7 @@ const BrowseCluster: React.FC = () => {
     GET_CLUSTER,
     {
       variables: {
-        projectID: projectID,
+        projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 3000,

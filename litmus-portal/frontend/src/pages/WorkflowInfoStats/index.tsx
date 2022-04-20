@@ -22,15 +22,15 @@ import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
 import Wrapper from '../../containers/layouts/Wrapper';
-import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import { GET_WORKFLOW_DETAILS } from '../../graphql/queries';
 import {
+  HeatmapDataRequest,
   HeatmapDataResponse,
-  HeatmapDataVars,
   Workflow,
   WorkflowDataRequest,
 } from '../../models/graphql/workflowData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
 } from '../../models/graphql/workflowListData';
 import { history } from '../../redux/configureStore';
@@ -82,11 +82,11 @@ const WorkflowInfoStats: React.FC = () => {
   const [hasWorkflowRun, setHasWorkflowRun] = useState<boolean>(true);
 
   // Apollo query to get the scheduled workflow data
-  const { data } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
-    WORKFLOW_LIST_DETAILS,
+  const { data } = useQuery<ScheduledWorkflows, GetWorkflowsRequest>(
+    GET_WORKFLOW_DETAILS,
     {
       variables: {
-        workflowInput: { projectID: projectID, workflowIDs: [workflowID] },
+        request: { projectID, workflowIDs: [workflowID] },
       },
       fetchPolicy: 'cache-and-network',
     }
@@ -95,8 +95,8 @@ const WorkflowInfoStats: React.FC = () => {
   // TODO: shift out
   const { data: workflowRunData } = useQuery<Workflow, WorkflowDataRequest>(
     gql`
-      query workflowDetails($workflowRunsRequest: GetWorkflowRunsInput!) {
-        getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+      query workflowDetails($workflowRunsRequest: GetWorkflowRunsRequest!) {
+        getWorkflowRuns(workflowRunsRequest: $workflowRunsRequest) {
           totalNoOfWorkflowRuns
           workflowRuns {
             workflowRunID
@@ -107,7 +107,7 @@ const WorkflowInfoStats: React.FC = () => {
     {
       variables: {
         workflowRunsRequest: {
-          projectID: projectID,
+          projectID,
           workflowIDs: [workflowID],
         },
       },
@@ -141,7 +141,7 @@ const WorkflowInfoStats: React.FC = () => {
   // Apollo query to get the heatmap data
   const { data: heatmapData, loading } = useQuery<
     HeatmapDataResponse,
-    HeatmapDataVars
+    HeatmapDataRequest
   >(
     gql`
       query getHeatmapData(
@@ -166,8 +166,8 @@ const WorkflowInfoStats: React.FC = () => {
     `,
     {
       variables: {
-        projectID: projectID,
-        workflowID: workflowID,
+        projectID,
+        workflowID,
         year,
       },
       fetchPolicy: 'cache-and-network',
@@ -217,7 +217,7 @@ const WorkflowInfoStats: React.FC = () => {
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
           <Typography className={classes.heading} data-cy="statsWorkflowName">
-            {data?.listWorkflow.workflows[0].workflowName}
+            {data?.getWorkflow.workflows[0].workflowName}
           </Typography>
           <Typography className={classes.subHeading}>
             Here’s the statistics of the selected workflow
@@ -241,7 +241,7 @@ const WorkflowInfoStats: React.FC = () => {
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
-      {data?.listWorkflow.workflows[0].cronSyntax !== '' ||
+      {data?.getWorkflow.workflows[0].cronSyntax !== '' ||
       (workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns &&
         workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns > 1) ? (
         <div className={classes.heatmapArea}>

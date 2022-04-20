@@ -15,14 +15,14 @@ import Loader from '../../components/Loader';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
 import Wrapper from '../../containers/layouts/Wrapper';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
-import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import { GET_WORKFLOW_DETAILS } from '../../graphql/queries';
 import {
-  CreateWorkFlowInput,
+  CreateWorkFlowRequest,
   UpdateWorkflowResponse,
   WeightMap,
 } from '../../models/graphql/createWorkflowData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
 } from '../../models/graphql/workflowListData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
@@ -83,14 +83,14 @@ const EditSchedule: React.FC = () => {
   const projectID = getProjectID();
   const userRole = getProjectRole();
 
-  const { data, loading } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
-    WORKFLOW_LIST_DETAILS,
+  const { data, loading } = useQuery<ScheduledWorkflows, GetWorkflowsRequest>(
+    GET_WORKFLOW_DETAILS,
     {
       variables: {
-        workflowInput: {
-          project_id: projectID,
+        request: {
+          projectID,
           filter: {
-            workflow_name: paramData.workflowName,
+            workflowName: paramData.workflowName,
           },
         },
       },
@@ -102,14 +102,14 @@ const EditSchedule: React.FC = () => {
     (state: RootState) => state.workflowManifest.manifest
   );
 
-  const wfDetails = data && data.ListWorkflow.workflows[0];
+  const wfDetails = data && data.getWorkflow.workflows[0];
   const doc = new YAML.Document();
   const w: Weights[] = [];
   const { cronSyntax, clusterid, clustername } = workflowData;
 
   const [createChaosWorkFlow, { error: workflowError }] = useMutation<
     UpdateWorkflowResponse,
-    CreateWorkFlowInput
+    CreateWorkFlowRequest
   >(UPDATE_SCHEDULE, {
     onCompleted: () => {
       setFinishModalOpen(true);
@@ -126,7 +126,7 @@ const EditSchedule: React.FC = () => {
 
       weights.forEach((data) => {
         weightData.push({
-          experiment_name: data.experimentName,
+          experimentName: data.experimentName,
           weightage: data.weight,
         });
       });
@@ -137,19 +137,19 @@ const EditSchedule: React.FC = () => {
       const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
 
       const chaosWorkFlowInputs = {
-        workflow_id: wfDetails?.workflow_id,
-        workflow_manifest: yamlJson,
+        workflow_id: wfDetails?.workflowID,
+        workflowManifest: yamlJson,
         cronSyntax,
-        workflow_name: fetchWorkflowNameFromManifest(manifest),
-        workflow_description: workflow.description,
+        workflowName: fetchWorkflowNameFromManifest(manifest),
+        workflowDescription: workflow.description,
         isCustomWorkflow: false,
         weightages: weightData,
-        project_id: projectID,
-        cluster_id: clusterid,
+        projectID,
+        clusterID: clusterid,
       };
 
       createChaosWorkFlow({
-        variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
+        variables: { request: chaosWorkFlowInputs },
       });
     }
   };
@@ -159,22 +159,22 @@ const EditSchedule: React.FC = () => {
       if (wfDetails !== undefined) {
         for (let i = 0; i < wfDetails?.weightages.length; i++) {
           w.push({
-            experimentName: wfDetails?.weightages[i].experiment_name,
+            experimentName: wfDetails?.weightages[i].experimentName,
             weight: wfDetails?.weightages[i].weightage,
           });
         }
-        doc.contents = JSON.parse(wfDetails?.workflow_manifest);
+        doc.contents = JSON.parse(wfDetails?.workflowManifest);
         workflowAction.setWorkflowManifest({
           manifest: isCronEdited === null ? doc.toString() : manifest,
         });
         setWorkflow({
-          name: wfDetails?.workflow_name,
-          description: wfDetails?.workflow_description,
+          name: wfDetails?.workflowName,
+          description: wfDetails?.workflowDescription,
         });
         localforage.setItem('weights', w);
         workflowAction.setWorkflowDetails({
-          workflow_id: wfDetails?.workflow_id,
-          clusterid: wfDetails?.cluster_id,
+          workflow_id: wfDetails?.workflowID,
+          clusterid: wfDetails?.clusterID,
           cronSyntax:
             isCronEdited === null ? wfDetails?.cronSyntax : cronSyntax,
           scheduleType: {

@@ -12,11 +12,11 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DELETE_WORKFLOW_TEMPLATE,
-  LIST_MANIFEST_TEMPLATE,
+  GET_MANIFEST_TEMPLATE,
 } from '../../../graphql';
 import {
-  ListManifestTemplate,
-  ListManifestTemplateArray,
+  GetManifestTemplate,
+  GetManifestTemplateArray,
 } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -42,8 +42,8 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
   const [search, setSearch] = useState<string | null>(null);
   const [selected, setSelected] = useState<string>('');
   const workflowAction = useActions(WorkflowActions);
-  const { data: templateData } = useQuery<ListManifestTemplate>(
-    LIST_MANIFEST_TEMPLATE,
+  const { data: templateData } = useQuery<GetManifestTemplate>(
+    GET_MANIFEST_TEMPLATE,
     {
       variables: {
         data: getProjectID(),
@@ -55,21 +55,19 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
   const [deleteTemplate] = useMutation(DELETE_WORKFLOW_TEMPLATE, {
     refetchQueries: [
       {
-        query: LIST_MANIFEST_TEMPLATE,
+        query: GET_MANIFEST_TEMPLATE,
         variables: { data: getProjectID() },
       },
     ],
   });
 
-  const filteredExistingWorkflows: ListManifestTemplateArray[] = templateData
-    ? templateData.ListManifestTemplate.filter(
-        (w: ListManifestTemplateArray) => {
-          if (search === null) return w;
-          if (w.template_name.toLowerCase().includes(search.toLowerCase()))
-            return w;
-          return null;
-        }
-      )
+  const filteredExistingWorkflows: GetManifestTemplateArray[] = templateData
+    ? templateData.getManifestTemplate.filter((w: GetManifestTemplateArray) => {
+        if (search === null) return w;
+        if (w.templateName.toLowerCase().includes(search.toLowerCase()))
+          return w;
+        return null;
+      })
     : [];
 
   // Methods
@@ -81,7 +79,7 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
     };
     selectedExp(selection.id);
     const templateData = filteredExistingWorkflows.filter((workflow) => {
-      return workflow.template_id === event.target.value;
+      return workflow.templateID === event.target.value;
     })[0];
     workflowAction.setWorkflowManifest({
       isCustomWorkflow: templateData.isCustomWorkflow,
@@ -114,22 +112,22 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
           >
             {filteredExistingWorkflows && filteredExistingWorkflows.length ? (
               filteredExistingWorkflows.map(
-                (templateData: ListManifestTemplateArray) => (
+                (templateData: GetManifestTemplateArray) => (
                   <LitmusCard
                     width="100%"
                     height="5rem"
-                    key={templateData.template_id}
+                    key={templateData.templateID}
                     borderColor={palette.border.main}
                     className={classes.existingWorkflowCard}
                   >
-                    <RadioButton value={templateData.template_id.toString()}>
+                    <RadioButton value={templateData.templateID.toString()}>
                       <div id="body">
                         <div id="left-div">
-                          <Typography>{templateData.template_name}</Typography>
+                          <Typography>{templateData.templateName}</Typography>
                         </div>
                         <div id="right-div">
                           <Typography>
-                            {templateData.template_description}
+                            {templateData.templateDescription}
                           </Typography>
                         </div>
                         <div id="last-div">
@@ -138,7 +136,7 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
                               src="./icons/litmus-icon.svg"
                               alt="Experiment Icon"
                             />
-                            <Typography>{templateData.project_name}</Typography>
+                            <Typography>{templateData.projectName}</Typography>
                           </div>
 
                           <img
@@ -152,7 +150,7 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
                             deleteTemplate({
                               variables: {
                                 projectID: getProjectID(),
-                                data: templateData.template_id,
+                                data: templateData.templateID,
                               },
                             });
                           }}

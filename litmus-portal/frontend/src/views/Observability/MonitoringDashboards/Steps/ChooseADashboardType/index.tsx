@@ -11,8 +11,8 @@ import Loader from '../../../../../components/Loader';
 import { GET_HUB_STATUS, GET_PORTAL_DASHBOARDS } from '../../../../../graphql';
 import { DashboardData } from '../../../../../models/dashboardsData';
 import {
-  PortalDashboardList,
-  PortalDashboardsVars,
+  GetPortalDashboard,
+  PortalDashboardsRequest,
 } from '../../../../../models/graphql/dashboardsDetails';
 import { HubStatus } from '../../../../../models/redux/myhub';
 import { DEFAULT_HUB_NAME } from '../../../../../pages/MonitoringDashboard/constants';
@@ -70,13 +70,13 @@ const ChooseADashboardType = forwardRef(
 
     // Query to get dashboards of the selected hub
     const [getPortalDashboards, { loading: loadingDashboards }] = useLazyQuery<
-      PortalDashboardList,
-      PortalDashboardsVars
+      GetPortalDashboard,
+      PortalDashboardsRequest
     >(GET_PORTAL_DASHBOARDS, {
       onCompleted: (data) => {
         let dashboards: DashboardData[] = [];
-        (data.PortalDashboardData ?? []).forEach((dashboard) => {
-          const parsedDashboardData = JSON.parse(dashboard.dashboard_data);
+        (data.portalDashboardData ?? []).forEach((dashboard) => {
+          const parsedDashboardData = JSON.parse(dashboard.dashboardData);
           dashboards.push({
             dashboardTypeID: parsedDashboardData.dashboardID,
             typeName: parsedDashboardData.name,

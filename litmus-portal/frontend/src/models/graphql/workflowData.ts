@@ -70,6 +70,7 @@ export interface WorkflowRun {
   experimentsNa: number;
   totalExperiments: number;
   executionData: string;
+  executedBy: string;
   isRemoved: boolean;
 }
 
@@ -86,7 +87,7 @@ export interface WorkflowSubscription {
   workflowEventListener: WorkflowRun;
 }
 
-export interface WorkflowSubscriptionInput {
+export interface WorkflowSubscriptionRequest {
   projectID: string;
 }
 
@@ -97,7 +98,7 @@ export interface Pagination {
 }
 
 // Sort
-export interface SortInput {
+export interface SortRequest {
   field: 'Name' | 'Time';
   descending?: boolean;
 }
@@ -116,7 +117,7 @@ export type WorkflowStatus =
   | 'Terminated'
   | undefined;
 
-export interface WorkflowRunFilterInput {
+export interface WorkflowRunFilterRequest {
   workflowName?: string;
   clusterName?: string;
   workflowStatus?: WorkflowStatus;
@@ -130,12 +131,12 @@ export interface WorkflowDataRequest {
     workflowRunIDs?: string[];
     workflowIDs?: string[];
     pagination?: Pagination;
-    sort?: SortInput;
-    filter?: WorkflowRunFilterInput;
+    sort?: SortRequest;
+    filter?: WorkflowRunFilterRequest;
   };
 }
 
-export interface HeatmapDataVars {
+export interface HeatmapDataRequest {
   projectID: string;
   workflowID: string;
   year: number;

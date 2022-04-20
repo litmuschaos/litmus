@@ -14,16 +14,16 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import Center from '../../../containers/layouts/Center';
-import { WORKFLOW_LIST_DETAILS, WORKFLOW_RUN_DETAILS } from '../../../graphql';
+import { GET_WORKFLOW_DETAILS, WORKFLOW_RUN_DETAILS } from '../../../graphql';
 import {
   ExecutionData,
   Pagination,
   Workflow,
   WorkflowDataRequest,
-  WorkflowRunFilterInput,
+  WorkflowRunFilterRequest,
 } from '../../../models/graphql/workflowData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
   WeightageMap,
 } from '../../../models/graphql/workflowListData';
@@ -75,7 +75,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
 
   const [wfRunData, setWfRunData] = React.useState<WorkFlowTests[]>([]);
 
-  const [dateRange, setDateRange] = React.useState<WorkflowRunFilterInput>({
+  const [dateRange, setDateRange] = React.useState<WorkflowRunFilterRequest>({
     workflowName: '',
     clusterName: 'All',
     workflowStatus: 'All',
@@ -142,9 +142,9 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     data: weightageDetail,
     loading: loadWeightage,
     error: errorWeightage,
-  } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(WORKFLOW_LIST_DETAILS, {
+  } = useQuery<ScheduledWorkflows, GetWorkflowsRequest>(GET_WORKFLOW_DETAILS, {
     variables: {
-      workflowInput: { projectID: projectID, workflowIDs: [workflowID] },
+      request: { projectID, workflowIDs: [workflowID] },
     },
   });
 
@@ -154,7 +154,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
   >(WORKFLOW_RUN_DETAILS, {
     variables: {
       workflowRunsRequest: {
-        projectID: projectID,
+        projectID,
         workflowIDs: [workflowID],
         workflowRunIDs: [workflowRunID],
         pagination: {
@@ -178,7 +178,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
             if (node.chaosData) {
               const { chaosData } = node;
               const weightageMap: WeightageMap[] = weightageDetail
-                ? weightageDetail?.listWorkflow.workflows[0]?.weightages
+                ? weightageDetail?.getWorkflow.workflows[0]?.weightages
                 : [];
               /* eslint-disable no-loop-func */
               weightageMap.forEach((weightage) => {

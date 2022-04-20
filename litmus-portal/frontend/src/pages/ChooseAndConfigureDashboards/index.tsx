@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Wrapper from '../../containers/layouts/Wrapper';
-import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../graphql';
+import { GET_DASHBOARD, GET_DATASOURCE } from '../../graphql';
 import {
   DashboardDetails,
   PanelDetails,
@@ -16,13 +16,13 @@ import {
 import {
   ApplicationMetadata,
   ApplicationMetadataResponse,
-  DashboardList,
-  ListDashboardVars,
+  GetDashboard,
+  GetDashboardRequest,
   PanelGroupResponse,
   PanelOption,
   PanelResponse,
   Resource,
-  updatePanelGroupInput,
+  UpdatePanelGroupRequest,
 } from '../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
@@ -55,7 +55,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       data: dataSourceList,
       loading: loadingDataSources,
       error: errorFetchingDataSources,
-    } = useQuery<DataSourceList, ListDataSourceVars>(LIST_DATASOURCE, {
+    } = useQuery<DataSourceList, ListDataSourceVars>(GET_DATASOURCE, {
       variables: { projectID },
       fetchPolicy: 'cache-and-network',
     });
@@ -65,7 +65,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       data: dashboardList,
       loading: loadingDashboard,
       error: errorFetchingDashboard,
-    } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD, {
+    } = useQuery<GetDashboard, GetDashboardRequest>(GET_DASHBOARD, {
       variables: { projectID, dbID: selectedDashboard.selectedDashboardID },
       skip: !configure || selectedDashboard.selectedDashboardID === '',
       fetchPolicy: 'network-only',
@@ -96,39 +96,39 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
           const panels: PanelDetails[] = [];
           panelGroup.panels.forEach((panel: PanelResponse) => {
             const promQueries: PromQueryDetails[] = [];
-            panel.prom_queries.forEach((promQuery) => {
+            panel.promQueries.forEach((promQuery) => {
               promQueries.push({
-                queryid: promQuery.queryid,
-                prom_query_name: promQuery.prom_query_name,
+                queryID: promQuery.queryID,
+                promQueryName: promQuery.promQueryName,
                 legend: promQuery.legend,
                 resolution: promQuery.resolution,
                 minstep: promQuery.minstep,
                 line: promQuery.line,
-                close_area: promQuery.close_area,
+                closeArea: promQuery.closeArea,
               });
             });
             const panelOption: PanelOption = {
-              points: panel.panel_options.points,
-              grids: panel.panel_options.grids,
-              left_axis: panel.panel_options.left_axis,
+              points: panel.panelOptions.points,
+              grids: panel.panelOptions.grids,
+              leftAxis: panel.panelOptions.leftAxis,
             };
             panels.push({
-              panel_name: panel.panel_name,
-              y_axis_left: panel.y_axis_left,
-              y_axis_right: panel.y_axis_right,
-              x_axis_down: panel.x_axis_down,
+              panelName: panel.panelName,
+              yAxisLeft: panel.yAxisLeft,
+              yAxisRight: panel.yAxisRight,
+              xAxisDown: panel.xAxisDown,
               unit: panel.unit,
-              panel_options: panelOption,
-              prom_queries: promQueries,
-              panel_id: panel.panel_id,
-              created_at: panel.created_at,
-              panel_group_id: panelGroup.panel_group_id,
-              panel_group_name: panelGroup.panel_group_name,
+              panelOptions: panelOption,
+              promQueries,
+              panelID: panel.panelID,
+              createdAt: panel.createdAt,
+              panelGroupID: panelGroup.panelGroupID,
+              panelGroupName: panelGroup.panelGroupName,
             });
           });
           panelGroups.push({
-            panel_group_id: panelGroup.panel_group_id,
-            panel_group_name: panelGroup.panel_group_name,
+            panelGroupID: panelGroup.panelGroupID,
+            panelGroupName: panelGroup.panelGroupName,
             panels,
           });
         });
@@ -139,12 +139,12 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
     const getExistingPanelGroupMap = (
       panelGroupsInput: PanelGroupResponse[]
     ) => {
-      const panelGroupMap: updatePanelGroupInput[] = [];
+      const panelGroupMap: UpdatePanelGroupRequest[] = [];
       if (panelGroupsInput?.length) {
         panelGroupsInput.forEach((panelGroup: PanelGroupResponse) => {
           panelGroupMap.push({
-            panel_group_id: panelGroup.panel_group_id,
-            panel_group_name: panelGroup.panel_group_name,
+            panelGroupID: panelGroup.panelGroupID,
+            panelGroupName: panelGroup.panelGroupName,
             panels: panelGroup.panels,
           });
         });
@@ -178,28 +178,27 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       if (
         configure === true &&
         dashboardList &&
-        dashboardList.ListDashboard &&
-        dashboardList.ListDashboard.length > 0
+        dashboardList.getDashboard &&
+        dashboardList.getDashboard.length > 0
       ) {
-        const dashboardDetail = dashboardList.ListDashboard[0];
+        const dashboardDetail = dashboardList.getDashboard[0];
         setDashboardVars({
           ...dashboardVars,
           id: selectedDashboard.selectedDashboardID,
-          name: dashboardDetail.db_name,
-          dataSourceType: dashboardDetail.ds_type,
-          dashboardTypeID: dashboardDetail.db_type_id,
-          dashboardTypeName: dashboardDetail.db_type_name,
-          dataSourceID: dashboardDetail.ds_id,
-          dataSourceURL: dashboardDetail.ds_url,
-          agentID: dashboardDetail.cluster_id,
-          information: dashboardDetail.db_information,
-          panelGroupMap: getExistingPanelGroupMap(dashboardDetail.panel_groups),
-          panelGroups: getExistingPanelGroups(dashboardDetail.panel_groups),
-          chaosEventQueryTemplate: dashboardDetail.chaos_event_query_template,
-          chaosVerdictQueryTemplate:
-            dashboardDetail.chaos_verdict_query_template,
+          name: dashboardDetail.dbName,
+          dataSourceType: dashboardDetail.dsType,
+          dashboardTypeID: dashboardDetail.dbTypeID,
+          dashboardTypeName: dashboardDetail.dbTypeName,
+          dataSourceID: dashboardDetail.dsID,
+          dataSourceURL: dashboardDetail.dsURL,
+          agentID: dashboardDetail.clusterID,
+          information: dashboardDetail.dbInformation,
+          panelGroupMap: getExistingPanelGroupMap(dashboardDetail.panelGroups),
+          panelGroups: getExistingPanelGroups(dashboardDetail.panelGroups),
+          chaosEventQueryTemplate: dashboardDetail.chaosEventQueryTemplate,
+          chaosVerdictQueryTemplate: dashboardDetail.chaosVerdictQueryTemplate,
           applicationMetadataMap: getApplicationMetadataMap(
-            dashboardDetail.application_metadata_map
+            dashboardDetail.applicationMetadataMap
           ),
         });
       }

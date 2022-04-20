@@ -185,7 +185,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
     loading,
     error,
   } = useQuery<Clusters, ClusterRequest>(GET_CLUSTER, {
-    variables: { projectID: projectID },
+    variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -197,10 +197,10 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
     KubeObjRequest
   >(KUBE_OBJ, {
     variables: {
-      data: {
-        cluster_id: dashboardDetails.agentID ?? '',
-        object_type: 'kubeobject',
-        kube_obj_request: {
+      request: {
+        clusterID: dashboardDetails.agentID ?? '',
+        objectType: 'kubeobject',
+        kubeObjRequest: {
           group: kubeObjInput.group,
           version: kubeObjInput.version,
           resource: kubeObjInput.resource,
@@ -211,7 +211,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
       const newAvailableApplicationMetadataMap: ApplicationMetadata[] = [];
       try {
         const kubeData: KubeObjData[] = JSON.parse(
-          kubeObjectData?.getKubeObject.kube_obj ?? ''
+          kubeObjectData?.getKubeObject.kubeObj ?? ''
         );
         kubeData.forEach((obj: KubeObjData) => {
           const newAvailableApplicationMetadata: ApplicationMetadata = {

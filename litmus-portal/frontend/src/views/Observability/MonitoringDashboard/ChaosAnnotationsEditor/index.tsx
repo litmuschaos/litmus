@@ -7,7 +7,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PROM_SERIES_LIST, UPDATE_DASHBOARD } from '../../../../graphql';
 import { DashboardDetails } from '../../../../models/dashboardsData';
-import { UpdateDashboardInput } from '../../../../models/graphql/dashboardsDetails';
+import { UpdateDashboardRequest } from '../../../../models/graphql/dashboardsDetails';
 import {
   PrometheusSeriesListQueryVars,
   PrometheusSeriesListResponse,
@@ -102,7 +102,7 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
     }
   );
 
-  const [updateDashboard] = useMutation<UpdateDashboardInput>(
+  const [updateDashboard] = useMutation<UpdateDashboardRequest>(
     UPDATE_DASHBOARD,
     {
       onCompleted: () => alertStateHandler(true),
@@ -172,46 +172,46 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
             <QueryEditor
               index={0}
               promQuery={{
-                queryid: t(
+                queryID: t(
                   'monitoringDashboard.monitoringDashboardPage.chaosAnnotationsEditor.eventQuery'
                 ),
-                prom_query_name: chaosEventQueryTemplate,
+                promQueryName: chaosEventQueryTemplate,
                 legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
                 resolution:
                   DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
                 minstep: '1',
                 line: false,
-                close_area: false,
+                closeArea: false,
               }}
               dsURL={dataSourceURL}
               seriesList={seriesList}
               handleUpdateQuery={(query) =>
                 setDashboardVars({
                   ...dashboardVars,
-                  chaosEventQueryTemplate: query.prom_query_name,
+                  chaosEventQueryTemplate: query.promQueryName,
                 })
               }
             />
             <QueryEditor
               index={1}
               promQuery={{
-                queryid: t(
+                queryID: t(
                   'monitoringDashboard.monitoringDashboardPage.chaosAnnotationsEditor.verdictQuery'
                 ),
-                prom_query_name: chaosVerdictQueryTemplate,
+                promQueryName: chaosVerdictQueryTemplate,
                 legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
                 resolution:
                   DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
                 minstep: '1',
                 line: false,
-                close_area: false,
+                closeArea: false,
               }}
               dsURL={dataSourceURL}
               seriesList={seriesList}
               handleUpdateQuery={(query) =>
                 setDashboardVars({
                   ...dashboardVars,
-                  chaosVerdictQueryTemplate: query.prom_query_name,
+                  chaosVerdictQueryTemplate: query.promQueryName,
                 })
               }
             />

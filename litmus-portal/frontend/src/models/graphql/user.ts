@@ -57,14 +57,6 @@ export interface MyHubDetail {
   repoURL: string;
 }
 
-export interface CurrentUserDetails {
-  getUser: UserDetails;
-}
-
-export interface CurrentUserDedtailsVars {
-  username: string;
-}
-
 export interface CreateUserData {
   username: string;
   email: string;
@@ -92,11 +84,6 @@ export interface UserData {
   deactivatedAt: string;
 }
 
-export interface UpdateUserStateInput {
-  uid: string;
-  isDeactivate: boolean;
-}
-
 export interface SSHKey {
   privateKey: string;
   publicKey: string;
@@ -106,7 +93,7 @@ export interface SSHKeys {
   generaterSSHKey: SSHKey;
 }
 
-export interface MyHubInput {
+export interface MyHubRequest {
   id?: string;
   hubName: string;
   repoURL: string;
@@ -131,7 +118,7 @@ export interface MyHubData {
 }
 
 export interface CreateMyHub {
-  myHubDetails: MyHubInput;
+  myHubDetails: MyHubRequest;
   projectID: string;
 }
 
@@ -148,10 +135,6 @@ export interface Projects {
 
 export interface ProjectDetail {
   getProject: Project;
-}
-
-export interface ProjectDetailVars {
-  projectID: string;
 }
 
 export enum Role {

@@ -11,5 +11,5 @@ export interface GitOpsData {
 }
 
 export interface GetGitOpsDetailRequest {
-  GitOpsDetails: GitOpsData;
+  gitOpsDetails: GitOpsData;
 }

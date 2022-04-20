@@ -24,14 +24,14 @@ import {
 import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
   Pagination,
-  SortInput,
+  SortRequest,
   Workflow,
   WorkflowDataRequest,
   WorkflowRun,
-  WorkflowRunFilterInput,
+  WorkflowRunFilterRequest,
   WorkflowStatus,
   WorkflowSubscription,
-  WorkflowSubscriptionInput,
+  WorkflowSubscriptionRequest,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import HeaderSection from './HeaderSection';
@@ -58,8 +58,8 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   });
 
   // States for filters
-  const [filters, setFilters] = useState<WorkflowRunFilterInput>({
-    workflowName: workflowName,
+  const [filters, setFilters] = useState<WorkflowRunFilterRequest>({
+    workflowName,
     clusterName: 'All',
     workflowStatus: 'All',
     dateRange: {
@@ -73,7 +73,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   );
 
   // State for sorting
-  const [sortData, setSortData] = useState<SortInput>({
+  const [sortData, setSortData] = useState<SortRequest>({
     field: 'Time',
     descending: true,
   });
@@ -112,7 +112,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
     GET_CLUSTER_NAMES,
     {
       variables: {
-        projectID: projectID,
+        projectID,
       },
     }
   );
@@ -124,7 +124,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   >(WORKFLOW_DETAILS, {
     variables: {
       workflowRunsRequest: {
-        projectID: projectID,
+        projectID,
         pagination: {
           page: paginationData.page,
           limit: paginationData.limit,
@@ -138,7 +138,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
 
   // Using subscription to get realtime data
   useEffect(() => {
-    subscribeToMore<WorkflowSubscription, WorkflowSubscriptionInput>({
+    subscribeToMore<WorkflowSubscription, WorkflowSubscriptionRequest>({
       document: WORKFLOW_EVENTS,
       variables: { projectID },
       updateQuery: (prev, { subscriptionData }) => {

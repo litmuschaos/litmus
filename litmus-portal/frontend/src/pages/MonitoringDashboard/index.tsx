@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Wrapper from '../../containers/layouts/Wrapper';
-import { LIST_DASHBOARD, VIEW_DASHBOARD } from '../../graphql';
+import { GET_DASHBOARD, VIEW_DASHBOARD } from '../../graphql';
 import {
   PanelNameAndID,
   ParsedChaosEventPrometheusData,
@@ -23,9 +23,9 @@ import {
   SelectedDashboardInformation,
 } from '../../models/dashboardsData';
 import {
-  DashboardList,
-  ListDashboardResponse,
-  ListDashboardVars,
+  GetDashboard,
+  GetDashboardRequest,
+  GetDashboardResponse,
   PanelGroupResponse,
   PanelResponse,
 } from '../../models/graphql/dashboardsDetails';
@@ -144,7 +144,7 @@ const DashboardPage: React.FC = () => {
     loading: loadingDashboards,
     error: errorFetchingDashboards,
     refetch: refetchDashboards,
-  } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD, {
+  } = useQuery<GetDashboard, GetDashboardRequest>(GET_DASHBOARD, {
     variables: {
       projectID,
       clusterID: selectedDashboard.selectedAgentID,
@@ -171,7 +171,7 @@ const DashboardPage: React.FC = () => {
       dbID: selectedDashboardInformation.id,
       prometheusQueries: selectedDashboardInformation.promQueries,
       queryMap: getDashboardQueryMap(
-        selectedDashboardInformation.metaData?.panel_groups ?? []
+        selectedDashboardInformation.metaData?.panelGroups ?? []
       ),
       dataVarMap: {
         url: selectedDashboardInformation.dataSourceURL,
@@ -185,7 +185,7 @@ const DashboardPage: React.FC = () => {
       loadingDashboards ||
       errorFetchingDashboards !== undefined ||
       selectedDashboardInformation.promQueries.length === 0 ||
-      selectedDashboardInformation.metaData?.panel_groups.length === 0 ||
+      selectedDashboardInformation.metaData?.panelGroups.length === 0 ||
       selectedDashboardInformation.dataSourceURL === '' ||
       (selectedDashboardInformation.range.startDate === INVALID_DATE &&
         selectedDashboardInformation.range.endDate === INVALID_DATE &&
@@ -236,65 +236,64 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     if (
       dashboards &&
-      dashboards.ListDashboard &&
-      dashboards.ListDashboard.length
+      dashboards.getDashboard &&
+      dashboards.getDashboard.length
     ) {
       if (
         selectedDashboardInformation.id !==
         selectedDashboardInformation.dashboardKey
       ) {
-        const selectedDashboard: ListDashboardResponse =
-          dashboards.ListDashboard.filter((data) => {
-            return data.db_id === selectedDashboardInformation.id;
+        const selectedDashboard: GetDashboardResponse =
+          dashboards.getDashboard.filter((data) => {
+            return data.dbID === selectedDashboardInformation.id;
           })[0];
         const selectedPanelNameAndIDList: PanelNameAndID[] = [];
         if (selectedDashboard) {
-          (selectedDashboard.panel_groups ?? []).forEach(
+          (selectedDashboard.panelGroups ?? []).forEach(
             (panelGroup: PanelGroupResponse) => {
               (panelGroup.panels ?? []).forEach((panel: PanelResponse) => {
                 selectedPanelNameAndIDList.push({
-                  name: panel.panel_name,
-                  id: panel.panel_id,
+                  name: panel.panelName,
+                  id: panel.panelID,
                 });
               });
             }
           );
           setSelectedDashboardInformation({
             ...selectedDashboardInformation,
-            dashboardListForAgent: dashboards.ListDashboard,
+            dashboardListForAgent: dashboards.getDashboard,
             metaData: selectedDashboard,
-            closedAreaQueryIDs: (selectedDashboard.panel_groups ?? [])
+            closedAreaQueryIDs: (selectedDashboard.panelGroups ?? [])
               .flatMap((panelGroup) =>
                 panelGroup ? panelGroup.panels ?? [] : []
               )
-              .flatMap((panel) => (panel ? panel.prom_queries ?? [] : []))
-              .filter((query) => query.close_area)
-              .map((query) => query.queryid),
+              .flatMap((panel) => (panel ? panel.promQueries ?? [] : []))
+              .filter((query) => query.closeArea)
+              .map((query) => query.queryID),
             dashboardKey: selectedDashboardInformation.id,
             panelNameAndIDList: selectedPanelNameAndIDList,
-            name: selectedDashboard.db_name,
-            typeName: selectedDashboard.db_type_name,
-            typeID: selectedDashboard.db_type_id,
-            agentName: selectedDashboard.cluster_name,
+            name: selectedDashboard.dbName,
+            typeName: selectedDashboard.dbTypeName,
+            typeID: selectedDashboard.dbTypeID,
+            agentName: selectedDashboard.clusterName,
             urlToIcon: `./icons/${
-              selectedDashboard.db_type_id.includes('custom')
+              selectedDashboard.dbTypeID.includes('custom')
                 ? 'custom'
-                : selectedDashboard.db_type_id
+                : selectedDashboard.dbTypeID
             }_dashboard.svg`,
-            information: selectedDashboard.db_information,
-            chaosEventQueryTemplate:
-              selectedDashboard.chaos_event_query_template,
+            information: selectedDashboard.dbInformation,
+            chaosEventQueryTemplate: selectedDashboard.chaosEventQueryTemplate,
             chaosVerdictQueryTemplate:
-              selectedDashboard.chaos_verdict_query_template,
-            applicationMetadataMap: selectedDashboard.application_metadata_map,
-            dataSourceURL: selectedDashboard.ds_url,
-            dataSourceID: selectedDashboard.ds_id,
-            dataSourceName: selectedDashboard.ds_name,
+              selectedDashboard.chaosVerdictQueryTemplate,
+            applicationMetadataMap: selectedDashboard.applicationMetadataMap,
+            dataSourceURL: selectedDashboard.dsURL,
+            dataSourceID: selectedDashboard.dsID,
+            dataSourceName: selectedDashboard.dsName,
             promQueries: generatePromQueries(
               selectedDashboardInformation.range,
-              selectedDashboard.panel_groups ?? [],
-              selectedDashboard.chaos_event_query_template,
-              selectedDashboard.chaos_verdict_query_template
+              selectedDashboard.panelGroups ?? [],
+              selectedDashboard.chaosEventQueryTemplate,
+              selectedDashboard.chaosVerdictQueryTemplate
             ),
           });
           setSelectedPanels(
@@ -305,8 +304,8 @@ const DashboardPage: React.FC = () => {
             ...promData,
             panelGroupQueryMap: [],
           });
-          if (selectedDashboard.ds_health_status !== ACTIVE) {
-            setDataSourceStatus(selectedDashboard.ds_health_status);
+          if (selectedDashboard.dsHealthStatus !== ACTIVE) {
+            setDataSourceStatus(selectedDashboard.dsHealthStatus);
           }
         }
         setReFetch(true);
@@ -454,21 +453,21 @@ const DashboardPage: React.FC = () => {
                   classes={{ paper: classes.menuList }}
                 >
                   {selectedDashboardInformation.dashboardListForAgent.map(
-                    (data: ListDashboardResponse) => {
+                    (data: GetDashboardResponse) => {
                       return (
                         <MenuItem
-                          key={`${data.db_id}-monitoringDashboard`}
-                          value={data.db_id}
+                          key={`${data.dbID}-monitoringDashboard`}
+                          value={data.dbID}
                           selected={
-                            data.db_id === selectedDashboardInformation.id
+                            data.dbID === selectedDashboardInformation.id
                           }
                           onClick={() => {
                             dashboard.selectDashboard({
-                              selectedDashboardID: data.db_id,
+                              selectedDashboardID: data.dbID,
                             });
                             setSelectedDashboardInformation({
                               ...selectedDashboardInformation,
-                              id: data.db_id,
+                              id: data.dbID,
                             });
                             setAnchorEl(null);
                           }}
@@ -480,7 +479,7 @@ const DashboardPage: React.FC = () => {
                               className={classes.btnText}
                               variant="h5"
                             >
-                              {data.db_name}
+                              {data.dbName}
                             </Typography>
                           </div>
                         </MenuItem>
@@ -544,7 +543,7 @@ const DashboardPage: React.FC = () => {
                   refreshInterval,
                   promQueries: generatePromQueries(
                     range,
-                    selectedDashboardInformation.metaData?.panel_groups ?? [],
+                    selectedDashboardInformation.metaData?.panelGroups ?? [],
                     selectedDashboardInformation.chaosEventQueryTemplate,
                     selectedDashboardInformation.chaosVerdictQueryTemplate
                   ),
@@ -651,15 +650,15 @@ const DashboardPage: React.FC = () => {
                 promData.panelGroupQueryMap.length > 0 &&
                 !reFetching &&
                 selectedDashboardInformation.metaData &&
-                selectedDashboardInformation.metaData.panel_groups.length > 0 &&
-                selectedDashboardInformation.metaData.panel_groups.map(
+                selectedDashboardInformation.metaData.panelGroups.length > 0 &&
+                selectedDashboardInformation.metaData.panelGroups.map(
                   (panelGroup: PanelGroupResponse, index) => (
                     <div
-                      key={`${panelGroup.panel_group_id}-dashboardPage-div`}
+                      key={`${panelGroup.panelGroupID}-dashboardPage-div`}
                       data-cy="dashboardPanelGroup"
                     >
                       <DashboardPanelGroup
-                        key={`${panelGroup.panel_group_id}-dashboardPage-component`}
+                        key={`${panelGroup.panelGroupID}-dashboardPage-component`}
                         centralAllowGraphUpdate={centralAllowGraphUpdate}
                         centralBrushPosition={centralBrushPosition}
                         handleCentralBrushPosition={(
@@ -766,7 +765,7 @@ const DashboardPage: React.FC = () => {
                               promQueries: generatePromQueries(
                                 range,
                                 selectedDashboardInformation.metaData
-                                  ?.panel_groups ?? [],
+                                  ?.panelGroups ?? [],
                                 selectedDashboardInformation.chaosEventQueryTemplate,
                                 selectedDashboardInformation.chaosVerdictQueryTemplate
                               ),
@@ -787,7 +786,7 @@ const DashboardPage: React.FC = () => {
                               promQueries: generatePromQueries(
                                 timeControlObjectFromHistory.range,
                                 selectedDashboardInformation.metaData
-                                  ?.panel_groups ?? [],
+                                  ?.panelGroups ?? [],
                                 selectedDashboardInformation.chaosEventQueryTemplate,
                                 selectedDashboardInformation.chaosVerdictQueryTemplate
                               ),
@@ -844,7 +843,7 @@ const DashboardPage: React.FC = () => {
                                   endDate: INVALID_DATE,
                                 },
                                 selectedDashboardInformation.metaData
-                                  ?.panel_groups ?? [],
+                                  ?.panelGroups ?? [],
                                 selectedDashboardInformation.chaosEventQueryTemplate,
                                 selectedDashboardInformation.chaosVerdictQueryTemplate
                               ),
@@ -858,8 +857,8 @@ const DashboardPage: React.FC = () => {
                             setShowPromQueryResponseLoader(false);
                           }
                         }}
-                        panel_group_id={panelGroup.panel_group_id}
-                        panel_group_name={panelGroup.panel_group_name}
+                        panelGroupID={panelGroup.panelGroupID}
+                        panelGroupName={panelGroup.panelGroupName}
                         panels={panelGroup.panels ?? []}
                         selectedPanels={selectedPanels}
                         metricDataForGroup={

@@ -9,12 +9,12 @@ import {
   PanelDetails,
 } from '../../../../../models/dashboardsData';
 import {
-  CreateDashboardInput,
+  CreateDashboardRequest,
   Panel,
   PanelGroup,
   PromQuery,
-  UpdateDashboardInput,
-  updatePanelGroupInput,
+  UpdateDashboardRequest,
+  UpdatePanelGroupRequest,
 } from '../../../../../models/graphql/dashboardsDetails';
 import {
   DEFAULT_REFRESH_RATE,
@@ -69,13 +69,13 @@ const TuneTheQueries = forwardRef(
       return true;
     };
 
-    const [createDashboard] = useMutation<CreateDashboardInput>(
+    const [createDashboard] = useMutation<CreateDashboardRequest>(
       CREATE_DASHBOARD,
       {
         onCompleted: (data) => {
           isLoading(false);
           setProceed(true);
-          onDashboardLoadRoutine(data.createDashBoard?.db_id ?? '').then(() => {
+          onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
             history.push({
               pathname: '/observability/monitoring-dashboard',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
@@ -89,7 +89,7 @@ const TuneTheQueries = forwardRef(
         },
       }
     );
-    const [updateDashboard] = useMutation<UpdateDashboardInput>(
+    const [updateDashboard] = useMutation<UpdateDashboardRequest>(
       UPDATE_DASHBOARD,
       {
         onCompleted: () => {
@@ -115,73 +115,73 @@ const TuneTheQueries = forwardRef(
         const panelGroups: PanelGroup[] = [];
         updatedDashboardDetails.selectedPanels?.forEach((panelDetails) => {
           const panelQueries: PromQuery[] = [];
-          panelDetails.prom_queries.forEach((query) => {
+          panelDetails.promQueries.forEach((query) => {
             panelQueries.push({
-              queryid: query.queryid,
-              prom_query_name: query.prom_query_name,
+              queryID: query.queryID,
+              promQueryName: query.promQueryName,
               legend: query.legend,
               resolution: query.resolution,
               minstep: query.minstep,
               line: query.line,
-              close_area: query.close_area,
+              closeArea: query.closeArea,
             });
           });
           const panel: Panel = {
-            prom_queries: panelQueries,
-            panel_options: panelDetails.panel_options,
-            panel_name: panelDetails.panel_name,
-            y_axis_left: panelDetails.y_axis_left,
-            y_axis_right: panelDetails.y_axis_right,
-            x_axis_down: panelDetails.x_axis_down,
+            promQueries: panelQueries,
+            panelOptions: panelDetails.panelOptions,
+            panelName: panelDetails.panelName,
+            yAxisLeft: panelDetails.yAxisLeft,
+            yAxisRight: panelDetails.yAxisRight,
+            xAxisDown: panelDetails.xAxisDown,
             unit: panelDetails.unit,
           };
           let panelGroupFound = false;
           panelGroups.forEach((panelGroup, index) => {
-            if (panelGroup.panel_group_name === panelDetails.panel_group_name) {
+            if (panelGroup.panelGroupName === panelDetails.panelGroupName) {
               panelGroups[index].panels.push(panel);
               panelGroupFound = true;
             }
           });
           if (!panelGroupFound) {
             panelGroups.push({
-              panel_group_name: panelDetails.panel_group_name ?? '',
+              panelGroupName: panelDetails.panelGroupName ?? '',
               panels: [panel],
             });
           }
         });
         return panelGroups;
       }
-      const panelGroups: updatePanelGroupInput[] = [];
+      const panelGroups: UpdatePanelGroupRequest[] = [];
       updatedDashboardDetails.selectedPanels?.forEach((panelDetails) => {
         const panelQueries: PromQuery[] = [];
-        panelDetails.prom_queries.forEach((query) => {
+        panelDetails.promQueries.forEach((query) => {
           panelQueries.push({
-            queryid: query.queryid,
-            prom_query_name: query.prom_query_name,
+            queryID: query.queryID,
+            promQueryName: query.promQueryName,
             legend: query.legend,
             resolution: query.resolution,
             minstep: query.minstep,
             line: query.line,
-            close_area: query.close_area,
+            closeArea: query.closeArea,
           });
         });
         const panel: Panel = {
-          panel_id: panelDetails.panel_id ?? '',
-          created_at: panelDetails.created_at ?? '',
-          panel_group_id: panelDetails.panel_group_id ?? '',
-          prom_queries: panelQueries,
-          panel_options: panelDetails.panel_options,
-          panel_name: panelDetails.panel_name,
-          y_axis_left: panelDetails.y_axis_left,
-          y_axis_right: panelDetails.y_axis_right,
-          x_axis_down: panelDetails.x_axis_down,
+          panelID: panelDetails.panelID ?? '',
+          createdAt: panelDetails.createdAt ?? '',
+          panelGroupID: panelDetails.panelGroupID ?? '',
+          promQueries: panelQueries,
+          panelOptions: panelDetails.panelOptions,
+          panelName: panelDetails.panelName,
+          yAxisLeft: panelDetails.yAxisLeft,
+          yAxisRight: panelDetails.yAxisRight,
+          xAxisDown: panelDetails.xAxisDown,
           unit: panelDetails.unit,
         };
         let panelGroupFound = false;
         panelGroups.forEach((panelGroup, index) => {
-          if (panelGroup.panel_group_name === panelDetails.panel_group_name) {
-            if (panelDetails.panel_group_id !== panelGroup.panel_group_id) {
-              panel.panel_group_id = panelGroup.panel_group_id;
+          if (panelGroup.panelGroupName === panelDetails.panelGroupName) {
+            if (panelDetails.panelGroupID !== panelGroup.panelGroupID) {
+              panel.panelGroupID = panelGroup.panelGroupID;
             }
             panelGroups[index].panels.push(panel);
             panelGroupFound = true;
@@ -189,8 +189,8 @@ const TuneTheQueries = forwardRef(
         });
         if (!panelGroupFound) {
           panelGroups.push({
-            panel_group_id: panelDetails.panel_group_id ?? '',
-            panel_group_name: panelDetails.panel_group_name ?? '',
+            panelGroupID: panelDetails.panelGroupID ?? '',
+            panelGroupName: panelDetails.panelGroupName ?? '',
             panels: [panel],
           });
         }
@@ -201,46 +201,46 @@ const TuneTheQueries = forwardRef(
     const handleCreateMutation = () => {
       isLoading(true);
       const dashboardInput = {
-        ds_id: dashboardVars.dataSourceID ?? '',
-        db_name: dashboardVars.name ?? '',
-        db_type_id: dashboardVars.dashboardTypeID ?? '',
-        db_type_name: dashboardVars.dashboardTypeName ?? '',
-        db_information: dashboardVars.information ?? '',
-        chaos_event_query_template: dashboardVars.chaosEventQueryTemplate ?? '',
-        chaos_verdict_query_template:
+        dsID: dashboardVars.dataSourceID ?? '',
+        dbName: dashboardVars.name ?? '',
+        dbTypeID: dashboardVars.dashboardTypeID ?? '',
+        dbTypeName: dashboardVars.dashboardTypeName ?? '',
+        dbInformation: dashboardVars.information ?? '',
+        chaosEventQueryTemplate: dashboardVars.chaosEventQueryTemplate ?? '',
+        chaosVerdictQueryTemplate:
           dashboardVars.chaosVerdictQueryTemplate ?? '',
-        application_metadata_map: dashboardVars.applicationMetadataMap ?? [],
-        panel_groups: getPanelGroups(),
-        end_time: `${Math.round(new Date().getTime() / 1000)}`,
-        start_time: `${
+        applicationMetadataMap: dashboardVars.applicationMetadataMap ?? [],
+        panelGroups: getPanelGroups(),
+        endTime: `${Math.round(new Date().getTime() / 1000)}`,
+        startTime: `${
           Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
         }`,
-        project_id: projectID,
-        cluster_id: dashboardVars.agentID ?? '',
-        refresh_rate: `${DEFAULT_REFRESH_RATE}`,
+        projectID,
+        clusterID: dashboardVars.agentID ?? '',
+        refreshRate: `${DEFAULT_REFRESH_RATE}`,
       };
       createDashboard({
-        variables: { createDBInput: dashboardInput },
+        variables: { createDBRequest: dashboardInput },
       });
     };
 
     const handleUpdateMutation = () => {
       isLoading(true);
       const dashboardInput = {
-        db_id: dashboardVars.id ?? '',
-        ds_id: dashboardVars.dataSourceID ?? '',
-        db_name: dashboardVars.name ?? '',
-        db_type_id: dashboardVars.dashboardTypeID ?? '',
-        db_type_name: dashboardVars.dashboardTypeName ?? '',
-        db_information: dashboardVars.information ?? '',
-        application_metadata_map: dashboardVars.applicationMetadataMap ?? [],
-        panel_groups: getPanelGroups(),
-        end_time: `${Math.round(new Date().getTime() / 1000)}`,
-        start_time: `${
+        dbID: dashboardVars.id ?? '',
+        dsID: dashboardVars.dataSourceID ?? '',
+        dbName: dashboardVars.name ?? '',
+        dbTypeID: dashboardVars.dashboardTypeID ?? '',
+        dbTypeName: dashboardVars.dashboardTypeName ?? '',
+        dbInformation: dashboardVars.information ?? '',
+        applicationMetadataMap: dashboardVars.applicationMetadataMap ?? [],
+        panelGroups: getPanelGroups(),
+        endTime: `${Math.round(new Date().getTime() / 1000)}`,
+        startTime: `${
           Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
         }`,
-        refresh_rate: `${DEFAULT_REFRESH_RATE}`,
-        cluster_id: dashboardVars.agentID ?? '',
+        refreshRate: `${DEFAULT_REFRESH_RATE}`,
+        clusterID: dashboardVars.agentID ?? '',
       };
       updateDashboard({
         variables: {

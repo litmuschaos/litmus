@@ -4,7 +4,7 @@ import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import { InputField, RadioButton, TextButton } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LIST_DATASOURCE } from '../../../../graphql';
+import { GET_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
   DataSourceList,
@@ -60,7 +60,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
 
   // Apollo query to get the datasource data
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
-    LIST_DATASOURCE,
+    GET_DATASOURCE,
     {
       variables: { projectID },
       fetchPolicy: 'cache-and-network',

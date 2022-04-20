@@ -5,7 +5,7 @@ import {
   MenuItem,
   TableCell,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { ButtonFilled, LightPills } from 'litmus-ui';
 import React, { useState } from 'react';
@@ -35,7 +35,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   const projectID = getProjectID();
 
   const { t } = useTranslation();
-  const [role, setRole] = useState<string>(row.Role);
+  const [role, setRole] = useState<string>(row.role);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
     setAnchorEl(null);
@@ -71,7 +71,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   const [cancelInviteOpen, setCancelInviteOpen] = useState<boolean>(false);
 
   React.useEffect(() => {
-    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
+    fetch(`${config.auth.url}/getUser/${row.userID}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivatedAt ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -105,7 +105,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             data-cy="avatar"
             alt="User"
             className={`${
-              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
+              row.deactivatedAt ? classes.darkBg : classes.avatarBackground
             } `}
           >
             {memberDetails?.username && userInitials(memberDetails.username)}
@@ -115,13 +115,13 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivatedAt ? classes.dark : ''
         }`}
       >
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={row.DeactivatedAt !== null}
+            disabled={row.deactivatedAt !== null}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -141,7 +141,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           >
             <MenuItem
               onClick={() => {
-                setRole(Role.editor);
+                setRole(Role.EDITOR);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -167,7 +167,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setRole(Role.viewer);
+                setRole(Role.VIEWER);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -196,7 +196,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivatedAt ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
@@ -204,16 +204,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       <TableCell className={classes.otherTC}>
         <LightPills
           variant={
-            row.Invitation === InvitationStatus.pending ? 'warning' : 'danger'
+            row.invitation === InvitationStatus.PENDING ? 'warning' : 'danger'
           }
-          label={row.Invitation}
+          label={row.invitation}
         />
       </TableCell>
 
-      <TableCell className={classes.buttonTC} key={row.UserID}>
+      <TableCell className={classes.buttonTC} key={row.userID}>
         <div className={classes.lastCell}>
-          {row.Invitation !== InvitationStatus.exited &&
-            row.Invitation !== InvitationStatus.declined && (
+          {row.invitation !== InvitationStatus.EXITED &&
+            row.invitation !== InvitationStatus.DECLINED && (
               <IconButton onClick={() => setCancelInviteOpen(true)}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
@@ -222,16 +222,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             classes={{
               tooltip: classes.tooltip,
             }}
-            disableHoverListener={!row.DeactivatedAt}
+            disableHoverListener={!row.deactivatedAt}
             disableFocusListener
             placement="bottom"
             title="User has been deactivated"
           >
             <div data-cy="resendButton">
               <ButtonFilled
-                disabled={row.DeactivatedAt !== null}
+                disabled={row.deactivatedAt !== null}
                 onClick={() => {
-                  SendInvite(row.UserID, role);
+                  SendInvite(row.userID, role);
                 }}
               >
                 {t('settings.teamingTab.invitation.sentInvitation.resend')}

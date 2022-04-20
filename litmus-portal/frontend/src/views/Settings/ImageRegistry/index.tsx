@@ -20,7 +20,7 @@ import { constants } from '../../../constants';
 import {
   ADD_IMAGE_REGISTRY,
   GET_IMAGE_REGISTRY,
-  LIST_IMAGE_REGISTRY,
+  GET_IMAGE_REGISTRY_BY_PROJECT_ID,
   UPDATE_IMAGE_REGISTRY,
 } from '../../../graphql';
 import { getProjectID } from '../../../utils/getSearchParams';
@@ -96,7 +96,7 @@ const ImageRegistry = () => {
   /**
    * ListImageRegistry is used to fetch the list of image registries
    */
-  const { loading: listLoading } = useQuery(LIST_IMAGE_REGISTRY, {
+  const { loading: listLoading } = useQuery(GET_IMAGE_REGISTRY_BY_PROJECT_ID, {
     variables: {
       data: projectID,
     },
@@ -149,7 +149,7 @@ const ImageRegistry = () => {
   const [createImageRegistry] = useMutation(ADD_IMAGE_REGISTRY, {
     refetchQueries: [
       {
-        query: LIST_IMAGE_REGISTRY,
+        query: GET_IMAGE_REGISTRY_BY_PROJECT_ID,
         variables: {
           data: projectID,
         },

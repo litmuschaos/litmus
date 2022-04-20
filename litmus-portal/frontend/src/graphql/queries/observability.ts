@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-// listDataSource
-export const LIST_DATASOURCE = gql`
+// GetDataSource
+export const GET_DATASOURCE = gql`
   query listDataSource($projectID: String!) {
     ListDataSource(projectID: $projectID) {
       dsID
@@ -23,10 +23,10 @@ export const LIST_DATASOURCE = gql`
   }
 `;
 
-export const LIST_DATASOURCE_OVERVIEW = gql`
+export const GET_DATASOURCE_OVERVIEW = gql`
   query listDataSource($projectID: String!) {
     ListDataSource(project_id: $projectID) {
-      dsID
+      ds_id
     }
   }
 `;
@@ -42,7 +42,7 @@ export const GET_PORTAL_DASHBOARDS = gql`
 `;
 
 // listDashboard
-export const LIST_DASHBOARD = gql`
+export const GET_DASHBOARD = gql`
   query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
     ListDashboard(projectID: $projectID, clusterID: $clusterID, dbID: $dbID) {
       dbID
@@ -102,7 +102,7 @@ export const LIST_DASHBOARD = gql`
   }
 `;
 
-export const LIST_DASHBOARD_OVERVIEW = gql`
+export const GET_DASHBOARD_OVERVIEW = gql`
   query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
     ListDashboard(projectID: $projectID, clusterID: $clusterID, dbID: $dbID) {
       dbID

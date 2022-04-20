@@ -22,7 +22,7 @@ import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
   GET_IMAGE_REGISTRY,
-  LIST_IMAGE_REGISTRY,
+  GET_IMAGE_REGISTRY_BY_PROJECT_ID,
 } from '../../../graphql';
 import { ImageRegistryInfo } from '../../../models/redux/image_registry';
 import useActions from '../../../redux/actions';
@@ -88,7 +88,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
     },
   });
 
-  useQuery(LIST_IMAGE_REGISTRY, {
+  useQuery(GET_IMAGE_REGISTRY_BY_PROJECT_ID, {
     variables: {
       data: selectedProjectID,
     },

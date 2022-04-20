@@ -27,19 +27,19 @@ import Loader from '../../../components/Loader';
 import {
   DELETE_WORKFLOW,
   GET_CLUSTER_NAMES,
+  GET_WORKFLOW_DETAILS,
   UPDATE_SCHEDULE,
-  WORKFLOW_LIST_DETAILS,
 } from '../../../graphql';
 import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import { WeightMap } from '../../../models/graphql/createWorkflowData';
 import { DeleteSchedule } from '../../../models/graphql/scheduleData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   Pagination,
   ScheduledWorkflow,
   ScheduledWorkflows,
-  SortInput,
-  WorkflowFilterInput,
+  SortRequest,
+  WorkflowFilterRequest,
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
@@ -49,8 +49,9 @@ interface BrowseScheduleProps {
   setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-interface FilterOption extends WorkflowFilterInput {
+interface FilterOption extends WorkflowFilterRequest {
   suspended?: string;
+  workflowType?: string;
 }
 
 const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
@@ -69,10 +70,11 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
     workflowName: '',
     clusterName: 'All',
     suspended: 'All',
+    workflowType: 'All',
   });
 
   // State for sorting
-  const [sortData, setSortData] = useState<SortInput>({
+  const [sortData, setSortData] = useState<SortRequest>({
     field: 'Time',
     descending: true,
   });
@@ -80,11 +82,11 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
   // Apollo query to get the scheduled data
   const { data, refetch, loading, error } = useQuery<
     ScheduledWorkflows,
-    ListWorkflowsInput
-  >(WORKFLOW_LIST_DETAILS, {
+    GetWorkflowsRequest
+  >(GET_WORKFLOW_DETAILS, {
     variables: {
-      workflowInput: {
-        projectID: projectID,
+      request: {
+        projectID,
         pagination: {
           page: paginationData.page,
           limit: paginationData.limit,
@@ -150,20 +152,30 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
     GET_CLUSTER_NAMES,
     {
       variables: {
-        projectID: projectID,
+        projectID,
       },
     }
   );
 
-  const filteredWorkflows = data?.listWorkflow.workflows.filter((dataRow) =>
-    filters.suspended === 'All'
-      ? true
-      : filters.suspended === 'true'
-      ? YAML.parse(dataRow.workflowManifest).spec.suspend === true
-      : filters.suspended === 'false'
-      ? YAML.parse(dataRow.workflowManifest).spec.suspend === undefined
-      : false
-  );
+  const filteredWorkflows = data?.getWorkflow.workflows
+    .filter((dataRow) =>
+      filters.suspended === 'All'
+        ? true
+        : filters.suspended === 'true'
+        ? YAML.parse(dataRow.workflowManifest).spec.suspend === true
+        : filters.suspended === 'false'
+        ? YAML.parse(dataRow.workflowManifest).spec.suspend === undefined
+        : false
+    )
+    .filter((dataRow) =>
+      filters.workflowType === 'All'
+        ? true
+        : filters.workflowType === 'workflow'
+        ? dataRow.cronSyntax.length === 0 || dataRow.cronSyntax === ''
+        : filters.workflowType === 'cronworkflow'
+        ? dataRow.cronSyntax.length > 0
+        : false
+    );
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
@@ -375,7 +387,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.listWorkflow.totalNoOfWorkflows ?? 0}
+          count={data?.getWorkflow.totalNoOfWorkflows ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

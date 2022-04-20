@@ -11,14 +11,14 @@ import { UnconfiguredAgent } from '../../../components/UnconfiguredAgent';
 import Center from '../../../containers/layouts/Center';
 import {
   GET_CLUSTER_LENGTH,
-  LIST_DASHBOARD_OVERVIEW,
-  LIST_DATASOURCE_OVERVIEW,
+  GET_DASHBOARD_OVERVIEW,
+  GET_DATASOURCE_OVERVIEW,
   WORKFLOW_DETAILS,
 } from '../../../graphql';
 import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
-  DashboardList,
-  ListDashboardVars,
+  GetDashboard,
+  GetDashboardRequest,
 } from '../../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
@@ -70,7 +70,7 @@ const Overview: React.FC = () => {
     data: dataSourceListData,
     loading: dataSourceListLoading,
     error: dataSourceListError,
-  } = useQuery<DataSourceList, ListDataSourceVars>(LIST_DATASOURCE_OVERVIEW, {
+  } = useQuery<DataSourceList, ListDataSourceVars>(GET_DATASOURCE_OVERVIEW, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
@@ -91,7 +91,7 @@ const Overview: React.FC = () => {
   } = useQuery<Workflow, WorkflowDataRequest>(WORKFLOW_DETAILS, {
     variables: {
       workflowRunsRequest: {
-        projectID: projectID,
+        projectID,
         pagination: {
           page: 0,
           limit: 3,
@@ -111,14 +111,14 @@ const Overview: React.FC = () => {
     data: dashboardListData,
     loading: dashboardListLoading,
     error: dashboardListError,
-  } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD_OVERVIEW, {
+  } = useQuery<GetDashboard, GetDashboardRequest>(GET_DASHBOARD_OVERVIEW, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
 
   // Get count for dashboardListData length to render conditionally
   if (dashboardListData) {
-    monitoringDashboardCount = dashboardListData.ListDashboard?.length;
+    monitoringDashboardCount = dashboardListData.getDashboard?.length;
   }
 
   // Loader for confirmation of agent presence
@@ -193,10 +193,11 @@ const Overview: React.FC = () => {
   let filteredDashboardListData;
   // Select the latest 3 dashboards
   if (monitoringDashboardCount > 0) {
-    filteredDashboardListData = dashboardListData?.ListDashboard.slice()
+    filteredDashboardListData = dashboardListData?.getDashboard
+      .slice()
       .sort((a, b) => {
-        const x = b.viewed_at as unknown as number;
-        const y = a.viewed_at as unknown as number;
+        const x = b.viewedAt as unknown as number;
+        const y = a.viewedAt as unknown as number;
         return sortNumAsc(x, y);
       })
       .slice(0, 3);
@@ -339,7 +340,7 @@ const Overview: React.FC = () => {
             filteredDashboardListData?.map((dashboard) => {
               return (
                 <MonitoringDashboardCard
-                  key={dashboard.db_id}
+                  key={dashboard.dbID}
                   data={dashboard}
                 />
               );

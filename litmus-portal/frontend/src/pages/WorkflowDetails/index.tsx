@@ -11,9 +11,9 @@ import { SuspenseLoader } from '../../components/SuspenseLoader';
 import { StyledTab, TabPanel } from '../../components/Tabs';
 import Wrapper from '../../containers/layouts/Wrapper';
 import {
+  GET_WORKFLOW_DETAILS,
   WORKFLOW_DETAILS_WITH_EXEC_DATA,
   WORKFLOW_EVENTS_WITH_EXEC_DATA,
-  WORKFLOW_LIST_DETAILS,
 } from '../../graphql';
 import { ScheduleWorkflow } from '../../models/graphql/scheduleData';
 import {
@@ -21,10 +21,10 @@ import {
   Workflow,
   WorkflowDataRequest,
   WorkflowSubscription,
-  WorkflowSubscriptionInput,
+  WorkflowSubscriptionRequest,
 } from '../../models/graphql/workflowData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
 } from '../../models/graphql/workflowListData';
 import useActions from '../../redux/actions';
@@ -81,7 +81,7 @@ const WorkflowDetails: React.FC = () => {
   >(WORKFLOW_DETAILS_WITH_EXEC_DATA, {
     variables: {
       workflowRunsRequest: {
-        projectID: projectID,
+        projectID,
         workflowRunIDs: [workflowRunID],
       },
     },
@@ -92,11 +92,11 @@ const WorkflowDetails: React.FC = () => {
 
   const { data: workflowData, loading } = useQuery<
     ScheduledWorkflows,
-    ListWorkflowsInput
-  >(WORKFLOW_LIST_DETAILS, {
+    GetWorkflowsRequest
+  >(GET_WORKFLOW_DETAILS, {
     variables: {
-      workflowInput: {
-        projectID: projectID,
+      request: {
+        projectID,
         workflowIDs: [workflowRun?.workflowID ?? ' '],
       },
     },
@@ -106,7 +106,7 @@ const WorkflowDetails: React.FC = () => {
   // Using subscription to get realtime data
   useEffect(() => {
     if (workflowRun?.phase && workflowRun.phase === 'Running') {
-      subscribeToMore<WorkflowSubscription, WorkflowSubscriptionInput>({
+      subscribeToMore<WorkflowSubscription, WorkflowSubscriptionRequest>({
         document: WORKFLOW_EVENTS_WITH_EXEC_DATA,
         variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
@@ -138,7 +138,7 @@ const WorkflowDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    const scheduledWorkflow = workflowData?.listWorkflow.workflows;
+    const scheduledWorkflow = workflowData?.getWorkflow.workflows;
     if (scheduledWorkflow) {
       setworkflowSchedulesDetails(
         (scheduledWorkflow[0]
@@ -235,7 +235,7 @@ const WorkflowDetails: React.FC = () => {
                         /* Node details and Logs */
                         <WorkflowNodeInfo
                           manifest={
-                            workflowSchedulesDetails?.workflow_manifest as string
+                            workflowSchedulesDetails?.workflowManifest as string
                           }
                           setIsInfoToggled={setIsInfoToggled}
                           clusterID={workflowRun.clusterID}
@@ -279,7 +279,7 @@ const WorkflowDetails: React.FC = () => {
                 {/* Table for all Node details */}
                 <NodeTable
                   manifest={
-                    workflowSchedulesDetails?.workflow_manifest as string
+                    workflowSchedulesDetails?.workflowManifest as string
                   }
                   data={JSON.parse(workflowRun.executionData) as ExecutionData}
                   handleClose={() => setLogsModalOpen(true)}

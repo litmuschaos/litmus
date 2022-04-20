@@ -17,11 +17,11 @@ import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
-import { LIST_DASHBOARD, LIST_DATASOURCE } from '../../../../graphql/queries';
+import { GET_DASHBOARD, GET_DATASOURCE } from '../../../../graphql/queries';
 import {
-  DashboardList,
-  ListDashboardResponse,
-  ListDashboardVars,
+  GetDashboard,
+  GetDashboardRequest,
+  GetDashboardResponse,
 } from '../../../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
@@ -89,9 +89,9 @@ const DashboardTable: React.FC = () => {
 
   // Apollo query to get the dashboard data
   const { data, loading, error, refetch } = useQuery<
-    DashboardList,
-    ListDashboardVars
-  >(LIST_DASHBOARD, {
+    GetDashboard,
+    GetDashboardRequest
+  >(GET_DASHBOARD, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
@@ -100,7 +100,7 @@ const DashboardTable: React.FC = () => {
   const { data: dataSourceList, loading: loadingDataSources } = useQuery<
     DataSourceList,
     ListDataSourceVars
-  >(LIST_DATASOURCE, {
+  >(GET_DATASOURCE, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
@@ -124,51 +124,52 @@ const DashboardTable: React.FC = () => {
     setPage(0);
   };
 
-  const getDashboardType = (searchingData: ListDashboardResponse[]) => {
+  const getDashboardType = (searchingData: GetDashboardResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.db_type_name)) {
-        uniqueList.push(data.db_type_name);
+      if (!uniqueList.includes(data.dbTypeName)) {
+        uniqueList.push(data.dbTypeName);
       }
     });
     return uniqueList;
   };
 
-  const getAgentName = (searchingData: ListDashboardResponse[]) => {
+  const getAgentName = (searchingData: GetDashboardResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.cluster_name)) {
-        uniqueList.push(data.cluster_name);
+      if (!uniqueList.includes(data.clusterName)) {
+        uniqueList.push(data.clusterName);
       }
     });
     return uniqueList;
   };
 
-  const payload: ListDashboardResponse[] = data
-    ? !data.ListDashboard
+  const payload: GetDashboardResponse[] = data
+    ? !data.getDashboard
       ? []
-      : data.ListDashboard.filter((db: ListDashboardResponse) => {
-          return filter.searchTokens.every((s: string) =>
-            db.db_name.toLowerCase().includes(s)
-          );
-        })
+      : data.getDashboard
+          .filter((db: GetDashboardResponse) => {
+            return filter.searchTokens.every((s: string) =>
+              db.dbName.toLowerCase().includes(s)
+            );
+          })
           .filter((data) => {
             return filter.selectedDashboardType === 'All'
               ? true
-              : data.db_type_name === filter.selectedDashboardType;
+              : data.dbTypeName === filter.selectedDashboardType;
           })
           .filter((data) => {
             return filter.selectedAgentName === 'All'
               ? true
-              : data.cluster_name === filter.selectedAgentName;
+              : data.clusterName === filter.selectedAgentName;
           })
           .filter((data) => {
             return filter.range.startDate === 'all' ||
               (filter.range.startDate && filter.range.endDate === undefined)
               ? true
-              : parseInt(data.viewed_at, 10) * 1000 >=
+              : parseInt(data.viewedAt, 10) * 1000 >=
                   new Date(moment(filter.range.startDate).format()).getTime() &&
-                  parseInt(data.viewed_at, 10) * 1000 <=
+                  parseInt(data.viewedAt, 10) * 1000 <=
                     new Date(
                       new Date(moment(filter.range.endDate).format()).setHours(
                         23,
@@ -177,18 +178,18 @@ const DashboardTable: React.FC = () => {
                       )
                     ).getTime();
           })
-          .sort((a: ListDashboardResponse, b: ListDashboardResponse) => {
+          .sort((a: GetDashboardResponse, b: GetDashboardResponse) => {
             // Sorting based on unique fields
             if (filter.sortData.name.sort) {
-              const x = a.db_name;
-              const y = b.db_name;
+              const x = a.dbName;
+              const y = b.dbName;
               return filter.sortData.name.ascending
                 ? sortAlphaAsc(x, y)
                 : sortAlphaDesc(x, y);
             }
             if (filter.sortData.lastViewed.sort) {
-              const x = parseInt(a.viewed_at, 10);
-              const y = parseInt(b.viewed_at, 10);
+              const x = parseInt(a.viewedAt, 10);
+              const y = parseInt(b.viewedAt, 10);
               return filter.sortData.lastViewed.ascending
                 ? sortNumAsc(x, y)
                 : sortNumDesc(x, y);
@@ -316,8 +317,8 @@ const DashboardTable: React.FC = () => {
               });
               setPage(0);
             }}
-            dashboardTypes={getDashboardType(data?.ListDashboard ?? [])}
-            agentNames={getAgentName(data?.ListDashboard ?? [])}
+            dashboardTypes={getDashboardType(data?.getDashboard ?? [])}
+            agentNames={getAgentName(data?.getDashboard ?? [])}
             callbackToSetDashboardType={(dashboardType: string) => {
               setFilter({
                 ...filter,
@@ -411,12 +412,12 @@ const DashboardTable: React.FC = () => {
                   payload
                     .slice(0)
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((data: ListDashboardResponse) => {
+                    .map((data: GetDashboardResponse) => {
                       return (
                         <TableRow
                           hover
                           tabIndex={-1}
-                          key={data.db_id}
+                          key={data.dbID}
                           className={classes.tableRow}
                         >
                           <TableData

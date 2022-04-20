@@ -55,7 +55,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     {
       variables: {
         workflowRunsRequest: {
-          projectID: projectID,
+          projectID,
           pagination: {
             page: 0,
             limit: 3,
@@ -195,7 +195,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
       />
 
       {/* Project Level info container */}
-      {projectRole === Role.owner && <ProjectInfoContainer />}
+      {projectRole === Role.OWNER && <ProjectInfoContainer />}
     </div>
   );
 };

@@ -92,7 +92,7 @@ export const WORKFLOW_STATS = gql`
 `;
 
 // ListWorkflow
-export const WORKFLOW_LIST_DETAILS = gql`
+export const GET_WORKFLOW_DETAILS = gql`
   query workflowListDetails($workflowInput: ListWorkflowsInput!) {
     ListWorkflow(workflowInput: $workflowInput) {
       totalNoOfWorkflows

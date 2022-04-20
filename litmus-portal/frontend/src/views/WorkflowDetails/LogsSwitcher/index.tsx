@@ -8,17 +8,13 @@ import YAML from 'yaml';
 import { StyledTab, TabPanel } from '../../../components/Tabs';
 import {
   WORKFLOW_DETAILS_WITH_EXEC_DATA,
-  WORKFLOW_LOGS
+  WORKFLOW_LOGS,
 } from '../../../graphql';
-import {
-  PodLog,
-  PodLogRequest,
-  PodLogVars
-} from '../../../models/graphql/podLog';
+import { PodLog, PodLogRequest } from '../../../models/graphql/podLog';
 import {
   ExecutionData,
   Workflow,
-  WorkflowDataRequest
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import { RootState } from '../../../redux/reducers';
 import { getProjectID } from '../../../utils/getSearchParams';
@@ -33,11 +29,7 @@ interface ChaosDataVar {
 interface LogsSwitcherProps extends PodLogRequest {}
 
 const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
-  clusterID,
-  workflowRunID,
-  podNamespace,
-  podName,
-  podType,
+  request: { clusterID, workflowRunID, podNamespace, podName, podType },
 }) => {
   const theme = useTheme();
   const { type } = useSelector((state: RootState) => state.selectedNode);
@@ -55,7 +47,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     {
       variables: {
         workflowRunsRequest: {
-          projectID: projectID,
+          projectID,
           workflowRunIDs: [workflowRunID],
         },
       },
@@ -103,9 +95,9 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     }
   }, [workflow_data, podName]);
 
-  const { data } = useSubscription<PodLog, PodLogVars>(WORKFLOW_LOGS, {
+  const { data } = useSubscription<PodLog, PodLogRequest>(WORKFLOW_LOGS, {
     variables: {
-      podDetails: {
+      request: {
         clusterID,
         workflowRunID,
         podName,
