@@ -207,3 +207,32 @@ spec:
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
+
+### Node CPU Load
+
+It contains percentage of node CPU to be consumed. It can be tuned via `CPU_LOAD` ENV.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-core.yaml yaml)
+```yaml
+# stress the cpu of the targeted nodes
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-cpu-hog-sa
+  experiments:
+  - name: node-cpu-hog
+    spec:
+      components:
+        env:
+        # cpu load in percentage for the stress
+        - name: CPU_LOAD
+          value: '100'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+```
