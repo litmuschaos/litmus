@@ -468,7 +468,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Analysis"
             onClick={() => {
               history.push({
-                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                pathname: `/analytics/workflowStatistics/${data.workflow_id}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}

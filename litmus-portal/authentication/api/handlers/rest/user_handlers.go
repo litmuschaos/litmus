@@ -49,17 +49,26 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
 		if err != nil {
-			log.Println("Error generating password")
+			log.Error("auth error: Error generating password")
 		}
 		password := string(hashedPassword)
 		userRequest.Password = password
+
+		// Validating email address
+		if userRequest.Email != "" {
+			if !userRequest.IsEmailValid(userRequest.Email) {
+				log.Error("auth error: invalid email")
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidEmail], presenter.CreateErrorResponse(utils.ErrInvalidEmail))
+				return
+			}
+		}
 
 		createdAt := strconv.FormatInt(time.Now().Unix(), 10)
 		userRequest.CreatedAt = &createdAt
 
 		userResponse, err := service.CreateUser(&userRequest)
 		if err == utils.ErrUserExists {
-			log.Info(err)
+			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserExists], presenter.CreateErrorResponse(utils.ErrUserExists))
 			return
 		}

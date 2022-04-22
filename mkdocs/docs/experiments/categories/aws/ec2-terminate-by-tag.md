@@ -142,6 +142,11 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <td> Instance Tag to filter the target ec2 instance.</td>
         <td> The <code>INSTANCE_TAG</code> should be provided as <code>key:value</code> ex: <code>team:devops</code></td>
       </tr>
+      <tr>
+        <td> REGION </td>
+        <td> The region name of the target instace</td>
+        <td> </td>
+      </tr> 
     </table>
     
     <h2>Optional Fields</h2>
@@ -182,11 +187,6 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <td> Period to wait before and after injection of chaos in sec </td>
         <td> </td>
       </tr>    
-      <tr>
-        <td> REGION </td>
-        <td> The region name of the target instace</td>
-        <td> </td>
-      </tr> 
     </table>
 
 ## Experiment Examples

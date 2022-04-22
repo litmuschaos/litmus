@@ -8,7 +8,7 @@ metadata:
     name: subscriber-role
 rules:
   - apiGroups: [""]
-    resources: ["configmaps"]
+    resources: ["configmaps", "secrets"]
     verbs: ["get", "create", "delete", "update"]
 
   - apiGroups: [""]
@@ -284,6 +284,7 @@ rules:
       - get
       - list
       - watch
+      - secrets
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
