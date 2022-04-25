@@ -88,7 +88,7 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 		return "", err
 	}
 
-	return wfHandler.ReRunWorkflow(projectID, workflowID, username)
+	return wfHandler.ReRunChaosWorkFlow(projectID, workflowID, username)
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
@@ -123,7 +123,11 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID
 	return wfHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
-func (r *mutationResolver) SyncWorkflow(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
+func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunRequest) (string, error) {
+	return wfHandler.ChaosWorkflowRun(request, *data_store.Store)
+}
+
+func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.SyncWorkflow],
 		model.InvitationAccepted.String())
@@ -132,10 +136,6 @@ func (r *mutationResolver) SyncWorkflow(ctx context.Context, projectID string, w
 	}
 
 	return wfHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, data_store.Store)
-}
-
-func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunInput) (string, error) {
-	return wfHandler.ChaosWorkflowRun(request, *data_store.Store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, request model.PodLog) (string, error) {

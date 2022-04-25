@@ -1149,7 +1149,7 @@ type WorkflowRunFilterInput struct {
 }
 
 // Defines the details for a workflow run
-type WorkflowRunInput struct {
+type WorkflowRunRequest struct {
 	// ID of the workflow
 	WorkflowID string `json:"workflowID"`
 	// ID of the workflow run which is to be queried

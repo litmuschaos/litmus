@@ -68,19 +68,19 @@ type Mutation {
   ): Boolean! @authorized
 
   """
+  Creates a new workflow run and sends it to subscriber
+  """
+  # authorized directive not required
+  chaosWorkflowRun(request: WorkflowRunRequest!): String!
+
+  """
   Manually sync the status of the workflow run
   """
-  syncWorkflow(
+  syncWorkflowRun(
     projectID: String!
     workflowID: String!
     workflowRunID: String!
   ): Boolean! @authorized
-
-  """
-  Creates a new workflow run and sends it to subscriber
-  """
-  # authorized directive not required
-  chaosWorkflowRun(request: WorkflowRunInput!): String!
 
   """
   Receives pod logs for experiments from agent
@@ -140,8 +140,9 @@ type Mutation {
 
   # GIT-OPS OPERATIONS
   """
-  Sends workflow events to subscriber
+  Sends workflow run request(single run workflow only) to agent on gitops notification
   """
+  # authorized directive not required
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
 
   """

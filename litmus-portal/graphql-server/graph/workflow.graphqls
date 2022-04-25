@@ -84,7 +84,7 @@ type ChaosWorkFlowResponse {
 """
 Defines the details for a workflow run
 """
-input WorkflowRunInput {
+input WorkflowRunRequest {
   """
   ID of the workflow
   """

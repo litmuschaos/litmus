@@ -299,7 +299,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddMyHub                   func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		ChaosWorkflowRun           func(childComplexity int, request model.WorkflowRunInput) int
+		ChaosWorkflowRun           func(childComplexity int, request model.WorkflowRunRequest) int
 		ConfirmClusterRegistration func(childComplexity int, request model.ClusterIdentity) int
 		CreateChaosWorkFlow        func(childComplexity int, request model.ChaosWorkFlowRequest) int
 		CreateDashBoard            func(childComplexity int, dashboard *model.CreateDBInput) int
@@ -324,7 +324,7 @@ type ComplexityRoot struct {
 		RegisterCluster            func(childComplexity int, request model.RegisterClusterRequest) int
 		SaveMyHub                  func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SyncHub                    func(childComplexity int, id string, projectID string) int
-		SyncWorkflow               func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
+		SyncWorkflowRun            func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
 		TerminateChaosWorkflow     func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
 		UpdateChaosWorkflow        func(childComplexity int, request *model.ChaosWorkFlowRequest) int
 		UpdateDashboard            func(childComplexity int, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
@@ -641,8 +641,8 @@ type MutationResolver interface {
 	UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error)
 	DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error)
 	TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error)
-	SyncWorkflow(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error)
-	ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunInput) (string, error)
+	ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunRequest) (string, error)
+	SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error)
 	PodLog(ctx context.Context, request model.PodLog) (string, error)
 	KubeObj(ctx context.Context, request model.KubeObjectData) (string, error)
 	CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error)
@@ -1840,7 +1840,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChaosWorkflowRun(childComplexity, args["request"].(model.WorkflowRunInput)), true
+		return e.complexity.Mutation.ChaosWorkflowRun(childComplexity, args["request"].(model.WorkflowRunRequest)), true
 
 	case "Mutation.confirmClusterRegistration":
 		if e.complexity.Mutation.ConfirmClusterRegistration == nil {
@@ -2125,17 +2125,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string), args["projectID"].(string)), true
 
-	case "Mutation.syncWorkflow":
-		if e.complexity.Mutation.SyncWorkflow == nil {
+	case "Mutation.syncWorkflowRun":
+		if e.complexity.Mutation.SyncWorkflowRun == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_syncWorkflow_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_syncWorkflowRun_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncWorkflow(childComplexity, args["projectID"].(string), args["workflowID"].(string), args["workflowRunID"].(string)), true
+		return e.complexity.Mutation.SyncWorkflowRun(childComplexity, args["projectID"].(string), args["workflowID"].(string), args["workflowRunID"].(string)), true
 
 	case "Mutation.terminateChaosWorkflow":
 		if e.complexity.Mutation.TerminateChaosWorkflow == nil {
@@ -5154,19 +5154,19 @@ type Mutation {
   ): Boolean! @authorized
 
   """
+  Creates a new workflow run and sends it to subscriber
+  """
+  # authorized directive not required
+  chaosWorkflowRun(request: WorkflowRunRequest!): String!
+
+  """
   Manually sync the status of the workflow run
   """
-  syncWorkflow(
+  syncWorkflowRun(
     projectID: String!
     workflowID: String!
     workflowRunID: String!
   ): Boolean! @authorized
-
-  """
-  Creates a new workflow run and sends it to subscriber
-  """
-  # authorized directive not required
-  chaosWorkflowRun(request: WorkflowRunInput!): String!
 
   """
   Receives pod logs for experiments from agent
@@ -5226,8 +5226,9 @@ type Mutation {
 
   # GIT-OPS OPERATIONS
   """
-  Sends workflow events to subscriber
+  Sends workflow run request(single run workflow only) to agent on gitops notification
   """
+  # authorized directive not required
   gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
 
   """
@@ -5748,7 +5749,7 @@ type ChaosWorkFlowResponse {
 """
 Defines the details for a workflow run
 """
-input WorkflowRunInput {
+input WorkflowRunRequest {
   """
   ID of the workflow
   """
@@ -6329,9 +6330,9 @@ func (ec *executionContext) field_Mutation_addMyHub_args(ctx context.Context, ra
 func (ec *executionContext) field_Mutation_chaosWorkflowRun_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.WorkflowRunInput
+	var arg0 model.WorkflowRunRequest
 	if tmp, ok := rawArgs["request"]; ok {
-		arg0, err = ec.unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx, tmp)
+		arg0, err = ec.unmarshalNWorkflowRunRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6766,7 +6767,7 @@ func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_syncWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_syncWorkflowRun_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -13239,7 +13240,7 @@ func (ec *executionContext) _Mutation_terminateChaosWorkflow(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_chaosWorkflowRun(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13255,7 +13256,48 @@ func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_syncWorkflow_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_chaosWorkflowRun_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ChaosWorkflowRun(rctx, args["request"].(model.WorkflowRunRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_syncWorkflowRun(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_syncWorkflowRun_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13264,7 +13306,7 @@ func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncWorkflow(rctx, args["projectID"].(string), args["workflowID"].(string), args["workflowRunID"].(string))
+			return ec.resolvers.Mutation().SyncWorkflowRun(rctx, args["projectID"].(string), args["workflowID"].(string), args["workflowRunID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13298,47 +13340,6 @@ func (ec *executionContext) _Mutation_syncWorkflow(ctx context.Context, field gr
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_chaosWorkflowRun(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_chaosWorkflowRun_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChaosWorkflowRun(rctx, args["request"].(model.WorkflowRunInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_podLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -25293,8 +25294,8 @@ func (ec *executionContext) unmarshalInputWorkflowRunFilterInput(ctx context.Con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputWorkflowRunInput(ctx context.Context, obj interface{}) (model.WorkflowRunInput, error) {
-	var it model.WorkflowRunInput
+func (ec *executionContext) unmarshalInputWorkflowRunRequest(ctx context.Context, obj interface{}) (model.WorkflowRunRequest, error) {
+	var it model.WorkflowRunRequest
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -26768,13 +26769,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "syncWorkflow":
-			out.Values[i] = ec._Mutation_syncWorkflow(ctx, field)
+		case "chaosWorkflowRun":
+			out.Values[i] = ec._Mutation_chaosWorkflowRun(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "chaosWorkflowRun":
-			out.Values[i] = ec._Mutation_chaosWorkflowRun(ctx, field)
+		case "syncWorkflowRun":
+			out.Values[i] = ec._Mutation_syncWorkflowRun(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -30400,8 +30401,8 @@ func (ec *executionContext) marshalNWorkflowRun2ᚖgithubᚗcomᚋlitmuschaosᚋ
 	return ec._WorkflowRun(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx context.Context, v interface{}) (model.WorkflowRunInput, error) {
-	return ec.unmarshalInputWorkflowRunInput(ctx, v)
+func (ec *executionContext) unmarshalNWorkflowRunRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunRequest(ctx context.Context, v interface{}) (model.WorkflowRunRequest, error) {
+	return ec.unmarshalInputWorkflowRunRequest(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNWorkflowRunStatsRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunStatsRequest(ctx context.Context, v interface{}) (model.WorkflowRunStatsRequest, error) {

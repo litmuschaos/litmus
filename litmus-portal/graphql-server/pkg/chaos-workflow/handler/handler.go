@@ -696,8 +696,8 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 }
 
 // ChaosWorkflowRun Updates or Inserts a new Workflow Run into the DB
-func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, error) {
-	cluster, err := cluster.VerifyCluster(*input.ClusterID)
+func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (string, error) {
+	cluster, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
 		log.Println("ERROR", err)
 		return "", err
@@ -705,16 +705,16 @@ func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, 
 
 	// Parse and store execution data
 	var executionData types.ExecutionData
-	err = json.Unmarshal([]byte(input.ExecutionData), &executionData)
+	err = json.Unmarshal([]byte(request.ExecutionData), &executionData)
 	if err != nil {
-		log.Println("Can not parse Execution Data of workflow run with id: ", input.WorkflowRunID)
+		log.Println("Can not parse Execution Data of workflow run with id: ", request.WorkflowRunID)
 		return "", err
 	}
 
 	var workflowRunMetrics types.WorkflowRunMetrics
 	// Resiliency Score will be calculated only if workflow execution is completed
-	if input.Completed {
-		workflowRunMetrics, err = ops.ProcessCompletedWorkflowRun(executionData, input.WorkflowID)
+	if request.Completed {
+		workflowRunMetrics, err = ops.ProcessCompletedWorkflowRun(executionData, request.WorkflowID)
 		if err != nil {
 			return "", err
 		}
@@ -722,8 +722,8 @@ func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, 
 
 	count := 0
 	isRemoved := false
-	count, err = dbOperationsWorkflow.UpdateWorkflowRun(input.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
-		WorkflowRunID:      input.WorkflowRunID,
+	count, err = dbOperationsWorkflow.UpdateWorkflowRun(request.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
+		WorkflowRunID:      request.WorkflowRunID,
 		LastUpdated:        strconv.FormatInt(time.Now().Unix(), 10),
 		Phase:              executionData.Phase,
 		ResiliencyScore:    &workflowRunMetrics.ResiliencyScore,
@@ -733,10 +733,10 @@ func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, 
 		ExperimentsStopped: &workflowRunMetrics.ExperimentsStopped,
 		ExperimentsNA:      &workflowRunMetrics.ExperimentsNA,
 		TotalExperiments:   &workflowRunMetrics.TotalExperiments,
-		ExecutionData:      input.ExecutionData,
-		Completed:          input.Completed,
+		ExecutionData:      request.ExecutionData,
+		Completed:          request.Completed,
 		IsRemoved:          &isRemoved,
-		ExecutedBy:         input.ExecutedBy,
+		ExecutedBy:         request.ExecutedBy,
 	})
 
 	if err != nil {
@@ -753,8 +753,8 @@ func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, 
 		ClusterName:        cluster.ClusterName,
 		ProjectID:          cluster.ProjectID,
 		LastUpdated:        strconv.FormatInt(time.Now().Unix(), 10),
-		WorkflowRunID:      input.WorkflowRunID,
-		WorkflowName:       input.WorkflowName,
+		WorkflowRunID:      request.WorkflowRunID,
+		WorkflowName:       request.WorkflowName,
 		Phase:              executionData.Phase,
 		ResiliencyScore:    &workflowRunMetrics.ResiliencyScore,
 		ExperimentsPassed:  &workflowRunMetrics.ExperimentsPassed,
@@ -763,10 +763,10 @@ func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, 
 		ExperimentsStopped: &workflowRunMetrics.ExperimentsStopped,
 		ExperimentsNa:      &workflowRunMetrics.ExperimentsNA,
 		TotalExperiments:   &workflowRunMetrics.TotalExperiments,
-		ExecutionData:      input.ExecutionData,
-		WorkflowID:         input.WorkflowID,
+		ExecutionData:      request.ExecutionData,
+		WorkflowID:         request.WorkflowID,
 		IsRemoved:          &isRemoved,
-		ExecutedBy:         input.ExecutedBy,
+		ExecutedBy:         request.ExecutedBy,
 	}, &r)
 
 	return "Workflow Run Accepted", nil
@@ -822,8 +822,8 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	}
 }
 
-// ReRunWorkflow sends workflow run request(single run workflow only) to agent on workflow re-run request
-func ReRunWorkflow(projectID string, workflowID string, username string) (string, error) {
+// ReRunChaosWorkFlow sends workflow run request(single run workflow only) to agent on workflow re-run request
+func ReRunChaosWorkFlow(projectID string, workflowID string, username string) (string, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"workflow_id", workflowID},
