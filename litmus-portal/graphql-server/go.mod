@@ -26,7 +26,7 @@ require (
 	github.com/tidwall/sjson v1.1.1
 	github.com/vektah/gqlparser/v2 v2.4.1
 	go.mongodb.org/mongo-driver v1.5.3
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
