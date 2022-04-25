@@ -2,7 +2,7 @@
 """
 Details for a workflow template
 """
-type ManifestTemplate {
+type WorkflowTemplate {
     """
     ID of the template
     """

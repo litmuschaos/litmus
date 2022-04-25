@@ -34,15 +34,15 @@ import (
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 )
 
-func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	input, wfType, err := ops.ProcessWorkflow(input)
+func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	request, wfType, err := ops.ProcessWorkflow(request)
 	if err != nil {
 		log.Print("Error processing workflow: ", err)
 		return nil, err
 	}
 
 	// GitOps Update
-	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
+	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -56,22 +56,22 @@ func CreateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowCreation(input, username, wfType, r)
+	err = ops.ProcessWorkflowCreation(request, username, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow: ", err)
 		return nil, err
 	}
 
 	return &model.ChaosWorkFlowResponse{
-		WorkflowID:          *input.WorkflowID,
-		CronSyntax:          input.CronSyntax,
-		WorkflowName:        input.WorkflowName,
-		WorkflowDescription: input.WorkflowDescription,
-		IsCustomWorkflow:    input.IsCustomWorkflow,
+		WorkflowID:          *request.WorkflowID,
+		CronSyntax:          request.CronSyntax,
+		WorkflowName:        request.WorkflowName,
+		WorkflowDescription: request.WorkflowDescription,
+		IsCustomWorkflow:    request.IsCustomWorkflow,
 	}, nil
 }
 
-func DeleteWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
+func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
 	query := bson.D{
 		{"workflow_id", workflowID},
 		{"project_id", projectID},
@@ -105,7 +105,7 @@ func DeleteWorkflow(ctx context.Context, projectID string, workflowID *string, w
 		return true, nil
 
 	} else if *workflowID != "" && *workflowRunID == "" {
-		wf := model.ChaosWorkFlowInput{
+		wf := model.ChaosWorkFlowRequest{
 			ProjectID:    workflow.ProjectID,
 			WorkflowID:   &workflow.WorkflowID,
 			WorkflowName: workflow.WorkflowName,
@@ -130,7 +130,7 @@ func DeleteWorkflow(ctx context.Context, projectID string, workflowID *string, w
 	return false, err
 }
 
-func TerminateWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
+func TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
 	query := bson.D{
 		{"workflow_id", workflowID},
 		{"project_id", projectID},
@@ -167,8 +167,8 @@ func TerminateWorkflow(ctx context.Context, projectID string, workflowID *string
 	return false, errors.New("invalid input, workflow and workflow run id cannot be empty")
 }
 
-func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	input, wfType, err := ops.ProcessWorkflow(input)
+func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	request, wfType, err := ops.ProcessWorkflow(request)
 	if err != nil {
 		log.Print("Error processing workflow update: ", err)
 		return nil, err
@@ -183,24 +183,24 @@ func UpdateWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput, r *sto
 	}
 
 	// GitOps Update
-	err = gitOpsHandler.UpsertWorkflowToGit(ctx, input)
+	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowUpdate(input, username, wfType, r)
+	err = ops.ProcessWorkflowUpdate(request, username, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow update: ", err)
 		return nil, err
 	}
 
 	return &model.ChaosWorkFlowResponse{
-		WorkflowID:          *input.WorkflowID,
-		CronSyntax:          input.CronSyntax,
-		WorkflowName:        input.WorkflowName,
-		WorkflowDescription: input.WorkflowDescription,
-		IsCustomWorkflow:    input.IsCustomWorkflow,
+		WorkflowID:          *request.WorkflowID,
+		CronSyntax:          request.CronSyntax,
+		WorkflowName:        request.WorkflowName,
+		WorkflowDescription: request.WorkflowDescription,
+		IsCustomWorkflow:    request.IsCustomWorkflow,
 	}, nil
 }
 
@@ -695,8 +695,8 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	return &output, nil
 }
 
-// WorkFlowRunHandler Updates or Inserts a new Workflow Run into the DB
-func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string, error) {
+// ChaosWorkflowRun Updates or Inserts a new Workflow Run into the DB
+func ChaosWorkflowRun(input model.WorkflowRunInput, r store.StateData) (string, error) {
 	cluster, err := cluster.VerifyCluster(*input.ClusterID)
 	if err != nil {
 		log.Println("ERROR", err)
@@ -772,19 +772,19 @@ func WorkFlowRunHandler(input model.WorkflowRunInput, r store.StateData) (string
 	return "Workflow Run Accepted", nil
 }
 
-// LogsHandler receives logs from the workflow-agent and publishes to frontend clients
-func LogsHandler(podLog model.PodLog, r store.StateData) (string, error) {
-	_, err := cluster.VerifyCluster(*podLog.ClusterID)
+// PodLog receives logs from the workflow-agent and publishes to frontend clients
+func PodLog(request model.PodLog, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err
 	}
-	if reqChan, ok := r.WorkflowLog[podLog.RequestID]; ok {
+	if reqChan, ok := r.WorkflowLog[request.RequestID]; ok {
 		resp := model.PodLogResponse{
-			PodName:       podLog.PodName,
-			WorkflowRunID: podLog.WorkflowRunID,
-			PodType:       podLog.PodType,
-			Log:           podLog.Log,
+			PodName:       request.PodName,
+			WorkflowRunID: request.WorkflowRunID,
+			PodType:       request.PodType,
+			Log:           request.Log,
 		}
 		reqChan <- &resp
 		close(reqChan)
@@ -858,7 +858,7 @@ func ReRunWorkflow(projectID string, workflowID string, username string) (string
 		return "", errors.New("Failed to updated workflow name " + err.Error())
 	}
 
-	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
@@ -867,17 +867,17 @@ func ReRunWorkflow(projectID string, workflowID string, username string) (string
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
 
-// KubeObjHandler receives Kubernetes Object data from subscriber
-func KubeObjHandler(kubeData model.KubeObjectData, r store.StateData) (string, error) {
-	_, err := cluster.VerifyCluster(*kubeData.ClusterID)
+// KubeObj receives Kubernetes Object data from subscriber
+func KubeObj(request model.KubeObjectData, r store.StateData) (string, error) {
+	_, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
 		log.Print("Error", err)
 		return "", err
 	}
-	if reqChan, ok := r.KubeObjectData[kubeData.RequestID]; ok {
+	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
 		resp := model.KubeObjectResponse{
-			ClusterID: kubeData.ClusterID.ClusterID,
-			KubeObj:   kubeData.KubeObj,
+			ClusterID: request.ClusterID.ClusterID,
+			KubeObj:   request.KubeObj,
 		}
 		reqChan <- &resp
 		close(reqChan)
@@ -912,9 +912,9 @@ func GetKubeObjData(reqID string, kubeObject model.KubeObjectRequest, r store.St
 	}
 }
 
-// SaveWorkflowTemplate is used to save the workflow manifest as a template
-func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
-	IsExist, err := IsTemplateAvailable(ctx, templateInput.TemplateName, templateInput.ProjectID)
+// CreateWorkflowTemplate is used to save the workflow manifest as a template
+func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error) {
+	IsExist, err := IsTemplateAvailable(ctx, request.TemplateName, request.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -926,52 +926,52 @@ func SaveWorkflowTemplate(ctx context.Context, templateInput *model.TemplateInpu
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
 	defer conn.Close()
 
-	projectData, err := grpc.GetProjectById(client, templateInput.ProjectID)
+	projectData, err := grpc.GetProjectById(client, request.ProjectID)
 	if err != nil {
 		return nil, err
 	}
 
 	uuid := uuid.New()
-	template := &dbSchemaWorkflowTemplate.ManifestTemplate{
+	template := &dbSchemaWorkflowTemplate.WorkflowTemplate{
 		TemplateID:          uuid.String(),
-		TemplateName:        templateInput.TemplateName,
-		TemplateDescription: templateInput.TemplateDescription,
-		ProjectID:           templateInput.ProjectID,
-		Manifest:            templateInput.Manifest,
+		TemplateName:        request.TemplateName,
+		TemplateDescription: request.TemplateDescription,
+		ProjectID:           request.ProjectID,
+		Manifest:            request.Manifest,
 		ProjectName:         projectData.Name,
 		CreatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		IsRemoved:           false,
-		IsCustomWorkflow:    templateInput.IsCustomWorkflow,
+		IsCustomWorkflow:    request.IsCustomWorkflow,
 	}
 
 	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)
 	if err != nil {
 		log.Print("Error", err)
 	}
-	return template.GetManifestTemplateOutput(), nil
+	return template.GetWorkflowTemplateOutput(), nil
 }
 
 // ListWorkflowTemplate is used to list all the workflow templates available in the project
-func ListWorkflowTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
+func ListWorkflowTemplate(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
-	var templateList []*model.ManifestTemplate
+	var templateList []*model.WorkflowTemplate
 
 	for _, template := range templates {
-		templateList = append(templateList, template.GetManifestTemplateOutput())
+		templateList = append(templateList, template.GetWorkflowTemplateOutput())
 	}
 	return templateList, err
 }
 
 // QueryTemplateWorkflowByID is used to fetch the workflow template with template id
-func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.ManifestTemplate, error) {
+func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.WorkflowTemplate, error) {
 	template, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
 	if err != nil {
 		return nil, err
 	}
-	return template.GetManifestTemplateOutput(), err
+	return template.GetWorkflowTemplateOutput(), err
 }
 
 // DeleteWorkflowTemplate is used to delete the workflow template (update the is_removed field as true)

@@ -270,18 +270,6 @@ type ComplexityRoot struct {
 		Name  func(childComplexity int) int
 	}
 
-	ManifestTemplate struct {
-		CreatedAt           func(childComplexity int) int
-		IsCustomWorkflow    func(childComplexity int) int
-		IsRemoved           func(childComplexity int) int
-		Manifest            func(childComplexity int) int
-		ProjectID           func(childComplexity int) int
-		ProjectName         func(childComplexity int) int
-		TemplateDescription func(childComplexity int) int
-		TemplateID          func(childComplexity int) int
-		TemplateName        func(childComplexity int) int
-	}
-
 	Metadata struct {
 		Annotations func(childComplexity int) int
 		Name        func(childComplexity int) int
@@ -311,34 +299,34 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddMyHub                   func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		ChaosWorkflowRun           func(childComplexity int, workflowData model.WorkflowRunInput) int
+		ChaosWorkflowRun           func(childComplexity int, request model.WorkflowRunInput) int
 		ConfirmClusterRegistration func(childComplexity int, request model.ClusterIdentity) int
-		CreateChaosWorkFlow        func(childComplexity int, input model.ChaosWorkFlowInput) int
+		CreateChaosWorkFlow        func(childComplexity int, request model.ChaosWorkFlowRequest) int
 		CreateDashBoard            func(childComplexity int, dashboard *model.CreateDBInput) int
 		CreateDataSource           func(childComplexity int, datasource *model.DSInput) int
 		CreateImageRegistry        func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		CreateManifestTemplate     func(childComplexity int, templateInput *model.TemplateInput) int
+		CreateWorkflowTemplate     func(childComplexity int, request *model.TemplateInput) int
 		DeleteChaosWorkflow        func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
 		DeleteClusters             func(childComplexity int, projectID string, clusterIDs []*string) int
 		DeleteDashboard            func(childComplexity int, projectID string, dbID *string) int
 		DeleteDataSource           func(childComplexity int, projectID string, input model.DeleteDSInput) int
 		DeleteImageRegistry        func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteManifestTemplate     func(childComplexity int, projectID string, templateID string) int
 		DeleteMyHub                func(childComplexity int, projectID string, hubID string) int
+		DeleteWorkflowTemplate     func(childComplexity int, projectID string, templateID string) int
 		DisableGitOps              func(childComplexity int, projectID string) int
 		EnableGitOps               func(childComplexity int, config model.GitConfig) int
 		GeneraterSSHKey            func(childComplexity int) int
 		GitopsNotifer              func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
-		KubeObj                    func(childComplexity int, kubeData model.KubeObjectData) int
+		KubeObj                    func(childComplexity int, request model.KubeObjectData) int
 		NewClusterEvent            func(childComplexity int, request model.NewClusterEventRequest) int
-		PodLog                     func(childComplexity int, log model.PodLog) int
+		PodLog                     func(childComplexity int, request model.PodLog) int
 		ReRunChaosWorkFlow         func(childComplexity int, projectID string, workflowID string) int
 		RegisterCluster            func(childComplexity int, request model.RegisterClusterRequest) int
 		SaveMyHub                  func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
 		SyncHub                    func(childComplexity int, id string, projectID string) int
 		SyncWorkflow               func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
 		TerminateChaosWorkflow     func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
-		UpdateChaosWorkflow        func(childComplexity int, input *model.ChaosWorkFlowInput) int
+		UpdateChaosWorkflow        func(childComplexity int, request *model.ChaosWorkFlowRequest) int
 		UpdateDashboard            func(childComplexity int, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource           func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps               func(childComplexity int, config model.GitConfig) int
@@ -476,12 +464,12 @@ type ComplexityRoot struct {
 		GetWorkflowRunStats         func(childComplexity int, workflowRunStatsRequest model.WorkflowRunStatsRequest) int
 		GetWorkflowRuns             func(childComplexity int, workflowRunsInput model.GetWorkflowRunsInput) int
 		GetWorkflowStats            func(childComplexity int, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) int
+		GetWorkflows                func(childComplexity int, workflowInput model.ListWorkflowsInput) int
 		GetYAMLData                 func(childComplexity int, experimentInput model.ExperimentInput) int
 		ListDashboard               func(childComplexity int, projectID string, clusterID *string, dbID *string) int
 		ListDataSource              func(childComplexity int, projectID string) int
 		ListImageRegistry           func(childComplexity int, projectID string) int
 		ListManifestTemplate        func(childComplexity int, projectID string) int
-		ListWorkflow                func(childComplexity int, workflowInput model.ListWorkflowsInput) int
 		PortalDashboardData         func(childComplexity int, projectID string, hubName string) int
 		UsageQuery                  func(childComplexity int, query model.UsageQuery) int
 	}
@@ -629,6 +617,18 @@ type ComplexityRoot struct {
 		Date  func(childComplexity int) int
 		Value func(childComplexity int) int
 	}
+
+	WorkflowTemplate struct {
+		CreatedAt           func(childComplexity int) int
+		IsCustomWorkflow    func(childComplexity int) int
+		IsRemoved           func(childComplexity int) int
+		Manifest            func(childComplexity int) int
+		ProjectID           func(childComplexity int) int
+		ProjectName         func(childComplexity int) int
+		TemplateDescription func(childComplexity int) int
+		TemplateID          func(childComplexity int) int
+		TemplateName        func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
@@ -636,17 +636,17 @@ type MutationResolver interface {
 	ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error)
 	NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error)
 	DeleteClusters(ctx context.Context, projectID string, clusterIDs []*string) (string, error)
-	CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
+	CreateChaosWorkFlow(ctx context.Context, request model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error)
 	ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error)
-	UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error)
+	UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error)
 	DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error)
 	TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error)
 	SyncWorkflow(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error)
-	ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error)
-	PodLog(ctx context.Context, log model.PodLog) (string, error)
-	KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error)
-	CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error)
-	DeleteManifestTemplate(ctx context.Context, projectID string, templateID string) (bool, error)
+	ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunInput) (string, error)
+	PodLog(ctx context.Context, request model.PodLog) (string, error)
+	KubeObj(ctx context.Context, request model.KubeObjectData) (string, error)
+	CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error)
+	DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error)
 	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
 	SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error)
@@ -671,12 +671,12 @@ type MutationResolver interface {
 type QueryResolver interface {
 	GetClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
 	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
-	ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
+	GetWorkflows(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error)
 	GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error)
 	GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error)
 	GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
-	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error)
-	GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.ManifestTemplate, error)
+	ListManifestTemplate(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error)
+	GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
 	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
@@ -1734,69 +1734,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Maintainer.Name(childComplexity), true
 
-	case "ManifestTemplate.createdAt":
-		if e.complexity.ManifestTemplate.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.CreatedAt(childComplexity), true
-
-	case "ManifestTemplate.isCustomWorkflow":
-		if e.complexity.ManifestTemplate.IsCustomWorkflow == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.IsCustomWorkflow(childComplexity), true
-
-	case "ManifestTemplate.isRemoved":
-		if e.complexity.ManifestTemplate.IsRemoved == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.IsRemoved(childComplexity), true
-
-	case "ManifestTemplate.manifest":
-		if e.complexity.ManifestTemplate.Manifest == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.Manifest(childComplexity), true
-
-	case "ManifestTemplate.projectID":
-		if e.complexity.ManifestTemplate.ProjectID == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.ProjectID(childComplexity), true
-
-	case "ManifestTemplate.projectName":
-		if e.complexity.ManifestTemplate.ProjectName == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.ProjectName(childComplexity), true
-
-	case "ManifestTemplate.templateDescription":
-		if e.complexity.ManifestTemplate.TemplateDescription == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.TemplateDescription(childComplexity), true
-
-	case "ManifestTemplate.templateID":
-		if e.complexity.ManifestTemplate.TemplateID == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.TemplateID(childComplexity), true
-
-	case "ManifestTemplate.templateName":
-		if e.complexity.ManifestTemplate.TemplateName == nil {
-			break
-		}
-
-		return e.complexity.ManifestTemplate.TemplateName(childComplexity), true
-
 	case "Metadata.annotations":
 		if e.complexity.Metadata.Annotations == nil {
 			break
@@ -1903,7 +1840,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ChaosWorkflowRun(childComplexity, args["workflowData"].(model.WorkflowRunInput)), true
+		return e.complexity.Mutation.ChaosWorkflowRun(childComplexity, args["request"].(model.WorkflowRunInput)), true
 
 	case "Mutation.confirmClusterRegistration":
 		if e.complexity.Mutation.ConfirmClusterRegistration == nil {
@@ -1927,7 +1864,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateChaosWorkFlow(childComplexity, args["input"].(model.ChaosWorkFlowInput)), true
+		return e.complexity.Mutation.CreateChaosWorkFlow(childComplexity, args["request"].(model.ChaosWorkFlowRequest)), true
 
 	case "Mutation.createDashBoard":
 		if e.complexity.Mutation.CreateDashBoard == nil {
@@ -1965,17 +1902,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateImageRegistry(childComplexity, args["projectID"].(string), args["imageRegistryInfo"].(model.ImageRegistryInput)), true
 
-	case "Mutation.createManifestTemplate":
-		if e.complexity.Mutation.CreateManifestTemplate == nil {
+	case "Mutation.createWorkflowTemplate":
+		if e.complexity.Mutation.CreateWorkflowTemplate == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createManifestTemplate_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createWorkflowTemplate_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateManifestTemplate(childComplexity, args["templateInput"].(*model.TemplateInput)), true
+		return e.complexity.Mutation.CreateWorkflowTemplate(childComplexity, args["request"].(*model.TemplateInput)), true
 
 	case "Mutation.deleteChaosWorkflow":
 		if e.complexity.Mutation.DeleteChaosWorkflow == nil {
@@ -2037,18 +1974,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string)), true
 
-	case "Mutation.deleteManifestTemplate":
-		if e.complexity.Mutation.DeleteManifestTemplate == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteManifestTemplate_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteManifestTemplate(childComplexity, args["projectID"].(string), args["templateID"].(string)), true
-
 	case "Mutation.deleteMyHub":
 		if e.complexity.Mutation.DeleteMyHub == nil {
 			break
@@ -2060,6 +1985,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["projectID"].(string), args["hubID"].(string)), true
+
+	case "Mutation.deleteWorkflowTemplate":
+		if e.complexity.Mutation.DeleteWorkflowTemplate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteWorkflowTemplate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteWorkflowTemplate(childComplexity, args["projectID"].(string), args["templateID"].(string)), true
 
 	case "Mutation.disableGitOps":
 		if e.complexity.Mutation.DisableGitOps == nil {
@@ -2114,7 +2051,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.KubeObj(childComplexity, args["kubeData"].(model.KubeObjectData)), true
+		return e.complexity.Mutation.KubeObj(childComplexity, args["request"].(model.KubeObjectData)), true
 
 	case "Mutation.newClusterEvent":
 		if e.complexity.Mutation.NewClusterEvent == nil {
@@ -2138,7 +2075,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.PodLog(childComplexity, args["log"].(model.PodLog)), true
+		return e.complexity.Mutation.PodLog(childComplexity, args["request"].(model.PodLog)), true
 
 	case "Mutation.reRunChaosWorkFlow":
 		if e.complexity.Mutation.ReRunChaosWorkFlow == nil {
@@ -2222,7 +2159,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateChaosWorkflow(childComplexity, args["input"].(*model.ChaosWorkFlowInput)), true
+		return e.complexity.Mutation.UpdateChaosWorkflow(childComplexity, args["request"].(*model.ChaosWorkFlowRequest)), true
 
 	case "Mutation.updateDashboard":
 		if e.complexity.Mutation.UpdateDashboard == nil {
@@ -2983,6 +2920,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetWorkflowStats(childComplexity, args["projectID"].(string), args["filter"].(model.TimeFrequency), args["showWorkflowRuns"].(bool)), true
 
+	case "Query.getWorkflows":
+		if e.complexity.Query.GetWorkflows == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getWorkflows_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetWorkflows(childComplexity, args["workflowInput"].(model.ListWorkflowsInput)), true
+
 	case "Query.getYAMLData":
 		if e.complexity.Query.GetYAMLData == nil {
 			break
@@ -3042,18 +2991,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ListManifestTemplate(childComplexity, args["projectID"].(string)), true
-
-	case "Query.listWorkflow":
-		if e.complexity.Query.ListWorkflow == nil {
-			break
-		}
-
-		args, err := ec.field_Query_listWorkflow_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ListWorkflow(childComplexity, args["workflowInput"].(model.ListWorkflowsInput)), true
 
 	case "Query.portalDashboardData":
 		if e.complexity.Query.PortalDashboardData == nil {
@@ -3780,6 +3717,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkflowStats.Value(childComplexity), true
+
+	case "WorkflowTemplate.createdAt":
+		if e.complexity.WorkflowTemplate.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.CreatedAt(childComplexity), true
+
+	case "WorkflowTemplate.isCustomWorkflow":
+		if e.complexity.WorkflowTemplate.IsCustomWorkflow == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.IsCustomWorkflow(childComplexity), true
+
+	case "WorkflowTemplate.isRemoved":
+		if e.complexity.WorkflowTemplate.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.IsRemoved(childComplexity), true
+
+	case "WorkflowTemplate.manifest":
+		if e.complexity.WorkflowTemplate.Manifest == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.Manifest(childComplexity), true
+
+	case "WorkflowTemplate.projectID":
+		if e.complexity.WorkflowTemplate.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.ProjectID(childComplexity), true
+
+	case "WorkflowTemplate.projectName":
+		if e.complexity.WorkflowTemplate.ProjectName == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.ProjectName(childComplexity), true
+
+	case "WorkflowTemplate.templateDescription":
+		if e.complexity.WorkflowTemplate.TemplateDescription == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.TemplateDescription(childComplexity), true
+
+	case "WorkflowTemplate.templateID":
+		if e.complexity.WorkflowTemplate.TemplateID == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.TemplateID(childComplexity), true
+
+	case "WorkflowTemplate.templateName":
+		if e.complexity.WorkflowTemplate.TemplateName == nil {
+			break
+		}
+
+		return e.complexity.WorkflowTemplate.TemplateName(childComplexity), true
 
 	}
 	return 0, false
@@ -5120,7 +5120,7 @@ type Mutation {
   """
   Creates a new workflow and applies its manifest
   """
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+  createChaosWorkFlow(request: ChaosWorkFlowRequest!): ChaosWorkFlowResponse!
   @authorized
 
   """
@@ -5132,7 +5132,7 @@ type Mutation {
   """
   Updates the workflow
   """
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+  updateChaosWorkflow(request: ChaosWorkFlowRequest): ChaosWorkFlowResponse!
   @authorized
 
   """
@@ -5166,31 +5166,31 @@ type Mutation {
   Creates a new workflow run and sends it to subscriber
   """
   # authorized directive not required
-  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+  chaosWorkflowRun(request: WorkflowRunInput!): String!
 
   """
   Receives pod logs for experiments from agent
   """
   # authorized directive not required
-  podLog(log: PodLog!): String!
+  podLog(request: PodLog!): String!
 
   """
   Receives kubernetes object data from subscriber
   """
   # authorized directive not required
-  kubeObj(kubeData: KubeObjectData!): String!
+  kubeObj(request: KubeObjectData!): String!
 
   # WORKFLOW TEMPLATE OPERATIONS
   """
   Creates a workflow template manifest
   """
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+  createWorkflowTemplate(request: TemplateInput): WorkflowTemplate!
   @authorized
 
   """
   Removes a workflow template manifest
   """
-  deleteManifestTemplate(projectID: String!, templateID: String!): Boolean!
+  deleteWorkflowTemplate(projectID: String!, templateID: String!): Boolean!
   @authorized
 
   # CHAOS-HUB OPERATIONS
@@ -5332,7 +5332,7 @@ type Query {
   """
   Returns the workflows in a project based on various filter parameters
   """
-  listWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
+  getWorkflows(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
   @authorized
 
   """
@@ -5358,7 +5358,7 @@ type Query {
   """
   Returns all the workflow templates for the projectID
   """
-  listManifestTemplate(projectID: String!): [ManifestTemplate]! @authorized
+  listManifestTemplate(projectID: String!): [WorkflowTemplate]! @authorized
 
   """
   Returns a single workflow templates given a projectID and a templateID
@@ -5366,7 +5366,7 @@ type Query {
   GetTemplateManifestByID(
     projectID: String!
     templateID: String!
-  ): ManifestTemplate! @authorized
+  ): WorkflowTemplate! @authorized
 
   # CHAOS-HUB OPERATIONS
   """
@@ -5680,7 +5680,7 @@ input WeightagesInput {
 """
 Defines the details for a chaos workflow
 """
-input ChaosWorkFlowInput {
+input ChaosWorkFlowRequest {
   """
   ID of the workflow
   """
@@ -6232,7 +6232,7 @@ type ListWorkflowsOutput {
 """
 Details for a workflow template
 """
-type ManifestTemplate {
+type WorkflowTemplate {
     """
     ID of the template
     """
@@ -6330,13 +6330,13 @@ func (ec *executionContext) field_Mutation_chaosWorkflowRun_args(ctx context.Con
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.WorkflowRunInput
-	if tmp, ok := rawArgs["workflowData"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNWorkflowRunInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowRunInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflowData"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6357,14 +6357,14 @@ func (ec *executionContext) field_Mutation_confirmClusterRegistration_args(ctx c
 func (ec *executionContext) field_Mutation_createChaosWorkFlow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.ChaosWorkFlowInput
-	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+	var arg0 model.ChaosWorkFlowRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6418,17 +6418,17 @@ func (ec *executionContext) field_Mutation_createImageRegistry_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createManifestTemplate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createWorkflowTemplate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *model.TemplateInput
-	if tmp, ok := rawArgs["templateInput"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalOTemplateInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐTemplateInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["templateInput"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6550,28 +6550,6 @@ func (ec *executionContext) field_Mutation_deleteImageRegistry_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteManifestTemplate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["templateID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["templateID"] = arg1
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6591,6 +6569,28 @@ func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context,
 		}
 	}
 	args["hubID"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteWorkflowTemplate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["templateID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["templateID"] = arg1
 	return args, nil
 }
 
@@ -6648,13 +6648,13 @@ func (ec *executionContext) field_Mutation_kubeObj_args(ctx context.Context, raw
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.KubeObjectData
-	if tmp, ok := rawArgs["kubeData"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectData(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["kubeData"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6676,13 +6676,13 @@ func (ec *executionContext) field_Mutation_podLog_args(ctx context.Context, rawA
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PodLog
-	if tmp, ok := rawArgs["log"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNPodLog2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLog(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["log"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6829,14 +6829,14 @@ func (ec *executionContext) field_Mutation_terminateChaosWorkflow_args(ctx conte
 func (ec *executionContext) field_Mutation_updateChaosWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.ChaosWorkFlowInput
-	if tmp, ok := rawArgs["input"]; ok {
-		arg0, err = ec.unmarshalOChaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, tmp)
+	var arg0 *model.ChaosWorkFlowRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalOChaosWorkFlowRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -7304,6 +7304,20 @@ func (ec *executionContext) field_Query_getWorkflowStats_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_getWorkflows_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ListWorkflowsInput
+	if tmp, ok := rawArgs["workflowInput"]; ok {
+		arg0, err = ec.unmarshalNListWorkflowsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["workflowInput"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_getYAMLData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7387,20 +7401,6 @@ func (ec *executionContext) field_Query_listManifestTemplate_args(ctx context.Co
 		}
 	}
 	args["projectID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_listWorkflow_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.ListWorkflowsInput
-	if tmp, ok := rawArgs["workflowInput"]; ok {
-		arg0, err = ec.unmarshalNListWorkflowsInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowsInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["workflowInput"] = arg0
 	return args, nil
 }
 
@@ -12340,312 +12340,6 @@ func (ec *executionContext) _Maintainer_email(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ManifestTemplate_templateID(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TemplateID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_manifest(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Manifest, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_templateName(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TemplateName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_templateDescription(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TemplateDescription, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_projectID(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_projectName(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsRemoved, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _ManifestTemplate_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.ManifestTemplate) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "ManifestTemplate",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsCustomWorkflow, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Metadata_name(ctx context.Context, field graphql.CollectedField, obj *model.Metadata) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -13265,7 +12959,7 @@ func (ec *executionContext) _Mutation_createChaosWorkFlow(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateChaosWorkFlow(rctx, args["input"].(model.ChaosWorkFlowInput))
+			return ec.resolvers.Mutation().CreateChaosWorkFlow(rctx, args["request"].(model.ChaosWorkFlowRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13387,7 +13081,7 @@ func (ec *executionContext) _Mutation_updateChaosWorkflow(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateChaosWorkflow(rctx, args["input"].(*model.ChaosWorkFlowInput))
+			return ec.resolvers.Mutation().UpdateChaosWorkflow(rctx, args["request"].(*model.ChaosWorkFlowRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13630,7 +13324,7 @@ func (ec *executionContext) _Mutation_chaosWorkflowRun(ctx context.Context, fiel
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ChaosWorkflowRun(rctx, args["workflowData"].(model.WorkflowRunInput))
+		return ec.resolvers.Mutation().ChaosWorkflowRun(rctx, args["request"].(model.WorkflowRunInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13671,7 +13365,7 @@ func (ec *executionContext) _Mutation_podLog(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().PodLog(rctx, args["log"].(model.PodLog))
+		return ec.resolvers.Mutation().PodLog(rctx, args["request"].(model.PodLog))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13712,7 +13406,7 @@ func (ec *executionContext) _Mutation_kubeObj(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().KubeObj(rctx, args["kubeData"].(model.KubeObjectData))
+		return ec.resolvers.Mutation().KubeObj(rctx, args["request"].(model.KubeObjectData))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13729,7 +13423,7 @@ func (ec *executionContext) _Mutation_kubeObj(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_createManifestTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_createWorkflowTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13745,7 +13439,7 @@ func (ec *executionContext) _Mutation_createManifestTemplate(ctx context.Context
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createManifestTemplate_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_createWorkflowTemplate_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13754,7 +13448,7 @@ func (ec *executionContext) _Mutation_createManifestTemplate(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateManifestTemplate(rctx, args["templateInput"].(*model.TemplateInput))
+			return ec.resolvers.Mutation().CreateWorkflowTemplate(rctx, args["request"].(*model.TemplateInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13770,10 +13464,10 @@ func (ec *executionContext) _Mutation_createManifestTemplate(ctx context.Context
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.ManifestTemplate); ok {
+		if data, ok := tmp.(*model.WorkflowTemplate); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ManifestTemplate`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.WorkflowTemplate`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13785,12 +13479,12 @@ func (ec *executionContext) _Mutation_createManifestTemplate(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ManifestTemplate)
+	res := resTmp.(*model.WorkflowTemplate)
 	fc.Result = res
-	return ec.marshalNManifestTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx, field.Selections, res)
+	return ec.marshalNWorkflowTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deleteManifestTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deleteWorkflowTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13806,7 +13500,7 @@ func (ec *executionContext) _Mutation_deleteManifestTemplate(ctx context.Context
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteManifestTemplate_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deleteWorkflowTemplate_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13815,7 +13509,7 @@ func (ec *executionContext) _Mutation_deleteManifestTemplate(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteManifestTemplate(rctx, args["projectID"].(string), args["templateID"].(string))
+			return ec.resolvers.Mutation().DeleteWorkflowTemplate(rctx, args["projectID"].(string), args["templateID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -17413,7 +17107,7 @@ func (ec *executionContext) _Query_getManifest(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_listWorkflow(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_getWorkflows(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -17429,7 +17123,7 @@ func (ec *executionContext) _Query_listWorkflow(ctx context.Context, field graph
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_listWorkflow_args(ctx, rawArgs)
+	args, err := ec.field_Query_getWorkflows_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -17438,7 +17132,7 @@ func (ec *executionContext) _Query_listWorkflow(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListWorkflow(rctx, args["workflowInput"].(model.ListWorkflowsInput))
+			return ec.resolvers.Query().GetWorkflows(rctx, args["workflowInput"].(model.ListWorkflowsInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -17698,10 +17392,10 @@ func (ec *executionContext) _Query_listManifestTemplate(ctx context.Context, fie
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.ManifestTemplate); ok {
+		if data, ok := tmp.([]*model.WorkflowTemplate); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ManifestTemplate`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.WorkflowTemplate`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17713,9 +17407,9 @@ func (ec *executionContext) _Query_listManifestTemplate(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.ManifestTemplate)
+	res := resTmp.([]*model.WorkflowTemplate)
 	fc.Result = res
-	return ec.marshalNManifestTemplate2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx, field.Selections, res)
+	return ec.marshalNWorkflowTemplate2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_GetTemplateManifestByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -17759,10 +17453,10 @@ func (ec *executionContext) _Query_GetTemplateManifestByID(ctx context.Context, 
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.ManifestTemplate); ok {
+		if data, ok := tmp.(*model.WorkflowTemplate); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ManifestTemplate`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.WorkflowTemplate`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17774,9 +17468,9 @@ func (ec *executionContext) _Query_GetTemplateManifestByID(ctx context.Context, 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ManifestTemplate)
+	res := resTmp.(*model.WorkflowTemplate)
 	fc.Result = res
-	return ec.marshalNManifestTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx, field.Selections, res)
+	return ec.marshalNWorkflowTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getCharts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -22300,6 +21994,312 @@ func (ec *executionContext) _WorkflowStats_value(ctx context.Context, field grap
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkflowTemplate_templateID(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TemplateID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_manifest(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Manifest, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_templateName(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TemplateName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_templateDescription(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TemplateDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_projectID(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_projectName(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkflowTemplate_isCustomWorkflow(ctx context.Context, field graphql.CollectedField, obj *model.WorkflowTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkflowTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCustomWorkflow, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -23379,8 +23379,8 @@ func (ec *executionContext) unmarshalInputApplicationMetadata(ctx context.Contex
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputChaosWorkFlowInput(ctx context.Context, obj interface{}) (model.ChaosWorkFlowInput, error) {
-	var it model.ChaosWorkFlowInput
+func (ec *executionContext) unmarshalInputChaosWorkFlowRequest(ctx context.Context, obj interface{}) (model.ChaosWorkFlowRequest, error) {
+	var it model.ChaosWorkFlowRequest
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -26556,73 +26556,6 @@ func (ec *executionContext) _Maintainer(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
-var manifestTemplateImplementors = []string{"ManifestTemplate"}
-
-func (ec *executionContext) _ManifestTemplate(ctx context.Context, sel ast.SelectionSet, obj *model.ManifestTemplate) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, manifestTemplateImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ManifestTemplate")
-		case "templateID":
-			out.Values[i] = ec._ManifestTemplate_templateID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "manifest":
-			out.Values[i] = ec._ManifestTemplate_manifest(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "templateName":
-			out.Values[i] = ec._ManifestTemplate_templateName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "templateDescription":
-			out.Values[i] = ec._ManifestTemplate_templateDescription(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "projectID":
-			out.Values[i] = ec._ManifestTemplate_projectID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "projectName":
-			out.Values[i] = ec._ManifestTemplate_projectName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "createdAt":
-			out.Values[i] = ec._ManifestTemplate_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isRemoved":
-			out.Values[i] = ec._ManifestTemplate_isRemoved(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isCustomWorkflow":
-			out.Values[i] = ec._ManifestTemplate_isCustomWorkflow(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var metadataImplementors = []string{"Metadata"}
 
 func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet, obj *model.Metadata) graphql.Marshaler {
@@ -26855,13 +26788,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "createManifestTemplate":
-			out.Values[i] = ec._Mutation_createManifestTemplate(ctx, field)
+		case "createWorkflowTemplate":
+			out.Values[i] = ec._Mutation_createWorkflowTemplate(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteManifestTemplate":
-			out.Values[i] = ec._Mutation_deleteManifestTemplate(ctx, field)
+		case "deleteWorkflowTemplate":
+			out.Values[i] = ec._Mutation_deleteWorkflowTemplate(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27573,7 +27506,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "listWorkflow":
+		case "getWorkflows":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -27581,7 +27514,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_listWorkflow(ctx, field)
+				res = ec._Query_getWorkflows(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -28669,6 +28602,73 @@ func (ec *executionContext) _WorkflowStats(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var workflowTemplateImplementors = []string{"WorkflowTemplate"}
+
+func (ec *executionContext) _WorkflowTemplate(ctx context.Context, sel ast.SelectionSet, obj *model.WorkflowTemplate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workflowTemplateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkflowTemplate")
+		case "templateID":
+			out.Values[i] = ec._WorkflowTemplate_templateID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "manifest":
+			out.Values[i] = ec._WorkflowTemplate_manifest(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "templateName":
+			out.Values[i] = ec._WorkflowTemplate_templateName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "templateDescription":
+			out.Values[i] = ec._WorkflowTemplate_templateDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "projectID":
+			out.Values[i] = ec._WorkflowTemplate_projectID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "projectName":
+			out.Values[i] = ec._WorkflowTemplate_projectName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._WorkflowTemplate_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isRemoved":
+			out.Values[i] = ec._WorkflowTemplate_isRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isCustomWorkflow":
+			out.Values[i] = ec._WorkflowTemplate_isCustomWorkflow(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var __DirectiveImplementors = []string{"__Directive"}
 
 func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionSet, obj *introspection.Directive) graphql.Marshaler {
@@ -28979,8 +28979,8 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
-	return ec.unmarshalInputChaosWorkFlowInput(ctx, v)
+func (ec *executionContext) unmarshalNChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx context.Context, v interface{}) (model.ChaosWorkFlowRequest, error) {
+	return ec.unmarshalInputChaosWorkFlowRequest(ctx, v)
 }
 
 func (ec *executionContext) marshalNChaosWorkFlowResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowResponse(ctx context.Context, sel ast.SelectionSet, v model.ChaosWorkFlowResponse) graphql.Marshaler {
@@ -29612,57 +29612,6 @@ func (ec *executionContext) marshalNMaintainer2ᚖgithubᚗcomᚋlitmuschaosᚋl
 		return graphql.Null
 	}
 	return ec._Maintainer(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNManifestTemplate2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx context.Context, sel ast.SelectionSet, v model.ManifestTemplate) graphql.Marshaler {
-	return ec._ManifestTemplate(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNManifestTemplate2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx context.Context, sel ast.SelectionSet, v []*model.ManifestTemplate) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOManifestTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNManifestTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx context.Context, sel ast.SelectionSet, v *model.ManifestTemplate) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ManifestTemplate(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNMetadata2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetadata(ctx context.Context, sel ast.SelectionSet, v model.Metadata) graphql.Marshaler {
@@ -30570,6 +30519,57 @@ func (ec *executionContext) marshalNWorkflowStats2ᚕᚖgithubᚗcomᚋlitmuscha
 	return ret
 }
 
+func (ec *executionContext) marshalNWorkflowTemplate2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx context.Context, sel ast.SelectionSet, v model.WorkflowTemplate) graphql.Marshaler {
+	return ec._WorkflowTemplate(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWorkflowTemplate2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx context.Context, sel ast.SelectionSet, v []*model.WorkflowTemplate) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOWorkflowTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNWorkflowTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowTemplate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkflowTemplate(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -31068,15 +31068,15 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
-func (ec *executionContext) unmarshalOChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (model.ChaosWorkFlowInput, error) {
-	return ec.unmarshalInputChaosWorkFlowInput(ctx, v)
+func (ec *executionContext) unmarshalOChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx context.Context, v interface{}) (model.ChaosWorkFlowRequest, error) {
+	return ec.unmarshalInputChaosWorkFlowRequest(ctx, v)
 }
 
-func (ec *executionContext) unmarshalOChaosWorkFlowInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx context.Context, v interface{}) (*model.ChaosWorkFlowInput, error) {
+func (ec *executionContext) unmarshalOChaosWorkFlowRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx context.Context, v interface{}) (*model.ChaosWorkFlowRequest, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOChaosWorkFlowInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowInput(ctx, v)
+	res, err := ec.unmarshalOChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx, v)
 	return &res, err
 }
 
@@ -31402,17 +31402,6 @@ func (ec *executionContext) marshalOListDashboardResponse2ᚖgithubᚗcomᚋlitm
 		return graphql.Null
 	}
 	return ec._ListDashboardResponse(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOManifestTemplate2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx context.Context, sel ast.SelectionSet, v model.ManifestTemplate) graphql.Marshaler {
-	return ec._ManifestTemplate(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOManifestTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐManifestTemplate(ctx context.Context, sel ast.SelectionSet, v *model.ManifestTemplate) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ManifestTemplate(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOMetricDataForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMetricDataForPanel(ctx context.Context, sel ast.SelectionSet, v model.MetricDataForPanel) graphql.Marshaler {
@@ -32454,6 +32443,17 @@ func (ec *executionContext) marshalOWorkflowStats2ᚖgithubᚗcomᚋlitmuschaos�
 		return graphql.Null
 	}
 	return ec._WorkflowStats(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWorkflowTemplate2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx context.Context, sel ast.SelectionSet, v model.WorkflowTemplate) graphql.Marshaler {
+	return ec._WorkflowTemplate(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOWorkflowTemplate2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkflowTemplate(ctx context.Context, sel ast.SelectionSet, v *model.WorkflowTemplate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WorkflowTemplate(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

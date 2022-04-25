@@ -1275,7 +1275,7 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 			}
 		}
 	} else {
-		var workflows []dbSchemaWorkflow.ChaosWorkFlowInput
+		var workflows []dbSchemaWorkflow.ChaosWorkFlowRequest
 		if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
 			return result, nil
 		}
@@ -1610,7 +1610,7 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 
 	// Call aggregation on pipeline
 	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
-	var chaosWorkflows []dbSchemaWorkflow.ChaosWorkFlowInput
+	var chaosWorkflows []dbSchemaWorkflow.ChaosWorkFlowRequest
 
 	// Result array
 	result := make([]*model.HeatmapData, 0, noOfDays)

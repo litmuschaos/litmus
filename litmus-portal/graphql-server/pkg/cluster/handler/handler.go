@@ -266,7 +266,7 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	if os.Getenv("AGENT_SCOPE") == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model
+			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
 			for CreateChaosWorkflow mutation to be passed to this function.
 		*/
 	}

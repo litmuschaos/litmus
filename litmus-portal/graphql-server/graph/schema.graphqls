@@ -34,7 +34,7 @@ type Mutation {
   """
   Creates a new workflow and applies its manifest
   """
-  createChaosWorkFlow(input: ChaosWorkFlowInput!): ChaosWorkFlowResponse!
+  createChaosWorkFlow(request: ChaosWorkFlowRequest!): ChaosWorkFlowResponse!
   @authorized
 
   """
@@ -46,7 +46,7 @@ type Mutation {
   """
   Updates the workflow
   """
-  updateChaosWorkflow(input: ChaosWorkFlowInput): ChaosWorkFlowResponse!
+  updateChaosWorkflow(request: ChaosWorkFlowRequest): ChaosWorkFlowResponse!
   @authorized
 
   """
@@ -80,31 +80,31 @@ type Mutation {
   Creates a new workflow run and sends it to subscriber
   """
   # authorized directive not required
-  chaosWorkflowRun(workflowData: WorkflowRunInput!): String!
+  chaosWorkflowRun(request: WorkflowRunInput!): String!
 
   """
   Receives pod logs for experiments from agent
   """
   # authorized directive not required
-  podLog(log: PodLog!): String!
+  podLog(request: PodLog!): String!
 
   """
   Receives kubernetes object data from subscriber
   """
   # authorized directive not required
-  kubeObj(kubeData: KubeObjectData!): String!
+  kubeObj(request: KubeObjectData!): String!
 
   # WORKFLOW TEMPLATE OPERATIONS
   """
   Creates a workflow template manifest
   """
-  createManifestTemplate(templateInput: TemplateInput): ManifestTemplate!
+  createWorkflowTemplate(request: TemplateInput): WorkflowTemplate!
   @authorized
 
   """
   Removes a workflow template manifest
   """
-  deleteManifestTemplate(projectID: String!, templateID: String!): Boolean!
+  deleteWorkflowTemplate(projectID: String!, templateID: String!): Boolean!
   @authorized
 
   # CHAOS-HUB OPERATIONS
@@ -246,7 +246,7 @@ type Query {
   """
   Returns the workflows in a project based on various filter parameters
   """
-  listWorkflow(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
+  getWorkflows(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
   @authorized
 
   """
@@ -272,7 +272,7 @@ type Query {
   """
   Returns all the workflow templates for the projectID
   """
-  listManifestTemplate(projectID: String!): [ManifestTemplate]! @authorized
+  listManifestTemplate(projectID: String!): [WorkflowTemplate]! @authorized
 
   """
   Returns a single workflow templates given a projectID and a templateID
@@ -280,7 +280,7 @@ type Query {
   GetTemplateManifestByID(
     projectID: String!
     templateID: String!
-  ): ManifestTemplate! @authorized
+  ): WorkflowTemplate! @authorized
 
   # CHAOS-HUB OPERATIONS
   """

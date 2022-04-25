@@ -16,7 +16,7 @@ input WeightagesInput {
 """
 Defines the details for a chaos workflow
 """
-input ChaosWorkFlowInput {
+input ChaosWorkFlowRequest {
   """
   ID of the workflow
   """

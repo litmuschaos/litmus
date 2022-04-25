@@ -60,7 +60,7 @@ type ApplicationMetadataResponse struct {
 }
 
 // Defines the details for a chaos workflow
-type ChaosWorkFlowInput struct {
+type ChaosWorkFlowRequest struct {
 	// ID of the workflow
 	WorkflowID *string `json:"workflowID"`
 	// Manifest of the workflow
@@ -545,28 +545,6 @@ type Maintainer struct {
 	Name string `json:"name"`
 	// Email of the maintainer
 	Email string `json:"email"`
-}
-
-// Details for a workflow template
-type ManifestTemplate struct {
-	// ID of the template
-	TemplateID string `json:"templateID"`
-	// Workflow manifest in JSON escaped string
-	Manifest string `json:"manifest"`
-	// Name of the template
-	TemplateName string `json:"templateName"`
-	// Description of the template
-	TemplateDescription string `json:"templateDescription"`
-	// ID of the project
-	ProjectID string `json:"projectID"`
-	// Name of the project
-	ProjectName string `json:"projectName"`
-	// Time at which the manifest template was created
-	CreatedAt string `json:"createdAt"`
-	// Bool value indicating if the workflow template has removed
-	IsRemoved bool `json:"isRemoved"`
-	// Bool value indicating whether the workflow template is a custom or not
-	IsCustomWorkflow bool `json:"isCustomWorkflow"`
 }
 
 type Metadata struct {
@@ -1247,6 +1225,28 @@ type WorkflowStat struct {
 type WorkflowStats struct {
 	Date  float64 `json:"date"`
 	Value int     `json:"value"`
+}
+
+// Details for a workflow template
+type WorkflowTemplate struct {
+	// ID of the template
+	TemplateID string `json:"templateID"`
+	// Workflow manifest in JSON escaped string
+	Manifest string `json:"manifest"`
+	// Name of the template
+	TemplateName string `json:"templateName"`
+	// Description of the template
+	TemplateDescription string `json:"templateDescription"`
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Name of the project
+	ProjectName string `json:"projectName"`
+	// Time at which the manifest template was created
+	CreatedAt string `json:"createdAt"`
+	// Bool value indicating if the workflow template has removed
+	IsRemoved bool `json:"isRemoved"`
+	// Bool value indicating whether the workflow template is a custom or not
+	IsCustomWorkflow bool `json:"isCustomWorkflow"`
 }
 
 type AuthType string

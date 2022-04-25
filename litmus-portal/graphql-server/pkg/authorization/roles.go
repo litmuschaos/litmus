@@ -49,8 +49,8 @@ const (
 	PortalDashboardData          RoleQuery = "PortalDashboardData"
 	ListWorkflow                 RoleQuery = "ListWorkflow"
 	SaveMyHub                    RoleQuery = "SaveMyHub"
-	CreateManifestTemplate       RoleQuery = "CreateManifestTemplate"
-	DeleteManifestTemplate       RoleQuery = "DeleteManifestTemplate"
+	CreateWorkflowTemplate       RoleQuery = "CreateWorkflowTemplate"
+	DeleteWorkflowTemplate       RoleQuery = "DeleteWorkflowTemplate"
 	CreateImageRegistry          RoleQuery = "CreateImageRegistry"
 	UpdateImageRegistry          RoleQuery = "UpdateImageRegistry"
 	DeleteImageRegistry          RoleQuery = "DeleteImageRegistry"
@@ -61,7 +61,7 @@ const (
 	ListDataSource               RoleQuery = "ListDataSource"
 	ListDashboard                RoleQuery = "ListDashboard"
 	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
-	ListManifestTemplate         RoleQuery = "ListManifestTemplate"
+	ListWorkflowTemplate         RoleQuery = "ListWorkflowTemplate"
 	GetTemplateManifestByID      RoleQuery = "GetTemplateManifestByID"
 	ListImageRegistry            RoleQuery = "ListImageRegistry"
 	GetImageRegistry             RoleQuery = "GetImageRegistry"
@@ -115,8 +115,8 @@ var MutationRbacRules = map[RoleQuery][]string{
 	PortalDashboardData:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	SaveMyHub:                    {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
-	DeleteManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateImageRegistry:          {MemberRoleOwnerString},
 	UpdateImageRegistry:          {MemberRoleOwnerString},
 	DeleteImageRegistry:          {MemberRoleOwnerString},
@@ -127,7 +127,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	ListDataSource:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDashboard:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetGitOpsDetails:             {MemberRoleOwnerString},
-	ListManifestTemplate:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflowTemplate:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetTemplateManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListImageRegistry:            {MemberRoleOwnerString},
 	GetImageRegistry:             {MemberRoleOwnerString},

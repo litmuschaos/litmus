@@ -62,14 +62,14 @@ func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string,
 	return clusterHandler.DeleteClusters(ctx, projectID, clusterIDs, *data_store.Store)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	err := authorization.ValidateRole(ctx, input.ProjectID,
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateChaosWorkFlow],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
+	return wfHandler.CreateChaosWorkflow(ctx, &request, data_store.Store)
 }
 
 func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error) {
@@ -91,14 +91,14 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 	return wfHandler.ReRunWorkflow(projectID, workflowID, username)
 }
 
-func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	err := authorization.ValidateRole(ctx, input.ProjectID,
+func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.UpdateWorkflow(ctx, input, data_store.Store)
+	return wfHandler.UpdateChaosWorkflow(ctx, request, data_store.Store)
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -109,7 +109,7 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID st
 		return false, err
 	}
 
-	return wfHandler.DeleteWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return wfHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
 func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -120,7 +120,7 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID
 		return false, err
 	}
 
-	return wfHandler.TerminateWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return wfHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
 func (r *mutationResolver) SyncWorkflow(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
@@ -134,32 +134,32 @@ func (r *mutationResolver) SyncWorkflow(ctx context.Context, projectID string, w
 	return wfHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
-func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return wfHandler.WorkFlowRunHandler(workflowData, *data_store.Store)
+func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunInput) (string, error) {
+	return wfHandler.ChaosWorkflowRun(request, *data_store.Store)
 }
 
-func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return wfHandler.LogsHandler(log, *data_store.Store)
+func (r *mutationResolver) PodLog(ctx context.Context, request model.PodLog) (string, error) {
+	return wfHandler.PodLog(request, *data_store.Store)
 }
 
-func (r *mutationResolver) KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error) {
-	return wfHandler.KubeObjHandler(kubeData, *data_store.Store)
+func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObjectData) (string, error) {
+	return wfHandler.KubeObj(request, *data_store.Store)
 }
 
-func (r *mutationResolver) CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
-	err := authorization.ValidateRole(ctx, templateInput.ProjectID,
-		authorization.MutationRbacRules[authorization.CreateManifestTemplate],
+func (r *mutationResolver) CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.CreateWorkflowTemplate],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.SaveWorkflowTemplate(ctx, templateInput)
+	return wfHandler.CreateWorkflowTemplate(ctx, request)
 }
 
-func (r *mutationResolver) DeleteManifestTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
+func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.DeleteManifestTemplate],
+		authorization.MutationRbacRules[authorization.DeleteWorkflowTemplate],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
@@ -410,7 +410,7 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 	return string(response), nil
 }
 
-func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
+func (r *queryResolver) GetWorkflows(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
 	err := authorization.ValidateRole(ctx, workflowInput.ProjectID,
 		authorization.MutationRbacRules[authorization.ListWorkflow],
 		model.InvitationAccepted.String())
@@ -453,9 +453,9 @@ func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experim
 	return myhub.GetPredefinedExperimentYAMLData(experimentInput)
 }
 
-func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
+func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListManifestTemplate],
+		authorization.MutationRbacRules[authorization.ListWorkflowTemplate],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -464,7 +464,7 @@ func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID stri
 	return wfHandler.ListWorkflowTemplate(ctx, projectID)
 }
 
-func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.ManifestTemplate, error) {
+func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetTemplateManifestByID],
 		model.InvitationAccepted.String())
