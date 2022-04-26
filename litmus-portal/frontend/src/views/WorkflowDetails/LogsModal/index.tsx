@@ -11,6 +11,7 @@ import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
 import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import trimstring from '../../../utils/trim';
+import LogsSwitcher from '../LogsSwitcher';
 import WorkflowStatus from '../WorkflowStatus';
 import useStyles from './styles';
 
@@ -148,14 +149,15 @@ const NodeLogsModal: React.FC<NodeLogsModalProps> = ({
               </div>
             </div>
             <div className={classes.logsHeight}>
-              {/* TODO: fix */}
-              {/* <LogsSwitcher
-                clusterID={clusterID}
-                workflowRunID={workflowRunID}
-                podNamespace={data.namespace}
-                podName={podName}
-                podType={data.nodes[podName].type}
-              /> */}
+              <LogsSwitcher
+                request={{
+                  clusterID,
+                  workflowRunID,
+                  podNamespace: data.namespace,
+                  podName,
+                  podType: data.nodes[podName].type,
+                }}
+              />
             </div>
           </div>
         </div>
