@@ -116,20 +116,20 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
 
   projectStats.map((project) => {
     usageData = {
-      ProjectName: project.Name,
-      Owner: project.Members.Owner[0].Username,
+      ProjectName: project.name,
+      Owner: project.members.owner[0].username,
       Agents: 0,
       Schedules: 0,
       WfRuns: 0,
       ExpRuns: 0,
-      Members: project.Members.Total,
+      Members: project.members.total,
     };
-    for (let i = 0; i < (data ? data.UsageQuery.Projects.length : 0); i++) {
-      if (project.ProjectId === data?.UsageQuery.Projects[i].ProjectId) {
-        usageData.Agents = data.UsageQuery.Projects[i].Agents.Total;
-        usageData.ExpRuns = data.UsageQuery.Projects[i].Workflows.ExpRuns;
-        usageData.WfRuns = data.UsageQuery.Projects[i].Workflows.Runs;
-        usageData.Schedules = data.UsageQuery.Projects[i].Workflows.Schedules;
+    for (let i = 0; i < (data ? data.usageQuery.projects.length : 0); i++) {
+      if (project.projectID === data?.usageQuery.projects[i].projectID) {
+        usageData.Agents = data.usageQuery.projects[i].agents.total;
+        usageData.ExpRuns = data.usageQuery.projects[i].workflows.expRuns;
+        usageData.WfRuns = data.usageQuery.projects[i].workflows.runs;
+        usageData.Schedules = data.usageQuery.projects[i].workflows.schedules;
         break;
       }
     }

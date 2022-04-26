@@ -169,26 +169,26 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
     if (hubName?.length) {
       updateMyHub({
         variables: {
-          MyHubDetails: {
+          myHubDetails: {
             id: hubData?.id,
-            HubName: gitHub.HubName.trim(),
-            RepoURL: gitHub.GitURL,
-            RepoBranch: gitHub.GitBranch,
-            IsPrivate: isToggled.isPublicToggled
+            hubName: gitHub.HubName.trim(),
+            repoURL: gitHub.GitURL,
+            repoBranch: gitHub.GitBranch,
+            isPrivate: isToggled.isPublicToggled
               ? false
               : !!isToggled.isPrivateToggled,
-            AuthType: isToggled.isPublicToggled
-              ? MyHubType.basic
+            authType: isToggled.isPublicToggled
+              ? MyHubType.BASIC
               : privateHub === 'token'
-              ? MyHubType.token
+              ? MyHubType.TOKEN
               : privateHub === 'ssh'
-              ? MyHubType.ssh
-              : MyHubType.basic,
-            Token: accessToken,
-            UserName: 'user',
-            Password: 'user',
-            SSHPrivateKey: sshKey.privateKey,
-            SSHPublicKey: sshKey.publicKey,
+              ? MyHubType.SSH
+              : MyHubType.BASIC,
+            token: accessToken,
+            userName: 'user',
+            password: 'user',
+            sshPrivateKey: sshKey.privateKey,
+            sshPublicKey: sshKey.publicKey,
           },
           projectID,
         },
@@ -199,25 +199,25 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
      */
       addMyHub({
         variables: {
-          MyHubDetails: {
-            HubName: gitHub.HubName.trim(),
-            RepoURL: gitHub.GitURL,
-            RepoBranch: gitHub.GitBranch,
-            IsPrivate: isToggled.isPublicToggled
+          myHubDetails: {
+            hubName: gitHub.HubName.trim(),
+            repoURL: gitHub.GitURL,
+            repoBranch: gitHub.GitBranch,
+            isPrivate: isToggled.isPublicToggled
               ? false
               : !!isToggled.isPrivateToggled,
-            AuthType: isToggled.isPublicToggled
-              ? MyHubType.basic
+            authType: isToggled.isPublicToggled
+              ? MyHubType.BASIC
               : privateHub === 'token'
-              ? MyHubType.token
+              ? MyHubType.TOKEN
               : privateHub === 'ssh'
-              ? MyHubType.ssh
-              : MyHubType.basic,
-            Token: accessToken,
-            UserName: 'user',
-            Password: 'user',
-            SSHPrivateKey: sshKey.privateKey,
-            SSHPublicKey: sshKey.publicKey,
+              ? MyHubType.SSH
+              : MyHubType.BASIC,
+            token: accessToken,
+            userName: 'user',
+            password: 'user',
+            sshPrivateKey: sshKey.privateKey,
+            sshPublicKey: sshKey.publicKey,
           },
           projectID,
         },
@@ -282,10 +282,10 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
             isPrivateToggled: false,
           });
         }
-        if (hubData.AuthType === MyHubType.token) {
+        if (hubData.AuthType === MyHubType.TOKEN) {
           setPrivateHub('token');
           setAccessToken(hubData.Token);
-        } else if (hubData.AuthType === MyHubType.ssh) {
+        } else if (hubData.AuthType === MyHubType.SSH) {
           setPrivateHub('ssh');
           setSshKey({
             privateKey: hubData.SSHPrivateKey,

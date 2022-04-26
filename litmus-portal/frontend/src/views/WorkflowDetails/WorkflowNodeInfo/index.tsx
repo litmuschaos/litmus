@@ -9,7 +9,6 @@ import { RootState } from '../../../redux/reducers';
 import timeDifference from '../../../utils/datesModifier';
 import trimstring from '../../../utils/trim';
 import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
-import LogsSwitcher from '../LogsSwitcher';
 import WorkflowStatus from '../WorkflowStatus';
 import useStyles from './styles';
 
@@ -163,13 +162,14 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         </div>
         {/* Right Panel for Node Logs */}
         <div className={classes.rightPanel}>
-          <LogsSwitcher
+          {/* TODO: fix */}
+          {/* <LogsSwitcher
             clusterID={clusterID}
             workflowRunID={workflowRunID}
             podNamespace={data.namespace}
             podType={data.nodes[podName].type}
             podName={podName}
-          />
+          /> */}
         </div>
       </div>
     </div>

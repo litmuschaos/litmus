@@ -15,8 +15,8 @@ import useStyles from './styles';
 
 const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
   panels,
-  panel_group_id,
-  panel_group_name,
+  panelGroupID,
+  panelGroupName,
   selectedPanels,
   centralBrushPosition,
   handleCentralBrushPosition,
@@ -47,16 +47,16 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
       <Accordion expanded={open}>
         <AccordionSummary
           expandIcon={open ? <ShrinkAccordion /> : <ExpandAccordion />}
-          aria-controls={`panel-group-${panel_group_id}-content`}
-          id={`panel-group-${panel_group_id}-header`}
+          aria-controls={`panel-group-${panelGroupID}-content`}
+          id={`panel-group-${panelGroupID}-header`}
           className={classes.panelGroup}
-          key={`${panel_group_id}`}
+          key={`${panelGroupID}`}
           onClick={() => {
             setOpen(!open);
           }}
         >
           <Typography className={classes.panelGroupTitle}>
-            {panel_group_name}
+            {panelGroupName}
           </Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.panelGroupContainer}>
@@ -64,27 +64,27 @@ const DashboardPanelGroup: React.FC<GraphPanelGroupProps> = ({
             panels
               .filter(
                 (panel) =>
-                  selectedPanels && selectedPanels.includes(panel.panel_id)
+                  selectedPanels && selectedPanels.includes(panel.panelID)
               )
               .map(
                 (panel: PanelResponse) =>
                   panel && (
                     <DashboardPanel
-                      key={panel.panel_id}
+                      key={panel.panelID}
                       data-cy="dashboardPanel"
-                      panel_id={panel.panel_id}
+                      panelID={panel.panelID}
                       centralAllowGraphUpdate={centralAllowGraphUpdate}
                       centralBrushPosition={centralBrushPosition}
                       handleCentralBrushPosition={handleCentralBrushPosition}
-                      created_at={panel.created_at}
-                      panel_name={panel.panel_name}
-                      panel_options={panel.panel_options}
-                      y_axis_left={panel.y_axis_left}
-                      y_axis_right={panel.y_axis_right}
-                      x_axis_down={panel.x_axis_down}
+                      createdAt={panel.createdAt}
+                      panelName={panel.panelName}
+                      panelOptions={panel.panelOptions}
+                      yAxisLeft={panel.yAxisLeft}
+                      yAxisRight={panel.yAxisRight}
+                      xAxisDown={panel.xAxisDown}
                       unit={panel.unit}
-                      prom_queries={panel.prom_queries}
-                      metricDataForPanel={getPanelMetricsData(panel.panel_id)}
+                      promQueries={panel.promQueries}
+                      metricDataForPanel={getPanelMetricsData(panel.panelID)}
                       chaosData={chaosData}
                     />
                   )

@@ -146,17 +146,17 @@ const ProjectDropdownItems: React.FC = () => {
     const projectOther: OtherProjectsType[] = [];
 
     projects.map((project) => {
-      return project.Members.forEach((member: Member) => {
-        if (member.UserID === userID && member.Role === 'Owner') {
+      return project.members.forEach((member: Member) => {
+        if (member.userID === userID && member.role === 'Owner') {
           projectOwner.push(project);
         } else if (
-          member.UserID === userID &&
-          member.Role !== 'Owner' &&
-          member.Invitation === 'Accepted'
+          member.userID === userID &&
+          member.role !== 'Owner' &&
+          member.invitation === 'Accepted'
         ) {
           projectOther.push({
             projectDetails: project,
-            currentUserProjectRole: member.Role,
+            currentUserProjectRole: member.role,
           });
         }
       });
@@ -191,12 +191,12 @@ const ProjectDropdownItems: React.FC = () => {
                   handleClick={() => {
                     history.push({
                       pathname: `/${baseRoute}`,
-                      search: `?projectID=${project.ID}&projectRole=Owner`,
+                      search: `?projectID=${project.id}&projectRole=Owner`,
                     });
                   }}
-                  label={project.Name}
-                  secondaryLabel={project.ID}
-                  selected={projectID === project.ID}
+                  label={project.name}
+                  secondaryLabel={project.id}
+                  selected={projectID === project.id}
                 />
               );
             })
@@ -221,12 +221,12 @@ const ProjectDropdownItems: React.FC = () => {
                   handleClick={() => {
                     history.push({
                       pathname: `/home`,
-                      search: `?projectID=${project.projectDetails.ID}&projectRole=${project.currentUserProjectRole}`,
+                      search: `?projectID=${project.projectDetails.id}&projectRole=${project.currentUserProjectRole}`,
                     });
                   }}
-                  label={project.projectDetails.Name}
-                  secondaryLabel={project.projectDetails.ID}
-                  selected={projectID === project.projectDetails.ID}
+                  label={project.projectDetails.name}
+                  secondaryLabel={project.projectDetails.id}
+                  selected={projectID === project.projectDetails.id}
                 />
               );
             })

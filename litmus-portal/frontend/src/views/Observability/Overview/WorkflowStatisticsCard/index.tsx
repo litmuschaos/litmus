@@ -67,16 +67,16 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                 <Typography
                   className={`${classes.testName} ${classes.noWrapProvider}`}
                 >
-                  {data.workflow_name}
+                  {data.workflowName}
                 </Typography>
                 <Typography className={classes.hint}>
-                  Agent: {data.cluster_name}
+                  Agent: {data.clusterName}
                 </Typography>
               </div>
             </div>
           </div>
           <Typography className={`${classes.noWrapProvider} ${classes.hint}`}>
-            {timeDifferenceForDate(data.last_updated)}
+            {timeDifferenceForDate(data.lastUpdated)}
           </Typography>
           <section className={classes.cardActionsSection}>
             <div className={classes.cardActions}>
@@ -87,7 +87,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                   });
                   if (data.phase?.toLowerCase() !== 'notavailable')
                     history.push({
-                      pathname: `/workflows/${data.workflow_run_id}`,
+                      pathname: `/workflows/${data.workflowRunID}`,
                       search: `?projectID=${projectID}&projectRole=${projectRole}`,
                     });
                 }}
@@ -100,7 +100,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
               <IconButton
                 onClick={() => {
                   history.push({
-                    pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                    pathname: `/observability/workflowStatistics/${data.workflowID}`,
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

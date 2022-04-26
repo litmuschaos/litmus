@@ -63,7 +63,7 @@ const Settings: React.FC = () => {
         >
           <StyledTab data-cy="my-account" label="My Account" {...tabProps(0)} />
           <StyledTab data-cy="teaming" label="Team" {...tabProps(1)} />
-          {role === UserRole.admin && (
+          {role === UserRole.ADMIN && (
             <StyledTab
               data-cy="user-management"
               label="User Management"
@@ -73,12 +73,12 @@ const Settings: React.FC = () => {
           <StyledTab
             data-cy="gitOps"
             label="GitOps"
-            {...tabProps(role === UserRole.admin ? 3 : 2)}
+            {...tabProps(role === UserRole.ADMIN ? 3 : 2)}
           />
           <StyledTab
             data-cy="image-registry"
             label="Image Registry"
-            {...tabProps(role === UserRole.admin ? 4 : 3)}
+            {...tabProps(role === UserRole.ADMIN ? 4 : 3)}
           />
         </Tabs>
       </Paper>
@@ -94,7 +94,7 @@ const Settings: React.FC = () => {
           </SuspenseLoader>
         </TabPanel>
       </div>
-      {role === UserRole.admin && (
+      {role === UserRole.ADMIN && (
         <TabPanel value={settingsTabValue} index={2}>
           <SuspenseLoader style={{ height: '50vh' }}>
             <UserManagement />
@@ -104,7 +104,7 @@ const Settings: React.FC = () => {
       <div data-cy="GitOpsPanel">
         <TabPanel
           value={settingsTabValue}
-          index={role === UserRole.admin ? 3 : 2}
+          index={role === UserRole.ADMIN ? 3 : 2}
         >
           <SuspenseLoader style={{ height: '50vh' }}>
             <GitOpsTab />
@@ -114,7 +114,7 @@ const Settings: React.FC = () => {
       <div data-cy="ImageRegistry">
         <TabPanel
           value={settingsTabValue}
-          index={role === UserRole.admin ? 4 : 3}
+          index={role === UserRole.ADMIN ? 4 : 3}
         >
           <SuspenseLoader style={{ height: '50vh' }}>
             <ImageRegistry />

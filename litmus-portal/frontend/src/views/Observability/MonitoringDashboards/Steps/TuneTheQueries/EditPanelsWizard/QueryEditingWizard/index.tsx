@@ -87,7 +87,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
   const [prometheusQueryData, setPrometheusQueryData] =
     React.useState<promInput>({
       ds_details: {
-        url: panelInfo.ds_url ?? '',
+        url: panelInfo.dsURL ?? '',
         start: `${
           new Date(
             moment.unix(Math.round(new Date().getTime() / 1000) - 900).format()
@@ -100,7 +100,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
         }`,
       },
       queries: getPromQueryInput(
-        panelInfo.prom_queries.filter((query) => !query.hidden),
+        panelInfo.promQueries.filter((query) => !query.hidden),
         900,
         false
       ),
@@ -112,7 +112,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
       if (update.graph) {
         setPrometheusQueryData({
           ds_details: {
-            url: panelInfo.ds_url ?? '',
+            url: panelInfo.dsURL ?? '',
             start: `${
               new Date(
                 moment
@@ -127,7 +127,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             }`,
           },
           queries: getPromQueryInput(
-            panelInfo.prom_queries.filter((query) => !query.hidden),
+            panelInfo.promQueries.filter((query) => !query.hidden),
             900,
             false
           ),
@@ -138,41 +138,41 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
   }, [update]);
 
   const handleAddQuery = () => {
-    const existingQueries: PromQueryDetails[] = panelInfo.prom_queries;
+    const existingQueries: PromQueryDetails[] = panelInfo.promQueries;
     existingQueries.push({
       hidden: false,
-      queryid: uuidv4(),
-      prom_query_name: '',
+      queryID: uuidv4(),
+      promQueryName: '',
       legend: '',
       resolution: '1/2',
       minstep: '5',
       line: true,
-      close_area: false,
+      closeArea: false,
     });
-    setPanelInfo({ ...panelInfo, prom_queries: existingQueries });
+    setPanelInfo({ ...panelInfo, promQueries: existingQueries });
     setUpdate({ triggerUpdate: true, graph: true });
   };
 
   const handleDeleteQuery = (index: number) => {
-    const existingQueries: PromQueryDetails[] = panelInfo.prom_queries;
+    const existingQueries: PromQueryDetails[] = panelInfo.promQueries;
     if (index !== 0 || existingQueries.length > 1) {
       existingQueries.splice(index, 1);
-      setPanelInfo({ ...panelInfo, prom_queries: existingQueries });
+      setPanelInfo({ ...panelInfo, promQueries: existingQueries });
       setUpdate({ triggerUpdate: true, graph: true });
     }
   };
 
   const handleShowAndHideQuery = (index: number) => {
-    const existingQueries: PromQueryDetails[] = panelInfo.prom_queries;
+    const existingQueries: PromQueryDetails[] = panelInfo.promQueries;
     existingQueries[index].hidden = !existingQueries[index].hidden;
-    setPanelInfo({ ...panelInfo, prom_queries: existingQueries });
+    setPanelInfo({ ...panelInfo, promQueries: existingQueries });
     setUpdate({ triggerUpdate: true, graph: true });
   };
 
   const handleUpdateQuery = (query: PromQueryDetails, index: number) => {
-    const existingQueries: PromQueryDetails[] = panelInfo.prom_queries;
+    const existingQueries: PromQueryDetails[] = panelInfo.promQueries;
     existingQueries[index] = query;
-    setPanelInfo({ ...panelInfo, prom_queries: existingQueries });
+    setPanelInfo({ ...panelInfo, promQueries: existingQueries });
     setUpdate({ triggerUpdate: true, graph: true });
   };
 
@@ -185,38 +185,38 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
       <div className={`${classes.flexBetween} ${classes.header}`}>
         <div className={classes.flex}>
           <Autocomplete
-            defaultValue={{ name: panelInfo.panel_group_name ?? '' }}
+            defaultValue={{ name: panelInfo.panelGroupName ?? '' }}
             freeSolo
-            id={`pg-${panelInfo.panel_group_name}`}
+            id={`pg-${panelInfo.panelGroupName}`}
             options={panelGroupsList}
             getOptionLabel={(option: Option) => option.name}
             style={{ width: '10.3rem' }}
-            value={{ name: panelInfo.panel_group_name ?? '' }}
+            value={{ name: panelInfo.panelGroupName ?? '' }}
             renderInput={(params) => (
               <TextField {...params} variant="standard" size="small" />
             )}
             onChange={(event, value, reason) => {
               setPanelInfo({
                 ...panelInfo,
-                panel_group_name: value
+                panelGroupName: value
                   ? reason === 'create-option'
                     ? (value as string)
                     : (value as Option).name
                   : '',
-                panel_group_id:
+                panelGroupID:
                   reason === 'create-option'
                     ? ''
-                    : panelInfo.panel_group_id ?? '',
+                    : panelInfo.panelGroupID ?? '',
               });
               setUpdate({ triggerUpdate: true, graph: false });
             }}
           />
           <Typography className={classes.divider}> / </Typography>
           <EditableText
-            defaultValue={panelInfo.panel_name}
+            defaultValue={panelInfo.panelName}
             id="name"
             onSave={(value) => {
-              setPanelInfo({ ...panelInfo, panel_name: value });
+              setPanelInfo({ ...panelInfo, panelName: value });
               setUpdate({ triggerUpdate: true, graph: false });
             }}
           />
@@ -271,7 +271,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               >
                 <StyledTab
                   label={
-                    panelInfo.prom_queries.length > 1
+                    panelInfo.promQueries.length > 1
                       ? t(
                           'monitoringDashboard.monitoringDashboards.tuneTheQueries.queries'
                         )
@@ -282,7 +282,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
                   icon={
                     <Avatar className={classes.avatar}>
                       <Typography className={classes.queryCount}>
-                        {panelInfo.prom_queries.length}
+                        {panelInfo.promQueries.length}
                       </Typography>
                     </Avatar>
                   }
@@ -297,14 +297,14 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
             </AppBar>
 
             <TabPanel value={tabValue} index={0}>
-              {panelInfo.prom_queries.map((prom_query, index) => (
+              {panelInfo.promQueries.map((prom_query, index) => (
                 <QueryEditor
-                  numberOfQueries={panelInfo.prom_queries.length}
+                  numberOfQueries={panelInfo.promQueries.length}
                   index={index}
-                  key={`query-editor-${prom_query.queryid}`}
+                  key={`query-editor-${prom_query.queryID}`}
                   promQuery={prom_query}
                   selectedApps={selectedApps}
-                  dsURL={panelInfo.ds_url ?? ''}
+                  dsURL={panelInfo.dsURL ?? ''}
                   seriesList={seriesList}
                   handleDeleteQuery={handleDeleteQuery}
                   handleShowAndHideQuery={handleShowAndHideQuery}
@@ -318,17 +318,17 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={panelInfo.panel_options.points}
+                      checked={panelInfo.panelOptions.points}
                       onChange={(
                         event: React.ChangeEvent<HTMLInputElement>
                       ) => {
                         const updatedPanelOptions: PanelOption = {
-                          ...panelInfo.panel_options,
+                          ...panelInfo.panelOptions,
                           points: event.target.checked,
                         };
                         setPanelInfo({
                           ...panelInfo,
-                          panel_options: updatedPanelOptions,
+                          panelOptions: updatedPanelOptions,
                         });
                         setUpdate({ triggerUpdate: true, graph: true });
                       }}
@@ -347,17 +347,17 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={panelInfo.panel_options.grids}
+                      checked={panelInfo.panelOptions.grids}
                       onChange={(
                         event: React.ChangeEvent<HTMLInputElement>
                       ) => {
                         const updatedPanelOptions: PanelOption = {
-                          ...panelInfo.panel_options,
+                          ...panelInfo.panelOptions,
                           grids: event.target.checked,
                         };
                         setPanelInfo({
                           ...panelInfo,
-                          panel_options: updatedPanelOptions,
+                          panelOptions: updatedPanelOptions,
                         });
                         setUpdate({ triggerUpdate: true, graph: true });
                       }}
@@ -428,11 +428,11 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               'monitoringDashboard.monitoringDashboards.tuneTheQueries.removeMetricConfirmation'
             )}
             <b>
-              <i>{` ${panelInfo.panel_name} `}</i>
+              <i>{` ${panelInfo.panelName} `}</i>
             </b>
             {t('monitoringDashboard.monitoringDashboards.tuneTheQueries.under')}
             <b>
-              <i>{` ${panelInfo.panel_group_name} `}</i>
+              <i>{` ${panelInfo.panelGroupName} `}</i>
             </b>
             ?
           </Typography>
@@ -476,11 +476,11 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
               'monitoringDashboard.monitoringDashboards.tuneTheQueries.discardChangesConfirmation'
             )}
             <b>
-              <i>{` ${panelInfo.panel_name} `}</i>
+              <i>{` ${panelInfo.panelName} `}</i>
             </b>
             {t('monitoringDashboard.monitoringDashboards.tuneTheQueries.under')}
             <b>
-              <i>{` ${panelInfo.panel_group_name} `}</i>
+              <i>{` ${panelInfo.panelGroupName} `}</i>
             </b>
             ?
           </Typography>

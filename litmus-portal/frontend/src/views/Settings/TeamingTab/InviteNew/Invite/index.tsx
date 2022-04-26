@@ -117,18 +117,18 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
         const memberList = new Map();
         const users: UserInvite[] = [];
         if (project !== undefined) {
-          project.Members.forEach((member) => {
+          project.members.forEach((member) => {
             if (
-              member.Invitation === 'Accepted' ||
-              member.Invitation === 'Pending'
+              member.invitation === 'Accepted' ||
+              member.invitation === 'Pending'
             ) {
-              memberList.set(member.UserID, 1);
+              memberList.set(member.userID, 1);
             }
           });
           // check for displaying only those users who are not the part of team
           res &&
             res.forEach((user: UserInvite) => {
-              if (!memberList.has(user._id) && !user.deactivated_at)
+              if (!memberList.has(user._id) && !user.deactivatedAt)
                 users.push(user);
             });
           setRows([...users]);

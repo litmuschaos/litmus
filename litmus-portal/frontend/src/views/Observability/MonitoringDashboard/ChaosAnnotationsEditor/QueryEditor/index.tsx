@@ -66,14 +66,12 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
   const [update, setUpdate] = React.useState<boolean>(false);
   const [localQuery, setLocalQuery] = React.useState<PromQueryDetails>({
     ...promQuery,
-    base_query: promQuery.prom_query_name.split('{')[0].includes('(')
-      ? promQuery.prom_query_name
+    base_query: promQuery.promQueryName.split('{')[0].includes('(')
+      ? promQuery.promQueryName
           .split('{')[0]
-          .substring(
-            promQuery.prom_query_name.split('{')[0].lastIndexOf('(') + 1
-          )
-      : promQuery.prom_query_name.split('{')[0],
-    labels_and_values_list: getLabelsAndValues(promQuery.prom_query_name),
+          .substring(promQuery.promQueryName.split('{')[0].lastIndexOf('(') + 1)
+      : promQuery.promQueryName.split('{')[0],
+    labels_and_values_list: getLabelsAndValues(promQuery.promQueryName),
   });
 
   const { data: labelValueData, refetch } = useQuery<
@@ -178,14 +176,14 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
           onClick={() => setOpen(!open)}
           expandIcon={open ? <ShrinkAccordion /> : <ExpandAccordion />}
           IconButtonProps={{ edge: 'start' }}
-          aria-controls={`query-${promQuery.queryid}-content`}
-          id={`query-${promQuery.queryid}-header`}
+          aria-controls={`query-${promQuery.queryID}-content`}
+          id={`query-${promQuery.queryID}-header`}
           className={classes.query}
-          key={`${promQuery.queryid}`}
+          key={`${promQuery.queryID}`}
         >
           <div className={classes.flex}>
             <Typography className={classes.queryTitle}>
-              {promQuery.queryid}
+              {promQuery.queryID}
             </Typography>
           </div>
         </AccordionSummary>
@@ -194,7 +192,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
             <Autocomplete
               value={{ name: localQuery.base_query ?? '' }}
               freeSolo
-              id={`query-${promQuery.queryid}-query-name`}
+              id={`query-${promQuery.queryID}-query-name`}
               options={seriesList}
               getOptionLabel={(option: Option) => option.name}
               renderInput={(params) => (
@@ -218,7 +216,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                 setLocalQuery({
                   ...localQuery,
                   base_query: newQuery,
-                  prom_query_name: newQuery,
+                  promQueryName: newQuery,
                   labels_and_values_list: [],
                 });
                 if (
@@ -255,7 +253,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                     const selectedValues: Array<Option> =
                       getSelectedValuesForLabel(
                         event.target.value as string,
-                        localQuery.prom_query_name,
+                        localQuery.promQueryName,
                         false
                       ) ?? [];
                     const existingLabelValuesList: QueryLabelValue[] =
@@ -276,17 +274,17 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                     }
                     const newPromQueryName = setLabelsAndValues(
                       localQuery.base_query ?? '',
-                      localQuery.prom_query_name ?? '',
+                      localQuery.promQueryName ?? '',
                       existingLabelValuesList
                     );
                     setLocalQuery({
                       ...localQuery,
-                      prom_query_name: newPromQueryName,
+                      promQueryName: newPromQueryName,
                       labels_and_values_list: existingLabelValuesList,
                     });
                     getSelectedValuesForLabel(
                       event.target.value as string,
-                      localQuery.prom_query_name,
+                      localQuery.promQueryName,
                       true
                     );
                     setUpdate(true);
@@ -343,12 +341,12 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   }
                   const newPromQueryName = setLabelsAndValues(
                     localQuery.base_query ?? '',
-                    localQuery.prom_query_name ?? '',
+                    localQuery.promQueryName ?? '',
                     existingLabelValuesList
                   );
                   setLocalQuery({
                     ...localQuery,
-                    prom_query_name: newPromQueryName,
+                    promQueryName: newPromQueryName,
                     labels_and_values_list: existingLabelValuesList,
                   });
                   getSelectedValuesForLabel(
@@ -379,7 +377,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
 
             <PrometheusQueryEditor
               index={index}
-              content={localQuery.prom_query_name ?? ''}
+              content={localQuery.promQueryName ?? ''}
               seriesListCompletionOptions={
                 seriesList.map((option: Option) => ({
                   value: option.name,
@@ -422,7 +420,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   ...localQuery,
                   base_query: newBaseQuery,
                   labels_and_values_list: getLabelsAndValues(updatedQuery),
-                  prom_query_name: updatedQuery,
+                  promQueryName: updatedQuery,
                 });
                 if (localQuery.base_query !== '' && dsURL !== '' && open) {
                   if (existingBaseQuery !== newBaseQuery) {

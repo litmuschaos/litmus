@@ -48,9 +48,9 @@ const SelectMyHub = () => {
           if (hub.IsAvailable) {
             hubDetails.push({
               id: hub.id,
-              HubName: hub.HubName,
-              RepoBranch: hub.RepoBranch,
-              RepoURL: hub.RepoURL,
+              hubName: hub.HubName,
+              repoBranch: hub.RepoBranch,
+              repoURL: hub.RepoURL,
             });
           }
         });
@@ -85,11 +85,11 @@ const SelectMyHub = () => {
           >
             {availableHubs.map((hubs) => (
               <MenuItem
-                key={hubs.HubName}
+                key={hubs.hubName}
                 data-cy="hubOption"
-                value={hubs.HubName}
+                value={hubs.hubName}
               >
-                {hubs.HubName}
+                {hubs.hubName}
               </MenuItem>
             ))}
           </Select>

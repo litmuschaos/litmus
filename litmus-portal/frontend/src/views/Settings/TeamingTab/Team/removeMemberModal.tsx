@@ -91,7 +91,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
             {isRemove
               ? t('settings.teamingTab.deleteUser.header')
               : t('settings.teamingTab.deleteModal.header')}
-            <strong> {row.UserName}?</strong>
+            <strong> {row.userName}?</strong>
           </Typography>
         </div>
         <div className={classes.textSecond}>
@@ -115,7 +115,7 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
             <ButtonFilled
               disabled={loading}
               onClick={() => {
-                removeMember(row.UserID, row.Role);
+                removeMember(row.userID, row.role);
               }}
             >
               <>

@@ -50,12 +50,12 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell className={classes.workflowName}>
         <Typography>
-          <strong>{data.workflow_name}</strong>
+          <strong>{data.workflowName}</strong>
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
         <Typography className={classes.tableObjects}>
-          {formatDate(data.created_at)}
+          {formatDate(data.createdAt)}
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
@@ -74,12 +74,12 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell>
         <Typography className={classes.tableObjects}>
-          &nbsp;{data.cluster_name}
+          &nbsp;{data.clusterName}
         </Typography>
       </StyledTableCell>
       <StyledTableCell style={{ width: '10rem' }}>
         <Typography className={classes.tableObjects}>
-          &nbsp;{data.last_updated_by || '-'}
+          &nbsp;{data.lastUpdatedBy || '-'}
         </Typography>
       </StyledTableCell>
       <StyledTableCell style={{ width: '10rem' }}>
@@ -95,7 +95,7 @@ const TableData: React.FC<TableDataProps> = ({
             aria-haspopup="true"
             onClick={() => {
               history.push({
-                pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                pathname: `/observability/workflowStatistics/${data.workflowID}`,
                 search: `?projectID=${projectID}&projectRole=${userRole}`,
               });
             }}

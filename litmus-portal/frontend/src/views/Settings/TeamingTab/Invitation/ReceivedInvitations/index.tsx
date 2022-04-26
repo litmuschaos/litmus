@@ -128,21 +128,21 @@ const ReceivedInvitations: React.FC<ReceivedInvitationsProps> = ({
     let roleVar = '';
 
     projectList.forEach((project: Project) => {
-      project.Members.forEach((member: Member) => {
-        if (member.UserID === userID && member.Invitation === 'Pending') {
+      project.members.forEach((member: Member) => {
+        if (member.userID === userID && member.invitation === 'Pending') {
           flag = 1;
-          roleVar = member.Role;
+          roleVar = member.role;
         }
       });
       if (flag === 1) {
-        project.Members.forEach((member: Member) => {
-          if (member.UserID !== userID && member.Role === 'Owner') {
+        project.members.forEach((member: Member) => {
+          if (member.userID !== userID && member.role === 'Owner') {
             users.push({
-              projectID: project.ID,
-              projectName: project.Name,
+              projectID: project.id,
+              projectName: project.name,
               role: roleVar,
-              user_id: member.UserID,
-              user_name: member.UserName,
+              user_id: member.userID,
+              user_name: member.userName,
             });
           }
         });

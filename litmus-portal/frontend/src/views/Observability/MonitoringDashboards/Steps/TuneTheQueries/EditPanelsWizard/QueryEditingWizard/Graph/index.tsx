@@ -45,9 +45,9 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
               prometheusData.GetPromQuery.metricsResponse ?? [],
               lineGraph,
               areaGraph,
-              panelVars.prom_queries
-                .filter((query) => query.close_area)
-                .map((query) => query.queryid)
+              panelVars.promQueries
+                .filter((query) => query.closeArea)
+                .map((query) => query.queryID)
             );
           setGraphData(parsedData);
         }
@@ -72,12 +72,12 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
         legendTableHeight={120}
         openSeries={graphData.seriesData}
         closedSeries={graphData.closedAreaData}
-        showGrid={panelVars.panel_options.grids}
-        showPoints={panelVars.panel_options.points}
+        showGrid={panelVars.panelOptions.grids}
+        showPoints={panelVars.panelOptions.points}
         showLegendTable
         showTips
         unit={panelVars.unit}
-        yLabel={panelVars.y_axis_left}
+        yLabel={panelVars.yAxisLeft}
         yLabelOffset={55}
         margin={{ left: 80, right: 20, top: 20, bottom: 30 }}
       />

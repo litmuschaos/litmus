@@ -66,13 +66,13 @@ const Routes: React.FC = () => {
           console.error(data);
         } else if (data.message !== 'No projects found') {
           data.data.forEach((project: Project): void => {
-            project.Members.forEach((member: Member): void => {
-              if (member.UserID === userID && member.Role === 'Owner') {
-                setprojectID(project.ID);
-                setprojectRole(member.Role);
+            project.members.forEach((member: Member): void => {
+              if (member.userID === userID && member.role === 'Owner') {
+                setprojectID(project.id);
+                setprojectRole(member.role);
                 history.push({
                   pathname: `/${baseRoute}`,
-                  search: `?projectID=${project.ID}&projectRole=${member.Role}`,
+                  search: `?projectID=${project.id}&projectRole=${member.role}`,
                 });
               }
             });
@@ -116,10 +116,10 @@ const Routes: React.FC = () => {
           console.error(data);
         } else {
           data.data.Members.forEach((member: Member) => {
-            if (member.UserID === userID) {
+            if (member.userID === userID) {
               isMember = true;
               setprojectID(data.data.ID);
-              setprojectRole(member.Role);
+              setprojectRole(member.role);
             }
           });
           if (!isMember) {
@@ -254,7 +254,7 @@ const Routes: React.FC = () => {
                   }}
                 />
               )}
-              {role === UserRole.admin ? (
+              {role === UserRole.ADMIN ? (
                 <Route path="/usage-statistics" component={UsageStatistics} />
               ) : (
                 <Redirect

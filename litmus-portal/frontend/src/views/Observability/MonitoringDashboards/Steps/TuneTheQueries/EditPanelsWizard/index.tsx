@@ -148,41 +148,41 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     const selectedPanelGroups: PanelGroupDetails[] = [];
     selectedDashboard.dashboardJSON.panelGroups.forEach(
       (panelGroup: PanelGroupDetails) => {
-        if (preSelectedPanelGroups.includes(panelGroup.panel_group_name)) {
+        if (preSelectedPanelGroups.includes(panelGroup.panelGroupName)) {
           const selectedPanels: PanelDetails[] = [];
           const preSelectedPanels: string[] = getPanelsByGroup(
-            panelGroup.panel_group_name
+            panelGroup.panelGroupName
           );
           panelGroup.panels.forEach((panel: PanelDetails) => {
-            if (preSelectedPanels.includes(panel.panel_name)) {
+            if (preSelectedPanels.includes(panel.panelName)) {
               const promQueryList: PromQueryDetails[] = [];
-              panel.prom_queries.forEach((promQuery) => {
+              panel.promQueries.forEach((promQuery) => {
                 promQueryList.push({
                   hidden: false,
-                  queryid: uuidv4(),
-                  prom_query_name: promQuery.prom_query_name,
+                  queryID: uuidv4(),
+                  promQueryName: promQuery.promQueryName,
                   legend: promQuery.legend,
                   resolution: promQuery.resolution,
                   minstep: promQuery.minstep,
                   line: promQuery.line,
-                  close_area: promQuery.close_area,
+                  closeArea: promQuery.closeArea,
                 });
               });
               selectedPanels.push({
-                panel_group_name: panelGroup.panel_group_name,
-                ds_url: dashboardVars.dataSourceURL ?? '',
-                prom_queries: promQueryList,
-                panel_options: panel.panel_options,
-                panel_name: panel.panel_name,
-                y_axis_left: panel.y_axis_left,
-                y_axis_right: panel.y_axis_right,
-                x_axis_down: panel.x_axis_down,
+                panelGroupName: panelGroup.panelGroupName,
+                dsURL: dashboardVars.dataSourceURL ?? '',
+                promQueries: promQueryList,
+                panelOptions: panel.panelOptions,
+                panelName: panel.panelName,
+                yAxisLeft: panel.yAxisLeft,
+                yAxisRight: panel.yAxisRight,
+                xAxisDown: panel.xAxisDown,
                 unit: panel.unit,
               });
             }
           });
           selectedPanelGroups.push({
-            panel_group_name: panelGroup.panel_group_name,
+            panelGroupName: panelGroup.panelGroupName,
             panels: selectedPanels,
           });
         }
@@ -206,11 +206,11 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     const newPanelGroupOptions: Array<Option> = [];
     updatedSelectedPanels.forEach((panel) => {
       if (
-        panel.panel_group_name &&
-        !newPanelGroups.includes(panel.panel_group_name)
+        panel.panelGroupName &&
+        !newPanelGroups.includes(panel.panelGroupName)
       ) {
-        newPanelGroups.push(panel.panel_group_name);
-        newPanelGroupOptions.push({ name: panel.panel_group_name });
+        newPanelGroups.push(panel.panelGroupName);
+        newPanelGroupOptions.push({ name: panel.panelGroupName });
       }
     });
     setPanelGroupsList(newPanelGroupOptions);
@@ -218,32 +218,32 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
 
   const getNewPanel = () => {
     const newPanel: PanelDetails = {
-      panel_id: '',
-      panel_group_id: '',
-      created_at: '',
-      panel_group_name: 'Untitled Panel Group',
-      ds_url: dashboardVars.dataSourceURL ?? '',
-      prom_queries: [
+      panelID: '',
+      panelGroupID: '',
+      createdAt: '',
+      panelGroupName: 'Untitled Panel Group',
+      dsURL: dashboardVars.dataSourceURL ?? '',
+      promQueries: [
         {
           hidden: false,
-          queryid: uuidv4(),
-          prom_query_name: '',
+          queryID: uuidv4(),
+          promQueryName: '',
           legend: '',
           resolution: '1/2',
           minstep: '5',
           line: true,
-          close_area: false,
+          closeArea: false,
         },
       ],
-      panel_options: {
+      panelOptions: {
         points: false,
         grids: true,
-        left_axis: true,
+        leftAxis: true,
       },
-      panel_name: 'Untitled Panel',
-      y_axis_left: '',
-      y_axis_right: '',
-      x_axis_down: '',
+      panelName: 'Untitled Panel',
+      yAxisLeft: '',
+      yAxisRight: '',
+      xAxisDown: '',
       unit: '',
     };
 
@@ -281,24 +281,24 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
         panelGroup.panels.forEach((panel) => {
           if (
             configure &&
-            panel.panel_id &&
+            panel.panelID &&
             activeEditPanelID !== '' &&
-            panel.panel_id === activeEditPanelID
+            panel.panelID === activeEditPanelID
           ) {
             allSelectedPanelsWithActiveIndex.activeIndex = count;
           }
           allSelectedPanelsWithActiveIndex.panels.push({
-            panel_id: panel.panel_id ?? '',
-            panel_group_id: panel.panel_group_id ?? '',
-            created_at: panel.created_at ?? '',
-            panel_group_name: panel.panel_group_name ?? '',
-            ds_url: dashboardVars.dataSourceURL ?? '',
-            prom_queries: panel.prom_queries,
-            panel_options: panel.panel_options,
-            panel_name: panel.panel_name,
-            y_axis_left: panel.y_axis_left,
-            y_axis_right: panel.y_axis_right,
-            x_axis_down: panel.x_axis_down,
+            panelID: panel.panelID ?? '',
+            panelGroupID: panel.panelGroupID ?? '',
+            createdAt: panel.createdAt ?? '',
+            panelGroupName: panel.panelGroupName ?? '',
+            dsURL: dashboardVars.dataSourceURL ?? '',
+            promQueries: panel.promQueries,
+            panelOptions: panel.panelOptions,
+            panelName: panel.panelName,
+            yAxisLeft: panel.yAxisLeft,
+            yAxisRight: panel.yAxisRight,
+            xAxisDown: panel.xAxisDown,
             unit: panel.unit,
           });
           count += 1;
@@ -382,66 +382,66 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       panelGroup.panels.forEach((selectedPanel) => {
         if (
           configure &&
-          selectedPanel.panel_id === existingPanels[index].panel_id
+          selectedPanel.panelID === existingPanels[index].panelID
         ) {
           const existingPromQueries: PromQueryDetails[] = [];
-          selectedPanel.prom_queries.forEach((promQuery) => {
+          selectedPanel.promQueries.forEach((promQuery) => {
             existingPromQueries.push({
               hidden: false,
-              queryid: promQuery.queryid,
-              prom_query_name: promQuery.prom_query_name,
+              queryID: promQuery.queryID,
+              promQueryName: promQuery.promQueryName,
               legend: promQuery.legend,
               resolution: promQuery.resolution,
               minstep: promQuery.minstep,
               line: promQuery.line,
-              close_area: promQuery.close_area,
+              closeArea: promQuery.closeArea,
             });
           });
           const existingPanelOptions: PanelOption = {
-            points: selectedPanel.panel_options.points,
-            grids: selectedPanel.panel_options.grids,
-            left_axis: selectedPanel.panel_options.left_axis,
+            points: selectedPanel.panelOptions.points,
+            grids: selectedPanel.panelOptions.grids,
+            leftAxis: selectedPanel.panelOptions.leftAxis,
           };
           existingPanels[index] = {
-            panel_id: selectedPanel.panel_id ?? '',
-            panel_group_id: panelGroup.panel_group_id ?? '',
-            created_at: selectedPanel.created_at ?? '',
-            panel_group_name: panelGroup.panel_group_name,
-            ds_url: dashboardVars.dataSourceURL ?? '',
-            prom_queries: existingPromQueries,
-            panel_options: existingPanelOptions,
-            panel_name: selectedPanel.panel_name,
-            y_axis_left: selectedPanel.y_axis_left,
-            y_axis_right: selectedPanel.y_axis_right,
-            x_axis_down: selectedPanel.x_axis_down,
+            panelID: selectedPanel.panelID ?? '',
+            panelGroupID: panelGroup.panelGroupID ?? '',
+            createdAt: selectedPanel.createdAt ?? '',
+            panelGroupName: panelGroup.panelGroupName,
+            dsURL: dashboardVars.dataSourceURL ?? '',
+            promQueries: existingPromQueries,
+            panelOptions: existingPanelOptions,
+            panelName: selectedPanel.panelName,
+            yAxisLeft: selectedPanel.yAxisLeft,
+            yAxisRight: selectedPanel.yAxisRight,
+            xAxisDown: selectedPanel.xAxisDown,
             unit: selectedPanel.unit,
           };
         } else if (
           !configure &&
-          selectedPanel.panel_name === existingPanels[index].panel_name
+          selectedPanel.panelName === existingPanels[index].panelName
         ) {
           const initialPromQueries: PromQueryDetails[] = [];
-          selectedPanel.prom_queries.forEach((prom_query) => {
+          selectedPanel.promQueries.forEach((promQuery) => {
             initialPromQueries.push({
               hidden: false,
-              queryid: uuidv4(),
-              prom_query_name: prom_query.prom_query_name,
-              legend: prom_query.legend,
-              resolution: prom_query.resolution,
-              minstep: prom_query.minstep,
-              line: prom_query.line,
-              close_area: prom_query.close_area,
+              queryID: uuidv4(),
+              promQueryName: promQuery.promQueryName,
+              legend: promQuery.legend,
+              resolution: promQuery.resolution,
+              minstep: promQuery.minstep,
+              line: promQuery.line,
+              closeArea: promQuery.closeArea,
             });
           });
           existingPanels[index] = {
-            ds_url: dashboardVars.dataSourceURL ?? '',
-            prom_queries: initialPromQueries,
-            panel_group_name: panelGroup.panel_group_name,
-            panel_options: selectedPanel.panel_options,
-            panel_name: selectedPanel.panel_name,
-            y_axis_left: selectedPanel.y_axis_left,
-            y_axis_right: selectedPanel.y_axis_right,
-            x_axis_down: selectedPanel.x_axis_down,
+            dsURL: dashboardVars.dataSourceURL ?? '',
+            promQueries: initialPromQueries,
+            panelGroupName: panelGroup.panelGroupName,
+            panelOptions: selectedPanel.panelOptions,
+            panelName: selectedPanel.panelName,
+            yAxisLeft: selectedPanel.yAxisLeft,
+            yAxisRight: selectedPanel.yAxisRight,
+            xAxisDown: selectedPanel.xAxisDown,
             unit: selectedPanel.unit,
           };
         }
@@ -489,9 +489,9 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
         >
           {dashboardDetails.selectedPanels?.map((panel, index) => (
             <StyledTab
-              label={panel.panel_name}
+              label={panel.panelName}
               {...a11yProps(index)}
-              key={`tab-${panel.panel_group_name}-${panel.panel_name}`}
+              key={`tab-${panel.panelGroupName}-${panel.panelName}`}
             />
           ))}
           <StyledTab
@@ -508,7 +508,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
           <TabPanel
             value={tabValue}
             index={index}
-            key={`tab-panel-${panel.panel_name}`}
+            key={`tab-panel-${panel.panelName}`}
           >
             <QueryEditingWizard
               numberOfPanels={dashboardDetails.selectedPanels?.length ?? 0}

@@ -120,9 +120,9 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
             if (hub.IsAvailable) {
               hubDetails.push({
                 id: hub.id,
-                HubName: hub.HubName,
-                RepoBranch: hub.RepoBranch,
-                RepoURL: hub.RepoURL,
+                hubName: hub.HubName,
+                repoBranch: hub.RepoBranch,
+                repoURL: hub.RepoURL,
               });
             }
           });
@@ -163,9 +163,9 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
                   MenuProps={MenuProps}
                 >
                   {availableHubs.map((hubs) => (
-                    <MenuItem key={hubs.HubName} value={hubs.HubName}>
+                    <MenuItem key={hubs.hubName} value={hubs.hubName}>
                       <Typography data-cy="PreDefinedHubOption">
-                        {hubs.HubName}
+                        {hubs.hubName}
                       </Typography>
                     </MenuItem>
                   ))}

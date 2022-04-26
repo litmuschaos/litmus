@@ -76,7 +76,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
           console.error(data.error);
         } else {
           setProjectOther(
-            projectOther.filter((row) => row.projectDetails.ID !== exitedMember)
+            projectOther.filter((row) => row.projectDetails.id !== exitedMember)
           );
           getProjects();
           fetchData();
@@ -91,15 +91,15 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
   useEffect(() => {
     const otherProject: OtherProjectsType[] = [];
     projects.map((project) => {
-      return project.Members.forEach((member: Member) => {
+      return project.members.forEach((member: Member) => {
         if (
-          member.UserID === userID &&
-          member.Role !== 'Owner' &&
-          member.Invitation === 'Accepted'
+          member.userID === userID &&
+          member.role !== 'Owner' &&
+          member.invitation === 'Accepted'
         ) {
           otherProject.push({
             projectDetails: project,
-            currentUserProjectRole: member.Role,
+            currentUserProjectRole: member.role,
           });
         }
       });
@@ -122,7 +122,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
                   data-cy="acceptedProjectName"
                   className={classes.projectName}
                 >
-                  {project.projectDetails.Name}
+                  {project.projectDetails.name}
                 </Typography>
                 <IconButton
                   data-cy="viewAcceptedProject"
@@ -130,7 +130,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
                   onClick={() => {
                     history.push({
                       pathname: `/home`,
-                      search: `?projectID=${project.projectDetails.ID}&projectRole=${project.currentUserProjectRole}`,
+                      search: `?projectID=${project.projectDetails.id}&projectRole=${project.currentUserProjectRole}`,
                     });
                   }}
                 >
@@ -153,7 +153,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
                   <ButtonFilled
                     className={classes.leaveProjectBtn}
                     onClick={() => {
-                      setExitedMember(project.projectDetails.ID);
+                      setExitedMember(project.projectDetails.id);
                       // leaveProject({
                       //   variables: {
                       //     data: {
@@ -164,7 +164,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
                       //   },
                       // });
                       leaveProject(
-                        project.projectDetails.ID,
+                        project.projectDetails.id,
                         getUserId(),
                         project.currentUserProjectRole
                       );

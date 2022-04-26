@@ -46,12 +46,12 @@ export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
     const queryMapPanel: queryMapForPanel[] = [];
     panelGroup.panels.forEach((panel) => {
       queryMapPanel.push({
-        panelID: panel.panel_id,
-        queryIDs: panel.prom_queries.map((query) => query.queryid),
+        panelID: panel.panelID,
+        queryIDs: panel.promQueries.map((query) => query.queryID),
       });
     });
     queryMapPanelGroup.push({
-      panelGroupID: panelGroup.panel_group_id,
+      panelGroupID: panelGroup.panelGroupID,
       panelQueryMap: queryMapPanel,
     });
   });
@@ -91,8 +91,8 @@ export const getPromQueryInput = (
   const promQueries: promQueryInput[] = [];
   prom_queries.forEach((query: PromQueryDetails) => {
     promQueries.push({
-      queryid: query.queryid,
-      query: query.prom_query_name,
+      queryid: query.queryID,
+      query: query.promQueryName,
       legend: query.legend,
       resolution: query.resolution,
       minstep:
@@ -148,7 +148,7 @@ export const generatePromQueries = (
   const promQueries: promQueryInput[] = getPromQueryInput(
     dashboardMetaPanelGroups
       .flatMap((panelGroup) => (panelGroup ? panelGroup.panels ?? [] : []))
-      .flatMap((panel) => (panel ? panel.prom_queries ?? [] : [])),
+      .flatMap((panel) => (panel ? panel.promQueries ?? [] : [])),
     timeRangeDiff,
     true,
     chaosEventQueryTemplate,
