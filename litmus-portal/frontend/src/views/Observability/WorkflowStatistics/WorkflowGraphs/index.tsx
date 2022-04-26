@@ -26,7 +26,7 @@ const WorkflowGraphs: React.FC = () => {
   >(GET_WORKFLOW_RUNS_STATS, {
     variables: {
       workflowRunStatsRequest: {
-        projectID: projectID,
+        projectID,
       },
     },
     fetchPolicy: 'cache-and-network',

@@ -51,7 +51,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
   >(GET_WORKFLOW_RUNS_STATS, {
     variables: {
       workflowRunStatsRequest: {
-        projectID: projectID,
+        projectID,
         workflowIDs: [workflowID],
       },
     },

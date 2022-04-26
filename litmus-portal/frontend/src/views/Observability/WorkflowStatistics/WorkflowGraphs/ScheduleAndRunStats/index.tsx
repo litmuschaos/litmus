@@ -49,7 +49,7 @@ const ScheduleAndRunStats: React.FC = () => {
     {
       variables: {
         filter: filters,
-        projectID: projectID,
+        projectID,
         showWorkflowRuns: activeTab === 0,
       },
       fetchPolicy: 'cache-and-network',
