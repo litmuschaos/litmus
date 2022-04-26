@@ -111,32 +111,32 @@ type Mutation {
   """
   Add a ChaosHub (includes the git clone operation)
   """
-  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+  addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
 
   """
   Save a ChaosHub configuration without cloning it
   """
-  saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+  saveChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
 
   """
   Sync changes from the Git repository of a ChaosHub
   """
-  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
+  syncChaosHub(id: ID!, projectID: String!): [ChaosHubStatus!]! @authorized
 
   """
   Generates Private and Public key for SSH authentication
   """
-  generaterSSHKey: SSHKey! @authorized
+  generateSSHKey: SSHKey! @authorized
 
   """
   Update the configuration of a ChaosHub
   """
-  updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
+  updateChaosHub(request: UpdateChaosHubRequest!): ChaosHub! @authorized
 
   """
   Delete the ChaosHub
   """
-  deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
+  deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # GIT-OPS OPERATIONS
   """
@@ -297,7 +297,7 @@ type Query {
   """
   Get the status of all the connected ChaosHub
   """
-  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
+  getHubStatus(projectID: String!): [ChaosHubStatus]! @authorized
 
   """
   Get the YAML manifest of ChaosEngine/ChaosExperiment

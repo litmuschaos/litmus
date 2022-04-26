@@ -23,9 +23,9 @@ type MyHub struct {
 }
 
 // GetOutputMyHub ...
-func (myhub *MyHub) GetOutputMyHub() *model.MyHub {
+func (myhub *MyHub) GetOutputMyHub() *model.ChaosHub {
 
-	return &model.MyHub{
+	return &model.ChaosHub{
 		ID:            myhub.ID,
 		ProjectID:     myhub.ProjectID,
 		RepoURL:       myhub.RepoURL,

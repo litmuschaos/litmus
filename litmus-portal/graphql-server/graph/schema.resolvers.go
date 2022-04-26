@@ -168,29 +168,29 @@ func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID
 	return wfHandler.DeleteWorkflowTemplate(ctx, projectID, templateID)
 }
 
-func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
-	err := authorization.ValidateRole(ctx, projectID,
+func (r *mutationResolver) AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.AddMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.AddMyHub(ctx, myhubInput, projectID)
+	return myhub.AddChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
-	err := authorization.ValidateRole(ctx, projectID,
+func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.SaveMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.SaveMyHub(ctx, myhubInput, projectID)
+	return myhub.SaveChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error) {
+func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) ([]*model.ChaosHubStatus, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
 		model.InvitationAccepted.String())
@@ -200,7 +200,7 @@ func (r *mutationResolver) SyncHub(ctx context.Context, id string, projectID str
 	return myhub.SyncHub(ctx, id, projectID)
 }
 
-func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
+func (r *mutationResolver) GenerateSSHKey(ctx context.Context) (*model.SSHKey, error) {
 	publicKey, privateKey, err := myHubOps.GenerateKeys()
 	if err != nil {
 		return nil, err
@@ -212,24 +212,24 @@ func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, 
 	}, nil
 }
 
-func (r *mutationResolver) UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error) {
-	err := authorization.ValidateRole(ctx, projectID,
+func (r *mutationResolver) UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return myhub.UpdateMyHub(ctx, myhubInput, projectID)
+	return myhub.UpdateChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) DeleteMyHub(ctx context.Context, projectID string, hubID string) (bool, error) {
+func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
 	}
-	return myhub.DeleteMyHub(ctx, hubID, projectID)
+	return myhub.DeleteChaosHub(ctx, hubID, projectID)
 }
 
 func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
@@ -497,7 +497,7 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput mo
 	return myhub.GetExperiment(ctx, experimentInput)
 }
 
-func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
+func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetHubStatus],
 		model.InvitationAccepted.String())

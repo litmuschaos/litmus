@@ -12,7 +12,7 @@ enum FileType {
   CSV
 }
 
-type MyHub {
+type ChaosHub {
   """
   ID of the chaos hub
   """
@@ -155,7 +155,7 @@ type Experiments {
   desc: String!
 }
 
-type MyHubStatus {
+type ChaosHubStatus {
   """
   ID of the hub
   """
@@ -177,7 +177,7 @@ type MyHubStatus {
   """
   totalExp: String!
   """
-  Bame of the chaos hub
+  Name of the chaos hub
   """
   hubName: String!
   """
@@ -225,7 +225,7 @@ type MyHubStatus {
 """
 Defines the details required for creating a chaos hub
 """
-input CreateMyHub {
+input CreateChaosHubRequest {
   """
   Name of the chaos hub
   """
@@ -270,6 +270,10 @@ input CreateMyHub {
   Public SSH key for authenticating into private chaos hub
   """
   sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
 }
 
 input ExperimentInput {
@@ -339,7 +343,7 @@ input CloningInput {
   sshPrivateKey: String
 }
 
-input UpdateMyHub {
+input UpdateChaosHubRequest {
   """
   ID of the chaos hub
   """
@@ -384,4 +388,8 @@ input UpdateMyHub {
   Public SSH key for authenticating into private chaos hub
   """
   sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
 }

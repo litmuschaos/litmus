@@ -59,6 +59,72 @@ type ApplicationMetadataResponse struct {
 	Applications []*ResourceResponse `json:"applications"`
 }
 
+type ChaosHub struct {
+	// ID of the chaos hub
+	ID string `json:"id"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// ID of the project in which the chaos hub is present
+	ProjectID string `json:"projectID"`
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Bool value indicating if the chaos hub is removed
+	IsRemoved bool `json:"isRemoved"`
+	// Timestamp when the chaos hub was created
+	CreatedAt string `json:"createdAt"`
+	// Timestamp when the chaos hub was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the chaos hub was last synced
+	LastSyncedAt string `json:"lastSyncedAt"`
+}
+
+type ChaosHubStatus struct {
+	// ID of the hub
+	ID string `json:"id"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is available or not.
+	IsAvailable bool `json:"isAvailable"`
+	// Total number of experiments in the hub
+	TotalExp string `json:"totalExp"`
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Bool value indicating whether the hub is private or not.
+	IsRemoved bool `json:"isRemoved"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
+	// Timestamp when the chaos hub was last synced
+	LastSyncedAt string `json:"lastSyncedAt"`
+}
+
 // Defines the details for a chaos workflow
 type ChaosWorkFlowRequest struct {
 	// ID of the workflow
@@ -199,25 +265,8 @@ type ConfirmClusterRegistrationResponse struct {
 	ClusterID          *string `json:"clusterID"`
 }
 
-type CreateDBInput struct {
-	DsID                      string                 `json:"dsID"`
-	DbName                    string                 `json:"dbName"`
-	DbTypeName                string                 `json:"dbTypeName"`
-	DbTypeID                  string                 `json:"dbTypeID"`
-	DbInformation             *string                `json:"dbInformation"`
-	ChaosEventQueryTemplate   string                 `json:"chaosEventQueryTemplate"`
-	ChaosVerdictQueryTemplate string                 `json:"chaosVerdictQueryTemplate"`
-	ApplicationMetadataMap    []*ApplicationMetadata `json:"applicationMetadataMap"`
-	PanelGroups               []*PanelGroup          `json:"panelGroups"`
-	EndTime                   string                 `json:"endTime"`
-	StartTime                 string                 `json:"startTime"`
-	ProjectID                 string                 `json:"projectID"`
-	ClusterID                 string                 `json:"clusterID"`
-	RefreshRate               string                 `json:"refreshRate"`
-}
-
 // Defines the details required for creating a chaos hub
-type CreateMyHub struct {
+type CreateChaosHubRequest struct {
 	// Name of the chaos hub
 	HubName string `json:"hubName"`
 	// URL of the git repository
@@ -238,6 +287,25 @@ type CreateMyHub struct {
 	SSHPrivateKey *string `json:"sshPrivateKey"`
 	// Public SSH key for authenticating into private chaos hub
 	SSHPublicKey *string `json:"sshPublicKey"`
+	// Project ID associated with this chaos hub
+	ProjectID string `json:"projectID"`
+}
+
+type CreateDBInput struct {
+	DsID                      string                 `json:"dsID"`
+	DbName                    string                 `json:"dbName"`
+	DbTypeName                string                 `json:"dbTypeName"`
+	DbTypeID                  string                 `json:"dbTypeID"`
+	DbInformation             *string                `json:"dbInformation"`
+	ChaosEventQueryTemplate   string                 `json:"chaosEventQueryTemplate"`
+	ChaosVerdictQueryTemplate string                 `json:"chaosVerdictQueryTemplate"`
+	ApplicationMetadataMap    []*ApplicationMetadata `json:"applicationMetadataMap"`
+	PanelGroups               []*PanelGroup          `json:"panelGroups"`
+	EndTime                   string                 `json:"endTime"`
+	StartTime                 string                 `json:"startTime"`
+	ProjectID                 string                 `json:"projectID"`
+	ClusterID                 string                 `json:"clusterID"`
+	RefreshRate               string                 `json:"refreshRate"`
 }
 
 type DSInput struct {
@@ -574,72 +642,6 @@ type MetricsTimeStampValue struct {
 	Value *float64 `json:"value"`
 }
 
-type MyHub struct {
-	// ID of the chaos hub
-	ID string `json:"id"`
-	// URL of the git repository
-	RepoURL string `json:"repoURL"`
-	// Branch of the git repository
-	RepoBranch string `json:"repoBranch"`
-	// ID of the project in which the chaos hub is present
-	ProjectID string `json:"projectID"`
-	// Name of the chaos hub
-	HubName string `json:"hubName"`
-	// Bool value indicating whether the hub is private or not.
-	IsPrivate bool `json:"isPrivate"`
-	// Type of authentication used: 	BASIC, SSH,	TOKEN
-	AuthType AuthType `json:"authType"`
-	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
-	// Git username
-	UserName *string `json:"userName"`
-	// Git password
-	Password *string `json:"password"`
-	// Private SSH key for authenticating into private chaos hub
-	SSHPrivateKey *string `json:"sshPrivateKey"`
-	// Bool value indicating if the chaos hub is removed
-	IsRemoved bool `json:"isRemoved"`
-	// Timestamp when the chaos hub was created
-	CreatedAt string `json:"createdAt"`
-	// Timestamp when the chaos hub was last updated
-	UpdatedAt string `json:"updatedAt"`
-	// Timestamp when the chaos hub was last synced
-	LastSyncedAt string `json:"lastSyncedAt"`
-}
-
-type MyHubStatus struct {
-	// ID of the hub
-	ID string `json:"id"`
-	// URL of the git repository
-	RepoURL string `json:"repoURL"`
-	// Branch of the git repository
-	RepoBranch string `json:"repoBranch"`
-	// Bool value indicating whether the hub is available or not.
-	IsAvailable bool `json:"isAvailable"`
-	// Total number of experiments in the hub
-	TotalExp string `json:"totalExp"`
-	// Bame of the chaos hub
-	HubName string `json:"hubName"`
-	// Bool value indicating whether the hub is private or not.
-	IsPrivate bool `json:"isPrivate"`
-	// Type of authentication used: 	BASIC, SSH,	TOKEN
-	AuthType AuthType `json:"authType"`
-	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
-	// Git username
-	UserName *string `json:"userName"`
-	// Git password
-	Password *string `json:"password"`
-	// Bool value indicating whether the hub is private or not.
-	IsRemoved bool `json:"isRemoved"`
-	// Private SSH key for authenticating into private chaos hub
-	SSHPrivateKey *string `json:"sshPrivateKey"`
-	// Public SSH key for authenticating into private chaos hub
-	SSHPublicKey *string `json:"sshPublicKey"`
-	// Timestamp when the chaos hub was last synced
-	LastSyncedAt string `json:"lastSyncedAt"`
-}
-
 type NewClusterEventRequest struct {
 	EventName   string `json:"eventName"`
 	Description string `json:"description"`
@@ -951,24 +953,7 @@ type TotalCount struct {
 	Workflows *WorkflowStat `json:"workflows"`
 }
 
-type UpdateDBInput struct {
-	DbID                      string                   `json:"dbID"`
-	DsID                      *string                  `json:"dsID"`
-	DbName                    *string                  `json:"dbName"`
-	DbTypeName                *string                  `json:"dbTypeName"`
-	DbTypeID                  *string                  `json:"dbTypeID"`
-	DbInformation             *string                  `json:"dbInformation"`
-	ChaosEventQueryTemplate   *string                  `json:"chaosEventQueryTemplate"`
-	ChaosVerdictQueryTemplate *string                  `json:"chaosVerdictQueryTemplate"`
-	ApplicationMetadataMap    []*ApplicationMetadata   `json:"applicationMetadataMap"`
-	PanelGroups               []*UpdatePanelGroupInput `json:"panelGroups"`
-	EndTime                   *string                  `json:"endTime"`
-	StartTime                 *string                  `json:"startTime"`
-	ClusterID                 *string                  `json:"clusterID"`
-	RefreshRate               *string                  `json:"refreshRate"`
-}
-
-type UpdateMyHub struct {
+type UpdateChaosHubRequest struct {
 	// ID of the chaos hub
 	ID string `json:"id"`
 	// Name of the chaos hub
@@ -991,6 +976,25 @@ type UpdateMyHub struct {
 	SSHPrivateKey *string `json:"sshPrivateKey"`
 	// Public SSH key for authenticating into private chaos hub
 	SSHPublicKey *string `json:"sshPublicKey"`
+	// Project ID associated with this chaos hub
+	ProjectID string `json:"projectID"`
+}
+
+type UpdateDBInput struct {
+	DbID                      string                   `json:"dbID"`
+	DsID                      *string                  `json:"dsID"`
+	DbName                    *string                  `json:"dbName"`
+	DbTypeName                *string                  `json:"dbTypeName"`
+	DbTypeID                  *string                  `json:"dbTypeID"`
+	DbInformation             *string                  `json:"dbInformation"`
+	ChaosEventQueryTemplate   *string                  `json:"chaosEventQueryTemplate"`
+	ChaosVerdictQueryTemplate *string                  `json:"chaosVerdictQueryTemplate"`
+	ApplicationMetadataMap    []*ApplicationMetadata   `json:"applicationMetadataMap"`
+	PanelGroups               []*UpdatePanelGroupInput `json:"panelGroups"`
+	EndTime                   *string                  `json:"endTime"`
+	StartTime                 *string                  `json:"startTime"`
+	ClusterID                 *string                  `json:"clusterID"`
+	RefreshRate               *string                  `json:"refreshRate"`
 }
 
 type UpdatePanelGroupInput struct {

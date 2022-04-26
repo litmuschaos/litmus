@@ -88,6 +88,42 @@ type ComplexityRoot struct {
 		Namespace    func(childComplexity int) int
 	}
 
+	ChaosHub struct {
+		AuthType      func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		HubName       func(childComplexity int) int
+		ID            func(childComplexity int) int
+		IsPrivate     func(childComplexity int) int
+		IsRemoved     func(childComplexity int) int
+		LastSyncedAt  func(childComplexity int) int
+		Password      func(childComplexity int) int
+		ProjectID     func(childComplexity int) int
+		RepoBranch    func(childComplexity int) int
+		RepoURL       func(childComplexity int) int
+		SSHPrivateKey func(childComplexity int) int
+		Token         func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UserName      func(childComplexity int) int
+	}
+
+	ChaosHubStatus struct {
+		AuthType      func(childComplexity int) int
+		HubName       func(childComplexity int) int
+		ID            func(childComplexity int) int
+		IsAvailable   func(childComplexity int) int
+		IsPrivate     func(childComplexity int) int
+		IsRemoved     func(childComplexity int) int
+		LastSyncedAt  func(childComplexity int) int
+		Password      func(childComplexity int) int
+		RepoBranch    func(childComplexity int) int
+		RepoURL       func(childComplexity int) int
+		SSHPrivateKey func(childComplexity int) int
+		SSHPublicKey  func(childComplexity int) int
+		Token         func(childComplexity int) int
+		TotalExp      func(childComplexity int) int
+		UserName      func(childComplexity int) int
+	}
+
 	ChaosWorkFlowResponse struct {
 		CronSyntax          func(childComplexity int) int
 		IsCustomWorkflow    func(childComplexity int) int
@@ -298,7 +334,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddMyHub                   func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
+		AddChaosHub                func(childComplexity int, request model.CreateChaosHubRequest) int
 		ChaosWorkflowRun           func(childComplexity int, request model.WorkflowRunRequest) int
 		ConfirmClusterRegistration func(childComplexity int, request model.ClusterIdentity) int
 		CreateChaosWorkFlow        func(childComplexity int, request model.ChaosWorkFlowRequest) int
@@ -306,69 +342,33 @@ type ComplexityRoot struct {
 		CreateDataSource           func(childComplexity int, datasource *model.DSInput) int
 		CreateImageRegistry        func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
 		CreateWorkflowTemplate     func(childComplexity int, request *model.TemplateInput) int
+		DeleteChaosHub             func(childComplexity int, projectID string, hubID string) int
 		DeleteChaosWorkflow        func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
 		DeleteClusters             func(childComplexity int, projectID string, clusterIDs []*string) int
 		DeleteDashboard            func(childComplexity int, projectID string, dbID *string) int
 		DeleteDataSource           func(childComplexity int, projectID string, input model.DeleteDSInput) int
 		DeleteImageRegistry        func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteMyHub                func(childComplexity int, projectID string, hubID string) int
 		DeleteWorkflowTemplate     func(childComplexity int, projectID string, templateID string) int
 		DisableGitOps              func(childComplexity int, projectID string) int
 		EnableGitOps               func(childComplexity int, config model.GitConfig) int
-		GeneraterSSHKey            func(childComplexity int) int
+		GenerateSSHKey             func(childComplexity int) int
 		GitopsNotifer              func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
 		KubeObj                    func(childComplexity int, request model.KubeObjectData) int
 		NewClusterEvent            func(childComplexity int, request model.NewClusterEventRequest) int
 		PodLog                     func(childComplexity int, request model.PodLog) int
 		ReRunChaosWorkFlow         func(childComplexity int, projectID string, workflowID string) int
 		RegisterCluster            func(childComplexity int, request model.RegisterClusterRequest) int
-		SaveMyHub                  func(childComplexity int, myhubInput model.CreateMyHub, projectID string) int
-		SyncHub                    func(childComplexity int, id string, projectID string) int
+		SaveChaosHub               func(childComplexity int, request model.CreateChaosHubRequest) int
+		SyncChaosHub               func(childComplexity int, id string, projectID string) int
 		SyncWorkflowRun            func(childComplexity int, projectID string, workflowID string, workflowRunID string) int
 		TerminateChaosWorkflow     func(childComplexity int, projectID string, workflowID *string, workflowRunID *string) int
+		UpdateChaosHub             func(childComplexity int, request model.UpdateChaosHubRequest) int
 		UpdateChaosWorkflow        func(childComplexity int, request *model.ChaosWorkFlowRequest) int
 		UpdateDashboard            func(childComplexity int, projectID string, dashboard model.UpdateDBInput, chaosQueryUpdate bool) int
 		UpdateDataSource           func(childComplexity int, datasource model.DSInput) int
 		UpdateGitOps               func(childComplexity int, config model.GitConfig) int
 		UpdateImageRegistry        func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		UpdateMyHub                func(childComplexity int, myhubInput model.UpdateMyHub, projectID string) int
 		UpdatePanel                func(childComplexity int, panelInput []*model.Panel) int
-	}
-
-	MyHub struct {
-		AuthType      func(childComplexity int) int
-		CreatedAt     func(childComplexity int) int
-		HubName       func(childComplexity int) int
-		ID            func(childComplexity int) int
-		IsPrivate     func(childComplexity int) int
-		IsRemoved     func(childComplexity int) int
-		LastSyncedAt  func(childComplexity int) int
-		Password      func(childComplexity int) int
-		ProjectID     func(childComplexity int) int
-		RepoBranch    func(childComplexity int) int
-		RepoURL       func(childComplexity int) int
-		SSHPrivateKey func(childComplexity int) int
-		Token         func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		UserName      func(childComplexity int) int
-	}
-
-	MyHubStatus struct {
-		AuthType      func(childComplexity int) int
-		HubName       func(childComplexity int) int
-		ID            func(childComplexity int) int
-		IsAvailable   func(childComplexity int) int
-		IsPrivate     func(childComplexity int) int
-		IsRemoved     func(childComplexity int) int
-		LastSyncedAt  func(childComplexity int) int
-		Password      func(childComplexity int) int
-		RepoBranch    func(childComplexity int) int
-		RepoURL       func(childComplexity int) int
-		SSHPrivateKey func(childComplexity int) int
-		SSHPublicKey  func(childComplexity int) int
-		Token         func(childComplexity int) int
-		TotalExp      func(childComplexity int) int
-		UserName      func(childComplexity int) int
 	}
 
 	Option struct {
@@ -647,12 +647,12 @@ type MutationResolver interface {
 	KubeObj(ctx context.Context, request model.KubeObjectData) (string, error)
 	CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error)
 	DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error)
-	AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
-	SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error)
-	SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error)
-	GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error)
-	UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error)
-	DeleteMyHub(ctx context.Context, projectID string, hubID string) (bool, error)
+	AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
+	SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
+	SyncChaosHub(ctx context.Context, id string, projectID string) ([]*model.ChaosHubStatus, error)
+	GenerateSSHKey(ctx context.Context) (*model.SSHKey, error)
+	UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error)
+	DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error)
 	GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
 	EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
@@ -679,7 +679,7 @@ type QueryResolver interface {
 	GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error)
 	GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error)
-	GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error)
+	GetHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error)
 	GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error)
@@ -879,6 +879,216 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ApplicationMetadataResponse.Namespace(childComplexity), true
+
+	case "ChaosHub.authType":
+		if e.complexity.ChaosHub.AuthType == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.AuthType(childComplexity), true
+
+	case "ChaosHub.createdAt":
+		if e.complexity.ChaosHub.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.CreatedAt(childComplexity), true
+
+	case "ChaosHub.hubName":
+		if e.complexity.ChaosHub.HubName == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.HubName(childComplexity), true
+
+	case "ChaosHub.id":
+		if e.complexity.ChaosHub.ID == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.ID(childComplexity), true
+
+	case "ChaosHub.isPrivate":
+		if e.complexity.ChaosHub.IsPrivate == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.IsPrivate(childComplexity), true
+
+	case "ChaosHub.isRemoved":
+		if e.complexity.ChaosHub.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.IsRemoved(childComplexity), true
+
+	case "ChaosHub.lastSyncedAt":
+		if e.complexity.ChaosHub.LastSyncedAt == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.LastSyncedAt(childComplexity), true
+
+	case "ChaosHub.password":
+		if e.complexity.ChaosHub.Password == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.Password(childComplexity), true
+
+	case "ChaosHub.projectID":
+		if e.complexity.ChaosHub.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.ProjectID(childComplexity), true
+
+	case "ChaosHub.repoBranch":
+		if e.complexity.ChaosHub.RepoBranch == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.RepoBranch(childComplexity), true
+
+	case "ChaosHub.repoURL":
+		if e.complexity.ChaosHub.RepoURL == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.RepoURL(childComplexity), true
+
+	case "ChaosHub.sshPrivateKey":
+		if e.complexity.ChaosHub.SSHPrivateKey == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.SSHPrivateKey(childComplexity), true
+
+	case "ChaosHub.token":
+		if e.complexity.ChaosHub.Token == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.Token(childComplexity), true
+
+	case "ChaosHub.updatedAt":
+		if e.complexity.ChaosHub.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.UpdatedAt(childComplexity), true
+
+	case "ChaosHub.userName":
+		if e.complexity.ChaosHub.UserName == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.UserName(childComplexity), true
+
+	case "ChaosHubStatus.authType":
+		if e.complexity.ChaosHubStatus.AuthType == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.AuthType(childComplexity), true
+
+	case "ChaosHubStatus.hubName":
+		if e.complexity.ChaosHubStatus.HubName == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.HubName(childComplexity), true
+
+	case "ChaosHubStatus.id":
+		if e.complexity.ChaosHubStatus.ID == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.ID(childComplexity), true
+
+	case "ChaosHubStatus.isAvailable":
+		if e.complexity.ChaosHubStatus.IsAvailable == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.IsAvailable(childComplexity), true
+
+	case "ChaosHubStatus.isPrivate":
+		if e.complexity.ChaosHubStatus.IsPrivate == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.IsPrivate(childComplexity), true
+
+	case "ChaosHubStatus.isRemoved":
+		if e.complexity.ChaosHubStatus.IsRemoved == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.IsRemoved(childComplexity), true
+
+	case "ChaosHubStatus.lastSyncedAt":
+		if e.complexity.ChaosHubStatus.LastSyncedAt == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.LastSyncedAt(childComplexity), true
+
+	case "ChaosHubStatus.password":
+		if e.complexity.ChaosHubStatus.Password == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.Password(childComplexity), true
+
+	case "ChaosHubStatus.repoBranch":
+		if e.complexity.ChaosHubStatus.RepoBranch == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.RepoBranch(childComplexity), true
+
+	case "ChaosHubStatus.repoURL":
+		if e.complexity.ChaosHubStatus.RepoURL == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.RepoURL(childComplexity), true
+
+	case "ChaosHubStatus.sshPrivateKey":
+		if e.complexity.ChaosHubStatus.SSHPrivateKey == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.SSHPrivateKey(childComplexity), true
+
+	case "ChaosHubStatus.sshPublicKey":
+		if e.complexity.ChaosHubStatus.SSHPublicKey == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.SSHPublicKey(childComplexity), true
+
+	case "ChaosHubStatus.token":
+		if e.complexity.ChaosHubStatus.Token == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.Token(childComplexity), true
+
+	case "ChaosHubStatus.totalExp":
+		if e.complexity.ChaosHubStatus.TotalExp == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.TotalExp(childComplexity), true
+
+	case "ChaosHubStatus.userName":
+		if e.complexity.ChaosHubStatus.UserName == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.UserName(childComplexity), true
 
 	case "ChaosWorkFlowResponse.cronSyntax":
 		if e.complexity.ChaosWorkFlowResponse.CronSyntax == nil {
@@ -1818,17 +2028,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MetricsTimeStampValue.Value(childComplexity), true
 
-	case "Mutation.addMyHub":
-		if e.complexity.Mutation.AddMyHub == nil {
+	case "Mutation.addChaosHub":
+		if e.complexity.Mutation.AddChaosHub == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_addMyHub_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addChaosHub_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddMyHub(childComplexity, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string)), true
+		return e.complexity.Mutation.AddChaosHub(childComplexity, args["request"].(model.CreateChaosHubRequest)), true
 
 	case "Mutation.chaosWorkflowRun":
 		if e.complexity.Mutation.ChaosWorkflowRun == nil {
@@ -1914,6 +2124,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateWorkflowTemplate(childComplexity, args["request"].(*model.TemplateInput)), true
 
+	case "Mutation.deleteChaosHub":
+		if e.complexity.Mutation.DeleteChaosHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteChaosHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteChaosHub(childComplexity, args["projectID"].(string), args["hubID"].(string)), true
+
 	case "Mutation.deleteChaosWorkflow":
 		if e.complexity.Mutation.DeleteChaosWorkflow == nil {
 			break
@@ -1974,18 +2196,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string)), true
 
-	case "Mutation.deleteMyHub":
-		if e.complexity.Mutation.DeleteMyHub == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteMyHub_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteMyHub(childComplexity, args["projectID"].(string), args["hubID"].(string)), true
-
 	case "Mutation.deleteWorkflowTemplate":
 		if e.complexity.Mutation.DeleteWorkflowTemplate == nil {
 			break
@@ -2022,12 +2232,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EnableGitOps(childComplexity, args["config"].(model.GitConfig)), true
 
-	case "Mutation.generaterSSHKey":
-		if e.complexity.Mutation.GeneraterSSHKey == nil {
+	case "Mutation.generateSSHKey":
+		if e.complexity.Mutation.GenerateSSHKey == nil {
 			break
 		}
 
-		return e.complexity.Mutation.GeneraterSSHKey(childComplexity), true
+		return e.complexity.Mutation.GenerateSSHKey(childComplexity), true
 
 	case "Mutation.gitopsNotifer":
 		if e.complexity.Mutation.GitopsNotifer == nil {
@@ -2101,29 +2311,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RegisterCluster(childComplexity, args["request"].(model.RegisterClusterRequest)), true
 
-	case "Mutation.saveMyHub":
-		if e.complexity.Mutation.SaveMyHub == nil {
+	case "Mutation.saveChaosHub":
+		if e.complexity.Mutation.SaveChaosHub == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_saveMyHub_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_saveChaosHub_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SaveMyHub(childComplexity, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string)), true
+		return e.complexity.Mutation.SaveChaosHub(childComplexity, args["request"].(model.CreateChaosHubRequest)), true
 
-	case "Mutation.syncHub":
-		if e.complexity.Mutation.SyncHub == nil {
+	case "Mutation.syncChaosHub":
+		if e.complexity.Mutation.SyncChaosHub == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_syncHub_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_syncChaosHub_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SyncHub(childComplexity, args["id"].(string), args["projectID"].(string)), true
+		return e.complexity.Mutation.SyncChaosHub(childComplexity, args["id"].(string), args["projectID"].(string)), true
 
 	case "Mutation.syncWorkflowRun":
 		if e.complexity.Mutation.SyncWorkflowRun == nil {
@@ -2148,6 +2358,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.TerminateChaosWorkflow(childComplexity, args["projectID"].(string), args["workflowID"].(*string), args["workflowRunID"].(*string)), true
+
+	case "Mutation.updateChaosHub":
+		if e.complexity.Mutation.UpdateChaosHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateChaosHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateChaosHub(childComplexity, args["request"].(model.UpdateChaosHubRequest)), true
 
 	case "Mutation.updateChaosWorkflow":
 		if e.complexity.Mutation.UpdateChaosWorkflow == nil {
@@ -2209,18 +2431,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string), args["imageRegistryInfo"].(model.ImageRegistryInput)), true
 
-	case "Mutation.updateMyHub":
-		if e.complexity.Mutation.UpdateMyHub == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateMyHub_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateMyHub(childComplexity, args["myhubInput"].(model.UpdateMyHub), args["projectID"].(string)), true
-
 	case "Mutation.updatePanel":
 		if e.complexity.Mutation.UpdatePanel == nil {
 			break
@@ -2232,216 +2442,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePanel(childComplexity, args["panelInput"].([]*model.Panel)), true
-
-	case "MyHub.authType":
-		if e.complexity.MyHub.AuthType == nil {
-			break
-		}
-
-		return e.complexity.MyHub.AuthType(childComplexity), true
-
-	case "MyHub.createdAt":
-		if e.complexity.MyHub.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.MyHub.CreatedAt(childComplexity), true
-
-	case "MyHub.hubName":
-		if e.complexity.MyHub.HubName == nil {
-			break
-		}
-
-		return e.complexity.MyHub.HubName(childComplexity), true
-
-	case "MyHub.id":
-		if e.complexity.MyHub.ID == nil {
-			break
-		}
-
-		return e.complexity.MyHub.ID(childComplexity), true
-
-	case "MyHub.isPrivate":
-		if e.complexity.MyHub.IsPrivate == nil {
-			break
-		}
-
-		return e.complexity.MyHub.IsPrivate(childComplexity), true
-
-	case "MyHub.isRemoved":
-		if e.complexity.MyHub.IsRemoved == nil {
-			break
-		}
-
-		return e.complexity.MyHub.IsRemoved(childComplexity), true
-
-	case "MyHub.lastSyncedAt":
-		if e.complexity.MyHub.LastSyncedAt == nil {
-			break
-		}
-
-		return e.complexity.MyHub.LastSyncedAt(childComplexity), true
-
-	case "MyHub.password":
-		if e.complexity.MyHub.Password == nil {
-			break
-		}
-
-		return e.complexity.MyHub.Password(childComplexity), true
-
-	case "MyHub.projectID":
-		if e.complexity.MyHub.ProjectID == nil {
-			break
-		}
-
-		return e.complexity.MyHub.ProjectID(childComplexity), true
-
-	case "MyHub.repoBranch":
-		if e.complexity.MyHub.RepoBranch == nil {
-			break
-		}
-
-		return e.complexity.MyHub.RepoBranch(childComplexity), true
-
-	case "MyHub.repoURL":
-		if e.complexity.MyHub.RepoURL == nil {
-			break
-		}
-
-		return e.complexity.MyHub.RepoURL(childComplexity), true
-
-	case "MyHub.sshPrivateKey":
-		if e.complexity.MyHub.SSHPrivateKey == nil {
-			break
-		}
-
-		return e.complexity.MyHub.SSHPrivateKey(childComplexity), true
-
-	case "MyHub.token":
-		if e.complexity.MyHub.Token == nil {
-			break
-		}
-
-		return e.complexity.MyHub.Token(childComplexity), true
-
-	case "MyHub.updatedAt":
-		if e.complexity.MyHub.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.MyHub.UpdatedAt(childComplexity), true
-
-	case "MyHub.userName":
-		if e.complexity.MyHub.UserName == nil {
-			break
-		}
-
-		return e.complexity.MyHub.UserName(childComplexity), true
-
-	case "MyHubStatus.authType":
-		if e.complexity.MyHubStatus.AuthType == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.AuthType(childComplexity), true
-
-	case "MyHubStatus.hubName":
-		if e.complexity.MyHubStatus.HubName == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.HubName(childComplexity), true
-
-	case "MyHubStatus.id":
-		if e.complexity.MyHubStatus.ID == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.ID(childComplexity), true
-
-	case "MyHubStatus.isAvailable":
-		if e.complexity.MyHubStatus.IsAvailable == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.IsAvailable(childComplexity), true
-
-	case "MyHubStatus.isPrivate":
-		if e.complexity.MyHubStatus.IsPrivate == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.IsPrivate(childComplexity), true
-
-	case "MyHubStatus.isRemoved":
-		if e.complexity.MyHubStatus.IsRemoved == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.IsRemoved(childComplexity), true
-
-	case "MyHubStatus.lastSyncedAt":
-		if e.complexity.MyHubStatus.LastSyncedAt == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.LastSyncedAt(childComplexity), true
-
-	case "MyHubStatus.password":
-		if e.complexity.MyHubStatus.Password == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.Password(childComplexity), true
-
-	case "MyHubStatus.repoBranch":
-		if e.complexity.MyHubStatus.RepoBranch == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.RepoBranch(childComplexity), true
-
-	case "MyHubStatus.repoURL":
-		if e.complexity.MyHubStatus.RepoURL == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.RepoURL(childComplexity), true
-
-	case "MyHubStatus.sshPrivateKey":
-		if e.complexity.MyHubStatus.SSHPrivateKey == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.SSHPrivateKey(childComplexity), true
-
-	case "MyHubStatus.sshPublicKey":
-		if e.complexity.MyHubStatus.SSHPublicKey == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.SSHPublicKey(childComplexity), true
-
-	case "MyHubStatus.token":
-		if e.complexity.MyHubStatus.Token == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.Token(childComplexity), true
-
-	case "MyHubStatus.totalExp":
-		if e.complexity.MyHubStatus.TotalExp == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.TotalExp(childComplexity), true
-
-	case "MyHubStatus.userName":
-		if e.complexity.MyHubStatus.UserName == nil {
-			break
-		}
-
-		return e.complexity.MyHubStatus.UserName(childComplexity), true
 
 	case "Option.name":
 		if e.complexity.Option.Name == nil {
@@ -4699,7 +4699,7 @@ enum FileType {
   CSV
 }
 
-type MyHub {
+type ChaosHub {
   """
   ID of the chaos hub
   """
@@ -4842,7 +4842,7 @@ type Experiments {
   desc: String!
 }
 
-type MyHubStatus {
+type ChaosHubStatus {
   """
   ID of the hub
   """
@@ -4864,7 +4864,7 @@ type MyHubStatus {
   """
   totalExp: String!
   """
-  Bame of the chaos hub
+  Name of the chaos hub
   """
   hubName: String!
   """
@@ -4912,7 +4912,7 @@ type MyHubStatus {
 """
 Defines the details required for creating a chaos hub
 """
-input CreateMyHub {
+input CreateChaosHubRequest {
   """
   Name of the chaos hub
   """
@@ -4957,6 +4957,10 @@ input CreateMyHub {
   Public SSH key for authenticating into private chaos hub
   """
   sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
 }
 
 input ExperimentInput {
@@ -5026,7 +5030,7 @@ input CloningInput {
   sshPrivateKey: String
 }
 
-input UpdateMyHub {
+input UpdateChaosHubRequest {
   """
   ID of the chaos hub
   """
@@ -5071,6 +5075,10 @@ input UpdateMyHub {
   Public SSH key for authenticating into private chaos hub
   """
   sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
@@ -5197,32 +5205,32 @@ type Mutation {
   """
   Add a ChaosHub (includes the git clone operation)
   """
-  addMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+  addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
 
   """
   Save a ChaosHub configuration without cloning it
   """
-  saveMyHub(myhubInput: CreateMyHub!, projectID: String!): MyHub! @authorized
+  saveChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
 
   """
   Sync changes from the Git repository of a ChaosHub
   """
-  syncHub(id: ID!, projectID: String!): [MyHubStatus!]! @authorized
+  syncChaosHub(id: ID!, projectID: String!): [ChaosHubStatus!]! @authorized
 
   """
   Generates Private and Public key for SSH authentication
   """
-  generaterSSHKey: SSHKey! @authorized
+  generateSSHKey: SSHKey! @authorized
 
   """
   Update the configuration of a ChaosHub
   """
-  updateMyHub(myhubInput: UpdateMyHub!, projectID: String!): MyHub! @authorized
+  updateChaosHub(request: UpdateChaosHubRequest!): ChaosHub! @authorized
 
   """
   Delete the ChaosHub
   """
-  deleteMyHub(projectID: String!, hubID: String!): Boolean! @authorized
+  deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
 
   # GIT-OPS OPERATIONS
   """
@@ -5383,7 +5391,7 @@ type Query {
   """
   Get the status of all the connected ChaosHub
   """
-  getHubStatus(projectID: String!): [MyHubStatus]! @authorized
+  getHubStatus(projectID: String!): [ChaosHubStatus]! @authorized
 
   """
   Get the YAML manifest of ChaosEngine/ChaosExperiment
@@ -6305,25 +6313,17 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_addMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_addChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateMyHub
-	if tmp, ok := rawArgs["myhubInput"]; ok {
-		arg0, err = ec.unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateMyHub(ctx, tmp)
+	var arg0 model.CreateChaosHubRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNCreateChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateChaosHubRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["myhubInput"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg1
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6430,6 +6430,28 @@ func (ec *executionContext) field_Mutation_createWorkflowTemplate_args(ctx conte
 		}
 	}
 	args["request"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["hubID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["hubID"] = arg1
 	return args, nil
 }
 
@@ -6548,28 +6570,6 @@ func (ec *executionContext) field_Mutation_deleteImageRegistry_args(ctx context.
 		}
 	}
 	args["projectID"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["hubID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["hubID"] = arg1
 	return args, nil
 }
 
@@ -6723,29 +6723,21 @@ func (ec *executionContext) field_Mutation_registerCluster_args(ctx context.Cont
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_saveMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_saveChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateMyHub
-	if tmp, ok := rawArgs["myhubInput"]; ok {
-		arg0, err = ec.unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateMyHub(ctx, tmp)
+	var arg0 model.CreateChaosHubRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNCreateChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateChaosHubRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["myhubInput"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg1
+	args["request"] = arg0
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_syncHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_syncChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -6824,6 +6816,20 @@ func (ec *executionContext) field_Mutation_terminateChaosWorkflow_args(ctx conte
 		}
 	}
 	args["workflowRunID"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateChaosHubRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNUpdateChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateChaosHubRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -6926,28 +6932,6 @@ func (ec *executionContext) field_Mutation_updateImageRegistry_args(ctx context.
 		}
 	}
 	args["imageRegistryInfo"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateMyHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 model.UpdateMyHub
-	if tmp, ok := rawArgs["myhubInput"]; ok {
-		arg0, err = ec.unmarshalNUpdateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateMyHub(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["myhubInput"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -8341,6 +8325,999 @@ func (ec *executionContext) _ApplicationMetadataResponse_applications(ctx contex
 	res := resTmp.([]*model.ResourceResponse)
 	fc.Result = res
 	return ec.marshalOResourceResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐResourceResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_id(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_repoURL(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RepoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_repoBranch(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RepoBranch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_projectID(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_hubName(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HubName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_isPrivate(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsPrivate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_authType(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.AuthType)
+	fc.Result = res
+	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_token(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_userName(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_password(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_sshPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHub_lastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastSyncedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_id(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_repoURL(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RepoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_repoBranch(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RepoBranch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_isAvailable(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsAvailable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_totalExp(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalExp, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_hubName(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HubName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_isPrivate(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsPrivate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_authType(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.AuthType)
+	fc.Result = res
+	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_token(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_userName(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_password(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRemoved, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_sshPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_sshPublicKey(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SSHPublicKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_lastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastSyncedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ChaosWorkFlowResponse_workflowID(ctx context.Context, field graphql.CollectedField, obj *model.ChaosWorkFlowResponse) (ret graphql.Marshaler) {
@@ -13546,7 +14523,7 @@ func (ec *executionContext) _Mutation_deleteWorkflowTemplate(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_addChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13562,7 +14539,7 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addMyHub_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_addChaosHub_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13571,7 +14548,7 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AddMyHub(rctx, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string))
+			return ec.resolvers.Mutation().AddChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13587,10 +14564,10 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.MyHub); ok {
+		if data, ok := tmp.(*model.ChaosHub); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHub`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13602,12 +14579,12 @@ func (ec *executionContext) _Mutation_addMyHub(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.MyHub)
+	res := resTmp.(*model.ChaosHub)
 	fc.Result = res
-	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_saveMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_saveChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13623,7 +14600,7 @@ func (ec *executionContext) _Mutation_saveMyHub(ctx context.Context, field graph
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_saveMyHub_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_saveChaosHub_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13632,7 +14609,7 @@ func (ec *executionContext) _Mutation_saveMyHub(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SaveMyHub(rctx, args["myhubInput"].(model.CreateMyHub), args["projectID"].(string))
+			return ec.resolvers.Mutation().SaveChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13648,10 +14625,10 @@ func (ec *executionContext) _Mutation_saveMyHub(ctx context.Context, field graph
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.MyHub); ok {
+		if data, ok := tmp.(*model.ChaosHub); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHub`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13663,12 +14640,12 @@ func (ec *executionContext) _Mutation_saveMyHub(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.MyHub)
+	res := resTmp.(*model.ChaosHub)
 	fc.Result = res
-	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_syncChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13684,7 +14661,7 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_syncHub_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_syncChaosHub_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13693,7 +14670,7 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncHub(rctx, args["id"].(string), args["projectID"].(string))
+			return ec.resolvers.Mutation().SyncChaosHub(rctx, args["id"].(string), args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13709,10 +14686,10 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.MyHubStatus); ok {
+		if data, ok := tmp.([]*model.ChaosHubStatus); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHubStatus`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHubStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13724,12 +14701,12 @@ func (ec *executionContext) _Mutation_syncHub(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.MyHubStatus)
+	res := resTmp.([]*model.ChaosHubStatus)
 	fc.Result = res
-	return ec.marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatusᚄ(ctx, field.Selections, res)
+	return ec.marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatusᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_generaterSSHKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_generateSSHKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13747,7 +14724,7 @@ func (ec *executionContext) _Mutation_generaterSSHKey(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().GeneraterSSHKey(rctx)
+			return ec.resolvers.Mutation().GenerateSSHKey(rctx)
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13783,7 +14760,7 @@ func (ec *executionContext) _Mutation_generaterSSHKey(ctx context.Context, field
 	return ec.marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_updateMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_updateChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13799,7 +14776,7 @@ func (ec *executionContext) _Mutation_updateMyHub(ctx context.Context, field gra
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateMyHub_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_updateChaosHub_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13808,7 +14785,7 @@ func (ec *executionContext) _Mutation_updateMyHub(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateMyHub(rctx, args["myhubInput"].(model.UpdateMyHub), args["projectID"].(string))
+			return ec.resolvers.Mutation().UpdateChaosHub(rctx, args["request"].(model.UpdateChaosHubRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -13824,10 +14801,10 @@ func (ec *executionContext) _Mutation_updateMyHub(ctx context.Context, field gra
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.MyHub); ok {
+		if data, ok := tmp.(*model.ChaosHub); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHub`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13839,12 +14816,12 @@ func (ec *executionContext) _Mutation_updateMyHub(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.MyHub)
+	res := resTmp.(*model.ChaosHub)
 	fc.Result = res
-	return ec.marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx, field.Selections, res)
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deleteChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13860,7 +14837,7 @@ func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field gra
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteMyHub_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deleteChaosHub_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -13869,7 +14846,7 @@ func (ec *executionContext) _Mutation_deleteMyHub(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteMyHub(rctx, args["projectID"].(string), args["hubID"].(string))
+			return ec.resolvers.Mutation().DeleteChaosHub(rctx, args["projectID"].(string), args["hubID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -14720,999 +15697,6 @@ func (ec *executionContext) _Mutation_deleteImageRegistry(ctx context.Context, f
 			return data, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_id(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_repoURL(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RepoURL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_repoBranch(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RepoBranch, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_projectID(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_hubName(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HubName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_isPrivate(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsPrivate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_authType(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AuthType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.AuthType)
-	fc.Result = res
-	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_token(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Token, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_userName(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_password(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Password, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_sshPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SSHPrivateKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsRemoved, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHub_lastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHub) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHub",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastSyncedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_id(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_repoURL(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RepoURL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_repoBranch(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RepoBranch, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_isAvailable(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsAvailable, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_totalExp(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalExp, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_hubName(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HubName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_isPrivate(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsPrivate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_authType(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AuthType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.AuthType)
-	fc.Result = res
-	return ec.marshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_token(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Token, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_userName(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_password(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Password, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_isRemoved(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsRemoved, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_sshPrivateKey(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SSHPrivateKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_sshPublicKey(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SSHPublicKey, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _MyHubStatus_lastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.MyHubStatus) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "MyHubStatus",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastSyncedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17637,10 +17621,10 @@ func (ec *executionContext) _Query_getHubStatus(ctx context.Context, field graph
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.MyHubStatus); ok {
+		if data, ok := tmp.([]*model.ChaosHubStatus); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.MyHubStatus`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHubStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17652,9 +17636,9 @@ func (ec *executionContext) _Query_getHubStatus(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.MyHubStatus)
+	res := resTmp.([]*model.ChaosHubStatus)
 	fc.Result = res
-	return ec.marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx, field.Selections, res)
+	return ec.marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -23548,6 +23532,84 @@ func (ec *executionContext) unmarshalInputClusterIdentity(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateChaosHubRequest(ctx context.Context, obj interface{}) (model.CreateChaosHubRequest, error) {
+	var it model.CreateChaosHubRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "hubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "repoURL":
+			var err error
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "repoBranch":
+			var err error
+			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isPrivate":
+			var err error
+			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "authType":
+			var err error
+			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "token":
+			var err error
+			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userName":
+			var err error
+			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sshPrivateKey":
+			var err error
+			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sshPublicKey":
+			var err error
+			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "projectID":
+			var err error
+			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateDBInput(ctx context.Context, obj interface{}) (model.CreateDBInput, error) {
 	var it model.CreateDBInput
 	var asMap = obj.(map[string]interface{})
@@ -23635,78 +23697,6 @@ func (ec *executionContext) unmarshalInputCreateDBInput(ctx context.Context, obj
 		case "refreshRate":
 			var err error
 			it.RefreshRate, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputCreateMyHub(ctx context.Context, obj interface{}) (model.CreateMyHub, error) {
-	var it model.CreateMyHub
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "hubName":
-			var err error
-			it.HubName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "repoURL":
-			var err error
-			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "repoBranch":
-			var err error
-			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isPrivate":
-			var err error
-			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "authType":
-			var err error
-			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "token":
-			var err error
-			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "userName":
-			var err error
-			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "password":
-			var err error
-			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "sshPrivateKey":
-			var err error
-			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "sshPublicKey":
-			var err error
-			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -24946,6 +24936,90 @@ func (ec *executionContext) unmarshalInputToleration(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateChaosHubRequest(ctx context.Context, obj interface{}) (model.UpdateChaosHubRequest, error) {
+	var it model.UpdateChaosHubRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "hubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "repoURL":
+			var err error
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "repoBranch":
+			var err error
+			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isPrivate":
+			var err error
+			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "authType":
+			var err error
+			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "token":
+			var err error
+			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userName":
+			var err error
+			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sshPrivateKey":
+			var err error
+			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sshPublicKey":
+			var err error
+			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "projectID":
+			var err error
+			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateDBInput(ctx context.Context, obj interface{}) (model.UpdateDBInput, error) {
 	var it model.UpdateDBInput
 	var asMap = obj.(map[string]interface{})
@@ -25033,84 +25107,6 @@ func (ec *executionContext) unmarshalInputUpdateDBInput(ctx context.Context, obj
 		case "refreshRate":
 			var err error
 			it.RefreshRate, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputUpdateMyHub(ctx context.Context, obj interface{}) (model.UpdateMyHub, error) {
-	var it model.UpdateMyHub
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-			it.ID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "hubName":
-			var err error
-			it.HubName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "repoURL":
-			var err error
-			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "repoBranch":
-			var err error
-			it.RepoBranch, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "isPrivate":
-			var err error
-			it.IsPrivate, err = ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "authType":
-			var err error
-			it.AuthType, err = ec.unmarshalNAuthType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAuthType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "token":
-			var err error
-			it.Token, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "userName":
-			var err error
-			it.UserName, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "password":
-			var err error
-			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "sshPrivateKey":
-			var err error
-			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "sshPublicKey":
-			var err error
-			it.SSHPublicKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -25646,6 +25642,173 @@ func (ec *executionContext) _ApplicationMetadataResponse(ctx context.Context, se
 			}
 		case "applications":
 			out.Values[i] = ec._ApplicationMetadataResponse_applications(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chaosHubImplementors = []string{"ChaosHub"}
+
+func (ec *executionContext) _ChaosHub(ctx context.Context, sel ast.SelectionSet, obj *model.ChaosHub) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chaosHubImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChaosHub")
+		case "id":
+			out.Values[i] = ec._ChaosHub_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "repoURL":
+			out.Values[i] = ec._ChaosHub_repoURL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "repoBranch":
+			out.Values[i] = ec._ChaosHub_repoBranch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "projectID":
+			out.Values[i] = ec._ChaosHub_projectID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hubName":
+			out.Values[i] = ec._ChaosHub_hubName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isPrivate":
+			out.Values[i] = ec._ChaosHub_isPrivate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "authType":
+			out.Values[i] = ec._ChaosHub_authType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "token":
+			out.Values[i] = ec._ChaosHub_token(ctx, field, obj)
+		case "userName":
+			out.Values[i] = ec._ChaosHub_userName(ctx, field, obj)
+		case "password":
+			out.Values[i] = ec._ChaosHub_password(ctx, field, obj)
+		case "sshPrivateKey":
+			out.Values[i] = ec._ChaosHub_sshPrivateKey(ctx, field, obj)
+		case "isRemoved":
+			out.Values[i] = ec._ChaosHub_isRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._ChaosHub_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._ChaosHub_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "lastSyncedAt":
+			out.Values[i] = ec._ChaosHub_lastSyncedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var chaosHubStatusImplementors = []string{"ChaosHubStatus"}
+
+func (ec *executionContext) _ChaosHubStatus(ctx context.Context, sel ast.SelectionSet, obj *model.ChaosHubStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, chaosHubStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ChaosHubStatus")
+		case "id":
+			out.Values[i] = ec._ChaosHubStatus_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "repoURL":
+			out.Values[i] = ec._ChaosHubStatus_repoURL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "repoBranch":
+			out.Values[i] = ec._ChaosHubStatus_repoBranch(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isAvailable":
+			out.Values[i] = ec._ChaosHubStatus_isAvailable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "totalExp":
+			out.Values[i] = ec._ChaosHubStatus_totalExp(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hubName":
+			out.Values[i] = ec._ChaosHubStatus_hubName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isPrivate":
+			out.Values[i] = ec._ChaosHubStatus_isPrivate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "authType":
+			out.Values[i] = ec._ChaosHubStatus_authType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "token":
+			out.Values[i] = ec._ChaosHubStatus_token(ctx, field, obj)
+		case "userName":
+			out.Values[i] = ec._ChaosHubStatus_userName(ctx, field, obj)
+		case "password":
+			out.Values[i] = ec._ChaosHubStatus_password(ctx, field, obj)
+		case "isRemoved":
+			out.Values[i] = ec._ChaosHubStatus_isRemoved(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "sshPrivateKey":
+			out.Values[i] = ec._ChaosHubStatus_sshPrivateKey(ctx, field, obj)
+		case "sshPublicKey":
+			out.Values[i] = ec._ChaosHubStatus_sshPublicKey(ctx, field, obj)
+		case "lastSyncedAt":
+			out.Values[i] = ec._ChaosHubStatus_lastSyncedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26799,33 +26962,33 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "addMyHub":
-			out.Values[i] = ec._Mutation_addMyHub(ctx, field)
+		case "addChaosHub":
+			out.Values[i] = ec._Mutation_addChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "saveMyHub":
-			out.Values[i] = ec._Mutation_saveMyHub(ctx, field)
+		case "saveChaosHub":
+			out.Values[i] = ec._Mutation_saveChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "syncHub":
-			out.Values[i] = ec._Mutation_syncHub(ctx, field)
+		case "syncChaosHub":
+			out.Values[i] = ec._Mutation_syncChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "generaterSSHKey":
-			out.Values[i] = ec._Mutation_generaterSSHKey(ctx, field)
+		case "generateSSHKey":
+			out.Values[i] = ec._Mutation_generateSSHKey(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "updateMyHub":
-			out.Values[i] = ec._Mutation_updateMyHub(ctx, field)
+		case "updateChaosHub":
+			out.Values[i] = ec._Mutation_updateChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteMyHub":
-			out.Values[i] = ec._Mutation_deleteMyHub(ctx, field)
+		case "deleteChaosHub":
+			out.Values[i] = ec._Mutation_deleteChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -26893,173 +27056,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteImageRegistry":
 			out.Values[i] = ec._Mutation_deleteImageRegistry(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var myHubImplementors = []string{"MyHub"}
-
-func (ec *executionContext) _MyHub(ctx context.Context, sel ast.SelectionSet, obj *model.MyHub) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, myHubImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("MyHub")
-		case "id":
-			out.Values[i] = ec._MyHub_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "repoURL":
-			out.Values[i] = ec._MyHub_repoURL(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "repoBranch":
-			out.Values[i] = ec._MyHub_repoBranch(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "projectID":
-			out.Values[i] = ec._MyHub_projectID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "hubName":
-			out.Values[i] = ec._MyHub_hubName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isPrivate":
-			out.Values[i] = ec._MyHub_isPrivate(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "authType":
-			out.Values[i] = ec._MyHub_authType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "token":
-			out.Values[i] = ec._MyHub_token(ctx, field, obj)
-		case "userName":
-			out.Values[i] = ec._MyHub_userName(ctx, field, obj)
-		case "password":
-			out.Values[i] = ec._MyHub_password(ctx, field, obj)
-		case "sshPrivateKey":
-			out.Values[i] = ec._MyHub_sshPrivateKey(ctx, field, obj)
-		case "isRemoved":
-			out.Values[i] = ec._MyHub_isRemoved(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "createdAt":
-			out.Values[i] = ec._MyHub_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updatedAt":
-			out.Values[i] = ec._MyHub_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "lastSyncedAt":
-			out.Values[i] = ec._MyHub_lastSyncedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var myHubStatusImplementors = []string{"MyHubStatus"}
-
-func (ec *executionContext) _MyHubStatus(ctx context.Context, sel ast.SelectionSet, obj *model.MyHubStatus) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, myHubStatusImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("MyHubStatus")
-		case "id":
-			out.Values[i] = ec._MyHubStatus_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "repoURL":
-			out.Values[i] = ec._MyHubStatus_repoURL(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "repoBranch":
-			out.Values[i] = ec._MyHubStatus_repoBranch(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isAvailable":
-			out.Values[i] = ec._MyHubStatus_isAvailable(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "totalExp":
-			out.Values[i] = ec._MyHubStatus_totalExp(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "hubName":
-			out.Values[i] = ec._MyHubStatus_hubName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "isPrivate":
-			out.Values[i] = ec._MyHubStatus_isPrivate(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "authType":
-			out.Values[i] = ec._MyHubStatus_authType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "token":
-			out.Values[i] = ec._MyHubStatus_token(ctx, field, obj)
-		case "userName":
-			out.Values[i] = ec._MyHubStatus_userName(ctx, field, obj)
-		case "password":
-			out.Values[i] = ec._MyHubStatus_password(ctx, field, obj)
-		case "isRemoved":
-			out.Values[i] = ec._MyHubStatus_isRemoved(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "sshPrivateKey":
-			out.Values[i] = ec._MyHubStatus_sshPrivateKey(ctx, field, obj)
-		case "sshPublicKey":
-			out.Values[i] = ec._MyHubStatus_sshPublicKey(ctx, field, obj)
-		case "lastSyncedAt":
-			out.Values[i] = ec._MyHubStatus_lastSyncedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28980,6 +28976,108 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNChaosHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx context.Context, sel ast.SelectionSet, v model.ChaosHub) graphql.Marshaler {
+	return ec._ChaosHub(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx context.Context, sel ast.SelectionSet, v *model.ChaosHub) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ChaosHub(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNChaosHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v model.ChaosHubStatus) graphql.Marshaler {
+	return ec._ChaosHubStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v []*model.ChaosHubStatus) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOChaosHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ChaosHubStatus) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNChaosHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNChaosHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v *model.ChaosHubStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ChaosHubStatus(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx context.Context, v interface{}) (model.ChaosWorkFlowRequest, error) {
 	return ec.unmarshalInputChaosWorkFlowRequest(ctx, v)
 }
@@ -29154,8 +29252,8 @@ func (ec *executionContext) marshalNConfirmClusterRegistrationResponse2ᚖgithub
 	return ec._ConfirmClusterRegistrationResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCreateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateMyHub(ctx context.Context, v interface{}) (model.CreateMyHub, error) {
-	return ec.unmarshalInputCreateMyHub(ctx, v)
+func (ec *executionContext) unmarshalNCreateChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateChaosHubRequest(ctx context.Context, v interface{}) (model.CreateChaosHubRequest, error) {
+	return ec.unmarshalInputCreateChaosHubRequest(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDSInput(ctx context.Context, v interface{}) (model.DSInput, error) {
@@ -29629,108 +29727,6 @@ func (ec *executionContext) marshalNMetadata2ᚖgithubᚗcomᚋlitmuschaosᚋlit
 	return ec._Metadata(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx context.Context, sel ast.SelectionSet, v model.MyHub) graphql.Marshaler {
-	return ec._MyHub(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMyHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHub(ctx context.Context, sel ast.SelectionSet, v *model.MyHub) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._MyHub(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNMyHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v model.MyHubStatus) graphql.Marshaler {
-	return ec._MyHubStatus(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v []*model.MyHubStatus) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNMyHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MyHubStatus) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v *model.MyHubStatus) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._MyHubStatus(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNNewClusterEventRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐNewClusterEventRequest(ctx context.Context, v interface{}) (model.NewClusterEventRequest, error) {
 	return ec.unmarshalInputNewClusterEventRequest(ctx, v)
 }
@@ -30195,12 +30191,12 @@ func (ec *executionContext) marshalNTotalCount2ᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ec._TotalCount(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
-	return ec.unmarshalInputUpdateDBInput(ctx, v)
+func (ec *executionContext) unmarshalNUpdateChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateChaosHubRequest(ctx context.Context, v interface{}) (model.UpdateChaosHubRequest, error) {
+	return ec.unmarshalInputUpdateChaosHubRequest(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateMyHub(ctx context.Context, v interface{}) (model.UpdateMyHub, error) {
-	return ec.unmarshalInputUpdateMyHub(ctx, v)
+func (ec *executionContext) unmarshalNUpdateDBInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUpdateDBInput(ctx context.Context, v interface{}) (model.UpdateDBInput, error) {
+	return ec.unmarshalInputUpdateDBInput(ctx, v)
 }
 
 func (ec *executionContext) marshalNUsageData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐUsageData(ctx context.Context, sel ast.SelectionSet, v model.UsageData) graphql.Marshaler {
@@ -31069,6 +31065,17 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
 }
 
+func (ec *executionContext) marshalOChaosHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v model.ChaosHubStatus) graphql.Marshaler {
+	return ec._ChaosHubStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOChaosHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v *model.ChaosHubStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ChaosHubStatus(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx context.Context, v interface{}) (model.ChaosWorkFlowRequest, error) {
 	return ec.unmarshalInputChaosWorkFlowRequest(ctx, v)
 }
@@ -31647,17 +31654,6 @@ func (ec *executionContext) marshalOMetricsTimeStampValue2ᚖgithubᚗcomᚋlitm
 		return graphql.Null
 	}
 	return ec._MetricsTimeStampValue(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOMyHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v model.MyHubStatus) graphql.Marshaler {
-	return ec._MyHubStatus(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOMyHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐMyHubStatus(ctx context.Context, sel ast.SelectionSet, v *model.MyHubStatus) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._MyHubStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOOption2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐOption(ctx context.Context, sel ast.SelectionSet, v model.Option) graphql.Marshaler {
