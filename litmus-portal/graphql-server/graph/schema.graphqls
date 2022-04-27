@@ -9,15 +9,16 @@ type Mutation {
   """
   Registers a new cluster for a user in a specified project
   """
-  registerCluster(
-    request: RegisterClusterRequest!
-  ): RegisterClusterResponse! @authorized
+  registerCluster(request: RegisterClusterRequest!): RegisterClusterResponse!
+    @authorized
 
   """
   Confirms the subscriber's registration with the control plane
   """
   # authorized directive not required
-  confirmClusterRegistration(request: ClusterIdentity!): ConfirmClusterRegistrationResponse!
+  confirmClusterRegistration(
+    request: ClusterIdentity!
+  ): ConfirmClusterRegistrationResponse!
 
   """
   Sends cluster related events to the subscriber
@@ -35,19 +36,19 @@ type Mutation {
   Creates a new workflow and applies its manifest
   """
   createChaosWorkFlow(request: ChaosWorkFlowRequest!): ChaosWorkFlowResponse!
-  @authorized
+    @authorized
 
   """
   Reruns the workflow and applies its manifest
   """
   reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
-  @authorized
+    @authorized
 
   """
   Updates the workflow
   """
   updateChaosWorkflow(request: ChaosWorkFlowRequest): ChaosWorkFlowResponse!
-  @authorized
+    @authorized
 
   """
   Removes a workflow from cluster
@@ -98,14 +99,13 @@ type Mutation {
   """
   Creates a workflow template manifest
   """
-  createWorkflowTemplate(request: TemplateInput): WorkflowTemplate!
-  @authorized
+  createWorkflowTemplate(request: TemplateInput): WorkflowTemplate! @authorized
 
   """
   Removes a workflow template manifest
   """
   deleteWorkflowTemplate(projectID: String!, templateID: String!): Boolean!
-  @authorized
+    @authorized
 
   # CHAOS-HUB OPERATIONS
   """
@@ -199,7 +199,7 @@ type Mutation {
   Deletes a datasource
   """
   deleteDataSource(projectID: String!, input: DeleteDSInput!): Boolean!
-  @authorized
+    @authorized
 
   # IMAGE REGISTRY OPERATIONS
   """
@@ -223,7 +223,7 @@ type Mutation {
   Delete the Image Registry
   """
   deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
-  @authorized
+    @authorized
 }
 
 type Query {
@@ -247,38 +247,35 @@ type Query {
   """
   Returns the workflows in a project based on various filter parameters
   """
-  getWorkflows(workflowInput: ListWorkflowsInput!): ListWorkflowsOutput!
-  @authorized
+  getWorkflows(request: GetWorkflowsRequest!): GetWorkflowsResponse! @authorized
 
   """
   Returns the workflow runs in a project based on various filter parameters
   """
-  getWorkflowRuns(
-    workflowRunsInput: GetWorkflowRunsInput!
-  ): GetWorkflowsOutput! @authorized
+  getWorkflowRuns(request: GetWorkflowRunsRequest!): GetWorkflowRunsResponse!
+    @authorized
 
   """
   Returns the list of predefined workflows in a project based on various filter parameters
   """
-  getPredefinedWorkflowList(hubName: String!, projectID: String!): [String!]!
-  @authorized
+  getPredefinedWorkflows(hubName: String!, projectID: String!): [String!]!
+    @authorized
 
   """
   Returns the list of predefined experiments in a project
   """
-  getPredefinedExperimentYAML(experimentInput: ExperimentInput!): String!
-  @authorized
+  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
 
   # WORKFLOW TEMPLATE OPERATIONS
   """
   Returns all the workflow templates for the projectID
   """
-  listManifestTemplate(projectID: String!): [WorkflowTemplate]! @authorized
+  getWorkflowManifests(projectID: String!): [WorkflowTemplate]! @authorized
 
   """
   Returns a single workflow templates given a projectID and a templateID
   """
-  GetTemplateManifestByID(
+  GetWorkflowManifestByID(
     projectID: String!
     templateID: String!
   ): WorkflowTemplate! @authorized
@@ -292,7 +289,7 @@ type Query {
   """
   Get the Experiment list from a ChaosHub
   """
-  getHubExperiment(experimentInput: ExperimentInput!): Chart! @authorized
+  getHubExperiment(request: ExperimentRequest!): Chart! @authorized
 
   """
   Get the status of all the connected ChaosHub
@@ -302,7 +299,7 @@ type Query {
   """
   Get the YAML manifest of ChaosEngine/ChaosExperiment
   """
-  getYAMLData(experimentInput: ExperimentInput!): String! @authorized
+  getYAMLData(request: ExperimentRequest!): String! @authorized
 
   # GIT-OPS OPERATIONS
   """
@@ -318,7 +315,7 @@ type Query {
     projectID: String!
     workflowID: String!
     year: Int!
-  ): [HeatmapData]! @authorized
+  ): [HeatmapDataResponse]! @authorized
 
   """
   Returns the workflow and runs data divided in time frequency (hourly/daily/monthly)

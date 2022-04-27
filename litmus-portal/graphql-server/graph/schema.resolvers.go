@@ -410,69 +410,69 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 	return string(response), nil
 }
 
-func (r *queryResolver) GetWorkflows(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
-	err := authorization.ValidateRole(ctx, workflowInput.ProjectID,
+func (r *queryResolver) GetWorkflows(ctx context.Context, request model.GetWorkflowsRequest) (*model.GetWorkflowsResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.ListWorkflow],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.QueryListWorkflow(workflowInput)
+	return wfHandler.GetWorkflows(request)
 }
 
-func (r *queryResolver) GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
-	err := authorization.ValidateRole(ctx, workflowRunsInput.ProjectID,
+func (r *queryResolver) GetWorkflowRuns(ctx context.Context, request model.GetWorkflowRunsRequest) (*model.GetWorkflowRunsResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.GetWorkflowRuns],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.QueryWorkflowRuns(workflowRunsInput)
+	return wfHandler.GetWorkflowRuns(request)
 }
 
-func (r *queryResolver) GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error) {
+func (r *queryResolver) GetPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetPredefinedWorkflowList],
+		authorization.MutationRbacRules[authorization.GetPredefinedWorkflows],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.GetPredefinedWorkflowList(hubName, projectID)
+	return myhub.GetPredefinedWorkflows(hubName, projectID)
 }
 
-func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
-	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
+func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.GetPredefinedExperimentYaml],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err
 	}
-	return myhub.GetPredefinedExperimentYAMLData(experimentInput)
+	return myhub.GetPredefinedExperimentYAMLData(request)
 }
 
-func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
+func (r *queryResolver) GetWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListWorkflowTemplate],
+		authorization.MutationRbacRules[authorization.GetWorkflowManifests],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.ListWorkflowTemplate(ctx, projectID)
+	return wfHandler.GetWorkflowManifests(ctx, projectID)
 }
 
-func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
+func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetTemplateManifestByID],
+		authorization.MutationRbacRules[authorization.GetWorkflowManifestByID],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.QueryTemplateWorkflowByID(ctx, templateID)
+	return wfHandler.GetWorkflowManifestByID(ctx, templateID)
 }
 
 func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
@@ -486,15 +486,15 @@ func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID
 	return myhub.GetCharts(ctx, hubName, projectID)
 }
 
-func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
-	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
+func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.GetHubExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.GetExperiment(ctx, experimentInput)
+	return myhub.GetHubExperiment(ctx, request)
 }
 
 func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
@@ -508,15 +508,15 @@ func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*
 	return myhub.HubStatus(ctx, projectID)
 }
 
-func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
-	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
+func (r *queryResolver) GetYAMLData(ctx context.Context, request model.ExperimentRequest) (string, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.GetYAMLData],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err
 	}
 
-	return myhub.GetYAMLData(experimentInput)
+	return myhub.GetYAMLData(request)
 }
 
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
@@ -527,10 +527,10 @@ func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) 
 		return nil, err
 	}
 
-	return gitOpsHandler.GetGitOpsDetailsHandler(ctx, projectID)
+	return gitOpsHandler.GetGitOpsDetails(ctx, projectID)
 }
 
-func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error) {
+func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapDataResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetHeatmapData],
 		model.InvitationAccepted.String())

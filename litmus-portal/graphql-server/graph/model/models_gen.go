@@ -373,7 +373,7 @@ type DsDetails struct {
 	End   string `json:"end"`
 }
 
-type ExperimentInput struct {
+type ExperimentRequest struct {
 	// ID of the project
 	ProjectID string `json:"projectID"`
 	// Name of the chart being used
@@ -393,7 +393,7 @@ type Experiments struct {
 }
 
 // Defines the details for workflow runs
-type GetWorkflowRunsInput struct {
+type GetWorkflowRunsRequest struct {
 	// ID of the project
 	ProjectID string `json:"projectID"`
 	// Array of workflow run IDs for which details will be fetched
@@ -409,11 +409,33 @@ type GetWorkflowRunsInput struct {
 }
 
 // Defines the details of a workflow to sent as response
-type GetWorkflowsOutput struct {
+type GetWorkflowRunsResponse struct {
 	// Total number of workflow runs
 	TotalNoOfWorkflowRuns int `json:"totalNoOfWorkflowRuns"`
 	// Defines details of workflow runs
 	WorkflowRuns []*WorkflowRun `json:"workflowRuns"`
+}
+
+// Defines the details for a workflow
+type GetWorkflowsRequest struct {
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Array of workflow IDs for which details will be fetched
+	WorkflowIDs []*string `json:"workflowIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *WorkflowSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *WorkflowFilterInput `json:"filter"`
+}
+
+// Defines the details for a workflow with total workflow count
+type GetWorkflowsResponse struct {
+	// Total number of workflows
+	TotalNoOfWorkflows int `json:"totalNoOfWorkflows"`
+	// Details related to the workflows
+	Workflows []*Workflow `json:"workflows"`
 }
 
 // Details of setting a Git repository
@@ -458,7 +480,7 @@ type GitConfigResponse struct {
 	SSHPrivateKey *string `json:"sshPrivateKey"`
 }
 
-type HeatmapData struct {
+type HeatmapDataResponse struct {
 	Bins []*WorkflowRunsData `json:"bins"`
 }
 
@@ -583,28 +605,6 @@ type ListDashboardResponse struct {
 	CreatedAt                 *string                        `json:"createdAt"`
 	UpdatedAt                 *string                        `json:"updatedAt"`
 	ViewedAt                  *string                        `json:"viewedAt"`
-}
-
-// Defines the details for a workflow
-type ListWorkflowsInput struct {
-	// ID of the project
-	ProjectID string `json:"projectID"`
-	// Array of workflow IDs for which details will be fetched
-	WorkflowIDs []*string `json:"workflowIDs"`
-	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
-	// Details for fetching sorted data
-	Sort *WorkflowSortInput `json:"sort"`
-	// Details for fetching filtered data
-	Filter *WorkflowFilterInput `json:"filter"`
-}
-
-// Defines the details for a workflow with total workflow count
-type ListWorkflowsOutput struct {
-	// Total number of workflows
-	TotalNoOfWorkflows int `json:"totalNoOfWorkflows"`
-	// Details related to the workflows
-	Workflows []*Workflow `json:"workflows"`
 }
 
 // Defines the details of the maintainer

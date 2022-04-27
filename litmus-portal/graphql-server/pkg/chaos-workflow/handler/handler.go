@@ -204,24 +204,24 @@ func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 	}, nil
 }
 
-// QueryWorkflowRuns sends all the workflow runs for a project from the DB
-func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
+// GetWorkflowRuns sends all the workflow runs for a project from the DB
+func GetWorkflowRuns(request model.GetWorkflowRunsRequest) (*model.GetWorkflowRunsResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
 	matchProjectIdStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", input.ProjectID},
+			{"project_id", request.ProjectID},
 		}},
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
 	// Match the workflowIds from the input array
-	if len(input.WorkflowIDs) != 0 {
+	if len(request.WorkflowIDs) != 0 {
 		matchWfIdStage := bson.D{
 			{"$match", bson.D{
 				{"workflow_id", bson.D{
-					{"$in", input.WorkflowIDs},
+					{"$in", request.WorkflowIDs},
 				}},
 			}},
 		}
@@ -271,7 +271,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	pipeline = append(pipeline, matchWfRunIsRemovedStage)
 
 	// Match the workflowIds from the input array
-	if len(input.WorkflowRunIDs) != 0 {
+	if len(request.WorkflowRunIDs) != 0 {
 		matchWfRunIdStage := bson.D{
 			{"$project", append(includeAllFromWorkflow,
 				bson.E{Key: "workflow_runs", Value: bson.D{
@@ -279,7 +279,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 						{"input", "$workflow_runs"},
 						{"as", "wfRun"},
 						{"cond", bson.D{
-							{"$in", bson.A{"$$wfRun.workflow_run_id", input.WorkflowRunIDs}},
+							{"$in", bson.A{"$$wfRun.workflow_run_id", request.WorkflowRunIDs}},
 						}},
 					}},
 				}},
@@ -290,14 +290,14 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	}
 
 	// Filtering based on multiple parameters
-	if input.Filter != nil {
+	if request.Filter != nil {
 
 		// Filtering based on workflow name
-		if input.Filter.WorkflowName != nil && *input.Filter.WorkflowName != "" {
+		if request.Filter.WorkflowName != nil && *request.Filter.WorkflowName != "" {
 			matchWfNameStage := bson.D{
 				{"$match", bson.D{
 					{"workflow_name", bson.D{
-						{"$regex", input.Filter.WorkflowName},
+						{"$regex", request.Filter.WorkflowName},
 					}},
 				}},
 			}
@@ -305,17 +305,17 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		}
 
 		// Filtering based on cluster name
-		if input.Filter.ClusterName != nil && *input.Filter.ClusterName != "All" && *input.Filter.ClusterName != "" {
+		if request.Filter.ClusterName != nil && *request.Filter.ClusterName != "All" && *request.Filter.ClusterName != "" {
 			matchClusterStage := bson.D{
 				{"$match", bson.D{
-					{"cluster_name", input.Filter.ClusterName},
+					{"cluster_name", request.Filter.ClusterName},
 				}},
 			}
 			pipeline = append(pipeline, matchClusterStage)
 		}
 
 		// Filtering based on phase
-		if input.Filter.WorkflowStatus != nil && *input.Filter.WorkflowStatus != "All" && *input.Filter.WorkflowStatus != "" {
+		if request.Filter.WorkflowStatus != nil && *request.Filter.WorkflowStatus != "All" && *request.Filter.WorkflowStatus != "" {
 			filterWfRunPhaseStage := bson.D{
 				{"$project", append(includeAllFromWorkflow,
 					bson.E{Key: "workflow_runs", Value: bson.D{
@@ -323,7 +323,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 							{"input", "$workflow_runs"},
 							{"as", "wfRun"},
 							{"cond", bson.D{
-								{"$eq", bson.A{"$$wfRun.phase", string(*input.Filter.WorkflowStatus)}},
+								{"$eq", bson.A{"$$wfRun.phase", string(*request.Filter.WorkflowStatus)}},
 							}},
 						}},
 					}},
@@ -334,10 +334,10 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		}
 
 		// Filtering based on date range
-		if input.Filter.DateRange != nil {
+		if request.Filter.DateRange != nil {
 			endDate := string(time.Now().Unix())
-			if input.Filter.DateRange.EndDate != nil {
-				endDate = *input.Filter.DateRange.EndDate
+			if request.Filter.DateRange.EndDate != nil {
+				endDate = *request.Filter.DateRange.EndDate
 			}
 			filterWfRunDateStage := bson.D{
 				{"$project", append(includeAllFromWorkflow,
@@ -348,7 +348,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 							{"cond", bson.D{
 								{"$and", bson.A{
 									bson.D{{"$lte", bson.A{"$$wfRun.last_updated", endDate}}},
-									bson.D{{"$gte", bson.A{"$$wfRun.last_updated", input.Filter.DateRange.StartDate}}},
+									bson.D{{"$gte", bson.A{"$$wfRun.last_updated", request.Filter.DateRange.StartDate}}},
 								}},
 							}},
 						}},
@@ -371,9 +371,9 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	var sortStage bson.D
 
 	switch {
-	case input.Sort != nil && input.Sort.Field == model.WorkflowSortingFieldTime:
+	case request.Sort != nil && request.Sort.Field == model.WorkflowSortingFieldTime:
 		// Sorting based on LastUpdated time
-		if input.Sort.Descending != nil && *input.Sort.Descending {
+		if request.Sort.Descending != nil && *request.Sort.Descending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_runs.last_updated", -1},
@@ -386,9 +386,9 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 				}},
 			}
 		}
-	case input.Sort != nil && input.Sort.Field == model.WorkflowSortingFieldName:
+	case request.Sort != nil && request.Sort.Field == model.WorkflowSortingFieldName:
 		// Sorting based on WorkflowName time
-		if input.Sort.Descending != nil && *input.Sort.Descending {
+		if request.Sort.Descending != nil && *request.Sort.Descending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_name", -1},
@@ -415,12 +415,12 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		sortStage,
 	}
 
-	if input.Pagination != nil {
+	if request.Pagination != nil {
 		paginationSkipStage := bson.D{
-			{"$skip", input.Pagination.Page * input.Pagination.Limit},
+			{"$skip", request.Pagination.Page * request.Pagination.Limit},
 		}
 		paginationLimitStage := bson.D{
-			{"$limit", input.Pagination.Limit},
+			{"$limit", request.Pagination.Limit},
 		}
 
 		paginatedWorkflows = append(paginatedWorkflows, paginationSkipStage, paginationLimitStage)
@@ -448,7 +448,7 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 	var workflows []dbSchemaWorkflow.AggregatedWorkflowRuns
 
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-		return &model.GetWorkflowsOutput{
+		return &model.GetWorkflowRunsResponse{
 			TotalNoOfWorkflowRuns: 0,
 			WorkflowRuns:          result,
 		}, nil
@@ -490,31 +490,31 @@ func QueryWorkflowRuns(input model.GetWorkflowRunsInput) (*model.GetWorkflowsOut
 		totalFilteredWorkflowRunsCounter = workflows[0].TotalFilteredWorkflowRuns[0].Count
 	}
 
-	output := model.GetWorkflowsOutput{
+	output := model.GetWorkflowRunsResponse{
 		TotalNoOfWorkflowRuns: totalFilteredWorkflowRunsCounter,
 		WorkflowRuns:          result,
 	}
 	return &output, nil
 }
 
-// QueryListWorkflow returns all the workflows present in the given project
-func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
+// GetWorkflows returns all the workflows present in the given project
+func GetWorkflows(request model.GetWorkflowsRequest) (*model.GetWorkflowsResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
 	matchProjectIdStage := bson.D{
 		{"$match", bson.D{
-			{"project_id", workflowInput.ProjectID},
+			{"project_id", request.ProjectID},
 		}},
 	}
 	pipeline = append(pipeline, matchProjectIdStage)
 
 	// Match the workflowIds from the input array
-	if len(workflowInput.WorkflowIDs) != 0 {
+	if len(request.WorkflowIDs) != 0 {
 		matchWfIdStage := bson.D{
 			{"$match", bson.D{
 				{"workflow_id", bson.D{
-					{"$in", workflowInput.WorkflowIDs},
+					{"$in", request.WorkflowIDs},
 				}},
 			}},
 		}
@@ -541,14 +541,14 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	pipeline = append(pipeline, excludeWfRun)
 
 	// Filtering based on multiple parameters
-	if workflowInput.Filter != nil {
+	if request.Filter != nil {
 
 		// Filtering based on workflow name
-		if workflowInput.Filter.WorkflowName != nil && *workflowInput.Filter.WorkflowName != "" {
+		if request.Filter.WorkflowName != nil && *request.Filter.WorkflowName != "" {
 			matchWfNameStage := bson.D{
 				{"$match", bson.D{
 					{"workflow_name", bson.D{
-						{"$regex", workflowInput.Filter.WorkflowName},
+						{"$regex", request.Filter.WorkflowName},
 					}},
 				}},
 			}
@@ -556,10 +556,10 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 		}
 
 		// Filtering based on cluster name
-		if workflowInput.Filter.ClusterName != nil && *workflowInput.Filter.ClusterName != "All" && *workflowInput.Filter.ClusterName != "" {
+		if request.Filter.ClusterName != nil && *request.Filter.ClusterName != "All" && *request.Filter.ClusterName != "" {
 			matchClusterStage := bson.D{
 				{"$match", bson.D{
-					{"cluster_name", workflowInput.Filter.ClusterName},
+					{"cluster_name", request.Filter.ClusterName},
 				}},
 			}
 			pipeline = append(pipeline, matchClusterStage)
@@ -570,9 +570,9 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 
 	switch {
 
-	case workflowInput.Sort != nil && workflowInput.Sort.Field == model.WorkflowSortingFieldTime:
+	case request.Sort != nil && request.Sort.Field == model.WorkflowSortingFieldTime:
 		// Sorting based on LastUpdated time
-		if workflowInput.Sort.Descending != nil && *workflowInput.Sort.Descending {
+		if request.Sort.Descending != nil && *request.Sort.Descending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"updated_at", -1},
@@ -586,9 +586,9 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 			}
 		}
 
-	case workflowInput.Sort != nil && workflowInput.Sort.Field == model.WorkflowSortingFieldName:
+	case request.Sort != nil && request.Sort.Field == model.WorkflowSortingFieldName:
 		// Sorting based on WorkflowName
-		if workflowInput.Sort.Descending != nil && *workflowInput.Sort.Descending {
+		if request.Sort.Descending != nil && *request.Sort.Descending {
 			sortStage = bson.D{
 				{"$sort", bson.D{
 					{"workflow_name", -1},
@@ -615,12 +615,12 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 		sortStage,
 	}
 
-	if workflowInput.Pagination != nil {
+	if request.Pagination != nil {
 		paginationSkipStage := bson.D{
-			{"$skip", workflowInput.Pagination.Page * workflowInput.Pagination.Limit},
+			{"$skip", request.Pagination.Page * request.Pagination.Limit},
 		}
 		paginationLimitStage := bson.D{
-			{"$limit", workflowInput.Pagination.Limit},
+			{"$limit", request.Pagination.Limit},
 		}
 
 		paginatedWorkflows = append(paginatedWorkflows, paginationSkipStage, paginationLimitStage)
@@ -648,7 +648,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 	var workflows []dbSchemaWorkflow.AggregatedWorkflows
 
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-		return &model.ListWorkflowsOutput{
+		return &model.GetWorkflowsResponse{
 			TotalNoOfWorkflows: 0,
 			Workflows:          result,
 		}, nil
@@ -688,7 +688,7 @@ func QueryListWorkflow(workflowInput model.ListWorkflowsInput) (*model.ListWorkf
 		totalFilteredWorkflowsCounter = workflows[0].TotalFilteredWorkflows[0].Count
 	}
 
-	output := model.ListWorkflowsOutput{
+	output := model.GetWorkflowsResponse{
 		TotalNoOfWorkflows: totalFilteredWorkflowsCounter,
 		Workflows:          result,
 	}
@@ -952,7 +952,7 @@ func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (
 }
 
 // ListWorkflowTemplate is used to list all the workflow templates available in the project
-func ListWorkflowTemplate(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
+func GetWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
@@ -966,7 +966,7 @@ func ListWorkflowTemplate(ctx context.Context, projectID string) ([]*model.Workf
 }
 
 // QueryTemplateWorkflowByID is used to fetch the workflow template with template id
-func QueryTemplateWorkflowByID(ctx context.Context, templateID string) (*model.WorkflowTemplate, error) {
+func GetWorkflowManifestByID(ctx context.Context, templateID string) (*model.WorkflowTemplate, error) {
 	template, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
 	if err != nil {
 		return nil, err

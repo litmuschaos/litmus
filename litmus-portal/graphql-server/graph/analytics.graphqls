@@ -321,7 +321,7 @@ type WorkflowRunsData {
   workflowRunDetail: WorkflowRunDetails
 }
 
-type HeatmapData {
+type HeatmapDataResponse {
   bins: [WorkflowRunsData]!
 }
 input WorkflowRunStatsRequest {

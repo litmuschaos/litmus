@@ -26,13 +26,13 @@ func GetChartsPath(chartsInput model.CloningInput) string {
 }
 
 // GetCSVData returns the ChartServiceYAML details according to the given filetype
-func GetCSVData(experimentInput model.ExperimentInput) string {
+func GetCSVData(request model.ExperimentRequest) string {
 	var ExperimentPath string
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
-	chartName := experimentInput.ChartName
-	if strings.ToLower(experimentInput.ChartName) == "predefined" {
+	ProjectID := request.ProjectID
+	HubName := request.HubName
+	experimentName := request.ExperimentName
+	chartName := request.ChartName
+	if strings.ToLower(request.ChartName) == "predefined" {
 		ExperimentPath = defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
 	} else {
 		ExperimentPath = defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
@@ -41,21 +41,21 @@ func GetCSVData(experimentInput model.ExperimentInput) string {
 }
 
 // GetExperimentYAMLPath is used to construct path for given experiment/engine.
-func GetExperimentYAMLPath(experimentInput model.ExperimentInput) string {
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
-	chartName := experimentInput.ChartName
-	fileType := experimentInput.FileType
+func GetExperimentYAMLPath(request model.ExperimentRequest) string {
+	ProjectID := request.ProjectID
+	HubName := request.HubName
+	experimentName := request.ExperimentName
+	chartName := request.ChartName
+	fileType := request.FileType
 	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + strings.ToLower(*fileType) + ".yaml"
 	return ExperimentYAMLPath
 }
 
 // GetPredefinedExperimentManifest is used to construct path for given chartsversion.yaml.
-func GetPredefinedExperimentManifest(experimentInput model.ExperimentInput) string {
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
+func GetPredefinedExperimentManifest(request model.ExperimentRequest) string {
+	ProjectID := request.ProjectID
+	HubName := request.HubName
+	experimentName := request.ExperimentName
 	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/workflow.yaml"
 	return ExperimentPath
 }

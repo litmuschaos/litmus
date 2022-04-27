@@ -92,8 +92,8 @@ func DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
 	return true, nil
 }
 
-// GetGitOpsDetailsHandler returns the current gitops config for the requested project
-func GetGitOpsDetailsHandler(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
+// GetGitOpsDetails returns the current gitops config for the requested project
+func GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 	config, err := dbOperationsGitOps.GetGitConfig(ctx, projectID)

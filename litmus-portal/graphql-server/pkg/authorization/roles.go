@@ -56,13 +56,13 @@ const (
 	DeleteImageRegistry          RoleQuery = "DeleteImageRegistry"
 	GetYAMLData                  RoleQuery = "GetYAMLData"
 	PredefinedWorkflowOperations RoleQuery = "PredefinedWorkflowOperations"
-	GetPredefinedWorkflowList    RoleQuery = "GetPredefinedWorkflowList"
+	GetPredefinedWorkflows       RoleQuery = "GetPredefinedWorkflows"
 	GetPredefinedExperimentYaml  RoleQuery = "GetPredefinedExperimentYaml"
 	ListDataSource               RoleQuery = "ListDataSource"
 	ListDashboard                RoleQuery = "ListDashboard"
 	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
-	ListWorkflowTemplate         RoleQuery = "ListWorkflowTemplate"
-	GetTemplateManifestByID      RoleQuery = "GetTemplateManifestByID"
+	GetWorkflowManifests         RoleQuery = "GetWorkflowManifests"
+	GetWorkflowManifestByID      RoleQuery = "GetWorkflowManifestByID"
 	ListImageRegistry            RoleQuery = "ListImageRegistry"
 	GetImageRegistry             RoleQuery = "GetImageRegistry"
 
@@ -122,13 +122,13 @@ var MutationRbacRules = map[RoleQuery][]string{
 	DeleteImageRegistry:          {MemberRoleOwnerString},
 	GetYAMLData:                  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	PredefinedWorkflowOperations: {MemberRoleOwnerString, MemberRoleEditorString},
-	GetPredefinedWorkflowList:    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetPredefinedWorkflows:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetPredefinedExperimentYaml:  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDataSource:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDashboard:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetGitOpsDetails:             {MemberRoleOwnerString},
-	ListWorkflowTemplate:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetTemplateManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetWorkflowManifests:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetWorkflowManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListImageRegistry:            {MemberRoleOwnerString},
 	GetImageRegistry:             {MemberRoleOwnerString},
 }

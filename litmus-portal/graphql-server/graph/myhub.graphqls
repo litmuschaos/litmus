@@ -276,7 +276,7 @@ input CreateChaosHubRequest {
   projectID: String!
 }
 
-input ExperimentInput {
+input ExperimentRequest {
   """
   ID of the project
   """

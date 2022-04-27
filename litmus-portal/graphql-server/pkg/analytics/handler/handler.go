@@ -1524,7 +1524,7 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 }
 
 // GetHeatMapData returns the data for calendar heatmap
-func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.HeatmapData, error) {
+func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.HeatmapDataResponse, error) {
 
 	// Start and end timestamp of the given year
 	start := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local)
@@ -1613,7 +1613,7 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 	var chaosWorkflows []dbSchemaWorkflow.ChaosWorkFlowRequest
 
 	// Result array
-	result := make([]*model.HeatmapData, 0, noOfDays)
+	result := make([]*model.HeatmapDataResponse, 0, noOfDays)
 	if err = workflowsCursor.All(context.Background(), &chaosWorkflows); err != nil {
 		fmt.Println(err)
 		return result, nil
@@ -1665,7 +1665,7 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 			x = append(x, &wfRunsInYear[day])
 			day += 1
 		}
-		var temp model.HeatmapData
+		var temp model.HeatmapDataResponse
 		temp.Bins = x
 		result = append(result, &temp)
 		week += 1
