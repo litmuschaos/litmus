@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // GetManifestTemplate
 export const GET_MANIFEST_TEMPLATE = gql`
-  query ListManifestTemplate($data: String!) {
-    ListManifestTemplate(projectID: $data) {
+  query getWorkflowManifests($projectID: String!) {
+    getWorkflowManifests(projectID: $projectID) {
       templateID
       manifest
       projectName
@@ -15,8 +15,8 @@ export const GET_MANIFEST_TEMPLATE = gql`
 `;
 
 export const GET_TEMPLATE_BY_ID = gql`
-  query GetManifestTemplate($data: String!) {
-    getTemplateManifestByID(templateID: $data) {
+  query GetWorkflowManifestByID($projectID: String!, $templateID: String!) {
+    GetWorkflowManifestByID(templateID: $templateID, projectID: $projectID) {
       templateID
       templateName
       templateDescription

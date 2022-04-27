@@ -59,8 +59,8 @@ export const GET_CHARTS_DATA = gql`
 
 export const GET_EXPERIMENT_DATA = gql`
   ${CORE_CHART_FIELDS}
-  query getExperiment($data: ExperimentInput!) {
-    getHubExperiment(experimentInput: $data) {
+  query getHubExperiment($request: ExperimentInput!) {
+    getHubExperiment(request: $request) {
       ...CoreChartFields
     }
   }
@@ -88,8 +88,8 @@ export const GET_HUB_STATUS = gql`
 `;
 
 export const GET_PREDEFINED_EXPERIMENT_YAML = gql`
-  query GetPredefinedExperimentYAML($experimentInput: ExperimentInput!) {
-    getPredefinedExperimentYAML(experimentInput: $experimentInput)
+  query GetPredefinedExperimentYAML($request: ExperimentInput!) {
+    getPredefinedExperimentYAML(request: $request)
   }
 `;
 
@@ -100,7 +100,7 @@ export const GET_ENGINE_YAML = gql`
 `;
 
 export const GET_EXPERIMENT_YAML = gql`
-  query getExperimentData($experimentInput: ExperimentInput!) {
-    getYAMLData(experimentInput: $experimentInput)
+  query getYAMLData($request: ExperimentInput!) {
+    getYAMLData(request: $request)
   }
 `;

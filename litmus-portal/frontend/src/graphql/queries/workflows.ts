@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // GetWorkflowRuns
 export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
-  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
-    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+  query getWorkflowRuns($request: GetWorkflowRunsInput!) {
+    getWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
         workflowID
@@ -22,8 +22,8 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
 `;
 
 export const WORKFLOW_DETAILS = gql`
-  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
-    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+  query getWorkflowRuns($request: GetWorkflowRunsInput!) {
+    getWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
         workflowRunID
@@ -49,8 +49,8 @@ export const WORKFLOW_DETAILS = gql`
 `;
 
 export const WORKFLOW_RUN_DETAILS = gql`
-  query workflowDetails($workflowRunsInput: GetWorkflowRunsInput!) {
-    getWorkflowRuns(workflowRunsInput: $workflowRunsInput) {
+  query getWorkflowRuns($request: GetWorkflowRunsInput!) {
+    getWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
         weightages {
@@ -93,8 +93,8 @@ export const WORKFLOW_STATS = gql`
 
 // ListWorkflow
 export const GET_WORKFLOW_DETAILS = gql`
-  query workflowListDetails($workflowInput: ListWorkflowsInput!) {
-    ListWorkflow(workflowInput: $workflowInput) {
+  query getWorkflows($request: ListWorkflowsInput!) {
+    getWorkflows(request: $request) {
       totalNoOfWorkflows
       workflows {
         workflowID
@@ -146,7 +146,7 @@ export const GET_WORKFLOW_RUNS_STATS = gql`
 
 // getPredefinedWorkflowList
 export const GET_PREDEFINED_WORKFLOW_LIST = gql`
-  query GetPredefinedWorkflowList($hubname: String!, $projectid: String!) {
-    getPredefinedWorkflowList(hubName: $hubname, projectID: $projectid)
+  query getPredefinedWorkflows($hubName: String!, $projectID: String!) {
+    getPredefinedWorkflows(hubName: $hubName, projectID: $projectID)
   }
 `;
