@@ -385,7 +385,7 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 
 func (r *queryResolver) GetClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetCluster],
+		authorization.MutationRbacRules[authorization.GetClusters],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err

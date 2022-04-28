@@ -36,7 +36,7 @@ const (
 	DeleteDashboard              RoleQuery = "DeleteDashboard"
 	DeleteDataSource             RoleQuery = "DeleteDataSource"
 	GetWorkflowRuns              RoleQuery = "GetWorkflowRuns"
-	GetCluster                   RoleQuery = "GetCluster"
+	GetClusters                  RoleQuery = "GetClusters"
 	GetManifest                  RoleQuery = "GetManifest"
 	GetAgentDetails              RoleQuery = "GetAgentDetails"
 	GetProject                   RoleQuery = "GetProject"
@@ -100,7 +100,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	DeleteDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
 	GetWorkflowRuns:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetCluster: {MemberRoleOwnerString, MemberRoleEditorString,
+	GetClusters: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
 	GetManifest:     {MemberRoleOwnerString, MemberRoleEditorString},
 	GetAgentDetails: {MemberRoleOwnerString, MemberRoleEditorString},
