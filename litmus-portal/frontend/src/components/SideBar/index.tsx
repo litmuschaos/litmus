@@ -132,15 +132,15 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         </div>
         <CustomisedListItem
-          key="observability"
+          key="analytics"
           handleClick={() => {
             history.push({
-              pathname: `/observability`,
+              pathname: `/analytics`,
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Observability"
-          selected={pathName === 'observability'}
+          label="Analytics"
+          selected={pathName === 'Analytics'}
         >
           <ObservabilityIcon />
         </CustomisedListItem>

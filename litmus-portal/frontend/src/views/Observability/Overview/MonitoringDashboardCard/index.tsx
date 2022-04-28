@@ -16,9 +16,9 @@ import {
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
 import { history } from '../../../../redux/configureStore';
-import { ReactComponent as ObservabilityIcon } from '../../../../svg/observability.svg';
 import { ReactComponent as CogwheelIcon } from '../../../../svg/cogwheel.svg';
 import { ReactComponent as DownloadIcon } from '../../../../svg/download.svg';
+import { ReactComponent as ObservabilityIcon } from '../../../../svg/observability.svg';
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import {
   getProjectID,
@@ -171,7 +171,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
                 onClick={() => {
                   onDashboardLoadRoutine().then(() => {
                     history.push({
-                      pathname: '/observability/monitoring-dashboard',
+                      pathname: '/analytics/monitoring-dashboard',
                       search: `?projectID=${projectID}&projectRole=${projectRole}`,
                     });
                   });
@@ -189,7 +189,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
                     activePanelID: '',
                   });
                   history.push({
-                    pathname: '/observability/dashboard/configure',
+                    pathname: '/analytics/dashboard/configure',
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

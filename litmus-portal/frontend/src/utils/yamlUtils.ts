@@ -1,9 +1,9 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-param-reassign */
-import YAML from 'yaml';
-import { v4 as uuidv4 } from 'uuid';
 import localforage from 'localforage';
+import { v4 as uuidv4 } from 'uuid';
+import YAML from 'yaml';
 import { constants } from '../constants';
 import { ImageRegistryInfo } from '../models/redux/image_registry';
 import { experimentMap } from '../models/redux/workflow';
@@ -410,4 +410,38 @@ export const isCronWorkflow = (manifest: any): boolean => {
     return true;
   }
   return false;
+};
+
+export const validateExperimentNames = (manifest: any): boolean => {
+  const value: any = [];
+  if (manifest.spec !== undefined) {
+    const yamlData =
+      manifest.kind === constants.workflow
+        ? manifest.spec
+        : manifest.spec.workflowSpec;
+    yamlData.templates[0].steps.forEach((step: any) => {
+      step.forEach((values: any) => {
+        // if exp name exists append the count
+        if (value[`${values.name}`]) {
+          const val = value[`${values.name}`] + 1;
+          value[`${values.name}`] = val;
+        }
+        // else set the default count as 1
+        else {
+          value[`${values.name}`] = 1;
+        }
+      });
+    });
+  }
+
+  // filter the experiment if it is occuring more than 1
+  const exp = Object.entries(value).filter(
+    ([, value]) => (value as number) > 1
+  ).length;
+
+  // if any experiment exists (with more than 1 occurance)
+  if (exp > 0) {
+    return false;
+  }
+  return true;
 };

@@ -42,16 +42,16 @@ var (
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, clusterData map[string]string) {
 	startTime, err := strconv.Atoi(clusterData["START_TIME"])
 	if err != nil {
-		logrus.WithError(err).Fatal("failed to parse startTime")
+		logrus.WithError(err).Fatal("Failed to parse START_TIME")
 	}
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get config")
+		logrus.WithError(err).Fatal("Could not get kube config")
 	}
 	// ClientSet to create Informer
 	clientSet, err := versioned.NewForConfig(cfg)
 	if err != nil {
-		logrus.WithError(err).Fatal("could not generate dynamic client for config")
+		logrus.WithError(err).Fatal("Could not generate dynamic client for config")
 	}
 	// Create a factory object to watch workflows depending on default scope
 	f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
@@ -117,7 +117,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get config")
+		logrus.WithError(err).Fatal("Could not get kube config")
 	}
 
 	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
@@ -126,7 +126,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 	}
 
 	nodes := make(map[string]types.Node)
-	logrus.Print("WORKFLOW EVENT ", workflowObj.UID, " ", eventType)
+	logrus.Print("Workflow RUN_ID: ", workflowObj.UID, " and event type: ", eventType)
 
 	for _, nodeStatus := range workflowObj.Status.Nodes {
 
@@ -140,7 +140,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 			//extracts chaos data
 			nodeType, cd, err = CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
 			if err != nil {
-				logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
+				logrus.WithError(err).Print("Failed to parse ChaosEngine CRD")
 			}
 		}
 
@@ -208,14 +208,13 @@ func SendWorkflowUpdates(clusterData map[string]string, event types.WorkflowEven
 
 	// generate graphql payload
 	payload, err := GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], "false", event)
+	if err != nil {
+		return "", errors.New("Error while generating graphql payload from the workflow event" + err.Error())
+	}
 
 	if event.FinishedAt != "" {
 		payload, err = GenerateWorkflowPayload(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], "true", event)
 		delete(eventMap, event.UID)
-	}
-
-	if err != nil {
-		return "", errors.New(err.Error() + ": ERROR PARSING WORKFLOW EVENT")
 	}
 
 	body, err := graphql.SendRequest(clusterData["SERVER_ADDR"], payload)
@@ -234,6 +233,6 @@ func WorkflowUpdates(clusterData map[string]string, event chan types.WorkflowEve
 			logrus.Print(err.Error())
 		}
 
-		logrus.Print("RESPONSE ", response)
+		logrus.Print("Response from the server: ", response)
 	}
 }

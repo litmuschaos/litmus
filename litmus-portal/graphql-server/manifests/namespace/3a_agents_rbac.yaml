@@ -8,7 +8,7 @@ metadata:
     name: subscriber-role
 rules:
   - apiGroups: [""]
-    resources: ["configmaps"]
+    resources: ["configmaps", "secrets"]
     verbs: ["get", "create", "delete", "update"]
 
   - apiGroups: [""]
@@ -280,6 +280,7 @@ rules:
       - statefulsets
       - pods
       - configmaps
+      - secrets
     verbs:
       - get
       - list

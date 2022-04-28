@@ -219,7 +219,7 @@ const DashboardTable: React.FC = () => {
         <ButtonFilled
           onClick={() =>
             history.push({
-              pathname: '/observability/dashboard/create',
+              pathname: '/analytics/dashboard/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             })
           }
@@ -278,7 +278,7 @@ const DashboardTable: React.FC = () => {
             <TextButton
               onClick={() =>
                 history.push({
-                  pathname: '/observability/datasource/create',
+                  pathname: '/analytics/datasource/create',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 })
               }

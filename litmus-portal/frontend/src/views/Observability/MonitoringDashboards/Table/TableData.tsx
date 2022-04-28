@@ -194,7 +194,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           onClick={() => {
             onDashboardLoadRoutine().then(() => {
               history.push({
-                pathname: '/observability/monitoring-dashboard',
+                pathname: '/analytics/monitoring-dashboard',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             });
@@ -285,7 +285,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             onClick={() => {
               onDashboardLoadRoutine().then(() => {
                 history.push({
-                  pathname: '/observability/monitoring-dashboard',
+                  pathname: '/analytics/monitoring-dashboard',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               });
@@ -312,7 +312,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 activePanelID: '',
               });
               history.push({
-                pathname: '/observability/dashboard/configure',
+                pathname: '/analytics/dashboard/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}

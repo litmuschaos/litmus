@@ -210,7 +210,36 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
           />
 
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel className={classes.selectText}>Name</InputLabel>
+            <InputLabel className={classes.selectText}>
+              Schedule Type
+            </InputLabel>
+            <Select
+              value={filters.workflowType}
+              onChange={(event) =>
+                setFilters({
+                  ...filters,
+                  workflowType: event.target.value as string,
+                })
+              }
+              label="Schedule Type"
+              className={classes.selectText}
+            >
+              <MenuItem value="All">
+                {t('chaosWorkflows.browseSchedules.options.all')}
+              </MenuItem>
+              <MenuItem value="workflow">
+                {t('chaosWorkflows.browseSchedules.options.workflow')}
+              </MenuItem>
+              <MenuItem value="cronworkflow">
+                {t('chaosWorkflows.browseSchedules.options.cronworkflow')}
+              </MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel className={classes.selectText}>
+              Schedule Status
+            </InputLabel>
             <Select
               value={filters.suspended}
               onChange={(event) =>
@@ -219,7 +248,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                   suspended: event.target.value as string,
                 })
               }
-              label="Name"
+              label="Schedule Status"
               className={classes.selectText}
             >
               <MenuItem value="All">

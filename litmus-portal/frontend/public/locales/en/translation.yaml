@@ -182,7 +182,7 @@ observability:
   tableHead5: Last Updated By
   workflowInfoStats:
     noRuns: No completed runs yet
-    back: Back to Observability
+    back: Back to Analytics
   workflowRunDetailsTable:
     tableHead0: Test Name
     tableHead1: Experiment Name
@@ -199,7 +199,7 @@ observability:
     experimentVerdict: Experiment Verdict
 
 monitoringDashboard:
-  heading: Observability
+  heading: Analytics
   overview: Overview
   monitoringDashboardPage:
     loadingText: Loading monitoring dashboard ...
@@ -622,9 +622,11 @@ chaosWorkflows:
     savedSuccessfully: Successfully saved template.
     cancel: Cancel
     options:
-      all: Show All Workflows
+      all: All
       enabledOnly: Show Enabled Workflows Only
       disabledOnly: Show Disabled Workflows Only
+      workflow: One Time Run
+      cronworkflow: Cron Workflow
   browseWorkflows:
     status: Status
     name: Name
@@ -967,8 +969,9 @@ createWorkflow:
       save: Save
     noMyHub: No MyHub selected
     selectHub: Select a hub and continue with a pre-defined workflow
-    noPredefined: No Pre-defined experiments present
+    noPredefined: No pre-defined workflows present in this ChaosHub.
     addPredefined: Add a pre-defined workflow to continue scheduling.
+    morePredefined: More pre-defined workflows can be found
     searchTerm: Enter a correct search term
     advance: Advanced options to tune workflow
     advanceDesc: Modify node selector, cleanup workflow resource and tolerations.

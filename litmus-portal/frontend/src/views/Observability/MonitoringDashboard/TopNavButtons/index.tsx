@@ -253,7 +253,7 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
               activePanelID: '',
             });
             history.push({
-              pathname: '/observability/dashboard/configure',
+              pathname: '/analytics/dashboard/configure',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}

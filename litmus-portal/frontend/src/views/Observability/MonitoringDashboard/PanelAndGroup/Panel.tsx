@@ -87,7 +87,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
                 activePanelID: panelID,
               });
               history.push({
-                pathname: '/observability/dashboard/configure',
+                pathname: '/analytics/dashboard/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}

@@ -77,7 +77,7 @@ const TuneTheQueries = forwardRef(
           setProceed(true);
           onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
             history.push({
-              pathname: '/observability/monitoring-dashboard',
+              pathname: '/analytics/monitoring-dashboard',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           });
@@ -97,7 +97,7 @@ const TuneTheQueries = forwardRef(
           setProceed(true);
           onDashboardLoadRoutine(dashboardVars.id ?? '').then(() => {
             history.push({
-              pathname: '/observability/monitoring-dashboard',
+              pathname: '/analytics/monitoring-dashboard',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           });
