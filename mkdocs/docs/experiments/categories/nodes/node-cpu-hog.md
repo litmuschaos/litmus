@@ -214,9 +214,9 @@ It contains percentage of node CPU to be consumed. It can be tuned via `CPU_LOAD
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-core.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-load.yaml yaml)
 ```yaml
-# stress the cpu of the targeted nodes
+# stress the cpu of the targeted nodes by load percentage
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -230,9 +230,13 @@ spec:
     spec:
       components:
         env:
-        # cpu load in percentage for the stress
+        # percentage of cpu to be stressed
         - name: CPU_LOAD
-          value: '100'
+          value: "100"
+        # node cpu core should be provided as 0 for cpu load
+        # to work otherwise it will take cpu core as priority
+        - name: NODE_CPU_CORE
+          value: '0'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```

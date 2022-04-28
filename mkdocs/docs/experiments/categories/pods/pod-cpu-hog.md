@@ -236,6 +236,7 @@ It contains percentage of pod CPU to be consumed. It can be tuned via `CPU_LOAD`
 
 Use the following example to tune this:
 
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-load.yaml yaml)
 ```yaml
 # cpu load for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -258,6 +259,10 @@ spec:
         # cpu load in percentage for the stress
         - name: CPU_LOAD
           value: '100'
+        # cpu core should be provided as 0 for cpu load
+        # to work, otherwise it will take cpu core as priority
+        - name: CPU_CORES
+          value: '0'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
