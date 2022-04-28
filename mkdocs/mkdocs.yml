@@ -172,6 +172,7 @@ nav:
           - Kyverno Policies: experiments/concepts/security/kyverno-policies.md
           - OpenShift SCC: experiments/concepts/security/openshift-scc.md
       - AWS IAM Integration: experiments/concepts/IAM/awsIamIntegration.md
+      - GCP IAM Integration: experiments/concepts/IAM/gcpIamIntegration.md
     - Litmus FAQ:
       - Contents: experiments/faq/content.md
       - FAQ: 
