@@ -240,12 +240,12 @@ type Cluster struct {
 	Version string `json:"version"`
 }
 
-type ClusterAction struct {
+type ClusterActionResponse struct {
 	ProjectID string         `json:"projectID"`
 	Action    *ActionPayload `json:"action"`
 }
 
-type ClusterEvent struct {
+type ClusterEventResponse struct {
 	EventID     string   `json:"eventID"`
 	EventType   string   `json:"eventType"`
 	EventName   string   `json:"eventName"`
@@ -741,7 +741,7 @@ type PodLogRequest struct {
 	PodName string `json:"podName"`
 	// Namespace where the pod is running
 	PodNamespace string `json:"podNamespace"`
-	// Type of the pod: chaosengine or not pod
+	// Type of the pod: chaosEngine or not pod
 	PodType string `json:"podType"`
 	// Name of the experiment pod fetched from execution data
 	ExpPod *string `json:"expPod"`
@@ -830,6 +830,10 @@ type PromSeriesResponse struct {
 	LabelValues []*LabelValue `json:"labelValues"`
 }
 
+type Provider struct {
+	Name string `json:"name"`
+}
+
 type QueryMapForPanel struct {
 	PanelID  string   `json:"panelID"`
 	QueryIDs []string `json:"queryIDs"`
@@ -905,7 +909,7 @@ type Spec struct {
 	Maturity            string        `json:"maturity"`
 	Maintainers         []*Maintainer `json:"maintainers"`
 	MinKubeVersion      string        `json:"minKubeVersion"`
-	Provider            string        `json:"provider"`
+	Provider            *Provider     `json:"provider"`
 	Links               []*Link       `json:"links"`
 	Experiments         []string      `json:"experiments"`
 	ChaosExpCRDLink     string        `json:"chaosExpCRDLink"`

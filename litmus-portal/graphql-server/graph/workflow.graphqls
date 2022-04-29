@@ -191,7 +191,7 @@ input PodLogRequest {
   """
   podNamespace: String!
   """
-  Type of the pod: chaosengine or not pod
+  Type of the pod: chaosEngine or not pod
   """
   podType: String!
   """

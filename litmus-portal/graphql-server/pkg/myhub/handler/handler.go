@@ -62,7 +62,7 @@ func GetPredefinedExperimentManifest(request model.ExperimentRequest) string {
 
 // GetChartsData is used to get details of charts like experiments.
 func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
-	var AllChartsDetails []model.Chart
+	var AllChartsDetails []ChaosChart
 	Charts, err := ioutil.ReadDir(ChartsPath)
 	if err != nil {
 		fmt.Println("File reading error", err)
@@ -74,24 +74,38 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 		AllChartsDetails = append(AllChartsDetails, ChartDetails)
 	}
 
-	e, _ := json.Marshal(AllChartsDetails)
-	var data1 []*model.Chart
-	json.Unmarshal(e, &data1)
-	return data1, nil
+	e, err := json.Marshal(AllChartsDetails)
+	if err != nil {
+		return nil, err
+	}
+
+	var unmarshalledData []*model.Chart
+	err = json.Unmarshal(e, &unmarshalledData)
+	if err != nil {
+		return nil, err
+	}
+
+	return unmarshalledData, nil
 }
 
 // GetExperimentData is used for getting details of selected Experiment path
 func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
-	data, _ := ReadExperimentFile(experimentFilePath)
-	e, _ := json.Marshal(data)
-	var data1 *model.Chart
-	json.Unmarshal(e, &data1)
-	return data1, nil
+	data, err := ReadExperimentFile(experimentFilePath)
+	if err != nil {
+		return nil, err
+	}
+	e, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	var chartData *model.Chart
+	json.Unmarshal(e, &chartData)
+	return chartData, nil
 }
 
-// ReadExperimentFile is used for reading a experiment file from given path
-func ReadExperimentFile(path string) (model.Chart, error) {
-	var experiment model.Chart
+// ReadExperimentFile is used for reading experiment file from given path
+func ReadExperimentFile(path string) (ChaosChart, error) {
+	var experiment ChaosChart
 	experimentFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)

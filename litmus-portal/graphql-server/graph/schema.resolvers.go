@@ -648,9 +648,9 @@ func (r *queryResolver) UsageQuery(ctx context.Context, query model.UsageQuery) 
 	return usage.GetUsage(ctx, query)
 }
 
-func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
+func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID string) (<-chan *model.ClusterEventResponse, error) {
 	log.Print("NEW EVENT ", projectID)
-	clusterEvent := make(chan *model.ClusterEvent, 1)
+	clusterEvent := make(chan *model.ClusterEventResponse, 1)
 
 	data_store.Store.Mutex.Lock()
 	data_store.Store.ClusterEventPublish[projectID] = append(data_store.Store.ClusterEventPublish[projectID], clusterEvent)
@@ -663,9 +663,9 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	return clusterEvent, nil
 }
 
-func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
+func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterActionResponse, error) {
 	log.Print("NEW CLUSTER CONNECT: ", clusterInfo.ClusterID)
-	clusterAction := make(chan *model.ClusterAction, 1)
+	clusterAction := make(chan *model.ClusterActionResponse, 1)
 	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
 	if err != nil {
 		log.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
@@ -715,7 +715,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	return clusterAction, nil
 }
 
-func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
+func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
 	log.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
 	data_store.Store.Mutex.Lock()
@@ -728,8 +728,8 @@ func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projec
 	return workflowEvent, nil
 }
 
-func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
-	log.Print("NEW LOG REQUEST: ", podDetails.ClusterID, podDetails.PodName)
+func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
+	log.Print("NEW LOG REQUEST: ", request.ClusterID, request.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
@@ -737,15 +737,15 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.P
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		log.Print("CLOSED LOG LISTENER: ", podDetails.ClusterID, podDetails.PodName)
+		log.Print("CLOSED LOG LISTENER: ", request.ClusterID, request.PodName)
 		delete(data_store.Store.WorkflowLog, reqID.String())
 	}()
-	go wfHandler.GetLogs(reqID.String(), podDetails, *data_store.Store)
+	go wfHandler.GetLogs(reqID.String(), request, *data_store.Store)
 	return workflowLog, nil
 }
 
-func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
-	log.Print("NEW KUBEOBJECT REQUEST", kubeObjectRequest.ClusterID)
+func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
+	log.Print("NEW KUBEOBJECT REQUEST", request.ClusterID)
 	kubeObjData := make(chan *model.KubeObjectResponse)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
@@ -756,7 +756,7 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 		log.Println("Closed KubeObj Listener")
 		delete(data_store.Store.KubeObjectData, reqID.String())
 	}()
-	go wfHandler.GetKubeObjData(reqID.String(), kubeObjectRequest, *data_store.Store)
+	go wfHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)
 	return kubeObjData, nil
 }
 

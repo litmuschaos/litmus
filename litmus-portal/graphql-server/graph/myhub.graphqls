@@ -132,7 +132,7 @@ type Spec {
   maturity: String!
   maintainers: [Maintainer!]!
   minKubeVersion: String!
-  provider: String!
+  provider: Provider!
   links: [Link!]!
   experiments: [String!]!
   chaosExpCRDLink: String!
@@ -140,9 +140,9 @@ type Spec {
   chaosType: String
 }
 
-#type Provider {
-#	name: String!
-#}
+type Provider {
+	name: String!
+}
 
 type PackageInformation {
   packageName: String!

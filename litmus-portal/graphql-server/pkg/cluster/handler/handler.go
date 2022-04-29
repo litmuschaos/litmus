@@ -245,7 +245,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 
 // SendClusterEvent sends events from the clusters to the appropriate users listening for the events
 func SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
-	newEvent := model.ClusterEvent{
+	newEvent := model.ClusterEventResponse{
 		EventID:     uuid.New().String(),
 		EventType:   eventType,
 		EventName:   eventName,
@@ -270,7 +270,7 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 			for CreateChaosWorkflow mutation to be passed to this function.
 		*/
 	}
-	newAction := &model.ClusterAction{
+	newAction := &model.ClusterActionResponse{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
 			K8sManifest:  subscriberRequest.K8sManifest,

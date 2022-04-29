@@ -57,6 +57,6 @@ type ChaosData struct {
 }
 
 type WorkflowSyncExternalData struct {
-	WorkflowID    string `json:"workflow_id"`
-	WorkflowRunID string `json:"workflow_run_id"`
+	WorkflowID    string `json:"workflowID"`
+	WorkflowRunID string `json:"workflowRunID"`
 }

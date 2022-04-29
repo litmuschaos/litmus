@@ -166,12 +166,12 @@ type ComplexityRoot struct {
 		Version               func(childComplexity int) int
 	}
 
-	ClusterAction struct {
+	ClusterActionResponse struct {
 		Action    func(childComplexity int) int
 		ProjectID func(childComplexity int) int
 	}
 
-	ClusterEvent struct {
+	ClusterEventResponse struct {
 		Cluster     func(childComplexity int) int
 		Description func(childComplexity int) int
 		EventID     func(childComplexity int) int
@@ -446,6 +446,10 @@ type ComplexityRoot struct {
 		Series      func(childComplexity int) int
 	}
 
+	Provider struct {
+		Name func(childComplexity int) int
+	}
+
 	Query struct {
 		GetCharts                   func(childComplexity int, hubName string, projectID string) int
 		GetClusters                 func(childComplexity int, projectID string, clusterType *string) int
@@ -512,12 +516,12 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		ClusterConnect        func(childComplexity int, clusterInfo model.ClusterIdentity) int
-		ClusterEventListener  func(childComplexity int, projectID string) int
-		GetKubeObject         func(childComplexity int, kubeObjectRequest model.KubeObjectRequest) int
-		GetPodLog             func(childComplexity int, podDetails model.PodLogRequest) int
-		ViewDashboard         func(childComplexity int, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) int
-		WorkflowEventListener func(childComplexity int, projectID string) int
+		ClusterConnect    func(childComplexity int, clusterInfo model.ClusterIdentity) int
+		GetClusterEvents  func(childComplexity int, projectID string) int
+		GetKubeObject     func(childComplexity int, request model.KubeObjectRequest) int
+		GetPodLog         func(childComplexity int, request model.PodLogRequest) int
+		GetWorkflowEvents func(childComplexity int, projectID string) int
+		ViewDashboard     func(childComplexity int, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) int
 	}
 
 	TotalCount struct {
@@ -696,11 +700,11 @@ type QueryResolver interface {
 	UsageQuery(ctx context.Context, query model.UsageQuery) (*model.UsageData, error)
 }
 type SubscriptionResolver interface {
-	ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error)
-	ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error)
-	WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error)
-	GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error)
-	GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
+	GetClusterEvents(ctx context.Context, projectID string) (<-chan *model.ClusterEventResponse, error)
+	ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterActionResponse, error)
+	GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error)
+	GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error)
+	GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error)
 	ViewDashboard(ctx context.Context, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error)
 }
 
@@ -1321,54 +1325,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Cluster.Version(childComplexity), true
 
-	case "ClusterAction.action":
-		if e.complexity.ClusterAction.Action == nil {
+	case "ClusterActionResponse.action":
+		if e.complexity.ClusterActionResponse.Action == nil {
 			break
 		}
 
-		return e.complexity.ClusterAction.Action(childComplexity), true
+		return e.complexity.ClusterActionResponse.Action(childComplexity), true
 
-	case "ClusterAction.projectID":
-		if e.complexity.ClusterAction.ProjectID == nil {
+	case "ClusterActionResponse.projectID":
+		if e.complexity.ClusterActionResponse.ProjectID == nil {
 			break
 		}
 
-		return e.complexity.ClusterAction.ProjectID(childComplexity), true
+		return e.complexity.ClusterActionResponse.ProjectID(childComplexity), true
 
-	case "ClusterEvent.cluster":
-		if e.complexity.ClusterEvent.Cluster == nil {
+	case "ClusterEventResponse.cluster":
+		if e.complexity.ClusterEventResponse.Cluster == nil {
 			break
 		}
 
-		return e.complexity.ClusterEvent.Cluster(childComplexity), true
+		return e.complexity.ClusterEventResponse.Cluster(childComplexity), true
 
-	case "ClusterEvent.description":
-		if e.complexity.ClusterEvent.Description == nil {
+	case "ClusterEventResponse.description":
+		if e.complexity.ClusterEventResponse.Description == nil {
 			break
 		}
 
-		return e.complexity.ClusterEvent.Description(childComplexity), true
+		return e.complexity.ClusterEventResponse.Description(childComplexity), true
 
-	case "ClusterEvent.eventID":
-		if e.complexity.ClusterEvent.EventID == nil {
+	case "ClusterEventResponse.eventID":
+		if e.complexity.ClusterEventResponse.EventID == nil {
 			break
 		}
 
-		return e.complexity.ClusterEvent.EventID(childComplexity), true
+		return e.complexity.ClusterEventResponse.EventID(childComplexity), true
 
-	case "ClusterEvent.eventName":
-		if e.complexity.ClusterEvent.EventName == nil {
+	case "ClusterEventResponse.eventName":
+		if e.complexity.ClusterEventResponse.EventName == nil {
 			break
 		}
 
-		return e.complexity.ClusterEvent.EventName(childComplexity), true
+		return e.complexity.ClusterEventResponse.EventName(childComplexity), true
 
-	case "ClusterEvent.eventType":
-		if e.complexity.ClusterEvent.EventType == nil {
+	case "ClusterEventResponse.eventType":
+		if e.complexity.ClusterEventResponse.EventType == nil {
 			break
 		}
 
-		return e.complexity.ClusterEvent.EventType(childComplexity), true
+		return e.complexity.ClusterEventResponse.EventType(childComplexity), true
 
 	case "ConfirmClusterRegistrationResponse.clusterID":
 		if e.complexity.ConfirmClusterRegistrationResponse.ClusterID == nil {
@@ -2716,6 +2720,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PromSeriesResponse.Series(childComplexity), true
 
+	case "Provider.name":
+		if e.complexity.Provider.Name == nil {
+			break
+		}
+
+		return e.complexity.Provider.Name(childComplexity), true
+
 	case "Query.getCharts":
 		if e.complexity.Query.GetCharts == nil {
 			break
@@ -3182,17 +3193,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.ClusterConnect(childComplexity, args["clusterInfo"].(model.ClusterIdentity)), true
 
-	case "Subscription.clusterEventListener":
-		if e.complexity.Subscription.ClusterEventListener == nil {
+	case "Subscription.getClusterEvents":
+		if e.complexity.Subscription.GetClusterEvents == nil {
 			break
 		}
 
-		args, err := ec.field_Subscription_clusterEventListener_args(context.TODO(), rawArgs)
+		args, err := ec.field_Subscription_getClusterEvents_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Subscription.ClusterEventListener(childComplexity, args["projectID"].(string)), true
+		return e.complexity.Subscription.GetClusterEvents(childComplexity, args["projectID"].(string)), true
 
 	case "Subscription.getKubeObject":
 		if e.complexity.Subscription.GetKubeObject == nil {
@@ -3204,7 +3215,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.GetKubeObject(childComplexity, args["kubeObjectRequest"].(model.KubeObjectRequest)), true
+		return e.complexity.Subscription.GetKubeObject(childComplexity, args["request"].(model.KubeObjectRequest)), true
 
 	case "Subscription.getPodLog":
 		if e.complexity.Subscription.GetPodLog == nil {
@@ -3216,7 +3227,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.GetPodLog(childComplexity, args["podDetails"].(model.PodLogRequest)), true
+		return e.complexity.Subscription.GetPodLog(childComplexity, args["request"].(model.PodLogRequest)), true
+
+	case "Subscription.getWorkflowEvents":
+		if e.complexity.Subscription.GetWorkflowEvents == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_getWorkflowEvents_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.GetWorkflowEvents(childComplexity, args["projectID"].(string)), true
 
 	case "Subscription.viewDashboard":
 		if e.complexity.Subscription.ViewDashboard == nil {
@@ -3229,18 +3252,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.ViewDashboard(childComplexity, args["dashboardID"].(*string), args["promQueries"].([]*model.PromQueryInput), args["dashboardQueryMap"].([]*model.QueryMapForPanelGroup), args["dataVariables"].(model.DataVars)), true
-
-	case "Subscription.workflowEventListener":
-		if e.complexity.Subscription.WorkflowEventListener == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_workflowEventListener_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.WorkflowEventListener(childComplexity, args["projectID"].(string)), true
 
 	case "TotalCount.agents":
 		if e.complexity.TotalCount.Agents == nil {
@@ -4377,7 +4388,7 @@ input Toleration {
     value: String
 }
 
-type ClusterEvent {
+type ClusterEventResponse {
     eventID: ID!
     eventType: String!
     eventName: String!
@@ -4393,7 +4404,7 @@ type ActionPayload {
     username: String
 }
 
-type ClusterAction {
+type ClusterActionResponse {
     projectID: ID!
     action: ActionPayload!
 }
@@ -4819,7 +4830,7 @@ type Spec {
   maturity: String!
   maintainers: [Maintainer!]!
   minKubeVersion: String!
-  provider: String!
+  provider: Provider!
   links: [Link!]!
   experiments: [String!]!
   chaosExpCRDLink: String!
@@ -4827,9 +4838,9 @@ type Spec {
   chaosType: String
 }
 
-#type Provider {
-#	name: String!
-#}
+type Provider {
+	name: String!
+}
 
 type PackageInformation {
   packageName: String!
@@ -5485,30 +5496,30 @@ type Subscription {
   """
   Listens cluster events from the graphql server
   """
-  clusterEventListener(projectID: String!): ClusterEvent! @authorized
+  getClusterEvents(projectID: String!): ClusterEventResponse! @authorized
 
   """
   Listens cluster operation request from the graphql server
   """
   # authorized directive not required
-  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterActionResponse!
 
   # WORKFLOW OPERATIONS
   """
   Sends workflow events to the subscriber
   """
-  workflowEventListener(projectID: String!): WorkflowRun! @authorized
+  getWorkflowEvents(projectID: String!): WorkflowRun! @authorized
 
   """
   Returns experiment logs from the pods
   """
-  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+  getPodLog(request: PodLogRequest!): PodLogResponse! @authorized
 
   # K8S OPERATIONS
   """
   Returns a kubernetes object given an input
   """
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+  getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
   # ANALYTICS OPERATIONS
@@ -5861,7 +5872,7 @@ input PodLogRequest {
   """
   podNamespace: String!
   """
-  Type of the pod: chaosengine or not pod
+  Type of the pod: chaosEngine or not pod
   """
   podType: String!
   """
@@ -7435,7 +7446,7 @@ func (ec *executionContext) field_Subscription_clusterConnect_args(ctx context.C
 	return args, nil
 }
 
-func (ec *executionContext) field_Subscription_clusterEventListener_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Subscription_getClusterEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -7453,13 +7464,13 @@ func (ec *executionContext) field_Subscription_getKubeObject_args(ctx context.Co
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.KubeObjectRequest
-	if tmp, ok := rawArgs["kubeObjectRequest"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNKubeObjectRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["kubeObjectRequest"] = arg0
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -7467,13 +7478,27 @@ func (ec *executionContext) field_Subscription_getPodLog_args(ctx context.Contex
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PodLogRequest
-	if tmp, ok := rawArgs["podDetails"]; ok {
+	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNPodLogRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPodLogRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["podDetails"] = arg0
+	args["request"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Subscription_getWorkflowEvents_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
 	return args, nil
 }
 
@@ -7512,20 +7537,6 @@ func (ec *executionContext) field_Subscription_viewDashboard_args(ctx context.Co
 		}
 	}
 	args["dataVariables"] = arg3
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_workflowEventListener_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg0
 	return args, nil
 }
 
@@ -10417,7 +10428,7 @@ func (ec *executionContext) _Cluster_version(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterAction_projectID(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterActionResponse_projectID(ctx context.Context, field graphql.CollectedField, obj *model.ClusterActionResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10425,7 +10436,7 @@ func (ec *executionContext) _ClusterAction_projectID(ctx context.Context, field 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterAction",
+		Object:   "ClusterActionResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -10451,7 +10462,7 @@ func (ec *executionContext) _ClusterAction_projectID(ctx context.Context, field 
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterAction_action(ctx context.Context, field graphql.CollectedField, obj *model.ClusterAction) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterActionResponse_action(ctx context.Context, field graphql.CollectedField, obj *model.ClusterActionResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10459,7 +10470,7 @@ func (ec *executionContext) _ClusterAction_action(ctx context.Context, field gra
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterAction",
+		Object:   "ClusterActionResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -10485,7 +10496,7 @@ func (ec *executionContext) _ClusterAction_action(ctx context.Context, field gra
 	return ec.marshalNActionPayload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐActionPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterEvent_eventID(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterEventResponse_eventID(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEventResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10493,7 +10504,7 @@ func (ec *executionContext) _ClusterEvent_eventID(ctx context.Context, field gra
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterEvent",
+		Object:   "ClusterEventResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -10519,7 +10530,7 @@ func (ec *executionContext) _ClusterEvent_eventID(ctx context.Context, field gra
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterEvent_eventType(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterEventResponse_eventType(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEventResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10527,7 +10538,7 @@ func (ec *executionContext) _ClusterEvent_eventType(ctx context.Context, field g
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterEvent",
+		Object:   "ClusterEventResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -10553,7 +10564,7 @@ func (ec *executionContext) _ClusterEvent_eventType(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterEvent_eventName(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterEventResponse_eventName(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEventResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10561,7 +10572,7 @@ func (ec *executionContext) _ClusterEvent_eventName(ctx context.Context, field g
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterEvent",
+		Object:   "ClusterEventResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -10587,7 +10598,7 @@ func (ec *executionContext) _ClusterEvent_eventName(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterEvent_description(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterEventResponse_description(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEventResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10595,7 +10606,7 @@ func (ec *executionContext) _ClusterEvent_description(ctx context.Context, field
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterEvent",
+		Object:   "ClusterEventResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -10621,7 +10632,7 @@ func (ec *executionContext) _ClusterEvent_description(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ClusterEvent_cluster(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEvent) (ret graphql.Marshaler) {
+func (ec *executionContext) _ClusterEventResponse_cluster(ctx context.Context, field graphql.CollectedField, obj *model.ClusterEventResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10629,7 +10640,7 @@ func (ec *executionContext) _ClusterEvent_cluster(ctx context.Context, field gra
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:   "ClusterEvent",
+		Object:   "ClusterEventResponse",
 		Field:    field,
 		Args:     nil,
 		IsMethod: false,
@@ -16966,6 +16977,40 @@ func (ec *executionContext) _PromSeriesResponse_labelValues(ctx context.Context,
 	return ec.marshalOLabelValue2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Provider_name(ctx context.Context, field graphql.CollectedField, obj *model.Provider) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Provider",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_getClusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19022,9 +19067,9 @@ func (ec *executionContext) _Spec_provider(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.Provider)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNProvider2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProvider(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Spec_links(ctx context.Context, field graphql.CollectedField, obj *model.Spec) (ret graphql.Marshaler) {
@@ -19293,7 +19338,7 @@ func (ec *executionContext) _SubData_subDataName(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_getClusterEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19309,7 +19354,7 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_clusterEventListener_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_getClusterEvents_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -19318,7 +19363,7 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Subscription().ClusterEventListener(rctx, args["projectID"].(string))
+			return ec.resolvers.Subscription().GetClusterEvents(rctx, args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -19334,10 +19379,10 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(<-chan *model.ClusterEvent); ok {
+		if data, ok := tmp.(<-chan *model.ClusterEventResponse); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ClusterEvent`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ClusterEventResponse`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19350,7 +19395,7 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 		return nil
 	}
 	return func() graphql.Marshaler {
-		res, ok := <-resTmp.(<-chan *model.ClusterEvent)
+		res, ok := <-resTmp.(<-chan *model.ClusterEventResponse)
 		if !ok {
 			return nil
 		}
@@ -19358,7 +19403,7 @@ func (ec *executionContext) _Subscription_clusterEventListener(ctx context.Conte
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNClusterEventResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventResponse(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -19401,7 +19446,7 @@ func (ec *executionContext) _Subscription_clusterConnect(ctx context.Context, fi
 		return nil
 	}
 	return func() graphql.Marshaler {
-		res, ok := <-resTmp.(<-chan *model.ClusterAction)
+		res, ok := <-resTmp.(<-chan *model.ClusterActionResponse)
 		if !ok {
 			return nil
 		}
@@ -19409,13 +19454,13 @@ func (ec *executionContext) _Subscription_clusterConnect(ctx context.Context, fi
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNClusterActionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionResponse(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
 }
 
-func (ec *executionContext) _Subscription_workflowEventListener(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+func (ec *executionContext) _Subscription_getWorkflowEvents(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -19431,7 +19476,7 @@ func (ec *executionContext) _Subscription_workflowEventListener(ctx context.Cont
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Subscription_workflowEventListener_args(ctx, rawArgs)
+	args, err := ec.field_Subscription_getWorkflowEvents_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return nil
@@ -19440,7 +19485,7 @@ func (ec *executionContext) _Subscription_workflowEventListener(ctx context.Cont
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Subscription().WorkflowEventListener(rctx, args["projectID"].(string))
+			return ec.resolvers.Subscription().GetWorkflowEvents(rctx, args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -19511,7 +19556,7 @@ func (ec *executionContext) _Subscription_getPodLog(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Subscription().GetPodLog(rctx, args["podDetails"].(model.PodLogRequest))
+			return ec.resolvers.Subscription().GetPodLog(rctx, args["request"].(model.PodLogRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -19582,7 +19627,7 @@ func (ec *executionContext) _Subscription_getKubeObject(ctx context.Context, fie
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Subscription().GetKubeObject(rctx, args["kubeObjectRequest"].(model.KubeObjectRequest))
+			return ec.resolvers.Subscription().GetKubeObject(rctx, args["request"].(model.KubeObjectRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -26026,24 +26071,24 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
-var clusterActionImplementors = []string{"ClusterAction"}
+var clusterActionResponseImplementors = []string{"ClusterActionResponse"}
 
-func (ec *executionContext) _ClusterAction(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterAction) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, clusterActionImplementors)
+func (ec *executionContext) _ClusterActionResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterActionResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clusterActionResponseImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("ClusterAction")
+			out.Values[i] = graphql.MarshalString("ClusterActionResponse")
 		case "projectID":
-			out.Values[i] = ec._ClusterAction_projectID(ctx, field, obj)
+			out.Values[i] = ec._ClusterActionResponse_projectID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "action":
-			out.Values[i] = ec._ClusterAction_action(ctx, field, obj)
+			out.Values[i] = ec._ClusterActionResponse_action(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -26058,39 +26103,39 @@ func (ec *executionContext) _ClusterAction(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var clusterEventImplementors = []string{"ClusterEvent"}
+var clusterEventResponseImplementors = []string{"ClusterEventResponse"}
 
-func (ec *executionContext) _ClusterEvent(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterEvent) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, clusterEventImplementors)
+func (ec *executionContext) _ClusterEventResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterEventResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clusterEventResponseImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("ClusterEvent")
+			out.Values[i] = graphql.MarshalString("ClusterEventResponse")
 		case "eventID":
-			out.Values[i] = ec._ClusterEvent_eventID(ctx, field, obj)
+			out.Values[i] = ec._ClusterEventResponse_eventID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "eventType":
-			out.Values[i] = ec._ClusterEvent_eventType(ctx, field, obj)
+			out.Values[i] = ec._ClusterEventResponse_eventType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "eventName":
-			out.Values[i] = ec._ClusterEvent_eventName(ctx, field, obj)
+			out.Values[i] = ec._ClusterEventResponse_eventName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "description":
-			out.Values[i] = ec._ClusterEvent_description(ctx, field, obj)
+			out.Values[i] = ec._ClusterEventResponse_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "cluster":
-			out.Values[i] = ec._ClusterEvent_cluster(ctx, field, obj)
+			out.Values[i] = ec._ClusterEventResponse_cluster(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27456,6 +27501,33 @@ func (ec *executionContext) _PromSeriesResponse(ctx context.Context, sel ast.Sel
 	return out
 }
 
+var providerImplementors = []string{"Provider"}
+
+func (ec *executionContext) _Provider(ctx context.Context, sel ast.SelectionSet, obj *model.Provider) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, providerImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Provider")
+		case "name":
+			out.Values[i] = ec._Provider_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -28054,12 +28126,12 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 
 	switch fields[0].Name {
-	case "clusterEventListener":
-		return ec._Subscription_clusterEventListener(ctx, fields[0])
+	case "getClusterEvents":
+		return ec._Subscription_getClusterEvents(ctx, fields[0])
 	case "clusterConnect":
 		return ec._Subscription_clusterConnect(ctx, fields[0])
-	case "workflowEventListener":
-		return ec._Subscription_workflowEventListener(ctx, fields[0])
+	case "getWorkflowEvents":
+		return ec._Subscription_getWorkflowEvents(ctx, fields[0])
 	case "getPodLog":
 		return ec._Subscription_getPodLog(ctx, fields[0])
 	case "getKubeObject":
@@ -29194,32 +29266,32 @@ func (ec *executionContext) marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitm
 	return ec._Cluster(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterAction2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx context.Context, sel ast.SelectionSet, v model.ClusterAction) graphql.Marshaler {
-	return ec._ClusterAction(ctx, sel, &v)
+func (ec *executionContext) marshalNClusterActionResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterActionResponse) graphql.Marshaler {
+	return ec._ClusterActionResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterAction2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterAction(ctx context.Context, sel ast.SelectionSet, v *model.ClusterAction) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterActionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterActionResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterActionResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._ClusterAction(ctx, sel, v)
+	return ec._ClusterActionResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterEvent2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v model.ClusterEvent) graphql.Marshaler {
-	return ec._ClusterEvent(ctx, sel, &v)
+func (ec *executionContext) marshalNClusterEventResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventResponse(ctx context.Context, sel ast.SelectionSet, v model.ClusterEventResponse) graphql.Marshaler {
+	return ec._ClusterEventResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNClusterEvent2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEvent(ctx context.Context, sel ast.SelectionSet, v *model.ClusterEvent) graphql.Marshaler {
+func (ec *executionContext) marshalNClusterEventResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterEventResponse(ctx context.Context, sel ast.SelectionSet, v *model.ClusterEventResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
 		return graphql.Null
 	}
-	return ec._ClusterEvent(ctx, sel, v)
+	return ec._ClusterEventResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNClusterIdentity2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterIdentity(ctx context.Context, v interface{}) (model.ClusterIdentity, error) {
@@ -29980,6 +30052,20 @@ func (ec *executionContext) marshalNPromSeriesResponse2ᚖgithubᚗcomᚋlitmusc
 		return graphql.Null
 	}
 	return ec._PromSeriesResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProvider2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProvider(ctx context.Context, sel ast.SelectionSet, v model.Provider) graphql.Marshaler {
+	return ec._Provider(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProvider2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProvider(ctx context.Context, sel ast.SelectionSet, v *model.Provider) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Provider(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNQueryMapForPanel2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐQueryMapForPanel(ctx context.Context, v interface{}) (model.QueryMapForPanel, error) {

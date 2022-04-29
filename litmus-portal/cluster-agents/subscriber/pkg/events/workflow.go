@@ -38,7 +38,7 @@ var (
 	ClusterID      = os.Getenv("CLUSTER_ID")
 )
 
-// initializes the Argo Workflow event watcher
+//WorkflowEventWatcher initializes the Argo Workflow event watcher
 func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, clusterData map[string]string) {
 	startTime, err := strconv.Atoi(clusterData["START_TIME"])
 	if err != nil {
@@ -48,17 +48,21 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent,
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not get kube config")
 	}
+
 	// ClientSet to create Informer
 	clientSet, err := versioned.NewForConfig(cfg)
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not generate dynamic client for config")
 	}
+
 	// Create a factory object to watch workflows depending on default scope
 	f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
 		externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
 			list.LabelSelector = fmt.Sprintf("cluster_id=%s,workflows.argoproj.io/controller-instanceid=%s", ClusterID, ClusterID)
 		}))
+
 	informer := f.Argoproj().V1alpha1().Workflows().Informer()
+
 	if AgentScope == "namespace" {
 		f = externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(AgentNamespace),
 			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
@@ -70,7 +74,7 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent,
 	go startWatchWorkflow(stopCh, informer, stream, int64(startTime))
 }
 
-// handles the different events events - add, update and delete
+//startWatchWorkflow handles the different events events - add, update and delete
 func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
@@ -99,7 +103,7 @@ func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, str
 	s.Run(stopCh)
 }
 
-// responsible for extracting the required data from the event and streaming
+//WorkflowEventHandler responsible for extracting the required data from the event and streaming
 func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{

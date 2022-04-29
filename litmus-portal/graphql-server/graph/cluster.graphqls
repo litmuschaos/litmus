@@ -160,7 +160,7 @@ input Toleration {
     value: String
 }
 
-type ClusterEvent {
+type ClusterEventResponse {
     eventID: ID!
     eventType: String!
     eventName: String!
@@ -176,7 +176,7 @@ type ActionPayload {
     username: String
 }
 
-type ClusterAction {
+type ClusterActionResponse {
     projectID: ID!
     action: ActionPayload!
 }

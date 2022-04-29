@@ -801,7 +801,7 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	}
 	reqType := "logs"
 	externalData := string(data)
-	payload := model.ClusterAction{
+	payload := model.ClusterActionResponse{
 		ProjectID: reqID,
 		Action: &model.ActionPayload{
 			RequestType:  reqType,
@@ -893,7 +893,7 @@ func GetKubeObjData(reqID string, kubeObject model.KubeObjectRequest, r store.St
 		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
 	}
 	externalData := string(data)
-	payload := model.ClusterAction{
+	payload := model.ClusterActionResponse{
 		ProjectID: reqID,
 		Action: &model.ActionPayload{
 			RequestType:  reqType,

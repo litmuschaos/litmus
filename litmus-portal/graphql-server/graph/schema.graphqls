@@ -391,30 +391,30 @@ type Subscription {
   """
   Listens cluster events from the graphql server
   """
-  clusterEventListener(projectID: String!): ClusterEvent! @authorized
+  getClusterEvents(projectID: String!): ClusterEventResponse! @authorized
 
   """
   Listens cluster operation request from the graphql server
   """
   # authorized directive not required
-  clusterConnect(clusterInfo: ClusterIdentity!): ClusterAction!
+  clusterConnect(clusterInfo: ClusterIdentity!): ClusterActionResponse!
 
   # WORKFLOW OPERATIONS
   """
   Sends workflow events to the subscriber
   """
-  workflowEventListener(projectID: String!): WorkflowRun! @authorized
+  getWorkflowEvents(projectID: String!): WorkflowRun! @authorized
 
   """
   Returns experiment logs from the pods
   """
-  getPodLog(podDetails: PodLogRequest!): PodLogResponse! @authorized
+  getPodLog(request: PodLogRequest!): PodLogResponse! @authorized
 
   # K8S OPERATIONS
   """
   Returns a kubernetes object given an input
   """
-  getKubeObject(kubeObjectRequest: KubeObjectRequest!): KubeObjectResponse!
+  getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 
   # ANALYTICS OPERATIONS
