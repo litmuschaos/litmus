@@ -35,18 +35,18 @@ const (
 	UpdateDashboard              RoleQuery = "UpdateDashboard"
 	DeleteDashboard              RoleQuery = "DeleteDashboard"
 	DeleteDataSource             RoleQuery = "DeleteDataSource"
-	GetWorkflowRuns              RoleQuery = "GetWorkflowRuns"
-	GetClusters                  RoleQuery = "GetClusters"
+	ListWorkflowRuns             RoleQuery = "ListWorkflowRuns"
+	ListClusters                 RoleQuery = "ListClusters"
 	GetManifest                  RoleQuery = "GetManifest"
 	GetAgentDetails              RoleQuery = "GetAgentDetails"
 	GetProject                   RoleQuery = "GetProject"
-	GetHeatmapData               RoleQuery = "GetHeatmapData"
-	GetWorkflowStats             RoleQuery = "GetWorkflowStats"
-	GetCharts                    RoleQuery = "GetCharts"
+	ListHeatmapData              RoleQuery = "ListHeatmapData"
+	ListWorkflowStats            RoleQuery = "ListWorkflowStats"
+	ListCharts                   RoleQuery = "ListCharts"
 	GetHubExperiment             RoleQuery = "GetHubExperiment"
 	GetWorkflowRunStats          RoleQuery = "GetWorkflowRunStats"
-	GetHubStatus                 RoleQuery = "GetHubStatus"
-	PortalDashboardData          RoleQuery = "PortalDashboardData"
+	ListHubStatus                RoleQuery = "ListHubStatus"
+	ListPortalDashboardData      RoleQuery = "ListPortalDashboardData"
 	ListWorkflow                 RoleQuery = "ListWorkflow"
 	SaveMyHub                    RoleQuery = "SaveMyHub"
 	CreateWorkflowTemplate       RoleQuery = "CreateWorkflowTemplate"
@@ -56,12 +56,12 @@ const (
 	DeleteImageRegistry          RoleQuery = "DeleteImageRegistry"
 	GetYAMLData                  RoleQuery = "GetYAMLData"
 	PredefinedWorkflowOperations RoleQuery = "PredefinedWorkflowOperations"
-	GetPredefinedWorkflows       RoleQuery = "GetPredefinedWorkflows"
+	ListPredefinedWorkflows      RoleQuery = "ListPredefinedWorkflows"
 	GetPredefinedExperimentYaml  RoleQuery = "GetPredefinedExperimentYaml"
 	ListDataSource               RoleQuery = "ListDataSource"
 	ListDashboard                RoleQuery = "ListDashboard"
 	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
-	GetWorkflowManifests         RoleQuery = "GetWorkflowManifests"
+	ListWorkflowManifests        RoleQuery = "ListWorkflowManifests"
 	GetWorkflowManifestByID      RoleQuery = "GetWorkflowManifestByID"
 	ListImageRegistry            RoleQuery = "ListImageRegistry"
 	GetImageRegistry             RoleQuery = "GetImageRegistry"
@@ -99,20 +99,20 @@ var MutationRbacRules = map[RoleQuery][]string{
 	UpdateDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
-	GetWorkflowRuns:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetClusters: {MemberRoleOwnerString, MemberRoleEditorString,
+	ListWorkflowRuns:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListClusters: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
 	GetManifest:     {MemberRoleOwnerString, MemberRoleEditorString},
 	GetAgentDetails: {MemberRoleOwnerString, MemberRoleEditorString},
 	GetProject: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
-	GetHeatmapData:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetWorkflowStats:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetCharts:                    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListHeatmapData:              {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflowStats:            {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListCharts:                   {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetHubExperiment:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetWorkflowRunStats:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetHubStatus:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	PortalDashboardData:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListHubStatus:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListPortalDashboardData:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	SaveMyHub:                    {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
@@ -122,12 +122,12 @@ var MutationRbacRules = map[RoleQuery][]string{
 	DeleteImageRegistry:          {MemberRoleOwnerString},
 	GetYAMLData:                  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	PredefinedWorkflowOperations: {MemberRoleOwnerString, MemberRoleEditorString},
-	GetPredefinedWorkflows:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListPredefinedWorkflows:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetPredefinedExperimentYaml:  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDataSource:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDashboard:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetGitOpsDetails:             {MemberRoleOwnerString},
-	GetWorkflowManifests:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflowManifests:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetWorkflowManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListImageRegistry:            {MemberRoleOwnerString},
 	GetImageRegistry:             {MemberRoleOwnerString},

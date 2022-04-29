@@ -392,52 +392,6 @@ type Experiments struct {
 	Desc string `json:"desc"`
 }
 
-// Defines the details for workflow runs
-type GetWorkflowRunsRequest struct {
-	// ID of the project
-	ProjectID string `json:"projectID"`
-	// Array of workflow run IDs for which details will be fetched
-	WorkflowRunIDs []*string `json:"workflowRunIDs"`
-	// Array of workflow IDs for which details will be fetched
-	WorkflowIDs []*string `json:"workflowIDs"`
-	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
-	// Details for fetching sorted data
-	Sort *WorkflowRunSortInput `json:"sort"`
-	// Details for fetching filtered data
-	Filter *WorkflowRunFilterInput `json:"filter"`
-}
-
-// Defines the details of a workflow to sent as response
-type GetWorkflowRunsResponse struct {
-	// Total number of workflow runs
-	TotalNoOfWorkflowRuns int `json:"totalNoOfWorkflowRuns"`
-	// Defines details of workflow runs
-	WorkflowRuns []*WorkflowRun `json:"workflowRuns"`
-}
-
-// Defines the details for a workflow
-type GetWorkflowsRequest struct {
-	// ID of the project
-	ProjectID string `json:"projectID"`
-	// Array of workflow IDs for which details will be fetched
-	WorkflowIDs []*string `json:"workflowIDs"`
-	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
-	// Details for fetching sorted data
-	Sort *WorkflowSortInput `json:"sort"`
-	// Details for fetching filtered data
-	Filter *WorkflowFilterInput `json:"filter"`
-}
-
-// Defines the details for a workflow with total workflow count
-type GetWorkflowsResponse struct {
-	// Total number of workflows
-	TotalNoOfWorkflows int `json:"totalNoOfWorkflows"`
-	// Details related to the workflows
-	Workflows []*Workflow `json:"workflows"`
-}
-
 // Details of setting a Git repository
 type GitConfig struct {
 	// ID of the project where GitOps is configured
@@ -607,6 +561,52 @@ type ListDashboardResponse struct {
 	ViewedAt                  *string                        `json:"viewedAt"`
 }
 
+// Defines the details for workflow runs
+type ListWorkflowRunsRequest struct {
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Array of workflow run IDs for which details will be fetched
+	WorkflowRunIDs []*string `json:"workflowRunIDs"`
+	// Array of workflow IDs for which details will be fetched
+	WorkflowIDs []*string `json:"workflowIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *WorkflowRunSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *WorkflowRunFilterInput `json:"filter"`
+}
+
+// Defines the details of a workflow to sent as response
+type ListWorkflowRunsResponse struct {
+	// Total number of workflow runs
+	TotalNoOfWorkflowRuns int `json:"totalNoOfWorkflowRuns"`
+	// Defines details of workflow runs
+	WorkflowRuns []*WorkflowRun `json:"workflowRuns"`
+}
+
+// Defines the details for a workflow
+type ListWorkflowsRequest struct {
+	// ID of the project
+	ProjectID string `json:"projectID"`
+	// Array of workflow IDs for which details will be fetched
+	WorkflowIDs []*string `json:"workflowIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *WorkflowSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *WorkflowFilterInput `json:"filter"`
+}
+
+// Defines the details for a workflow with total workflow count
+type ListWorkflowsResponse struct {
+	// Total number of workflows
+	TotalNoOfWorkflows int `json:"totalNoOfWorkflows"`
+	// Details related to the workflows
+	Workflows []*Workflow `json:"workflows"`
+}
+
 // Defines the details of the maintainer
 type Maintainer struct {
 	// Name of the maintainer
@@ -763,7 +763,7 @@ type PodLogResponse struct {
 	Log string `json:"log"`
 }
 
-type PortalDashboardData struct {
+type PortalDashboardDataResponse struct {
 	Name          string `json:"name"`
 	DashboardData string `json:"dashboardData"`
 }
@@ -776,11 +776,6 @@ type ProjectData struct {
 	Agents *AgentStat `json:"agents"`
 	// ID of the project
 	ProjectID string `json:"projectId"`
-}
-
-type PromInput struct {
-	Queries   []*PromQueryInput `json:"queries"`
-	DsDetails *DsDetails        `json:"dsDetails"`
 }
 
 type PromQuery struct {
@@ -811,11 +806,6 @@ type PromQueryResponse struct {
 	CloseArea     *bool   `json:"closeArea"`
 }
 
-type PromResponse struct {
-	MetricsResponse     []*MetricsPromResponse     `json:"metricsResponse"`
-	AnnotationsResponse []*AnnotationsPromResponse `json:"annotationsResponse"`
-}
-
 type PromSeriesInput struct {
 	Series    string     `json:"series"`
 	DsDetails *DsDetails `json:"dsDetails"`
@@ -828,6 +818,16 @@ type PromSeriesListResponse struct {
 type PromSeriesResponse struct {
 	Series      string        `json:"series"`
 	LabelValues []*LabelValue `json:"labelValues"`
+}
+
+type PrometheusDataRequest struct {
+	Queries   []*PromQueryInput `json:"queries"`
+	DsDetails *DsDetails        `json:"dsDetails"`
+}
+
+type PrometheusDataResponse struct {
+	MetricsResponse     []*MetricsPromResponse     `json:"metricsResponse"`
+	AnnotationsResponse []*AnnotationsPromResponse `json:"annotationsResponse"`
 }
 
 type Provider struct {
@@ -1007,18 +1007,8 @@ type UpdatePanelGroupInput struct {
 	Panels         []*Panel `json:"panels"`
 }
 
-// Defines total usage data
-type UsageData struct {
-	// Project related data
-	Projects []*ProjectData `json:"projects"`
-	// Total number of entries
-	TotalEntries int `json:"totalEntries"`
-	// Total number of projects, users, agents and workflows
-	TotalCount *TotalCount `json:"totalCount"`
-}
-
 // Defines input details for querying the total usage related details
-type UsageQuery struct {
+type UsageDataRequest struct {
 	// Pagination detail to fetch only a required number of data at a time
 	Pagination *Pagination `json:"pagination"`
 	// Rage of dates between which the data will be fetched
@@ -1027,6 +1017,16 @@ type UsageQuery struct {
 	Sort *UsageSortInput `json:"sort"`
 	// Search field to search for a particular project and fetch it's data
 	SearchProject *string `json:"searchProject"`
+}
+
+// Defines total usage data
+type UsageDataResponse struct {
+	// Project related data
+	Projects []*ProjectData `json:"projects"`
+	// Total number of entries
+	TotalEntries int `json:"totalEntries"`
+	// Total number of projects, users, agents and workflows
+	TotalCount *TotalCount `json:"totalCount"`
 }
 
 // Defines details required for sorting the data for a particular field
@@ -1230,7 +1230,7 @@ type WorkflowStat struct {
 	ExpRuns int `json:"expRuns"`
 }
 
-type WorkflowStats struct {
+type WorkflowStatsResponse struct {
 	Date  float64 `json:"date"`
 	Value int     `json:"value"`
 }

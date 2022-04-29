@@ -204,8 +204,8 @@ func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 	}, nil
 }
 
-// GetWorkflowRuns sends all the workflow runs for a project from the DB
-func GetWorkflowRuns(request model.GetWorkflowRunsRequest) (*model.GetWorkflowRunsResponse, error) {
+// ListWorkflowRuns sends all the workflow runs for a project from the DB
+func ListWorkflowRuns(request model.ListWorkflowRunsRequest) (*model.ListWorkflowRunsResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
@@ -448,7 +448,7 @@ func GetWorkflowRuns(request model.GetWorkflowRunsRequest) (*model.GetWorkflowRu
 	var workflows []dbSchemaWorkflow.AggregatedWorkflowRuns
 
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-		return &model.GetWorkflowRunsResponse{
+		return &model.ListWorkflowRunsResponse{
 			TotalNoOfWorkflowRuns: 0,
 			WorkflowRuns:          result,
 		}, nil
@@ -490,15 +490,15 @@ func GetWorkflowRuns(request model.GetWorkflowRunsRequest) (*model.GetWorkflowRu
 		totalFilteredWorkflowRunsCounter = workflows[0].TotalFilteredWorkflowRuns[0].Count
 	}
 
-	output := model.GetWorkflowRunsResponse{
+	output := model.ListWorkflowRunsResponse{
 		TotalNoOfWorkflowRuns: totalFilteredWorkflowRunsCounter,
 		WorkflowRuns:          result,
 	}
 	return &output, nil
 }
 
-// GetWorkflows returns all the workflows present in the given project
-func GetWorkflows(request model.GetWorkflowsRequest) (*model.GetWorkflowsResponse, error) {
+// ListWorkflows returns all the workflows present in the given project
+func ListWorkflows(request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match with projectID
@@ -648,7 +648,7 @@ func GetWorkflows(request model.GetWorkflowsRequest) (*model.GetWorkflowsRespons
 	var workflows []dbSchemaWorkflow.AggregatedWorkflows
 
 	if err = workflowsCursor.All(context.Background(), &workflows); err != nil || len(workflows) == 0 {
-		return &model.GetWorkflowsResponse{
+		return &model.ListWorkflowsResponse{
 			TotalNoOfWorkflows: 0,
 			Workflows:          result,
 		}, nil
@@ -688,7 +688,7 @@ func GetWorkflows(request model.GetWorkflowsRequest) (*model.GetWorkflowsRespons
 		totalFilteredWorkflowsCounter = workflows[0].TotalFilteredWorkflows[0].Count
 	}
 
-	output := model.GetWorkflowsResponse{
+	output := model.ListWorkflowsResponse{
 		TotalNoOfWorkflows: totalFilteredWorkflowsCounter,
 		Workflows:          result,
 	}
@@ -952,7 +952,7 @@ func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (
 }
 
 // ListWorkflowTemplate is used to list all the workflow templates available in the project
-func GetWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
+func ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err

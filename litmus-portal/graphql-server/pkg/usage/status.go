@@ -14,8 +14,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// GetUsage returns the portal's usage overview
-func GetUsage(ctx context.Context, query model.UsageQuery) (*model.UsageData, error) {
+// GetUsageData returns the portal's usage overview
+func GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error) {
 	data, err := usageHelper(ctx, query)
 	if err != nil {
 		return nil, err
@@ -36,14 +36,14 @@ func GetUsage(ctx context.Context, query model.UsageQuery) (*model.UsageData, er
 	if len(data.Pagination) != 1 {
 		return nil, errors.New("failed to get total entries for pagination")
 	}
-	return &model.UsageData{
+	return &model.UsageDataResponse{
 		Projects:     Projects,
 		TotalCount:   &Total,
 		TotalEntries: data.Pagination[0].TotalEntries,
 	}, nil
 }
 
-func usageHelper(ctx context.Context, query model.UsageQuery) (AggregateData, error) {
+func usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateData, error) {
 
 	pagination := bson.A{}
 	project := bson.A{}

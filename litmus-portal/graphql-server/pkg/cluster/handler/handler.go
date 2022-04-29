@@ -208,8 +208,8 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 	return "Successfully deleted clusters", nil
 }
 
-// QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters
-func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
+// ListClusters takes a projectID and clusterType to filter and return a list of clusters
+func ListClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
 	clusters, err := dbOperationsCluster.GetClusterWithProjectID(projectID, clusterType)
 	if err != nil {
 		return nil, err

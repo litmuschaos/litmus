@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -232,8 +233,8 @@ func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string,
 	return myhub.DeleteChaosHub(ctx, hubID, projectID)
 }
 
-func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
-	return gitOpsHandler.GitOpsNotificationHandler(ctx, clusterInfo, workflowID)
+func (r *mutationResolver) GitopsNotifier(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
@@ -383,15 +384,15 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 	return diRegistry, err
 }
 
-func (r *queryResolver) GetClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
+func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetClusters],
+		authorization.MutationRbacRules[authorization.ListClusters],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return clusterHandler.QueryGetClusters(projectID, clusterType)
+	return clusterHandler.ListClusters(projectID, clusterType)
 }
 
 func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
@@ -410,7 +411,7 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 	return string(response), nil
 }
 
-func (r *queryResolver) GetWorkflows(ctx context.Context, request model.GetWorkflowsRequest) (*model.GetWorkflowsResponse, error) {
+func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.ListWorkflow],
 		model.InvitationAccepted.String())
@@ -418,29 +419,29 @@ func (r *queryResolver) GetWorkflows(ctx context.Context, request model.GetWorkf
 		return nil, err
 	}
 
-	return wfHandler.GetWorkflows(request)
+	return wfHandler.ListWorkflows(request)
 }
 
-func (r *queryResolver) GetWorkflowRuns(ctx context.Context, request model.GetWorkflowRunsRequest) (*model.GetWorkflowRunsResponse, error) {
+func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.ListWorkflowRunsRequest) (*model.ListWorkflowRunsResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.GetWorkflowRuns],
+		authorization.MutationRbacRules[authorization.ListWorkflowRuns],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.GetWorkflowRuns(request)
+	return wfHandler.ListWorkflowRuns(request)
 }
 
-func (r *queryResolver) GetPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error) {
+func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetPredefinedWorkflows],
+		authorization.MutationRbacRules[authorization.ListPredefinedWorkflows],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.GetPredefinedWorkflows(hubName, projectID)
+	return myhub.ListPredefinedWorkflows(hubName, projectID)
 }
 
 func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
@@ -453,15 +454,15 @@ func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request
 	return myhub.GetPredefinedExperimentYAMLData(request)
 }
 
-func (r *queryResolver) GetWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
+func (r *queryResolver) ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetWorkflowManifests],
+		authorization.MutationRbacRules[authorization.ListWorkflowManifests],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.GetWorkflowManifests(ctx, projectID)
+	return wfHandler.ListWorkflowManifests(ctx, projectID)
 }
 
 func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
@@ -475,15 +476,15 @@ func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID s
 	return wfHandler.GetWorkflowManifestByID(ctx, templateID)
 }
 
-func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+func (r *queryResolver) ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetCharts],
+		authorization.MutationRbacRules[authorization.ListCharts],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.GetCharts(ctx, hubName, projectID)
+	return myhub.ListCharts(ctx, hubName, projectID)
 }
 
 func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error) {
@@ -497,15 +498,15 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.Expe
 	return myhub.GetHubExperiment(ctx, request)
 }
 
-func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
+func (r *queryResolver) ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetHubStatus],
+		authorization.MutationRbacRules[authorization.ListHubStatus],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.HubStatus(ctx, projectID)
+	return myhub.ListHubStatus(ctx, projectID)
 }
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, request model.ExperimentRequest) (string, error) {
@@ -530,26 +531,26 @@ func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) 
 	return gitOpsHandler.GetGitOpsDetails(ctx, projectID)
 }
 
-func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapDataResponse, error) {
+func (r *queryResolver) ListHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapDataResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetHeatmapData],
+		authorization.MutationRbacRules[authorization.ListHeatmapData],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return analyticsHandler.GetHeatMapData(workflowID, projectID, year)
+	return analyticsHandler.ListHeatmapData(workflowID, projectID, year)
 }
 
-func (r *queryResolver) GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+func (r *queryResolver) ListWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStatsResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetWorkflowStats],
+		authorization.MutationRbacRules[authorization.ListWorkflowStats],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return analyticsHandler.GetWorkflowStats(projectID, filter, showWorkflowRuns)
+	return analyticsHandler.ListWorkflowStats(projectID, filter, showWorkflowRuns)
 }
 
 func (r *queryResolver) GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error) {
@@ -574,17 +575,17 @@ func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([
 	return analyticsHandler.QueryListDataSource(projectID)
 }
 
-func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error) {
-	promResponseData, _, err := analyticsHandler.GetPromQuery(query)
+func (r *queryResolver) GetPrometheusData(ctx context.Context, request *model.PrometheusDataRequest) (*model.PrometheusDataResponse, error) {
+	promResponseData, _, err := analyticsHandler.GetPrometheusData(request)
 	return promResponseData, err
 }
 
-func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
-	return analyticsHandler.GetLabelNamesAndValues(series)
+func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, request *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
+	return analyticsHandler.GetLabelNamesAndValues(request)
 }
 
-func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error) {
-	return analyticsHandler.GetSeriesList(dsDetails)
+func (r *queryResolver) GetPromSeriesList(ctx context.Context, request *model.DsDetails) (*model.PromSeriesListResponse, error) {
+	return analyticsHandler.GetPromSeriesList(request)
 }
 
 func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error) {
@@ -598,14 +599,14 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clu
 	return analyticsHandler.QueryListDashboard(projectID, clusterID, dbID)
 }
 
-func (r *queryResolver) PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error) {
+func (r *queryResolver) ListPortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardDataResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.PortalDashboardData],
+		authorization.MutationRbacRules[authorization.ListPortalDashboardData],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return analyticsHandler.GetPortalDashboardData(projectID, hubName)
+	return analyticsHandler.ListPortalDashboardData(projectID, hubName)
 }
 
 func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
@@ -640,12 +641,12 @@ func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID st
 	return imageRegistry, err
 }
 
-func (r *queryResolver) UsageQuery(ctx context.Context, query model.UsageQuery) (*model.UsageData, error) {
+func (r *queryResolver) GetUsageData(ctx context.Context, request model.UsageDataRequest) (*model.UsageDataResponse, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	if claims["role"].(string) != "admin" {
 		return nil, errors.New("only portal admin access")
 	}
-	return usage.GetUsage(ctx, query)
+	return usage.GetUsageData(ctx, request)
 }
 
 func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID string) (<-chan *model.ClusterEventResponse, error) {
@@ -794,3 +795,13 @@ func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subsc
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
+	return gitOpsHandler.GitOpsNotificationHandler(ctx, clusterInfo, workflowID)
+}

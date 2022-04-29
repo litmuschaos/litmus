@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[string]model.WorkflowStats) error {
+func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[string]model.WorkflowStatsResponse) error {
 	// Converts the time stamp(string) to unix
 	i, err := strconv.ParseInt(updatedAt, 10, 64)
 	if err != nil {
@@ -58,7 +58,7 @@ func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[st
 }
 
 // PatchChaosEventWithVerdict takes annotations with chaos events, chaos verdict prometheus response, prometheus queries and cache object to patch and update chaos events with chaos verdict
-func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, verdictResponse *model.AnnotationsPromResponse, promInput *model.PromInput, AnalyticsCache *cache.Cache) []*model.AnnotationsPromResponse {
+func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, verdictResponse *model.AnnotationsPromResponse, promInput *model.PrometheusDataRequest, AnalyticsCache *cache.Cache) []*model.AnnotationsPromResponse {
 	var existingAnnotations []*model.AnnotationsPromResponse
 	err := copier.Copy(&existingAnnotations, &annotations)
 	if err != nil {
@@ -183,7 +183,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 }
 
 // MapMetricsToDashboard takes dashboard query map, prometheus response and query response map for mapping metrics to the panels for a dashboard
-func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, newPromResponse *model.PromResponse, queryResponseMap map[string]*model.MetricsPromResponse) *model.DashboardPromResponse {
+func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, newPromResponse *model.PrometheusDataResponse, queryResponseMap map[string]*model.MetricsPromResponse) *model.DashboardPromResponse {
 	var dashboardMetrics []*model.MetricDataForPanelGroup
 
 	for _, panelGroupQueryMap := range dashboardQueryMap {
@@ -206,7 +206,7 @@ func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, new
 		dashboardMetrics = append(dashboardMetrics, panelGroupMetricsData)
 	}
 
-	var promResponse model.PromResponse
+	var promResponse model.PrometheusDataResponse
 	err := copier.Copy(&promResponse, &newPromResponse)
 	if err != nil {
 		log.Printf("Error parsing annotations  %v\n", err)

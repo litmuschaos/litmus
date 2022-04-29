@@ -288,7 +288,7 @@ input WorkflowRunSortInput {
 """
 Defines the details for workflow runs
 """
-input GetWorkflowRunsRequest {
+input ListWorkflowRunsRequest {
   """
   ID of the project
   """
@@ -418,7 +418,7 @@ type WorkflowRun {
 """
 Defines the details of a workflow to sent as response
 """
-type GetWorkflowRunsResponse {
+type ListWorkflowRunsResponse {
   """
   Total number of workflow runs
   """
@@ -446,7 +446,7 @@ input WorkflowFilterInput {
 """
 Defines the details for a workflow
 """
-input GetWorkflowsRequest {
+input ListWorkflowsRequest {
   """
   ID of the project
   """
@@ -552,7 +552,7 @@ type Workflow {
 """
 Defines the details for a workflow with total workflow count
 """
-type GetWorkflowsResponse {
+type ListWorkflowsResponse {
   """
   Total number of workflows
   """

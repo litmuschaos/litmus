@@ -688,8 +688,8 @@ func QueryListDataSource(projectID string) ([]*model.DSResponse, error) {
 	return newDataSources, nil
 }
 
-// GetPromQuery takes prometheus queries and returns response for annotations and metrics with a query map
-func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*model.MetricsPromResponse, error) {
+// GetPrometheusData takes prometheus queries and returns response for annotations and metrics with a query map
+func GetPrometheusData(promInput *model.PrometheusDataRequest) (*model.PrometheusDataResponse, map[string]*model.MetricsPromResponse, error) {
 	var (
 		metrics         []*model.MetricsPromResponse
 		annotations     []*model.AnnotationsPromResponse
@@ -782,7 +782,7 @@ func GetPromQuery(promInput *model.PromInput) (*model.PromResponse, map[string]*
 		annotations = ops.PatchChaosEventWithVerdict(annotations, verdictResponse, promInput, AnalyticsCache)
 	}
 
-	newPromResponse := model.PromResponse{
+	newPromResponse := model.PrometheusDataResponse{
 		MetricsResponse:     metrics,
 		AnnotationsResponse: annotations,
 	}
@@ -820,12 +820,12 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 				End:   dataVariables.End,
 			}
 
-			newPromInput := &model.PromInput{
+			newPromInput := &model.PrometheusDataRequest{
 				Queries:   promQueries,
 				DsDetails: dsDetails,
 			}
 
-			newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
+			newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 			if err != nil {
 				log.Printf("Error during data source query of the dashboard view: %v\n", viewID)
 			} else {
@@ -841,12 +841,12 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 					End:   endTime,
 				}
 
-				newPromInput := &model.PromInput{
+				newPromInput := &model.PrometheusDataRequest{
 					Queries:   promQueries,
 					DsDetails: dsDetails,
 				}
 
-				newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
+				newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 				if err != nil {
 					log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 					break
@@ -871,12 +871,12 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 				End:   endTime,
 			}
 
-			newPromInput := &model.PromInput{
+			newPromInput := &model.PrometheusDataRequest{
 				Queries:   promQueries,
 				DsDetails: dsDetails,
 			}
 
-			newPromResponse, queryResponseMap, err := GetPromQuery(newPromInput)
+			newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 			if err != nil {
 				log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 			} else {
@@ -930,7 +930,7 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 	return newPromSeriesResponse, nil
 }
 
-func GetSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListResponse, error) {
+func GetPromSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesListResponse, error) {
 	var newPromSeriesListResponse *model.PromSeriesListResponse
 	newPromSeriesListInput := analytics.PromDSDetails{
 		URL:   promSeriesListInput.URL,
@@ -1099,8 +1099,8 @@ func QueryListDashboard(projectID string, clusterID *string, dbID *string) ([]*m
 	return newListDashboard, nil
 }
 
-// GetWorkflowStats returns schedules data for analytics graph
-func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+// ListWorkflowStats returns schedules data for analytics graph
+func ListWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStatsResponse, error) {
 	var pipeline mongo.Pipeline
 	dbKey := "created_at"
 	now := time.Now()
@@ -1226,10 +1226,10 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 	}
 
 	// Result array
-	var result []*model.WorkflowStats
+	var result []*model.WorkflowStatsResponse
 
 	// Map to store schedule count monthly(last 6months), weekly(last 4weeks) and hourly (last 48hrs)
-	statsMap := make(map[string]model.WorkflowStats)
+	statsMap := make(map[string]model.WorkflowStatsResponse)
 
 	// Initialize the value of the map based on filter
 	switch filter {
@@ -1237,7 +1237,7 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
 			// Storing the timestamp of first day of the month
 			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
-			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStats{
+			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStatsResponse{
 				Date:  date * 1000,
 				Value: 0,
 			}
@@ -1246,7 +1246,7 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 		for daysAgo := now.AddDate(0, 0, -28); daysAgo.Before(now) || daysAgo.Equal(now); daysAgo = daysAgo.AddDate(0, 0, 1) {
 			// Storing the timestamp of first hour of the day
 			date := float64(time.Date(daysAgo.Year(), daysAgo.Month(), daysAgo.Day(), 0, 0, 0, 0, time.Local).Unix())
-			statsMap[fmt.Sprintf("%d-%d", daysAgo.Month(), daysAgo.Day())] = model.WorkflowStats{
+			statsMap[fmt.Sprintf("%d-%d", daysAgo.Month(), daysAgo.Day())] = model.WorkflowStatsResponse{
 				Date:  date * 1000,
 				Value: 0,
 			}
@@ -1255,7 +1255,7 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 		for hoursAgo := now.Add(time.Hour * -48); hoursAgo.Before(now) || hoursAgo.Equal(now); hoursAgo = hoursAgo.Add(time.Hour * 1) {
 			// Storing the timestamp of first minute of the hour
 			date := float64(time.Date(hoursAgo.Year(), hoursAgo.Month(), hoursAgo.Day(), hoursAgo.Hour(), 0, 0, 0, time.Local).Unix())
-			statsMap[fmt.Sprintf("%d-%d", hoursAgo.Day(), hoursAgo.Hour())] = model.WorkflowStats{
+			statsMap[fmt.Sprintf("%d-%d", hoursAgo.Day(), hoursAgo.Hour())] = model.WorkflowStatsResponse{
 				Date:  date * 1000,
 				Value: 0,
 			}
@@ -1290,7 +1290,7 @@ func GetWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflow
 
 	// To fill the result array from statsMap for monthly and weekly data
 	for _, val := range statsMap {
-		result = append(result, &model.WorkflowStats{Date: val.Date, Value: val.Value})
+		result = append(result, &model.WorkflowStatsResponse{Date: val.Date, Value: val.Value})
 	}
 
 	// Sorts the result array in ascending order of time
@@ -1523,8 +1523,8 @@ func GetWorkflowRunStats(workflowRunStatsRequest model.WorkflowRunStatsRequest) 
 	return &result, nil
 }
 
-// GetHeatMapData returns the data for calendar heatmap
-func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.HeatmapDataResponse, error) {
+// ListHeatmapData returns the data for calendar heatmap
+func ListHeatmapData(workflow_id string, project_id string, year int) ([]*model.HeatmapDataResponse, error) {
 
 	// Start and end timestamp of the given year
 	start := time.Date(year, time.January, 1, 0, 00, 00, 0, time.Local)
@@ -1673,11 +1673,11 @@ func GetHeatMapData(workflow_id string, project_id string, year int) ([]*model.H
 	return result, nil
 }
 
-// GetPortalDashboardData gets the portal dashboard data from the ChaosHub
-func GetPortalDashboardData(projectID string, hubname string) ([]*model.PortalDashboardData, error) {
+// ListPortalDashboardData gets the portal dashboard data from the ChaosHub
+func ListPortalDashboardData(projectID string, hubname string) ([]*model.PortalDashboardDataResponse, error) {
 	DashboardDirectoryPath := defaultPath + projectID + "/" + hubname + "/monitoring/dashboards/litmus-portal"
-	var PortalDashboards []*model.PortalDashboardData
-	var PortalDashboardData analytics.PortalDashboard
+	var PortalDashboards []*model.PortalDashboardDataResponse
+	var ListPortalDashboardData analytics.PortalDashboard
 	files, err := ioutil.ReadDir(DashboardDirectoryPath)
 	if err != nil {
 		return PortalDashboards, err
@@ -1687,12 +1687,12 @@ func GetPortalDashboardData(projectID string, hubname string) ([]*model.PortalDa
 		if err != nil {
 			dashboardData = []byte("")
 		}
-		err = json.Unmarshal(dashboardData, &PortalDashboardData)
+		err = json.Unmarshal(dashboardData, &ListPortalDashboardData)
 		if err != nil {
 			return nil, err
 		}
-		dashboard, _ := json.Marshal(PortalDashboardData)
-		data := &model.PortalDashboardData{
+		dashboard, _ := json.Marshal(ListPortalDashboardData)
+		data := &model.PortalDashboardDataResponse{
 			Name:          file.Name(),
 			DashboardData: string(dashboard),
 		}

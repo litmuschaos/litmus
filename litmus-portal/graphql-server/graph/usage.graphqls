@@ -81,7 +81,7 @@ type TotalCount {
 """
 Defines total usage data
 """
-type UsageData {
+type UsageDataResponse {
   """
   Project related data
   """
@@ -123,7 +123,7 @@ input UsageSortInput {
 """
 Defines input details for querying the total usage related details
 """
-input UsageQuery {
+input UsageDataRequest {
   """
   Pagination detail to fetch only a required number of data at a time
   """

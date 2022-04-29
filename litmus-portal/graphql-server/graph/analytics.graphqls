@@ -116,7 +116,7 @@ input PromQuery {
   closeArea: Boolean
 }
 
-input PromInput {
+input PrometheusDataRequest {
   queries: [PromQueryInput]
   dsDetails: DsDetails!
 }
@@ -187,7 +187,7 @@ type AnnotationsTimeStampValue {
   value: Int
 }
 
-type PromResponse {
+type PrometheusDataResponse {
   metricsResponse: [MetricsPromResponse]
   annotationsResponse: [AnnotationsPromResponse]
 }
@@ -306,7 +306,7 @@ enum TimeFrequency {
   MONTHLY
 }
 
-type WorkflowStats {
+type WorkflowStatsResponse {
   date: Float!
   value: Int!
 }
@@ -347,7 +347,7 @@ type WorkflowRunStatsResponse {
   workflowRunFailedPercentage: Float!
 }
 
-type PortalDashboardData {
-    name: String!
-    dashboardData: String!
+type PortalDashboardDataResponse {
+  name: String!
+  dashboardData: String!
 }

@@ -131,8 +131,8 @@ func SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*m
 	return newHub.GetOutputMyHub(), nil
 }
 
-// HubStatus returns the array of hubdetails with their current status.
-func HubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
+// ListHubStatus returns the array of hubdetails with their current status.
+func ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
 
 	allHubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
 	if err != nil {
@@ -197,8 +197,8 @@ func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bo
 	return false, nil
 }
 
-// GetCharts is responsible for getting the charts details
-func GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+// ListCharts is responsible for getting the charts details
+func ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 
 	chartsInput := model.CloningInput{}
 	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
@@ -279,7 +279,7 @@ func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.Chao
 		log.Print("ERROR", err)
 		return nil, err
 	}
-	return HubStatus(ctx, syncHubInput.ProjectID)
+	return ListHubStatus(ctx, syncHubInput.ProjectID)
 }
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
@@ -461,7 +461,7 @@ func RecurringHubSync() {
 	}
 }
 
-func GetPredefinedWorkflows(hubname string, projectID string) ([]string, error) {
+func ListPredefinedWorkflows(hubname string, projectID string) ([]string, error) {
 	expList, err := handler.GetPredefinedWorkflowFileList(hubname, projectID)
 	if err != nil {
 		return nil, err
