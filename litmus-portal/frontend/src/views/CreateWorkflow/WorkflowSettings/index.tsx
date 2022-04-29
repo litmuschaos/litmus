@@ -66,12 +66,12 @@ const WorkflowSettings = forwardRef((_, ref) => {
       fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
         if (data.getHubExperiment !== undefined) {
-          setName(data.getHubExperiment.Metadata.Name.toLowerCase());
-          setDescription(data.getHubExperiment.Spec.CategoryDescription);
+          setName(data.getHubExperiment.metadata.name.toLowerCase());
+          setDescription(data.getHubExperiment.spec.categoryDescription);
           setIcon(
-            `${config.grahqlEndpoint}/icon/${projectID}/${hubName}/predefined/${data.getHubExperiment.Metadata.Name}.png`
+            `${config.grahqlEndpoint}/icon/${projectID}/${hubName}/predefined/${data.getHubExperiment.metadata.name}.png`
           );
-          setCRDLink(data.getHubExperiment.Metadata.Name);
+          setCRDLink(data.getHubExperiment.metadata.name);
         }
       },
     }

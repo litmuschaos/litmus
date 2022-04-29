@@ -2,13 +2,13 @@ import { gql } from '@apollo/client';
 
 // gitOps
 export const ENABLE_GITOPS = gql`
-  mutation enableGitOps($config: GitConfig!) {
+  mutation enableGitOps($config: GitConfigResponse!) {
     enableGitOps(config: $config)
   }
 `;
 
 export const UPDATE_GITOPS = gql`
-  mutation updateGitOps($config: GitConfig!) {
+  mutation updateGitOps($config: GitConfigResponse!) {
     updateGitOps(config: $config)
   }
 `;

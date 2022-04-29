@@ -60,7 +60,7 @@ const ChooseADashboardType = forwardRef(
       GET_HUB_STATUS,
       {
         variables: {
-          data: projectID,
+          projectID,
           onError: () => {
             alert.changeAlertState(true);
           },
@@ -113,8 +113,8 @@ const ChooseADashboardType = forwardRef(
       if (!loadingHubs) {
         const availableHubNames =
           hubs?.getHubStatus
-            .filter((hubs) => hubs.IsAvailable === true)
-            .map((hub) => hub.HubName) ?? [];
+            .filter((hubs) => hubs.isAvailable === true)
+            .map((hub) => hub.hubName) ?? [];
 
         if (availableHubNames.length) {
           getPortalDashboards({

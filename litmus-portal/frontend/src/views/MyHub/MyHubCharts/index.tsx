@@ -47,14 +47,14 @@ const MyHub: React.FC = () => {
   const projectID = getProjectID();
   // Get all MyHubs with status
   const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: projectID },
+    variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
   const theme = useTheme();
 
   // Filter the selected MyHub
   const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
-    return paramData.hubname === myHub.HubName;
+    return paramData.hubname === myHub.hubName;
   })[0];
 
   const classes = useStyles();
@@ -114,9 +114,9 @@ const MyHub: React.FC = () => {
     if (data !== undefined) {
       const chartList = data.getCharts;
       chartList.forEach((expData: Chart) => {
-        expData.Spec.Experiments.forEach((expName) => {
+        expData.spec.experiments.forEach((expName) => {
           exp.push({
-            ChaosName: expData.Metadata.Name,
+            ChaosName: expData.metadata.name,
             ExperimentName: expName,
           });
         });
@@ -153,19 +153,19 @@ const MyHub: React.FC = () => {
       <BackButton />
       <div className={classes.header}>
         <Typography variant="h3" gutterBottom>
-          {UserHub?.HubName}
+          {UserHub?.hubName}
         </Typography>
         <Typography variant="h5" gutterBottom>
           {t('myhub.myhubChart.repoLink')}
-          <strong>{UserHub?.RepoURL}</strong>
+          <strong>{UserHub?.repoURL}</strong>
         </Typography>
         <Typography variant="h5">
           {t('myhub.myhubChart.repoBranch')}
-          <strong>{UserHub?.RepoBranch}</strong>
+          <strong>{UserHub?.repoBranch}</strong>
         </Typography>
         <Typography className={classes.lastSyncText}>
           {t('myhub.myhubChart.lastSynced')}{' '}
-          {formatDate(UserHub ? UserHub.LastSyncedAt : '')}
+          {formatDate(UserHub ? UserHub.lastSyncedAt : '')}
         </Typography>
         {/* </div> */}
       </div>

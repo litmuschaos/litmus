@@ -105,7 +105,7 @@ const EditSchedule: React.FC = () => {
   const wfDetails = data && data.getWorkflow.workflows[0];
   const doc = new YAML.Document();
   const w: Weights[] = [];
-  const { cronSyntax, clusterid, clustername } = workflowData;
+  const { cronSyntax, clusterID, clusterName } = workflowData;
 
   const [createChaosWorkFlow, { error: workflowError }] = useMutation<
     UpdateWorkflowResponse,
@@ -145,7 +145,7 @@ const EditSchedule: React.FC = () => {
         isCustomWorkflow: false,
         weightages: weightData,
         projectID,
-        clusterID: clusterid,
+        clusterID: clusterID,
       };
 
       createChaosWorkFlow({
@@ -313,7 +313,7 @@ const EditSchedule: React.FC = () => {
                         </Typography>
                       </div>
                       <Typography className={classes.schCol2}>
-                        {clustername}
+                        {clusterName}
                       </Typography>
                     </div>
 

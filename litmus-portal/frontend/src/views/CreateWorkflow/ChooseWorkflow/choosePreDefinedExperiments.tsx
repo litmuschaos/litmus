@@ -47,7 +47,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
 
     // Get all MyHubs with status
     const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-      variables: { data: selectedProjectID },
+      variables: { projectID: selectedProjectID },
       fetchPolicy: 'cache-and-network',
     });
 
@@ -117,19 +117,19 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
             /**
              * Push only available hub
              */
-            if (hub.IsAvailable) {
+            if (hub.isAvailable) {
               hubDetails.push({
                 id: hub.id,
-                hubName: hub.HubName,
-                repoBranch: hub.RepoBranch,
-                repoURL: hub.RepoURL,
+                hubName: hub.hubName,
+                repoBranch: hub.repoBranch,
+                repoURL: hub.repoURL,
               });
             }
           });
           setAvailableHubs(hubDetails);
         }
         data.getHubStatus.forEach((hubData) => {
-          if (hubData.HubName.toLowerCase() === 'litmus chaoshub') {
+          if (hubData.hubName.toLowerCase() === 'litmus chaoshub') {
             setSelectedHub('Litmus ChaosHub');
             localforage.setItem('selectedHub', 'Litmus ChaosHub');
             getPredefinedWorkflow({

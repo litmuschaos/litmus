@@ -90,11 +90,11 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
   });
 
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: projectID },
+    variables: { projectID },
     fetchPolicy: 'network-only',
   });
   const hubData = data?.getHubStatus.filter(
-    (hubs) => hubs.HubName === hubName
+    (hubs) => hubs.hubName === hubName
   )[0];
 
   /**
@@ -267,11 +267,11 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
     if (hubName?.length) {
       if (hubData !== undefined) {
         setGitHub({
-          HubName: hubData.HubName,
-          GitURL: hubData.RepoURL,
-          GitBranch: hubData.RepoBranch,
+          HubName: hubData.hubName,
+          GitURL: hubData.repoURL,
+          GitBranch: hubData.repoBranch,
         });
-        if (hubData.IsPrivate) {
+        if (hubData.isPrivate) {
           setIsToggled({
             isPublicToggled: false,
             isPrivateToggled: true,
@@ -282,14 +282,14 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
             isPrivateToggled: false,
           });
         }
-        if (hubData.AuthType === MyHubType.TOKEN) {
+        if (hubData.authType === MyHubType.TOKEN) {
           setPrivateHub('token');
-          setAccessToken(hubData.Token);
-        } else if (hubData.AuthType === MyHubType.SSH) {
+          setAccessToken(hubData.token);
+        } else if (hubData.authType === MyHubType.SSH) {
           setPrivateHub('ssh');
           setSshKey({
-            privateKey: hubData.SSHPrivateKey,
-            publicKey: hubData.SSHPublicKey,
+            privateKey: hubData.sshPrivateKey,
+            publicKey: hubData.sshPublicKey,
           });
         } else {
           setPrivateHub('token');

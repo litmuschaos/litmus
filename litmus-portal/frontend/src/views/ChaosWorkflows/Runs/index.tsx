@@ -123,7 +123,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
     WorkflowDataRequest
   >(WORKFLOW_DETAILS, {
     variables: {
-      workflowRunsRequest: {
+      GetWorkflowRunsRequest: {
         projectID,
         pagination: {
           page: paginationData.page,

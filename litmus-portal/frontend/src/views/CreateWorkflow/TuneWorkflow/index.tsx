@@ -146,9 +146,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
     onCompleted: (data) => {
       const allExp: ChartName[] = [];
       data.getCharts.forEach((data) => {
-        return data.Spec.Experiments?.forEach((experiment) => {
+        return data.spec.experiments?.forEach((experiment) => {
           allExp.push({
-            ChaosName: data.Metadata.Name,
+            ChaosName: data.metadata.name,
             ExperimentName: experiment,
           });
         });

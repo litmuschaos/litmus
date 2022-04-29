@@ -126,7 +126,7 @@ export interface WorkflowRunFilterRequest {
 }
 
 export interface WorkflowDataRequest {
-  workflowRunsRequest: {
+  GetWorkflowRunsRequest: {
     projectID: string;
     workflowRunIDs?: string[];
     workflowIDs?: string[];

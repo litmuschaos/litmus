@@ -27,12 +27,12 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
           </Typography>
         </div>
         {maintainers?.map((m: Maintainer) => (
-          <div className={classes.maintainerField} key={m.Name}>
+          <div className={classes.maintainerField} key={m.name}>
             <Typography className={classes.maintainerlinks}>
-              {m.Name}
+              {m.name}
             </Typography>
             <Typography className={classes.maintainerlinks}>
-              {m.Email}
+              {m.email}
             </Typography>
           </div>
         ))}
@@ -50,15 +50,15 @@ const UsefulLinks: React.FC<UsefulLinkProps> = ({
         </div>
         {data?.map(
           (d: Link) =>
-            d.Url && (
-              <div key={d.Name}>
+            d.url && (
+              <div key={d.name}>
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={d.Url}
+                  href={d.url}
                   className={classes.createLinkText}
                 >
-                  <Typography className={classes.linkType}>{d.Name}</Typography>
+                  <Typography className={classes.linkType}>{d.name}</Typography>
                 </a>
               </div>
             )

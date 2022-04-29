@@ -54,7 +54,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     WORKFLOW_DETAILS,
     {
       variables: {
-        workflowRunsRequest: {
+        GetWorkflowRunsRequest: {
           projectID,
           pagination: {
             page: 0,

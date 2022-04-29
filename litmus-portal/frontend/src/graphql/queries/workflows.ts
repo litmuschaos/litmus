@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 // GetWorkflowRuns
 export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
-  query getWorkflowRuns($request: GetWorkflowRunsInput!) {
+  query getWorkflowRuns($request: GetWorkflowRunsRequest!) {
     getWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
@@ -22,7 +22,7 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
 `;
 
 export const WORKFLOW_DETAILS = gql`
-  query getWorkflowRuns($request: GetWorkflowRunsInput!) {
+  query getWorkflowRuns($request: GetWorkflowRunsRequest!) {
     getWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
@@ -49,7 +49,7 @@ export const WORKFLOW_DETAILS = gql`
 `;
 
 export const WORKFLOW_RUN_DETAILS = gql`
-  query getWorkflowRuns($request: GetWorkflowRunsInput!) {
+  query getWorkflowRuns($request: GetWorkflowRunsRequest!) {
     getWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {

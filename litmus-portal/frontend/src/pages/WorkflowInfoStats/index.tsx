@@ -95,8 +95,8 @@ const WorkflowInfoStats: React.FC = () => {
   // TODO: shift out
   const { data: workflowRunData } = useQuery<Workflow, WorkflowDataRequest>(
     gql`
-      query workflowDetails($workflowRunsRequest: GetWorkflowRunsRequest!) {
-        getWorkflowRuns(workflowRunsRequest: $workflowRunsRequest) {
+      query workflowDetails($request: GetWorkflowRunsRequest!) {
+        getWorkflowRuns(request: $request) {
           totalNoOfWorkflowRuns
           workflowRuns {
             workflowRunID
@@ -106,7 +106,7 @@ const WorkflowInfoStats: React.FC = () => {
     `,
     {
       variables: {
-        workflowRunsRequest: {
+        GetWorkflowRunsRequest: {
           projectID,
           workflowIDs: [workflowID],
         },

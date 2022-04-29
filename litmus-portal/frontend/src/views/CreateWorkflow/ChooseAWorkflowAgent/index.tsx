@@ -53,7 +53,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   const alert = useActions(AlertActions);
   const imageRegistry = useActions(ImageRegistryActions);
   const clusterid: string = useSelector(
-    (state: RootState) => state.workflowData.clusterid
+    (state: RootState) => state.workflowData.clusterID
   );
   const selectedProjectID = getProjectID();
 

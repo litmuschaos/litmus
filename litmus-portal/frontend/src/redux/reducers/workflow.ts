@@ -9,7 +9,7 @@ import createReducer from './createReducer';
 const initialState: WorkflowData = {
   chaosEngineChanged: false,
   namespace: '',
-  clusterid: '',
+  clusterID: '',
   cronSyntax: '',
   scheduleType: {
     scheduleOnce: 'now',
@@ -22,7 +22,7 @@ const initialState: WorkflowData = {
     time: new Date(),
     date: new Date(),
   },
-  clustername: '',
+  clusterName: '',
 };
 
 const init: WorkflowManifest = {

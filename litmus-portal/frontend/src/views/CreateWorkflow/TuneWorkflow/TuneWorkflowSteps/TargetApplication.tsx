@@ -71,7 +71,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
-  const { clusterid } = workflowData;
+  const { clusterID } = workflowData;
   const engineManifest = YAML.parse(manifest.engineYAML);
 
   /**
@@ -162,7 +162,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const { data } = useSubscription<KubeObjResponse, KubeObjRequest>(KUBE_OBJ, {
     variables: {
       request: {
-        clusterID: clusterid,
+        clusterID: clusterID,
         objectType: 'kubeobject',
         kubeObjRequest: {
           group: GVRObj.group,

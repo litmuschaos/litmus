@@ -90,7 +90,7 @@ const VerifyCommit = forwardRef(
       (state: RootState) => state.workflowData
     );
 
-    const { clusterid, cronSyntax, clustername } = workflowData;
+    const { clusterID, cronSyntax, clusterName } = workflowData;
 
     const { manifest, isCustomWorkflow, isUploaded } = useSelector(
       (state: RootState) => state.workflowManifest
@@ -268,7 +268,7 @@ const VerifyCommit = forwardRef(
           isCustomWorkflow,
           weightages: weightData,
           projectID: getProjectID(),
-          clusterID: clusterid,
+          clusterID: clusterID,
         };
         createChaosWorkFlow({
           variables: { request: chaosWorkFlowInputs },
@@ -415,7 +415,7 @@ const VerifyCommit = forwardRef(
                   </Typography>
 
                   <Typography className={classes.right}>
-                    {clustername}
+                    {clusterName}
                   </Typography>
                 </div>
                 <div className={classes.itemWrapper}>

@@ -90,7 +90,7 @@ const Overview: React.FC = () => {
     error: workflowError,
   } = useQuery<Workflow, WorkflowDataRequest>(WORKFLOW_DETAILS, {
     variables: {
-      workflowRunsRequest: {
+      GetWorkflowRunsRequest: {
         projectID,
         pagination: {
           page: 0,

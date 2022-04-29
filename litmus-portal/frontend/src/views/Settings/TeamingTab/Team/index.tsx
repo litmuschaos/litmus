@@ -161,7 +161,9 @@ const TeamingTab: React.FC = () => {
     ? notAccepted &&
       notAccepted
         .filter((dataRow) =>
-          dataRow.userName.toLowerCase().includes(filters.search.toLowerCase())
+          dataRow?.userName
+            ?.toLowerCase()
+            .includes(filters.search.toLowerCase())
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
@@ -214,7 +216,7 @@ const TeamingTab: React.FC = () => {
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.members.forEach((member: Member) => {
+      project.members?.forEach((member: Member) => {
         if (member.userID === userID && member.role === 'Owner') {
           projectOwner++;
         } else if (

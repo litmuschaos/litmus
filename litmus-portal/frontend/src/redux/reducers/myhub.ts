@@ -1,24 +1,24 @@
 import {
+  HubDetails,
   MyHubAction,
   MyHubActions,
-  HubDetails,
 } from '../../models/redux/myhub';
 import createReducer from './createReducer';
 
 const initialState: HubDetails = {
   id: '',
-  HubName: '',
-  RepoURL: '',
-  RepoBranch: '',
-  TotalExp: '',
-  IsAvailable: true,
-  IsPrivate: false,
-  Token: '',
-  UserName: '',
-  Password: '',
-  SSHPrivateKey: '',
-  SSHPublicKey: '',
-  LastSyncedAt: '',
+  hubName: '',
+  repoURL: '',
+  repoBranch: '',
+  totalExp: '',
+  isAvailable: true,
+  isPrivate: false,
+  token: '',
+  userName: '',
+  password: '',
+  sshPrivateKey: '',
+  sshPublicKey: '',
+  lastSyncedAt: '',
 };
 
 export const hubDetails = createReducer<HubDetails>(initialState, {

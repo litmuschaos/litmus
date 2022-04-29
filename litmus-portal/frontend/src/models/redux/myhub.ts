@@ -1,69 +1,69 @@
 import { MyHubType } from '../graphql/user';
 
 export interface Chart {
-  ApiVersion: string;
-  Kind: string;
-  Metadata: Metadata;
-  Spec: Spec;
-  PackageInfo: PackageInfo;
+  apiVersion: string;
+  kind: string;
+  metadata: Metadata;
+  spec: Spec;
+  packageInfo: PackageInfo;
 }
 
 export interface Spec {
-  DisplayName: string;
-  CategoryDescription: string;
-  Keywords: string[];
-  Maturity: string;
-  Maintainers: Maintainer[];
-  MinKubeVersion: string;
-  Provider: string;
-  Links: Link[];
-  Experiments: string[];
-  ChaosExpCRDLink: string;
-  Platforms: string[];
-  ChaosType: string;
+  displayName: string;
+  categoryDescription: string;
+  keywords: string[];
+  maturity: string;
+  maintainers: Maintainer[];
+  minKubeVersion: string;
+  provider: string;
+  links: Link[];
+  experiments: string[];
+  chaosExpCRDLink: string;
+  platforms: string[];
+  chaosType: string;
 }
 
 export interface Maintainer {
-  Name: string;
-  Email: string;
+  name: string;
+  email: string;
 }
 
 export interface Link {
-  Name: string;
-  Url: string;
+  name: string;
+  url: string;
 }
 
 export interface Metadata {
-  Name: string;
-  Version: string;
-  Annotations: Annotation[];
+  name: string;
+  version: string;
+  annotations: Annotation[];
 }
 
 export interface Annotation {
-  Categories: string;
-  Vendor: string;
-  CreatedAt: string;
-  Repository: string;
-  Support: string;
-  ChartDescription: string;
+  categories: string;
+  vendor: string;
+  createdAt: string;
+  repository: string;
+  support: string;
+  chartDescription: string;
 }
 
 export interface PackageInfo {
-  PackageName: string;
-  Experiments: Experiments[];
+  packageName: string;
+  experiments: Experiments[];
 }
 
 export interface Experiments {
-  Name: string;
-  Csv: string;
-  Desc: string;
+  name: string;
+  csv: string;
+  desc: string;
 }
 
 export interface ChartsInput {
-  HubName: string;
-  UserName: string;
-  RepoURL: string;
-  RepoBranch: string;
+  hubName: string;
+  userName: string;
+  repoURL: string;
+  repoBranch: string;
 }
 
 export interface Charts {
@@ -76,19 +76,19 @@ export interface ExperimentDetail {
 
 export interface HubDetails {
   id: string;
-  HubName: string;
-  RepoURL: string;
-  RepoBranch: string;
-  TotalExp: string;
-  IsAvailable: boolean;
-  AuthType?: MyHubType;
-  IsPrivate: boolean;
-  Token: string;
-  UserName: string;
-  Password: string;
-  SSHPrivateKey: string;
-  SSHPublicKey: string;
-  LastSyncedAt: string;
+  hubName: string;
+  repoURL: string;
+  repoBranch: string;
+  totalExp: string;
+  isAvailable: boolean;
+  authType?: MyHubType;
+  isPrivate: boolean;
+  token: string;
+  userName: string;
+  password: string;
+  sshPrivateKey: string;
+  sshPublicKey: string;
+  lastSyncedAt: string;
 }
 
 export interface HubStatus {

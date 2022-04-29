@@ -167,7 +167,7 @@ const WorkflowComparisonTable = () => {
   const [getWorkflowRun, { loading: loadingRuns, error: errorFetchingRuns }] =
     useLazyQuery<Workflow, WorkflowDataRequest>(WORKFLOW_RUN_DETAILS, {
       variables: {
-        workflowRunsRequest: {
+        GetWorkflowRunsRequest: {
           projectID,
           workflowIDs: selectedWorkflows,
         },

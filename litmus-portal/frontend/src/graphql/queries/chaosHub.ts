@@ -3,46 +3,46 @@ import { gql } from '@apollo/client';
 // getHubStatus
 export const CORE_CHART_FIELDS = gql`
   fragment CoreChartFields on Chart {
-    ApiVersion
+    apiVersion
     Kind
-    Metadata {
-      Name
-      Version
-      Annotations {
-        Categories
-        Vendor
-        CreatedAt
-        Repository
-        Support
-        ChartDescription
+    metadata {
+      name
+      version
+      annotations {
+        categories
+        vendor
+        createdAt
+        repository
+        support
+        chartDescription
       }
     }
-    Spec {
-      DisplayName
-      CategoryDescription
-      Keywords
-      Maturity
-      Experiments
-      Maintainers {
-        Name
-        Email
+    spec {
+      displayName
+      categoryDescription
+      keywords
+      maturity
+      experiments
+      maintainers {
+        name
+        email
       }
-      MinKubeVersion
-      Provider
-      Links {
-        Name
-        Url
+      minKubeVersion
+      provider
+      links {
+        name
+        url
       }
-      ChaosExpCRDLink
-      Platforms
-      ChaosType
+      chaosExpCRDLink
+      platforms
+      chaosType
     }
-    PackageInfo {
-      PackageName
-      Experiments {
-        Name
-        CSV
-        Desc
+    packageInfo {
+      packageName
+      experiments {
+        name
+        csv
+        desc
       }
     }
   }
@@ -67,22 +67,22 @@ export const GET_EXPERIMENT_DATA = gql`
 `;
 
 export const GET_HUB_STATUS = gql`
-  query getHubStatus($data: String!) {
-    getHubStatus(projectID: $data) {
+  query getHubStatus($projectID: String!) {
+    getHubStatus(projectID: $projectID) {
       id
-      HubName
-      RepoBranch
-      RepoURL
-      TotalExp
-      IsAvailable
-      AuthType
-      IsPrivate
-      Token
-      UserName
-      Password
-      SSHPrivateKey
-      SSHPublicKey
-      LastSyncedAt
+      hubName
+      repoBranch
+      repoURL
+      totalExp
+      isAvailable
+      authType
+      isPrivate
+      token
+      userName
+      password
+      sshPrivateKey
+      sshPublicKey
+      lastSyncedAt
     }
   }
 `;

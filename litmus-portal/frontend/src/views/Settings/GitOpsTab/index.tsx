@@ -87,7 +87,7 @@ const GitOpsTab = () => {
   const { data, refetch, loading } = useQuery<GetGitOpsDetailRequest>(
     GET_GITOPS_DATA,
     {
-      variables: { data: projectID },
+      variables: { projectID },
       fetchPolicy: 'cache-and-network',
     }
   );
@@ -240,20 +240,20 @@ const GitOpsTab = () => {
       if (data?.gitOpsDetails.enabled === false) {
         enableGitOps({
           variables: {
-            gitConfig: {
-              ProjectID: projectID,
-              RepoURL: gitHub.GitURL,
-              Branch: gitHub.GitBranch,
-              AuthType:
+            gitConfigResponse: {
+              projectID: projectID,
+              repoURL: gitHub.GitURL,
+              branch: gitHub.GitBranch,
+              authType:
                 privateHub === 'token'
                   ? MyHubType.TOKEN
                   : privateHub === 'ssh'
                   ? MyHubType.SSH
                   : MyHubType.NONE,
-              Token: accessToken,
-              UserName: 'user',
-              Password: 'user',
-              SSHPrivateKey: sshKey.privateKey,
+              token: accessToken,
+              userName: 'user',
+              password: 'user',
+              sshPrivateKey: sshKey.privateKey,
             },
           },
         });
@@ -261,11 +261,11 @@ const GitOpsTab = () => {
       if (data?.gitOpsDetails.enabled === true) {
         updateGitOps({
           variables: {
-            gitConfig: {
-              ProjectID: projectID,
-              RepoURL: gitHub.GitURL,
-              Branch: gitHub.GitBranch,
-              AuthType:
+            gitConfigResponse: {
+              projectID: projectID,
+              repoURL: gitHub.GitURL,
+              branch: gitHub.GitBranch,
+              authType:
                 privateHub === ''
                   ? data?.gitOpsDetails.authType
                   : privateHub === 'token'
@@ -273,11 +273,11 @@ const GitOpsTab = () => {
                   : privateHub === 'ssh'
                   ? MyHubType.SSH
                   : MyHubType.NONE,
-              Token:
+              token:
                 privateHub === '' ? data?.gitOpsDetails.token : accessToken,
-              UserName: 'user',
-              Password: 'user',
-              SSHPrivateKey:
+              userName: 'user',
+              password: 'user',
+              sshPrivateKey:
                 privateHub === ''
                   ? data?.gitOpsDetails.sshPrivateKey
                   : sshKey.privateKey,

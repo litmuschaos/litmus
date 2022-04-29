@@ -153,7 +153,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     WorkflowDataRequest
   >(WORKFLOW_RUN_DETAILS, {
     variables: {
-      workflowRunsRequest: {
+      GetWorkflowRunsRequest: {
         projectID,
         workflowIDs: [workflowID],
         workflowRunIDs: [workflowRunID],

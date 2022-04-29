@@ -80,7 +80,7 @@ const WorkflowDetails: React.FC = () => {
     WorkflowDataRequest
   >(WORKFLOW_DETAILS_WITH_EXEC_DATA, {
     variables: {
-      workflowRunsRequest: {
+      GetWorkflowRunsRequest: {
         projectID,
         workflowRunIDs: [workflowRunID],
       },

@@ -31,7 +31,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   const experimentDefaultImagePath = `${config.grahqlEndpoint}/icon`;
 
   const [imageURL, setImageURL] = useState(
-    `${experimentDefaultImagePath}/${projectID}/${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}.png`
+    `${experimentDefaultImagePath}/${projectID}/${UserHub?.hubName}/${expName.ChaosName}/${expName.ExperimentName}.png`
   );
   return (
     <div>
@@ -41,7 +41,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
         className={classes.cardDiv}
         onClick={() => {
           history.push({
-            pathname: `${UserHub?.HubName}/${expName.ChaosName}/${expName.ExperimentName}`,
+            pathname: `${UserHub?.hubName}/${expName.ChaosName}/${expName.ExperimentName}`,
             search: `?projectID=${projectID}&projectRole=${userRole}`,
           });
         }}
