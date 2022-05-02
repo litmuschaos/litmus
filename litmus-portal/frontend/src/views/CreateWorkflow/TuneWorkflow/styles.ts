@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme) => ({
       background: theme.palette.background.default,
     },
   },
+  tooltip: {
+    fontSize: '1rem',
+  },
 
   // Styles for Add Experiment Modal
   addExpModal: {
