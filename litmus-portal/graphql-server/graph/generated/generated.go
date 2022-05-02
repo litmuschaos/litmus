@@ -352,7 +352,7 @@ type ComplexityRoot struct {
 		DisableGitOps              func(childComplexity int, projectID string) int
 		EnableGitOps               func(childComplexity int, config model.GitConfig) int
 		GenerateSSHKey             func(childComplexity int) int
-		GitopsNotifer              func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
+		GitopsNotifier             func(childComplexity int, clusterInfo model.ClusterIdentity, workflowID string) int
 		KubeObj                    func(childComplexity int, request model.KubeObjectData) int
 		NewClusterEvent            func(childComplexity int, request model.NewClusterEventRequest) int
 		PodLog                     func(childComplexity int, request model.PodLog) int
@@ -657,7 +657,7 @@ type MutationResolver interface {
 	GenerateSSHKey(ctx context.Context) (*model.SSHKey, error)
 	UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error)
 	DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error)
-	GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
+	GitopsNotifier(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error)
 	EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
 	UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error)
@@ -2243,17 +2243,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.GenerateSSHKey(childComplexity), true
 
-	case "Mutation.gitopsNotifer":
-		if e.complexity.Mutation.GitopsNotifer == nil {
+	case "Mutation.gitopsNotifier":
+		if e.complexity.Mutation.GitopsNotifier == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_gitopsNotifer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_gitopsNotifier_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.GitopsNotifer(childComplexity, args["clusterInfo"].(model.ClusterIdentity), args["workflowID"].(string)), true
+		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.ClusterIdentity), args["workflowID"].(string)), true
 
 	case "Mutation.kubeObj":
 		if e.complexity.Mutation.KubeObj == nil {
@@ -5093,14 +5093,14 @@ input UpdateChaosHubRequest {
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
-  ACCEPTED
-  PENDING
+  Accepted
+  Pending
 }
 
 enum MemberRole {
-  OWNER
-  EDITOR
-  VIEWER
+  Owner
+  Editor
+  Viewer
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
@@ -5248,7 +5248,7 @@ type Mutation {
   Sends workflow run request(single run workflow only) to agent on gitops notification
   """
   # authorized directive not required
-  gitopsNotifer(clusterInfo: ClusterIdentity!, workflowID: String!): String!
+  gitopsNotifier(clusterInfo: ClusterIdentity!, workflowID: String!): String!
 
   """
   Enables gitops settings in the project
@@ -6630,7 +6630,7 @@ func (ec *executionContext) field_Mutation_enableGitOps_args(ctx context.Context
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_gitopsNotifer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_gitopsNotifier_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.ClusterIdentity
@@ -14889,7 +14889,7 @@ func (ec *executionContext) _Mutation_deleteChaosHub(ctx context.Context, field 
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_gitopsNotifer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_gitopsNotifier(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -14905,7 +14905,7 @@ func (ec *executionContext) _Mutation_gitopsNotifer(ctx context.Context, field g
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_gitopsNotifer_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_gitopsNotifier_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -14913,7 +14913,7 @@ func (ec *executionContext) _Mutation_gitopsNotifer(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().GitopsNotifer(rctx, args["clusterInfo"].(model.ClusterIdentity), args["workflowID"].(string))
+		return ec.resolvers.Mutation().GitopsNotifier(rctx, args["clusterInfo"].(model.ClusterIdentity), args["workflowID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27033,8 +27033,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "gitopsNotifer":
-			out.Values[i] = ec._Mutation_gitopsNotifer(ctx, field)
+		case "gitopsNotifier":
+			out.Values[i] = ec._Mutation_gitopsNotifier(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

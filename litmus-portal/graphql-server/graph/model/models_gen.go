@@ -1350,8 +1350,8 @@ func (e FileType) MarshalGQL(w io.Writer) {
 type Invitation string
 
 const (
-	InvitationAccepted Invitation = "ACCEPTED"
-	InvitationPending  Invitation = "PENDING"
+	InvitationAccepted Invitation = "Accepted"
+	InvitationPending  Invitation = "Pending"
 )
 
 var AllInvitation = []Invitation{
@@ -1391,9 +1391,9 @@ func (e Invitation) MarshalGQL(w io.Writer) {
 type MemberRole string
 
 const (
-	MemberRoleOwner  MemberRole = "OWNER"
-	MemberRoleEditor MemberRole = "EDITOR"
-	MemberRoleViewer MemberRole = "VIEWER"
+	MemberRoleOwner  MemberRole = "Owner"
+	MemberRoleEditor MemberRole = "Editor"
+	MemberRoleViewer MemberRole = "Viewer"
 )
 
 var AllMemberRole = []MemberRole{
