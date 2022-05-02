@@ -1,6 +1,13 @@
 import { useQuery, useSubscription } from '@apollo/client';
-import { Tabs, Typography, useTheme } from '@material-ui/core';
-import { ButtonFilled } from 'litmus-ui';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Tabs,
+  Typography,
+  useTheme,
+} from '@material-ui/core';
+import { ButtonFilled, Icon } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -11,9 +18,11 @@ import {
   WORKFLOW_LOGS,
 } from '../../../graphql';
 import {
+  ChaosResultResponse,
   PodLog,
   PodLogRequest,
   PodLogVars,
+  ProbeResponse,
 } from '../../../models/graphql/podLog';
 import {
   ExecutionData,
@@ -50,6 +59,8 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   const { t } = useTranslation();
   const projectID = getProjectID();
 
+  const [toggledChaosResultView, setToggledChaosResultView] =
+    useState<boolean>(false);
   const { data: workflow_data } = useQuery<Workflow, WorkflowDataVars>(
     WORKFLOW_DETAILS_WITH_EXEC_DATA,
     {
@@ -89,19 +100,75 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     }
   }, [workflow_data, pod_name]);
 
-  const [chaosResult, setChaosResult] = useState('');
+  const [chaosResult, setChaosResult] = useState<ChaosResultResponse>({
+    phase: '',
+    verdict: '',
+    failStep: '',
+    probeSuccessPercentage: '',
+    probeStatus: [
+      {
+        name: '',
+        type: '',
+        status: {},
+      },
+    ],
+    passedRuns: 0,
+    failedRuns: 0,
+    stoppedRuns: 0,
+  });
+  const [stringResponse, setStringResponse] = useState<string>('');
+  const [expandedOne, setExpandedOne] = React.useState<boolean>(true);
+  const [expandedTwo, setExpandedTwo] = React.useState<boolean>(true);
+  const [expandedThree, setExpandedThree] = React.useState<boolean>(true);
+
+  const toggleView = () => setToggledChaosResultView((prev: boolean) => !prev);
+
+  const handleAccordionChange = (option: string) => {
+    if (option === 'one') setExpandedOne((prev: boolean) => !prev);
+    if (option === 'two') setExpandedTwo((prev: boolean) => !prev);
+    if (option === 'three') setExpandedThree((prev: boolean) => !prev);
+  };
 
   useEffect(() => {
     if (workflow !== undefined) {
       const nodeData = (JSON.parse(workflow.execution_data) as ExecutionData)
         .nodes[pod_name];
-      if (nodeData?.chaosData?.chaosResult) {
-        setChaosResult(YAML.stringify(nodeData.chaosData?.chaosResult));
+      if (
+        nodeData?.chaosData?.chaosResult &&
+        toggledChaosResultView === false
+      ) {
+        const resultJSON = nodeData.chaosData?.chaosResult?.status;
+
+        const probeArr: ProbeResponse[] = [];
+
+        if (resultJSON !== undefined && resultJSON.probeStatus !== undefined) {
+          resultJSON.probeStatus.map((probe: ProbeResponse) =>
+            probeArr.push({
+              name: probe.name,
+              type: probe.type,
+              status: probe.status,
+            })
+          );
+        }
+
+        setChaosResult({
+          phase: resultJSON.experimentStatus.phase,
+          verdict: resultJSON.experimentStatus.verdict,
+          failStep: resultJSON.experimentStatus.failStep,
+          probeSuccessPercentage:
+            resultJSON.experimentStatus.probeSuccessPercentage,
+          probeStatus: probeArr,
+          passedRuns: resultJSON.history.passedRuns,
+          failedRuns: resultJSON.history.failedRuns,
+          stoppedRuns: resultJSON.history.stoppedRuns,
+        });
+      } else if (toggledChaosResultView === true) {
+        setStringResponse(YAML.stringify(nodeData?.chaosData?.chaosResult));
       } else {
-        setChaosResult('Chaos Result Not available');
+        setStringResponse('Chaos result not available');
       }
     }
-  }, [workflow_data, pod_name]);
+  }, [workflow_data, pod_name, toggledChaosResultView]);
 
   const { data } = useSubscription<PodLog, PodLogVars>(WORKFLOW_LOGS, {
     variables: {
@@ -144,7 +211,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     try {
       chaos_logs = chaosLogs(logs.chaos_logs);
     } catch {
-      chaos_logs = 'Chaos Logs unavailable';
+      chaos_logs = 'Chaos logs unavailable';
     }
     const file = new Blob([logs?.main_logs, chaos_logs], {
       type: 'text/txt',
@@ -158,6 +225,32 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   const parseLogs = (logs: string) => {
     try {
       const podLogs = JSON.parse(logs);
+      const podLogsElement = (
+        <div>
+          {podLogs?.main_logs.split('\n').map((line: string) => (
+            <div>
+              {line.toLowerCase().includes('failed') ||
+              line.toLowerCase().includes('fail') ||
+              line.toLowerCase().includes('unsuccessful') ||
+              line.toLowerCase().includes('error') ||
+              line.toLowerCase().includes('err') ||
+              line.toLowerCase().includes('not work') ? (
+                <span style={{ color: 'red' }}>{line}</span>
+              ) : line.toLowerCase().includes('success') ||
+                line.toLowerCase().includes('completed') ||
+                line.toLowerCase().includes('executed') ||
+                line.toLowerCase().includes('passed') ||
+                line.toLowerCase().includes('pass') ||
+                line.toLowerCase().includes('successful') ? (
+                <span style={{ color: 'green' }}>{line}</span>
+              ) : (
+                <Typography>{line}</Typography>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+
       return (
         <div data-cy="LogsWindow">
           <div>
@@ -168,10 +261,14 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
                 onClick={() => {
                   downloadLogs(podLogs, pod_name);
                 }}
-                className={classes.downloadLogsBtn}
+                className={classes.btn}
               >
                 <Typography>
-                  <img src="./icons/download-logs.svg" alt="download logs" />{' '}
+                  <Icon
+                    name="download"
+                    size="lg"
+                    color={theme.palette.highlight}
+                  />{' '}
                   {t('workflowDetailsView.logs')}
                 </Typography>
               </ButtonFilled>
@@ -181,7 +278,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
             {podLogs?.main_logs !== null && podLogs?.main_logs !== '' ? (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>
-                  {podLogs?.main_logs}
+                  {podLogsElement}
                 </Typography>
               </div>
             ) : (
@@ -244,12 +341,168 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
       {type === 'ChaosEngine' && (
         <TabPanel value={selectedTab} index={1} style={{ height: '100%' }}>
           <div className={classes.logs}>
+            <ButtonFilled onClick={toggleView} className={classes.btn}>
+              <Typography>
+                <Icon
+                  name="forward"
+                  size="lg"
+                  color={theme.palette.highlight}
+                />{' '}
+                {toggledChaosResultView
+                  ? 'View Simplified Result'
+                  : 'View Detailed Result'}
+              </Typography>
+            </ButtonFilled>
             <div style={{ whiteSpace: 'pre-wrap' }}>
               <Typography
                 data-cy="ChaosResultTypography"
                 className={classes.text}
               >
-                {chaosResult}
+                {chaosResult.phase !== '' ? (
+                  typeof chaosResult !== 'string' &&
+                  toggledChaosResultView === false ? (
+                    <>
+                      <Accordion
+                        expanded={expandedOne}
+                        className={classes.accordion}
+                        onChange={() => handleAccordionChange('one')}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel1d-content"
+                          id="panel1d-header"
+                          className={classes.summary}
+                          expandIcon={
+                            <Icon
+                              name="chevronRight"
+                              size="lg"
+                              color={theme.palette.common.white}
+                            />
+                          }
+                        >
+                          <Typography className={classes.title}>
+                            Overall Node Result
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <div className={classes.subText}>
+                            <Typography>
+                              Experiment Verdict:{' '}
+                              {chaosResult.verdict.toLowerCase() === 'pass' ? (
+                                <span className={classes.success}>
+                                  {chaosResult.verdict}
+                                </span>
+                              ) : (
+                                <span className={classes.failed}>
+                                  {chaosResult.verdict}
+                                </span>
+                              )}
+                            </Typography>
+                            <Typography>Phase: {chaosResult.phase}</Typography>
+                            <Typography>
+                              Fail Step: {chaosResult.failStep}
+                            </Typography>
+                          </div>
+                        </AccordionDetails>
+                      </Accordion>
+                      <hr className={classes.line} />
+                      <Accordion
+                        expanded={expandedTwo}
+                        className={classes.accordion}
+                        onChange={() => handleAccordionChange('two')}
+                      >
+                        <AccordionSummary
+                          aria-controls="panel1d-content"
+                          id="panel1d-header"
+                          className={classes.summary}
+                          expandIcon={
+                            <Icon
+                              name="chevronRight"
+                              size="lg"
+                              color={theme.palette.common.white}
+                            />
+                          }
+                        >
+                          <Typography className={classes.title}>
+                            Chaos Engine Result
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <div className={classes.subText}>
+                            <Typography>
+                              Passed Runs: {chaosResult.passedRuns}
+                            </Typography>
+                            <Typography>
+                              Failed Runs: {chaosResult.failedRuns}
+                            </Typography>
+                            <Typography>
+                              Stopped Runs: {chaosResult.stoppedRuns}
+                            </Typography>
+                          </div>
+                        </AccordionDetails>
+                      </Accordion>
+                      {chaosResult.probeStatus.length > 0 ? (
+                        <div>
+                          <hr className={classes.line} />
+                          <Accordion
+                            expanded={expandedThree}
+                            className={classes.accordion}
+                            onChange={() => handleAccordionChange('three')}
+                          >
+                            <AccordionSummary
+                              aria-controls="panel1d-content"
+                              id="panel1d-header"
+                              className={classes.summary}
+                              expandIcon={
+                                <Icon
+                                  name="chevronRight"
+                                  size="lg"
+                                  color={theme.palette.common.white}
+                                />
+                              }
+                            >
+                              <Typography className={classes.title}>
+                                Probe Result
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <div className={classes.subText}>
+                                <Typography>
+                                  Probe Success Percentage:{' '}
+                                  <span className={classes.success}>
+                                    {chaosResult.probeSuccessPercentage}%
+                                  </span>
+                                </Typography>
+                                <Typography>
+                                  Probe Status:{' '}
+                                  {chaosResult.probeStatus.map(
+                                    (probe: ProbeResponse) => (
+                                      <div className={classes.probeStatus}>
+                                        <Typography>
+                                          Name: {probe.name}
+                                        </Typography>
+                                        <Typography>
+                                          Type: {probe.type}
+                                        </Typography>
+                                        <Typography>
+                                          {YAML.stringify(probe.status)}
+                                        </Typography>
+                                        <br />
+                                      </div>
+                                    )
+                                  )}
+                                </Typography>
+                              </div>
+                            </AccordionDetails>
+                          </Accordion>
+                        </div>
+                      ) : null}
+                    </>
+                  ) : (
+                    stringResponse
+                  )
+                ) : (
+                  'Please wait for the node execution to finish'
+                )}
               </Typography>
             </div>
           </div>

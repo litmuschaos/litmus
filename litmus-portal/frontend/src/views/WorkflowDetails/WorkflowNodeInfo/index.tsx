@@ -1,5 +1,5 @@
-import { IconButton, Typography } from '@material-ui/core';
-import { ButtonOutlined } from 'litmus-ui';
+import { IconButton, Typography, useTheme } from '@material-ui/core';
+import { Icon } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -29,6 +29,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   setIsInfoToggled,
 }) => {
   const classes = useStyles();
+  const { palette } = useTheme();
   const { t } = useTranslation();
   const [isAppInfoVisible, setIsAppInfoVisible] = useState(false);
 
@@ -55,14 +56,15 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         <Typography className={classes.title}>
           <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>
         </Typography>
-        <ButtonOutlined
-          className={classes.closeButton}
+        <Icon
           onClick={() => {
             setIsInfoToggled(false);
           }}
-        >
-          &#x2715;
-        </ButtonOutlined>
+          name="closeWrapped"
+          size="2xl"
+          style={{ cursor: 'pointer' }}
+          color={palette.text.hint}
+        />
       </div>
 
       {/* Section */}

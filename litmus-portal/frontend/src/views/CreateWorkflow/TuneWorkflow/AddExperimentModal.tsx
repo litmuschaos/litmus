@@ -14,6 +14,7 @@ import useStyles from './styles';
 interface ChartName {
   ChaosName: string;
   ExperimentName: string;
+  Keywords: string[];
 }
 
 interface AddExperimentModalProps {
@@ -48,10 +49,18 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
   const filteredExperiments = allExperiments.filter((exp: ChartName) => {
     if (search === null) return exp;
     if (
-      exp.ChaosName.toLowerCase().includes(search.toLowerCase()) ||
-      exp.ExperimentName.toLowerCase().includes(search.toLowerCase())
-    )
+      exp.ChaosName.replace(/-/g, ' ')
+        .toLowerCase()
+        .includes(search.replace(/-/g, ' ').toLowerCase()) ||
+      exp.ExperimentName.replace(/-/g, ' ')
+        .toLowerCase()
+        .includes(search.replace(/-/g, ' ').toLowerCase()) ||
+      exp.Keywords.some((k: string) =>
+        k.toLowerCase().includes(search.toLowerCase())
+      )
+    ) {
       return exp;
+    }
     return null;
   });
 

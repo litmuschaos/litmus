@@ -69,6 +69,7 @@ interface StepType {
 interface ChartName {
   ChaosName: string;
   ExperimentName: string;
+  Keywords: string[];
 }
 
 interface ChildRef {
@@ -150,6 +151,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           allExp.push({
             ChaosName: data.Metadata.Name,
             ExperimentName: experiment,
+            Keywords: data.Spec.Keywords,
           });
         });
       });
