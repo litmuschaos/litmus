@@ -114,7 +114,7 @@ const WorkflowInfoStats: React.FC = () => {
       onCompleted: () => {
         setHasWorkflowRun(
           workflowRunData !== undefined &&
-            workflowRunData.getWorkflowRuns.totalNoOfWorkflowRuns > 0
+            workflowRunData.listWorkflowRuns.totalNoOfWorkflowRuns > 0
         );
       },
       fetchPolicy: 'cache-and-network',
@@ -122,7 +122,7 @@ const WorkflowInfoStats: React.FC = () => {
   );
 
   const workflowRunID =
-    workflowRunData?.getWorkflowRuns?.workflowRuns[0]?.workflowRunID ?? '';
+    workflowRunData?.listWorkflowRuns?.workflowRuns[0]?.workflowRunID ?? '';
 
   const presentYear = new Date().getFullYear();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -217,7 +217,7 @@ const WorkflowInfoStats: React.FC = () => {
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
           <Typography className={classes.heading} data-cy="statsWorkflowName">
-            {data?.getWorkflows.workflows[0].workflowName}
+            {data?.listWorkflows.workflows[0].workflowName}
           </Typography>
           <Typography className={classes.subHeading}>
             Here’s the statistics of the selected workflow
@@ -234,16 +234,16 @@ const WorkflowInfoStats: React.FC = () => {
         <InfoSection
           data={data}
           workflowRunLength={
-            workflowRunData.getWorkflowRuns.totalNoOfWorkflowRuns
+            workflowRunData.listWorkflowRuns.totalNoOfWorkflowRuns
           }
         />
       )}
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
-      {data?.getWorkflows.workflows[0].cronSyntax !== '' ||
-      (workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns &&
-        workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns > 1) ? (
+      {data?.listWorkflows.workflows[0].cronSyntax !== '' ||
+      (workflowRunData?.listWorkflowRuns.totalNoOfWorkflowRuns &&
+        workflowRunData?.listWorkflowRuns.totalNoOfWorkflowRuns > 1) ? (
         <div className={classes.heatmapArea}>
           <div className={classes.heatmapAreaHeading}>
             <Typography className={classes.sectionHeading}>
@@ -255,7 +255,7 @@ const WorkflowInfoStats: React.FC = () => {
             <div className={classes.formControlParent}>
               <Typography>
                 Total runs till date:{' '}
-                {workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns}
+                {workflowRunData?.listWorkflowRuns.totalNoOfWorkflowRuns}
               </Typography>
               <FormControl
                 className={classes.formControl}

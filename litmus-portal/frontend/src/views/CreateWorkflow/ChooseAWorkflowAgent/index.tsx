@@ -22,9 +22,8 @@ import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
   GET_IMAGE_REGISTRY,
-  GET_IMAGE_REGISTRY_BY_PROJECT_ID,
+  LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
 } from '../../../graphql';
-import { ImageRegistryInfo } from '../../../models/redux/image_registry';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as ImageRegistryActions from '../../../redux/actions/image_registry';
@@ -52,7 +51,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   const workflow = useActions(WorkflowActions);
   const alert = useActions(AlertActions);
   const imageRegistry = useActions(ImageRegistryActions);
-  const clusterid: string = useSelector(
+  const clusterID: string = useSelector(
     (state: RootState) => state.workflowData.clusterID
   );
   const selectedProjectID = getProjectID();
@@ -72,36 +71,35 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (data !== undefined) {
-        const regData = data.GetImageRegistry
-          .image_registry_info as ImageRegistryInfo;
+        const regData = data.getImageRegistry.imageRegistryInfo;
         imageRegistry.selectImageRegistry({
-          image_registry_name: regData.image_registry_name,
-          image_repo_name: regData.image_repo_name,
-          image_registry_type: regData.image_registry_type,
-          secret_name: regData.secret_name,
-          secret_namespace: regData.secret_namespace,
-          enable_registry: regData.enable_registry,
-          is_default: regData.is_default,
+          image_registry_name: regData.imageRegistryName,
+          image_repo_name: regData.imageRepoName,
+          image_registry_type: regData.imageRegistryType,
+          secret_name: regData.secretName,
+          secret_namespace: regData.secretNamespace,
+          enable_registry: regData.enableRegistry,
+          is_default: regData.isDefault,
           update_registry: true,
         });
       }
     },
   });
 
-  useQuery(GET_IMAGE_REGISTRY_BY_PROJECT_ID, {
+  useQuery(LIST_IMAGE_REGISTRY_BY_PROJECT_ID, {
     variables: {
       data: selectedProjectID,
     },
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (
-        data.ListImageRegistry !== null &&
-        data.ListImageRegistry.length > 0
+        data.listImageRegistry !== null &&
+        data.listImageRegistry.length > 0
       ) {
         getRegistryData({
           variables: {
-            registryid: data.ListImageRegistry[0].image_registry_id,
-            projectid: selectedProjectID,
+            imageRegistryID: data.listImageRegistry[0].imageRegistryID,
+            projectID: selectedProjectID,
           },
         });
       } else {
@@ -122,8 +120,8 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   const [getCluster, { loading }] = useLazyQuery(GET_CLUSTER, {
     onCompleted: (data) => {
       const clusters: Cluster[] = [];
-      if (data && data.getCluster.length !== 0) {
-        data.getCluster.forEach((e: Cluster) => {
+      if (data && data.listClusters.length !== 0) {
+        data.listClusters.forEach((e: Cluster) => {
           if (e.isActive === true) {
             // Populating all the cluster data in the clusters[] array
             clusters.push({
@@ -134,7 +132,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
             });
             // Setting the initial workflow yaml to be of type Workflow
             workflow.setWorkflowDetails({
-              clusterid: '',
+              clusterID: '',
               cronSyntax: '',
               scheduleType: {
                 scheduleOnce: 'now',
@@ -162,7 +160,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
       alert.changeAlertState(true);
       return false;
     }
-    if (clusterid === '' || clusterData.length === 0) {
+    if (clusterID === '' || clusterData.length === 0) {
       alert.changeAlertState(true); // No Cluster has been selected and user clicked on Next
       return false;
     }
@@ -171,7 +169,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
 
   // Rendering once to get the cluster data
   useEffect(() => {
-    getCluster({ variables: { project_id: selectedProjectID } });
+    getCluster({ variables: { projectID: selectedProjectID } });
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,7 +190,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
       clusterData.forEach((cluster) => {
         if (currentlySelectedAgent === cluster.clusterID) {
           workflow.setWorkflowDetails({
-            clusterid: cluster.clusterID,
+            clusterID: cluster.clusterID,
             projectID: selectedProjectID,
             clustername: cluster.clusterName,
             namespace: cluster.agentNamespace,

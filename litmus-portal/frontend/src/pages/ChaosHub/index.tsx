@@ -98,7 +98,7 @@ const MyHub: React.FC = () => {
     },
   });
 
-  const totalHubs = data && data.getHubStatus;
+  const totalHubs = data && data.listHubStatus;
 
   const [deleteHub, setDeleteHub] = useState<DeleteHub>({
     deleteHubModal: false,

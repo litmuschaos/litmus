@@ -57,8 +57,8 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const [getPredefinedWorkflow] = useLazyQuery(GET_PREDEFINED_WORKFLOW_LIST, {
       fetchPolicy: 'network-only',
       onCompleted: (data) => {
-        if (data.GetPredefinedWorkflowList !== undefined) {
-          setWorkflowlist(data.GetPredefinedWorkflowList);
+        if (data.listPredefinedWorkflows !== undefined) {
+          setWorkflowlist(data.listPredefinedWorkflows);
         }
       },
       onError: () => {
@@ -98,8 +98,8 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
       setSelectedHub(event.target.value as string);
       getPredefinedWorkflow({
         variables: {
-          hubname: event.target.value as string,
-          projectid: selectedProjectID,
+          hubName: event.target.value as string,
+          projectID: selectedProjectID,
         },
       });
       localforage.setItem('selectedHub', event.target.value as string);
@@ -110,10 +110,10 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
      * fetch the pre-defined workflows
      */
     useEffect(() => {
-      if (data?.getHubStatus !== undefined) {
-        if (data.getHubStatus.length) {
+      if (data?.listHubStatus !== undefined) {
+        if (data.listHubStatus.length) {
           const hubDetails: MyHubDetail[] = [];
-          data.getHubStatus.forEach((hub) => {
+          data.listHubStatus.forEach((hub) => {
             /**
              * Push only available hub
              */
@@ -128,14 +128,14 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
           });
           setAvailableHubs(hubDetails);
         }
-        data.getHubStatus.forEach((hubData) => {
+        data.listHubStatus.forEach((hubData) => {
           if (hubData.hubName.toLowerCase() === 'litmus chaoshub') {
             setSelectedHub('Litmus ChaosHub');
             localforage.setItem('selectedHub', 'Litmus ChaosHub');
             getPredefinedWorkflow({
               variables: {
-                hubname: 'Litmus ChaosHub',
-                projectid: selectedProjectID,
+                hubName: 'Litmus ChaosHub',
+                projectID: selectedProjectID,
               },
             });
           }

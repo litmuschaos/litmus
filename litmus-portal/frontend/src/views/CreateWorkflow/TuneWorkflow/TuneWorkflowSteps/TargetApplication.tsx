@@ -162,7 +162,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const { data } = useSubscription<KubeObjResponse, KubeObjRequest>(KUBE_OBJ, {
     variables: {
       request: {
-        clusterID: clusterID,
+        clusterID,
         objectType: 'kubeobject',
         kubeObjRequest: {
           group: GVRObj.group,

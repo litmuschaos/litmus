@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // Workflow
 export const CREATE_WORKFLOW = gql`
-  mutation createChaosWorkFlow($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
-    createChaosWorkFlow(input: $ChaosWorkFlowInput) {
+  mutation createChaosWorkFlow($request: ChaosWorkFlowRequest!) {
+    createChaosWorkFlow(request: $request) {
       workflowID
       cronSyntax
       workflowName

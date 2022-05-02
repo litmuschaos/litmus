@@ -38,10 +38,10 @@ const SelectMyHub = () => {
   };
 
   useEffect(() => {
-    if (data?.getHubStatus !== undefined) {
-      if (data.getHubStatus.length) {
+    if (data?.listHubStatus !== undefined) {
+      if (data.listHubStatus.length) {
         const hubDetails: MyHubDetail[] = [];
-        data.getHubStatus.forEach((hub) => {
+        data.listHubStatus.forEach((hub) => {
           /**
            * Push only available hubs
            */
@@ -55,7 +55,7 @@ const SelectMyHub = () => {
           }
         });
         setAvailableHubs(hubDetails);
-        data.getHubStatus.forEach((hubData) => {
+        data.listHubStatus.forEach((hubData) => {
           if (hubData.hubName.toLowerCase() === 'litmus chaoshub') {
             setSelectedHub('Litmus ChaosHub');
             localforage.setItem('selectedHub', 'Litmus ChaosHub');

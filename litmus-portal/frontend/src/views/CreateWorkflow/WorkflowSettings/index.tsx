@@ -144,12 +144,12 @@ const WorkflowSettings = forwardRef((_, ref) => {
           setHubName(hub as string);
           getWorkflowDetails({
             variables: {
-              data: {
-                HubName: hub as string,
-                ProjectID: projectID,
-                ChartName: 'predefined',
-                ExperimentName: (value as ChooseWorkflowRadio).id,
-                FileType: 'CSV',
+              request: {
+                hubName: hub as string,
+                projectID,
+                chartName: 'predefined',
+                experimentName: (value as ChooseWorkflowRadio).id,
+                fileType: 'CSV',
               },
             },
           });

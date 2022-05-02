@@ -1,33 +1,33 @@
 import { gql } from '@apollo/client';
 
 export const WORKFLOW_EVENTS_WITH_EXEC_DATA = gql`
-  subscription workflowEvents($projectID: String!) {
-    workflowEventListener(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      cluster_name
-      last_updated
-      cluster_id
+  subscription getWorkflowEvents($projectID: String!) {
+    getWorkflowEvents(projectID: $projectID) {
+      workflowID
+      workflowName
+      workflowRunID
+      clusterName
+      lastUpdated
+      clusterID
       phase
-      execution_data
-      resiliency_score
+      executionData
+      resiliencyScore
     }
   }
 `;
 
 export const WORKFLOW_EVENTS = gql`
-  subscription workflowEvents($projectID: String!) {
-    workflowEventListener(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      cluster_name
-      last_updated
+  subscription getWorkflowEvents($projectID: String!) {
+    getWorkflowEvents(projectID: $projectID) {
+      workflowID
+      workflowName
+      workflowRunID
+      clusterName
+      lastUpdated
       phase
-      resiliency_score
-      experiments_passed
-      total_experiments
+      resiliencyScore
+      experimentsPassed
+      totalExperiments
     }
   }
 `;

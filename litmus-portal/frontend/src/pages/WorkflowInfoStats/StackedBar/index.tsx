@@ -82,8 +82,8 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     }
   );
 
-  if (data?.getWorkflowRuns.workflowRuns) {
-    data.getWorkflowRuns.workflowRuns.forEach((wfrun) => {
+  if (data?.listWorkflowRuns.workflowRuns) {
+    data.listWorkflowRuns.workflowRuns.forEach((wfrun) => {
       if (wfrun.phase !== 'Running') {
         stackBarData.push({
           id: wfrun.workflowRunID,

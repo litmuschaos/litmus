@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-// getHubStatus
+// listHubStatus
 export const CORE_CHART_FIELDS = gql`
   fragment CoreChartFields on Chart {
     apiVersion
-    Kind
+    kind
     metadata {
       name
       version
@@ -28,7 +28,9 @@ export const CORE_CHART_FIELDS = gql`
         email
       }
       minKubeVersion
-      provider
+      provider {
+        name
+      }
       links {
         name
         url
@@ -41,7 +43,7 @@ export const CORE_CHART_FIELDS = gql`
       packageName
       experiments {
         name
-        csv
+        CSV
         desc
       }
     }
@@ -59,7 +61,7 @@ export const GET_CHARTS_DATA = gql`
 
 export const GET_EXPERIMENT_DATA = gql`
   ${CORE_CHART_FIELDS}
-  query getHubExperiment($request: ExperimentInput!) {
+  query getHubExperiment($request: ExperimentRequest!) {
     getHubExperiment(request: $request) {
       ...CoreChartFields
     }
@@ -67,8 +69,8 @@ export const GET_EXPERIMENT_DATA = gql`
 `;
 
 export const GET_HUB_STATUS = gql`
-  query getHubStatus($projectID: String!) {
-    getHubStatus(projectID: $projectID) {
+  query listHubStatus($projectID: String!) {
+    listHubStatus(projectID: $projectID) {
       id
       hubName
       repoBranch
@@ -88,19 +90,19 @@ export const GET_HUB_STATUS = gql`
 `;
 
 export const GET_PREDEFINED_EXPERIMENT_YAML = gql`
-  query GetPredefinedExperimentYAML($request: ExperimentInput!) {
+  query getPredefinedExperimentYAML($request: ExperimentRequest!) {
     getPredefinedExperimentYAML(request: $request)
   }
 `;
 
 export const GET_ENGINE_YAML = gql`
-  query getEngineData($experimentInput: ExperimentInput!) {
-    getYAMLData(experimentInput: $experimentInput)
+  query getEngineData($request: ExperimentRequest!) {
+    getYAMLData(request: $request)
   }
 `;
 
 export const GET_EXPERIMENT_YAML = gql`
-  query getYAMLData($request: ExperimentInput!) {
+  query getYAMLData($request: ExperimentRequest!) {
     getYAMLData(request: $request)
   }
 `;

@@ -20,7 +20,7 @@ import { constants } from '../../../constants';
 import {
   ADD_IMAGE_REGISTRY,
   GET_IMAGE_REGISTRY,
-  GET_IMAGE_REGISTRY_BY_PROJECT_ID,
+  LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
   UPDATE_IMAGE_REGISTRY,
 } from '../../../graphql';
 import { getProjectID } from '../../../utils/getSearchParams';
@@ -96,21 +96,21 @@ const ImageRegistry = () => {
   /**
    * ListImageRegistry is used to fetch the list of image registries
    */
-  const { loading: listLoading } = useQuery(GET_IMAGE_REGISTRY_BY_PROJECT_ID, {
+  const { loading: listLoading } = useQuery(LIST_IMAGE_REGISTRY_BY_PROJECT_ID, {
     variables: {
       data: projectID,
     },
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (
-        data.ListImageRegistry !== null &&
-        data.ListImageRegistry.length > 0
+        data.listImageRegistry !== null &&
+        data.listImageRegistry.length > 0
       ) {
-        setRegistryID(data.ListImageRegistry[0].image_registry_id);
+        setRegistryID(data.listImageRegistry[0].image_registry_id);
         getRegistryData({
           variables: {
-            registryid: data.ListImageRegistry[0].image_registry_id,
-            projectid: projectID,
+            imageRegistryID: data.listImageRegistry[0].image_registry_id,
+            projectID,
           },
         });
       } else {
@@ -149,7 +149,7 @@ const ImageRegistry = () => {
   const [createImageRegistry] = useMutation(ADD_IMAGE_REGISTRY, {
     refetchQueries: [
       {
-        query: GET_IMAGE_REGISTRY_BY_PROJECT_ID,
+        query: LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
         variables: {
           data: projectID,
         },

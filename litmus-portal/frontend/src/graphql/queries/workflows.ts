@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // GetWorkflowRuns
 export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
-  query getWorkflowRuns($request: GetWorkflowRunsRequest!) {
-    getWorkflowRuns(request: $request) {
+  query listWorkflowRuns($request: ListWorkflowRunsRequest!) {
+    listWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
         workflowID
@@ -22,8 +22,8 @@ export const WORKFLOW_DETAILS_WITH_EXEC_DATA = gql`
 `;
 
 export const WORKFLOW_DETAILS = gql`
-  query getWorkflowRuns($request: GetWorkflowRunsRequest!) {
-    getWorkflowRuns(request: $request) {
+  query listWorkflowRuns($request: ListWorkflowRunsRequest!) {
+    listWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
         workflowRunID
@@ -50,8 +50,8 @@ export const WORKFLOW_DETAILS = gql`
 `;
 
 export const WORKFLOW_RUN_DETAILS = gql`
-  query getWorkflowRuns($request: GetWorkflowRunsRequest!) {
-    getWorkflowRuns(request: $request) {
+  query listWorkflowRuns($request: ListWorkflowRunsRequest!) {
+    listWorkflowRuns(request: $request) {
       totalNoOfWorkflowRuns
       workflowRuns {
         weightages {
@@ -76,12 +76,12 @@ export const WORKFLOW_RUN_DETAILS = gql`
 
 // getWorkflowStats
 export const WORKFLOW_STATS = gql`
-  query getWorkflowStats(
+  query listWorkflowStats(
     $projectID: ID!
     $filter: TimeFrequency!
     $showWorkflowRuns: Boolean!
   ) {
-    getWorkflowStats(
+    listWorkflowStats(
       projectID: $projectID
       filter: $filter
       showWorkflowRuns: $showWorkflowRuns
@@ -94,8 +94,8 @@ export const WORKFLOW_STATS = gql`
 
 // ListWorkflow
 export const GET_WORKFLOW_DETAILS = gql`
-  query getWorkflows($request: GetWorkflowsRequest!) {
-    getWorkflows(request: $request) {
+  query listWorkflows($request: ListWorkflowsRequest!) {
+    listWorkflows(request: $request) {
       totalNoOfWorkflows
       workflows {
         workflowID
@@ -148,7 +148,7 @@ export const GET_WORKFLOW_RUNS_STATS = gql`
 
 // getPredefinedWorkflowList
 export const GET_PREDEFINED_WORKFLOW_LIST = gql`
-  query getPredefinedWorkflows($hubName: String!, $projectID: String!) {
-    getPredefinedWorkflows(hubName: $hubName, projectID: $projectID)
+  query listPredefinedWorkflows($hubName: String!, $projectID: String!) {
+    listPredefinedWorkflows(hubName: $hubName, projectID: $projectID)
   }
 `;

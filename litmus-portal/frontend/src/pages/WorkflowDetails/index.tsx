@@ -73,7 +73,6 @@ const WorkflowDetails: React.FC = () => {
   const { podName } = useSelector((state: RootState) => state.selectedNode);
 
   const { workflowRunID }: URLParams = useParams();
-
   // Query to get workflows
   const { subscribeToMore, data, error } = useQuery<
     Workflow,
@@ -88,7 +87,7 @@ const WorkflowDetails: React.FC = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const workflowRun = data?.getWorkflowRuns.workflowRuns[0];
+  const workflowRun = data?.listWorkflowRuns.workflowRuns[0];
 
   const { data: workflowData, loading } = useQuery<
     ScheduledWorkflows,
@@ -110,20 +109,21 @@ const WorkflowDetails: React.FC = () => {
         document: WORKFLOW_EVENTS_WITH_EXEC_DATA,
         variables: { projectID },
         updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
+          if (!subscriptionData.data || !prev || !prev.listWorkflowRuns)
             return prev;
 
-          const modifiedWorkflows = prev.getWorkflowRuns.workflowRuns.slice();
-          const newWorkflow = subscriptionData.data.workflowEventListener;
+          const modifiedWorkflows = prev.listWorkflowRuns.workflowRuns.slice();
+          const newWorkflow = subscriptionData.data.getWorkflowEvents;
 
           // Update only the required workflowRun
           if (modifiedWorkflows[0].workflowRunID === newWorkflow.workflowRunID)
             modifiedWorkflows[0] = newWorkflow;
 
-          const totalNoOfWorkflows = prev.getWorkflowRuns.totalNoOfWorkflowRuns;
+          const totalNoOfWorkflows =
+            prev.listWorkflowRuns.totalNoOfWorkflowRuns;
 
           return {
-            getWorkflowRuns: {
+            listWorkflowRuns: {
               totalNoOfWorkflowRuns: totalNoOfWorkflows,
               workflowRuns: modifiedWorkflows,
             },
@@ -138,7 +138,7 @@ const WorkflowDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    const scheduledWorkflow = workflowData?.getWorkflows.workflows;
+    const scheduledWorkflow = workflowData?.listWorkflows.workflows;
     if (scheduledWorkflow) {
       setworkflowSchedulesDetails(
         (scheduledWorkflow[0]

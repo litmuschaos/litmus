@@ -93,7 +93,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
     variables: { projectID },
     fetchPolicy: 'network-only',
   });
-  const hubData = data?.getHubStatus.filter(
+  const hubData = data?.listHubStatus.filter(
     (hubs) => hubs.hubName === hubName
   )[0];
 

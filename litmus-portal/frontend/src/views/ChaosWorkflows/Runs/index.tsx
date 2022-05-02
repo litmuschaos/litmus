@@ -142,15 +142,14 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
       document: WORKFLOW_EVENTS,
       variables: { projectID },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
+        if (!subscriptionData.data || !prev || !prev.listWorkflowRuns)
           return prev;
 
-        const modifiedWorkflows = prev.getWorkflowRuns.workflowRuns.slice();
-        const newWorkflow = subscriptionData.data.workflowEventListener;
-
+        const modifiedWorkflows = prev.listWorkflowRuns.workflowRuns.slice();
+        const newWorkflow = subscriptionData.data.getWorkflowEvents;
         // Updating the query data
         let i = 0;
-        let totalNoOfWorkflows = prev.getWorkflowRuns.totalNoOfWorkflowRuns;
+        let totalNoOfWorkflows = prev.listWorkflowRuns.totalNoOfWorkflowRuns;
 
         for (; i < modifiedWorkflows.length; i++) {
           if (
@@ -166,7 +165,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
         }
 
         return {
-          getWorkflowRuns: {
+          listWorkflowRuns: {
             totalNoOfWorkflowRuns: totalNoOfWorkflows,
             workflowRuns: modifiedWorkflows,
           },
@@ -191,8 +190,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
     setOpen(true);
   };
 
-  const workflowRuns = data?.getWorkflowRuns.workflowRuns;
-
+  const workflowRuns = data?.listWorkflowRuns.workflowRuns;
   // Functions passed as props in the headerSection
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -424,7 +422,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={data?.getWorkflowRuns.totalNoOfWorkflowRuns ?? 0}
+          count={data?.listWorkflowRuns.totalNoOfWorkflowRuns ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

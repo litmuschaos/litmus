@@ -15,7 +15,9 @@ export interface Spec {
   maturity: string;
   maintainers: Maintainer[];
   minKubeVersion: string;
-  provider: string;
+  provider: {
+    name: string;
+  };
   links: Link[];
   experiments: string[];
   chaosExpCRDLink: string;
@@ -55,7 +57,7 @@ export interface PackageInfo {
 
 export interface Experiments {
   name: string;
-  csv: string;
+  CSV: string;
   desc: string;
 }
 
@@ -92,7 +94,7 @@ export interface HubDetails {
 }
 
 export interface HubStatus {
-  getHubStatus: HubDetails[];
+  listHubStatus: HubDetails[];
 }
 
 export enum MyHubActions {

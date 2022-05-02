@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_CLUSTER = gql`
-  query getClusters($projectID: String!, $clusterType: String) {
-    getClusters(projectID: $projectID, clusterType: $clusterType) {
+  query listClusters($projectID: String!, $clusterType: String) {
+    listClusters(projectID: $projectID, clusterType: $clusterType) {
       clusterID
       clusterName
       description
@@ -24,16 +24,16 @@ export const GET_CLUSTER = gql`
 `;
 
 export const GET_CLUSTER_LENGTH = gql`
-  query getClusters($projectID: String!) {
-    getClusters(projectID: $projectID) {
+  query listClusters($projectID: String!) {
+    listClusters(projectID: $projectID) {
       clusterID
     }
   }
 `;
 
 export const GET_CLUSTER_NAMES = gql`
-  query getClusters($projectID: String!) {
-    getClusters(projectID: $projectID) {
+  query listClusters($projectID: String!) {
+    listClusters(projectID: $projectID) {
       clusterName
     }
   }

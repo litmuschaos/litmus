@@ -166,9 +166,9 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     },
     onCompleted: (data) => {
       const workflowTestsArray: WorkFlowTests[] = [];
-      if (data.getWorkflowRuns.workflowRuns.length > 0) {
+      if (data.listWorkflowRuns.workflowRuns.length > 0) {
         const executionData: ExecutionData = JSON.parse(
-          data?.getWorkflowRuns?.workflowRuns[0]?.executionData
+          data?.listWorkflowRuns?.workflowRuns[0]?.executionData
         );
         const { nodes } = executionData;
         let index: number = 1;
@@ -178,7 +178,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
             if (node.chaosData) {
               const { chaosData } = node;
               const weightageMap: WeightageMap[] = weightageDetail
-                ? weightageDetail?.getWorkflows.workflows[0]?.weightages
+                ? weightageDetail?.listWorkflows.workflows[0]?.weightages
                 : [];
               /* eslint-disable no-loop-func */
               weightageMap.forEach((weightage) => {

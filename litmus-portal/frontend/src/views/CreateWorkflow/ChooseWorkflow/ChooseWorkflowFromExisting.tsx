@@ -46,7 +46,7 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
     GET_MANIFEST_TEMPLATE,
     {
       variables: {
-        data: getProjectID(),
+        projectID: getProjectID(),
       },
       fetchPolicy: 'network-only',
     }
@@ -56,18 +56,20 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
     refetchQueries: [
       {
         query: GET_MANIFEST_TEMPLATE,
-        variables: { data: getProjectID() },
+        variables: { projectID: getProjectID() },
       },
     ],
   });
 
-  const filteredExistingWorkflows: GetManifestTemplateArray[] = templateData
-    ? templateData.getManifestTemplate.filter((w: GetManifestTemplateArray) => {
-        if (search === null) return w;
-        if (w.templateName.toLowerCase().includes(search.toLowerCase()))
-          return w;
-        return null;
-      })
+  const filteredExistingWorkflows = templateData
+    ? templateData.listWorkflowManifests.filter(
+        (w: GetManifestTemplateArray) => {
+          if (search === null) return w;
+          if (w.templateName.toLowerCase().includes(search.toLowerCase()))
+            return w;
+          return null;
+        }
+      )
     : [];
 
   // Methods

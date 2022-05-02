@@ -241,7 +241,7 @@ const GitOpsTab = () => {
         enableGitOps({
           variables: {
             gitConfigResponse: {
-              projectID: projectID,
+              projectID,
               repoURL: gitHub.GitURL,
               branch: gitHub.GitBranch,
               authType:
@@ -262,7 +262,7 @@ const GitOpsTab = () => {
         updateGitOps({
           variables: {
             gitConfigResponse: {
-              projectID: projectID,
+              projectID,
               repoURL: gitHub.GitURL,
               branch: gitHub.GitBranch,
               authType:

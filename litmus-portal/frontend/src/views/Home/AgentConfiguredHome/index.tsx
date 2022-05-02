@@ -66,7 +66,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
     }
   );
 
-  const workflowRunCount = data?.getWorkflowRuns.totalNoOfWorkflowRuns ?? 0;
+  const workflowRunCount = data?.listWorkflowRuns.totalNoOfWorkflowRuns ?? 0;
 
   if (error) {
     console.error('Error fetching Workflow Data');
@@ -112,7 +112,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             'homeViews.agentConfiguredHome.recentWorkflowRuns.schedule'
           )}
         >
-          {data?.getWorkflowRuns.workflowRuns.map((workflow) => {
+          {data?.listWorkflowRuns.workflowRuns.map((workflow) => {
             return (
               <WorkflowRunCard key={workflow.workflowRunID} data={workflow} />
             );

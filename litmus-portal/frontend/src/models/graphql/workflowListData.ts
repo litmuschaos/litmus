@@ -93,7 +93,7 @@ export interface Pagination {
 }
 
 export interface GetManifestTemplate {
-  getManifestTemplate: GetManifestTemplateArray[];
+  listWorkflowManifests: GetManifestTemplateArray[];
 }
 
 export interface SortRequest {
@@ -122,5 +122,5 @@ export interface GetWorkflowsResponse {
 }
 
 export interface ScheduledWorkflows {
-  getWorkflows: GetWorkflowsResponse;
+  listWorkflows: GetWorkflowsResponse;
 }

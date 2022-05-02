@@ -112,7 +112,7 @@ const ChooseADashboardType = forwardRef(
     useEffect(() => {
       if (!loadingHubs) {
         const availableHubNames =
-          hubs?.getHubStatus
+          hubs?.listHubStatus
             .filter((hubs) => hubs.isAvailable === true)
             .map((hub) => hub.hubName) ?? [];
 

@@ -54,7 +54,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     }
   );
 
-  const workflow = workflow_data?.getWorkflowRuns.workflowRuns[0];
+  const workflow = workflow_data?.listWorkflowRuns.workflowRuns[0];
 
   const [chaosData, setChaosData] = useState<ChaosDataVar>({
     expPod: '',

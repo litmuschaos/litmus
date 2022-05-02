@@ -53,7 +53,7 @@ const MyHub: React.FC = () => {
   const theme = useTheme();
 
   // Filter the selected MyHub
-  const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
+  const UserHub = hubDetails?.listHubStatus.filter((myHub) => {
     return paramData.hubname === myHub.hubName;
   })[0];
 

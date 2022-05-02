@@ -268,7 +268,7 @@ const VerifyCommit = forwardRef(
           isCustomWorkflow,
           weightages: weightData,
           projectID: getProjectID(),
-          clusterID: clusterID,
+          clusterID,
         };
         createChaosWorkFlow({
           variables: { request: chaosWorkFlowInputs },

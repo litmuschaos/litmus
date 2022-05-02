@@ -80,11 +80,11 @@ interface GetWorkflowRunsResponse {
 }
 
 export interface Workflow {
-  getWorkflowRuns: GetWorkflowRunsResponse;
+  listWorkflowRuns: GetWorkflowRunsResponse;
 }
 
 export interface WorkflowSubscription {
-  workflowEventListener: WorkflowRun;
+  getWorkflowEvents: WorkflowRun;
 }
 
 export interface WorkflowSubscriptionRequest {

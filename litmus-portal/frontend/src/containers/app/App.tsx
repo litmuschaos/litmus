@@ -206,7 +206,7 @@ const Routes: React.FC = () => {
               <Route exact path="/create-workflow" component={CreateWorkflow} />
               <Route
                 exact
-                path="/workflows/:workflowRunId"
+                path="/workflows/:workflowRunID"
                 component={WorkflowDetails}
               />
               <Route

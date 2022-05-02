@@ -157,7 +157,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
     }
   );
 
-  const filteredWorkflows = data?.getWorkflows.workflows
+  const filteredWorkflows = data?.listWorkflows.workflows
     .filter((dataRow) =>
       filters.suspended === 'All'
         ? true
@@ -278,7 +278,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              {clusterList?.getClusters?.map((cluster) => (
+              {clusterList?.listClusters?.map((cluster) => (
                 <MenuItem key={cluster.clusterName} value={cluster.clusterName}>
                   {cluster.clusterName}
                 </MenuItem>
@@ -416,7 +416,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.getWorkflows.totalNoOfWorkflows ?? 0}
+          count={data?.listWorkflows.totalNoOfWorkflows ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

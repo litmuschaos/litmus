@@ -190,7 +190,7 @@ const WorkflowComparisonTable = () => {
         let totalValidRuns: number = 0;
         const totalValidWorkflowRuns: WorkflowDataForExport[] = [];
         const timeSeriesArray: DatedResilienceScore[][] = [];
-        const runs = data?.getWorkflowRuns?.workflowRuns;
+        const runs = data?.listWorkflowRuns?.workflowRuns;
         selectedWorkflows.forEach((workflowID) => {
           let isWorkflowValid: boolean = false;
           const workflowTimeSeriesData: DatedResilienceScore[] = [];
@@ -410,12 +410,12 @@ const WorkflowComparisonTable = () => {
   const searchingDataRetriever = () => {
     let searchingData: ScheduledWorkflow[] = [];
     if (compare === false) {
-      searchingData = data?.getWorkflows.workflows ?? [];
+      searchingData = data?.listWorkflows.workflows ?? [];
     } else {
       const searchedData: ScheduledWorkflow[] = [];
       selectedWorkflows.forEach((workflowID) => {
         if (data) {
-          data.getWorkflows.workflows.forEach((workflow) => {
+          data.listWorkflows.workflows.forEach((workflow) => {
             if (workflow.workflowID === workflowID) {
               searchedData.push(workflow);
             }
@@ -435,7 +435,7 @@ const WorkflowComparisonTable = () => {
     selectedWorkflows.forEach((workflow) => {
       displayData.forEach((displayWorkflow, i) => {
         if (displayWorkflow.workflowID === workflow && data) {
-          payload.push(data.getWorkflows.workflows[i]);
+          payload.push(data.listWorkflows.workflows[i]);
         }
       });
     });
@@ -570,8 +570,8 @@ const WorkflowComparisonTable = () => {
   };
 
   useEffect(() => {
-    setDisplayData(data ? data.getWorkflows.workflows : []);
-    getClusters(data ? data.getWorkflows.workflows : []);
+    setDisplayData(data ? data.listWorkflows.workflows : []);
+    getClusters(data ? data.listWorkflows.workflows : []);
   }, [data]);
 
   useEffect(() => {
@@ -756,7 +756,7 @@ const WorkflowComparisonTable = () => {
                     }}
                   />
                   <TableBody>
-                    {loading || !data?.getWorkflows ? (
+                    {loading || !data?.listWorkflows ? (
                       <TableRow>
                         <TableCell colSpan={6}>
                           <Loader />
@@ -820,7 +820,7 @@ const WorkflowComparisonTable = () => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={data?.getWorkflows.totalNoOfWorkflows ?? 0}
+                  count={data?.listWorkflows.totalNoOfWorkflows ?? 0}
                   rowsPerPage={paginationData.limit}
                   page={paginationData.page}
                   onChangePage={(_, page) =>

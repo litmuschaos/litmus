@@ -166,7 +166,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     {
       onCompleted: (data) => {
         const wfmanifest = updateEngineName(
-          YAML.parse(data.GetPredefinedExperimentYAML)
+          YAML.parse(data.getPredefinedExperimentYAML)
         );
         const updatedManifestImage = updateManifestImage(
           YAML.parse(wfmanifest),
@@ -308,12 +308,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
             localforage.getItem('selectedHub').then((hub) => {
               getPredefinedExperimentYaml({
                 variables: {
-                  experimentInput: {
-                    ProjectID: selectedProjectID,
-                    ChartName: 'predefined',
-                    ExperimentName: (value as WorkflowDetailsProps).CRDLink,
-                    HubName: hub as string,
-                    FileType: 'WORKFLOW',
+                  request: {
+                    projectID: selectedProjectID,
+                    chartName: 'predefined',
+                    experimentName: (value as WorkflowDetailsProps).CRDLink,
+                    hubName: hub as string,
+                    fileType: 'WORKFLOW',
                   },
                 },
               });

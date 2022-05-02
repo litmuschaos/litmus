@@ -62,7 +62,7 @@ const Overview: React.FC = () => {
 
   // Set boolean to conditionally render agent setup banner
   if (agentList) {
-    isAgentPresent = agentList.getClusters.length > 0;
+    isAgentPresent = agentList.listClusters.length > 0;
   }
 
   // Check for data source being present or not
@@ -103,7 +103,7 @@ const Overview: React.FC = () => {
 
   // Get count for workflowData length to render conditionally
   if (workflowData) {
-    WorkflowStatisticsCount = workflowData.getWorkflowRuns.workflowRuns.length;
+    WorkflowStatisticsCount = workflowData.listWorkflowRuns.workflowRuns.length;
   }
 
   // Fetch data to display for the monitoring dashboard cards
@@ -288,7 +288,7 @@ const Overview: React.FC = () => {
               <Loader />
             </Center>
           ) : (
-            workflowData?.getWorkflowRuns.workflowRuns.map((workflow) => {
+            workflowData?.listWorkflowRuns.workflowRuns.map((workflow) => {
               return (
                 <WorkflowStatisticsCard
                   key={workflow.workflowID}
