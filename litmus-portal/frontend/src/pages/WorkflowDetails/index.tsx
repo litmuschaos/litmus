@@ -80,7 +80,7 @@ const WorkflowDetails: React.FC = () => {
     WorkflowDataRequest
   >(WORKFLOW_DETAILS_WITH_EXEC_DATA, {
     variables: {
-      GetWorkflowRunsRequest: {
+      request: {
         projectID,
         workflowRunIDs: [workflowRunID],
       },
@@ -138,7 +138,7 @@ const WorkflowDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    const scheduledWorkflow = workflowData?.getWorkflow.workflows;
+    const scheduledWorkflow = workflowData?.getWorkflows.workflows;
     if (scheduledWorkflow) {
       setworkflowSchedulesDetails(
         (scheduledWorkflow[0]

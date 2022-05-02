@@ -102,7 +102,7 @@ const EditSchedule: React.FC = () => {
     (state: RootState) => state.workflowManifest.manifest
   );
 
-  const wfDetails = data && data.getWorkflow.workflows[0];
+  const wfDetails = data && data.getWorkflows.workflows[0];
   const doc = new YAML.Document();
   const w: Weights[] = [];
   const { cronSyntax, clusterID, clusterName } = workflowData;
@@ -145,7 +145,7 @@ const EditSchedule: React.FC = () => {
         isCustomWorkflow: false,
         weightages: weightData,
         projectID,
-        clusterID: clusterID,
+        clusterID,
       };
 
       createChaosWorkFlow({

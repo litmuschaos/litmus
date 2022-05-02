@@ -5094,14 +5094,14 @@ input UpdateChaosHubRequest {
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
-  ACCEPTED
-  PENDING
+  Accepted
+  Pending
 }
 
 enum MemberRole {
-  OWNER
-  EDITOR
-  VIEWER
+  Owner
+  Editor
+  Viewer
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/schema.graphqls", Input: `# GraphQL schema example
@@ -5894,11 +5894,11 @@ input PodLogRequest {
 }
 
 enum WorkflowRunStatus {
-  ALL
-  FAILED
-  RUNNING
-  SUCCEEDED
-  TERMINATED
+  All
+  Failed
+  Running
+  Succeeded
+  Terminated
 }
 
 """

@@ -153,7 +153,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     WorkflowDataRequest
   >(WORKFLOW_RUN_DETAILS, {
     variables: {
-      GetWorkflowRunsRequest: {
+      request: {
         projectID,
         workflowIDs: [workflowID],
         workflowRunIDs: [workflowRunID],
@@ -178,7 +178,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
             if (node.chaosData) {
               const { chaosData } = node;
               const weightageMap: WeightageMap[] = weightageDetail
-                ? weightageDetail?.getWorkflow.workflows[0]?.weightages
+                ? weightageDetail?.getWorkflows.workflows[0]?.weightages
                 : [];
               /* eslint-disable no-loop-func */
               weightageMap.forEach((weightage) => {

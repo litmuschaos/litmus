@@ -99,7 +99,7 @@ export interface Pagination {
 
 // Sort
 export interface SortRequest {
-  field: 'Name' | 'Time';
+  field: 'NAME' | 'TIME';
   descending?: boolean;
 }
 
@@ -126,7 +126,7 @@ export interface WorkflowRunFilterRequest {
 }
 
 export interface WorkflowDataRequest {
-  GetWorkflowRunsRequest: {
+  request: {
     projectID: string;
     workflowRunIDs?: string[];
     workflowIDs?: string[];

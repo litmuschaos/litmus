@@ -106,7 +106,7 @@ const WorkflowInfoStats: React.FC = () => {
     `,
     {
       variables: {
-        GetWorkflowRunsRequest: {
+        request: {
           projectID,
           workflowIDs: [workflowID],
         },
@@ -217,7 +217,7 @@ const WorkflowInfoStats: React.FC = () => {
       <div className={classes.headingSection}>
         <div className={classes.pageHeading}>
           <Typography className={classes.heading} data-cy="statsWorkflowName">
-            {data?.getWorkflow.workflows[0].workflowName}
+            {data?.getWorkflows.workflows[0].workflowName}
           </Typography>
           <Typography className={classes.subHeading}>
             Here’s the statistics of the selected workflow
@@ -241,7 +241,7 @@ const WorkflowInfoStats: React.FC = () => {
 
       {/* Visulization Area */}
       {/* Check for cron workflow OR single workflow which has been re-run */}
-      {data?.getWorkflow.workflows[0].cronSyntax !== '' ||
+      {data?.getWorkflows.workflows[0].cronSyntax !== '' ||
       (workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns &&
         workflowRunData?.getWorkflowRuns.totalNoOfWorkflowRuns > 1) ? (
         <div className={classes.heatmapArea}>

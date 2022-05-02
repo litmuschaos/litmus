@@ -39,13 +39,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             <Typography>
               Name :{' '}
               <span className={classes.infoHint} data-cy="infoWorkflowName">
-                {data.getWorkflow.workflows[0].workflowName}
+                {data.getWorkflows.workflows[0].workflowName}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
               <span className={classes.infoHint} data-cy="infoWorkflowId">
-                {data.getWorkflow.workflows[0].workflowID}
+                {data.getWorkflows.workflows[0].workflowID}
               </span>
             </Typography>
             {data && (
@@ -56,7 +56,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                   data-cy="infoWorkflowSubject"
                 >
                   {
-                    YAML.parse(data?.getWorkflow.workflows[0].workflowManifest)
+                    YAML.parse(data?.getWorkflows.workflows[0].workflowManifest)
                       .metadata.labels.subject
                   }
                 </span>
@@ -70,7 +70,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                   data-cy="infoWorkflowNamespace"
                 >
                   {
-                    YAML.parse(data?.getWorkflow.workflows[0].workflowManifest)
+                    YAML.parse(data?.getWorkflows.workflows[0].workflowManifest)
                       .metadata.namespace
                   }
                 </span>
@@ -84,13 +84,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             <Typography>
               Name :{' '}
               <span className={classes.infoHint} data-cy="infoAgentName">
-                {data.getWorkflow.workflows[0].clusterName}
+                {data.getWorkflows.workflows[0].clusterName}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
               <span className={classes.infoHint} data-cy="infoClusterId">
-                {data.getWorkflow.workflows[0].clusterID}
+                {data.getWorkflows.workflows[0].clusterID}
               </span>
             </Typography>
           </div>
@@ -102,15 +102,17 @@ const InfoSection: React.FC<InfoSectionProps> = ({
             <Typography>
               Last Run :{' '}
               <span className={classes.infoHint}>
-                {timeDifferenceForDate(data.getWorkflow.workflows[0].updatedAt)}
+                {timeDifferenceForDate(
+                  data.getWorkflows.workflows[0].updatedAt
+                )}
               </span>
             </Typography>
             <Typography data-cy="infoWorkflowNextRun">
               Next Run :{' '}
-              {data.getWorkflow.workflows[0].cronSyntax ? (
+              {data.getWorkflows.workflows[0].cronSyntax ? (
                 <span className={classes.infoHint}>
                   {parser
-                    .parseExpression(data.getWorkflow.workflows[0].cronSyntax)
+                    .parseExpression(data.getWorkflows.workflows[0].cronSyntax)
                     .next()
                     .toString()}
                 </span>
@@ -122,12 +124,14 @@ const InfoSection: React.FC<InfoSectionProps> = ({
           {/* Column 4 */}
           <div className={classes.regularity} data-cy="infoWorkflowRegularity">
             <Typography className={classes.infoHeader}>Regularity :</Typography>
-            {data.getWorkflow.workflows[0].cronSyntax === '' ? (
+            {data.getWorkflows.workflows[0].cronSyntax === '' ? (
               <Typography>Non cron workflow</Typography>
             ) : (
-              data.getWorkflow.workflows[0].cronSyntax !== undefined && (
+              data.getWorkflows.workflows[0].cronSyntax !== undefined && (
                 <Typography>
-                  {cronstrue.toString(data.getWorkflow.workflows[0].cronSyntax)}
+                  {cronstrue.toString(
+                    data.getWorkflows.workflows[0].cronSyntax
+                  )}
                 </Typography>
               )
             )}
@@ -135,8 +139,8 @@ const InfoSection: React.FC<InfoSectionProps> = ({
         </div>
         {showMore && (
           <WorkflowStats
-            workflowID={data.getWorkflow.workflows[0].workflowID}
-            isCron={data.getWorkflow.workflows[0].cronSyntax !== ''}
+            workflowID={data.getWorkflows.workflows[0].workflowID}
+            isCron={data.getWorkflows.workflows[0].cronSyntax !== ''}
             noOfWorkflowRuns={workflowRunLength ?? 0}
           />
         )}

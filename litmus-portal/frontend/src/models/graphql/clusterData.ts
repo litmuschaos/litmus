@@ -24,7 +24,7 @@ export interface Cluster {
 }
 
 export interface Clusters {
-  getCluster: Cluster[];
+  getClusters: Cluster[];
 }
 
 export interface CreateClusterRequest {

@@ -47,7 +47,7 @@ const ManifestModal: React.FC<ManifestModalProps> = ({
           <YamlEditor
             content={YAML.stringify(
               YAML.parse(
-                data?.getWorkflow.workflows[0].workflowManifest as string
+                data?.getWorkflows.workflows[0].workflowManifest as string
               )
             )}
             filename="Workflow Template"

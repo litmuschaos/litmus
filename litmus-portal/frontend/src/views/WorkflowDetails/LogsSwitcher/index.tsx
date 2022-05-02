@@ -46,7 +46,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     WORKFLOW_DETAILS_WITH_EXEC_DATA,
     {
       variables: {
-        GetWorkflowRunsRequest: {
+        request: {
           projectID,
           workflowRunIDs: [workflowRunID],
         },

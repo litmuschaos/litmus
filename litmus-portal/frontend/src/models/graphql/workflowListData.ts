@@ -97,7 +97,7 @@ export interface GetManifestTemplate {
 }
 
 export interface SortRequest {
-  field: 'Name' | 'Time';
+  field: 'NAME' | 'TIME';
   descending?: Boolean;
 }
 
@@ -122,5 +122,5 @@ export interface GetWorkflowsResponse {
 }
 
 export interface ScheduledWorkflows {
-  getWorkflow: GetWorkflowsResponse;
+  getWorkflows: GetWorkflowsResponse;
 }

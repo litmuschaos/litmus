@@ -64,11 +64,11 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     WORKFLOW_DETAILS,
     {
       variables: {
-        GetWorkflowRunsRequest: {
+        request: {
           projectID,
           workflowIDs: [workflowID],
           sort: {
-            field: 'Time',
+            field: 'TIME',
           },
           filter: {
             dateRange: {
