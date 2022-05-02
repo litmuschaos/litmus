@@ -43,6 +43,7 @@ export const WORKFLOW_DETAILS = gql`
         experimentsNa
         totalExperiments
         isRemoved
+        executedBy
       }
     }
   }
@@ -93,7 +94,7 @@ export const WORKFLOW_STATS = gql`
 
 // ListWorkflow
 export const GET_WORKFLOW_DETAILS = gql`
-  query getWorkflows($request: ListWorkflowsInput!) {
+  query getWorkflows($request: GetWorkflowsRequest!) {
     getWorkflows(request: $request) {
       totalNoOfWorkflows
       workflows {
@@ -110,10 +111,11 @@ export const GET_WORKFLOW_DETAILS = gql`
         isCustomWorkflow
         updatedAt
         createdAt
-        projectId
-        clusterId
+        projectID
+        clusterID
         clusterType
         isRemoved
+        lastUpdatedBy
       }
     }
   }

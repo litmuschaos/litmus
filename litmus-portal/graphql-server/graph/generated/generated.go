@@ -5890,11 +5890,11 @@ input PodLogRequest {
 }
 
 enum WorkflowRunStatus {
-  ALL
-  FAILED
-  RUNNING
-  SUCCEEDED
-  TERMINATED
+  All
+  Failed
+  Running
+  Succeeded
+  Terminated
 }
 
 """

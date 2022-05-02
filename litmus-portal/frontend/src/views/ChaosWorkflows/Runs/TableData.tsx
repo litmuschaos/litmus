@@ -296,7 +296,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </Typography>
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
-        {scheduledWorkflowData?.getWorkflow.workflows[0]?.weightages[0]
+        {scheduledWorkflowData?.getWorkflows.workflows[0]?.weightages[0]
           ?.experimentName !== '' ? (
           <>
             <Typography data-cy="ResScore">
@@ -353,7 +353,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
       </TableCell>
       <TableCell>
         <div>
-          {scheduledWorkflowData?.getWorkflow.workflows[0]?.weightages[0]
+          {scheduledWorkflowData?.getWorkflows.workflows[0]?.weightages[0]
             ?.experimentName !== '' ? (
             <>
               <Button
@@ -365,7 +365,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                     'chaosWorkflows.browseWorkflows.tableData.showExperiments'
                   )}
                   (
-                  {scheduledWorkflowData?.getWorkflow.workflows[0]?.weightages
+                  {scheduledWorkflowData?.getWorkflows.workflows[0]?.weightages
                     .length ?? 0}
                   )
                 </Typography>
@@ -392,7 +392,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 }}
               >
                 <div className={classes.popover}>
-                  {scheduledWorkflowData?.getWorkflow.workflows[0]?.weightages.map(
+                  {scheduledWorkflowData?.getWorkflows.workflows[0]?.weightages.map(
                     (weightEntry) => (
                       <div
                         key={weightEntry.experimentName}

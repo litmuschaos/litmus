@@ -1528,11 +1528,11 @@ func (e UsageSort) MarshalGQL(w io.Writer) {
 type WorkflowRunStatus string
 
 const (
-	WorkflowRunStatusAll        WorkflowRunStatus = "ALL"
-	WorkflowRunStatusFailed     WorkflowRunStatus = "FAILED"
-	WorkflowRunStatusRunning    WorkflowRunStatus = "RUNNING"
-	WorkflowRunStatusSucceeded  WorkflowRunStatus = "SUCCEEDED"
-	WorkflowRunStatusTerminated WorkflowRunStatus = "TERMINATED"
+	WorkflowRunStatusAll        WorkflowRunStatus = "All"
+	WorkflowRunStatusFailed     WorkflowRunStatus = "Failed"
+	WorkflowRunStatusRunning    WorkflowRunStatus = "Running"
+	WorkflowRunStatusSucceeded  WorkflowRunStatus = "Succeeded"
+	WorkflowRunStatusTerminated WorkflowRunStatus = "Terminated"
 )
 
 var AllWorkflowRunStatus = []WorkflowRunStatus{

@@ -90,7 +90,7 @@ const BrowseCluster: React.FC = () => {
     lastRun: { sort: true, ascending: true },
   });
 
-  const filteredData = data?.getCluster
+  const filteredData = data?.getClusters
     .filter((dataRow) =>
       dataRow.clusterName.toLowerCase().includes(filters.search.toLowerCase())
     )

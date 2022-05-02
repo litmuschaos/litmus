@@ -74,7 +74,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
 
   // State for sorting
   const [sortData, setSortData] = useState<SortRequest>({
-    field: 'Time',
+    field: 'TIME',
     descending: true,
   });
 
@@ -123,7 +123,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
     WorkflowDataRequest
   >(WORKFLOW_DETAILS, {
     variables: {
-      GetWorkflowRunsRequest: {
+      request: {
         projectID,
         pagination: {
           page: paginationData.page,
@@ -299,7 +299,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                           })
                         }
                       >
@@ -310,7 +310,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                             descending: true,
                           })
                         }
@@ -354,7 +354,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Time',
+                            field: 'TIME',
                             descending: true,
                           })
                         }
@@ -366,7 +366,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Time',
+                            field: 'TIME',
                           })
                         }
                       >

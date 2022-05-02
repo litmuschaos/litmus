@@ -75,7 +75,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
   // State for sorting
   const [sortData, setSortData] = useState<SortRequest>({
-    field: 'Time',
+    field: 'TIME',
     descending: true,
   });
 
@@ -157,7 +157,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
     }
   );
 
-  const filteredWorkflows = data?.getWorkflow.workflows
+  const filteredWorkflows = data?.getWorkflows.workflows
     .filter((dataRow) =>
       filters.suspended === 'All'
         ? true
@@ -278,7 +278,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              {clusterList?.getCluster?.map((cluster) => (
+              {clusterList?.getClusters?.map((cluster) => (
                 <MenuItem key={cluster.clusterName} value={cluster.clusterName}>
                   {cluster.clusterName}
                 </MenuItem>
@@ -308,7 +308,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                             descending: false,
                           })
                         }
@@ -320,7 +320,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                             descending: true,
                           })
                         }
@@ -416,7 +416,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.getWorkflow.totalNoOfWorkflows ?? 0}
+          count={data?.getWorkflows.totalNoOfWorkflows ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

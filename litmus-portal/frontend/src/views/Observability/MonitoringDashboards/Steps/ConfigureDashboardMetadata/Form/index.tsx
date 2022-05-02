@@ -293,7 +293,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   }, [update]);
 
   useEffect(() => {
-    const availableAgents = (agentList?.getCluster ?? []).filter((cluster) => {
+    const availableAgents = (agentList?.getClusters ?? []).filter((cluster) => {
       return (
         cluster.isActive && cluster.isClusterConfirmed && cluster.isRegistered
       );
@@ -480,14 +480,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                 'monitoringDashboard.monitoringDashboards.configureDashboardMetadata.form.noActiveAgent'
               )}
             </Typography>
-          ) : !(agentList?.getCluster ?? []).filter((cluster) => {
+          ) : !(agentList?.getClusters ?? []).filter((cluster) => {
               return (
                 cluster.clusterID === dashboardDetails.agentID &&
                 cluster.isActive &&
                 cluster.isClusterConfirmed &&
                 cluster.isRegistered
               );
-            }).length && agentList?.getCluster.length ? (
+            }).length && agentList?.getClusters.length ? (
             <Typography className={classes.formErrorText}>
               {t(
                 'monitoringDashboard.monitoringDashboards.configureDashboardMetadata.form.agentInactive'

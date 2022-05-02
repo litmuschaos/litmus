@@ -62,7 +62,7 @@ const Overview: React.FC = () => {
 
   // Set boolean to conditionally render agent setup banner
   if (agentList) {
-    isAgentPresent = agentList.getCluster.length > 0;
+    isAgentPresent = agentList.getClusters.length > 0;
   }
 
   // Check for data source being present or not
@@ -90,7 +90,7 @@ const Overview: React.FC = () => {
     error: workflowError,
   } = useQuery<Workflow, WorkflowDataRequest>(WORKFLOW_DETAILS, {
     variables: {
-      GetWorkflowRunsRequest: {
+      request: {
         projectID,
         pagination: {
           page: 0,

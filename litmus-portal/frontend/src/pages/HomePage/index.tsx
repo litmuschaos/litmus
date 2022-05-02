@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
   let agentCount = 0;
 
   if (agentList !== undefined) {
-    agentCount = agentList.getCluster.length;
+    agentCount = agentList?.getClusters.length;
   }
 
   return (

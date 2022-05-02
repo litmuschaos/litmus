@@ -216,22 +216,25 @@ const TeamingTab: React.FC = () => {
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.members?.forEach((member: Member) => {
-        if (member.userID === userID && member.role === 'Owner') {
-          projectOwner++;
-        } else if (
-          member.userID === userID &&
-          member.invitation === 'Pending'
-        ) {
-          projectInvitation++;
-        } else if (
-          member.userID === userID &&
-          member.role !== 'Owner' &&
-          member.invitation === 'Accepted'
-        ) {
-          projectOther++;
-        }
-      });
+      const projectMembers = project.members;
+      if (projectMembers) {
+        projectMembers.forEach((member: Member) => {
+          if (member.userID === userID && member.role === 'Owner') {
+            projectOwner++;
+          } else if (
+            member.userID === userID &&
+            member.invitation === 'Pending'
+          ) {
+            projectInvitation++;
+          } else if (
+            member.userID === userID &&
+            member.role !== 'Owner' &&
+            member.invitation === 'Accepted'
+          ) {
+            projectOther++;
+          }
+        });
+      }
     });
     setProjectOwnerCount(projectOwner);
     setInvitationCount(projectInvitation);

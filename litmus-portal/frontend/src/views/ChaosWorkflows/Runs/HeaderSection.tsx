@@ -127,7 +127,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>
-            {clusterList?.getCluster?.map((cluster) => (
+            {clusterList?.getClusters?.map((cluster) => (
               <MenuItem key={cluster.clusterName} value={cluster.clusterName}>
                 {cluster.clusterName}
               </MenuItem>
