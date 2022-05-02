@@ -14,5 +14,5 @@ type PodLogRequest struct {
 
 type PodLog struct {
 	MainPod  string            `json:"main_logs"`
-	ChaosPod map[string]string `json:"chaos_logs",omitempty`
+	ChaosPod map[string]string `json:"chaos_logs,omitempty"`
 }
