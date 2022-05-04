@@ -69,7 +69,7 @@ export interface ChartsInput {
 }
 
 export interface Charts {
-  getCharts: Chart[];
+  listCharts: Chart[];
 }
 
 export interface ExperimentDetail {

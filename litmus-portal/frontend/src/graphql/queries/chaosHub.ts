@@ -52,8 +52,8 @@ export const CORE_CHART_FIELDS = gql`
 
 export const GET_CHARTS_DATA = gql`
   ${CORE_CHART_FIELDS}
-  query getCharts($hubName: String!, $projectID: String!) {
-    getCharts(hubName: $hubName, projectID: $projectID) {
+  query listCharts($hubName: String!, $projectID: String!) {
+    listCharts(hubName: $hubName, projectID: $projectID) {
       ...CoreChartFields
     }
   }

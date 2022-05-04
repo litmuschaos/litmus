@@ -145,7 +145,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
     onCompleted: (data) => {
       const allExp: ChartName[] = [];
-      data.getCharts.forEach((data) => {
+      data.listCharts.forEach((data) => {
         return data.spec.experiments?.forEach((experiment) => {
           allExp.push({
             ChaosName: data.metadata.name,
@@ -340,7 +340,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         localforage.getItem('selectedHub').then((hub) => {
           setHubName(hub as string);
           getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
+            variables: { projectID: selectedProjectID, hubName: hub as string },
           });
         });
       }
@@ -377,23 +377,23 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const handleDone = () => {
     getExperimentYaml({
       variables: {
-        experimentInput: {
-          ProjectID: selectedProjectID,
-          HubName: hubName,
-          ChartName: selectedExp.split('/')[0],
-          ExperimentName: selectedExp.split('/')[1],
-          FileType: 'EXPERIMENT',
+        request: {
+          projectID: selectedProjectID,
+          hubName,
+          chartName: selectedExp.split('/')[0],
+          experimentName: selectedExp.split('/')[1],
+          fileType: 'EXPERIMENT',
         },
       },
     });
     getEngineYaml({
       variables: {
-        experimentInput: {
-          ProjectID: selectedProjectID,
-          HubName: hubName,
-          ChartName: selectedExp.split('/')[0],
-          ExperimentName: selectedExp.split('/')[1],
-          FileType: 'ENGINE',
+        request: {
+          projectID: selectedProjectID,
+          hubName,
+          chartName: selectedExp.split('/')[0],
+          experimentName: selectedExp.split('/')[1],
+          fileType: 'ENGINE',
         },
       },
     });

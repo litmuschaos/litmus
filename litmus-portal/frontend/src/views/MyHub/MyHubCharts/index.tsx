@@ -64,7 +64,7 @@ const MyHub: React.FC = () => {
   // Query to get charts of selected MyHub
   const { data, loading } = useQuery<Charts>(GET_CHARTS_DATA, {
     variables: {
-      HubName: paramData.hubname,
+      hubName: paramData.hubname,
       projectID,
     },
     fetchPolicy: 'network-only',
@@ -74,8 +74,8 @@ const MyHub: React.FC = () => {
     GET_PREDEFINED_WORKFLOW_LIST,
     {
       variables: {
-        hubname: paramData.hubname,
-        projectid: projectID,
+        hubName: paramData.hubname,
+        projectID,
       },
       fetchPolicy: 'network-only',
     }
@@ -112,7 +112,7 @@ const MyHub: React.FC = () => {
 
   useEffect(() => {
     if (data !== undefined) {
-      const chartList = data.getCharts;
+      const chartList = data.listCharts;
       chartList.forEach((expData: Chart) => {
         expData.spec.experiments.forEach((expName) => {
           exp.push({
@@ -126,8 +126,8 @@ const MyHub: React.FC = () => {
   }, [data]);
 
   const filteredWorkflow =
-    predefinedData?.GetPredefinedWorkflowList &&
-    predefinedData?.GetPredefinedWorkflowList.filter((data: string) =>
+    predefinedData?.listPredefinedWorkflows &&
+    predefinedData?.listPredefinedWorkflows.filter((data: string) =>
       data.toLowerCase().includes(searchPredefined.trim())
     );
 

@@ -40,12 +40,12 @@ const MyHub = () => {
   // Query to get charts of selected MyHub
   const { data, loading } = useQuery<ExperimentDetail>(GET_EXPERIMENT_DATA, {
     variables: {
-      data: {
-        HubName: paramData.hubname,
-        ProjectID: projectID,
-        ChartName: paramData.chart,
-        ExperimentName: paramData.experiment,
-        FileType: 'CSV',
+      request: {
+        hubName: paramData.hubname,
+        projectID,
+        chartName: paramData.chart,
+        experimentName: paramData.experiment,
+        fileType: 'CSV',
       },
     },
     fetchPolicy: 'cache-and-network',

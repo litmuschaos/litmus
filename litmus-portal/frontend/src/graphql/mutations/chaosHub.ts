@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // chaosHub (Change mutation name to add_chaos_hub)
 export const ADD_MY_HUB = gql`
-  mutation addMyHub($myHubInput: CreateMyHub!, $projectID: String!) {
-    addMyHub(myhubInput: $myHubInput, projectID: $projectID) {
+  mutation addChaosHub($request: CreateMyHub!, $projectID: String!) {
+    addChaosHub(request: $request, projectID: $projectID) {
       hubName
       repoURL
       repoBranch
@@ -12,8 +12,8 @@ export const ADD_MY_HUB = gql`
 `;
 
 export const UPDATE_MY_HUB = gql`
-  mutation updateMyHub($myHubInput: UpdateMyHub!, $projectID: String!) {
-    updateMyHub(myhubInput: $myHubInput, projectID: $projectID) {
+  mutation updateChaosHub($request: UpdateMyHub!, $projectID: String!) {
+    updateChaosHub(request: $request, projectID: $projectID) {
       hubName
       repoURL
       repoBranch
@@ -22,8 +22,8 @@ export const UPDATE_MY_HUB = gql`
 `;
 
 export const SYNC_REPO = gql`
-  mutation syncHub($id: ID!, $projectID: String!) {
-    syncHub(id: $id, projectID: $projectID) {
+  mutation syncChaosHub($id: ID!, $projectID: String!) {
+    syncChaosHub(id: $id, projectID: $projectID) {
       id
       repoURL
       repoBranch
@@ -35,8 +35,8 @@ export const SYNC_REPO = gql`
 `;
 
 export const DELETE_HUB = gql`
-  mutation deleteMyHub($hubID: String!, $projectID: String!) {
-    deleteMyHub(hubID: $hubID, projectID: $projectID)
+  mutation deleteChaosHub($hubID: String!, $projectID: String!) {
+    deleteChaosHub(hubID: $hubID, projectID: $projectID)
   }
 `;
 
