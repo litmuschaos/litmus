@@ -80,12 +80,12 @@ const WorkflowSettings = forwardRef((_, ref) => {
   const [getSavedTemplateDetails] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      if (data.GetTemplateManifestByID !== undefined) {
-        setName(data.GetTemplateManifestByID.template_name);
-        setDescription(data.GetTemplateManifestByID.template_description);
+      if (data.getWorkflowManifestByID !== undefined) {
+        setName(data.getWorkflowManifestByID.templateName);
+        setDescription(data.getWorkflowManifestByID.templateDescription);
         setIcon('./avatars/litmus.svg');
-        setCRDLink(data.GetTemplateManifestByID.template_id);
-        const savedTemplate = data.GetTemplateManifestByID.manifest;
+        setCRDLink(data.getWorkflowManifestByID.template_id);
+        const savedTemplate = data.getWorkflowManifestByID.manifest;
         if (parsed(savedTemplate).length === 0) {
           workflowAction.setWorkflowManifest({
             manifest: savedTemplate,
@@ -161,7 +161,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
         getSavedTemplateDetails({
           variables: {
             projectID: getProjectID(),
-            data: (value as ChooseWorkflowRadio).id,
+            templateID: (value as ChooseWorkflowRadio).id,
           },
         });
         setDisplayRegChange(true);

@@ -110,7 +110,7 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
     },
   });
 
-  const chaosLogs = (chaoslog: any) => {
+  const parsedChaosLog = (chaoslog: any) => {
     let log_str = '';
     if (Object.keys(chaoslog).length) {
       for (let i = 0; i <= Object.keys(chaoslog).length; i++) {
@@ -132,13 +132,13 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
   // Function to download the logs
   const downloadLogs = (logs: any, podName: string) => {
     const element = document.createElement('a');
-    let chaos_logs = '';
+    let chaosLogs = '';
     try {
-      chaos_logs = chaosLogs(logs.chaos_logs);
+      chaosLogs = parsedChaosLog(logs.chaosLogs);
     } catch {
-      chaos_logs = 'Chaos Logs unavailable';
+      chaosLogs = 'Chaos Logs unavailable';
     }
-    const file = new Blob([logs?.main_logs, chaos_logs], {
+    const file = new Blob([logs?.mainLogs, chaosLogs], {
       type: 'text/txt',
     });
     element.href = URL.createObjectURL(file);
@@ -170,10 +170,10 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
             ) : (
               <></>
             )}
-            {podLogs?.main_logs !== null && podLogs?.main_logs !== '' ? (
+            {podLogs?.mainLogs !== null && podLogs?.mainLogs !== '' ? (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>
-                  {podLogs?.main_logs}
+                  {podLogs?.mainLogs}
                 </Typography>
               </div>
             ) : (
@@ -183,10 +183,10 @@ const LogsSwitcher: React.FC<LogsSwitcherProps> = ({
             )}
           </div>
           <div>
-            {podLogs?.chaos_logs && (
+            {podLogs?.chaosLogs && (
               <div style={{ whiteSpace: 'pre-wrap' }}>
                 <Typography className={classes.text}>
-                  {chaosLogs(podLogs.chaos_logs)}
+                  {parsedChaosLog(podLogs.chaosLogs)}
                 </Typography>
               </div>
             )}

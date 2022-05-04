@@ -174,7 +174,7 @@ const EditSchedule: React.FC = () => {
         localforage.setItem('weights', w);
         workflowAction.setWorkflowDetails({
           workflow_id: wfDetails?.workflowID,
-          clusterid: wfDetails?.clusterID,
+          clusterID: wfDetails?.clusterID,
           cronSyntax:
             isCronEdited === null ? wfDetails?.cronSyntax : cronSyntax,
           scheduleType: {

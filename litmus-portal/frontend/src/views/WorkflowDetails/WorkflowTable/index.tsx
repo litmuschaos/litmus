@@ -51,7 +51,7 @@ const NodeTable: React.FC<NodeTableProps> = ({
   const changeNodeLogs = (selectedKey: string) => {
     nodeSelection.selectNode({
       ...data.nodes[selectedKey],
-      pod_name: selectedKey,
+      podName: selectedKey,
     });
   };
 

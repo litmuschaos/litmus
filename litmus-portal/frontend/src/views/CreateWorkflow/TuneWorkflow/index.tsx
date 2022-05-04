@@ -189,7 +189,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
    */
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
-      const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
+      const parsedYAML = YAML.parse(data.getWorkflowManifestByID.manifest);
 
       const updatedManifestImage = updateManifestImage(
         parsedYAML,
@@ -330,7 +330,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
             getTemplate({
               variables: {
                 projectID: getProjectID(),
-                data: (value as ChooseWorkflowRadio).id,
+                templateID: (value as ChooseWorkflowRadio).id,
               },
             });
           }

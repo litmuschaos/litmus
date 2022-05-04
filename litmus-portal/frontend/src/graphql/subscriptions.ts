@@ -33,8 +33,8 @@ export const WORKFLOW_EVENTS = gql`
 `;
 
 export const WORKFLOW_LOGS = gql`
-  subscription podLog($podDetails: PodLogRequest!) {
-    getPodLog(podDetails: $podDetails) {
+  subscription podLog($request: PodLogRequest!) {
+    getPodLog(request: $request) {
       log
     }
   }
