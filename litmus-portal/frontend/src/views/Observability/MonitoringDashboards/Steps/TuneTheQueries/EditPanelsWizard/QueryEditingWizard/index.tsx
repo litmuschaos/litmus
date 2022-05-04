@@ -347,13 +347,13 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={panelInfo.panelOptions.grids}
+                      checked={panelInfo.panelOptions.grIDs}
                       onChange={(
                         event: React.ChangeEvent<HTMLInputElement>
                       ) => {
                         const updatedPanelOptions: PanelOption = {
                           ...panelInfo.panelOptions,
-                          grids: event.target.checked,
+                          grIDs: event.target.checked,
                         };
                         setPanelInfo({
                           ...panelInfo,

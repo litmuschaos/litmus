@@ -152,13 +152,14 @@ const DataSourceTable: React.FC = () => {
   };
 
   const payload: ListDataSourceResponse[] = data
-    ? !data.ListDataSource
+    ? !data.listDataSource
       ? []
-      : data.ListDataSource.filter((ds: ListDataSourceResponse) => {
-          return filter.searchTokens.every((s: string) =>
-            ds.ds_name.toLowerCase().includes(s)
-          );
-        })
+      : data.listDataSource
+          .filter((ds: ListDataSourceResponse) => {
+            return filter.searchTokens.every((s: string) =>
+              ds.ds_name.toLowerCase().includes(s)
+            );
+          })
           .filter((data) => {
             return filter.selectedStatus === 'All'
               ? true
@@ -241,7 +242,7 @@ const DataSourceTable: React.FC = () => {
               });
               setPage(0);
             }}
-            statuses={getStatus(data?.ListDataSource ?? [])}
+            statuses={getStatus(data?.listDataSource ?? [])}
             callbackToSetStatus={(status: string) => {
               setFilter({
                 ...filter,

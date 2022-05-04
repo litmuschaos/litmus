@@ -367,7 +367,7 @@ const WorkflowComparisonTable = () => {
       },
     });
 
-  const getClusters = (searchingData: ScheduledWorkflow[]) => {
+  const listClusters = (searchingData: ScheduledWorkflow[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
       if (!uniqueList.includes(data.clusterName)) {
@@ -571,7 +571,7 @@ const WorkflowComparisonTable = () => {
 
   useEffect(() => {
     setDisplayData(data ? data.listWorkflows.workflows : []);
-    getClusters(data ? data.listWorkflows.workflows : []);
+    listClusters(data ? data.listWorkflows.workflows : []);
   }, [data]);
 
   useEffect(() => {
@@ -645,7 +645,7 @@ const WorkflowComparisonTable = () => {
       });
     setDisplayData(payload);
     setShowAll(false);
-    getClusters(searchingDataRetriever());
+    listClusters(searchingDataRetriever());
   }, [filter, compare]);
 
   return (

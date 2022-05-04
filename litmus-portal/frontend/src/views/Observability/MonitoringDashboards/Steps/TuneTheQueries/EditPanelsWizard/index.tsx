@@ -237,7 +237,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       ],
       panelOptions: {
         points: false,
-        grids: true,
+        grIDs: true,
         leftAxis: true,
       },
       panelName: 'Untitled Panel',
@@ -399,7 +399,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
           });
           const existingPanelOptions: PanelOption = {
             points: selectedPanel.panelOptions.points,
-            grids: selectedPanel.panelOptions.grids,
+            grIDs: selectedPanel.panelOptions.grIDs,
             leftAxis: selectedPanel.panelOptions.leftAxis,
           };
           existingPanels[index] = {

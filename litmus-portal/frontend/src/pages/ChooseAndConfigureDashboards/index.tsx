@@ -109,7 +109,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
             });
             const panelOption: PanelOption = {
               points: panel.panelOptions.points,
-              grids: panel.panelOptions.grids,
+              grIDs: panel.panelOptions.grIDs,
               leftAxis: panel.panelOptions.leftAxis,
             };
             panels.push({
@@ -243,7 +243,7 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
               configure={configure}
               activePanelID={selectedDashboard.activePanelID}
               existingDashboardVars={dashboardVars}
-              dataSourceList={dataSourceList?.ListDataSource ?? []}
+              dataSourceList={dataSourceList?.listDataSource ?? []}
             />
           </>
         )}

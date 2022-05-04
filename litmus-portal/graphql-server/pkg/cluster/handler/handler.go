@@ -165,7 +165,7 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 	if err != nil {
 		return "", err
 	}
-	clusters, err := dbOperationsCluster.GetClusters(ctx, query)
+	clusters, err := dbOperationsCluster.ListClusters(ctx, query)
 	if err != nil {
 		return "", nil
 	}

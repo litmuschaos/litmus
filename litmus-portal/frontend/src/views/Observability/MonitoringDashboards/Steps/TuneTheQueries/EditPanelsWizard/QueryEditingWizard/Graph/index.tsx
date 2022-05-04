@@ -72,7 +72,7 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
         legendTableHeight={120}
         openSeries={graphData.seriesData}
         closedSeries={graphData.closedAreaData}
-        showGrid={panelVars.panelOptions.grids}
+        showGrid={panelVars.panelOptions.grIDs}
         showPoints={panelVars.panelOptions.points}
         showLegendTable
         showTips

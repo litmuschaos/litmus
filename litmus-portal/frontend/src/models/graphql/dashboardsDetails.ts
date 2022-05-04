@@ -1,6 +1,6 @@
 export interface PanelOption {
   points: boolean;
-  grids: boolean;
+  grIDs: boolean;
   leftAxis: boolean;
 }
 

@@ -130,7 +130,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
               openSeries={metricDataForPanel?.seriesData}
               closedSeries={metricDataForPanel?.closedAreaData}
               eventSeries={chaosData}
-              showGrid={panelOptions.grids}
+              showGrid={panelOptions.grIDs}
               showPoints={panelOptions.points}
               showLegendTable
               showEventTable
@@ -154,7 +154,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           openSeries={metricDataForPanel?.seriesData}
           closedSeries={metricDataForPanel?.closedAreaData}
           eventSeries={chaosData}
-          showGrid={panelOptions.grids}
+          showGrid={panelOptions.grIDs}
           showPoints={panelOptions.points}
           showEventTable={viewEventMetric}
           showLegendTable

@@ -47,5 +47,5 @@ export interface ListDataSourceVars {
 }
 
 export interface DataSourceList {
-  ListDataSource: ListDataSourceResponse[];
+  listDataSource: ListDataSourceResponse[];
 }

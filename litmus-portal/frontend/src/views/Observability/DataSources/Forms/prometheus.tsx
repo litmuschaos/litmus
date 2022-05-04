@@ -148,7 +148,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
 
   useEffect(() => {
     if (configure === true) {
-      data?.ListDataSource.forEach(
+      data?.listDataSource.forEach(
         (dataSourceDetail: ListDataSourceResponse) => {
           if (dataSourceDetail.ds_id === dataSourceID) {
             setDataSourceDetails({

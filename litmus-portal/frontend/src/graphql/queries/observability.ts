@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 // GetDataSource
 export const GET_DATASOURCE = gql`
   query listDataSource($projectID: String!) {
-    ListDataSource(projectID: $projectID) {
+    listDataSource(projectID: $projectID) {
       dsID
       dsName
       dsType
@@ -25,8 +25,8 @@ export const GET_DATASOURCE = gql`
 
 export const GET_DATASOURCE_OVERVIEW = gql`
   query listDataSource($projectID: String!) {
-    ListDataSource(project_id: $projectID) {
-      ds_id
+    listDataSource(projectID: $projectID) {
+      dsID
     }
   }
 `;
@@ -44,7 +44,7 @@ export const GET_PORTAL_DASHBOARDS = gql`
 // listDashboard
 export const GET_DASHBOARD = gql`
   query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
-    ListDashboard(projectID: $projectID, clusterID: $clusterID, dbID: $dbID) {
+    listDashboard(projectID: $projectID, clusterID: $clusterID, dbID: $dbID) {
       dbID
       dsID
       dbName
@@ -80,11 +80,11 @@ export const GET_DASHBOARD = gql`
           }
           panelOptions {
             points
-            grids
+            grIDs
             leftAxis
           }
           panelName
-          yAxis_left
+          yAxisLeft
           yAxisRight
           xAxisDown
           unit
@@ -104,7 +104,7 @@ export const GET_DASHBOARD = gql`
 
 export const GET_DASHBOARD_OVERVIEW = gql`
   query listDashboard($projectID: String!, $clusterID: String, $dbID: String) {
-    ListDashboard(projectID: $projectID, clusterID: $clusterID, dbID: $dbID) {
+    listDashboard(projectID: $projectID, clusterID: $clusterID, dbID: $dbID) {
       dbID
       dbName
       dbTypeID
@@ -137,7 +137,7 @@ export const GET_DASHBOARD_OVERVIEW = gql`
           }
           panelOptions {
             points
-            grids
+            grIDs
             leftAxis
           }
           panelName

@@ -71,7 +71,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
         });
         const options: PanelOption = {
           points: panel.panelOptions.points,
-          grids: panel.panelOptions.grids,
+          grIDs: panel.panelOptions.grIDs,
           leftAxis: panel.panelOptions.leftAxis,
         };
         const selectedPanel: PanelExport = {

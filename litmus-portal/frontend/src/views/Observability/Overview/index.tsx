@@ -74,13 +74,13 @@ const Overview: React.FC = () => {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
-      setDataSourceCount(data.ListDataSource.length);
+      setDataSourceCount(data.listDataSource.length);
     },
   });
 
   // Set boolean to conditionally render the banner
   if (dataSourceListData) {
-    dataSource = dataSourceListData.ListDataSource.length > 0;
+    dataSource = dataSourceListData.listDataSource.length > 0;
   }
 
   // Fetch data to display for the workflow statistics cards

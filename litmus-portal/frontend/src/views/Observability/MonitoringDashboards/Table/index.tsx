@@ -199,9 +199,9 @@ const DashboardTable: React.FC = () => {
     : [];
 
   useEffect(() => {
-    if (dataSourceList && dataSourceList.ListDataSource) {
+    if (dataSourceList && dataSourceList.listDataSource) {
       const activeDataSources: ListDataSourceResponse[] =
-        dataSourceList.ListDataSource.filter(
+        dataSourceList.listDataSource.filter(
           (dataSource) => dataSource.health_status === 'Active'
         ) ?? [];
       if (activeDataSources.length) {
@@ -245,7 +245,7 @@ const DashboardTable: React.FC = () => {
       {!activeDataSourceAvailable && !loadingDataSources && (
         <blockquote className={classes.warningBlock}>
           <Typography className={classes.warningText} align="left">
-            {dataSourceList?.ListDataSource.length
+            {dataSourceList?.listDataSource.length
               ? t(
                   'monitoringDashboard.monitoringDashboardTable.warning.noActiveDataSource'
                 )
@@ -254,7 +254,7 @@ const DashboardTable: React.FC = () => {
                 )}
           </Typography>
           <div className={classes.warningActions}>
-            {dataSourceList && dataSourceList.ListDataSource.length > 0 && (
+            {dataSourceList && dataSourceList.listDataSource.length > 0 && (
               <>
                 <TextButton
                   onClick={() => tabs.changeObservabilityDashboardTabs(3)}
