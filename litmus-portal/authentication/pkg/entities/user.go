@@ -2,6 +2,7 @@ package entities
 
 import (
 	"litmus/litmus-portal/authentication/pkg/utils"
+	"net/mail"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -50,7 +51,7 @@ type UserPassword struct {
 // UpdateUserState defines structure to deactivate or reactivate user
 type UpdateUserState struct {
 	Username     string `json:"username"`
-	IsDeactivate bool   `json:"is_deactivate"`
+	IsDeactivate *bool  `json:"is_deactivate"`
 }
 
 // APIStatus defines structure for APIroute status
@@ -82,6 +83,12 @@ func (user User) GetUserWithProject() *UserWithProject {
 func (user *User) SanitizedUser() *User {
 	user.Password = ""
 	return user
+}
+
+// IsEmailValid validates the email
+func (user *User) IsEmailValid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
 
 // GetSignedJWT generates the JWT Token for the user object

@@ -7,6 +7,8 @@ import (
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -51,7 +53,7 @@ func DexLogin() gin.HandlerFunc {
 	}
 }
 
-// DexCallback is the handler that creates/logs in the user from Dex and provides JWT to frontend via a reidirect
+// DexCallback is the handler that creates/logs in the user from Dex and provides JWT to frontend via a redirect
 func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		incomingState := c.Query("state")
@@ -95,12 +97,16 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+		createdAt := strconv.FormatInt(time.Now().Unix(), 10)
+
 		var userData = entities.User{
-			Name:     claims.Name,
-			Email:    claims.Email,
-			UserName: claims.Email,
-			Role:     entities.RoleUser,
+			Name:      claims.Name,
+			Email:     claims.Email,
+			UserName:  claims.Email,
+			Role:      entities.RoleUser,
+			CreatedAt: &createdAt,
 		}
+
 		signedInUser, err := userService.LoginUser(&userData)
 		if err != nil {
 			log.Error(err)

@@ -84,6 +84,7 @@ const TableData: React.FC<TableDataProps> = ({
     if (mutate === true) {
       deleteDataSource({
         variables: {
+          projectID: getProjectID(),
           deleteDSInput: {
             ds_id: data.ds_id,
             force_delete: false,
@@ -184,7 +185,7 @@ const TableData: React.FC<TableDataProps> = ({
                 selectedDataSourceName: data.ds_name,
               });
               history.push({
-                pathname: '/observability/datasource/configure',
+                pathname: '/analytics/datasource/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}

@@ -42,11 +42,19 @@ spec:
             - workflow-controller
           image: #{ARGO-WORKFLOW-CONTROLLER}
           name: workflow-controller
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
           env:
             - name: LEADER_ELECTION_DISABLE
               value: "true"
           resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
             limits:
-              cpu: 150m
-              memory: 250Mi
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
       serviceAccountName: argo

@@ -552,8 +552,8 @@ export const PROM_SERIES_LIST = gql`
 `;
 
 export const GET_TEMPLATE_BY_ID = gql`
-  query GetManifestTemplate($data: String!) {
-    GetTemplateManifestByID(template_id: $data) {
+  query GetManifestTemplate($projectID: String!, $data: String!) {
+    GetTemplateManifestByID(projectID: $projectID, template_id: $data) {
       template_id
       template_name
       template_description

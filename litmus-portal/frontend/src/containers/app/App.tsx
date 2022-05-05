@@ -3,9 +3,9 @@ import React, { lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import { SuspenseLoader } from '../../components/SuspenseLoader';
 import config from '../../config';
-import { Member, Project, UserRole } from '../../models/graphql/user';
+import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { getToken, getUserId, getUserRole } from '../../utils/auth';
+import { getToken, getUserRole } from '../../utils/auth';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import Scaffold from '../layouts/Scaffold';
 
@@ -48,12 +48,11 @@ const Routes: React.FC = () => {
   const role = getUserRole();
   const [projectID, setprojectID] = useState<string>(projectIDFromURL);
   const [projectRole, setprojectRole] = useState<string>(projectRoleFromURL);
-  const userID = getUserId();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getProjects = () => {
+  const getOwnerProjects = () => {
     setLoading(true);
-    fetch(`${config.auth.url}/list_projects`, {
+    fetch(`${config.auth.url}/get_owner_projects`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -62,32 +61,26 @@ const Routes: React.FC = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if ('error' in data) {
-          console.error(data);
-        } else if (data.message !== 'No projects found') {
-          data.data.forEach((project: Project): void => {
-            project.Members.forEach((member: Member): void => {
-              if (member.UserID === userID && member.Role === 'Owner') {
-                setprojectID(project.ID);
-                setprojectRole(member.Role);
-                history.push({
-                  pathname: `/${baseRoute}`,
-                  search: `?projectID=${project.ID}&projectRole=${member.Role}`,
-                });
-              }
-            });
+        if (data.data) {
+          setprojectID(data.data[0]);
+          setprojectRole('Owner');
+          history.push({
+            pathname: `/${baseRoute}`,
+            search: `?projectID=${data.data[0]}&projectRole=Owner`,
           });
         }
+
         setLoading(false);
       })
       .catch((err) => {
         console.error(err);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
     if (!((projectID !== '' && projectID !== undefined) || getToken() === '')) {
-      getProjects();
+      getOwnerProjects();
     }
   }, [projectID]);
 
@@ -100,10 +93,9 @@ const Routes: React.FC = () => {
 
   const [projectValidation, setProjectValidation] = useState<boolean>(false);
 
-  const getProjectDetails = () => {
-    let isMember = false;
+  const getProjectValidation = () => {
     setProjectValidation(true);
-    fetch(`${config.auth.url}/get_project/${projectID}`, {
+    fetch(`${config.auth.url}/get_project_role/${projectID}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -113,33 +105,31 @@ const Routes: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if ('error' in data) {
-          console.error(data);
+          setprojectID('');
+          setprojectRole('');
+        }
+        if (data.role !== 'N/A') {
+          setprojectRole(data.role);
+          if (data.role !== projectRole)
+            history.push({
+              pathname: `/${baseRoute}`,
+              search: `?projectID=${projectID}&projectRole=${data.role}`,
+            });
         } else {
-          data.data.Members.forEach((member: Member) => {
-            if (member.UserID === userID) {
-              isMember = true;
-              setprojectID(data.data.ID);
-              setprojectRole(member.Role);
-            }
-          });
-          if (!isMember) {
-            setprojectID('');
-            setprojectRole('');
-          }
+          setprojectID('');
+          setprojectRole('');
         }
         setProjectValidation(false);
       })
       .catch((err) => {
         console.error(err);
-        if (!isMember) {
-          setprojectID('');
-          setprojectRole('');
-        }
+        setprojectID('');
+        setprojectRole('');
       });
   };
   useEffect(() => {
     if (getToken() !== '' && projectID) {
-      getProjectDetails();
+      getProjectValidation();
     }
   }, []);
 
@@ -183,34 +173,34 @@ const Routes: React.FC = () => {
               <Route exact path="/workflows" component={Workflows} />
               <Route
                 exact
-                path="/observability"
+                path="/analytics"
                 component={ObservabilityDashboard}
               />
               <Route
                 exact
-                path="/observability/datasource/create"
+                path="/analytics/datasource/create"
                 component={() => <DataSourceConfigurePage configure={false} />}
               />
               <Route
                 exact
-                path="/observability/datasource/configure"
+                path="/analytics/datasource/configure"
                 component={() => <DataSourceConfigurePage configure />}
               />
               <Route
                 exact
-                path="/observability/dashboard/create"
+                path="/analytics/dashboard/create"
                 component={() => (
                   <ChooseAndConfigureDashboards configure={false} />
                 )}
               />
               <Route
                 exact
-                path="/observability/dashboard/configure"
+                path="/analytics/dashboard/configure"
                 component={() => <ChooseAndConfigureDashboards configure />}
               />
               <Route
                 exact
-                path="/observability/monitoring-dashboard"
+                path="/analytics/monitoring-dashboard"
                 component={() => <DashboardPage />}
               />
               <Route exact path="/create-workflow" component={CreateWorkflow} />
@@ -231,7 +221,7 @@ const Routes: React.FC = () => {
               />
               <Route
                 exact
-                path="/observability/workflowStatistics/:workflowId"
+                path="/analytics/workflowStatistics/:workflowId"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -269,26 +259,14 @@ const Routes: React.FC = () => {
               <Redirect exact path="/getStarted" to="/home" />
               <Redirect exact path="/workflows/schedule" to="/workflows" />
               <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/analytics/overview" to="/analytics" />
               <Redirect
                 exact
-                path="/observability/overview"
-                to="/observability"
+                path="/analytics/litmusdashboard"
+                to="/analytics"
               />
-              <Redirect
-                exact
-                path="/observability/litmusdashboard"
-                to="/observability"
-              />
-              <Redirect
-                exact
-                path="/observability/datasource"
-                to="/observability"
-              />
-              <Redirect
-                exact
-                path="/observability/dashboard"
-                to="/observability"
-              />
+              <Redirect exact path="/analytics/datasource" to="/analytics" />
+              <Redirect exact path="/analytics/dashboard" to="/analytics" />
               <Redirect exact path="/api-doc" to="/api-doc/index.html" />
               <Redirect to="/404" />
             </Switch>

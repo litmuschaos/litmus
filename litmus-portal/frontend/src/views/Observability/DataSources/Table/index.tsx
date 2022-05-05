@@ -209,7 +209,7 @@ const DataSourceTable: React.FC = () => {
         <ButtonFilled
           onClick={() =>
             history.push({
-              pathname: '/observability/datasource/create',
+              pathname: '/analytics/datasource/create',
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             })
           }
@@ -490,6 +490,7 @@ const DataSourceTable: React.FC = () => {
               onClick={() =>
                 deleteDataSource({
                   variables: {
+                    projectID: getProjectID(),
                     deleteDSInput: {
                       ds_id: forceDeleteVars.dsID,
                       force_delete: true,

@@ -44,6 +44,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [dashboardSelectedForDeleting, setDashboardSelectedForDeleting] =
     React.useState<DeleteDashboardInput>({
+      projectID: '',
       dbID: '',
     });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -177,7 +178,10 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
   useEffect(() => {
     if (mutate === true) {
       deleteDashboard({
-        variables: { dbID: dashboardSelectedForDeleting.dbID },
+        variables: {
+          projectID: getProjectID(),
+          dbID: dashboardSelectedForDeleting.dbID,
+        },
       });
     }
   }, [mutate]);
@@ -190,7 +194,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
           onClick={() => {
             onDashboardLoadRoutine().then(() => {
               history.push({
-                pathname: '/observability/monitoring-dashboard',
+                pathname: '/analytics/monitoring-dashboard',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             });
@@ -281,7 +285,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             onClick={() => {
               onDashboardLoadRoutine().then(() => {
                 history.push({
-                  pathname: '/observability/monitoring-dashboard',
+                  pathname: '/analytics/monitoring-dashboard',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               });
@@ -308,7 +312,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
                 activePanelID: '',
               });
               history.push({
-                pathname: '/observability/dashboard/configure',
+                pathname: '/analytics/dashboard/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -353,6 +357,7 @@ const TableData: React.FC<TableDataProps> = ({ data, alertStateHandler }) => {
             value="Delete"
             onClick={() => {
               setDashboardSelectedForDeleting({
+                projectID: getProjectID(),
                 dbID: data.db_id,
               });
               setOpenModal(true);
