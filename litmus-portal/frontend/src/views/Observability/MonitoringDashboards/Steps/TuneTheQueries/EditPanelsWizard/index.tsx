@@ -83,7 +83,7 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
     PROM_SERIES_LIST,
     {
       variables: {
-        prometheusDSInput: {
+        request: {
           url: dashboardVars.dataSourceURL ?? '',
           start: `${
             new Date(
@@ -104,8 +104,8 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       onCompleted: (prometheusSeriesData) => {
         if (prometheusSeriesData) {
           const seriesValues: Array<Option> = [];
-          if (prometheusSeriesData.GetPromSeriesList.seriesList) {
-            prometheusSeriesData.GetPromSeriesList.seriesList.forEach(
+          if (prometheusSeriesData.getPromSeriesList.seriesList) {
+            prometheusSeriesData.getPromSeriesList.seriesList.forEach(
               (series) => {
                 seriesValues.push({ name: series });
               }

@@ -33,8 +33,8 @@ export const GET_DATASOURCE_OVERVIEW = gql`
 
 // portalDashboardData
 export const GET_PORTAL_DASHBOARDS = gql`
-  query getPortalDashboards($projectID: String!, $hubName: String!) {
-    portalDashboardData(projectID: $projectID, hubName: $hubName) {
+  query listPortalDashboardData($projectID: String!, $hubName: String!) {
+    listPortalDashboardData(projectID: $projectID, hubName: $hubName) {
       name
       dashboardData
     }
@@ -155,8 +155,8 @@ export const GET_DASHBOARD_OVERVIEW = gql`
 
 // getPromQuery
 export const PROM_QUERY = gql`
-  query PrometheusQuery($prometheusInput: promInput) {
-    getPromQuery(query: $prometheusInput) {
+  query PrometheusQuery($request: PrometheusDataRequest!) {
+    getPrometheusData(request: $request) {
       metricsResponse {
         queryID
         legends
@@ -179,8 +179,8 @@ export const PROM_QUERY = gql`
 
 // getPromLabelNamesAndValues
 export const PROM_LABEL_VALUES = gql`
-  query PrometheusLabelValues($prometheusInput: promSeriesInput) {
-    getPromLabelNamesAndValues(series: $prometheusInput) {
+  query PrometheusLabelValues($request: PromSeriesInput) {
+    getPromLabelNamesAndValues(request: $request) {
       series
       labelValues {
         label
@@ -194,8 +194,8 @@ export const PROM_LABEL_VALUES = gql`
 
 // getPromSeriesList
 export const PROM_SERIES_LIST = gql`
-  query PrometheusSeriesList($prometheusDSInput: dsDetails) {
-    getPromSeriesList(dsDetails: $prometheusDSInput) {
+  query getPromSeriesList($request: DsDetails) {
+    getPromSeriesList(request: $request) {
       seriesList
     }
   }

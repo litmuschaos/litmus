@@ -127,7 +127,7 @@ export interface PortalDashboardsResponse {
 }
 
 export interface GetPortalDashboard {
-  portalDashboardData: PortalDashboardsResponse[];
+  listPortalDashboardData: PortalDashboardsResponse[];
 }
 
 export interface ResourceResponse {
@@ -174,5 +174,5 @@ export interface GetDashboardRequest {
 }
 
 export interface GetDashboard {
-  getDashboard: GetDashboardResponse[];
+  listDashboard: GetDashboardResponse[];
 }

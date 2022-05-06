@@ -23,6 +23,12 @@ import {
   LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
   UPDATE_IMAGE_REGISTRY,
 } from '../../../graphql';
+import {
+  CreateImageRegistryResponse,
+  GetImageRegistryResponse,
+  ListImageRegistryResponse,
+  UpdateImageRegistryResponse,
+} from '../../../models/graphql/imageRegistries';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -54,12 +60,10 @@ const ImageRegistry = () => {
   /**
    * GetRegistryData to fetch Registry Data by ID
    */
-  const [getRegistryData, { data, loading }] = useLazyQuery(
-    GET_IMAGE_REGISTRY,
-    {
+  const [getRegistryData, { data, loading }] =
+    useLazyQuery<GetImageRegistryResponse>(GET_IMAGE_REGISTRY, {
       fetchPolicy: 'network-only',
-    }
-  );
+    });
   const [registryInfo, setRegistryInfo] = useState<RegistryInfo>({
     registry_name: '',
     repo_name: '',
@@ -96,38 +100,40 @@ const ImageRegistry = () => {
   /**
    * ListImageRegistry is used to fetch the list of image registries
    */
-  const { loading: listLoading } = useQuery(LIST_IMAGE_REGISTRY_BY_PROJECT_ID, {
-    variables: {
-      data: projectID,
-    },
-    fetchPolicy: 'network-only',
-    onCompleted: (data) => {
-      if (
-        data.listImageRegistry !== null &&
-        data.listImageRegistry.length > 0
-      ) {
-        setRegistryID(data.listImageRegistry[0].image_registry_id);
-        getRegistryData({
-          variables: {
-            imageRegistryID: data.listImageRegistry[0].image_registry_id,
-            projectID,
-          },
-        });
-      } else {
-        setIsAvailable(false);
-        setRegistry('disabled');
-      }
-    },
-  });
+  const { loading: listLoading } = useQuery<ListImageRegistryResponse>(
+    LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
+    {
+      variables: {
+        data: projectID,
+      },
+      fetchPolicy: 'network-only',
+      onCompleted: (data) => {
+        if (
+          data.listImageRegistry !== null &&
+          data.listImageRegistry.length > 0
+        ) {
+          setRegistryID(data.listImageRegistry[0].imageRegistryID);
+          getRegistryData({
+            variables: {
+              imageRegistryID: data.listImageRegistry[0].imageRegistryID,
+              projectID,
+            },
+          });
+        } else {
+          setIsAvailable(false);
+          setRegistry('disabled');
+        }
+      },
+    }
+  );
 
   /**
    * UpdateImageRegistry is used to update the Image Registry
    */
-  const [updateImageRegistry, { loading: updateLoader }] = useMutation(
-    UPDATE_IMAGE_REGISTRY,
-    {
+  const [updateImageRegistry, { loading: updateLoader }] =
+    useMutation<UpdateImageRegistryResponse>(UPDATE_IMAGE_REGISTRY, {
       onCompleted: (data) => {
-        if (data.updateImageRegistry.image_registry_info.is_default) {
+        if (data.updateImageRegistry.imageRegistryInfo.isDefault) {
           setIsCustomRegistryEnabled(false);
           setRegistry('disabled');
         } else {
@@ -136,41 +142,42 @@ const ImageRegistry = () => {
         }
         setRegistryData({
           registry_name:
-            data.updateImageRegistry.image_registry_info.image_registry_name,
-          repo_name:
-            data.updateImageRegistry.image_registry_info.image_repo_name,
+            data.updateImageRegistry.imageRegistryInfo.imageRegistryName,
+          repo_name: data.updateImageRegistry.imageRegistryInfo.imageRepoName,
           registry_type:
-            data.updateImageRegistry.image_registry_info.image_registry_type,
+            data.updateImageRegistry.imageRegistryInfo.imageRegistryType,
         });
+      },
+    });
+
+  const [createImageRegistry] = useMutation<CreateImageRegistryResponse>(
+    ADD_IMAGE_REGISTRY,
+    {
+      refetchQueries: [
+        {
+          query: LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
+          variables: {
+            data: projectID,
+          },
+        },
+      ],
+      onCompleted: (data) => {
+        if (data !== undefined) {
+          setIsAvailable(true);
+        }
+      },
+      onError: () => {
+        setIsAvailable(false);
       },
     }
   );
-
-  const [createImageRegistry] = useMutation(ADD_IMAGE_REGISTRY, {
-    refetchQueries: [
-      {
-        query: LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
-        variables: {
-          data: projectID,
-        },
-      },
-    ],
-    onCompleted: (data) => {
-      if (data !== undefined) {
-        setIsAvailable(true);
-      }
-    },
-    onError: () => {
-      setIsAvailable(false);
-    },
-  });
 
   /**
    * UseEffect to set the initial data of image registry
    */
   useEffect(() => {
     if (data !== undefined) {
-      if (data.GetImageRegistry.image_registry_info.is_default) {
+      if (data.getImageRegistry.imageRegistryInfo.isDefault) {
         setRegistry('disabled');
         setIsCustomRegistryEnabled(false);
         setRegistryData({
@@ -183,10 +190,10 @@ const ImageRegistry = () => {
         setIsCustomRegistryEnabled(true);
         setRegistryData({
           registry_name:
-            data.GetImageRegistry.image_registry_info.image_registry_name,
-          repo_name: data.GetImageRegistry.image_registry_info.image_repo_name,
+            data.getImageRegistry.imageRegistryInfo.imageRegistryName,
+          repo_name: data.getImageRegistry.imageRegistryInfo.imageRepoName,
           registry_type:
-            data.GetImageRegistry.image_registry_info.image_registry_type,
+            data.getImageRegistry.imageRegistryInfo.imageRegistryType,
         });
       }
     }
@@ -202,13 +209,13 @@ const ImageRegistry = () => {
         imageRegistryID: registryID,
         projectID,
         imageRegistryInfo: {
-          image_registry_name: registryInfo.registry_name,
-          image_repo_name: registryInfo.repo_name,
-          image_registry_type: registryInfo.registry_type,
-          secret_name: registryInfo.secret_name,
-          secret_namespace: registryInfo.secret_namespace,
-          enable_registry: true,
-          is_default: false,
+          imageRegistryName: registryInfo.registry_name,
+          imageRepoName: registryInfo.repo_name,
+          imageRegistryType: registryInfo.registry_type,
+          secretName: registryInfo.secret_name,
+          secretNamespace: registryInfo.secret_namespace,
+          enableRegistry: true,
+          isDefault: false,
         },
       },
     });
@@ -291,13 +298,13 @@ const ImageRegistry = () => {
                               variables: {
                                 projectID,
                                 imageRegistryInfo: {
-                                  image_registry_name: constants.dockerio,
-                                  image_repo_name: constants.litmus,
-                                  image_registry_type: constants.public,
-                                  secret_name: '',
-                                  secret_namespace: '',
-                                  enable_registry: true,
-                                  is_default: true,
+                                  imageRegistryName: constants.dockerio,
+                                  imageRepoName: constants.litmus,
+                                  imageRegistryType: constants.public,
+                                  secretName: '',
+                                  secretNamespace: '',
+                                  enableRegistry: true,
+                                  isDefault: true,
                                 },
                               },
                             })
@@ -306,13 +313,13 @@ const ImageRegistry = () => {
                                 imageRegistryID: registryID,
                                 projectID,
                                 imageRegistryInfo: {
-                                  image_registry_name: constants.dockerio,
-                                  image_repo_name: constants.litmus,
-                                  image_registry_type: constants.public,
-                                  secret_name: '',
-                                  secret_namespace: '',
-                                  enable_registry: true,
-                                  is_default: true,
+                                  imageRegistryName: constants.dockerio,
+                                  imageRepoName: constants.litmus,
+                                  imageRegistryType: constants.public,
+                                  secretName: '',
+                                  secretNamespace: '',
+                                  enableRegistry: true,
+                                  isDefault: true,
                                 },
                               },
                             })

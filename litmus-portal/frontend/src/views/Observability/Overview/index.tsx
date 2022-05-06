@@ -118,7 +118,7 @@ const Overview: React.FC = () => {
 
   // Get count for dashboardListData length to render conditionally
   if (dashboardListData) {
-    monitoringDashboardCount = dashboardListData.getDashboard?.length;
+    monitoringDashboardCount = dashboardListData.listDashboard?.length;
   }
 
   // Loader for confirmation of agent presence
@@ -193,7 +193,7 @@ const Overview: React.FC = () => {
   let filteredDashboardListData;
   // Select the latest 3 dashboards
   if (monitoringDashboardCount > 0) {
-    filteredDashboardListData = dashboardListData?.getDashboard
+    filteredDashboardListData = dashboardListData?.listDashboard
       .slice()
       .sort((a, b) => {
         const x = b.viewedAt as unknown as number;

@@ -74,13 +74,13 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
           let otherCount = 0;
           let inviteCount = 0;
           data.data.forEach((project: Project): void => {
-            project.members.forEach((member: Member) => {
-              if (member.userID === userID && member.invitation === 'Pending') {
+            project.Members.forEach((member: Member) => {
+              if (member.UserID === userID && member.Invitation === 'Pending') {
                 inviteCount++;
               } else if (
-                member.userID === userID &&
-                member.role !== 'Owner' &&
-                member.invitation === 'Accepted'
+                member.UserID === userID &&
+                member.Role !== 'Owner' &&
+                member.Invitation === 'Accepted'
               ) {
                 otherCount++;
               }

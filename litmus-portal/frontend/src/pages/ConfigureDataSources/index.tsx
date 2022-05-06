@@ -104,23 +104,20 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
       authType = 'basic auth';
     }
     const dataSourceInput = {
-      ds_name: dataSourceVars.name,
-      ds_type: dataSourceVars.dataSourceType,
-      ds_url:
+      dsName: dataSourceVars.name,
+      dsType: dataSourceVars.dataSourceType,
+      dsURL:
         dataSourceVars.url[dataSourceVars.url.length - 1] !== '/'
           ? dataSourceVars.url
           : dataSourceVars.url.slice(0, -1),
-      access_type: dataSourceVars.access,
-      auth_type: authType,
-      basic_auth_username: dataSourceVars.username,
-      basic_auth_password: dataSourceVars.password,
-      scrape_interval: parseInt(
-        dataSourceVars.scrapeInterval.split('s')[0],
-        10
-      ),
-      query_timeout: parseInt(dataSourceVars.queryTimeout.split('s')[0], 10),
-      http_method: dataSourceVars.httpMethod,
-      project_id: projectID,
+      accessType: dataSourceVars.access,
+      authType,
+      basicAuthUsername: dataSourceVars.username,
+      basicAuthPassword: dataSourceVars.password,
+      scrapeInterval: parseInt(dataSourceVars.scrapeInterval.split('s')[0], 10),
+      queryTimeout: parseInt(dataSourceVars.queryTimeout.split('s')[0], 10),
+      httpMethod: dataSourceVars.httpMethod,
+      projectID,
     };
     createDataSource({
       variables: { DSInput: dataSourceInput },
@@ -133,24 +130,21 @@ const DataSourceConfigurePage: React.FC<DataSourceConfigurePageProps> = ({
       authType = 'basic auth';
     }
     const dataSourceInput = {
-      ds_id: dataSourceVars.id ?? '',
-      ds_name: dataSourceVars.name,
-      ds_type: dataSourceVars.dataSourceType,
-      ds_url:
+      dsID: dataSourceVars.id ?? '',
+      dsName: dataSourceVars.name,
+      dsType: dataSourceVars.dataSourceType,
+      dsURL:
         dataSourceVars.url[dataSourceVars.url.length - 1] !== '/'
           ? dataSourceVars.url
           : dataSourceVars.url.slice(0, -1),
-      access_type: dataSourceVars.access,
-      auth_type: authType,
-      basic_auth_username: dataSourceVars.username,
-      basic_auth_password: dataSourceVars.password,
-      scrape_interval: parseInt(
-        dataSourceVars.scrapeInterval.split('s')[0],
-        10
-      ),
-      query_timeout: parseInt(dataSourceVars.queryTimeout.split('s')[0], 10),
-      http_method: dataSourceVars.httpMethod,
-      project_id: projectID,
+      accessType: dataSourceVars.access,
+      authType,
+      basicAuthUsername: dataSourceVars.username,
+      basicAuthPassword: dataSourceVars.password,
+      scrapeInterval: parseInt(dataSourceVars.scrapeInterval.split('s')[0], 10),
+      queryTimeout: parseInt(dataSourceVars.queryTimeout.split('s')[0], 10),
+      httpMethod: dataSourceVars.httpMethod,
+      projectID,
     };
     updateDataSource({
       variables: { DSInput: dataSourceInput },

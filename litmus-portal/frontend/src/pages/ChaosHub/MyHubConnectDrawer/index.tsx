@@ -23,12 +23,12 @@ import {
 } from '../../../graphql/mutations';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
 import {
-  CreateMyHub,
-  MyHubData,
-  MyHubType,
   SSHKey,
+  MyHubData,
+  CreateMyHub,
   SSHKeys,
-} from '../../../models/graphql/user';
+  MyHubType,
+} from '../../../models/graphql/chaoshub';
 import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
@@ -169,7 +169,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
     if (hubName?.length) {
       updateMyHub({
         variables: {
-          myHubDetails: {
+          request: {
             id: hubData?.id,
             hubName: gitHub.HubName.trim(),
             repoURL: gitHub.GitURL,
@@ -189,8 +189,8 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
             password: 'user',
             sshPrivateKey: sshKey.privateKey,
             sshPublicKey: sshKey.publicKey,
+            projectID,
           },
-          projectID,
         },
       });
     } else
@@ -199,7 +199,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
      */
       addMyHub({
         variables: {
-          myHubDetails: {
+          request: {
             hubName: gitHub.HubName.trim(),
             repoURL: gitHub.GitURL,
             repoBranch: gitHub.GitBranch,
@@ -218,8 +218,8 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
             password: 'user',
             sshPrivateKey: sshKey.privateKey,
             sshPublicKey: sshKey.publicKey,
+            projectID,
           },
-          projectID,
         },
       });
   };

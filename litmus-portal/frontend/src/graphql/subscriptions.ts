@@ -41,33 +41,33 @@ export const WORKFLOW_LOGS = gql`
 `;
 
 export const KUBE_OBJ = gql`
-  subscription getKubeObject($data: KubeObjectRequest!) {
-    getKubeObject(kubeObjectRequest: $data) {
-      cluster_id
-      kube_obj
+  subscription getKubeObject($request: KubeObjectRequest!) {
+    getKubeObject(request: $request) {
+      clusterID
+      kubeObj
     }
   }
 `;
 
 export const VIEW_DASHBOARD = gql`
   subscription viewDashboard(
-    $dbID: String
-    $prometheusQueries: [promQueryInput!]!
-    $queryMap: [queryMapForPanelGroup!]!
-    $dataVarMap: dataVars!
+    $dashboardID: String
+    $promQueries: [PromQueryInput!]!
+    $dashboardQueryMap: [QueryMapForPanelGroup!]!
+    $dataVariables: DataVars!
   ) {
     viewDashboard(
-      dashboardID: $dbID
-      promQueries: $prometheusQueries
-      dashboardQueryMap: $queryMap
-      dataVariables: $dataVarMap
+      dashboardID: $dashboardID
+      promQueries: $promQueries
+      dashboardQueryMap: $dashboardQueryMap
+      dataVariables: $dataVariables
     ) {
       dashboardMetricsResponse {
         panelGroupID
         panelGroupMetricsResponse {
           panelID
-          PanelMetricsResponse {
-            queryid
+          panelMetricsResponse {
+            queryID
             legends
             tsvs {
               date
@@ -77,7 +77,7 @@ export const VIEW_DASHBOARD = gql`
         }
       }
       annotationsResponse {
-        queryid
+        queryID
         legends
         tsvs {
           date

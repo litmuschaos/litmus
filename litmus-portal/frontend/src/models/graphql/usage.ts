@@ -15,10 +15,20 @@ export interface ProjectData {
 export interface UsageData {
   totalCount: {
     projects: number;
+    agents: {
+      ns: string;
+      cluster: string;
+      total: number;
+    };
+    workflows: {
+      schedules: number;
+      runs: number;
+      expRuns: number;
+    };
   };
   projects: ProjectData[];
 }
 
 export interface UsageStats {
-  usageQuery: UsageData;
+  getUsageData: UsageData;
 }

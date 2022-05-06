@@ -57,18 +57,18 @@ const ProjectInfoContainer: React.FC = () => {
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.members.forEach((member: Member) => {
-        if (member.userID === userID && member.role === Role.OWNER) {
+      project.Members.forEach((member: Member) => {
+        if (member.UserID === userID && member.Role === Role.OWNER) {
           projectOwner++;
         } else if (
-          member.userID === userID &&
-          member.invitation === InvitationStatus.PENDING
+          member.UserID === userID &&
+          member.Invitation === InvitationStatus.PENDING
         ) {
           projectInvitation++;
         } else if (
-          member.userID === userID &&
-          member.role !== Role.OWNER &&
-          member.invitation === InvitationStatus.ACCEPTED
+          member.UserID === userID &&
+          member.Role !== Role.OWNER &&
+          member.Invitation === InvitationStatus.ACCEPTED
         ) {
           projectOther++;
         }

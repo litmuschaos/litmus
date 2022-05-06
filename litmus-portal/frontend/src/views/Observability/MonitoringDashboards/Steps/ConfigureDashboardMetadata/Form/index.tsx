@@ -255,8 +255,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   const getSelectedDsURL = (selectedDsID: string) => {
     let selectedDsURL: string = '';
     dataSourceList.forEach((ds) => {
-      if (ds.ds_id === selectedDsID) {
-        selectedDsURL = ds.ds_url;
+      if (ds.dsID === selectedDsID) {
+        selectedDsURL = ds.dsURL;
       }
     });
     return selectedDsURL;
@@ -312,17 +312,17 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
 
   useEffect(() => {
     const availableDataSources = dataSourceList.filter((dataSource) => {
-      return dataSource.health_status === 'Active';
+      return dataSource.healthStatus === 'Active';
     });
     setActiveDataSources(availableDataSources);
     if (dashboardDetails.dataSourceID === '' && !configure) {
       setDashboardDetails({
         ...dashboardDetails,
         dataSourceID: availableDataSources.length
-          ? availableDataSources[0].ds_id
+          ? availableDataSources[0].dsID
           : '',
         dataSourceURL: availableDataSources.length
-          ? availableDataSources[0].ds_url
+          ? availableDataSources[0].dsURL
           : '',
       });
       setUpdate(true);
@@ -543,11 +543,11 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
           >
             {activeDataSources.map((dataSource: ListDataSourceResponse) => (
               <MenuItem
-                key={dataSource.ds_id}
-                value={dataSource.ds_id}
-                data-cy={dataSource.ds_name}
+                key={dataSource.dsID}
+                value={dataSource.dsID}
+                data-cy={dataSource.dsName}
               >
-                {dataSource.ds_name}
+                {dataSource.dsName}
               </MenuItem>
             ))}
           </Select>
@@ -559,8 +559,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             </Typography>
           ) : !dataSourceList.filter((dataSource) => {
               return (
-                dataSource.health_status === 'Active' &&
-                dataSource.ds_id === dashboardDetails.dataSourceID
+                dataSource.healthStatus === 'Active' &&
+                dataSource.dsID === dashboardDetails.dataSourceID
               );
             }).length ? (
             <Typography className={classes.formErrorText}>

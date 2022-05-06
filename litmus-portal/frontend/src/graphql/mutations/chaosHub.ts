@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // chaosHub (Change mutation name to add_chaos_hub)
 export const ADD_MY_HUB = gql`
-  mutation addChaosHub($request: CreateMyHub!, $projectID: String!) {
-    addChaosHub(request: $request, projectID: $projectID) {
+  mutation addChaosHub($request: CreateChaosHubRequest!) {
+    addChaosHub(request: $request) {
       hubName
       repoURL
       repoBranch
@@ -12,8 +12,8 @@ export const ADD_MY_HUB = gql`
 `;
 
 export const UPDATE_MY_HUB = gql`
-  mutation updateChaosHub($request: UpdateMyHub!, $projectID: String!) {
-    updateChaosHub(request: $request, projectID: $projectID) {
+  mutation updateChaosHub($request: UpdateChaosHubRequest!) {
+    updateChaosHub(request: $request) {
       hubName
       repoURL
       repoBranch

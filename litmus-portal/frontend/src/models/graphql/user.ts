@@ -1,53 +1,53 @@
 export interface Member {
-  email: string;
-  firstName: string;
-  invitation: string;
-  joinedAt: string;
-  role: string;
-  userID: string;
-  userName: string;
-  deactivatedAt: string;
+  Email: string;
+  FirstName: string;
+  Invitation: string;
+  JoinedAt: string;
+  Role: string;
+  UserID: string;
+  UserName: string;
+  DeactivatedAt: string;
 }
 
 export interface Project {
-  members: Member[];
-  name: string;
-  uid: string;
-  id: string;
-  state: string;
-  createdAt: string;
-  updatedAt: string;
-  removedAt: string;
+  Members: Member[];
+  Name: string;
+  UID: string;
+  ID: string;
+  State: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+  RemovedAt: string;
 }
 
 export interface Owner {
-  userID: string;
-  username: string;
+  UserID: string;
+  Username: string;
 }
 
 export interface MemberData {
-  owner: Owner[];
-  total: number;
+  Owner: Owner[];
+  Total: number;
 }
 
 export interface ProjectStats {
-  name: string;
-  projectID: string;
-  members: MemberData;
+  Name: string;
+  ProjectID: string;
+  Members: MemberData;
 }
 
 export interface UserDetails {
-  username: string;
-  projects: Project[];
-  name: string;
-  email: string;
-  id: string;
-  companyName: string;
-  updatedAt: string;
-  createdAt: string;
-  removedAt: string;
-  isEmailVerified: string;
-  role: string;
+  Username: string;
+  Projects: Project[];
+  Name: string;
+  Email: string;
+  Id: string;
+  CompanyName: string;
+  UpdatedAt: string;
+  CreatedAt: string;
+  RemovedAt: string;
+  IsEmailVerified: string;
+  Role: string;
 }
 
 export interface MyHubDetail {
@@ -84,51 +84,6 @@ export interface UserData {
   deactivatedAt: string;
 }
 
-export interface SSHKey {
-  privateKey: string;
-  publicKey: string;
-}
-
-export interface SSHKeys {
-  generaterSSHKey: SSHKey;
-}
-
-export interface MyHubRequest {
-  id?: string;
-  hubName: string;
-  repoURL: string;
-  repoBranch: string;
-  isPrivate: Boolean;
-  authType: MyHubType;
-  token?: string;
-  userName?: string;
-  password?: string;
-  sshPrivateKey?: string;
-  sshPublicKey?: string;
-}
-
-export interface MyHubData {
-  id: string;
-  repoURL: string;
-  repoBranch: string;
-  projectID: string;
-  hubName: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateMyHub {
-  myHubDetails: MyHubRequest;
-  projectID: string;
-}
-
-export enum MyHubType {
-  BASIC = 'BASIC',
-  TOKEN = 'TOKEN',
-  SSH = 'SSH',
-  NONE = 'NONE',
-}
-
 export interface Projects {
   getProjects: Project[];
 }
@@ -138,19 +93,19 @@ export interface ProjectDetail {
 }
 
 export enum Role {
-  VIEWER = 'VIEWER',
-  EDITOR = 'EDITOR',
-  OWNER = 'OWNER',
+  VIEWER = 'Viewer',
+  EDITOR = 'Editor',
+  OWNER = 'Owner',
 }
 
 export enum UserRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
+  ADMIN = 'admin',
+  USER = 'user',
 }
 
 export enum InvitationStatus {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
+  PENDING = 'Pending',
+  ACCEPTED = 'Accepted',
 }
 
 export enum UserStatus {

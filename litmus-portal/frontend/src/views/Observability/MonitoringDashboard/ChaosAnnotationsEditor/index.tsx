@@ -7,7 +7,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PROM_SERIES_LIST, UPDATE_DASHBOARD } from '../../../../graphql';
 import { DashboardDetails } from '../../../../models/dashboardsData';
-import { UpdateDashboardRequest } from '../../../../models/graphql/dashboardsDetails';
 import {
   PrometheusSeriesListQueryVars,
   PrometheusSeriesListResponse,
@@ -64,7 +63,7 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
     PROM_SERIES_LIST,
     {
       variables: {
-        prometheusDSInput: {
+        request: {
           url: dataSourceURL,
           start: `${
             new Date(
@@ -89,8 +88,8 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
       onCompleted: (prometheusSeriesData) => {
         if (prometheusSeriesData) {
           const seriesValues: Array<Option> = [];
-          if (prometheusSeriesData.GetPromSeriesList.seriesList) {
-            prometheusSeriesData.GetPromSeriesList.seriesList.forEach(
+          if (prometheusSeriesData.getPromSeriesList.seriesList) {
+            prometheusSeriesData.getPromSeriesList.seriesList.forEach(
               (series) => {
                 seriesValues.push({ name: series });
               }
@@ -102,13 +101,10 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
     }
   );
 
-  const [updateDashboard] = useMutation<UpdateDashboardRequest>(
-    UPDATE_DASHBOARD,
-    {
-      onCompleted: () => alertStateHandler(true),
-      onError: () => alertStateHandler(false),
-    }
-  );
+  const [updateDashboard] = useMutation(UPDATE_DASHBOARD, {
+    onCompleted: () => alertStateHandler(true),
+    onError: () => alertStateHandler(false),
+  });
 
   return (
     <>
@@ -232,11 +228,11 @@ const ChaosAnnotationsEditor: React.FC<ChaosAnnotationsEditorProps> = ({
                 updateDashboard({
                   variables: {
                     projectID: getProjectID(),
-                    updateDBInput: {
-                      db_id: dashboardVars.id ?? '',
-                      chaos_event_query_template:
+                    dashboard: {
+                      dbID: dashboardVars.id ?? '',
+                      chaosEventQueryTemplate:
                         dashboardVars.chaosEventQueryTemplate ?? '',
-                      chaos_verdict_query_template:
+                      chaosVerdictQueryTemplate:
                         dashboardVars.chaosVerdictQueryTemplate ?? '',
                     },
                     chaosQueryUpdate: true,

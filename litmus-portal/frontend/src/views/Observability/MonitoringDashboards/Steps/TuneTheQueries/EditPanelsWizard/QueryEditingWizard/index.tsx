@@ -86,7 +86,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
   const [settings, setSettings] = useState<boolean>(true);
   const [prometheusQueryData, setPrometheusQueryData] =
     React.useState<promInput>({
-      ds_details: {
+      dsDetails: {
         url: panelInfo.dsURL ?? '',
         start: `${
           new Date(
@@ -111,7 +111,7 @@ const QueryEditingWizard: React.FC<QueryEditingWizardProps> = ({
       handleUpdatePanel(panelInfo, index);
       if (update.graph) {
         setPrometheusQueryData({
-          ds_details: {
+          dsDetails: {
             url: panelInfo.dsURL ?? '',
             start: `${
               new Date(

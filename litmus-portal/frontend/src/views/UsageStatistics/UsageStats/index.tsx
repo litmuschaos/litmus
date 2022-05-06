@@ -5,6 +5,7 @@ import Loader from '../../../components/Loader';
 import config from '../../../config';
 import { GET_GLOBAL_STATS } from '../../../graphql';
 import { getToken } from '../../../utils/auth';
+import { UsageStats as GlobalStats } from '../../../models/graphql/usage';
 import Card from './Cards';
 import useStyles from './styles';
 
@@ -16,15 +17,16 @@ interface TimeRange {
 const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const [usageQuery, { loading, data }] = useLazyQuery(GET_GLOBAL_STATS);
+  const [usageQuery, { loading, data }] =
+    useLazyQuery<GlobalStats>(GET_GLOBAL_STATS);
 
   useEffect(() => {
     usageQuery({
       variables: {
-        query: {
-          DateRange: {
-            start_date: start_time,
-            end_date: end_time,
+        request: {
+          dateRange: {
+            startDate: start_time,
+            endDate: end_time,
           },
         },
       },
@@ -103,15 +105,15 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
             header={t('usage.card.agentHeader')}
             subtitle={t('usage.card.agentSubtitle')}
             color={classes.agentsData}
-            data={data?.UsageQuery.TotalCount.Agents.Total ?? 0}
+            data={data?.getUsageData.totalCount.agents.total ?? 0}
             split
             subData={[
               {
-                option1: data?.UsageQuery.TotalCount.Agents.Cluster ?? 0,
+                option1: data?.getUsageData.totalCount.agents.cluster ?? 0,
                 option2: `${t('usage.card.agentClusterScope')}`,
               },
               {
-                option1: data?.UsageQuery.TotalCount.Agents.Ns ?? 0,
+                option1: data?.getUsageData.totalCount.agents.ns ?? 0,
                 option2: `${t('usage.card.agentNamespaceScope')}`,
               },
             ]}
@@ -122,21 +124,21 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
             header={t('usage.card.workflowScheduleHeader')}
             subtitle={t('usage.card.workflowScheduleSubtitle')}
             color={classes.schedules}
-            data={data?.UsageQuery.TotalCount.Workflows.Schedules ?? 0}
+            data={data?.getUsageData.totalCount.workflows.schedules ?? 0}
           />
           <Card
             image="./icons/workflows-outline.svg"
             header={t('usage.card.workflowRunHeader')}
             subtitle={t('usage.card.workflowRunSubtitle')}
             color={classes.wfRuns}
-            data={data?.UsageQuery.TotalCount.Workflows.Runs ?? 0}
+            data={data?.getUsageData.totalCount.workflows.runs ?? 0}
           />
           <Card
             image="./icons/myhub.svg"
             header={t('usage.card.experimentRunHeader')}
             subtitle={t('usage.card.experimentRunSubtitle')}
             color={classes.expRuns}
-            data={data?.UsageQuery.TotalCount.Workflows.ExpRuns ?? 0}
+            data={data?.getUsageData.totalCount.workflows.expRuns ?? 0}
           />
         </>
       )}

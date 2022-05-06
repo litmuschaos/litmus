@@ -49,8 +49,8 @@ export const DELETE_DATASOURCE = gql`
 `;
 
 export const CREATE_DASHBOARD = gql`
-  mutation createDashBoard($createDBInput: createDBInput) {
-    createDashBoard(dashboard: $createDBInput) {
+  mutation createDashBoard($dashboard: CreateDBInput!) {
+    createDashBoard(dashboard: $dashboard) {
       dbID
     }
   }
@@ -59,12 +59,12 @@ export const CREATE_DASHBOARD = gql`
 export const UPDATE_DASHBOARD = gql`
   mutation updateDashboard(
     $projectID: String!
-    $updateDBInput: updateDBInput!
+    $dashboard: UpdateDBInput!
     $chaosQueryUpdate: Boolean!
   ) {
     updateDashboard(
       projectID: $projectID
-      dashboard: $updateDBInput
+      dashboard: $dashboard
       chaosQueryUpdate: $chaosQueryUpdate
     )
   }

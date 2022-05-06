@@ -75,7 +75,7 @@ const ChooseADashboardType = forwardRef(
     >(GET_PORTAL_DASHBOARDS, {
       onCompleted: (data) => {
         let dashboards: DashboardData[] = [];
-        (data.portalDashboardData ?? []).forEach((dashboard) => {
+        (data.listPortalDashboardData ?? []).forEach((dashboard) => {
           const parsedDashboardData = JSON.parse(dashboard.dashboardData);
           dashboards.push({
             dashboardTypeID: parsedDashboardData.dashboardID,

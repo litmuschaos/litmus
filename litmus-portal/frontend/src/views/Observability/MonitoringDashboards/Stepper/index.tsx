@@ -72,12 +72,12 @@ const DashboardStepper: React.FC<DashboardStepperProps> = ({
       : existingDashboardVars.dataSourceType ?? '',
     dataSourceID: !configure
       ? dataSourceList.length !== 0
-        ? dataSourceList[0].ds_id
+        ? dataSourceList[0].dsID
         : ''
       : existingDashboardVars.dataSourceID ?? '',
     dataSourceURL: !configure
       ? dataSourceList.length !== 0
-        ? dataSourceList[0].ds_url
+        ? dataSourceList[0].dsURL
         : ''
       : existingDashboardVars.dataSourceURL ?? '',
     chaosEventQueryTemplate: !configure

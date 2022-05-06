@@ -1,5 +1,5 @@
 export interface promQueryInput {
-  queryid: string;
+  queryID: string;
   query: string;
   legend?: string;
   resolution?: string;
@@ -7,7 +7,7 @@ export interface promQueryInput {
 }
 
 export interface promInput {
-  ds_details: dsDetails;
+  dsDetails: dsDetails;
   queries?: promQueryInput[];
 }
 
@@ -46,16 +46,16 @@ export interface promResponse {
 }
 
 export interface PrometheusQueryVars {
-  prometheusInput: promInput;
+  request: promInput;
 }
 
 export interface PrometheusResponse {
-  GetPromQuery: promResponse;
+  getPrometheusData: promResponse;
 }
 
 export interface promSeriesInput {
   series: string;
-  ds_details: dsDetails;
+  dsDetails: dsDetails;
 }
 
 export interface Option {
@@ -71,11 +71,11 @@ export interface promSeriesResponse {
 }
 
 export interface PrometheusSeriesQueryVars {
-  prometheusInput: promSeriesInput;
+  request: promSeriesInput;
 }
 
 export interface PrometheusSeriesResponse {
-  GetPromLabelNamesAndValues: promSeriesResponse;
+  getPromLabelNamesAndValues: promSeriesResponse;
 }
 
 export interface dsDetails {
@@ -89,19 +89,19 @@ export interface promSeriesListResponse {
 }
 
 export interface PrometheusSeriesListQueryVars {
-  prometheusDSInput: dsDetails;
+  request: dsDetails;
 }
 
 export interface PrometheusSeriesListResponse {
-  GetPromSeriesList: promSeriesListResponse;
+  getPromSeriesList: promSeriesListResponse;
 }
 
 export interface dataVars {
   url: string;
   start: string;
   end: string;
-  relative_time: number;
-  refresh_interval: number;
+  relativeTime: number;
+  refreshInterval: number;
 }
 
 export interface queryMapForPanel {
@@ -115,10 +115,10 @@ export interface queryMapForPanelGroup {
 }
 
 export interface ViewDashboardInput {
-  dbID?: string;
-  prometheusQueries: promQueryInput[];
-  queryMap: queryMapForPanelGroup[];
-  dataVarMap: dataVars;
+  dashboardID?: string;
+  promQueries: promQueryInput[];
+  dashboardQueryMap: queryMapForPanelGroup[];
+  dataVariables: dataVars;
 }
 
 export interface metricDataForPanel {

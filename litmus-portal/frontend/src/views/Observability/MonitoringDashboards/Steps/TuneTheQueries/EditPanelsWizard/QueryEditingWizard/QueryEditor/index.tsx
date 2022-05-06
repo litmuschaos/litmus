@@ -98,8 +98,8 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     PrometheusSeriesQueryVars
   >(PROM_LABEL_VALUES, {
     variables: {
-      prometheusInput: {
-        ds_details: {
+      request: {
+        dsDetails: {
           url: dsURL,
           start: `${
             new Date(
@@ -129,9 +129,9 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
     let options: Array<Option> = [];
     if (
       labelValueData &&
-      labelValueData.GetPromLabelNamesAndValues.labelValues
+      labelValueData.getPromLabelNamesAndValues.labelValues
     ) {
-      labelValueData.GetPromLabelNamesAndValues.labelValues.forEach(
+      labelValueData.getPromLabelNamesAndValues.labelValues.forEach(
         (labelValue) => {
           if (labelValue.label === label) {
             options = labelValue.values ?? [];
@@ -420,7 +420,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                   className={classes.selectText}
                 >
                   {labelValueData &&
-                    labelValueData.GetPromLabelNamesAndValues.labelValues?.map(
+                    labelValueData.getPromLabelNamesAndValues.labelValues?.map(
                       (labelValue: LabelValue) => (
                         <MenuItem
                           key={labelValue.label}
@@ -504,7 +504,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                 })) ?? []
               }
               labelListCompletionOptions={
-                labelValueData?.GetPromLabelNamesAndValues.labelValues?.map(
+                labelValueData?.getPromLabelNamesAndValues.labelValues?.map(
                   (labelValue: LabelValue) => ({
                     value: labelValue.label,
                     score: 2,
@@ -519,7 +519,7 @@ const QueryEditor: React.FC<QueryEditorProps> = ({
                 ) ?? []
               }
               valueListCompletionOptions={getValueList(
-                labelValueData?.GetPromLabelNamesAndValues.labelValues ?? []
+                labelValueData?.getPromLabelNamesAndValues.labelValues ?? []
               )}
               saveQueryChange={(updatedQuery: string) => {
                 const existingBaseQuery: string = localQuery.base_query ?? '';

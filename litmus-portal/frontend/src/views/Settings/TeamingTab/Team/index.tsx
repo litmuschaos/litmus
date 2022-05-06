@@ -108,11 +108,11 @@ const TeamingTab: React.FC = () => {
           const acceptedUsers: Member[] = [];
           const notAcceptedUsers: Member[] = [];
           memberList.forEach((member: Member) => {
-            if (member.invitation === 'Accepted') {
+            if (member.Invitation === 'Accepted') {
               acceptedUsers.push(member);
             } else if (
-              member.userID !== userID &&
-              member.invitation !== 'Accepted'
+              member.UserID !== userID &&
+              member.Invitation !== 'Accepted'
             ) {
               notAcceptedUsers.push(member);
             }
@@ -147,13 +147,13 @@ const TeamingTab: React.FC = () => {
     ? accepted &&
       accepted
         .filter((dataRow) =>
-          dataRow.userName.toLowerCase().includes(filters.search.toLowerCase())
+          dataRow.UserName.toLowerCase().includes(filters.search.toLowerCase())
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
-          if (filters.role === 'Editor') return dataRow.role === 'Editor';
-          if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
-          return dataRow.role === 'Owner';
+          if (filters.role === 'Editor') return dataRow.Role === 'Editor';
+          if (filters.role === 'Viewer') return dataRow.Role === 'Viewer';
+          return dataRow.Role === 'Owner';
         })
     : [];
 
@@ -161,15 +161,15 @@ const TeamingTab: React.FC = () => {
     ? notAccepted &&
       notAccepted
         .filter((dataRow) =>
-          dataRow?.userName
-            ?.toLowerCase()
-            .includes(filters.search.toLowerCase())
+          dataRow?.UserName?.toLowerCase().includes(
+            filters.search.toLowerCase()
+          )
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
-          if (filters.role === 'Editor') return dataRow.role === 'Editor';
-          if (filters.role === 'Viewer') return dataRow.role === 'Viewer';
-          return dataRow.role === 'Owner';
+          if (filters.role === 'Editor') return dataRow.Role === 'Editor';
+          if (filters.role === 'Viewer') return dataRow.Role === 'Viewer';
+          return dataRow.Role === 'Owner';
         })
     : [];
 
@@ -216,20 +216,20 @@ const TeamingTab: React.FC = () => {
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      const projectMembers = project.members;
+      const projectMembers = project.Members;
       if (projectMembers) {
         projectMembers.forEach((member: Member) => {
-          if (member.userID === userID && member.role === 'Owner') {
+          if (member.UserID === userID && member.Role === 'Owner') {
             projectOwner++;
           } else if (
-            member.userID === userID &&
-            member.invitation === 'Pending'
+            member.UserID === userID &&
+            member.Invitation === 'Pending'
           ) {
             projectInvitation++;
           } else if (
-            member.userID === userID &&
-            member.role !== 'Owner' &&
-            member.invitation === 'Accepted'
+            member.UserID === userID &&
+            member.Role !== 'Owner' &&
+            member.Invitation === 'Accepted'
           ) {
             projectOther++;
           }
@@ -332,7 +332,7 @@ const TeamingTab: React.FC = () => {
                     {project && (
                       <EditableText
                         label={t('settings.teamingTab.editProjectLabel')}
-                        defaultValue={project.name ? project.name : ''}
+                        defaultValue={project.Name ? project.Name : ''}
                         onSave={(value) => {
                           updateProjectName(value);
                         }}

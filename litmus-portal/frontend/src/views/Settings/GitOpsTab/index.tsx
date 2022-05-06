@@ -18,8 +18,8 @@ import {
   UPDATE_GITOPS,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
+import { SSHKey, SSHKeys, MyHubType } from '../../../models/graphql/chaoshub';
 import { GetGitOpsDetailRequest } from '../../../models/graphql/gitOps';
-import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import GitOpsInfo from './gitOpsInfo';
@@ -204,8 +204,8 @@ const GitOpsTab = () => {
   const onConfirmEdit = () => {
     setIsGitOpsEnabled(false);
     setGitHub({
-      GitURL: data?.gitOpsDetails.repoURL || '',
-      GitBranch: data?.gitOpsDetails.branch || '',
+      GitURL: data?.getGitOpsDetails.repoURL || '',
+      GitBranch: data?.getGitOpsDetails.branch || '',
     });
     setPrivateHub('');
     setAccessToken('');
@@ -223,7 +223,7 @@ const GitOpsTab = () => {
   // UseEffect to set the initial state of radio-buttons
   useEffect(() => {
     if (data !== undefined) {
-      if (data.gitOpsDetails.enabled) {
+      if (data.getGitOpsDetails.enabled) {
         setValue('enabled');
         setIsGitOpsEnabled(true);
       } else {
@@ -237,7 +237,7 @@ const GitOpsTab = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (value === 'enabled') {
-      if (data?.gitOpsDetails.enabled === false) {
+      if (data?.getGitOpsDetails.enabled === false) {
         enableGitOps({
           variables: {
             gitConfigResponse: {
@@ -258,7 +258,7 @@ const GitOpsTab = () => {
           },
         });
       }
-      if (data?.gitOpsDetails.enabled === true) {
+      if (data?.getGitOpsDetails.enabled === true) {
         updateGitOps({
           variables: {
             gitConfigResponse: {
@@ -267,19 +267,19 @@ const GitOpsTab = () => {
               branch: gitHub.GitBranch,
               authType:
                 privateHub === ''
-                  ? data?.gitOpsDetails.authType
+                  ? data?.getGitOpsDetails.authType
                   : privateHub === 'token'
                   ? MyHubType.TOKEN
                   : privateHub === 'ssh'
                   ? MyHubType.SSH
                   : MyHubType.NONE,
               token:
-                privateHub === '' ? data?.gitOpsDetails.token : accessToken,
+                privateHub === '' ? data?.getGitOpsDetails.token : accessToken,
               userName: 'user',
               password: 'user',
               sshPrivateKey:
                 privateHub === ''
-                  ? data?.gitOpsDetails.sshPrivateKey
+                  ? data?.getGitOpsDetails.sshPrivateKey
                   : sshKey.privateKey,
             },
           },
@@ -319,7 +319,7 @@ const GitOpsTab = () => {
                     }
                   />
                   {value === 'disabled' &&
-                  data?.gitOpsDetails.enabled === true ? (
+                  data?.getGitOpsDetails.enabled === true ? (
                     <div>
                       <Typography className={classes.disconnectText}>
                         {t('settings.gitopsTab.disconnect')}
@@ -474,7 +474,7 @@ const GitOpsTab = () => {
                                         <Loader size={20} />
                                       ) : (
                                         <Typography>
-                                          {data?.gitOpsDetails.enabled
+                                          {data?.getGitOpsDetails.enabled
                                             ? 'Update'
                                             : t('settings.gitopsTab.connect')}
                                         </Typography>

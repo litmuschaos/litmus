@@ -178,10 +178,10 @@ const ChooseAndConfigureDashboards: React.FC<ChooseAndConfigureDashboardsProps> 
       if (
         configure === true &&
         dashboardList &&
-        dashboardList.getDashboard &&
-        dashboardList.getDashboard.length > 0
+        dashboardList.listDashboard &&
+        dashboardList.listDashboard.length > 0
       ) {
-        const dashboardDetail = dashboardList.getDashboard[0];
+        const dashboardDetail = dashboardList.listDashboard[0];
         setDashboardVars({
           ...dashboardVars,
           id: selectedDashboard.selectedDashboardID,

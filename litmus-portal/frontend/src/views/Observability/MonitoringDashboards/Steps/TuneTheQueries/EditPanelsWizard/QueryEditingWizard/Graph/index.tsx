@@ -35,14 +35,14 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
     PROM_QUERY,
     {
       variables: {
-        prometheusInput: prometheusQueryData,
+        request: prometheusQueryData,
       },
       fetchPolicy: 'no-cache',
       onCompleted: (prometheusData) => {
         if (prometheusData) {
           const parsedData: ParsedMetricPrometheusData =
             MetricDataParserForPrometheus(
-              prometheusData.GetPromQuery.metricsResponse ?? [],
+              prometheusData.getPrometheusData.metricsResponse ?? [],
               lineGraph,
               areaGraph,
               panelVars.promQueries
@@ -58,7 +58,7 @@ const Graph: React.FC<GraphProps> = ({ prometheusQueryData, panelVars }) => {
   useEffect(() => {
     if (
       firstLoad &&
-      prometheusQueryData?.ds_details.url !== '' &&
+      prometheusQueryData?.dsDetails.url !== '' &&
       prometheusQueryData?.queries?.length !== 0
     ) {
       getGraphData();

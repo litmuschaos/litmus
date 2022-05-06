@@ -9,11 +9,9 @@ import {
   PanelDetails,
 } from '../../../../../models/dashboardsData';
 import {
-  CreateDashboardRequest,
   Panel,
   PanelGroup,
   PromQuery,
-  UpdateDashboardRequest,
   UpdatePanelGroupRequest,
 } from '../../../../../models/graphql/dashboardsDetails';
 import {
@@ -69,46 +67,40 @@ const TuneTheQueries = forwardRef(
       return true;
     };
 
-    const [createDashboard] = useMutation<CreateDashboardRequest>(
-      CREATE_DASHBOARD,
-      {
-        onCompleted: (data) => {
-          isLoading(false);
-          setProceed(true);
-          onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
-            history.push({
-              pathname: '/analytics/monitoring-dashboard',
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
+    const [createDashboard] = useMutation(CREATE_DASHBOARD, {
+      onCompleted: (data) => {
+        isLoading(false);
+        setProceed(true);
+        onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
+          history.push({
+            pathname: '/analytics/monitoring-dashboard',
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
           });
-        },
-        onError: () => {
-          alert.changeAlertState(true);
-          isLoading(false);
-          setProceed(false);
-        },
-      }
-    );
-    const [updateDashboard] = useMutation<UpdateDashboardRequest>(
-      UPDATE_DASHBOARD,
-      {
-        onCompleted: () => {
-          isLoading(false);
-          setProceed(true);
-          onDashboardLoadRoutine(dashboardVars.id ?? '').then(() => {
-            history.push({
-              pathname: '/analytics/monitoring-dashboard',
-              search: `?projectID=${projectID}&projectRole=${projectRole}`,
-            });
+        });
+      },
+      onError: () => {
+        alert.changeAlertState(true);
+        isLoading(false);
+        setProceed(false);
+      },
+    });
+    const [updateDashboard] = useMutation(UPDATE_DASHBOARD, {
+      onCompleted: () => {
+        isLoading(false);
+        setProceed(true);
+        onDashboardLoadRoutine(dashboardVars.id ?? '').then(() => {
+          history.push({
+            pathname: '/analytics/monitoring-dashboard',
+            search: `?projectID=${projectID}&projectRole=${projectRole}`,
           });
-        },
-        onError: () => {
-          alert.changeAlertState(true);
-          isLoading(false);
-          setProceed(false);
-        },
-      }
-    );
+        });
+      },
+      onError: () => {
+        alert.changeAlertState(true);
+        isLoading(false);
+        setProceed(false);
+      },
+    });
 
     const getPanelGroups = () => {
       if (configure === false) {
@@ -220,7 +212,7 @@ const TuneTheQueries = forwardRef(
         refreshRate: `${DEFAULT_REFRESH_RATE}`,
       };
       createDashboard({
-        variables: { createDBRequest: dashboardInput },
+        variables: { dashboard: dashboardInput },
       });
     };
 
@@ -245,7 +237,7 @@ const TuneTheQueries = forwardRef(
       updateDashboard({
         variables: {
           projectID: getProjectID(),
-          updateDBInput: dashboardInput,
+          dashboard: dashboardInput,
           chaosQueryUpdate: false,
         },
       });

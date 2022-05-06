@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import {
   ParsedChaosEventPrometheusData,
   ParsedMetricPrometheusData,
@@ -91,7 +92,7 @@ export const getPromQueryInput = (
   const promQueries: promQueryInput[] = [];
   prom_queries.forEach((query: PromQueryDetails) => {
     promQueries.push({
-      queryid: query.queryID,
+      queryID: query.queryID,
       query: query.promQueryName,
       legend: query.legend,
       resolution: query.resolution,
@@ -104,7 +105,7 @@ export const getPromQueryInput = (
   });
   if (withEvents && eventQueryTemplate && verdictQueryTemplate) {
     promQueries.push({
-      queryid: DEFAULT_CHAOS_EVENT_QUERY_ID,
+      queryID: DEFAULT_CHAOS_EVENT_QUERY_ID,
       query: eventQueryTemplate,
       legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
       resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
@@ -118,7 +119,7 @@ export const getPromQueryInput = (
             ),
     });
     promQueries.push({
-      queryid: DEFAULT_CHAOS_VERDICT_QUERY_ID,
+      queryID: DEFAULT_CHAOS_VERDICT_QUERY_ID,
       query: verdictQueryTemplate,
       legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
       resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
@@ -168,7 +169,7 @@ export const MetricDataParserForPrometheus = (
     seriesData: [],
     closedAreaData: [],
   };
-  metricData.forEach((queryResponse, mainIndex) => {
+  metricData?.forEach((queryResponse, mainIndex) => {
     if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
       let { legends } = queryResponse;
       let { tsvs } = queryResponse;
@@ -300,7 +301,7 @@ export const DashboardMetricDataParserForPrometheus = (
   selectedApplications?: string[]
 ) => {
   const mappedData: QueryMapForPanelGroup[] = [];
-  metricData.forEach((panelGroupData, panelGroupIndex) => {
+  metricData?.forEach((panelGroupData, panelGroupIndex) => {
     mappedData.push({
       panelGroupID: panelGroupData.panelGroupID,
       metricDataForGroup: [],

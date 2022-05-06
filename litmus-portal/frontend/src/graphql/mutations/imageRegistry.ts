@@ -24,14 +24,14 @@ export const UPDATE_IMAGE_REGISTRY = gql`
   mutation updateImageRegistry(
     $imageRegistryID: String!
     $projectID: String!
-    $imageRegistryInfo: imageRegistryInput!
+    $imageRegistryInfo: ImageRegistryInput!
   ) {
     updateImageRegistry(
       imageRegistryID: $imageRegistryID
       projectID: $projectID
       imageRegistryInfo: $imageRegistryInfo
     ) {
-      imageRegistry_info {
+      imageRegistryInfo {
         imageRepoName
         imageRegistryName
         imageRegistryType

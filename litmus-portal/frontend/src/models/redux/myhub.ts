@@ -1,4 +1,4 @@
-import { MyHubType } from '../graphql/user';
+import { MyHubType } from '../graphql/chaoshub';
 
 export interface Chart {
   apiVersion: string;

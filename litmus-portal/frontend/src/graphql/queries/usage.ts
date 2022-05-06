@@ -2,9 +2,9 @@ import { gql } from '@apollo/client';
 
 // usageQuery
 export const GET_GLOBAL_STATS = gql`
-  query getGlobalStats($query: UsageQuery!) {
-    usageQuery(query: $query) {
-      TotalCount {
+  query getGlobalStats($request: UsageDataRequest!) {
+    getUsageData(request: $request) {
+      totalCount {
         projects
         users
         agents {
@@ -24,8 +24,8 @@ export const GET_GLOBAL_STATS = gql`
 
 // projectId -> projectID needs to be updated in backend
 export const GLOBAL_PROJECT_DATA = gql`
-  query getStats($query: UsageQuery!) {
-    usageQuery(query: $query) {
+  query getStats($request: UsageDataRequest!) {
+    getUsageData(request: $request) {
       totalCount {
         projects
       }

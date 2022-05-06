@@ -144,8 +144,8 @@ const DataSourceTable: React.FC = () => {
   const getStatus = (searchingData: ListDataSourceResponse[]) => {
     const uniqueList: string[] = [];
     searchingData.forEach((data) => {
-      if (!uniqueList.includes(data.health_status)) {
-        uniqueList.push(data.health_status);
+      if (!uniqueList.includes(data.healthStatus)) {
+        uniqueList.push(data.healthStatus);
       }
     });
     return uniqueList;
@@ -157,21 +157,21 @@ const DataSourceTable: React.FC = () => {
       : data.listDataSource
           .filter((ds: ListDataSourceResponse) => {
             return filter.searchTokens.every((s: string) =>
-              ds.ds_name.toLowerCase().includes(s)
+              ds.dsName.toLowerCase().includes(s)
             );
           })
           .filter((data) => {
             return filter.selectedStatus === 'All'
               ? true
-              : data.health_status === filter.selectedStatus;
+              : data.healthStatus === filter.selectedStatus;
           })
           .filter((data) => {
             return filter.range.startDate === 'all' ||
               (filter.range.startDate && filter.range.endDate === undefined)
               ? true
-              : parseInt(data.updated_at, 10) * 1000 >=
+              : parseInt(data.updatedAt, 10) * 1000 >=
                   new Date(moment(filter.range.startDate).format()).getTime() &&
-                  parseInt(data.updated_at, 10) * 1000 <=
+                  parseInt(data.updatedAt, 10) * 1000 <=
                     new Date(
                       new Date(moment(filter.range.endDate).format()).setHours(
                         23,
@@ -183,16 +183,16 @@ const DataSourceTable: React.FC = () => {
           .sort((a: ListDataSourceResponse, b: ListDataSourceResponse) => {
             // Sorting based on unique fields
             if (filter.sortData.name.sort) {
-              const x = a.ds_name;
-              const y = b.ds_name;
+              const x = a.dsName;
+              const y = b.dsName;
 
               return filter.sortData.name.ascending
                 ? sortAlphaAsc(x, y)
                 : sortAlphaDesc(x, y);
             }
             if (filter.sortData.lastConfigured.sort) {
-              const x = parseInt(a.updated_at, 10);
-              const y = parseInt(b.updated_at, 10);
+              const x = parseInt(a.updatedAt, 10);
+              const y = parseInt(b.updatedAt, 10);
               return filter.sortData.lastConfigured.ascending
                 ? sortNumAsc(x, y)
                 : sortNumDesc(x, y);
@@ -328,7 +328,7 @@ const DataSourceTable: React.FC = () => {
                         <TableRow
                           hover
                           tabIndex={-1}
-                          key={data.ds_id}
+                          key={data.dsID}
                           className={classes.tableRow}
                         >
                           <TableData
@@ -493,8 +493,8 @@ const DataSourceTable: React.FC = () => {
                   variables: {
                     projectID: getProjectID(),
                     deleteDSInput: {
-                      ds_id: forceDeleteVars.dsID,
-                      force_delete: true,
+                      dsID: forceDeleteVars.dsID,
+                      forceDelete: true,
                     },
                   },
                 })

@@ -10,7 +10,6 @@ import { CREATE_DASHBOARD } from '../../../../graphql/mutations';
 import { SelectedDashboardInformation } from '../../../../models/dashboardsData';
 import {
   ApplicationMetadata,
-  CreateDashboardRequest,
   Panel,
   PanelGroup,
   PanelOption,
@@ -52,19 +51,16 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
     return true;
   };
 
-  const [createDashboard] = useMutation<CreateDashboardRequest>(
-    CREATE_DASHBOARD,
-    {
-      onCompleted: (data) => {
-        onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
-          window.location.reload();
-        });
-      },
-      onError: () => {
-        setIsAlertOpen(true);
-      },
-    }
-  );
+  const [createDashboard] = useMutation(CREATE_DASHBOARD, {
+    onCompleted: (data) => {
+      onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
+        window.location.reload();
+      });
+    },
+    onError: () => {
+      setIsAlertOpen(true);
+    },
+  });
 
   const getPanelGroups = () => {
     const panelGroups: PanelGroup[] = [];
@@ -145,7 +141,7 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
       refresh_rate: `${DEFAULT_REFRESH_RATE}`,
     };
     createDashboard({
-      variables: { createDBRequest: dashboardInput },
+      variables: { dashboard: dashboardInput },
     });
   };
 

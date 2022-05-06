@@ -168,17 +168,17 @@ const DashboardPage: React.FC = () => {
     error: errorFetchingDashboardQueries,
   } = useSubscription<ViewDashboard, ViewDashboardInput>(VIEW_DASHBOARD, {
     variables: {
-      dbID: selectedDashboardInformation.id,
-      prometheusQueries: selectedDashboardInformation.promQueries,
-      queryMap: getDashboardQueryMap(
+      dashboardID: selectedDashboardInformation.id,
+      promQueries: selectedDashboardInformation.promQueries,
+      dashboardQueryMap: getDashboardQueryMap(
         selectedDashboardInformation.metaData?.panelGroups ?? []
       ),
-      dataVarMap: {
+      dataVariables: {
         url: selectedDashboardInformation.dataSourceURL,
         start: selectedDashboardInformation.range.startDate,
         end: selectedDashboardInformation.range.endDate,
-        relative_time: selectedDashboardInformation.relativeTime,
-        refresh_interval: selectedDashboardInformation.refreshInterval,
+        relativeTime: selectedDashboardInformation.relativeTime,
+        refreshInterval: selectedDashboardInformation.refreshInterval,
       },
     },
     skip:
@@ -205,13 +205,13 @@ const DashboardPage: React.FC = () => {
     onSubscriptionData: (subscriptionUpdate) => {
       setPromData({
         chaosEventData: ChaosEventDataParserForPrometheus(
-          subscriptionUpdate.subscriptionData.data?.viewDashboard
+          subscriptionUpdate.subscriptionData?.data?.viewDashboard
             ?.annotationsResponse ?? [],
           areaGraph,
           selectedEvents
         ),
         panelGroupQueryMap: DashboardMetricDataParserForPrometheus(
-          subscriptionUpdate.subscriptionData.data?.viewDashboard
+          subscriptionUpdate.subscriptionData?.data?.viewDashboard
             ?.dashboardMetricsResponse ?? [],
           lineGraph,
           areaGraph,
@@ -236,15 +236,15 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     if (
       dashboards &&
-      dashboards.getDashboard &&
-      dashboards.getDashboard.length
+      dashboards.listDashboard &&
+      dashboards.listDashboard.length
     ) {
       if (
         selectedDashboardInformation.id !==
         selectedDashboardInformation.dashboardKey
       ) {
         const selectedDashboard: GetDashboardResponse =
-          dashboards.getDashboard.filter((data) => {
+          dashboards.listDashboard.filter((data) => {
             return data.dbID === selectedDashboardInformation.id;
           })[0];
         const selectedPanelNameAndIDList: PanelNameAndID[] = [];
@@ -261,7 +261,7 @@ const DashboardPage: React.FC = () => {
           );
           setSelectedDashboardInformation({
             ...selectedDashboardInformation,
-            dashboardListForAgent: dashboards.getDashboard,
+            dashboardListForAgent: dashboards.listDashboard,
             metaData: selectedDashboard,
             closedAreaQueryIDs: (selectedDashboard.panelGroups ?? [])
               .flatMap((panelGroup) =>

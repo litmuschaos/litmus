@@ -35,7 +35,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   const projectID = getProjectID();
 
   const { t } = useTranslation();
-  const [role, setRole] = useState<string>(row.role);
+  const [role, setRole] = useState<string>(row.Role);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClose = () => {
     setAnchorEl(null);
@@ -71,7 +71,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
   const [cancelInviteOpen, setCancelInviteOpen] = useState<boolean>(false);
 
   React.useEffect(() => {
-    fetch(`${config.auth.url}/getUser/${row.userID}`, {
+    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -105,7 +105,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             data-cy="avatar"
             alt="User"
             className={`${
-              row.deactivatedAt ? classes.darkBg : classes.avatarBackground
+              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
             } `}
           >
             {memberDetails?.username && userInitials(memberDetails.username)}
@@ -115,13 +115,13 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={row.deactivatedAt !== null}
+            disabled={row.DeactivatedAt !== null}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -196,7 +196,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
@@ -204,16 +204,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       <TableCell className={classes.otherTC}>
         <LightPills
           variant={
-            row.invitation === InvitationStatus.PENDING ? 'warning' : 'danger'
+            row.Invitation === InvitationStatus.PENDING ? 'warning' : 'danger'
           }
-          label={row.invitation}
+          label={row.Invitation}
         />
       </TableCell>
 
-      <TableCell className={classes.buttonTC} key={row.userID}>
+      <TableCell className={classes.buttonTC} key={row.UserID}>
         <div className={classes.lastCell}>
-          {row.invitation !== InvitationStatus.EXITED &&
-            row.invitation !== InvitationStatus.DECLINED && (
+          {row.Invitation !== InvitationStatus.EXITED &&
+            row.Invitation !== InvitationStatus.DECLINED && (
               <IconButton onClick={() => setCancelInviteOpen(true)}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>
@@ -222,16 +222,16 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             classes={{
               tooltip: classes.tooltip,
             }}
-            disableHoverListener={!row.deactivatedAt}
+            disableHoverListener={!row.DeactivatedAt}
             disableFocusListener
             placement="bottom"
             title="User has been deactivated"
           >
             <div data-cy="resendButton">
               <ButtonFilled
-                disabled={row.deactivatedAt !== null}
+                disabled={row.DeactivatedAt !== null}
                 onClick={() => {
-                  SendInvite(row.userID, role);
+                  SendInvite(row.UserID, role);
                 }}
               >
                 {t('settings.teamingTab.invitation.sentInvitation.resend')}

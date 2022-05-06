@@ -83,10 +83,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   useEffect(() => {
     usageQuery({
       variables: {
-        query: {
-          DateRange: {
-            start_date: start_time,
-            end_date: end_time,
+        request: {
+          dateRange: {
+            startDate: start_time,
+            endDate: end_time,
           },
         },
       },
@@ -113,23 +113,22 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
         console.error(err);
       });
   };
-
   projectStats.map((project) => {
     usageData = {
-      ProjectName: project.name,
-      Owner: project.members.owner[0].username,
+      ProjectName: project.Name,
+      Owner: project.Members.Owner[0].Username,
       Agents: 0,
       Schedules: 0,
       WfRuns: 0,
       ExpRuns: 0,
-      Members: project.members.total,
+      Members: project.Members.Total,
     };
-    for (let i = 0; i < (data ? data.usageQuery.projects.length : 0); i++) {
-      if (project.projectID === data?.usageQuery.projects[i].projectID) {
-        usageData.Agents = data.usageQuery.projects[i].agents.total;
-        usageData.ExpRuns = data.usageQuery.projects[i].workflows.expRuns;
-        usageData.WfRuns = data.usageQuery.projects[i].workflows.runs;
-        usageData.Schedules = data.usageQuery.projects[i].workflows.schedules;
+    for (let i = 0; i < (data ? data.getUsageData.projects.length : 0); i++) {
+      if (project.ProjectID === data?.getUsageData.projects[i].projectID) {
+        usageData.Agents = data.getUsageData.projects[i].agents.total;
+        usageData.ExpRuns = data.getUsageData.projects[i].workflows.expRuns;
+        usageData.WfRuns = data.getUsageData.projects[i].workflows.runs;
+        usageData.Schedules = data.getUsageData.projects[i].workflows.schedules;
         break;
       }
     }

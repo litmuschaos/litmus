@@ -145,9 +145,9 @@ const DashboardTable: React.FC = () => {
   };
 
   const payload: GetDashboardResponse[] = data
-    ? !data.getDashboard
+    ? !data.listDashboard
       ? []
-      : data.getDashboard
+      : data.listDashboard
           .filter((db: GetDashboardResponse) => {
             return filter.searchTokens.every((s: string) =>
               db.dbName.toLowerCase().includes(s)
@@ -202,7 +202,7 @@ const DashboardTable: React.FC = () => {
     if (dataSourceList && dataSourceList.listDataSource) {
       const activeDataSources: ListDataSourceResponse[] =
         dataSourceList.listDataSource.filter(
-          (dataSource) => dataSource.health_status === 'Active'
+          (dataSource) => dataSource.healthStatus === 'Active'
         ) ?? [];
       if (activeDataSources.length) {
         setActiveDataSourceAvailable(true);
@@ -317,8 +317,8 @@ const DashboardTable: React.FC = () => {
               });
               setPage(0);
             }}
-            dashboardTypes={getDashboardType(data?.getDashboard ?? [])}
-            agentNames={getAgentName(data?.getDashboard ?? [])}
+            dashboardTypes={getDashboardType(data?.listDashboard ?? [])}
+            agentNames={getAgentName(data?.listDashboard ?? [])}
             callbackToSetDashboardType={(dashboardType: string) => {
               setFilter({
                 ...filter,

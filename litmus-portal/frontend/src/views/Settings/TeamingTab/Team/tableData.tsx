@@ -28,7 +28,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
   const [memberDetails, setMemberDetails] = useState<CurrentUserData>();
 
   useEffect(() => {
-    fetch(`${config.auth.url}/getUser/${row.userID}`, {
+    fetch(`${config.auth.url}/getUser/${row.UserID}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -62,7 +62,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             data-cy="avatar"
             alt="User"
             className={`${
-              row.deactivatedAt ? classes.darkBg : classes.avatarBackground
+              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
             } `}
           >
             {memberDetails?.username && userInitials(memberDetails.username)}
@@ -72,21 +72,21 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
-        {row.role}
+        {row.Role}
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.deactivatedAt ? classes.dark : ''
+          row.DeactivatedAt ? classes.dark : ''
         }`}
       >
         <div className={classes.dateDiv}>
@@ -95,16 +95,16 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             src="./icons/calendarIcon.svg"
             alt="calendar"
           />
-          {formatDate(row.joinedAt)}
+          {formatDate(row.JoinedAt)}
         </div>
       </TableCell>
 
-      {row.role !== Role.OWNER ? (
+      {row.Role !== Role.OWNER ? (
         <TableCell
           className={`${classes.otherTC} ${
-            row.deactivatedAt ? classes.dark : ''
+            row.DeactivatedAt ? classes.dark : ''
           }`}
-          key={row.userID}
+          key={row.UserID}
         >
           <IconButton data-cy="removeMember" onClick={() => setOpen(true)}>
             <img alt="delete" src="./icons/removeMember.svg" height="50" />
@@ -113,7 +113,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       ) : (
         <TableCell
           className={`${classes.otherTC} ${
-            row.deactivatedAt ? classes.dark : ''
+            row.DeactivatedAt ? classes.dark : ''
           }`}
         />
       )}

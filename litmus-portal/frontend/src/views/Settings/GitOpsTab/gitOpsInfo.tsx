@@ -26,13 +26,13 @@ const GitOpsInfo: React.FC<GitOpsInfoProps> = ({
   return (
     <div className={classes.gitInfo} data-cy="gitopsInfoBox">
       <Typography className={classes.branchText}>
-        <strong>{data?.gitOpsDetails.branch}</strong>
+        <strong>{data?.getGitOpsDetails.branch}</strong>
       </Typography>
       <Typography className={classes.branch}>
         {t('settings.gitopsTab.branch')}
       </Typography>
       <Typography className={classes.repoURLText}>
-        <strong> {data?.gitOpsDetails.repoURL}</strong>
+        <strong> {data?.getGitOpsDetails.repoURL}</strong>
       </Typography>
       <Typography className={classes.gitURL}>
         {' '}
