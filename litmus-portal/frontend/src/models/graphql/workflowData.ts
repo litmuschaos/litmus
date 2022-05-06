@@ -152,7 +152,7 @@ export interface HeatMapData {
 }
 
 export interface HeatmapDataResponse {
-  getHeatmapData: WeekData[];
+  listHeatmapData: WeekData[];
 }
 
 export interface WorkflowRunStatsResponse {

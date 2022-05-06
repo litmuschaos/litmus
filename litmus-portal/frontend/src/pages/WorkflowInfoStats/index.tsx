@@ -22,7 +22,10 @@ import BackButton from '../../components/Button/BackButton';
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
 import Wrapper from '../../containers/layouts/Wrapper';
-import { GET_WORKFLOW_DETAILS } from '../../graphql/queries';
+import {
+  GET_WORKFLOW_DETAILS,
+  WORKFLOW_RUN_DETAILS,
+} from '../../graphql/queries';
 import {
   HeatmapDataRequest,
   HeatmapDataResponse,
@@ -55,9 +58,9 @@ const TestCalendarHeatmapTooltip = ({
         {tooltipData?.data?.bin?.bin.value ?? 0}% Average Resiliency
       </div>
       <div>
-        {tooltipData?.data?.bin?.bin.workflowRunDetail.no_of_runs ?? 0}{' '}
-        completed runs on{' '}
-        {formatDate(tooltipData?.data?.bin?.bin.workflowRunDetail.date_stamp) ??
+        {tooltipData?.data?.bin?.bin.workflowRunDetail.noOfRuns ?? 0} completed
+        runs on{' '}
+        {formatDate(tooltipData?.data?.bin?.bin.workflowRunDetail.dateStamp) ??
           ''}
       </div>
     </div>
@@ -94,16 +97,7 @@ const WorkflowInfoStats: React.FC = () => {
 
   // TODO: shift out
   const { data: workflowRunData } = useQuery<Workflow, WorkflowDataRequest>(
-    gql`
-      query workflowDetails($request: GetWorkflowRunsRequest!) {
-        getWorkflowRuns(request: $request) {
-          totalNoOfWorkflowRuns
-          workflowRuns {
-            workflowRunID
-          }
-        }
-      }
-    `,
+    WORKFLOW_RUN_DETAILS,
     {
       variables: {
         request: {
@@ -144,21 +138,21 @@ const WorkflowInfoStats: React.FC = () => {
     HeatmapDataRequest
   >(
     gql`
-      query getHeatmapData(
-        $project_id: String!
-        $workflow_id: String!
+      query listHeatmapData(
+        $projectID: String!
+        $workflowID: String!
         $year: Int!
       ) {
-        getHeatmapData(
-          project_id: $project_id
-          workflow_id: $workflow_id
+        listHeatmapData(
+          projectID: $projectID
+          workflowID: $workflowID
           year: $year
         ) {
           bins {
             value
             workflowRunDetail {
-              no_of_runs
-              date_stamp
+              noOfRuns
+              dateStamp
             }
           }
         }
@@ -287,12 +281,12 @@ const WorkflowInfoStats: React.FC = () => {
               ) : (
                 <div className={classes.heatmapParent} data-cy="statsHeatMap">
                   <CalendarHeatmap
-                    calendarHeatmapMetric={heatmapData?.getHeatmapData ?? []}
+                    calendarHeatmapMetric={heatmapData?.listHeatmapData ?? []}
                     valueThreshold={valueThreshold}
                     CalendarHeatmapTooltip={TestCalendarHeatmapTooltip}
                     handleBinClick={(bin: any) => {
                       if (bin) {
-                        if (bin?.bin?.workflowRunDetail.no_of_runs === 0) {
+                        if (bin?.bin?.workflowRunDetail.noOfRuns === 0) {
                           setDataCheck(true);
                           setShowStackBar(false);
                           handleTableClose();
@@ -301,7 +295,7 @@ const WorkflowInfoStats: React.FC = () => {
                           handleTableClose();
                           setBinResiliencyScore(bin.bin.value);
                           setWorkflowRunDate(
-                            bin.bin.workflowRunDetail.date_stamp
+                            bin.bin.workflowRunDetail.dateStamp
                           );
                         }
                       } else {
