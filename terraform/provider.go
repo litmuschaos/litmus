@@ -2,7 +2,7 @@ package main
 import (
         "github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
-// this is the provider file for terraform which has the schema and the resource
+// Provider file for terraform which has the schema and the resource
 func Provider() *schema.Provider {
         // this is the provider file
         return &schema.Provider{
