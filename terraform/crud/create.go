@@ -1,10 +1,8 @@
 // Example to demonstrate helm chart installation using helm client-go
 // Most of the code is copied from https://github.com/helm/helm repo
 // https://github.com/PrasadG193/helm-clientgo-example
-/*
-Package crud will be used for all CRUD operations
-....
-*/
+
+//Package crud will be used for all CRUD operations
 package crud
 
 import (
