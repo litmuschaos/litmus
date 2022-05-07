@@ -1,6 +1,10 @@
 // Example to demonstrate helm chart installation using helm client-go
 // Most of the code is copied from https://github.com/helm/helm repo
 // https://github.com/PrasadG193/helm-clientgo-example
+/*
+Package crud will be used for all CRUD operations
+....
+*/
 package crud
 
 import (
@@ -37,7 +41,7 @@ var (
 		//"set": "mysqlRootPassword=admin@123,persistence.enabled=false,imagePullPolicy=Always",
 	}
 )
-
+// Create operations are handled by this function
 func Create() error {
 	fmt.Println("We hit Create.go")
 
@@ -147,7 +151,7 @@ func RepoUpdate() {
 	fmt.Printf("Update Complete. ⎈ Happy Helming!⎈\n")
 }
 
-// InstallChart
+// InstallChart will install the chart
 func InstallChart(name, repo, chart string, args map[string]string) {
 	actionConfig := new(action.Configuration)
 	if err := actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), debug); err != nil {
