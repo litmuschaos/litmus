@@ -19,7 +19,7 @@ type Payload struct {
 }
 
 type Data struct {
-	ClusterConfirm ClusterConfirm `json:"clusterConfirm"`
+	ClusterConfirm ClusterConfirm `json:"confirmClusterRegistration"`
 	ClusterConnect ClusterConnect `json:"clusterConnect"`
 }
 
