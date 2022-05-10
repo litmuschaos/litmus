@@ -53,7 +53,7 @@ type ProjectData {
   """
   ID of the project
   """
-  projectId: String!
+  projectID: String!
 }
 
 """

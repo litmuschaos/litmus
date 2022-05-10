@@ -22,7 +22,7 @@ type MemberStat struct {
 
 type ProjectStats struct {
 	Name      string      `bson:"name"`
-	ProjectId string      `bson:"_id"`
+	ProjectID string      `bson:"_id"`
 	Members   *MemberStat `bson:"memberStat"`
 }
 

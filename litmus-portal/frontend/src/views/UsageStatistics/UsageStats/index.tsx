@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import config from '../../../config';
 import { GET_GLOBAL_STATS } from '../../../graphql';
+import { UsageStatsResponse } from '../../../models/graphql/usage';
 import { getToken } from '../../../utils/auth';
-import { UsageStats as GlobalStats } from '../../../models/graphql/usage';
 import Card from './Cards';
 import useStyles from './styles';
 
@@ -18,7 +18,7 @@ const UsageStats: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const [usageQuery, { loading, data }] =
-    useLazyQuery<GlobalStats>(GET_GLOBAL_STATS);
+    useLazyQuery<UsageStatsResponse>(GET_GLOBAL_STATS);
 
   useEffect(() => {
     usageQuery({

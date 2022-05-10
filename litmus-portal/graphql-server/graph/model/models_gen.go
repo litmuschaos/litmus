@@ -775,7 +775,7 @@ type ProjectData struct {
 	// Agent related statistics
 	Agents *AgentStat `json:"agents"`
 	// ID of the project
-	ProjectID string `json:"projectId"`
+	ProjectID string `json:"projectID"`
 }
 
 type PromQuery struct {

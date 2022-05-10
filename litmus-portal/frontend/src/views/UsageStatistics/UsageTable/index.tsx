@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import config from '../../../config';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
-import { UsageStats } from '../../../models/graphql/usage';
+import { UsageStatsResponse } from '../../../models/graphql/usage';
 import { ProjectStats } from '../../../models/graphql/user';
 import { getToken } from '../../../utils/auth';
 import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
@@ -74,7 +74,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const [search, setSearch] = useState<string>('');
 
   const [usageQuery, { loading, data }] =
-    useLazyQuery<UsageStats>(GLOBAL_PROJECT_DATA);
+    useLazyQuery<UsageStatsResponse>(GLOBAL_PROJECT_DATA);
 
   const [projectStats, setProjectStats] = React.useState<ProjectStats[]>([]);
 

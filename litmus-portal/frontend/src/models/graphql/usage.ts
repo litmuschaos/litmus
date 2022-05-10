@@ -7,28 +7,32 @@ export interface ProjectData {
   };
   agents: {
     total: number;
-    NS: number;
+    ns: number;
     cluster: number;
   };
 }
 
+export interface AgentStat {
+  ns: number;
+  cluster: number;
+  total: number;
+  active: number;
+}
+
+export interface WorkflowStat {
+  schedules: number;
+  runs: number;
+  expRuns: number;
+}
 export interface UsageData {
   totalCount: {
     projects: number;
-    agents: {
-      ns: string;
-      cluster: string;
-      total: number;
-    };
-    workflows: {
-      schedules: number;
-      runs: number;
-      expRuns: number;
-    };
+    agents: AgentStat;
+    workflows: WorkflowStat;
   };
   projects: ProjectData[];
 }
 
-export interface UsageStats {
+export interface UsageStatsResponse {
   getUsageData: UsageData;
 }

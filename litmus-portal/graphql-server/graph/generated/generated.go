@@ -2622,7 +2622,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectData.Agents(childComplexity), true
 
-	case "ProjectData.projectId":
+	case "ProjectData.projectID":
 		if e.complexity.ProjectData.ProjectID == nil {
 			break
 		}
@@ -5594,7 +5594,7 @@ type ProjectData {
   """
   ID of the project
   """
-  projectId: String!
+  projectID: String!
 }
 
 """
@@ -16569,7 +16569,7 @@ func (ec *executionContext) _ProjectData_agents(ctx context.Context, field graph
 	return ec.marshalNAgentStat2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAgentStat(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProjectData_projectId(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProjectData_projectID(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -27371,8 +27371,8 @@ func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "projectId":
-			out.Values[i] = ec._ProjectData_projectId(ctx, field, obj)
+		case "projectID":
+			out.Values[i] = ec._ProjectData_projectID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

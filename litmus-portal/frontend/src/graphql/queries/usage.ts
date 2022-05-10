@@ -28,9 +28,20 @@ export const GLOBAL_PROJECT_DATA = gql`
     getUsageData(request: $request) {
       totalCount {
         projects
+        agents {
+          ns
+          total
+          cluster
+          active
+        }
+        workflows {
+          schedules
+          runs
+          expRuns
+        }
       }
       projects {
-        projectId
+        projectID
         workflows {
           schedules
           runs
