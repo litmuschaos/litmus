@@ -19,7 +19,7 @@ import Loader from '../../../components/Loader';
 import config from '../../../config';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
 import { UsageStatsResponse } from '../../../models/graphql/usage';
-import { ProjectStats } from '../../../models/graphql/user';
+import { ProjectStats, UserData } from '../../../models/graphql/user';
 import { getToken } from '../../../utils/auth';
 import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
 import useStyles from './styles';
@@ -113,10 +113,35 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
         console.error(err);
       });
   };
+  const [users, setUsers] = useState<UserData[]>([]);
+
+  const fetchUsers = () => {
+    fetch(`${config.auth.url}/users`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        setUsers(res);
+      })
+
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const userMap = new Map();
+
+  users.map((user) => userMap.set(user._id, user.username));
+
   projectStats.map((project) => {
     usageData = {
       ProjectName: project.Name,
-      Owner: project.Members.Owner[0].Username,
+      Owner: userMap.get(project.Members.Owner[0].UserID),
       Agents: 0,
       Schedules: 0,
       WfRuns: 0,
@@ -137,6 +162,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   });
 
   React.useEffect(() => {
+    fetchUsers();
     getProjectStats();
   }, []);
 

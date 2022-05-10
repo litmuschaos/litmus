@@ -12,7 +12,7 @@ type Project struct {
 }
 
 type Owner struct {
-	UserId   string `bson:"user_id"`
+	UserID   string `bson:"user_id"`
 	Username string `bson:"username"`
 }
 type MemberStat struct {
