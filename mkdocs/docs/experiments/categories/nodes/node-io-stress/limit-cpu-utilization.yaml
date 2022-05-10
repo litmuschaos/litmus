@@ -12,7 +12,7 @@ spec:
     spec:
       components:
         env:
-        # total cpu cores to be used
+        # number of cpu cores to be stressed
         - name: CPU
           value: '1' 
         - name: TOTAL_CHAOS_DURATION

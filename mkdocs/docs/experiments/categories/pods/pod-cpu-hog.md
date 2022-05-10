@@ -200,7 +200,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### CPU Cores
 
-It stresses the `CPU_CORE` cpu cores of the targeted pod for the `TOTAL_CHAOS_DURATION` duration.
+It stresses the `CPU_CORE` of the targeted pod for the `TOTAL_CHAOS_DURATION` duration.
 
 Use the following example to tune this:
 
@@ -227,6 +227,42 @@ spec:
         # cpu cores for stress
         - name: CPU_CORES
           value: '1'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```
+
+### CPU Load
+It contains percentage of pod CPU to be consumed. It can be tuned via `CPU_LOAD` ENV.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-load.yaml yaml)
+```yaml
+# cpu load for the stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-cpu-hog-sa
+  experiments:
+  - name: pod-cpu-hog
+    spec:
+      components:
+        env:
+        # cpu load in percentage for the stress
+        - name: CPU_LOAD
+          value: '100'
+        # cpu core should be provided as 0 for cpu load
+        # to work, otherwise it will take cpu core as priority
+        - name: CPU_CORES
+          value: '0'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
