@@ -59,7 +59,7 @@ const ScheduleAndRunStats: React.FC = () => {
   const closedSeriesData: Array<GraphMetric> = [
     {
       metricName: activeTab === 0 ? 'Runs' : 'Schedules',
-      data: data?.getWorkflowStats ?? [],
+      data: data?.listWorkflowStats ?? [],
       baseColor: activeTab === 0 ? '#F6793E' : '#5B44BA',
     },
   ];

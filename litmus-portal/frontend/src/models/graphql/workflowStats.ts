@@ -10,7 +10,7 @@ export enum Filter {
 }
 
 export interface WorkflowStatsResponse {
-  getWorkflowStats: Array<DateValue>;
+  listWorkflowStats: Array<DateValue>;
 }
 
 export interface WorkflowStatsVars {

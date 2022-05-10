@@ -46,7 +46,7 @@ export const SYNC_WORKFLOW = gql`
 `;
 
 export const DELETE_WORKFLOW = gql`
-  mutation deleteWorkflow(
+  mutation deleteChaosWorkflow(
     $projectID: String!
     $workflowID: String
     $workflowRunID: String

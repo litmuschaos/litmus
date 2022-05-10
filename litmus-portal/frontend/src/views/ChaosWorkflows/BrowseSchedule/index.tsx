@@ -182,7 +182,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
       variables: {
         projectID: getProjectID(),
         workflowID: wfid,
-        workflow_run_id: '',
+        workflowRunID: '',
       },
     });
   };
