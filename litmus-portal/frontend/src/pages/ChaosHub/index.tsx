@@ -108,7 +108,7 @@ const MyHub: React.FC = () => {
   const handleHubDelete = () => {
     deleteRepo({
       variables: {
-        hub_id: deleteHub.hubID,
+        hubID: deleteHub.hubID,
         projectID,
       },
     });
