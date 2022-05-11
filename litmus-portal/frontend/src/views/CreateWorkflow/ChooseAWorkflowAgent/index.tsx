@@ -192,7 +192,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
           workflow.setWorkflowDetails({
             clusterID: cluster.clusterID,
             projectID: selectedProjectID,
-            clustername: cluster.clusterName,
+            clusterName: cluster.clusterName,
             namespace: cluster.agentNamespace,
           });
         }

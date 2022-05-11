@@ -14,8 +14,8 @@ export const CREATE_WORKFLOW = gql`
 `;
 
 export const UPDATE_SCHEDULE = gql`
-  mutation updateChaosWorkflow($ChaosWorkFlowInput: ChaosWorkFlowInput!) {
-    updateChaosWorkflow(input: $ChaosWorkFlowInput) {
+  mutation updateChaosWorkflow($request: ChaosWorkFlowRequest!) {
+    updateChaosWorkflow(request: $request) {
       workflowID
       cronSyntax
       workflowName
