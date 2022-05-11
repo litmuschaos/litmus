@@ -394,6 +394,17 @@ func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clus
 	return clusterHandler.ListClusters(projectID, clusterType)
 }
 
+func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.GetAgentDetails],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return clusterHandler.GetAgentDetails(ctx, clusterID, projectID)
+}
+
 func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetManifest],

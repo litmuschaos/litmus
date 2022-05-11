@@ -233,6 +233,11 @@ type Query {
   """
   listClusters(projectID: String!, clusterType: String): [Cluster!]! @authorized
 
+  """
+  Query to fetch agent details based on projectID and agentName
+  """
+  getAgentDetails(clusterID: String!, projectID: String!): Cluster! @authorized
+
   # MANIFEST OPERATIONS
   """
   Returns the manifest given projectID, clusterID and accessKey
