@@ -206,7 +206,7 @@ const Routes: React.FC = () => {
               <Route exact path="/create-workflow" component={CreateWorkflow} />
               <Route
                 exact
-                path="/workflows/:workflowRunId"
+                path="/workflows/:workflowRunID"
                 component={WorkflowDetails}
               />
               <Route
@@ -221,7 +221,7 @@ const Routes: React.FC = () => {
               />
               <Route
                 exact
-                path="/analytics/workflowStatistics/:workflowId"
+                path="/analytics/workflowStatistics/:workflowID"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -244,7 +244,7 @@ const Routes: React.FC = () => {
                   }}
                 />
               )}
-              {role === UserRole.admin ? (
+              {role === UserRole.ADMIN ? (
                 <Route path="/usage-statistics" component={UsageStatistics} />
               ) : (
                 <Redirect

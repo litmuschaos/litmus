@@ -77,11 +77,11 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
         action={
           <div className={classes.mainCardDiv}>
             <div
-              className={hub.IsAvailable ? classes.connected : classes.error}
+              className={hub.isAvailable ? classes.connected : classes.error}
             >
               <Center>
                 <Typography className={classes.statusText}>
-                  {hub.IsAvailable ? 'Connected' : 'Error'}
+                  {hub.isAvailable ? 'Connected' : 'Error'}
                 </Typography>
               </Center>
             </div>
@@ -128,7 +128,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                     data-cy="myHubEdit"
                     value="View"
                     onClick={() => {
-                      handleEditHub(hub.HubName);
+                      handleEditHub(hub.hubName);
                       handleClose();
                     }}
                   >
@@ -175,7 +175,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
       <CardContent
         onClick={() => {
           history.push({
-            pathname: `/myhub/${hub.HubName}`,
+            pathname: `/myhub/${hub.hubName}`,
             search: `?projectID=${projectID}&projectRole=${userRole}`,
           });
         }}
@@ -183,7 +183,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
         <div className={classes.cardContent}>
           <img
             src={`./icons/${
-              hub.HubName === 'Litmus ChaosHub'
+              hub.hubName === 'Litmus ChaosHub'
                 ? 'myhub-litmus.svg'
                 : 'my-hub-charts.svg'
             }`}
@@ -195,11 +195,11 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
             align="center"
             className={classes.hubName}
           >
-            <strong>{hub.HubName}</strong>/{hub.RepoBranch}
+            <strong>{hub.hubName}</strong>/{hub.repoBranch}
           </Typography>
           <Typography className={classes.totalExp} gutterBottom>
-            {parseInt(hub.TotalExp, 10) > 0
-              ? `${hub.TotalExp} experiments`
+            {parseInt(hub.totalExp, 10) > 0
+              ? `${hub.totalExp} experiments`
               : t('myhub.error')}
           </Typography>
         </div>
@@ -216,7 +216,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
               {t('myhub.lastSync')}
             </Typography>
             <Typography className={classes.lastSyncText}>
-              {formatDate(hub.LastSyncedAt)}
+              {formatDate(hub.lastSyncedAt)}
             </Typography>
           </div>
         )}

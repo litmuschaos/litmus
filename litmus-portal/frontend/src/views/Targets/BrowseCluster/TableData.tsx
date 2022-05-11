@@ -54,7 +54,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   };
 
   const handleClose = () => {
-    deleteRow(data.cluster_id);
+    deleteRow(data.clusterID);
     setOpen(false);
   };
 
@@ -86,18 +86,18 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const [upgradeModal, setUpgradeModal] = React.useState(false);
   const theme = useTheme();
   const codeSnippet = `litmusctl upgrade agent --cluster-id="${
-    data.cluster_id
+    data.clusterID
   }" --project-id="${getProjectID()}"`;
 
   return (
     <>
       <TableCell className={classes.tableDataStatus}>
-        {data.is_cluster_confirmed === false ? (
+        {data.isClusterConfirmed === false ? (
           <LightPills
             variant="warning"
             label={t('workflowCluster.header.formControl.menu6')}
           />
-        ) : data.is_cluster_confirmed === true && data.is_active ? (
+        ) : data.isClusterConfirmed === true && data.isActive ? (
           <LightPills
             variant="success"
             label={t('workflowCluster.header.formControl.menu1')}
@@ -110,25 +110,25 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         )}
       </TableCell>
       <TableCell className={classes.workflowNameData}>
-        <Typography>{data.cluster_name}</Typography>
+        <Typography>{data.clusterName}</Typography>
       </TableCell>
       <TableCell>
-        <Typography>{capitalize(data.agent_scope)}</Typography>
+        <Typography>{capitalize(data.agentScope)}</Typography>
       </TableCell>
-      <TableCell>{formatDate(data.updated_at)}</TableCell>
+      <TableCell>{formatDate(data.updatedAt)}</TableCell>
       <TableCell>
         <Typography className={classes.stepsData}>
-          {data.no_of_workflows}
+          {data.noOfWorkflows}
         </Typography>
       </TableCell>
       <TableCell className={classes.stepsDataschedule}>
-        <Typography>{data.no_of_schedules}</Typography>
+        <Typography>{data.noOfSchedules}</Typography>
       </TableCell>
       <TableCell>
-        {data.last_workflow_timestamp === '0' ? (
+        {data.lastWorkflowTimestamp === '0' ? (
           <Typography>Not Yet</Typography>
         ) : (
-          timeDifferenceForDate(data.last_workflow_timestamp)
+          timeDifferenceForDate(data.lastWorkflowTimestamp)
         )}
       </TableCell>
       <TableCell className={classes.menuCell}>
@@ -153,7 +153,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
         >
           <MenuItem
             value="Copy_ID"
-            onClick={() => copyTextToClipboard(data.cluster_id)}
+            onClick={() => copyTextToClipboard(data.clusterID)}
           >
             <div className={classes.expDiv}>
               <Typography data-cy="Copy_ID" className={classes.btnText}>
@@ -238,7 +238,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
                   {t('targets.modalDelete.head2')}
                   <br />
                   <strong>
-                    {data.cluster_name} {t('targets.modalDelete.head4')}
+                    {data.clusterName} {t('targets.modalDelete.head4')}
                   </strong>
                 </Typography>
               </div>

@@ -72,7 +72,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
         });
 
         history.push({
-          pathname: `/workflows/${data.workflow_run_id}`,
+          pathname: `/workflows/${data.workflowRunID}`,
           search: `?projectID=${projectID}&projectRole=${projectRole}`,
         });
       }}
@@ -93,10 +93,10 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
                 <Typography
                   className={`${classes.testName} ${classes.noWrapProvider}`}
                 >
-                  {data.workflow_name}
+                  {data.workflowName}
                 </Typography>
                 <Typography className={classes.hint}>
-                  {data.cluster_name}
+                  {data.clusterName}
                 </Typography>
               </div>
             </div>
@@ -109,12 +109,12 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
               )}
             </Typography>
             <Typography
-              className={getResiliencyScoreVariant(data.resiliency_score ?? 0)}
+              className={getResiliencyScoreVariant(data.resiliencyScore ?? 0)}
             >
-              {data.resiliency_score === undefined ||
-              data.resiliency_score === null
+              {data.resiliencyScore === undefined ||
+              data.resiliencyScore === null
                 ? 'NA'
-                : `${data.resiliency_score}%`}
+                : `${data.resiliencyScore}%`}
             </Typography>
           </div>
 
@@ -127,7 +127,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
             <Typography
               className={`${classes.noWrapProvider} ${classes.lastRunTime}`}
             >
-              {timeDifferenceForDate(data.last_updated)}
+              {timeDifferenceForDate(data.lastUpdated)}
             </Typography>
           </div>
         </div>

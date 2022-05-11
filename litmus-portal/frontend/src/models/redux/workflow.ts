@@ -30,9 +30,9 @@ export interface customWorkflow {
 export interface WorkflowData {
   chaosEngineChanged: boolean;
   namespace: string;
-  workflow_id?: string;
-  clusterid: string;
-  clustername: string;
+  workflowID?: string;
+  clusterID: string;
+  clusterName: string;
   cronSyntax: string;
   scheduleType: scheduleType;
   scheduleInput: scheduleInput;

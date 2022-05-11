@@ -18,7 +18,7 @@ interface Panel {
   panel_name: string;
   panel_options: {
     points: boolean;
-    grids: boolean;
+    grIDs: boolean;
     left_axis: boolean;
   };
   y_axis_left: string;

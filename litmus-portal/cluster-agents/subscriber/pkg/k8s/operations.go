@@ -208,7 +208,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	if requestType == "create" {
 		response, err := dr.Create(ctx, obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
-			// This doesnt ever happen even if it does already exist
+			// This doesn't ever happen even if it does already exist
 			logrus.Info("Already exists")
 			return nil, nil
 		}
@@ -222,7 +222,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	} else if requestType == "update" {
 		getObj, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -243,7 +243,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	} else if requestType == "delete" {
 		err := dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -257,7 +257,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	} else if requestType == "get" {
 		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -287,7 +287,7 @@ func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]str
 	obj.SetLabels(newLabels)
 }
 
-// This function handles cluster operations
+// ClusterOperations handles cluster operations
 func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
@@ -333,7 +333,7 @@ func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, 
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
-	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
+	payload := `{"query":"mutation{ confirmClusterRegistration(request: {clusterID: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", accessKey: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey clusterID}}"}`
 	resp, err := graphql.SendRequest(clusterData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err

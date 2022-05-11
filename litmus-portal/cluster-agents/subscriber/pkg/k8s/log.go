@@ -52,7 +52,7 @@ func GetLogs(podName, namespace, container string) (string, error) {
 	return str, nil
 }
 
-// create pod log for normal pods and chaos-engine pods
+//CreatePodLog creates pod log for normal pods and chaos-engine pods
 func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	logDetails := types.PodLog{}
 	mainLog, err := GetLogs(podLog.PodName, podLog.PodNamespace, "main")
@@ -109,7 +109,7 @@ func SendPodLogs(clusterData map[string]string, podLog types.PodLogRequest) {
 }
 
 func GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error) {
-	clusterID := `{cluster_id: \"` + cid + `\", version: \"` + version + `\", access_key: \"` + accessKey + `\"}`
+	clusterID := `{clusterID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
 	processed := " Could not get logs "
 
 	// get the logs
@@ -122,8 +122,8 @@ func GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogReque
 		}
 	}
 
-	mutation := `{ cluster_id: ` + clusterID + `, request_id:\"` + podLog.RequestID + `\", workflow_run_id: \"` + podLog.WorkflowRunID + `\", pod_name: \"` + podLog.PodName + `\", pod_type: \"` + podLog.PodType + `\", log:\"` + processed[1:len(processed)-1] + `\"}`
-	var payload = []byte(`{"query":"mutation { podLog(log:` + mutation + ` )}"}`)
+	mutation := `{ clusterID: ` + clusterID + `, requestID:\"` + podLog.RequestID + `\", workflowRunID: \"` + podLog.WorkflowRunID + `\", podName: \"` + podLog.PodName + `\", podType: \"` + podLog.PodType + `\", log:\"` + processed[1:len(processed)-1] + `\"}`
+	var payload = []byte(`{"query":"mutation { podLog(request:` + mutation + ` )}"}`)
 
 	return payload, nil
 }

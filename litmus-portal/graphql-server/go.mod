@@ -24,7 +24,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tidwall/gjson v1.12.1
 	github.com/tidwall/sjson v1.1.1
-	github.com/vektah/gqlparser/v2 v2.4.1
+	github.com/vektah/gqlparser/v2 v2.1.0
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
 	google.golang.org/grpc v1.42.0

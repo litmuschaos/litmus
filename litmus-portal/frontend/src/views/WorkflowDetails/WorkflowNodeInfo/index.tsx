@@ -16,15 +16,15 @@ import useStyles from './styles';
 interface WorkflowNodeInfoProps {
   setIsInfoToggled: React.Dispatch<React.SetStateAction<boolean>>;
   manifest: string;
-  cluster_id: string;
-  workflow_run_id: string;
+  clusterID: string;
+  workflowRunID: string;
   data: ExecutionData;
 }
 
 const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   manifest,
-  cluster_id,
-  workflow_run_id,
+  clusterID,
+  workflowRunID,
   data,
   setIsInfoToggled,
 }) => {
@@ -32,19 +32,19 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
   const { t } = useTranslation();
   const [isAppInfoVisible, setIsAppInfoVisible] = useState(false);
 
-  const { pod_name } = useSelector((state: RootState) => state.selectedNode);
+  const { podName } = useSelector((state: RootState) => state.selectedNode);
 
   const [embeddedYAMLString, setEmbeddedYAMLString] = useState('');
 
   useEffect(() => {
     const currentEmbeddedYAMLString = stepEmbeddedYAMLExtractor(
       manifest,
-      data.nodes[pod_name].name
+      data.nodes[podName].name
     );
     setEmbeddedYAMLString(currentEmbeddedYAMLString);
     if (embeddedYAMLString && !YAML.parse(embeddedYAMLString).spec.appinfo)
       setIsAppInfoVisible(false);
-  }, [pod_name]);
+  }, [podName]);
 
   return (
     <div className={classes.root}>
@@ -53,7 +53,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
       {/* Header */}
       <div className={classes.header}>
         <Typography className={classes.title}>
-          <strong>{trimstring(data.nodes[pod_name].name, 30)}</strong>
+          <strong>{trimstring(data.nodes[podName].name, 30)}</strong>
         </Typography>
         <ButtonOutlined
           className={classes.closeButton}
@@ -70,7 +70,7 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         {/* Left-Panel Containing details about selected Node. */}
         <div className={classes.leftPanel}>
           {/* Phase */}
-          <WorkflowStatus phase={data.nodes[pod_name].phase} />
+          <WorkflowStatus phase={data.nodes[podName].phase} />
           {/* Start Time */}
           <Typography className={classes.textMargin}>
             <strong>
@@ -78,8 +78,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
             </strong>
             &nbsp;&nbsp;&nbsp;
             <span>
-              {data.nodes[pod_name].phase !== 'Pending'
-                ? timeDifference(data.nodes[pod_name].startedAt)
+              {data.nodes[podName].phase !== 'Pending'
+                ? timeDifference(data.nodes[podName].startedAt)
                 : '- -'}
             </span>
           </Typography>
@@ -89,8 +89,8 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               {t('workflowDetailsView.workflowNodeInfo.endTime')}:
             </strong>
             &nbsp;&nbsp;&nbsp;
-            {data.nodes[pod_name].finishedAt !== '' ? (
-              <span>{timeDifference(data.nodes[pod_name].finishedAt)}</span>
+            {data.nodes[podName].finishedAt !== '' ? (
+              <span>{timeDifference(data.nodes[podName].finishedAt)}</span>
             ) : (
               <span>- -</span>
             )}
@@ -101,21 +101,21 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
               {t('workflowDetailsView.workflowNodeInfo.duration')}:
             </strong>
             &nbsp;&nbsp;&nbsp;
-            {data.nodes[pod_name].finishedAt !== ''
+            {data.nodes[podName].finishedAt !== ''
               ? (
-                  (parseInt(data.nodes[pod_name].finishedAt, 10) -
-                    parseInt(data.nodes[pod_name].startedAt, 10)) /
+                  (parseInt(data.nodes[podName].finishedAt, 10) -
+                    parseInt(data.nodes[podName].startedAt, 10)) /
                   60
                 ).toFixed(1)
               : (
                   (new Date().getTime() / 1000 -
-                    parseInt(data.nodes[pod_name].startedAt, 10)) /
+                    parseInt(data.nodes[podName].startedAt, 10)) /
                   60
                 ).toFixed(1)}{' '}
             minutes
           </Typography>
           {/* Button to show Application Details */}
-          {data.nodes[pod_name].type === 'ChaosEngine' && embeddedYAMLString && (
+          {data.nodes[podName].type === 'ChaosEngine' && embeddedYAMLString && (
             <>
               <IconButton
                 disabled={!YAML.parse(embeddedYAMLString).spec.appinfo}
@@ -164,11 +164,13 @@ const WorkflowNodeInfo: React.FC<WorkflowNodeInfoProps> = ({
         {/* Right Panel for Node Logs */}
         <div className={classes.rightPanel}>
           <LogsSwitcher
-            cluster_id={cluster_id}
-            workflow_run_id={workflow_run_id}
-            pod_namespace={data.namespace}
-            pod_type={data.nodes[pod_name].type}
-            pod_name={pod_name}
+            request={{
+              clusterID,
+              workflowRunID,
+              podNamespace: data.namespace,
+              podName,
+              podType: data.nodes[podName].type,
+            }}
           />
         </div>
       </div>

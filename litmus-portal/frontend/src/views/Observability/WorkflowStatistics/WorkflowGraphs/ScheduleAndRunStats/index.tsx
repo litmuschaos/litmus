@@ -42,15 +42,15 @@ const ScheduleAndRunStats: React.FC = () => {
     setActiveTab(actTab);
   };
 
-  const [filters, setFilters] = useState<Filter>(Filter.Monthly);
+  const [filters, setFilters] = useState<Filter>(Filter.MONTHLY);
 
   const { data, loading } = useQuery<WorkflowStatsResponse, WorkflowStatsVars>(
     WORKFLOW_STATS,
     {
       variables: {
         filter: filters,
-        project_id: projectID,
-        show_workflow_runs: activeTab === 0,
+        projectID,
+        showWorkflowRuns: activeTab === 0,
       },
       fetchPolicy: 'cache-and-network',
     }
@@ -59,18 +59,18 @@ const ScheduleAndRunStats: React.FC = () => {
   const closedSeriesData: Array<GraphMetric> = [
     {
       metricName: activeTab === 0 ? 'Runs' : 'Schedules',
-      data: data?.getWorkflowStats ?? [],
+      data: data?.listWorkflowStats ?? [],
       baseColor: activeTab === 0 ? '#F6793E' : '#5B44BA',
     },
   ];
 
   function xAxisTimeFormat(filter: Filter) {
     switch (filter) {
-      case Filter.Monthly:
+      case Filter.MONTHLY:
         return 'MMM-YY';
-      case Filter.Daily:
+      case Filter.DAILY:
         return 'DD-MMM-YY';
-      case Filter.Hourly:
+      case Filter.HOURLY:
         return 'HH[hrs]-DD';
       default:
         return 'MMM';
@@ -103,13 +103,13 @@ const ScheduleAndRunStats: React.FC = () => {
             classes: { paper: classes.menuList },
           }}
         >
-          <MenuItem value={Filter.Monthly} className={classes.menuListItem}>
+          <MenuItem value={Filter.MONTHLY} className={classes.menuListItem}>
             Monthly
           </MenuItem>
-          <MenuItem value={Filter.Daily} className={classes.menuListItem}>
+          <MenuItem value={Filter.DAILY} className={classes.menuListItem}>
             Daily
           </MenuItem>
-          <MenuItem value={Filter.Hourly} className={classes.menuListItem}>
+          <MenuItem value={Filter.HOURLY} className={classes.menuListItem}>
             Hourly
           </MenuItem>
         </Select>

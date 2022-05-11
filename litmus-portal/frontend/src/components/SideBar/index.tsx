@@ -161,7 +161,7 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
 
-        {role === UserRole.admin && projectRole === 'Owner' && (
+        {role === UserRole.ADMIN && projectRole === 'Owner' && (
           <CustomisedListItem
             key="usage-statistics"
             handleClick={() => {

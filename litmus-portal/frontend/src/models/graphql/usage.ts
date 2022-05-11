@@ -1,24 +1,38 @@
 export interface ProjectData {
-  ProjectId: string;
-  Workflows: {
-    Schedules: number;
-    ExpRuns: number;
-    Runs: number;
+  projectID: string;
+  workflows: {
+    schedules: number;
+    expRuns: number;
+    runs: number;
   };
-  Agents: {
-    Total: number;
-    Ns: number;
-    Cluster: number;
+  agents: {
+    total: number;
+    ns: number;
+    cluster: number;
   };
 }
 
+export interface AgentStat {
+  ns: number;
+  cluster: number;
+  total: number;
+  active: number;
+}
+
+export interface WorkflowStat {
+  schedules: number;
+  runs: number;
+  expRuns: number;
+}
 export interface UsageData {
-  TotalCount: {
-    Projects: number;
+  totalCount: {
+    projects: number;
+    agents: AgentStat;
+    workflows: WorkflowStat;
   };
-  Projects: ProjectData[];
+  projects: ProjectData[];
 }
 
-export interface UsageStats {
-  UsageQuery: UsageData;
+export interface UsageStatsResponse {
+  getUsageData: UsageData;
 }

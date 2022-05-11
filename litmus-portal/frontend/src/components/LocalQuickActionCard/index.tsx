@@ -73,7 +73,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
 
     // TODO: settings only accessible by Owner
     (homePage || returningHome || community || observability) &&
-    getProjectRole() === Role.owner
+    getProjectRole() === Role.OWNER
       ? {
           src: './icons/teamMember.svg',
           alt: 'team',

@@ -1,3 +1,4 @@
+import { useSubscription } from '@apollo/client';
 import {
   Button,
   Checkbox,
@@ -9,23 +10,16 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import { InputField } from 'litmus-ui';
+import { Autocomplete } from '@material-ui/lab';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import YAML from 'yaml';
-import { useSelector } from 'react-redux';
-import { useSubscription } from '@apollo/client';
-import { Autocomplete } from '@material-ui/lab';
+import { InputField } from 'litmus-ui';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useStyles from './styles';
-import * as WorkflowActions from '../../../../redux/actions/workflow';
-import {
-  WorkflowData,
-  WorkflowManifest,
-} from '../../../../models/redux/workflow';
-import { RootState } from '../../../../redux/reducers';
-import useActions from '../../../../redux/actions';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
+import { constants } from '../../../../constants';
+import { KUBE_OBJ } from '../../../../graphql';
 import {
   GVRRequest,
   KubeObjData,
@@ -33,9 +27,15 @@ import {
   KubeObjResource,
   KubeObjResponse,
 } from '../../../../models/graphql/createWorkflowData';
-import { KUBE_OBJ } from '../../../../graphql';
-import { constants } from '../../../../constants';
+import {
+  WorkflowData,
+  WorkflowManifest,
+} from '../../../../models/redux/workflow';
+import useActions from '../../../../redux/actions';
+import * as WorkflowActions from '../../../../redux/actions/workflow';
+import { RootState } from '../../../../redux/reducers';
 import { gvrData } from './data';
+import useStyles from './styles';
 
 interface AppInfoData {
   namespace: string;
@@ -71,7 +71,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
-  const { clusterid } = workflowData;
+  const { clusterID } = workflowData;
   const engineManifest = YAML.parse(manifest.engineYAML);
 
   /**
@@ -161,10 +161,10 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
    */
   const { data } = useSubscription<KubeObjResponse, KubeObjRequest>(KUBE_OBJ, {
     variables: {
-      data: {
-        cluster_id: clusterid,
-        object_type: 'kubeobject',
-        kube_obj_request: {
+      request: {
+        clusterID,
+        objectType: 'kubeobject',
+        kubeObjRequest: {
           group: GVRObj.group,
           version: GVRObj.version,
           resource: GVRObj.resource,
@@ -184,7 +184,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
         /**
          * Parse the kubeObject data
          */
-        const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kube_obj);
+        const kubeData: KubeObjData[] = JSON.parse(data.getKubeObject.kubeObj);
         kubeData.forEach((obj: KubeObjData) => {
           const applabels: string[] = [];
           if (obj.data != null) {

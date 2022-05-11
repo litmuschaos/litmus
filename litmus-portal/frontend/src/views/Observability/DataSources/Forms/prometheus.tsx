@@ -4,7 +4,7 @@ import { FormControlLabel, FormGroup, Typography } from '@material-ui/core';
 import { InputField, RadioButton, TextButton } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LIST_DATASOURCE } from '../../../../graphql';
+import { GET_DATASOURCE } from '../../../../graphql';
 import { DataSourceDetails } from '../../../../models/dataSourceData';
 import {
   DataSourceList,
@@ -60,7 +60,7 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
 
   // Apollo query to get the datasource data
   const { data } = useQuery<DataSourceList, ListDataSourceVars>(
-    LIST_DATASOURCE,
+    GET_DATASOURCE,
     {
       variables: { projectID },
       fetchPolicy: 'cache-and-network',
@@ -148,26 +148,26 @@ const ConfigurePrometheus: React.FC<ConfigurePrometheusProps> = ({
 
   useEffect(() => {
     if (configure === true) {
-      data?.ListDataSource.forEach(
+      data?.listDataSource.forEach(
         (dataSourceDetail: ListDataSourceResponse) => {
-          if (dataSourceDetail.ds_id === dataSourceID) {
+          if (dataSourceDetail.dsID === dataSourceID) {
             setDataSourceDetails({
               ...dataSourceDetails,
-              id: dataSourceDetail.ds_id,
-              name: dataSourceDetail.ds_name,
-              dataSourceType: dataSourceDetail.ds_type,
-              url: dataSourceDetail.ds_url,
-              access: dataSourceDetail.access_type,
-              basicAuth: dataSourceDetail.auth_type === 'basic auth',
-              username: dataSourceDetail.basic_auth_username,
-              password: dataSourceDetail.basic_auth_password,
-              noAuth: dataSourceDetail.auth_type === 'no auth',
+              id: dataSourceDetail.dsID,
+              name: dataSourceDetail.dsName,
+              dataSourceType: dataSourceDetail.dsType,
+              url: dataSourceDetail.dsURL,
+              access: dataSourceDetail.accessType,
+              basicAuth: dataSourceDetail.authType === 'basic auth',
+              username: dataSourceDetail.basicAuthUsername,
+              password: dataSourceDetail.basicAuthPassword,
+              noAuth: dataSourceDetail.authType === 'no auth',
               withCredentials: false,
               tlsClientAuth: false,
               withCACert: false,
-              scrapeInterval: `${dataSourceDetail.scrape_interval.toString()}s`,
-              queryTimeout: `${dataSourceDetail.query_timeout.toString()}s`,
-              httpMethod: dataSourceDetail.http_method,
+              scrapeInterval: `${dataSourceDetail.scrapeInterval.toString()}s`,
+              queryTimeout: `${dataSourceDetail.queryTimeout.toString()}s`,
+              httpMethod: dataSourceDetail.httpMethod,
             });
             setUpdate(true);
           }

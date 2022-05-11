@@ -1,5 +1,5 @@
 export interface WeightageMap {
-  experiment_name: string;
+  experimentName: string;
   weightage: number;
 }
 
@@ -33,8 +33,8 @@ export interface Nodes {
 }
 
 export interface ExecutionData {
-  resiliency_score?: number;
-  event_type: string;
+  resiliencyScore?: number;
+  eventType: string;
   uid: string;
   namespace: string;
   name: string;
@@ -46,44 +46,44 @@ export interface ExecutionData {
 }
 
 export interface WorkflowRun {
-  execution_data: string;
-  last_updated: string;
-  workflow_run_id: string;
+  executionData: string;
+  lastUpdated: string;
+  workflowRunID: string;
 }
 
 export interface ScheduledWorkflow {
-  workflow_id: string;
-  workflow_manifest: string;
+  workflowID: string;
+  workflowManifest: string;
   cronSyntax: string;
-  cluster_name: string;
-  workflow_name: string;
-  workflow_description: string;
+  clusterName: string;
+  workflowName: string;
+  workflowDescription: string;
   weightages: WeightageMap[];
   isCustomWorkflow: string;
-  updated_at: string;
-  created_at: string;
-  project_id: string;
-  cluster_id: string;
-  cluster_type: string;
+  updatedAt: string;
+  createdAt: string;
+  projectID: string;
+  clusterID: string;
+  clusterType: string;
   isRemoved: Boolean;
-  last_updated_by: string;
+  lastUpdatedBy: string;
 }
 
-export interface WorkflowList {
-  ListWorkflow: ScheduledWorkflow[];
+export interface GetWorkflow {
+  getWorkflow: ScheduledWorkflow[];
 }
 
-export interface WorkflowListDataVars {
+export interface GetWorkflowDataRequest {
   projectID: string;
   workflowIDs: string[];
 }
 
-export interface ListManifestTemplateArray {
-  template_id: string;
+export interface GetManifestTemplateArray {
+  templateID: string;
   manifest: string;
-  project_name: string;
-  template_description: string;
-  template_name: string;
+  projectName: string;
+  templateDescription: string;
+  templateName: string;
   isCustomWorkflow: boolean;
 }
 
@@ -92,34 +92,35 @@ export interface Pagination {
   limit: number;
 }
 
-export interface ListManifestTemplate {
-  ListManifestTemplate: ListManifestTemplateArray[];
+export interface GetManifestTemplate {
+  listWorkflowManifests: GetManifestTemplateArray[];
 }
 
-export interface SortInput {
-  field: 'Name' | 'Time';
+export interface SortRequest {
+  field: 'NAME' | 'TIME';
   descending?: Boolean;
 }
 
-export interface WorkflowFilterInput {
-  workflow_name?: string;
-  cluster_name?: string;
+export interface WorkflowFilterRequest {
+  workflowName?: string;
+  clusterName?: string;
 }
-export interface ListWorkflowsInput {
-  workflowInput: {
-    project_id: string;
-    workflow_ids?: string[];
+
+export interface GetWorkflowsRequest {
+  request: {
+    projectID: string;
+    workflowIDs?: string[];
     pagination?: Pagination;
-    sort?: SortInput;
-    filter?: WorkflowFilterInput;
+    sort?: SortRequest;
+    filter?: WorkflowFilterRequest;
   };
 }
 
-export interface ListWorkflowsOutput {
-  total_no_of_workflows: number;
+export interface GetWorkflowsResponse {
+  totalNoOfWorkflows: number;
   workflows: ScheduledWorkflow[];
 }
 
 export interface ScheduledWorkflows {
-  ListWorkflow: ListWorkflowsOutput;
+  listWorkflows: GetWorkflowsResponse;
 }

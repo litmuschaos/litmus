@@ -21,17 +21,17 @@ import {
   WORKFLOW_DETAILS,
   WORKFLOW_EVENTS,
 } from '../../../graphql';
-import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
+import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
   Pagination,
-  SortInput,
+  SortRequest,
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
   WorkflowRun,
-  WorkflowRunFilterInput,
+  WorkflowRunFilterRequest,
   WorkflowStatus,
   WorkflowSubscription,
-  WorkflowSubscriptionInput,
+  WorkflowSubscriptionRequest,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import HeaderSection from './HeaderSection';
@@ -58,12 +58,12 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   });
 
   // States for filters
-  const [filters, setFilters] = useState<WorkflowRunFilterInput>({
-    workflow_name: workflowName,
-    cluster_name: 'All',
-    workflow_status: 'All',
-    date_range: {
-      start_date: new Date(0).valueOf().toString(),
+  const [filters, setFilters] = useState<WorkflowRunFilterRequest>({
+    workflowName,
+    clusterName: 'All',
+    workflowStatus: 'All',
+    dateRange: {
+      startDate: new Date(0).valueOf().toString(),
     },
   });
 
@@ -73,32 +73,32 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   );
 
   // State for sorting
-  const [sortData, setSortData] = useState<SortInput>({
-    field: 'Time',
+  const [sortData, setSortData] = useState<SortRequest>({
+    field: 'TIME',
     descending: true,
   });
 
   // Checks if the workflow event from subscription exists in the table
   function isFiltered(newWorkflow: WorkflowRun) {
     const nameExists =
-      filters.workflow_name &&
-      newWorkflow.workflow_name
+      filters.workflowName &&
+      newWorkflow.workflowName
         .toLowerCase()
-        .includes(filters.workflow_name.toLowerCase());
+        .includes(filters.workflowName.toLowerCase());
 
     const clusterExists =
-      filters.cluster_name === 'All' ||
-      filters.cluster_name === newWorkflow.cluster_name;
+      filters.clusterName === 'All' ||
+      filters.clusterName === newWorkflow.clusterName;
 
     const phaseExists =
-      filters.workflow_status === 'All' ||
-      filters.workflow_status === newWorkflow.phase;
+      filters.workflowStatus === 'All' ||
+      filters.workflowStatus === newWorkflow.phase;
 
     const dateExists =
-      filters.date_range &&
-      newWorkflow.last_updated >= filters.date_range.start_date &&
-      (filters.date_range.end_date
-        ? newWorkflow.last_updated < filters.date_range.end_date
+      filters.dateRange &&
+      newWorkflow.lastUpdated >= filters.dateRange.startDate &&
+      (filters.dateRange.endDate
+        ? newWorkflow.lastUpdated < filters.dateRange.endDate
         : true);
 
     const shouldAddNewWorkflow =
@@ -108,11 +108,11 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   }
 
   // Query to get list of Clusters
-  const { data: clusterList } = useQuery<Partial<Clusters>, ClusterVars>(
+  const { data: clusterList } = useQuery<Partial<Clusters>, ClusterRequest>(
     GET_CLUSTER_NAMES,
     {
       variables: {
-        project_id: projectID,
+        projectID,
       },
     }
   );
@@ -120,11 +120,11 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   // Query to get workflows
   const { subscribeToMore, data, error, refetch } = useQuery<
     Workflow,
-    WorkflowDataVars
+    WorkflowDataRequest
   >(WORKFLOW_DETAILS, {
     variables: {
-      workflowRunsInput: {
-        project_id: projectID,
+      request: {
+        projectID,
         pagination: {
           page: paginationData.page,
           limit: paginationData.limit,
@@ -138,23 +138,22 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
 
   // Using subscription to get realtime data
   useEffect(() => {
-    subscribeToMore<WorkflowSubscription, WorkflowSubscriptionInput>({
+    subscribeToMore<WorkflowSubscription, WorkflowSubscriptionRequest>({
       document: WORKFLOW_EVENTS,
       variables: { projectID },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data || !prev || !prev.getWorkflowRuns)
+        if (!subscriptionData.data || !prev || !prev.listWorkflowRuns)
           return prev;
 
-        const modifiedWorkflows = prev.getWorkflowRuns.workflow_runs.slice();
-        const newWorkflow = subscriptionData.data.workflowEventListener;
-
+        const modifiedWorkflows = prev.listWorkflowRuns.workflowRuns.slice();
+        const newWorkflow = subscriptionData.data.getWorkflowEvents;
         // Updating the query data
         let i = 0;
-        let totalNoOfWorkflows = prev.getWorkflowRuns.total_no_of_workflow_runs;
+        let totalNoOfWorkflows = prev.listWorkflowRuns.totalNoOfWorkflowRuns;
 
         for (; i < modifiedWorkflows.length; i++) {
           if (
-            modifiedWorkflows[i].workflow_run_id === newWorkflow.workflow_run_id
+            modifiedWorkflows[i].workflowRunID === newWorkflow.workflowRunID
           ) {
             modifiedWorkflows[i] = newWorkflow;
             break;
@@ -166,9 +165,9 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
         }
 
         return {
-          getWorkflowRuns: {
-            total_no_of_workflow_runs: totalNoOfWorkflows,
-            workflow_runs: modifiedWorkflows,
+          listWorkflowRuns: {
+            totalNoOfWorkflowRuns: totalNoOfWorkflows,
+            workflowRuns: modifiedWorkflows,
           },
         };
       },
@@ -191,13 +190,12 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
     setOpen(true);
   };
 
-  const workflowRuns = data?.getWorkflowRuns.workflow_runs;
-
+  const workflowRuns = data?.listWorkflowRuns.workflowRuns;
   // Functions passed as props in the headerSection
   const changeSearch = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
-    setFilters({ ...filters, workflow_name: event.target.value as string });
+    setFilters({ ...filters, workflowName: event.target.value as string });
     setWorkflowName(event.target.value as string);
     setPaginationData({ ...paginationData, page: 0 });
   };
@@ -210,7 +208,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
   ) => {
     setFilters({
       ...filters,
-      workflow_status: event.target.value as WorkflowStatus,
+      workflowStatus: event.target.value as WorkflowStatus,
     });
     setPaginationData({ ...paginationData, page: 0 });
   };
@@ -221,7 +219,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
       value: unknown;
     }>
   ) => {
-    setFilters({ ...filters, cluster_name: event.target.value as string });
+    setFilters({ ...filters, clusterName: event.target.value as string });
     setPaginationData({ ...paginationData, page: 0 });
   };
 
@@ -230,12 +228,12 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
     // Change filter value for date range
     setFilters({
       ...filters,
-      date_range: {
-        start_date: new Date(selectStartDate)
+      dateRange: {
+        startDate: new Date(selectStartDate)
           .setHours(0, 0, 0)
           .valueOf()
           .toString(),
-        end_date: new Date(selectEndDate)
+        endDate: new Date(selectEndDate)
           .setHours(23, 59, 59)
           .valueOf()
           .toString(),
@@ -257,11 +255,11 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
       <section className="Heading section">
         {/* Header Section */}
         <HeaderSection
-          searchValue={filters.workflow_name}
+          searchValue={filters.workflowName}
           changeSearch={changeSearch}
-          statusValue={filters.workflow_status}
+          statusValue={filters.workflowStatus}
           changeStatus={changeStatus}
-          clusterValue={filters.cluster_name}
+          clusterValue={filters.clusterName}
           changeCluster={changeCluster}
           popOverClick={handlePopOverClick}
           popOverClose={handlePopOverClose}
@@ -299,7 +297,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                           })
                         }
                       >
@@ -310,7 +308,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                             descending: true,
                           })
                         }
@@ -354,7 +352,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Time',
+                            field: 'TIME',
                             descending: true,
                           })
                         }
@@ -366,7 +364,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Time',
+                            field: 'TIME',
                           })
                         }
                       >
@@ -401,8 +399,8 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
               ) : workflowRuns && workflowRuns.length ? (
                 workflowRuns.map((dataRow) => (
                   <TableRow
-                    data-cy={dataRow.workflow_name}
-                    key={dataRow.workflow_run_id}
+                    data-cy={dataRow.workflowName}
+                    key={dataRow.workflowRunID}
                   >
                     <TableData data={dataRow} refetchQuery={refetch} />
                   </TableRow>
@@ -424,7 +422,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={data?.getWorkflowRuns.total_no_of_workflow_runs ?? 0}
+          count={data?.listWorkflowRuns.totalNoOfWorkflowRuns ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

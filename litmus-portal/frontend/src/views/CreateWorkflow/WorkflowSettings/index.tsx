@@ -66,12 +66,12 @@ const WorkflowSettings = forwardRef((_, ref) => {
       fetchPolicy: 'cache-and-network',
       onCompleted: (data) => {
         if (data.getHubExperiment !== undefined) {
-          setName(data.getHubExperiment.Metadata.Name.toLowerCase());
-          setDescription(data.getHubExperiment.Spec.CategoryDescription);
+          setName(data.getHubExperiment.metadata.name.toLowerCase());
+          setDescription(data.getHubExperiment.spec.categoryDescription);
           setIcon(
-            `${config.grahqlEndpoint}/icon/${projectID}/${hubName}/predefined/${data.getHubExperiment.Metadata.Name}.png`
+            `${config.grahqlEndpoint}/icon/${projectID}/${hubName}/predefined/${data.getHubExperiment.metadata.name}.png`
           );
-          setCRDLink(data.getHubExperiment.Metadata.Name);
+          setCRDLink(data.getHubExperiment.metadata.name);
         }
       },
     }
@@ -80,12 +80,12 @@ const WorkflowSettings = forwardRef((_, ref) => {
   const [getSavedTemplateDetails] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     fetchPolicy: 'network-only',
     onCompleted: (data) => {
-      if (data.GetTemplateManifestByID !== undefined) {
-        setName(data.GetTemplateManifestByID.template_name);
-        setDescription(data.GetTemplateManifestByID.template_description);
+      if (data.getWorkflowManifestByID !== undefined) {
+        setName(data.getWorkflowManifestByID.templateName);
+        setDescription(data.getWorkflowManifestByID.templateDescription);
         setIcon('./avatars/litmus.svg');
-        setCRDLink(data.GetTemplateManifestByID.template_id);
-        const savedTemplate = data.GetTemplateManifestByID.manifest;
+        setCRDLink(data.getWorkflowManifestByID.template_id);
+        const savedTemplate = data.getWorkflowManifestByID.manifest;
         if (parsed(savedTemplate).length === 0) {
           workflowAction.setWorkflowManifest({
             manifest: savedTemplate,
@@ -144,12 +144,12 @@ const WorkflowSettings = forwardRef((_, ref) => {
           setHubName(hub as string);
           getWorkflowDetails({
             variables: {
-              data: {
-                HubName: hub as string,
-                ProjectID: projectID,
-                ChartName: 'predefined',
-                ExperimentName: (value as ChooseWorkflowRadio).id,
-                FileType: 'CSV',
+              request: {
+                hubName: hub as string,
+                projectID,
+                chartName: 'predefined',
+                experimentName: (value as ChooseWorkflowRadio).id,
+                fileType: 'CSV',
               },
             },
           });
@@ -161,7 +161,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
         getSavedTemplateDetails({
           variables: {
             projectID: getProjectID(),
-            data: (value as ChooseWorkflowRadio).id,
+            templateID: (value as ChooseWorkflowRadio).id,
           },
         });
         setDisplayRegChange(true);

@@ -32,25 +32,44 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (r *mutationResolver) UserClusterReg(ctx context.Context, clusterInput model.ClusterInput) (*model.ClusterRegResponse, error) {
-	err := authorization.ValidateRole(ctx, clusterInput.ProjectID,
+func (r *mutationResolver) RegisterCluster(ctx context.Context, request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UserClusterReg],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return clusterHandler.ClusterRegister(clusterInput)
+	return clusterHandler.RegisterCluster(request)
 }
 
-func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, input model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	err := authorization.ValidateRole(ctx, input.ProjectID,
+func (r *mutationResolver) ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error) {
+	return clusterHandler.ConfirmClusterRegistration(request, *data_store.Store)
+}
+
+func (r *mutationResolver) NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error) {
+	return clusterHandler.NewClusterEvent(request, *data_store.Store)
+}
+
+func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string, clusterIDs []*string) (string, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.DeleteClusters],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return "", err
+	}
+
+	return clusterHandler.DeleteClusters(ctx, projectID, clusterIDs, *data_store.Store)
+}
+
+func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateChaosWorkFlow],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.CreateChaosWorkflow(ctx, &input, data_store.Store)
+	return wfHandler.CreateChaosWorkflow(ctx, &request, data_store.Store)
 }
 
 func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error) {
@@ -69,7 +88,17 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 		return "", err
 	}
 
-	return wfHandler.ReRunWorkflow(projectID, workflowID, username)
+	return wfHandler.ReRunChaosWorkFlow(projectID, workflowID, username)
+}
+
+func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+	return wfHandler.UpdateChaosWorkflow(ctx, request, data_store.Store)
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -80,7 +109,7 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID st
 		return false, err
 	}
 
-	return wfHandler.DeleteWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return wfHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
 func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -91,10 +120,14 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID
 		return false, err
 	}
 
-	return wfHandler.TerminateWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return wfHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
-func (r *mutationResolver) SyncWorkflow(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
+func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunRequest) (string, error) {
+	return wfHandler.ChaosWorkflowRun(request, *data_store.Store)
+}
+
+func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.SyncWorkflow],
 		model.InvitationAccepted.String())
@@ -105,49 +138,59 @@ func (r *mutationResolver) SyncWorkflow(ctx context.Context, projectID string, w
 	return wfHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
-func (r *mutationResolver) ClusterConfirm(ctx context.Context, identity model.ClusterIdentity) (*model.ClusterConfirmResponse, error) {
-	return clusterHandler.ConfirmClusterRegistration(identity, *data_store.Store)
+func (r *mutationResolver) PodLog(ctx context.Context, request model.PodLog) (string, error) {
+	return wfHandler.PodLog(request, *data_store.Store)
 }
 
-func (r *mutationResolver) NewClusterEvent(ctx context.Context, clusterEvent model.ClusterEventInput) (string, error) {
-	return clusterHandler.NewEvent(clusterEvent, *data_store.Store)
+func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObjectData) (string, error) {
+	return wfHandler.KubeObj(request, *data_store.Store)
 }
 
-func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, workflowData model.WorkflowRunInput) (string, error) {
-	return wfHandler.WorkFlowRunHandler(workflowData, *data_store.Store)
+func (r *mutationResolver) CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.CreateWorkflowTemplate],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return wfHandler.CreateWorkflowTemplate(ctx, request)
 }
 
-func (r *mutationResolver) PodLog(ctx context.Context, log model.PodLog) (string, error) {
-	return wfHandler.LogsHandler(log, *data_store.Store)
-}
-
-func (r *mutationResolver) KubeObj(ctx context.Context, kubeData model.KubeObjectData) (string, error) {
-	return wfHandler.KubeObjHandler(kubeData, *data_store.Store)
-}
-
-func (r *mutationResolver) AddMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
+func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.DeleteWorkflowTemplate],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return false, err
+	}
+
+	return wfHandler.DeleteWorkflowTemplate(ctx, projectID, templateID)
+}
+
+func (r *mutationResolver) AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.AddMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.AddMyHub(ctx, myhubInput, projectID)
+	return myhub.AddChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) SaveMyHub(ctx context.Context, myhubInput model.CreateMyHub, projectID string) (*model.MyHub, error) {
-	err := authorization.ValidateRole(ctx, projectID,
+func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.SaveMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.SaveMyHub(ctx, myhubInput, projectID)
+	return myhub.SaveChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) SyncHub(ctx context.Context, id string, projectID string) ([]*model.MyHubStatus, error) {
+func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) ([]*model.ChaosHubStatus, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
 		model.InvitationAccepted.String())
@@ -157,28 +200,7 @@ func (r *mutationResolver) SyncHub(ctx context.Context, id string, projectID str
 	return myhub.SyncHub(ctx, id, projectID)
 }
 
-func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, input *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowResponse, error) {
-	err := authorization.ValidateRole(ctx, input.ProjectID,
-		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-	return wfHandler.UpdateWorkflow(ctx, input, data_store.Store)
-}
-
-func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string, clusterIds []*string) (string, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.DeleteClusters],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return "", err
-	}
-
-	return clusterHandler.DeleteClusters(ctx, projectID, clusterIds, *data_store.Store)
-}
-
-func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, error) {
+func (r *mutationResolver) GenerateSSHKey(ctx context.Context) (*model.SSHKey, error) {
 	publicKey, privateKey, err := myHubOps.GenerateKeys()
 	if err != nil {
 		return nil, err
@@ -190,27 +212,27 @@ func (r *mutationResolver) GeneraterSSHKey(ctx context.Context) (*model.SSHKey, 
 	}, nil
 }
 
-func (r *mutationResolver) UpdateMyHub(ctx context.Context, myhubInput model.UpdateMyHub, projectID string) (*model.MyHub, error) {
-	err := authorization.ValidateRole(ctx, projectID,
+func (r *mutationResolver) UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return myhub.UpdateMyHub(ctx, myhubInput, projectID)
+	return myhub.UpdateChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) DeleteMyHub(ctx context.Context, hubID string, projectID string) (bool, error) {
+func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteMyHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
 	}
-	return myhub.DeleteMyHub(ctx, hubID, projectID)
+	return myhub.DeleteChaosHub(ctx, hubID, projectID)
 }
 
-func (r *mutationResolver) GitopsNotifer(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
+func (r *mutationResolver) GitopsNotifier(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
 	return gitOpsHandler.GitOpsNotificationHandler(ctx, clusterInfo, workflowID)
 }
 
@@ -314,28 +336,6 @@ func (r *mutationResolver) DeleteDataSource(ctx context.Context, projectID strin
 	return analyticsHandler.DeleteDataSource(projectID, input)
 }
 
-func (r *mutationResolver) CreateManifestTemplate(ctx context.Context, templateInput *model.TemplateInput) (*model.ManifestTemplate, error) {
-	err := authorization.ValidateRole(ctx, templateInput.ProjectID,
-		authorization.MutationRbacRules[authorization.CreateManifestTemplate],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return wfHandler.SaveWorkflowTemplate(ctx, templateInput)
-}
-
-func (r *mutationResolver) DeleteManifestTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.DeleteManifestTemplate],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return false, err
-	}
-
-	return wfHandler.DeleteWorkflowTemplate(ctx, projectID, templateID)
-}
-
 func (r *mutationResolver) CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.CreateImageRegistry],
@@ -383,26 +383,26 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 	return diRegistry, err
 }
 
-func (r *queryResolver) GetWorkflowRuns(ctx context.Context, workflowRunsInput model.GetWorkflowRunsInput) (*model.GetWorkflowsOutput, error) {
-	err := authorization.ValidateRole(ctx, workflowRunsInput.ProjectID,
-		authorization.MutationRbacRules[authorization.GetWorkflowRuns],
+func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListClusters],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return wfHandler.QueryWorkflowRuns(workflowRunsInput)
+	return clusterHandler.ListClusters(projectID, clusterType)
 }
 
-func (r *queryResolver) GetCluster(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
+func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetCluster],
+		authorization.MutationRbacRules[authorization.GetAgentDetails],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return clusterHandler.QueryGetClusters(projectID, clusterType)
+	return clusterHandler.GetAgentDetails(ctx, clusterID, projectID)
 }
 
 func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
@@ -421,37 +421,146 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 	return string(response), nil
 }
 
-func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetAgentDetails],
+func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.ListWorkflow],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return clusterHandler.GetAgentDetails(ctx, clusterID, projectID)
+	return wfHandler.ListWorkflows(request)
 }
 
-func (r *queryResolver) GetHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapData, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetHeatmapData],
+func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.ListWorkflowRunsRequest) (*model.ListWorkflowRunsResponse, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.ListWorkflowRuns],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return analyticsHandler.GetHeatMapData(workflowID, projectID, year)
+	return wfHandler.ListWorkflowRuns(request)
 }
 
-func (r *queryResolver) GetWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStats, error) {
+func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetWorkflowStats],
+		authorization.MutationRbacRules[authorization.ListPredefinedWorkflows],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return analyticsHandler.GetWorkflowStats(projectID, filter, showWorkflowRuns)
+	return myhub.ListPredefinedWorkflows(hubName, projectID)
+}
+
+func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.GetPredefinedExperimentYaml],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return "", err
+	}
+	return myhub.GetPredefinedExperimentYAMLData(request)
+}
+
+func (r *queryResolver) ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListWorkflowManifests],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return wfHandler.ListWorkflowManifests(ctx, projectID)
+}
+
+func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.GetWorkflowManifestByID],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return wfHandler.GetWorkflowManifestByID(ctx, templateID)
+}
+
+func (r *queryResolver) ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListCharts],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return myhub.ListCharts(ctx, hubName, projectID)
+}
+
+func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.GetHubExperiment],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return myhub.GetHubExperiment(ctx, request)
+}
+
+func (r *queryResolver) ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListHubStatus],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return myhub.ListHubStatus(ctx, projectID)
+}
+
+func (r *queryResolver) GetYAMLData(ctx context.Context, request model.ExperimentRequest) (string, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.GetYAMLData],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return "", err
+	}
+
+	return myhub.GetYAMLData(request)
+}
+
+func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.GetGitOpsDetails],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return gitOpsHandler.GetGitOpsDetails(ctx, projectID)
+}
+
+func (r *queryResolver) ListHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapDataResponse, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListHeatmapData],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return analyticsHandler.ListHeatmapData(workflowID, projectID, year)
+}
+
+func (r *queryResolver) ListWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStatsResponse, error) {
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.ListWorkflowStats],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return analyticsHandler.ListWorkflowStats(projectID, filter, showWorkflowRuns)
 }
 
 func (r *queryResolver) GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error) {
@@ -465,82 +574,6 @@ func (r *queryResolver) GetWorkflowRunStats(ctx context.Context, workflowRunStat
 	return analyticsHandler.GetWorkflowRunStats(workflowRunStatsRequest)
 }
 
-func (r *queryResolver) ListWorkflow(ctx context.Context, workflowInput model.ListWorkflowsInput) (*model.ListWorkflowsOutput, error) {
-	err := authorization.ValidateRole(ctx, workflowInput.ProjectID,
-		authorization.MutationRbacRules[authorization.ListWorkflow],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return wfHandler.QueryListWorkflow(workflowInput)
-}
-
-func (r *queryResolver) GetCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetCharts],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return myhub.GetCharts(ctx, hubName, projectID)
-}
-
-func (r *queryResolver) GetHubExperiment(ctx context.Context, experimentInput model.ExperimentInput) (*model.Chart, error) {
-	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
-		authorization.MutationRbacRules[authorization.GetHubExperiment],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return myhub.GetExperiment(ctx, experimentInput)
-}
-
-func (r *queryResolver) GetHubStatus(ctx context.Context, projectID string) ([]*model.MyHubStatus, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetHubStatus],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return myhub.HubStatus(ctx, projectID)
-}
-
-func (r *queryResolver) GetYAMLData(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
-	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
-		authorization.MutationRbacRules[authorization.GetYAMLData],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return "", err
-	}
-
-	return myhub.GetYAMLData(ctx, experimentInput)
-}
-
-func (r *queryResolver) GetPredefinedWorkflowList(ctx context.Context, hubName string, projectID string) ([]string, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetPredefinedWorkflowList],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return myhub.GetPredefinedWorkflowList(hubName, projectID)
-}
-
-func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, experimentInput model.ExperimentInput) (string, error) {
-	err := authorization.ValidateRole(ctx, experimentInput.ProjectID,
-		authorization.MutationRbacRules[authorization.GetPredefinedExperimentYaml],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return "", err
-	}
-	return myhub.GetPredefinedExperimentYAMLData(ctx, experimentInput)
-}
-
 func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([]*model.DSResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListDataSource],
@@ -552,17 +585,17 @@ func (r *queryResolver) ListDataSource(ctx context.Context, projectID string) ([
 	return analyticsHandler.QueryListDataSource(projectID)
 }
 
-func (r *queryResolver) GetPromQuery(ctx context.Context, query *model.PromInput) (*model.PromResponse, error) {
-	promResponseData, _, err := analyticsHandler.GetPromQuery(query)
+func (r *queryResolver) GetPrometheusData(ctx context.Context, request *model.PrometheusDataRequest) (*model.PrometheusDataResponse, error) {
+	promResponseData, _, err := analyticsHandler.GetPrometheusData(request)
 	return promResponseData, err
 }
 
-func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, series *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
-	return analyticsHandler.GetLabelNamesAndValues(series)
+func (r *queryResolver) GetPromLabelNamesAndValues(ctx context.Context, request *model.PromSeriesInput) (*model.PromSeriesResponse, error) {
+	return analyticsHandler.GetLabelNamesAndValues(request)
 }
 
-func (r *queryResolver) GetPromSeriesList(ctx context.Context, dsDetails *model.DsDetails) (*model.PromSeriesListResponse, error) {
-	return analyticsHandler.GetSeriesList(dsDetails)
+func (r *queryResolver) GetPromSeriesList(ctx context.Context, request *model.DsDetails) (*model.PromSeriesListResponse, error) {
+	return analyticsHandler.GetPromSeriesList(request)
 }
 
 func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error) {
@@ -576,47 +609,14 @@ func (r *queryResolver) ListDashboard(ctx context.Context, projectID string, clu
 	return analyticsHandler.QueryListDashboard(projectID, clusterID, dbID)
 }
 
-func (r *queryResolver) PortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardData, error) {
+func (r *queryResolver) ListPortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardDataResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.PortalDashboardData],
+		authorization.MutationRbacRules[authorization.ListPortalDashboardData],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return analyticsHandler.GetPortalDashboardData(projectID, hubName)
-}
-
-func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetGitOpsDetails],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return gitOpsHandler.GetGitOpsDetailsHandler(ctx, projectID)
-}
-
-func (r *queryResolver) ListManifestTemplate(ctx context.Context, projectID string) ([]*model.ManifestTemplate, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListManifestTemplate],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return wfHandler.ListWorkflowTemplate(ctx, projectID)
-}
-
-func (r *queryResolver) GetTemplateManifestByID(ctx context.Context, projectID string, templateID string) (*model.ManifestTemplate, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.GetTemplateManifestByID],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return wfHandler.QueryTemplateWorkflowByID(ctx, templateID)
+	return analyticsHandler.ListPortalDashboardData(projectID, hubName)
 }
 
 func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
@@ -651,17 +651,17 @@ func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID st
 	return imageRegistry, err
 }
 
-func (r *queryResolver) UsageQuery(ctx context.Context, query model.UsageQuery) (*model.UsageData, error) {
+func (r *queryResolver) GetUsageData(ctx context.Context, request model.UsageDataRequest) (*model.UsageDataResponse, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	if claims["role"].(string) != "admin" {
 		return nil, errors.New("only portal admin access")
 	}
-	return usage.GetUsage(ctx, query)
+	return usage.GetUsageData(ctx, request)
 }
 
-func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, projectID string) (<-chan *model.ClusterEvent, error) {
+func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID string) (<-chan *model.ClusterEventResponse, error) {
 	log.Print("NEW EVENT ", projectID)
-	clusterEvent := make(chan *model.ClusterEvent, 1)
+	clusterEvent := make(chan *model.ClusterEventResponse, 1)
 
 	data_store.Store.Mutex.Lock()
 	data_store.Store.ClusterEventPublish[projectID] = append(data_store.Store.ClusterEventPublish[projectID], clusterEvent)
@@ -674,38 +674,9 @@ func (r *subscriptionResolver) ClusterEventListener(ctx context.Context, project
 	return clusterEvent, nil
 }
 
-func (r *subscriptionResolver) WorkflowEventListener(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
-	log.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
-	workflowEvent := make(chan *model.WorkflowRun, 1)
-	data_store.Store.Mutex.Lock()
-	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
-	data_store.Store.Mutex.Unlock()
-	go func() {
-		<-ctx.Done()
-		log.Print("CLOSED WORKFLOW LISTENER: ", projectID)
-	}()
-	return workflowEvent, nil
-}
-
-func (r *subscriptionResolver) GetPodLog(ctx context.Context, podDetails model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
-	log.Print("NEW LOG REQUEST: ", podDetails.ClusterID, podDetails.PodName)
-	workflowLog := make(chan *model.PodLogResponse, 1)
-	reqID := uuid.New()
-	data_store.Store.Mutex.Lock()
-	data_store.Store.WorkflowLog[reqID.String()] = workflowLog
-	data_store.Store.Mutex.Unlock()
-	go func() {
-		<-ctx.Done()
-		log.Print("CLOSED LOG LISTENER: ", podDetails.ClusterID, podDetails.PodName)
-		delete(data_store.Store.WorkflowLog, reqID.String())
-	}()
-	go wfHandler.GetLogs(reqID.String(), podDetails, *data_store.Store)
-	return workflowLog, nil
-}
-
-func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterAction, error) {
+func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterActionResponse, error) {
 	log.Print("NEW CLUSTER CONNECT: ", clusterInfo.ClusterID)
-	clusterAction := make(chan *model.ClusterAction, 1)
+	clusterAction := make(chan *model.ClusterActionResponse, 1)
 	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
 	if err != nil {
 		log.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
@@ -755,8 +726,37 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	return clusterAction, nil
 }
 
-func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
-	log.Print("NEW KUBEOBJECT REQUEST", kubeObjectRequest.ClusterID)
+func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
+	log.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
+	workflowEvent := make(chan *model.WorkflowRun, 1)
+	data_store.Store.Mutex.Lock()
+	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Print("CLOSED WORKFLOW LISTENER: ", projectID)
+	}()
+	return workflowEvent, nil
+}
+
+func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
+	log.Print("NEW LOG REQUEST: ", request.ClusterID, request.PodName)
+	workflowLog := make(chan *model.PodLogResponse, 1)
+	reqID := uuid.New()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.WorkflowLog[reqID.String()] = workflowLog
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		log.Print("CLOSED LOG LISTENER: ", request.ClusterID, request.PodName)
+		delete(data_store.Store.WorkflowLog, reqID.String())
+	}()
+	go wfHandler.GetLogs(reqID.String(), request, *data_store.Store)
+	return workflowLog, nil
+}
+
+func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
+	log.Print("NEW KUBEOBJECT REQUEST", request.ClusterID)
 	kubeObjData := make(chan *model.KubeObjectResponse)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
@@ -767,7 +767,7 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, kubeObjectRequ
 		log.Println("Closed KubeObj Listener")
 		delete(data_store.Store.KubeObjectData, reqID.String())
 	}()
-	go wfHandler.GetKubeObjData(reqID.String(), kubeObjectRequest, *data_store.Store)
+	go wfHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)
 	return kubeObjData, nil
 }
 

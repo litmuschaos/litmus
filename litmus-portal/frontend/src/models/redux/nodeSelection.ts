@@ -1,7 +1,7 @@
 import { Node } from '../graphql/workflowData';
 
 export interface SelectedNode extends Node {
-  pod_name: string;
+  podName: string;
 }
 
 export enum NodeSelectionActions {

@@ -74,7 +74,7 @@ const TableData: React.FC<TableDataProps> = ({
           const dashboardNames: string[] = dashboardList
             .substring(1, dashboardList.length - 1)
             .split(',');
-          drawerStateHandler(data.ds_id, data.ds_name, dashboardNames);
+          drawerStateHandler(data.dsID, data.dsName, dashboardNames);
         }
       },
     }
@@ -86,8 +86,8 @@ const TableData: React.FC<TableDataProps> = ({
         variables: {
           projectID: getProjectID(),
           deleteDSInput: {
-            ds_id: data.ds_id,
-            force_delete: false,
+            dsID: data.dsID,
+            forceDelete: false,
           },
         },
       });
@@ -97,12 +97,12 @@ const TableData: React.FC<TableDataProps> = ({
   return (
     <>
       <StyledTableCell className={classes.tableDataStatus}>
-        {data.health_status === 'Active' ? (
-          <LightPills variant="success" label={data.health_status} />
-        ) : data.health_status === 'Not Ready' ? (
-          <LightPills variant="warning" label={data.health_status} />
+        {data.healthStatus === 'Active' ? (
+          <LightPills variant="success" label={data.healthStatus} />
+        ) : data.healthStatus === 'Not Ready' ? (
+          <LightPills variant="warning" label={data.healthStatus} />
         ) : (
-          <LightPills variant="danger" label={data.health_status} />
+          <LightPills variant="danger" label={data.healthStatus} />
         )}
       </StyledTableCell>
       <StyledTableCell className={classes.columnDivider}>
@@ -110,7 +110,7 @@ const TableData: React.FC<TableDataProps> = ({
           className={`${classes.tableObjects} ${classes.dataSourceNameCol}`}
           style={{ fontWeight: 500 }}
         >
-          {data.ds_name}
+          {data.dsName}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.dividerPadding}>
@@ -123,7 +123,7 @@ const TableData: React.FC<TableDataProps> = ({
             alt="Prometheus"
             className={classes.inlineIcon}
           />
-          {data.ds_type}
+          {data.dsType}
         </Typography>
       </StyledTableCell>
       <StyledTableCell>
@@ -132,19 +132,19 @@ const TableData: React.FC<TableDataProps> = ({
           style={{ maxWidth: '13.5rem' }}
         >
           <img src="./icons/calendarIcon.svg" alt="Calender" />
-          {formatDate(data.updated_at)}
+          {formatDate(data.updatedAt)}
         </Typography>
       </StyledTableCell>
 
       <StyledTableCell>
         <TextButton
           className={classes.button}
-          onClick={() => window.open(data.ds_url)}
+          onClick={() => window.open(data.dsURL)}
           endIcon={<ExternalLinkIcon className={classes.inlineIcon} />}
           classes={{ label: classes.buttonLabel }}
         >
           <TextPopOver
-            text={data.ds_url}
+            text={data.dsURL}
             className={`${classes.tableObjects} ${classes.dataSourceUrlColData}`}
           />
         </TextButton>
@@ -181,8 +181,8 @@ const TableData: React.FC<TableDataProps> = ({
             value="Configure"
             onClick={() => {
               dataSource.selectDataSource({
-                selectedDataSourceID: data.ds_id,
-                selectedDataSourceName: data.ds_name,
+                selectedDataSourceID: data.dsID,
+                selectedDataSourceName: data.dsName,
               });
               history.push({
                 pathname: '/analytics/datasource/configure',
@@ -247,7 +247,7 @@ const TableData: React.FC<TableDataProps> = ({
               'monitoringDashboard.dataSourceTable.modal.removeDataSourceConfirmation'
             )}
             <b>
-              <i>{` ${data.ds_name} `}</i>
+              <i>{` ${data.dsName} `}</i>
             </b>
             ?
           </Typography>

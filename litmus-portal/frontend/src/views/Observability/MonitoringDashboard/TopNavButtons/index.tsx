@@ -64,44 +64,44 @@ const TopNavButtons: React.FC<TopNavButtonsProps> = ({
   const getDashboard = () => {
     const panelGroupMap: PanelGroupMap[] = [];
     const panelGroups: PanelGroupExport[] = [];
-    dashboardData.metaData?.panel_groups.forEach((panelGroup) => {
+    dashboardData.metaData?.panelGroups.forEach((panelGroup) => {
       panelGroupMap.push({
-        groupName: panelGroup.panel_group_name,
+        groupName: panelGroup.panelGroupName,
         panels: [],
       });
       const len: number = panelGroupMap.length;
       const selectedPanels: PanelExport[] = [];
       panelGroup.panels.forEach((panel) => {
-        panelGroupMap[len - 1].panels.push(panel.panel_name);
+        panelGroupMap[len - 1].panels.push(panel.panelName);
         const queries: PromQueryExport[] = [];
-        panel.prom_queries.forEach((query) => {
+        panel.promQueries.forEach((query) => {
           queries.push({
-            prom_query_name: query.prom_query_name,
+            prom_query_name: query.promQueryName,
             legend: query.legend,
             resolution: query.resolution,
             minstep: query.minstep,
             line: query.line,
-            close_area: query.close_area,
+            close_area: query.closeArea,
           });
         });
         const options: PanelOption = {
-          points: panel.panel_options.points,
-          grids: panel.panel_options.grids,
-          left_axis: panel.panel_options.left_axis,
+          points: panel.panelOptions.points,
+          grIDs: panel.panelOptions.grIDs,
+          leftAxis: panel.panelOptions.leftAxis,
         };
         const selectedPanel: PanelExport = {
           prom_queries: queries,
           panel_options: options,
-          panel_name: panel.panel_name,
-          y_axis_left: panel.y_axis_left,
-          y_axis_right: panel.y_axis_right,
-          x_axis_down: panel.x_axis_down,
+          panel_name: panel.panelName,
+          y_axis_left: panel.yAxisLeft,
+          y_axis_right: panel.yAxisRight,
+          x_axis_down: panel.xAxisDown,
           unit: panel.unit,
         };
         selectedPanels.push(selectedPanel);
       });
       panelGroups.push({
-        panel_group_name: panelGroup.panel_group_name,
+        panel_group_name: panelGroup.panelGroupName,
         panels: selectedPanels,
       });
     });

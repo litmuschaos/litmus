@@ -1,14 +1,14 @@
 import { BrushPostitionProps, GraphMetric } from 'litmus-ui';
 import {
   ApplicationMetadata,
-  ListDashboardResponse,
+  GetDashboardResponse,
   Panel,
   PanelGroup,
   PanelGroupResponse,
   PanelOption,
   PanelResponse,
   PromQuery,
-  updatePanelGroupInput,
+  UpdatePanelGroupRequest,
 } from './graphql/dashboardsDetails';
 import { promQueryInput } from './graphql/prometheus';
 
@@ -74,7 +74,7 @@ export interface DashboardDetails {
   agentID?: string;
   information?: string;
   panelGroups?: PanelGroupDetails[];
-  panelGroupMap?: updatePanelGroupInput[];
+  panelGroupMap?: UpdatePanelGroupRequest[];
   selectedPanelGroupMap?: PanelGroupMap[];
   applicationMetadataMap?: ApplicationMetadata[];
   selectedPanels?: PanelDetails[];
@@ -165,8 +165,8 @@ export interface SelectedDashboardInformation {
   chaosEventQueryTemplate: string;
   chaosVerdictQueryTemplate: string;
   applicationMetadataMap: ApplicationMetadata[];
-  dashboardListForAgent: ListDashboardResponse[];
-  metaData: ListDashboardResponse | undefined;
+  dashboardListForAgent: GetDashboardResponse[];
+  metaData: GetDashboardResponse | undefined;
   closedAreaQueryIDs: string[];
   dashboardKey: string;
   panelNameAndIDList: PanelNameAndID[];
@@ -187,9 +187,9 @@ export interface PromQueryDetails extends PromQuery {
 }
 
 export interface PanelDetails extends Panel {
-  ds_url?: string;
-  panel_group_name?: string;
-  prom_queries: PromQueryDetails[];
+  dsURL?: string;
+  panelGroupName?: string;
+  promQueries: PromQueryDetails[];
 }
 
 export interface PanelGroupDetails extends PanelGroup {

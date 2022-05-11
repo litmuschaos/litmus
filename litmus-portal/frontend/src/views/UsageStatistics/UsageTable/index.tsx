@@ -18,8 +18,8 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../../components/Loader';
 import config from '../../../config';
 import { GLOBAL_PROJECT_DATA } from '../../../graphql';
-import { UsageStats } from '../../../models/graphql/usage';
-import { ProjectStats } from '../../../models/graphql/user';
+import { UsageStatsResponse } from '../../../models/graphql/usage';
+import { ProjectStats, UserData } from '../../../models/graphql/user';
 import { getToken } from '../../../utils/auth';
 import { sortNumAsc, sortNumDesc } from '../../../utils/sort';
 import useStyles from './styles';
@@ -74,7 +74,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   const [search, setSearch] = useState<string>('');
 
   const [usageQuery, { loading, data }] =
-    useLazyQuery<UsageStats>(GLOBAL_PROJECT_DATA);
+    useLazyQuery<UsageStatsResponse>(GLOBAL_PROJECT_DATA);
 
   const [projectStats, setProjectStats] = React.useState<ProjectStats[]>([]);
 
@@ -83,10 +83,10 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   useEffect(() => {
     usageQuery({
       variables: {
-        query: {
-          DateRange: {
-            start_date: start_time,
-            end_date: end_time,
+        request: {
+          dateRange: {
+            startDate: start_time,
+            endDate: end_time,
           },
         },
       },
@@ -113,23 +113,47 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
         console.error(err);
       });
   };
+  const [users, setUsers] = useState<UserData[]>([]);
+
+  const fetchUsers = () => {
+    fetch(`${config.auth.url}/users`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getToken()}`,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((res) => {
+        setUsers(res);
+      })
+
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const userMap = new Map();
+
+  users.map((user) => userMap.set(user._id, user.username));
 
   projectStats.map((project) => {
     usageData = {
       ProjectName: project.Name,
-      Owner: project.Members.Owner[0].Username,
+      Owner: userMap.get(project.Members.Owner[0].UserID),
       Agents: 0,
       Schedules: 0,
       WfRuns: 0,
       ExpRuns: 0,
       Members: project.Members.Total,
     };
-    for (let i = 0; i < (data ? data.UsageQuery.Projects.length : 0); i++) {
-      if (project.ProjectId === data?.UsageQuery.Projects[i].ProjectId) {
-        usageData.Agents = data.UsageQuery.Projects[i].Agents.Total;
-        usageData.ExpRuns = data.UsageQuery.Projects[i].Workflows.ExpRuns;
-        usageData.WfRuns = data.UsageQuery.Projects[i].Workflows.Runs;
-        usageData.Schedules = data.UsageQuery.Projects[i].Workflows.Schedules;
+    for (let i = 0; i < (data ? data.getUsageData.projects.length : 0); i++) {
+      if (project.ProjectID === data?.getUsageData.projects[i].projectID) {
+        usageData.Agents = data.getUsageData.projects[i].agents.total;
+        usageData.ExpRuns = data.getUsageData.projects[i].workflows.expRuns;
+        usageData.WfRuns = data.getUsageData.projects[i].workflows.runs;
+        usageData.Schedules = data.getUsageData.projects[i].workflows.schedules;
         break;
       }
     }
@@ -138,6 +162,7 @@ const UsageTable: React.FC<TimeRange> = ({ start_time, end_time }) => {
   });
 
   React.useEffect(() => {
+    fetchUsers();
     getProjectStats();
   }, []);
 

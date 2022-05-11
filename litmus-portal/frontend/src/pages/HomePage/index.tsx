@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import Wrapper from '../../containers/layouts/Wrapper';
 import { GET_CLUSTER_LENGTH } from '../../graphql';
-import { Clusters, ClusterVars } from '../../models/graphql/clusterData';
+import { ClusterRequest, Clusters } from '../../models/graphql/clusterData';
 import { getUsername } from '../../utils/auth';
 import { getProjectID } from '../../utils/getSearchParams';
 import useStyles from './styles';
@@ -19,10 +19,10 @@ const HomePage: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { data: agentList, loading } = useQuery<Clusters, ClusterVars>(
+  const { data: agentList, loading } = useQuery<Clusters, ClusterRequest>(
     GET_CLUSTER_LENGTH,
     {
-      variables: { project_id: getProjectID() },
+      variables: { projectID: getProjectID() },
       fetchPolicy: 'network-only',
     }
   );
@@ -30,7 +30,7 @@ const HomePage: React.FC = () => {
   let agentCount = 0;
 
   if (agentList !== undefined) {
-    agentCount = agentList.getCluster.length;
+    agentCount = agentList?.listClusters.length;
   }
 
   return (

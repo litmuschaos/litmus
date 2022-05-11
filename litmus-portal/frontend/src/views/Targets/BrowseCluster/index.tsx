@@ -18,8 +18,8 @@ import Loader from '../../../components/Loader';
 import { DELETE_CLUSTERS, GET_CLUSTER } from '../../../graphql';
 import {
   Cluster,
+  ClusterRequest,
   Clusters,
-  ClusterVars,
   DeleteClusters,
 } from '../../../models/graphql/clusterData';
 import { getProjectID } from '../../../utils/getSearchParams';
@@ -65,11 +65,11 @@ const BrowseCluster: React.FC = () => {
     cluster: 'All',
   });
 
-  const { data, loading, error } = useQuery<Clusters, ClusterVars>(
+  const { data, loading, error } = useQuery<Clusters, ClusterRequest>(
     GET_CLUSTER,
     {
       variables: {
-        project_id: projectID,
+        projectID,
       },
       fetchPolicy: 'cache-and-network',
       pollInterval: 3000,
@@ -90,19 +90,19 @@ const BrowseCluster: React.FC = () => {
     lastRun: { sort: true, ascending: true },
   });
 
-  const filteredData = data?.getCluster
+  const filteredData = data?.listClusters
     .filter((dataRow) =>
-      dataRow.cluster_name.toLowerCase().includes(filters.search.toLowerCase())
+      dataRow.clusterName.toLowerCase().includes(filters.search.toLowerCase())
     )
     .filter((dataRow) => {
       if (filters.status === 'All') {
         return true;
       }
-      if (!dataRow.is_cluster_confirmed) {
+      if (!dataRow.isClusterConfirmed) {
         const p = 'pending';
         return p.includes(filters.status.toLowerCase());
       }
-      return dataRow.is_active
+      return dataRow.isActive
         .toString()
         .toLowerCase()
         .includes(filters.status.toLowerCase());
@@ -110,23 +110,23 @@ const BrowseCluster: React.FC = () => {
     .filter((dataRow) =>
       filters.cluster === 'All'
         ? true
-        : dataRow.cluster_type
+        : dataRow.clusterType
             .toLowerCase()
             .includes(filters.cluster.toLowerCase())
     )
     .filter((dataRow) => {
       return dateRange.fromDate && dateRange.toDate === undefined
         ? true
-        : parseInt(dataRow.updated_at, 10) * 1000 >=
+        : parseInt(dataRow.updatedAt, 10) * 1000 >=
             new Date(moment(dateRange.fromDate).format()).getTime() &&
-            parseInt(dataRow.updated_at, 10) * 1000 <=
+            parseInt(dataRow.updatedAt, 10) * 1000 <=
               new Date(moment(dateRange.toDate).format()).getTime();
     })
     .sort((a: Cluster, b: Cluster) => {
       // Sorting based on unique fields
       if (sortData.name.sort) {
-        const x = a.cluster_name;
-        const y = b.cluster_name;
+        const x = a.clusterName;
+        const y = b.clusterName;
 
         return sortData.name.ascending
           ? sortAlphaAsc(x, y)
@@ -134,8 +134,8 @@ const BrowseCluster: React.FC = () => {
       }
 
       if (sortData.lastRun.sort) {
-        const x = parseInt(a.created_at, 10);
-        const y = parseInt(b.created_at, 10);
+        const x = parseInt(a.createdAt, 10);
+        const y = parseInt(b.createdAt, 10);
 
         return sortData.lastRun.ascending
           ? sortNumAsc(y, x)
@@ -345,7 +345,7 @@ const BrowseCluster: React.FC = () => {
                   .map((data: Cluster) => (
                     <TableRow
                       data-cy="browseClusterData"
-                      key={data.cluster_id}
+                      key={data.clusterID}
                       className={classes.dataRow}
                     >
                       <TableData data={data} deleteRow={deleteRow} />

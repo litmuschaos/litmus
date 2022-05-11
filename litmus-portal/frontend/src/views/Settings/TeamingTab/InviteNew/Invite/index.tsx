@@ -128,7 +128,7 @@ const Invite: React.FC<InviteProps> = ({ handleModal }) => {
           // check for displaying only those users who are not the part of team
           res &&
             res.forEach((user: UserInvite) => {
-              if (!memberList.has(user._id) && !user.deactivated_at)
+              if (!memberList.has(user._id) && !user.deactivatedAt)
                 users.push(user);
             });
           setRows([...users]);

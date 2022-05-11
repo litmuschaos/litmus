@@ -1,0 +1,68 @@
+
+"""
+Details for a workflow template
+"""
+type WorkflowTemplate {
+    """
+    ID of the template
+    """
+    templateID: ID!
+    """
+    Workflow manifest in JSON escaped string
+    """
+    manifest: String!
+    """
+    Name of the template
+    """
+    templateName: String!
+    """
+    Description of the template
+    """
+    templateDescription: String!
+    """
+    ID of the project
+    """
+    projectID: String!
+    """
+    Name of the project
+    """
+    projectName: String!
+    """
+    Time at which the manifest template was created
+    """
+    createdAt: String!
+    """
+    Bool value indicating if the workflow template has removed
+    """
+    isRemoved: Boolean!
+    """
+    Bool value indicating whether the workflow template is a custom or not
+    """
+    isCustomWorkflow: Boolean!
+}
+
+"""
+Details for saving the template
+"""
+input TemplateInput {
+    """
+    Workflow manifest in JSON escaped format
+    """
+    manifest: String!
+    """
+    Name of the template
+    """
+    templateName: String!
+    """
+    Description of the template
+    """
+    templateDescription: String!
+    """
+    Name of the project
+    """
+    projectID: String!
+    """
+    Bool value indicating whether the workflow is a custom workflow or not
+    """
+    isCustomWorkflow: Boolean!
+}

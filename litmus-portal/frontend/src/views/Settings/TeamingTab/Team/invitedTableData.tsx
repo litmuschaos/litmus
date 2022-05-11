@@ -11,7 +11,6 @@ import { ButtonFilled, LightPills } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../../config';
-// import { ALL_USERS, GET_PROJECT, SEND_INVITE } from '../../../../graphql';
 import { InvitationStatus } from '../../../../models/graphql/invite';
 import { Member, Role } from '../../../../models/graphql/user';
 import { CurrentUserData } from '../../../../models/userData';
@@ -142,7 +141,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           >
             <MenuItem
               onClick={() => {
-                setRole(Role.editor);
+                setRole(Role.EDITOR);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -168,7 +167,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             </MenuItem>
             <MenuItem
               onClick={() => {
-                setRole(Role.viewer);
+                setRole(Role.VIEWER);
                 setAnchorEl(null);
               }}
               className={classes.menuOpt}
@@ -205,7 +204,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       <TableCell className={classes.otherTC}>
         <LightPills
           variant={
-            row.Invitation === InvitationStatus.pending ? 'warning' : 'danger'
+            row.Invitation === InvitationStatus.PENDING ? 'warning' : 'danger'
           }
           label={row.Invitation}
         />
@@ -213,8 +212,8 @@ const InvitedTableData: React.FC<TableDataProps> = ({
 
       <TableCell className={classes.buttonTC} key={row.UserID}>
         <div className={classes.lastCell}>
-          {row.Invitation !== InvitationStatus.exited &&
-            row.Invitation !== InvitationStatus.declined && (
+          {row.Invitation !== InvitationStatus.EXITED &&
+            row.Invitation !== InvitationStatus.DECLINED && (
               <IconButton onClick={() => setCancelInviteOpen(true)}>
                 <img alt="delete" src="./icons/deleteBox.svg" height="45" />
               </IconButton>

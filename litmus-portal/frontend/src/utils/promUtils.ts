@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import {
   ParsedChaosEventPrometheusData,
   ParsedMetricPrometheusData,
@@ -46,12 +47,12 @@ export const getDashboardQueryMap = (panelGroups: PanelGroupResponse[]) => {
     const queryMapPanel: queryMapForPanel[] = [];
     panelGroup.panels.forEach((panel) => {
       queryMapPanel.push({
-        panelID: panel.panel_id,
-        queryIDs: panel.prom_queries.map((query) => query.queryid),
+        panelID: panel.panelID,
+        queryIDs: panel.promQueries.map((query) => query.queryID),
       });
     });
     queryMapPanelGroup.push({
-      panelGroupID: panelGroup.panel_group_id,
+      panelGroupID: panelGroup.panelGroupID,
       panelQueryMap: queryMapPanel,
     });
   });
@@ -91,8 +92,8 @@ export const getPromQueryInput = (
   const promQueries: promQueryInput[] = [];
   prom_queries.forEach((query: PromQueryDetails) => {
     promQueries.push({
-      queryid: query.queryid,
-      query: query.prom_query_name,
+      queryID: query.queryID,
+      query: query.promQueryName,
       legend: query.legend,
       resolution: query.resolution,
       minstep:
@@ -104,7 +105,7 @@ export const getPromQueryInput = (
   });
   if (withEvents && eventQueryTemplate && verdictQueryTemplate) {
     promQueries.push({
-      queryid: DEFAULT_CHAOS_EVENT_QUERY_ID,
+      queryID: DEFAULT_CHAOS_EVENT_QUERY_ID,
       query: eventQueryTemplate,
       legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
       resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
@@ -118,7 +119,7 @@ export const getPromQueryInput = (
             ),
     });
     promQueries.push({
-      queryid: DEFAULT_CHAOS_VERDICT_QUERY_ID,
+      queryID: DEFAULT_CHAOS_VERDICT_QUERY_ID,
       query: verdictQueryTemplate,
       legend: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_LEGEND,
       resolution: DEFAULT_CHAOS_EVENT_AND_VERDICT_PROMETHEUS_QUERY_RESOLUTION,
@@ -148,7 +149,7 @@ export const generatePromQueries = (
   const promQueries: promQueryInput[] = getPromQueryInput(
     dashboardMetaPanelGroups
       .flatMap((panelGroup) => (panelGroup ? panelGroup.panels ?? [] : []))
-      .flatMap((panel) => (panel ? panel.prom_queries ?? [] : [])),
+      .flatMap((panel) => (panel ? panel.promQueries ?? [] : [])),
     timeRangeDiff,
     true,
     chaosEventQueryTemplate,
@@ -168,7 +169,7 @@ export const MetricDataParserForPrometheus = (
     seriesData: [],
     closedAreaData: [],
   };
-  metricData.forEach((queryResponse, mainIndex) => {
+  metricData?.forEach((queryResponse, mainIndex) => {
     if (queryResponse && queryResponse.legends && queryResponse.tsvs) {
       let { legends } = queryResponse;
       let { tsvs } = queryResponse;
@@ -300,7 +301,7 @@ export const DashboardMetricDataParserForPrometheus = (
   selectedApplications?: string[]
 ) => {
   const mappedData: QueryMapForPanelGroup[] = [];
-  metricData.forEach((panelGroupData, panelGroupIndex) => {
+  metricData?.forEach((panelGroupData, panelGroupIndex) => {
     mappedData.push({
       panelGroupID: panelGroupData.panelGroupID,
       metricDataForGroup: [],

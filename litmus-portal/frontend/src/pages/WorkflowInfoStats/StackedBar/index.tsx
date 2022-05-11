@@ -13,7 +13,7 @@ import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import WorkflowRunTable from '../WorkflowRunTable';
@@ -60,20 +60,20 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     return '';
   };
 
-  const { data, loading } = useQuery<Workflow, WorkflowDataVars>(
+  const { data, loading } = useQuery<Workflow, WorkflowDataRequest>(
     WORKFLOW_DETAILS,
     {
       variables: {
-        workflowRunsInput: {
-          project_id: projectID,
-          workflow_ids: [workflowID],
+        request: {
+          projectID,
+          workflowIDs: [workflowID],
           sort: {
-            field: 'Time',
+            field: 'TIME',
           },
           filter: {
-            date_range: {
-              start_date: moment.unix(date).startOf('day').unix().toString(),
-              end_date: moment.unix(date).endOf('day').unix().toString(),
+            dateRange: {
+              startDate: moment.unix(date).startOf('day').unix().toString(),
+              endDate: moment.unix(date).endOf('day').unix().toString(),
             },
           },
         },
@@ -82,30 +82,30 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
     }
   );
 
-  if (data?.getWorkflowRuns.workflow_runs) {
-    data.getWorkflowRuns.workflow_runs.forEach((wfrun) => {
+  if (data?.listWorkflowRuns.workflowRuns) {
+    data.listWorkflowRuns.workflowRuns.forEach((wfrun) => {
       if (wfrun.phase !== 'Running') {
         stackBarData.push({
-          id: wfrun.workflow_run_id,
-          date: Number(wfrun.last_updated) * 1000,
+          id: wfrun.workflowRunID,
+          date: Number(wfrun.lastUpdated) * 1000,
           passPercentage:
-            wfrun.total_experiments &&
-            wfrun.experiments_passed &&
-            wfrun.total_experiments > 0
-              ? (wfrun.experiments_passed * 100) / wfrun.total_experiments
+            wfrun.totalExperiments &&
+            wfrun.experimentsPassed &&
+            wfrun.totalExperiments > 0
+              ? (wfrun.experimentsPassed * 100) / wfrun.totalExperiments
               : 0,
           failPercentage:
-            wfrun.total_experiments &&
-            !wfrun.experiments_failed &&
-            wfrun.total_experiments > 0
-              ? (wfrun.experiments_failed * 100) / wfrun.total_experiments
+            wfrun.totalExperiments &&
+            !wfrun.experimentsFailed &&
+            wfrun.totalExperiments > 0
+              ? (wfrun.experimentsFailed * 100) / wfrun.totalExperiments
               : 0,
-          passCount: wfrun.experiments_passed ?? 0,
-          failCount: wfrun.experiments_failed ?? 0,
+          passCount: wfrun.experimentsPassed ?? 0,
+          failCount: wfrun.experimentsFailed ?? 0,
         });
         openSeries.data.push({
-          date: Number(wfrun.last_updated) * 1000,
-          value: wfrun.resiliency_score ?? 0,
+          date: Number(wfrun.lastUpdated) * 1000,
+          value: wfrun.resiliencyScore ?? 0,
         });
       }
     });
@@ -220,8 +220,8 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       </div>
       {showTable && (
         <WorkflowRunTable
-          workflowId={workflowID}
-          workflowRunId={workflowRunID}
+          workflowID={workflowID}
+          workflowRunID={workflowRunID}
         />
       )}
     </div>

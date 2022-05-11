@@ -161,7 +161,9 @@ const TeamingTab: React.FC = () => {
     ? notAccepted &&
       notAccepted
         .filter((dataRow) =>
-          dataRow.UserName.toLowerCase().includes(filters.search.toLowerCase())
+          dataRow?.UserName?.toLowerCase().includes(
+            filters.search.toLowerCase()
+          )
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
@@ -214,22 +216,25 @@ const TeamingTab: React.FC = () => {
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.Members.forEach((member: Member) => {
-        if (member.UserID === userID && member.Role === 'Owner') {
-          projectOwner++;
-        } else if (
-          member.UserID === userID &&
-          member.Invitation === 'Pending'
-        ) {
-          projectInvitation++;
-        } else if (
-          member.UserID === userID &&
-          member.Role !== 'Owner' &&
-          member.Invitation === 'Accepted'
-        ) {
-          projectOther++;
-        }
-      });
+      const projectMembers = project.Members;
+      if (projectMembers) {
+        projectMembers.forEach((member: Member) => {
+          if (member.UserID === userID && member.Role === 'Owner') {
+            projectOwner++;
+          } else if (
+            member.UserID === userID &&
+            member.Invitation === 'Pending'
+          ) {
+            projectInvitation++;
+          } else if (
+            member.UserID === userID &&
+            member.Role !== 'Owner' &&
+            member.Invitation === 'Accepted'
+          ) {
+            projectOther++;
+          }
+        });
+      }
     });
     setProjectOwnerCount(projectOwner);
     setInvitationCount(projectInvitation);
