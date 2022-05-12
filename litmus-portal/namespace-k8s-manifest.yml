@@ -1,5 +1,5 @@
 ### RBAC Manifests
-## If SELF_CLUSTER="true" then these permissions are required to apply
+## If SELF_AGENT="true" then these permissions are required to apply
 ## https://github.com/chaosnative/hce/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -343,7 +343,7 @@ subjects:
   - kind: ServiceAccount
     name: litmus-server-account
 # litmus-server-role is used by the litmusportal-server
-# If SELF_CLUSTER=false, then only litmus-server-role and litmus-server-rb are required.
+# If SELF_AGENT=false, then only litmus-server-role and litmus-server-rb are required.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
