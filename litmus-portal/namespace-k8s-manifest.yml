@@ -1,6 +1,6 @@
 ### RBAC Manifests
 ## If SELF_AGENT="true" then these permissions are required to apply
-## https://github.com/chaosnative/hce/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
+## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -109,7 +109,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-#these permissions are required to apply https://github.com/chaosnative/hce/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
+#these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
