@@ -1,0 +1,1560 @@
+introspection: http://localhost:8080/query
+
+servers:
+  - url: http://localhost:8080
+    description: Dev
+  - url: http://localhost:8080/query
+    description: Prod
+
+info:
+  title: Litmus Portal API Documentation
+  description: |
+    Litmus Portal provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+domains:
+  - name: Cluster
+    description: |
+      Litmus Portal gives the ability to run chaos on remote Kubernetes cluster. Self cluster is automatically getting connected after submitting the welcome model. To connect an external cluster, use the following APIs for cluster operations. <br/>
+      User can access connected clusters via <b>agents</b> page of Litmus Portal.
+    usecases:
+      - name: List Cluster
+        query: query.getCluster
+        description: |
+          Returns a list of cluster with Litmus Portal. It includes pending, active and inactive clusters.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>project_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>cluster_type</td>
+              <td>external/internal</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"project_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+              <b>"cluster_type"</b>: "external",<br/>
+          </p>
+          }
+      - name: Register Cluster
+        query: mutation.userClusterReg
+        description: |
+          User can make requests to connect their kubernetes cluster and get a token as response, that token can be used to get the subscriber manifest which needs to apply in their cluster.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>cluster_name</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>description</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>project_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>platform_name</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>cluster_type</td>
+              <td>external/internal</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>agent_namespace</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>serviceaccount</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>agent_scope</td>
+              <td>cluster/namespace</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>agent_ns_exists</td>
+              <td>true/false</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>agent_sa_exists</td>
+              <td>true/false</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>node_selector</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"cluster_name"</b>: "Litmus-cluster", <br/>
+              <b>"description"</b>: "New Litmus Portal Cluster",<br/>
+              <b>"platform_name"</b>: "AWS",<br/>
+              <b>"project_id"</b>: "5fd7d9212c9f32447e28317b",<br/>
+              <b>"cluster_type"</b>: "external",<br/>
+              <b>"agent_namespace"</b>: "",<br/>
+              <b>"agent_namespace"</b>: "",<br/>
+              <b>"agent_scope"</b>: cluster,<br/>
+              <b>"agent_ns_exists"</b>: false,<br/>
+              <b>"agent_sa_exists"</b>: false,
+          </p>
+          }
+      - name: Delete Cluster
+        query: mutation.deleteClusterReg
+        description: |
+          This query can be used to delete a cluster from litmus portal. It cannot be undone. <br/>
+          <b>Note:</b> User can access the details of deleted cluster inside MongoDB, which are being marked as removed.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>cluster_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"cluster_id"</b>: "2df3212c9f32447e28317b", <br/>
+          </p>
+          }
+
+  - name: Chaos Workflow
+    description: |
+      Chaos workflows consist of a sequence of experiments run together to introduce chaos in the Kubernetes platform. <br/>
+      <b>Note:</b> Target cluster should be in active state before scheduling the workflow
+    usecases:
+      - name: Create ChaosWorkflow
+        query: mutation.createChaosWorkFlow
+        description: |
+          User can create Chaos Workflow easily via the workflow page of the Litmus Portal dashboard. 
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>workflow_id</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>workflow_manifest</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflow_manifest</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>cronSyntax</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>workflow_name</td>
+              <td>external/internal</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>weightages</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflow_description</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>isCustomWorkflow</td>
+              <td>true/false</td>
+              <td>Madatory</td>
+            </tr>
+            <tr>
+              <td>project_id</td>
+              <td></td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>cluster_id</td>
+              <td></td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"workflow_name"</b>: "Pod-networkloss-chaos", <br/>
+              <b>"workflow_manifest"</b>: "{ apiVersion: v1 ......}",<br/>
+              <b>"cronSyntax"</b>: "***/2",<br/>
+              <b>"project_id"</b>: "5fd7d9212c9f32447e28317b",<br/>
+              <b>"cluster_id"</b>: "3gr3f492146f53d4g3e283re",<br/>
+              <b>"workflow_description"</b>: "Pod networkloss-experiment",<br/>
+              <b>"isCustomWorkflow"</b>: false,<br/>
+          </p>
+          }
+
+      - name: Get ChaosWorkflow Runs
+        query: query.getWorkflowRuns
+        description: |
+          Returns a list of chaos workflow and details of particular using a same endpoint. It can fetch both cron and non-cron workflow present in the Litmus Portal. false<br/>
+          This query also supports pagination, filtering and sorting of data according to different parameters.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>project_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflow_ids</td>
+              <td>[]</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>workflow_run_ids</td>
+              <td>[]</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>pagination</td>
+              <td>{page: "integer", limit:"integer"}</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>sort</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>filter</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+          </table>
+      - name: List Chaos Workflow
+        query: query.ListWorkflow
+        description: |
+          This query is used to get the list of all the scheduled workflows. Individual schedules can also be extracted by providing the <b>workflow_ids</b>
+          <table>
+            <tr>
+                <th>Field</th>
+                <th>Possible values</th>
+                <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+                <td>project_id</td>
+                <td>-</td>
+                <td>Mandatory</td>
+            </tr>
+            <tr>
+                <td>workflow_ids</td>
+                <td>[]</td>
+                <td>Optional</td>
+            </tr>
+            <tr>
+                <td>pagination</td>
+                <td>{page: "integer", limit:"integer"}</td>
+                <td>Optional</td>
+            </tr>
+            <tr>
+                <td>sort</td>
+                <td>-</td>
+                <td>Optional</td>
+            </tr>
+            <tr>
+                <td>filter</td>
+                <td>-</td>
+                <td>Optional</td>
+            </tr>
+          </table>
+      - name: Re Run Chaos Workflow
+        query: mutation.reRunChaosWorkFlow
+        description: |
+          This API is used to re-run a particular chaos workflow on the basis of <b>workflow_id</b>
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>workflow_id</td>
+              <td>string</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+      - name: Update ChaosWorkflow
+        query: mutation.updateChaosWorkflow
+        description: |
+          Update the specified chaos workflow by setting the values of the parameters passed. Any parameters not provided will change with its empty value.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>workflow_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>cronSyntax</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflow_name</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflow_description</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>isCustomWorkflow</td>
+              <td>true/false</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"workflow_id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+              <b>"cronSyntax"</b>: "****",<br/>
+              <b>"workflow_name"</b>: "New-network-chaos",<br/>
+              <b>"workflow_description"</b>: "Update Chaos workflow",<br/>
+              <b>"isCustomWorkflow"</b>: false<br/>
+          </p>
+          }
+      - name: Delete ChaosWorkflow
+        query: mutation.deleteChaosWorkflow
+        description: |
+          Delete chaos workflow will permanently delete schedule workflow from the cluster. It cannot be undone.
+          <b>Note:</b> User can access the details of deleted workflow inside MongoDB, which are being marked as removed.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>workflowid</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"workflowid"</b>: "2df3212c9f32447e28317b", <br/>
+          </p>
+          }
+      - name: Save Template
+        query: mutation.createManifestTemplate
+        description: |
+          Save a scheduled workflow as a template. Provide a workflow name and description, and use the scheduled manifest as a template.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>isCustomWorkflow</td>
+              <td>true/false/td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>manifest</td>
+              <td>"kind: CronWorkflow\napiVersion: argoproj.io/v1alpha1\nmetadata:\n  name: bank-of-anthos-1626851266\n  namespace: litmus\n ....</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>project_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>template_name</td>
+              <td>new-saved-template</td>
+              <td>Mandatory</td>
+            </tr>
+             <tr>
+              <td>template_description</td>
+              <td>Demo Description</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+
+      - name: List Manifest Template
+        query: query.ListManifestTemplate
+        description: |
+          This query lists all the available Templates present in a particular project.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>project_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+      - name: Get Template Manifest
+        query: query.GetTemplateManifestByID
+        description: |
+          This query fetches the manifest from a selected template.  It takes the <b>template_id</b> as an input.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>template_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+
+  - name: ChaosHub
+    description: ChaosHub constructs workflow from a set of experiments from Chaos Hub or the Git Repo. There is a public hub which get cloned during the installation by default.
+    usecases:
+      - name: Add ChaosHub
+        query: mutation.addMyHub
+        description: |
+          User can add chaoshub easily via the myhub page of the Litmus Portal dashboard. After adding chaoshub, it will clone the git repository which has the chaos charts. 
+          You can connect both Public and Private Repositories. For Private Repositories, user can authenticate using Access Token or SSH for cloning the repository.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>RepoURL</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>RepoBranch</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>IsPrivate</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>AuthType</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>Token</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>UserName</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>SSHPublicKey</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>SSHPrivateKey</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>ProjectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"RepoURL"</b>: "https://github.com/litmuschaos/chaos-charts", <br/>
+              <b>"RepoBranch"</b>: "master",<br/>
+              <b>"HubName"</b>: "my-chaos-hub",<br/>
+          </p>
+          }
+
+      - name: List ChaosHub
+        query: query.getHubStatus
+        description: |
+          Returns a list of ChaosHub connected with Litmus Portal along with the status and the total number of experiments.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>projectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"projectID"</b>: "5fd7d9212c9f32447e28317b", <br/>
+          </p>
+          }
+
+      - name: Sync ChaosHub
+        query: mutation.syncHub
+        description: |
+          Sync hub will pull the latest commits from the git repository. 
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+          <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"id"</b>: "5fd7d9212c9f32447e28317b", <br/>
+          </p>
+          }
+      - name: Update Hub
+        query: mutation.updateMyHub
+        description: |
+          Update the hub configuration of a ChaosHub
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>RepoURL</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>RepoBranch</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>IsPrivate</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>AuthType</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>Token</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>UserName</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>SSHPublicKey</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>SSHPrivateKey</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>ProjectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+
+      - name: Delete Hub
+        query: mutation.deleteMyHub
+        description: |
+          Delete a ChaosHub from the project
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>hub_id</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+
+      - name: Get Charts
+        query: query.getCharts
+        description: |
+          Get all the charts from a hub
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>projectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+
+      - name: Get Hub Experiments
+        query: query.getHubExperiment
+        description: |
+          Get the experiment details from a selected chart
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>ProjectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>ChartName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>ExperimentName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>FileType</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+          </table>
+
+      - name: Get Experiment YAML
+        query: query.getYAMLData
+        description: |
+          With this query, user can fetch engine or experiment manifest from a hub.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>ProjectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>ChartName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>ExperimentName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>FileType</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+          </table>
+
+      - name: Get Pre-defined workflow
+        query: query.GetPredefinedWorkflowList
+        description: |
+          List of all the pre-defined workflows present in a ChaosHub
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>projectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+
+      - name: Get Pre-defined Workflow Manifest
+        query: query.GetPredefinedExperimentYAML
+        description: |
+          With this query, user can fetch engine or experiment manifest from a hub.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>ProjectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>ChartName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>ExperimentName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>HubName</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>FileType</td>
+              <td>-</td>
+              <td>Optional</td>
+            </tr>
+          </table>
+
+  - name: Workflow Management
+    description: Workflow Management APIs are used to manage the workflows with GitOPs. These also allow the user to use custom image registries for the chaos workflows.
+    usecases:
+      - name: Enable GitOps
+        query: mutation.enableGitOps
+        description: |
+          This query is used to enable gitops functionality
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>ProjectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>Branch</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>RepoURL</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>AuthType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>Token</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>UserName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>Password</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>SSHPrivateKey</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+
+      - name: Disable GitOps
+        query: mutation.disableGitOps
+        description: |
+          This query is used to disable gitops functionality
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+
+      - name: Get GitOPs Details
+        query: query.getGitOpsDetails
+        description: |
+          This query is used to get the gitops details and configurations
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+
+      - name: Update GitOps
+        query: mutation.updateGitOps
+        description: |
+          This query is used to update the gitops details and configurations
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>ProjectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>Branch</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>RepoURL</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>AuthType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>Token</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>UserName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>Password</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>SSHPrivateKey</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: List Image Regisry
+        query: query.ListImageRegistry
+        description: |
+          This query is used to list all the image registries.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+
+      - name: Create Image Registry
+        query: mutation.createImageRegistry
+        description: |
+          This query is used to create a new image registry.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>is_default</td>
+            <td>true/false</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>image_registry_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>image_repo_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>image_registry_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>secret_name</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+           <tr>
+            <td>secret_namespace</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+           <tr>
+            <td>enable_registry</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          </table>
+
+      - name: Get Image  Registry
+        query: query.GetImageRegistry
+        description: |
+          This query is used to get the the image registry from the project_id and image_registry_id
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>image_registry_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+
+      - name: Update Image Registry
+        query: mutation.updateImageRegistry
+        description: |
+          This query is used to update the image registry. 
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>image_registry_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>is_default</td>
+            <td>true/false</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>image_registry_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>image_repo_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>image_registry_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+           <tr>
+            <td>secret_name</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+           <tr>
+            <td>secret_namespace</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+           <tr>
+            <td>enable_registry</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          </table>
+
+      - name: Delete Image Registry
+        query: mutation.deleteImageRegistry
+        description: |
+          This query is used to delete the image registry 
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>image_registry_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+
+  - name: Analytics
+    description: Analytics allows user to visualize the chaos metrics with the help of different dashboards and graphs present in the Litmus Portal.
+    usecases:
+      - name: Get HeatMap Data
+        query: query.getHeatmapData
+        description: |
+          This query is used to get year-wise calendar heatmap of daily average resilience scores for workflow runs.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflow_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>year</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Workflow Stats
+        query: query.getWorkflowStats
+        description: |
+          This query is used to get monthly, daily and hourly workflow schedule and run statistics as a time series.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>filter</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>show_workflow_runs</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Workflow Run Stats
+        query: query.getWorkflowRunStats
+        description: |
+          This query is used to get aggregated workflow and experiment statistics for completed runs of selected schedules.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflow_ids</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: List DataSource
+        query: query.ListDataSource
+        description: |
+          This query is used to list all connected data sources in a project.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Prom Query
+        query: query.GetPromQuery
+        description: |
+          This query is used to get prometheus time series data from promQL queries and data source details.
+      - name: Get Prom Label names and values
+        query: query.GetPromLabelNamesAndValues
+        description: |
+          This query is used to get labels and values associated with a prometheus metric and a given data source.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>series</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>ds_details.url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>ds_details.start</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>ds_details.end</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Prom Series List
+        query: query.GetPromSeriesList
+        description: |
+          This query is used to get a list of all time series metric names available on a prometheus data source.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>start</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>  
+          <tr>
+            <td>end</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: List Dashboard
+        query: query.ListDashboard
+        description: |
+          This query is used to list all dashboards created in a project.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>cluster_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>  
+          <tr>
+            <td>db_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Portal Dashboard Data
+        query: query.PortalDashboardData
+        description: |
+          This query is used to list all pre-configured dashboard templates available in litmus center.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+           <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+           <tr>
+            <td>hub_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
+      - name: Create DataSource
+        query: mutation.createDataSource
+        description: |
+          This mutation is used to add a prometheus data source to the project which serves as a metrics collector for agent clusters.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+           <tr>
+            <td>ds_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>ds_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>ds_url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>access_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>auth_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>basic_auth_username</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>basic_auth_password</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>scrape_interval</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>query_timeout</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>http_method</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
+           <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"ds_name"</b>: "sample data source", <br/>
+              <b>"ds_type"</b>: "Prometheus",<br/>
+              <b>"access_type"</b>: "Server (Default)",<br/>
+              <b>"auth_type"</b>: "no auth",<br/>
+              <b>"basic_auth_password"</b>: "",<br/>
+              <b>"basic_auth_username"</b>: "",<br/>
+              <b>"ds_url"</b>: "https://demo.com:9090",<br/>
+              <b>"http_method"</b>: "POST",<br/>
+              <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",<br/>
+              <b>"query_timeout"</b>: "30",<br/>
+              <b>"scrape_interval"</b>: "15",<br/>
+          </p>
+          }
+      - name: Create Dashboard
+        query: mutation.createDashBoard
+        description: |
+          This mutation is used to create an application dashboard providing agent information, data source details and prometheus queries.
+      - name: Update DataSource
+        query: mutation.updateDataSource
+        description: |
+          This mutation is used to update a conncted data source's information.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>ds_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+           <tr>
+            <td>ds_name</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>ds_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>ds_url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>access_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>auth_type</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>basic_auth_username</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>basic_auth_password</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>scrape_interval</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>query_timeout</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>http_method</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>project_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
+           <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"ds_id"</b>: "sample data source", <br/>
+              <b>"ds_name"</b>: "sample data source", <br/>
+              <b>"ds_type"</b>: "Prometheus",<br/>
+              <b>"access_type"</b>: "Server (Default)",<br/>
+              <b>"auth_type"</b>: "no auth",<br/>
+              <b>"basic_auth_password"</b>: "",<br/>
+              <b>"basic_auth_username"</b>: "",<br/>
+              <b>"ds_url"</b>: "https://demo.com:9090",<br/>
+              <b>"http_method"</b>: "POST",<br/>
+              <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",<br/>
+              <b>"query_timeout"</b>: "30",<br/>
+              <b>"scrape_interval"</b>: "15",<br/>
+          </p>
+          }
+      - name: Update Dashboard
+        query: mutation.updateDashboard
+        description: |
+          This mutation is used to update a dashboard's information and details.
+      - name: Update Panel
+        query: mutation.updatePanel
+        description: |
+          This mutation is used to update prometheus queries and panel details for selected panels.
+      - name: Delete Dashboard
+        query: mutation.deleteDashboard
+        description: |
+          This mutation is used to delete a dashboard from a project.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>db_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
+      - name: Delete DataSource
+        query: mutation.deleteDataSource
+        description: |
+          Disconnect a data source from a project
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>force_delete</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>ds_id</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
