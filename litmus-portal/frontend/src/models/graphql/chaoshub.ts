@@ -4,7 +4,7 @@ export interface SSHKey {
 }
 
 export interface SSHKeys {
-  generaterSSHKey: SSHKey;
+  generateSSHKey: SSHKey;
 }
 
 export interface MyHubRequest {

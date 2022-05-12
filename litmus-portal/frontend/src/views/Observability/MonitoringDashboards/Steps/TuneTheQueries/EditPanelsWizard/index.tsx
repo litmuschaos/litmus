@@ -146,48 +146,51 @@ const EditPanelsWizard: React.FC<EditPanelsWizardProps> = ({
       });
     }
     const selectedPanelGroups: PanelGroupDetails[] = [];
-    selectedDashboard.dashboardJSON.panelGroups.forEach(
-      (panelGroup: PanelGroupDetails) => {
-        if (preSelectedPanelGroups.includes(panelGroup.panelGroupName)) {
-          const selectedPanels: PanelDetails[] = [];
-          const preSelectedPanels: string[] = getPanelsByGroup(
-            panelGroup.panelGroupName
-          );
-          panelGroup.panels.forEach((panel: PanelDetails) => {
-            if (preSelectedPanels.includes(panel.panelName)) {
-              const promQueryList: PromQueryDetails[] = [];
-              panel.promQueries.forEach((promQuery) => {
-                promQueryList.push({
-                  hidden: false,
-                  queryID: uuidv4(),
-                  promQueryName: promQuery.promQueryName,
-                  legend: promQuery.legend,
-                  resolution: promQuery.resolution,
-                  minstep: promQuery.minstep,
-                  line: promQuery.line,
-                  closeArea: promQuery.closeArea,
-                });
+    selectedDashboard.dashboardJSON.panelGroups.forEach((panelGroup: any) => {
+      if (preSelectedPanelGroups.includes(panelGroup.panel_group_name)) {
+        const selectedPanels: PanelDetails[] = [];
+        const preSelectedPanels: string[] = getPanelsByGroup(
+          panelGroup.panel_group_name
+        );
+        panelGroup.panels.forEach((panel: any) => {
+          if (preSelectedPanels.includes(panel.panel_name)) {
+            const promQueryList: PromQueryDetails[] = [];
+            panel.prom_queries.forEach((promQuery: any) => {
+              promQueryList.push({
+                hidden: false,
+                queryID: uuidv4(),
+                promQueryName: promQuery.prom_query_name,
+                legend: promQuery.legend,
+                resolution: promQuery.resolution,
+                minstep: promQuery.minstep,
+                line: promQuery.line,
+                closeArea: promQuery.close_area,
               });
-              selectedPanels.push({
-                panelGroupName: panelGroup.panelGroupName,
-                dsURL: dashboardVars.dataSourceURL ?? '',
-                promQueries: promQueryList,
-                panelOptions: panel.panelOptions,
-                panelName: panel.panelName,
-                yAxisLeft: panel.yAxisLeft,
-                yAxisRight: panel.yAxisRight,
-                xAxisDown: panel.xAxisDown,
-                unit: panel.unit,
-              });
-            }
-          });
-          selectedPanelGroups.push({
-            panelGroupName: panelGroup.panelGroupName,
-            panels: selectedPanels,
-          });
-        }
+            });
+            const panelOptions: PanelOption = {
+              points: panel.panel_options.points,
+              grIDs: panel.panel_options.grids,
+              leftAxis: panel.panel_options.left_axis,
+            };
+            selectedPanels.push({
+              panelGroupName: panelGroup.panel_group_name,
+              dsURL: dashboardVars.dataSourceURL ?? '',
+              promQueries: promQueryList,
+              panelOptions,
+              panelName: panel.panel_name,
+              yAxisLeft: panel.y_axis_left,
+              yAxisRight: panel.y_axis_right,
+              xAxisDown: panel.x_axis_down,
+              unit: panel.unit,
+            });
+          }
+        });
+        selectedPanelGroups.push({
+          panelGroupName: panelGroup.panel_group_name,
+          panels: selectedPanels,
+        });
       }
-    );
+    });
     return selectedPanelGroups;
   };
 

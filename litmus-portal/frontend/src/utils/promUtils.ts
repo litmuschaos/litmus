@@ -310,7 +310,7 @@ export const DashboardMetricDataParserForPrometheus = (
       mappedData[panelGroupIndex].metricDataForGroup.push({
         panelID: panelData.panelID,
         metricDataForPanel: MetricDataParserForPrometheus(
-          panelData.PanelMetricsResponse,
+          panelData.panelMetricsResponse,
           lineGraph,
           areaGraph,
           closedAreaQueryIDs,

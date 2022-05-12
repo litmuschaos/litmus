@@ -243,13 +243,13 @@ const DashboardPage: React.FC = () => {
         selectedDashboardInformation.id !==
         selectedDashboardInformation.dashboardKey
       ) {
-        const selectedDashboard: GetDashboardResponse =
+        const selectedDashBoard: GetDashboardResponse =
           dashboards.listDashboard.filter((data) => {
             return data.dbID === selectedDashboardInformation.id;
           })[0];
         const selectedPanelNameAndIDList: PanelNameAndID[] = [];
-        if (selectedDashboard) {
-          (selectedDashboard.panelGroups ?? []).forEach(
+        if (selectedDashBoard) {
+          (selectedDashBoard.panelGroups ?? []).forEach(
             (panelGroup: PanelGroupResponse) => {
               (panelGroup.panels ?? []).forEach((panel: PanelResponse) => {
                 selectedPanelNameAndIDList.push({
@@ -262,8 +262,8 @@ const DashboardPage: React.FC = () => {
           setSelectedDashboardInformation({
             ...selectedDashboardInformation,
             dashboardListForAgent: dashboards.listDashboard,
-            metaData: selectedDashboard,
-            closedAreaQueryIDs: (selectedDashboard.panelGroups ?? [])
+            metaData: selectedDashBoard,
+            closedAreaQueryIDs: (selectedDashBoard.panelGroups ?? [])
               .flatMap((panelGroup) =>
                 panelGroup ? panelGroup.panels ?? [] : []
               )
@@ -272,28 +272,28 @@ const DashboardPage: React.FC = () => {
               .map((query) => query.queryID),
             dashboardKey: selectedDashboardInformation.id,
             panelNameAndIDList: selectedPanelNameAndIDList,
-            name: selectedDashboard.dbName,
-            typeName: selectedDashboard.dbTypeName,
-            typeID: selectedDashboard.dbTypeID,
-            agentName: selectedDashboard.clusterName,
+            name: selectedDashBoard.dbName,
+            typeName: selectedDashBoard.dbTypeName,
+            typeID: selectedDashBoard.dbTypeID,
+            agentName: selectedDashBoard.clusterName,
             urlToIcon: `./icons/${
-              selectedDashboard.dbTypeID.includes('custom')
+              selectedDashBoard.dbTypeID.includes('custom')
                 ? 'custom'
-                : selectedDashboard.dbTypeID
+                : selectedDashBoard.dbTypeID
             }_dashboard.svg`,
-            information: selectedDashboard.dbInformation,
-            chaosEventQueryTemplate: selectedDashboard.chaosEventQueryTemplate,
+            information: selectedDashBoard.dbInformation,
+            chaosEventQueryTemplate: selectedDashBoard.chaosEventQueryTemplate,
             chaosVerdictQueryTemplate:
-              selectedDashboard.chaosVerdictQueryTemplate,
-            applicationMetadataMap: selectedDashboard.applicationMetadataMap,
-            dataSourceURL: selectedDashboard.dsURL,
-            dataSourceID: selectedDashboard.dsID,
-            dataSourceName: selectedDashboard.dsName,
+              selectedDashBoard.chaosVerdictQueryTemplate,
+            applicationMetadataMap: selectedDashBoard.applicationMetadataMap,
+            dataSourceURL: selectedDashBoard.dsURL,
+            dataSourceID: selectedDashBoard.dsID,
+            dataSourceName: selectedDashBoard.dsName,
             promQueries: generatePromQueries(
               selectedDashboardInformation.range,
-              selectedDashboard.panelGroups ?? [],
-              selectedDashboard.chaosEventQueryTemplate,
-              selectedDashboard.chaosVerdictQueryTemplate
+              selectedDashBoard.panelGroups ?? [],
+              selectedDashBoard.chaosEventQueryTemplate,
+              selectedDashBoard.chaosVerdictQueryTemplate
             ),
           });
           setSelectedPanels(
@@ -304,8 +304,8 @@ const DashboardPage: React.FC = () => {
             ...promData,
             panelGroupQueryMap: [],
           });
-          if (selectedDashboard.dsHealthStatus !== ACTIVE) {
-            setDataSourceStatus(selectedDashboard.dsHealthStatus);
+          if (selectedDashBoard.dsHealthStatus !== ACTIVE) {
+            setDataSourceStatus(selectedDashBoard.dsHealthStatus);
           }
         }
         setReFetch(true);

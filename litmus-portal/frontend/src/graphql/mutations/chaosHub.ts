@@ -42,7 +42,7 @@ export const DELETE_HUB = gql`
 
 export const GENERATE_SSH = gql`
   mutation generateSSHKey {
-    generaterSSHKey {
+    generateSSHKey {
       privateKey
       publicKey
     }

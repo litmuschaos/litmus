@@ -289,7 +289,7 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (typ
 			if value.ChaosExp == nil {
 				continue
 			}
-			weight, ok := weightMap[value.ChaosExp.ExperimentName]
+			weight, ok := weightMap[value.Name]
 			// probeSuccessPercentage will be included only if chaosData is present
 			if ok {
 				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
