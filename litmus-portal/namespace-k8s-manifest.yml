@@ -1,6 +1,6 @@
 ### RBAC Manifests
-## If SELF_AGENT="true" then these permissions are required to apply 
-## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
+## If SELF_CLUSTER="true" then these permissions are required to apply
+## https://github.com/chaosnative/hce/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -17,7 +17,7 @@ rules:
     resources: [persistentvolumeclaims]
     verbs: [create, delete]
   - apiGroups: [argoproj.io]
-    resources: [workflows, workflows/finalizers]
+    resources: [workflows, workflows/finalizers,workflowtasksets]
     verbs: [get, list, watch, update, patch, delete, create]
   - apiGroups: [argoproj.io]
     resources: [workflowtemplates, workflowtemplates/finalizers,workflowtasksets]
@@ -80,8 +80,11 @@ rules:
     resources: [rollouts]
     verbs: [get, list]
   - apiGroups: [""]
-    resources: [pods, pods/exec, configmaps, events, services]
+    resources: [pods, pods/exec]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [""]
+    resources: [configmaps, events, services]
+    verbs: [get, create, update, patch, list, watch]
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
@@ -106,7 +109,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-server-account
-#these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
+#these permissions are required to apply https://github.com/chaosnative/hce/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -136,8 +139,11 @@ rules:
     verbs: [get, list]
 
   - apiGroups: [apps]
-    resources: [deployments, daemonsets, replicasets, statefulsets]
-    verbs: [get, list, delete]
+    resources: [deployments]
+    verbs: [delete]
+  - apiGroups: [apps]
+    resources: [deployment, daemonsets, replicasets, statefulsets]
+    verbs: [get, list]
 
   - apiGroups: [argoproj.io]
     resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, rollouts]
@@ -170,9 +176,13 @@ rules:
   ## .. by creating the chaos-runner
 
   # for creating and monitoring the chaos-runner pods
+  # for creating and deleting the helper or target app pod and events by experiment
   - apiGroups: [""]
-    resources: [pods, events]
+    resources: [pods]
     verbs: [create, delete, get, list, patch, update, deletecollection]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, get, list, patch, update]
 
     # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
   - apiGroups: [""]
@@ -192,24 +202,7 @@ rules:
     # ********************************************************************
     # Permissions needed for creation and discovery of chaos experiments
     # ********************************************************************
-
-    # The helper pods are created by experiment to perform the actual chaos injection ...
-    # ... for a period of chaos duration
-
-    # for creating and deleting the helper or target app pod and events by experiment
-  - apiGroups: [""]
-    resources: [pods]
-    verbs: [create, delete, deletecollection]
-
     # for creating and monitoring the events for chaos operations
-  - apiGroups: [""]
-    resources: [events]
-    verbs: [create, delete, get, list, patch, update, deletecollection]
-
-    # for monitoring the helper and target app pod
-  - apiGroups: [""]
-    resources: [pods]
-    verbs: [get, list, patch, update]
 
     # for creating and managing to execute comands inside target container
   - apiGroups: [""]
@@ -224,12 +217,12 @@ rules:
     # for creating and monitoring liveness services or monitoring target app services during chaos injection
   - apiGroups: [""]
     resources: [services]
-    verbs: [create, delete, get, list, delete, deletecollection]
+    verbs: [create, get, list]
 
     # for checking the app parent resources as deployments or sts and are eligible chaos candidates
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
-    verbs: [list, get, patch, update, create, delete]
+    verbs: [list, get, patch, update, create]
 
     # for checking the app parent resources as replicasets and are eligible chaos candidates
   - apiGroups: [apps]
@@ -239,7 +232,7 @@ rules:
     # for checking the app parent resources as deamonsets and are eligible chaos candidates
   - apiGroups: [apps]
     resources: [daemonsets]
-    verbs: [list, get, delete]
+    verbs: [list, get]
 
     # for checking (openshift) app parent resources if they are eligible chaos candidates
   - apiGroups: [apps.openshift.io]
@@ -250,6 +243,11 @@ rules:
   - apiGroups: [argoproj.io]
     resources: [rollouts]
     verbs: [list, get]
+
+  # performs CRUD operations on the network policies
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["create","delete","list","get"]
 
     # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
@@ -282,18 +280,23 @@ metadata:
 rules:
   # for managing the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
-    resources: [pods, services]
+    resources: [pods]
     verbs: [create, get, watch, patch, delete, list]
+  - apiGroups: [""]
+    resources: [services]
+    verbs: [create, get, watch, patch, list, delete]
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
-    resources: [pods/log, secrets, configmaps]
+    resources: [pods/log]
     verbs: [get, watch, create, delete, patch]
-
+  - apiGroups: [""]
+    resources: [secrets, configmaps]
+    verbs: [get, watch, create, patch]
   # for creation & deletion of application in predefined workflows
   - apiGroups: [apps]
     resources: [deployments, statefulsets]
-    verbs: [get, watch, patch , create, delete]
+    verbs: [get, watch, patch , create]
 
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
   - apiGroups: [litmuschaos.io]
@@ -340,7 +343,7 @@ subjects:
   - kind: ServiceAccount
     name: litmus-server-account
 # litmus-server-role is used by the litmusportal-server
-# If SELF_AGENT=false, then only litmus-server-role and litmus-server-rb are required.
+# If SELF_CLUSTER=false, then only litmus-server-role and litmus-server-rb are required.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
