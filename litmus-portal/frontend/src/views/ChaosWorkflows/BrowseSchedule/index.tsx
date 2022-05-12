@@ -132,7 +132,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
     updateSchedule({
       variables: {
-        ChaosWorkFlowInput: {
+        request: {
           workflowID: schedule.workflowID,
           workflowName: schedule.workflowName,
           workflowDescription: schedule.workflowDescription,
