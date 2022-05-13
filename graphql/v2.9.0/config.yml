@@ -1131,422 +1131,945 @@ domains:
           </tr>
           </table>
 
-  # - name: Analytics
-  #   description: Analytics allows user to visualize the chaos metrics with the help of different dashboards and graphs present in the ChaosCenter.
-  #   usecases:
-  #     - name: Get HeatMap Data
-  #       query: query.getHeatmapData
-  #       description: |
-  #         This query is used to get year-wise calendar heatmap of daily average resilience scores for workflow runs.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>workflow_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>year</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: Get Workflow Stats
-  #       query: query.getWorkflowStats
-  #       description: |
-  #         This query is used to get monthly, daily and hourly workflow schedule and run statistics as a time series.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>filter</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>show_workflow_runs</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: Get Workflow Run Stats
-  #       query: query.getWorkflowRunStats
-  #       description: |
-  #         This query is used to get aggregated workflow and experiment statistics for completed runs of selected schedules.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>workflow_ids</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: List DataSource
-  #       query: query.ListDataSource
-  #       description: |
-  #         This query is used to list all connected data sources in a project.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: Get Prom Query
-  #       query: query.GetPromQuery
-  #       description: |
-  #         This query is used to get prometheus time series data from promQL queries and data source details.
-  #     - name: Get Prom Label names and values
-  #       query: query.GetPromLabelNamesAndValues
-  #       description: |
-  #         This query is used to get labels and values associated with a prometheus metric and a given data source.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>series</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>ds_details.url</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>ds_details.start</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>ds_details.end</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: Get Prom Series List
-  #       query: query.GetPromSeriesList
-  #       description: |
-  #         This query is used to get a list of all time series metric names available on a prometheus data source.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>url</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>start</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>  
-  #         <tr>
-  #           <td>end</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: List Dashboard
-  #       query: query.ListDashboard
-  #       description: |
-  #         This query is used to list all dashboards created in a project.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         <tr>
-  #           <td>cluster_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>  
-  #         <tr>
-  #           <td>db_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr>
-  #         </table>
-  #     - name: Portal Dashboard Data
-  #       query: query.PortalDashboardData
-  #       description: |
-  #         This query is used to list all pre-configured dashboard templates available in litmus center.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #          <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #          <tr>
-  #           <td>hub_name</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         </table>
-  #     - name: Create DataSource
-  #       query: mutation.createDataSource
-  #       description: |
-  #         This mutation is used to add a prometheus data source to the project which serves as a metrics collector for agent clusters.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #          <tr>
-  #           <td>ds_name</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>ds_type</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>ds_url</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>access_type</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>auth_type</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>basic_auth_username</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>basic_auth_password</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>scrape_interval</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>query_timeout</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>http_method</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         </table>
-  #          <h6>Example Body:</h6>
-  #         {<br/>
-  #         <p style="margin-left: 40px">
-  #             <b>"ds_name"</b>: "sample data source", <br/>
-  #             <b>"ds_type"</b>: "Prometheus",<br/>
-  #             <b>"access_type"</b>: "Server (Default)",<br/>
-  #             <b>"auth_type"</b>: "no auth",<br/>
-  #             <b>"basic_auth_password"</b>: "",<br/>
-  #             <b>"basic_auth_username"</b>: "",<br/>
-  #             <b>"ds_url"</b>: "https://demo.com:9090",<br/>
-  #             <b>"http_method"</b>: "POST",<br/>
-  #             <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",<br/>
-  #             <b>"query_timeout"</b>: "30",<br/>
-  #             <b>"scrape_interval"</b>: "15",<br/>
-  #         </p>
-  #         }
-  #     - name: Create Dashboard
-  #       query: mutation.createDashBoard
-  #       description: |
-  #         This mutation is used to create an application dashboard providing agent information, data source details and prometheus queries.
-  #     - name: Update DataSource
-  #       query: mutation.updateDataSource
-  #       description: |
-  #         This mutation is used to update a conncted data source's information.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>ds_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #          <tr>
-  #           <td>ds_name</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>ds_type</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>ds_url</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>access_type</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>auth_type</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>basic_auth_username</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>basic_auth_password</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>scrape_interval</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>query_timeout</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>http_method</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>project_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         </table>
-  #          <h6>Example Body:</h6>
-  #         {<br/>
-  #         <p style="margin-left: 40px">
-  #             <b>"ds_id"</b>: "sample data source", <br/>
-  #             <b>"ds_name"</b>: "sample data source", <br/>
-  #             <b>"ds_type"</b>: "Prometheus",<br/>
-  #             <b>"access_type"</b>: "Server (Default)",<br/>
-  #             <b>"auth_type"</b>: "no auth",<br/>
-  #             <b>"basic_auth_password"</b>: "",<br/>
-  #             <b>"basic_auth_username"</b>: "",<br/>
-  #             <b>"ds_url"</b>: "https://demo.com:9090",<br/>
-  #             <b>"http_method"</b>: "POST",<br/>
-  #             <b>"project_id"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",<br/>
-  #             <b>"query_timeout"</b>: "30",<br/>
-  #             <b>"scrape_interval"</b>: "15",<br/>
-  #         </p>
-  #         }
-  #     - name: Update Dashboard
-  #       query: mutation.updateDashboard
-  #       description: |
-  #         This mutation is used to update a dashboard's information and details.
-  #     - name: Update Panel
-  #       query: mutation.updatePanel
-  #       description: |
-  #         This mutation is used to update prometheus queries and panel details for selected panels.
-  #     - name: Delete Dashboard
-  #       query: mutation.deleteDashboard
-  #       description: |
-  #         This mutation is used to delete a dashboard from a project.
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>db_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         </table>
-  #     - name: Delete DataSource
-  #       query: mutation.deleteDataSource
-  #       description: |
-  #         Disconnect a data source from a project
-  #         <table>
-  #         <tr>
-  #           <th>Field</th>
-  #           <th>Possible values</th>
-  #           <th>Mandatory/Optional</th>
-  #         </tr>
-  #         <tr>
-  #           <td>force_delete</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         <tr>
-  #           <td>ds_id</td>
-  #           <td>-</td>
-  #           <td>Mandatory</td>
-  #         </tr> 
-  #         </table>
+  - name: Analytics
+    description: Analytics allows user to visualize the chaos metrics with the help of different dashboards and graphs present in the Litmus Portal.
+    usecases:
+      - name: List Heatmap Data
+        query: query.listHeatmapData
+        description: |
+          This query is used to get year-wise calendar heatmap of daily average resilience scores for workflow runs.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflowID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>year</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: List Workflow Stats
+        query: query.listWorkflowStats
+        description: |
+          This query is used to get monthly, daily and hourly workflow schedule and run statistics as a time series.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>filter</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>showWorkflowRuns</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Workflow Run Stats
+        query: query.getWorkflowRunStats
+        description: |
+          This query is used to get aggregated workflow and experiment statistics for completed runs of selected schedules.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>workflowIDs</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          </table>
+      - name: List DataSource
+        query: query.listDataSource
+        description: |
+          This query is used to list all connected data sources in a project.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Prometheus Data
+        query: query.getPrometheusData
+        description: |
+          This query is used to get prometheus time series data from promQL queries and data source details.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>queryID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>query</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>legend</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>resolution</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>minstep</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>start</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>end</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Prom Label names and values
+        query: query.getPromLabelNamesAndValues
+        description: |
+          This query is used to get labels and values associated with a prometheus metric and a given data source.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>series</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>start</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>end</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Get Prom Series List
+        query: query.getPromSeriesList
+        description: |
+          This query is used to get a list of all time series metric names available on a prometheus data source.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>url</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>start</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>  
+          <tr>
+            <td>end</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: List Dashboard
+        query: query.listDashboard
+        description: |
+          This query is used to list all dashboards created in a project.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>clusterID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>  
+          <tr>
+            <td>dbID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          </table>
+      - name: List Portal Dashboard Data
+        query: query.listPortalDashboardData
+        description: |
+          This query is used to list all pre-configured dashboard templates available in litmus center.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+           <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+           <tr>
+            <td>hubName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
+      - name: Create DataSource
+        query: mutation.createDataSource
+        description: |
+          This mutation is used to add a prometheus data source to the project which serves as a metrics collector for agent clusters.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+           <tr>
+            <td>dsID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+           <tr>
+            <td>dsName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dsType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dsURL</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>accessType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>authType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>basicAuthUsername</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>basicAuthPassword</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>scrapeInterval</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>queryTimeout</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>httpMethod</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          </table>
+           <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"dsName"</b>: "sample data source", <br/>
+              <b>"dsType"</b>: "Prometheus",<br/>
+              <b>"accessType"</b>: "Server (Default)",<br/>
+              <b>"authType"</b>: "no auth",<br/>
+              <b>"basicAuthPassword"</b>: "",<br/>
+              <b>"basicAuthUsername"</b>: "",<br/>
+              <b>"dsURL"</b>: "https://demo.com:9090",<br/>
+              <b>"httpMethod"</b>: "POST",<br/>
+              <b>"projectID"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",<br/>
+              <b>"queryTimeout"</b>: "30",<br/>
+              <b>"scrapeInterval"</b>: "15",<br/>
+          </p>
+          }
+      - name: Create Dashboard
+        query: mutation.createDashBoard
+        description: |
+          This mutation is used to create an application dashboard providing agent information, data source details and prometheus queries.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>dsID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+           <tr>
+            <td>dbName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dbTypeName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dbTypeID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dbInformation</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>chaosEventQueryTemplate</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>chaosVerdictQueryTemplate</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>namespace</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>kind</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>names</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>dbID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>yAxisLeft</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>yAxisRight</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>xAxisDown</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>unit</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelGroupID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>createdAt</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>queryID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>promQueryName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>legend</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>resolution</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>minstep</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>line</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>closeArea</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>points</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>grIDs</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>leftAxis</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>panelGroupName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>endTime</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>startTime</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>clusterID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>refreshRate</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          </table>
+      - name: Update DataSource
+        query: mutation.updateDataSource
+        description: |
+          This mutation is used to update a connected data source's information.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>dsID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+           <tr>
+            <td>dsName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dsType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dsURL</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>accessType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>authType</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>basicAuthUsername</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>basicAuthPassword</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>scrapeInterval</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>queryTimeout</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>httpMethod</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          </table>
+           <h6>Example Body:</h6>
+          {<br/>
+          <p style="margin-left: 40px">
+              <b>"dsID"</b>: "sample data source", <br/>
+              <b>"dsName"</b>: "sample data source", <br/>
+              <b>"dsType"</b>: "Prometheus",<br/>
+              <b>"accessType"</b>: "Server (Default)",<br/>
+              <b>"authType"</b>: "no auth",<br/>
+              <b>"basicAuthPassword"</b>: "",<br/>
+              <b>"basicAuthUsername"</b>: "",<br/>
+              <b>"dsURL"</b>: "https://demo.com:9090",<br/>
+              <b>"httpMethod"</b>: "POST",<br/>
+              <b>"projectID"</b>: "4c3d0513-5988-446e-8ce5-1a4c6fb274f3",<br/>
+              <b>"queryTimeout"</b>: "30",<br/>
+              <b>"scrapeInterval"</b>: "15",<br/>
+          </p>
+          }
+      - name: Update Dashboard
+        query: mutation.updateDashboard
+        description: |
+          This mutation is used to update a dashboard's information and details.
+           <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>dbID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>dsID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+           <tr>
+            <td>dbName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>dbTypeName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>dbTypeID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>dbInformation</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>chaosEventQueryTemplate</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>chaosVerdictQueryTemplate</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>namespace</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>kind</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>names</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>  
+          <tr>
+            <td>yAxisLeft</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>yAxisRight</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>xAxisDown</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>unit</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelGroupID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>createdAt</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>queryID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>promQueryName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>legend</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>resolution</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>minstep</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>line</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>closeArea</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>points</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>grIDs</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>leftAxis</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>panelGroupName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr>
+          <tr>
+            <td>endTime</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>startTime</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>clusterID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>refreshRate</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          <tr>
+            <td>chaosQueryUpdate</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>
+          </table>
+      - name: Update Panel
+        query: mutation.updatePanel
+        description: |
+          This mutation is used to update prometheus queries and panel details for selected panels.
+          <table>
+          <tr>
+            <td>panelID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr>  
+          <tr>
+            <td>yAxisLeft</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>yAxisRight</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>xAxisDown</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>unit</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelGroupID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>createdAt</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>queryID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>promQueryName</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>legend</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>resolution</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>minstep</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>line</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>closeArea</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>points</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>grIDs</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>leftAxis</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          <tr>
+            <td>panelName</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
+      - name: Delete Dashboard
+        query: mutation.deleteDashboard
+        description: |
+          This mutation is used to delete a dashboard from a project.
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+          <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dbID</td>
+            <td>-</td>
+            <td>Optional</td>
+          </tr> 
+          </table>
+      - name: Delete DataSource
+        query: mutation.deleteDataSource
+        description: |
+          Disconnect a data source from a project
+          <table>
+          <tr>
+            <th>Field</th>
+            <th>Possible values</th>
+            <th>Mandatory/Optional</th>
+          </tr>
+           <tr>
+            <td>projectID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>forceDelete</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          <tr>
+            <td>dsID</td>
+            <td>-</td>
+            <td>Mandatory</td>
+          </tr> 
+          </table>
