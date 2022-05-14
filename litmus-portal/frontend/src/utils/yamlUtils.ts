@@ -408,7 +408,7 @@ export const updateChaosExpCRDImage = (
 ) => {
   const chaosExpCRD = YAML.parse(chaosExp);
   if (
-    chaosExpCRD.kind.toLowerCase() === 'chaosexperiment' &&
+    chaosExpCRD?.kind.toLowerCase() === 'chaosexperiment' &&
     chaosExpCRD?.spec &&
     chaosExpCRD?.spec?.definition
   ) {
