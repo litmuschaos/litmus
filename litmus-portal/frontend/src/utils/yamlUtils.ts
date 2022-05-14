@@ -407,7 +407,11 @@ export const updateChaosExpCRDImage = (
   registryData: ImageRegistryInfo
 ) => {
   const chaosExpCRD = YAML.parse(chaosExp);
-  if (chaosExpCRD.spec && chaosExpCRD.spec.definition) {
+  if (
+    chaosExpCRD.kind.toLowerCase() === 'chaosexperiment' &&
+    chaosExpCRD?.spec &&
+    chaosExpCRD?.spec?.definition
+  ) {
     const chaosExpDef = chaosExpCRD.spec.definition;
     if (registryData.update_registry) {
       if (!registryData.is_default) {
