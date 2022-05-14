@@ -182,7 +182,7 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
                 : [];
               /* eslint-disable no-loop-func */
               weightageMap.forEach((weightage) => {
-                if (weightage.experimentName === node.name) {
+                if (chaosData.engineName.includes(weightage.experimentName)) {
                   workflowTestsArray.push({
                     test_id: index,
                     test_name: node.name,
