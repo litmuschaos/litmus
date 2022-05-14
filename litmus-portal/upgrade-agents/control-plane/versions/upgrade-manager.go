@@ -41,7 +41,8 @@ func NewUpgradeManager(logger *zap.Logger, dbClient *mongo.Client) (*UpgradeMana
 		return nil, fmt.Errorf("failed to get previous version data from db, value=%v", config.Value)
 	}
 	if config.Value.(string) == currentVersion {
-		return nil, fmt.Errorf("previous version and current version are same")
+		logger.Info("Not upgrading agent plane since current version and desired version are same ")
+		return nil, nil
 	}
 
 	return &UpgradeManager{
@@ -82,8 +83,13 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 			VersionManager: nil,
 		},
 
-		// latest version no more upgrades available
 		"2.8.0": {
+			NextVersion:    "2.9.0",
+			VersionManager: nil,
+		},
+
+		// latest version no more upgrades available
+		"2.9.0": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},
@@ -93,9 +99,6 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 // verifyPath verifies whether the current upgrade from PreviousVersion to TargetVersion
 // is possible given the configured upgrade path
 func (m *UpgradeManager) verifyPath(upgradePath map[string]UpgradeExecutor) error {
-	if m.PreviousVersion == m.TargetVersion {
-		return fmt.Errorf("previous version and current version are same")
-	}
 
 	_, okP := upgradePath[m.PreviousVersion]
 	_, okT := upgradePath[m.TargetVersion]
