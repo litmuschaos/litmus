@@ -24,7 +24,8 @@ export DB_USER=admin
 export DB_PASSWORD=1234
 export VERSION=ci
 export HUB_BRANCH_NAME=v2.7.x
-export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]" 
+export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
+export LITMUS_CORE_VERSION="2.8.0"
 # Dependency Checks
 dir=($(pwd | tr "/" "\n"))
 count=${#dir[@]}

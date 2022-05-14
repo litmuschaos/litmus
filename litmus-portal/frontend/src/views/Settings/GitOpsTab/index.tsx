@@ -98,8 +98,8 @@ const GitOpsTab = () => {
     {
       onCompleted: (data) => {
         setSshKey({
-          privateKey: data.generaterSSHKey.privateKey,
-          publicKey: data.generaterSSHKey.publicKey,
+          privateKey: data.generateSSHKey.privateKey,
+          publicKey: data.generateSSHKey.publicKey,
         });
       },
     }
@@ -240,7 +240,7 @@ const GitOpsTab = () => {
       if (data?.getGitOpsDetails.enabled === false) {
         enableGitOps({
           variables: {
-            gitConfigResponse: {
+            config: {
               projectID,
               repoURL: gitHub.GitURL,
               branch: gitHub.GitBranch,
@@ -261,7 +261,7 @@ const GitOpsTab = () => {
       if (data?.getGitOpsDetails.enabled === true) {
         updateGitOps({
           variables: {
-            gitConfigResponse: {
+            config: {
               projectID,
               repoURL: gitHub.GitURL,
               branch: gitHub.GitBranch,
@@ -330,7 +330,7 @@ const GitOpsTab = () => {
                         onClick={() =>
                           disableGitOps({
                             variables: {
-                              data: projectID,
+                              projectID,
                             },
                           })
                         }

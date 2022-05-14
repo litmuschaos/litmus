@@ -69,6 +69,9 @@ const WorkflowTable = forwardRef(
     const imageRegistryData = useSelector(
       (state: RootState) => state.selectedImageRegistry
     );
+    const { version } = useSelector(
+      (state: RootState) => state.litmusCoreVersion
+    );
 
     /**
      * State variables to manage popover actions
@@ -172,7 +175,7 @@ const WorkflowTable = forwardRef(
         parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
           name: 'revert-chaos',
           container: {
-            image: 'litmuschaos/k8s:latest',
+            image: `litmuschaos/k8s:${version}`,
             command: ['sh', '-c'],
             args: [
               `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
@@ -211,7 +214,7 @@ const WorkflowTable = forwardRef(
         ] = {
           name: 'revert-chaos',
           container: {
-            image: 'litmuschaos/k8s:latest',
+            image: `litmuschaos/k8s:${version}`,
             command: ['sh', '-c'],
             args: [deleteEngines],
           },

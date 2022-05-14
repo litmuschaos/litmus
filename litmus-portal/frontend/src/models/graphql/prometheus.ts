@@ -123,7 +123,7 @@ export interface ViewDashboardInput {
 
 export interface metricDataForPanel {
   panelID: string;
-  PanelMetricsResponse: metricsPromResponse[];
+  panelMetricsResponse: metricsPromResponse[];
 }
 
 export interface metricDataForPanelGroup {

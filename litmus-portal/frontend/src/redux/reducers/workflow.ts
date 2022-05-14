@@ -1,4 +1,5 @@
 import {
+  LitmusCoreVersion,
   WorkflowAction,
   WorkflowActions,
   WorkflowData,
@@ -32,6 +33,10 @@ const init: WorkflowManifest = {
   isUploaded: false,
 };
 
+const coreVersion: LitmusCoreVersion = {
+  version: 'latest',
+};
+
 export const workflowData = createReducer<WorkflowData>(initialState, {
   [WorkflowActions.SET_WORKFLOW_DETAILS](
     state: WorkflowData,
@@ -52,6 +57,19 @@ export const workflowManifest = createReducer<WorkflowManifest>(init, {
     return {
       ...state,
       ...action.payload,
+    };
+  },
+});
+
+export const litmusCoreVersion = createReducer<LitmusCoreVersion>(coreVersion, {
+  [WorkflowActions.SET_LITMUS_CORE_VERSION](
+    state: LitmusCoreVersion,
+    action: WorkflowAction
+  ) {
+    const version = action.payload;
+    return {
+      ...state,
+      version,
     };
   },
 });

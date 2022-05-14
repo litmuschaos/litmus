@@ -204,7 +204,7 @@ const BrowseCluster: React.FC = () => {
 
   const deleteRow = (clid: string) => {
     deleteClusters({
-      variables: { projectID: getProjectID(), cluster_ids: [clid] },
+      variables: { projectID: getProjectID(), clusterIDs: [clid] },
     });
   };
 

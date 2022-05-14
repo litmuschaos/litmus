@@ -154,8 +154,8 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
     {
       onCompleted: (data) => {
         setSshKey({
-          privateKey: data.generaterSSHKey.privateKey,
-          publicKey: data.generaterSSHKey.publicKey,
+          privateKey: data.generateSSHKey.privateKey,
+          publicKey: data.generateSSHKey.publicKey,
         });
       },
     }
