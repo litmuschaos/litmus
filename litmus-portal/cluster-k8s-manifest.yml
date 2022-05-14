@@ -660,6 +660,8 @@ spec:
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
+            - name: LITMUS_CORE_VERSION
+              value: "2.8.0"
           ports:
             - containerPort: 8080
             - containerPort: 8000

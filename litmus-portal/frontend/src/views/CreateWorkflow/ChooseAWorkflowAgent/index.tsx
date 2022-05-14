@@ -170,6 +170,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
   // Rendering once to get the cluster data
   useEffect(() => {
     getCluster({ variables: { projectID: selectedProjectID } });
+    workflow.setLitmusCoreVersion();
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

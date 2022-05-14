@@ -402,6 +402,28 @@ export const updateManifestImage = (
   return YAML.stringify(parsedYaml);
 };
 
+export const updateChaosExpCRDImage = (
+  chaosExp: string,
+  registryData: ImageRegistryInfo
+) => {
+  const chaosExpCRD = YAML.parse(chaosExp);
+  if (chaosExpCRD.spec && chaosExpCRD.spec.definition) {
+    const chaosExpDef = chaosExpCRD.spec.definition;
+    if (registryData.update_registry) {
+      if (!registryData.is_default) {
+        const imageData = chaosExpDef.image.split('/');
+        const imageName = imageData[imageData.length - 1];
+        chaosExpDef.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
+      } else {
+        const imageData = chaosExpDef.image.split('/');
+        const imageName = imageData[imageData.length - 1];
+        chaosExpDef.image = `${constants.litmus}/${imageName}`;
+      }
+    }
+  }
+  return YAML.stringify(chaosExpCRD);
+};
+
 export const isCronWorkflow = (manifest: any): boolean => {
   if (manifest.kind.toLowerCase() === 'workflow') {
     return false;

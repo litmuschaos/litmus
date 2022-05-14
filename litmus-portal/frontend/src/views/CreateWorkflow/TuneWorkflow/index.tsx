@@ -39,6 +39,7 @@ import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
   fetchWorkflowNameFromManifest,
+  updateChaosExpCRDImage,
   updateEngineName,
   updateManifestImage,
   updateNamespace,
@@ -127,6 +128,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
   );
   const imageRegistryData = useSelector(
     (state: RootState) => state.selectedImageRegistry
+  );
+  const { version } = useSelector(
+    (state: RootState) => state.litmusCoreVersion
   );
   const { namespace } = useSelector((state: RootState) => state.workflowData);
 
@@ -264,7 +268,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           container: {
             args: [`${installAllExp}`],
             command: ['sh', '-c'],
-            image: 'litmuschaos/k8s:latest',
+            image: `litmuschaos/k8s:${version}`,
           },
         },
       ],
@@ -506,7 +510,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           `-file=/tmp/chaosengine-${ExpName}.yaml`,
           `-saveName=/tmp/engine-name`,
         ],
-        image: 'litmuschaos/litmus-checker:latest',
+        image: `litmuschaos/litmus-checker:${version}`,
       },
     };
     if (generatedYAML.kind === 'Workflow')
@@ -604,9 +608,15 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   useEffect(() => {
     if (engineData !== undefined && experimentData !== undefined) {
+      const experimentCRD = {
+        getYAMLData: updateChaosExpCRDImage(
+          experimentData.getYAMLData,
+          imageRegistryData
+        ),
+      };
       setExperiment({
         ChaosEngine: engineData,
-        Experiment: experimentData,
+        Experiment: experimentCRD,
       });
     }
   }, [engineDataLoading, experimentDataLoading]);
