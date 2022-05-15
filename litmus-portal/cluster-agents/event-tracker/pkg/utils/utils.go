@@ -326,7 +326,7 @@ func SendRequest(workflowID string) (string, error) {
 		return "", err
 	}
 
-	payload := `{"query": "mutation { gitopsNotifer(clusterInfo: { cluster_id: \"` + clusterID + `\", version: \"` + Version + `\", access_key: \"` + accessKey + `\"}, workflow_id: \"` + workflowID + `\")\n}"}`
+	payload := `{"query": "mutation { gitopsNotifier(clusterInfo: { clusterID: \"` + clusterID + `\", version: \"` + Version + `\", accessKey: \"` + accessKey + `\"}, workflowID: \"` + workflowID + `\")\n}"}`
 	req, err := http.NewRequest("POST", serverAddr, bytes.NewBuffer([]byte(payload)))
 	if err != nil {
 		return "", err
