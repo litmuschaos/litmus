@@ -47,19 +47,25 @@
                 <a href="#operation-create_chaos_workflow-post"> Create Chaos Workflow </a>
               </li>
               <li>
-                <a href="#operation-list_chaosworkflow_runs-post"> List ChaosWorkflow Runs </a>
+                <a href="#operation-list_chaos_workflow_runs-post"> List Chaos Workflow Runs </a>
               </li>
               <li>
                 <a href="#operation-list_chaos_workflow-post"> List Chaos Workflow </a>
               </li>
               <li>
-                <a href="#operation-re_run_chaos_workflow-post"> Re Run Chaos Workflow </a>
+                <a href="#operation-re-run_chaos_workflow-post"> Re-run Chaos Workflow </a>
               </li>
               <li>
-                <a href="#operation-update_chaosworkflow-post"> Update ChaosWorkflow </a>
+                <a href="#operation-update_chaos_workflow-post"> Update Chaos Workflow </a>
               </li>
               <li>
-                <a href="#operation-delete_chaosworkflow-post"> Delete ChaosWorkflow </a>
+                <a href="#operation-delete_chaos_workflow-post"> Delete Chaos Workflow </a>
+              </li>
+              <li>
+                <a href="#operation-sync_chaos_workflow-post"> Sync Chaos Workflow </a>
+              </li>
+              <li>
+                <a href="#operation-terminate_chaos_workflow-post"> Terminate Chaos Workflow </a>
               </li>
               <li>
                 <a href="#operation-save_template-post"> Save Template </a>
@@ -191,6 +197,13 @@
                 <a href="#operation-delete_datasource-post"> Delete DataSource </a>
               </li>
             </ul>
+          </section>
+          <section>
+            <a
+            href="https://litmuschaos.github.io/litmus/auth/v2.0.0/api.html"
+            target="_blank"
+            >Authentication</a
+          >
           </section>
           <h5>Schema Definitions</h5>
           <a href="#definition-ActionPayload"> ActionPayload </a>
@@ -331,7 +344,7 @@
           <div id="introduction" data-traverse-target="introduction">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>ChaosCenter provides console and UI experience for creating, scheduling, and monitoring chaos workflows.. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application.</p>
+                <p>ChaosCenter provides console and UI experience for creating, scheduling, and monitoring chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application.</p>
               </div>
               <div class="doc-examples">
                 <section>
@@ -1314,7 +1327,7 @@ http://localhost:8080/query
               </div>
             </div>
           </div>
-          <div id="operation-list_chaosworkflow_runs-post" class="operation panel" data-traverse-target="operation-list_chaosworkflow_runs-post">
+          <div id="operation-list_chaos_workflow_runs-post" class="operation panel" data-traverse-target="operation-list_chaos_workflow_runs-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1324,7 +1337,7 @@ http://localhost:8080/query
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">List ChaosWorkflow Runs</span>
+              <span class="operation-summary">List Chaos Workflow Runs</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -1674,7 +1687,7 @@ http://localhost:8080/query
               </div>
             </div>
           </div>
-          <div id="operation-re_run_chaos_workflow-post" class="operation panel" data-traverse-target="operation-re_run_chaos_workflow-post">
+          <div id="operation-re-run_chaos_workflow-post" class="operation panel" data-traverse-target="operation-re-run_chaos_workflow-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1684,7 +1697,7 @@ http://localhost:8080/query
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Re Run Chaos Workflow</span>
+              <span class="operation-summary">Re-run Chaos Workflow</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -1818,7 +1831,7 @@ http://localhost:8080/query
               </div>
             </div>
           </div>
-          <div id="operation-update_chaosworkflow-post" class="operation panel" data-traverse-target="operation-update_chaosworkflow-post">
+          <div id="operation-update_chaos_workflow-post" class="operation panel" data-traverse-target="operation-update_chaos_workflow-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -1828,7 +1841,7 @@ http://localhost:8080/query
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Update ChaosWorkflow</span>
+              <span class="operation-summary">Update Chaos Workflow</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -2006,7 +2019,7 @@ http://localhost:8080/query
               </div>
             </div>
           </div>
-          <div id="operation-delete_chaosworkflow-post" class="operation panel" data-traverse-target="operation-delete_chaosworkflow-post">
+          <div id="operation-delete_chaos_workflow-post" class="operation panel" data-traverse-target="operation-delete_chaos_workflow-post">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -2016,7 +2029,7 @@ http://localhost:8080/query
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Delete ChaosWorkflow</span>
+              <span class="operation-summary">Delete Chaos Workflow</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -2159,6 +2172,328 @@ http://localhost:8080/query
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;data&quot;</span>: {
     <span class="hljs-attr">&quot;deleteChaosWorkflow&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-sync_chaos_workflow-post" class="operation panel" data-traverse-target="operation-sync_chaos_workflow-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Chaos-Workflow">Chaos Workflow</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Sync Chaos Workflow</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to sync a Chaos Workflow with the connected agent.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>projectID</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflowID</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflowRunID</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">projectID:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">workflowID:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">workflowRunID:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> syncWorkflowRun<span class="hljs-tag">(<span class="hljs-code">$projectID</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$workflowID</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$workflowRunID</span>:<span class="hljs-type"> String!</span>)</span><span class="hljs-tag">{
+  <span class="hljs-symbol">syncWorkflowRun<span class="hljs-tag">(projectID: <span class="hljs-code">$projectID</span>, workflowID: <span class="hljs-code">$workflowID</span>, workflowRunID: <span class="hljs-code">$workflowRunID</span>)</span></span>
+}</span></span>
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;projectID&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;workflowID&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;workflowRunID&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20syncWorkflowRun(%24projectID%3A%20String!%2C%20%24workflowID%3A%20String!%2C%20%24workflowRunID%3A%20String!)%7B%0A%20%20syncWorkflowRun(projectID%3A%20%24projectID%2C%20workflowID%3A%20%24workflowID%2C%20workflowRunID%3A%20%24workflowRunID)%0A%7D" target="_blank">Try it now</a>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">boolean</div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;syncWorkflowRun&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation-terminate_chaos_workflow-post" class="operation panel" data-traverse-target="operation-terminate_chaos_workflow-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Chaos-Workflow">Chaos Workflow</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Terminate Chaos Workflow</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This API is used to terminate a running Chaos Workflow.</p>
+                  <table>
+                    <tr>
+                      <th>Field</th>
+                      <th>Possible values</th>
+                      <th>Mandatory/Optional</th>
+                    </tr>
+                    <tr>
+                      <td>projectID</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflowID</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                    <tr>
+                      <td>workflowRunID</td>
+                      <td>-</td>
+                      <td>Mandatory</td>
+                    </tr>
+                  </table>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body"> </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">projectID:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">workflowID:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">workflowRunID:
+                        <span class="prop-type">
+                          <div class="json-property-type">string</div>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p class="no-description">(no description)</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h4>Example</h3>
+                    <h5>Request Content-Types:
+                      <span>application/json</span>
+                    </h5>
+                    <h5>Query</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-gql"><span class="hljs-symbol"><span class="hljs-keyword">mutation</span> terminateChaosWorkflow<span class="hljs-tag">(<span class="hljs-code">$projectID</span>:<span class="hljs-type"> String!</span>, <span class="hljs-code">$workflowID</span>:<span class="hljs-type"> String,</span> <span class="hljs-code">$workflowRunID</span>:<span class="hljs-type"> String)</span>{
+  terminateChaosWorkflow(projectID: <span class="hljs-code">$projectID</span>, workflowID: <span class="hljs-code">$workflowID</span>, workflowRunID: <span class="hljs-code">$workflowRunID</span>)</span></span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <h5>Variables</h5>
+                    <!-- <div class="hljs"> -->
+                    <html>
+                    <head></head>
+                    <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;projectID&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;workflowID&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;workflowRunID&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                    </html>
+                    <!-- </div> -->
+                    <a href="http://localhost:8080?query=mutation%20terminateChaosWorkflow(%24projectID%3A%20String!%2C%20%24workflowID%3A%20String%2C%20%24workflowRunID%3A%20String)%7B%0A%20%20terminateChaosWorkflow(projectID%3A%20%24projectID%2C%20workflowID%3A%20%24workflowID%2C%20workflowRunID%3A%20%24workflowRunID)%0A%7D" target="_blank">Try it now</a>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Successful operation</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <div class="json-property-type">boolean</div>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;data&quot;</span>: {
+    <span class="hljs-attr">&quot;terminateChaosWorkflow&quot;</span>: <span class="hljs-string">&quot;boolean&quot;</span>
   }
 }
 </code></pre> </body>
