@@ -393,3 +393,60 @@ input UpdateChaosHubRequest {
   """
   projectID: String!
 }
+
+
+extend type Query {
+  # CHAOS-HUB OPERATIONS
+  """
+  List the Charts details of a ChaosHub
+  """
+  listCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
+
+  """
+  Get the Experiment list from a ChaosHub
+  """
+  getHubExperiment(request: ExperimentRequest!): Chart! @authorized
+
+  """
+  List the status of all the connected ChaosHub
+  """
+  listHubStatus(projectID: String!): [ChaosHubStatus]! @authorized
+
+  """
+  Get the YAML manifest of ChaosEngine/ChaosExperiment
+  """
+  getYAMLData(request: ExperimentRequest!): String! @authorized
+}
+
+extend type Mutation {
+  # CHAOS-HUB OPERATIONS
+  """
+  Add a ChaosHub (includes the git clone operation)
+  """
+  addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Save a ChaosHub configuration without cloning it
+  """
+  saveChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Sync changes from the Git repository of a ChaosHub
+  """
+  syncChaosHub(id: ID!, projectID: String!): [ChaosHubStatus!]! @authorized
+
+  """
+  Generates Private and Public key for SSH authentication
+  """
+  generateSSHKey: SSHKey! @authorized
+
+  """
+  Update the configuration of a ChaosHub
+  """
+  updateChaosHub(request: UpdateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Delete the ChaosHub
+  """
+  deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
+}

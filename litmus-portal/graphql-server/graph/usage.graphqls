@@ -141,3 +141,11 @@ input UsageDataRequest {
   """
   searchProject: String
 }
+
+extend type Query {
+  # USAGE OPERATIONS
+  """
+  Returns the portal's usage overview
+  """
+  getUsageData(request: UsageDataRequest!): UsageDataResponse! @authorized
+}

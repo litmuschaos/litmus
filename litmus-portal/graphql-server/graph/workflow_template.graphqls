@@ -1,4 +1,3 @@
-
 """
 Details for a workflow template
 """
@@ -65,4 +64,34 @@ input TemplateInput {
     Bool value indicating whether the workflow is a custom workflow or not
     """
     isCustomWorkflow: Boolean!
+}
+
+extend type Query {
+    # WORKFLOW TEMPLATE OPERATIONS
+    """
+    Returns all the workflow templates for the projectID
+    """
+    listWorkflowManifests(projectID: String!): [WorkflowTemplate]! @authorized
+
+    """
+    Returns a single workflow templates given a projectID and a templateID
+    """
+    getWorkflowManifestByID(
+        projectID: String!
+        templateID: String!
+    ): WorkflowTemplate! @authorized
+}
+
+extend type Mutation {
+    # WORKFLOW TEMPLATE OPERATIONS
+    """
+    Creates a workflow template manifest
+    """
+    createWorkflowTemplate(request: TemplateInput): WorkflowTemplate! @authorized
+
+    """
+    Removes a workflow template manifest
+    """
+    deleteWorkflowTemplate(projectID: String!, templateID: String!): Boolean!
+    @authorized
 }
