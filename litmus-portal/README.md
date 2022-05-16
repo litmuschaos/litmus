@@ -22,10 +22,23 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 
 #### Applying k8s manifest
 
-> Litmus-2.8.0 (Stable) Cluster Scope manifest
+> Litmus-2.9.0 (Stable) Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/mkdocs/docs/2.8.0/litmus-2.8.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.9.0/mkdocs/docs/2.9.0/litmus-2.9.0.yaml
+```
+
+Or
+
+> Litmus-2.9.0 (Stable) Namespaced Scope manifest.
+
+```bash
+#Create a namespace eg: litmus
+kubectl create ns litmus
+#Install CRDs, if SELF_AGENT env is set to TRUE
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/2.9.0/litmus-portal-crds-2.9.0.yml
+#Install ChaosCenter
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/2.9.0/litmus-namespaced-2.9.0.yaml -n litmus
 ```
 
 Or
@@ -44,7 +57,7 @@ Or
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/litmus-portal/litmus-portal-crds.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/litmus-portal-crds.yml
 #Install ChaosCenter
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespace-k8s-manifest.yml -n litmus
 ```
@@ -77,13 +90,16 @@ minikube -n $LITMUS_PORTAL_NAMESPACE --url litmusportal-frontend-service
 
 Note: Default `username: admin` and `password: litmus`
 
-### **User Guide for Litmus Portal**
+### **User Guide for ChaosCenter**
 
-Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+ChaosCenter provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
 View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
-### **Upgrade from 2.7.0 to 2.8.0**
+### **Local Development Guide for ChaosCenter**
+Local Development Guide for ChaosCenter can be found <b>[here](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide)</b>
+
+### **Upgrade from 2.8.0 to 2.9.0**
 
 You can upgrade using the steps from [section here](https://docs.litmuschaos.io/docs/user-guides/upgrade)
 
