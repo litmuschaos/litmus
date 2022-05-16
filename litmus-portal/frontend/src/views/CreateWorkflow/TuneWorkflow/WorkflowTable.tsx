@@ -27,7 +27,10 @@ import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import parsed, { updateManifestImage } from '../../../utils/yamlUtils';
+import parsed, {
+  updateManifestImage,
+  extractEngineNames,
+} from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 const ConfigurationStepper = lazy(
@@ -94,7 +97,7 @@ const WorkflowTable = forwardRef(
     const addWeights = (manifest: string) => {
       const arr: experimentMap[] = [];
       const hashMap = new Map();
-      const tests = parsed(manifest);
+      const tests = extractEngineNames(manifest);
       tests.forEach((test) => {
         let value = 10;
         if (hashMap.has(test)) {

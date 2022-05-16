@@ -1,6 +1,7 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-expressions */
 import localforage from 'localforage';
 import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
@@ -470,4 +471,26 @@ export const validateExperimentNames = (manifest: any): boolean => {
     return false;
   }
   return true;
+};
+
+export const extractEngineNames = (manifest: string) => {
+  const engineNames: string[] = [];
+  const parsedManifest = YAML.parse(manifest);
+  if (parsedManifest.spec !== undefined) {
+    const yamlData =
+      parsedManifest.kind === constants.workflow
+        ? parsedManifest.spec
+        : parsedManifest.spec.workflowSpec;
+    yamlData.templates.forEach((template: any) => {
+      template?.inputs?.artifacts.forEach((artifact: any) => {
+        if (artifact?.raw?.data) {
+          const artifactManifest = YAML.parse(artifact.raw.data);
+          if (artifactManifest.kind === 'ChaosEngine') {
+            engineNames.push(artifactManifest.metadata.generateName);
+          }
+        }
+      });
+    });
+  }
+  return engineNames;
 };
