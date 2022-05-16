@@ -2898,7 +2898,7 @@
 <li>Support for Docker, Containerd &amp; CRI-O runtime</li>
 <li>Support for scheduling policies (nodeSelector, tolerations) and resource definitions for chaos pods</li>
 <li>Support for ARM64 nodes</li>
-<li>Scaffolding scripts (SDK) to help bootstrap a new chaos experiment in Go, Ansible</li>
+<li>Scaffolding scripts (SDK) to help bootstrap a new chaos experiment in Go, Python, Ansible</li>
 <li>Support orchestration of non-native chaos libraries via the BYOC (Bring-Your-Own-Chaos) model</li>
 <li>Support for OpenShift platform </li>
 <li>Integration tests &amp; e2e framework creation for control plane components and chaos experiments</li>
@@ -2909,13 +2909,21 @@
 <hr />
 <h3 id="in-progress-under-active-development">In-Progress (Under Active Development)<a class="headerlink" href="#in-progress-under-active-development" title="Permanent link">&para;</a></h3>
 <ul>
+<li>Support for all ChaosEngine schema elements within workflow wizard </li>
+<li>Workflow YAML linter addition</li>
+<li>Minimized role permissions for Chaos Service Accounts</li>
+<li>Chaos-center users account to chaosService account map</li>
+<li>Provide complete workflow termination/abort capability </li>
+<li>Cross-hub experiment support within a Chaos Workflow </li>
+<li>Helm Chart for Chaos Execution Plane</li>
+<li>Enhanced CRD schema for ChaosEngine to support advanced CommandProbe configuration</li>
+<li>Support for S3 artifact sink (helps performance/benchmark runs)</li>
+<li>ChaosHub refactor for 2.x user flow </li>
 <li>Chaos experiments against virtual machines and cloud infrastructure (AWS, GCP, Azure, VMWare, Baremetal)</li>
 <li>Improved documentation and tutorials for Litmus Portal based execution flow </li>
-<li>Scaffolding scripts (SDK) to bootstrap experiments in Python</li>
 <li>Off the shelf chaos-integrated monitoring dashboards for application chaos categories </li>
 <li>Support for user defined chaos experiment result definition </li>
 <li>Increased fault injection types (IOChaos, HTTPChaos, JVMChaos) </li>
-<li>Improved runtime validation of chaos dependencies via litmus admission controllers</li>
 <li>Special Interest Groups (SIGs) around specific areas in the project to take the roadmap forward</li>
 </ul>
 <hr />
