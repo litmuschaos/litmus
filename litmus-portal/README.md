@@ -77,11 +77,14 @@ minikube -n $LITMUS_PORTAL_NAMESPACE --url litmusportal-frontend-service
 
 Note: Default `username: admin` and `password: litmus`
 
-### **User Guide for Litmus Portal**
+### **User Guide for ChaosCenter**
 
-Litmus-Portal provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
+ChaosCenter provides console or UI experience for managing, monitoring, and events round chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
 View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
+
+### **Local Development Guide for ChaosCenter**
+Local Development Guide for ChaosCenter can be found <b>[here](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide)</b>
 
 ### **Upgrade from 2.8.0 to 2.9.0**
 
