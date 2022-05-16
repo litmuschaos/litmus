@@ -22,10 +22,10 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 
 #### Applying k8s manifest
 
-> Litmus-2.8.0 (Stable) Cluster Scope manifest
+> Litmus-2.9.0 (Stable) Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/mkdocs/docs/2.8.0/litmus-2.8.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.9.0/mkdocs/docs/2.9.0/litmus-2.9.0.yaml
 ```
 
 Or
@@ -44,7 +44,7 @@ Or
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/litmus-portal/litmus-portal-crds.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.9.0/litmus-portal/litmus-portal-crds.yml
 #Install ChaosCenter
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/namespace-k8s-manifest.yml -n litmus
 ```
@@ -83,7 +83,7 @@ Litmus-Portal provides console or UI experience for managing, monitoring, and ev
 
 View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
-### **Upgrade from 2.7.0 to 2.8.0**
+### **Upgrade from 2.8.0 to 2.9.0**
 
 You can upgrade using the steps from [section here](https://docs.litmuschaos.io/docs/user-guides/upgrade)
 
