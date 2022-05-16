@@ -166,7 +166,10 @@ const WorkflowRunTable: React.FC<WorkflowRunTableProps> = ({
     },
     onCompleted: (data) => {
       const workflowTestsArray: WorkFlowTests[] = [];
-      if (data?.listWorkflowRuns?.workflowRuns) {
+      if (
+        data?.listWorkflowRuns?.workflowRuns &&
+        data.listWorkflowRuns.workflowRuns[0]?.executionData
+      ) {
         const executionData: ExecutionData = JSON.parse(
           data.listWorkflowRuns.workflowRuns[0]?.executionData
         );
