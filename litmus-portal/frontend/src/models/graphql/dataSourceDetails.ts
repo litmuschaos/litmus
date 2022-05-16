@@ -40,7 +40,7 @@ export interface deleteDSInput {
 
 export interface DeleteDataSourceInput {
   projectID: string;
-  deleteDSInput: deleteDSInput;
+  input: deleteDSInput;
 }
 export interface ListDataSourceVars {
   projectID: string;

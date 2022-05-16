@@ -9,7 +9,7 @@ servers:
 info:
   title: ChaosCenter API Documentation
   description: |
-    ChaosCenter provides console and UI experience for creating, scheduling, and monitoring chaos workflows.. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application.
+    ChaosCenter provides console and UI experience for creating, scheduling, and monitoring chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application.
 domains:
   - name: Agents
     description: |
@@ -216,7 +216,7 @@ domains:
             </tr>
           </table>
 
-      - name: List ChaosWorkflow Runs
+      - name: List Chaos Workflow Runs
         query: query.listWorkflowRuns
         description: |
           This API returns a list of Chaos Workflows and their runs. This API can fetch both cron and non-cron workflow present in the ChaosCenter. false<br/>
@@ -294,7 +294,7 @@ domains:
               <td>Optional</td>
             </tr>
           </table>
-      - name: Re Run Chaos Workflow
+      - name: Re-run Chaos Workflow
         query: mutation.reRunChaosWorkFlow
         description: |
           This API is used to re-run a particular chaos workflow on the basis of <b>workflowID</b>
@@ -315,7 +315,7 @@ domains:
               <td>Mandatory</td>
             </tr>
           </table>
-      - name: Update ChaosWorkflow
+      - name: Update Chaos Workflow
         query: mutation.updateChaosWorkflow
         description: |
           Update the specified chaos workflow by setting the values of the parameters passed.
@@ -361,11 +361,63 @@ domains:
               <td>Mandatory</td>
             </tr>
           </table>
-      - name: Delete ChaosWorkflow
+      - name: Delete Chaos Workflow
         query: mutation.deleteChaosWorkflow
         description: |
           Delete chaos workflow will permanently delete scheduled workflow from the cluster. It cannot be undone.
           <b>Note:</b> User can access the details of deleted workflow inside MongoDB, which are being marked as removed.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>projectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflowID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflowRunID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+      - name: Sync Chaos Workflow
+        query: mutation.syncWorkflowRun
+        description: |
+          This API is used to sync a Chaos Workflow with the connected agent.
+          <table>
+            <tr>
+              <th>Field</th>
+              <th>Possible values</th>
+              <th>Mandatory/Optional</th>
+            </tr>
+            <tr>
+              <td>projectID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflowID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+            <tr>
+              <td>workflowRunID</td>
+              <td>-</td>
+              <td>Mandatory</td>
+            </tr>
+          </table>
+      - name: Terminate Chaos Workflow
+        query: mutation.terminateChaosWorkflow
+        description: |
+          This API is used to terminate a running Chaos Workflow.
           <table>
             <tr>
               <th>Field</th>

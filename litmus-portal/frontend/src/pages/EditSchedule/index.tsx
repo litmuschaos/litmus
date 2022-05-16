@@ -137,7 +137,7 @@ const EditSchedule: React.FC = () => {
       const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
 
       const chaosWorkFlowInputs = {
-        workflow_id: wfDetails?.workflowID,
+        workflowID: wfDetails?.workflowID,
         workflowManifest: yamlJson,
         cronSyntax,
         workflowName: fetchWorkflowNameFromManifest(manifest),
