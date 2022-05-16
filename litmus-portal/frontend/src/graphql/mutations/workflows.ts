@@ -32,12 +32,12 @@ export const RERUN_CHAOS_WORKFLOW = gql`
 `;
 
 export const SYNC_WORKFLOW = gql`
-  mutation syncWorkflow(
+  mutation syncWorkflowRun(
     $projectID: String!
     $workflowID: String!
     $workflowRunID: String!
   ) {
-    syncWorkflow(
+    syncWorkflowRun(
       projectID: $projectID
       workflowID: $workflowID
       workflowRunID: $workflowRunID

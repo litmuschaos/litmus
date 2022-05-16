@@ -40,11 +40,8 @@ export const UPDATE_DATASOURCE = gql`
 `;
 
 export const DELETE_DATASOURCE = gql`
-  mutation deleteDataSource(
-    $projectID: String!
-    $deleteDSInput: deleteDSInput!
-  ) {
-    deleteDataSource(projectID: $projectID, input: $deleteDSInput)
+  mutation deleteDataSource($projectID: String!, $input: DeleteDSInput!) {
+    deleteDataSource(projectID: $projectID, input: $input)
   }
 `;
 

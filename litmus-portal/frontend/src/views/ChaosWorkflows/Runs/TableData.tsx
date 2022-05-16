@@ -115,7 +115,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
    */
   const [syncWorkflow] = useMutation(SYNC_WORKFLOW, {
     onCompleted: (data) => {
-      if (data?.syncWorkflow) {
+      if (data?.syncWorkflowRun) {
         handleWarningPopOverClose();
         refetchQuery();
       }

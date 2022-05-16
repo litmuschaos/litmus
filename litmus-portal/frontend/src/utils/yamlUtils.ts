@@ -224,10 +224,32 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const extractEngineNames = (manifest: string) => {
+  const engineNames: string[] = [];
+  const parsedManifest = YAML.parse(manifest);
+  if (parsedManifest.spec !== undefined) {
+    const yamlData =
+      parsedManifest.kind === constants.workflow
+        ? parsedManifest.spec
+        : parsedManifest.spec.workflowSpec;
+    yamlData.templates?.forEach((template: any) => {
+      template?.inputs?.artifacts?.forEach((artifact: any) => {
+        if (artifact?.raw?.data) {
+          const artifactManifest = YAML.parse(artifact.raw.data);
+          if (artifactManifest.kind === 'ChaosEngine') {
+            engineNames.push(artifactManifest.metadata.generateName);
+          }
+        }
+      });
+    });
+  }
+  return engineNames;
+};
+
 export const addWeights = (manifest: string) => {
   const arr: experimentMap[] = [];
   const hashMap = new Map();
-  const tests = parsed(manifest);
+  const tests = extractEngineNames(manifest);
   if (tests.length) {
     tests.forEach((test) => {
       let value = 10;
@@ -446,7 +468,7 @@ export const validateExperimentNames = (manifest: any): boolean => {
       manifest.kind === constants.workflow
         ? manifest.spec
         : manifest.spec.workflowSpec;
-    yamlData.templates[0].steps.forEach((step: any) => {
+    yamlData.templates[0]?.steps?.forEach((step: any) => {
       step.forEach((values: any) => {
         // if exp name exists append the count
         if (value[`${values.name}`]) {
@@ -471,26 +493,4 @@ export const validateExperimentNames = (manifest: any): boolean => {
     return false;
   }
   return true;
-};
-
-export const extractEngineNames = (manifest: string) => {
-  const engineNames: string[] = [];
-  const parsedManifest = YAML.parse(manifest);
-  if (parsedManifest.spec !== undefined) {
-    const yamlData =
-      parsedManifest.kind === constants.workflow
-        ? parsedManifest.spec
-        : parsedManifest.spec.workflowSpec;
-    yamlData.templates.forEach((template: any) => {
-      template?.inputs?.artifacts.forEach((artifact: any) => {
-        if (artifact?.raw?.data) {
-          const artifactManifest = YAML.parse(artifact.raw.data);
-          if (artifactManifest.kind === 'ChaosEngine') {
-            engineNames.push(artifactManifest.metadata.generateName);
-          }
-        }
-      });
-    });
-  }
-  return engineNames;
 };

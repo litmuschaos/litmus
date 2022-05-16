@@ -152,7 +152,7 @@ const ChooseWorkflowFromExisting: React.FC<ChooseWorkflowFromExistingProps> = ({
                             deleteTemplate({
                               variables: {
                                 projectID: getProjectID(),
-                                data: templateData.templateID,
+                                templateID: templateData.templateID,
                               },
                             });
                           }}

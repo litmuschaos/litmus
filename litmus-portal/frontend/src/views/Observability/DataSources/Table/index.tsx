@@ -492,7 +492,7 @@ const DataSourceTable: React.FC = () => {
                 deleteDataSource({
                   variables: {
                     projectID: getProjectID(),
-                    deleteDSInput: {
+                    input: {
                       dsID: forceDeleteVars.dsID,
                       forceDelete: true,
                     },
