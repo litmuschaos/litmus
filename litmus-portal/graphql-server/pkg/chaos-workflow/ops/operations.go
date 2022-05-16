@@ -286,10 +286,16 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (typ
 
 	for _, value := range execData.Nodes {
 		if value.Type == "ChaosEngine" {
+			experimentName := ""
 			if value.ChaosExp == nil {
 				continue
 			}
-			weight, ok := weightMap[value.ChaosExp.ExperimentName]
+			for expName, _ := range weightMap {
+				if strings.Contains(value.ChaosExp.EngineName, expName) {
+					experimentName = expName
+				}
+			}
+			weight, ok := weightMap[experimentName]
 			// probeSuccessPercentage will be included only if chaosData is present
 			if ok {
 				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
@@ -363,7 +369,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[s
 				if strings.ToLower(meta.Kind) == "chaosengine" {
 					var exprname string
 					if len(meta.Spec.Experiments) > 0 {
-						exprname = meta.Spec.Experiments[0].Name
+						exprname = meta.GenerateName
 						if len(exprname) == 0 {
 							return errors.New("empty chaos experiment name")
 						}
@@ -477,7 +483,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights m
 				if strings.ToLower(meta.Kind) == "chaosengine" {
 					var exprname string
 					if len(meta.Spec.Experiments) > 0 {
-						exprname = meta.Spec.Experiments[0].Name
+						exprname = meta.GenerateName
 						if len(exprname) == 0 {
 							return errors.New("empty chaos experiment name")
 						}
@@ -544,7 +550,7 @@ func processChaosengineManifest(workflow *model.ChaosWorkFlowRequest, weights ma
 	if len(workflowManifest.Spec.Experiments) == 0 {
 		return errors.New("no experiments specified in chaosengine - " + workflowManifest.Name)
 	}
-	exprname := workflowManifest.Spec.Experiments[0].Name
+	exprname := workflowManifest.GenerateName
 	if len(exprname) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
@@ -600,7 +606,7 @@ func processChaosScheduleManifest(workflow *model.ChaosWorkFlowRequest, weights 
 	if len(workflowManifest.Spec.EngineTemplateSpec.Experiments) == 0 {
 		return errors.New("no experiments specified in chaosengine - " + workflowManifest.Name)
 	}
-	exprname := workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Name
+	exprname := workflowManifest.GenerateName
 	if len(exprname) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
