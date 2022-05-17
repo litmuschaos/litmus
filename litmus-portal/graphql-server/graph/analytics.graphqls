@@ -324,6 +324,7 @@ type WorkflowRunsData {
 type HeatmapDataResponse {
   bins: [WorkflowRunsData]!
 }
+
 input WorkflowRunStatsRequest {
   projectID: ID!
   workflowIDs: [ID]
@@ -350,4 +351,129 @@ type WorkflowRunStatsResponse {
 type PortalDashboardDataResponse {
   name: String!
   dashboardData: String!
+}
+
+
+extend type Mutation {
+  # ANALYTICS OPERATIONS
+  """
+  Creates a new datasource
+  """
+  createDataSource(datasource: DSInput): DSResponse @authorized
+
+  """
+  Creates a new analytics dashboard
+  """
+  createDashBoard(dashboard: CreateDBInput): ListDashboardResponse! @authorized
+
+  """
+  Updates a datasource
+  """
+  updateDataSource(datasource: DSInput!): DSResponse! @authorized
+
+  """
+  Updates a dashboard
+  """
+  updateDashboard(
+    projectID: String!
+    dashboard: UpdateDBInput!
+    chaosQueryUpdate: Boolean!
+  ): String! @authorized
+
+  """
+  Updates a dashboard panel
+  """
+  updatePanel(panelInput: [Panel]): String! @authorized
+
+  """
+  Deletes a dashboard
+  """
+  deleteDashboard(projectID: String!, dbID: String): Boolean! @authorized
+
+  """
+  Deletes a datasource
+  """
+  deleteDataSource(projectID: String!, input: DeleteDSInput!): Boolean!
+  @authorized
+}
+
+extend type Query {
+  # ANALYTICS OPERATIONS
+  """
+  Returns the workflow run data for a particular workflow in heatmap bins format
+  """
+  listHeatmapData(
+    projectID: String!
+    workflowID: String!
+    year: Int!
+  ): [HeatmapDataResponse]! @authorized
+
+  """
+  Returns the workflow and runs data divided in time frequency (hourly/daily/monthly)
+  """
+  listWorkflowStats(
+    projectID: ID!
+    filter: TimeFrequency!
+    showWorkflowRuns: Boolean!
+  ): [WorkflowStatsResponse]! @authorized
+
+  """
+  Returns metadata for multiple workflowIDs
+  """
+  getWorkflowRunStats(
+    workflowRunStatsRequest: WorkflowRunStatsRequest!
+  ): WorkflowRunStatsResponse! @authorized
+
+  """
+  Returns all the data sources for the projectID
+  """
+  listDataSource(projectID: String!): [DSResponse]! @authorized
+
+  """
+  Takes prometheus queries and returns response for annotations and metrics with a query map
+  """
+  getPrometheusData(request: PrometheusDataRequest): PrometheusDataResponse!
+  @authorized
+
+  """
+  Return the prometheus labels and values for a given input
+  """
+  getPromLabelNamesAndValues(request: PromSeriesInput): PromSeriesResponse!
+  @authorized
+
+  """
+  Return a list of all the prometheus series
+  """
+  getPromSeriesList(request: DsDetails): PromSeriesListResponse! @authorized
+
+  """
+  Returns a list of all the dashboards given an input
+  """
+  listDashboard(
+    projectID: String!
+    clusterID: String
+    dbID: String
+  ): [ListDashboardResponse] @authorized
+
+  """
+  Returns the portal dashboard data from the ChaosHub
+  """
+  listPortalDashboardData(
+    projectID: String!
+    hubName: String!
+  ): [PortalDashboardDataResponse!]! @authorized
+}
+
+extend type Subscription {
+  # ANALYTICS OPERATIONS
+  """
+  Takes a dashboard view id, prometheus queries, dashboard query map
+  and data variables to query prometheus and send data periodically to the subscribed client
+  """
+  viewDashboard(
+    dashboardID: String
+    promQueries: [PromQueryInput!]!
+    dashboardQueryMap: [QueryMapForPanelGroup!]!
+    dataVariables: DataVars!
+  ): DashboardPromResponse! @authorized
 }

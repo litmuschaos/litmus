@@ -217,3 +217,93 @@ type RegisterClusterResponse {
     """
     clusterName: String!
 }
+
+
+extend type Query {
+    # CLUSTER OPERATIONS
+    """
+    Returns clusters with a particular cluster type in the project
+    """
+    listClusters(projectID: String!, clusterType: String): [Cluster!]! @authorized
+
+    """
+    Query to fetch agent details based on projectID and agentName
+    """
+    getAgentDetails(clusterID: String!, projectID: String!): Cluster! @authorized
+
+    # MANIFEST OPERATIONS
+    """
+    Returns the manifest given projectID, clusterID and accessKey
+    """
+    getManifest(
+        projectID: String!
+        clusterID: String!
+        accessKey: String!
+    ): String! @authorized
+}
+
+extend type Mutation {
+    # CLUSTER OPERATIONS
+    """
+    Registers a new cluster for a user in a specified project
+    """
+    registerCluster(request: RegisterClusterRequest!): RegisterClusterResponse!
+    @authorized
+
+    """
+    Confirms the subscriber's registration with the control plane
+    """
+    # authorized directive not required
+    confirmClusterRegistration(
+        request: ClusterIdentity!
+    ): ConfirmClusterRegistrationResponse!
+
+    """
+    Sends cluster related events to the subscriber
+    """
+    # authorized directive not required
+    newClusterEvent(request: NewClusterEventRequest!): String!
+
+    """
+    Disconnects a cluster/agent and deletes its agent configuration from the control plane
+    """
+    deleteClusters(projectID: String!, clusterIDs: [String]!): String! @authorized
+
+    """
+    Receives pod logs for experiments from agent
+    """
+    # authorized directive not required
+    podLog(request: PodLog!): String!
+
+    """
+    Receives kubernetes object data from subscriber
+    """
+    # authorized directive not required
+    kubeObj(request: KubeObjectData!): String!
+}
+
+extend type Subscription {
+    # CLUSTER OPERATIONS
+    """
+    Listens cluster events from the graphql server
+    """
+    getClusterEvents(projectID: String!): ClusterEventResponse! @authorized
+
+    """
+    Listens cluster operation request from the graphql server
+    """
+    # authorized directive not required
+    clusterConnect(clusterInfo: ClusterIdentity!): ClusterActionResponse!
+
+    """
+    Returns experiment logs from the pods
+    """
+    getPodLog(request: PodLogRequest!): PodLogResponse! @authorized
+
+    # K8S OPERATIONS
+    """
+    Returns a kubernetes object given an input
+    """
+    getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
+}

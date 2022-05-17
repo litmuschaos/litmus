@@ -99,3 +99,39 @@ type ImageRegistryResponse {
   """
   isRemoved: Boolean
 }
+
+extend type Query {
+  # IMAGE REGISTRY OPERATIONS
+  listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
+
+  getImageRegistry(
+    imageRegistryID: String!
+    projectID: String!
+  ): ImageRegistryResponse! @authorized
+}
+
+extend type Mutation {
+  # IMAGE REGISTRY OPERATIONS
+  """
+  Create an Image Registry configuration
+  """
+  createImageRegistry(
+    projectID: String!
+    imageRegistryInfo: ImageRegistryInput!
+  ): ImageRegistryResponse! @authorized
+
+  """
+  Update the Image Registry configuration
+  """
+  updateImageRegistry(
+    imageRegistryID: String!
+    projectID: String!
+    imageRegistryInfo: ImageRegistryInput!
+  ): ImageRegistryResponse! @authorized
+
+  """
+  Delete the Image Registry
+  """
+  deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
+  @authorized
+}
