@@ -67,7 +67,7 @@ root@demo> eksctl create iamserviceaccount \
     --cluster <cluster_name> \
     --attach-policy-arn <IAM_policy_ARN> \
     --approve \
-    --override-existing-serviceaccont
+    --override-existing-serviceaccounts
 ```
 
 #### Step 3: Associate an IAM role with a service account
