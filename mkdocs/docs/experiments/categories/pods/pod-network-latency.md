@@ -150,7 +150,7 @@
         <td> JITTER </td>
         <td> The network jitter value in ms </td>
         <td> Default 0, provide numeric value only </td>
-      </tr>
+      </tr> 
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
