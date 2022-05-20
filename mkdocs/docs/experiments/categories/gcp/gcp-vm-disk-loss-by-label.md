@@ -87,10 +87,6 @@
           - apiGroups: [""]
             resources: ["pods/log"]
             verbs: ["get","list","watch"]  
-          # for creating and managing to execute comands inside target container
-          - apiGroups: [""]
-            resources: ["pods/exec"]
-            verbs: ["get","list","create"]
           # for configuring and monitor the experiment job by the chaos-runner pod
           - apiGroups: ["batch"]
             resources: ["jobs"]
