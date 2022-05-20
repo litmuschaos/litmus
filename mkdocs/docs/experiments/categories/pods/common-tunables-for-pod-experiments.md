@@ -182,7 +182,7 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/default-app-health-check.yaml yaml)
 ```yaml
-## node label to filter target pods
+## application status check as tunable
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -200,6 +200,6 @@ spec:
     spec:
       components:
         env:
-        - name: NODE_LABEL
-          value: 'kubernetes.io/hostname=worker-01'
+        - name: DEFAULT_APP_HEALTH_CHECK
+          value: 'false'
 ```
