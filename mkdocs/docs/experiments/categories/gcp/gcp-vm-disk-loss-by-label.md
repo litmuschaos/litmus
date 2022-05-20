@@ -3,7 +3,7 @@
 - It causes chaos to disrupt state of GCP persistent disk volume filtered using a label by detaching it from its VM instance for a certain chaos duration.
 
 !!! tip "Scenario: detach the gcp disk"    
-    ![GCP VM Disk Loss By Label](../../images/gcp-vm-disk-loss-by-label.png)
+    ![GCP VM Disk Loss By Label](../../images/gcp-vm-disk.png)
 
 ## Uses
 
