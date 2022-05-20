@@ -17,7 +17,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>gcp-vm-instance-stop</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/experiment.yaml">here</a>
+    -  Ensure that the <code>gcp-vm-instance-stop-by-label</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop-by-label/experiment.yaml">here</a>
     - Ensure that you have sufficient GCP permissions to stop and start the GCP VM instances. 
     - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:
 
@@ -58,68 +58,68 @@
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-        name: gcp-vm-instance-stop-by-label-sa
-        namespace: default
-        labels:
+          name: gcp-vm-instance-stop-by-label-sa
+          namespace: default
+          labels:
             name: gcp-vm-instance-stop-by-label-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
         metadata:
-        name: gcp-vm-instance-stop-by-label-sa
-        labels:
+          name: gcp-vm-instance-stop-by-label-sa
+          labels:
             name: gcp-vm-instance-stop-by-label-sa
             app.kubernetes.io/part-of: litmus
         rules:
-        # Create and monitor the experiment & helper pods
-        - apiGroups: [""]
+          # Create and monitor the experiment & helper pods
+          - apiGroups: [""]
             resources: ["pods"]
             verbs: ["create","delete","get","list","patch","update", "deletecollection"]
-        # Performs CRUD operations on the events inside chaosengine and chaosresult
-        - apiGroups: [""]
+          # Performs CRUD operations on the events inside chaosengine and chaosresult
+          - apiGroups: [""]
             resources: ["events"]
             verbs: ["create","get","list","patch","update"]
-        # Fetch configmaps & secrets details and mount it to the experiment pod (if specified)
-        - apiGroups: [""]
+          # Fetch configmaps & secrets details and mount it to the experiment pod (if specified)
+          - apiGroups: [""]
             resources: ["secrets","configmaps"]
             verbs: ["get","list",]
-        # Track and get the runner, experiment, and helper pods log 
-        - apiGroups: [""]
+          # Track and get the runner, experiment, and helper pods log 
+          - apiGroups: [""]
             resources: ["pods/log"]
             verbs: ["get","list","watch"]  
-        # for creating and managing to execute comands inside target container
-        - apiGroups: [""]
+          # for creating and managing to execute comands inside target container
+          - apiGroups: [""]
             resources: ["pods/exec"]
             verbs: ["get","list","create"]
-        # for configuring and monitor the experiment job by the chaos-runner pod
-        - apiGroups: ["batch"]
+          # for configuring and monitor the experiment job by the chaos-runner pod
+          - apiGroups: ["batch"]
             resources: ["jobs"]
             verbs: ["create","list","get","delete","deletecollection"]
-        # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
-        - apiGroups: ["litmuschaos.io"]
+          # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+          - apiGroups: ["litmuschaos.io"]
             resources: ["chaosengines","chaosexperiments","chaosresults"]
             verbs: ["create","list","get","patch","update","delete"]
-        # for experiment to perform node status checks
-        - apiGroups: [""]
+          # for experiment to perform node status checks
+          - apiGroups: [""]
             resources: ["nodes"]
             verbs: ["get","list"]
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         metadata:
-        name: gcp-vm-instance-stop-by-label-sa
-        labels:
+          name: gcp-vm-instance-stop-by-label-sa
+          labels:
             name: gcp-vm-instance-stop-by-label-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: gcp-vm-instance-stop-by-label-sa
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: gcp-vm-instance-stop-by-label-sa
         subjects:
         - kind: ServiceAccount
-        name: gcp-vm-instance-stop-by-label-sa
-        namespace: default
+          name: gcp-vm-instance-stop-by-label-sa
+          namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
@@ -142,12 +142,12 @@
       <tr> 
         <td> INSTANCE_LABEL </td>
         <td> Name of target VM instances </td>
-        <td> Multiple instance names can be provided as instance1,instance2,... </td>
+        <td> The <code>INSTANCE_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>vm:target-vm</code> </td>
       </tr>
       <tr>
         <td> INSTANCE_ZONES </td>
         <td> The zones of the target VM instances </td>
-        <td> Zone for every instance name has to be provided as zone1,zone2,... in the same order of <code>VM_INSTANCE_NAMES</code> </td>
+        <td> Only one zone can be provided i.e. all target instances should lie in the same zone </td>
       </tr>
     </table>
     
