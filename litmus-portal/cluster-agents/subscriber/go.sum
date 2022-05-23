@@ -168,8 +168,8 @@ github.com/ardielle/ardielle-go v1.5.2/go.mod h1:I4hy1n795cUhaVt/ojz83SNVCYIGsAF
 github.com/ardielle/ardielle-tools v1.5.4/go.mod h1:oZN+JRMnqGiIhrzkRN9l26Cej9dEx4jeNG6A+AdkShk=
 github.com/argoproj-labs/argo-dataflow v0.0.107/go.mod h1:XQ+s9j5t/7R11Oi+P8dmbX9JRi+UdscGURxC457y6O8=
 github.com/argoproj/argo-events v1.4.0/go.mod h1:wI5A0U3Wj9ZvfPn3ioL18Dz29+7aibtlyU9pS0Ry+bg=
-github.com/argoproj/argo-workflows/v3 v3.2.9 h1:ErXHWP1Wi9sWatkEVAdBqK+c6vi83beWr+dOlxJjayY=
-github.com/argoproj/argo-workflows/v3 v3.2.9/go.mod h1:I4+VcUGDm7hsF+pDyrx9+DFD1pjzB+CJU1z+nZ7CpC4=
+github.com/argoproj/argo-workflows/v3 v3.2.11 h1:pJs2Rm/JtbTRrHQArqNXbl34b8AA00Ct+EvD2u1UShM=
+github.com/argoproj/argo-workflows/v3 v3.2.11/go.mod h1:I4+VcUGDm7hsF+pDyrx9+DFD1pjzB+CJU1z+nZ7CpC4=
 github.com/argoproj/pkg v0.9.0/go.mod h1:ra+bQPmbVAoEL+gYSKesuigt4m49i3Qa3mE/xQcjCiA=
 github.com/argoproj/pkg v0.11.0/go.mod h1:ra+bQPmbVAoEL+gYSKesuigt4m49i3Qa3mE/xQcjCiA=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
