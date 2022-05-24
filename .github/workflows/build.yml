@@ -4,9 +4,6 @@ on:
     branches:
       - master
       - v*
-    paths-ignore:
-      - '**/*.md'
-    
 
 env:
   DOCKER_BUILDKIT: 1 # Enable Docker_buildkit in all build jobs
