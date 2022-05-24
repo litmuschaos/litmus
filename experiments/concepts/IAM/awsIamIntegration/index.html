@@ -2957,7 +2957,7 @@
     --cluster &lt;cluster_name&gt; <span class="se">\</span>
     --attach-policy-arn &lt;IAM_policy_ARN&gt; <span class="se">\</span>
     --approve <span class="se">\</span>
-    --override-existing-serviceaccont
+    --override-existing-serviceaccounts
 </code></pre></div>
 <h4 id="step-3-associate-an-iam-role-with-a-service-account">Step 3: Associate an IAM role with a service account<a class="headerlink" href="#step-3-associate-an-iam-role-with-a-service-account" title="Permanent link">&para;</a></h4>
 <p>Complete this task for each Kubernetes service account that needs access to AWS resources. We can do this by defining the IAM role to associate with a service account in your cluster by adding the following annotation to the service account.</p>
