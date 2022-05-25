@@ -99,6 +99,7 @@ nav:
             - Pod Network Latency: experiments/categories/pods/pod-network-latency.md
             - Pod Network Loss: experiments/categories/pods/pod-network-loss.md
             - Pod Network Partition: experiments/categories/pods/pod-network-partition.md
+            - Pod HTTP Latency: experiments/categories/pods/pod-http-latency.md
           - Node Chaos:
             - Docker Service Kill: experiments/categories/nodes/docker-service-kill.md
             - Kubelet Service Kill: experiments/categories/nodes/kubelet-service-kill.md
