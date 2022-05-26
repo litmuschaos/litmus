@@ -656,6 +656,8 @@ spec:
               value: ""
             - name: SELF_AGENT_TOLERATIONS
               value: ""
+            - name: CHAOS_CENTER_UI_ENDPOINT
+              value: ""
             - name: INGRESS
               value: "false"
             - name: INGRESS_NAME

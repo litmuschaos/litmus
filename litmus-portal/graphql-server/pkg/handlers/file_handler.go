@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"errors"
-	"log"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 
@@ -18,6 +18,13 @@ import (
 const (
 	clusterScope   string = "cluster"
 	namespaceScope string = "namespace"
+)
+
+var (
+	endpoint      = os.Getenv("CHAOS_CENTER_UI_ENDPOINT")
+	scope         = os.Getenv("PORTAL_SCOPE")
+	tlsCert       = os.Getenv("TLS_CERT_B64")
+	tlsSecretName = os.Getenv("TLS_SECRET_NAME")
 )
 
 var subscriberConfiguration = &types.SubscriberConfigurationVars{
@@ -44,7 +51,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	response, statusCode, err := GetManifest(token)
 	if err != nil {
-		log.Print("error: ", err)
+		logrus.Print("error: ", err)
 		utils.WriteHeaders(&w, statusCode)
 	}
 
@@ -53,45 +60,48 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetManifest(token string) ([]byte, int, error) {
-
-	id, err := cluster.ClusterValidateJWT(token)
+	clusterID, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
 		return nil, 404, err
 	}
 
-	reqCluster, err := dbOperationsCluster.GetCluster(id)
+	reqCluster, err := dbOperationsCluster.GetCluster(clusterID)
 	if err != nil {
 		return nil, 500, err
 	}
 
-	scope := os.Getenv("PORTAL_SCOPE")
-	if scope == clusterScope {
+	if scope == namespaceScope && endpoint == "" {
+		return nil, 500, errors.New("CHAOS_CENTER_UI_ENDPOINT env is empty for namespace scope installation")
+	}
+
+	if endpoint != "" {
+		subscriberConfiguration.GQLServerURI = endpoint + "/query"
+	} else if scope == clusterScope {
 		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, 500, err
 		}
-	} else if scope == namespaceScope {
-		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
-		subscriberConfiguration.TLSCert = os.Getenv("TLS_CERT_B64")
+
+		if tlsSecretName != "" {
+			subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
+			if err != nil {
+				return nil, 500, err
+			}
+		}
 	}
 
-	secretName := os.Getenv("TLS_SECRET_NAME")
-	if scope == clusterScope && secretName != "" {
-		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(secretName)
-		if err != nil {
-			return nil, 500, err
-		}
+	if scope == namespaceScope {
+		subscriberConfiguration.TLSCert = tlsCert
 	}
 
 	if !reqCluster.IsRegistered {
 		var respData []byte
-
 		if reqCluster.AgentScope == "cluster" {
 			respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
 		} else if reqCluster.AgentScope == "namespace" {
 			respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
 		} else {
-			log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+			logrus.Print("ERROR- AGENT_SCOPE env is empty!")
 		}
 		if err != nil {
 			return nil, 500, err
@@ -104,44 +114,48 @@ func GetManifest(token string) ([]byte, int, error) {
 }
 
 // GetManifestWithClusterID returns manifest for a given cluster
-func GetManifestWithClusterID(id string, key string) ([]byte, error) {
-
-	reqCluster, err := dbOperationsCluster.GetCluster(id)
+func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error) {
+	reqCluster, err := dbOperationsCluster.GetCluster(clusterID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Checking if cluster with given clusterID and accesskey is present
-	if reqCluster.AccessKey != key {
-		return nil, errors.New("Invalid access key")
+	if reqCluster.AccessKey != accessKey {
+		return nil, errors.New("Access Key is invalid")
 	}
-	scope := os.Getenv("PORTAL_SCOPE")
-	if scope == clusterScope {
+
+	if scope == namespaceScope && endpoint == "" {
+		return nil, errors.New("CHAOS_CENTER_UI_ENDPOINT env is empty for namespace scope installation")
+	}
+
+	if endpoint != "" {
+		subscriberConfiguration.GQLServerURI = endpoint + "/query"
+	} else if scope == clusterScope {
 		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
 		if err != nil {
 			return nil, err
 		}
-	} else if scope == namespaceScope {
-		subscriberConfiguration.GQLServerURI = os.Getenv("PORTAL_ENDPOINT") + "/query"
-		subscriberConfiguration.TLSCert = os.Getenv("TLS_CERT_B64")
-	}
 
-	secretName := os.Getenv("TLS_SECRET_NAME")
-	if scope == clusterScope && secretName != "" {
-		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(secretName)
-		if err != nil {
-			return nil, err
+		if tlsSecretName != "" {
+			subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	var respData []byte
+	if scope == namespaceScope {
+		subscriberConfiguration.TLSCert = tlsCert
+	}
 
+	var respData []byte
 	if reqCluster.AgentScope == clusterScope {
 		respData, err = utils.ManifestParser(reqCluster, "manifests/cluster", subscriberConfiguration)
 	} else if reqCluster.AgentScope == namespaceScope {
 		respData, err = utils.ManifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
 	} else {
-		log.Print("ERROR- AGENT SCOPE NOT SELECTED!")
+		logrus.Print("ERROR- AGENT_SCOPE env is empty!")
 	}
 	if err != nil {
 		return nil, err

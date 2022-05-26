@@ -236,15 +236,16 @@ func wrapIPV6(addr string) string {
 }
 
 func GetTLSCert(secretName string) (string, error) {
-	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return "", err
 	}
-	secret, err := clientset.CoreV1().Secrets(os.Getenv("LITMUS_PORTAL_NAMESPACE")).Get(ctx, secretName, metaV1.GetOptions{})
+
+	secret, err := clientset.CoreV1().Secrets(os.Getenv("LITMUS_PORTAL_NAMESPACE")).Get(context.Background(), secretName, metaV1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
+
 	if cert, ok := secret.Data["tls.crt"]; ok {
 		return base64.StdEncoding.EncodeToString(cert), nil
 	}
