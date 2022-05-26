@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"errors"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
