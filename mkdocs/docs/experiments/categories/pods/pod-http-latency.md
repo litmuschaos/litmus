@@ -3,8 +3,8 @@
 - It injects http request latency on the specified container by starting proxy server and then redirecting the traffic to the proxy server.
 - It can test the application's resilience to lossy/flaky http requests
 
-!!! tip "Scenario: Corrupt the network packets of target pod"    
-    ![Pod Network Corruption](../../images/network-chaos.png)
+!!! tip "Scenario: Add latency to the HTTP request"    
+    ![Pod HTTP Latency](../../images/pod-http.png)
 
 ## Uses
 
@@ -16,7 +16,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a> 
+    - Ensure that the <code>pod-http-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-latency/experiment.yaml">here</a> 
     
 ## Default Validations
 
@@ -30,25 +30,25 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-network-corruption/rbac.yaml yaml)
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-http-latency/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: pod-network-corruption-sa
+          name: pod-http-latency-sa
           namespace: default
           labels:
-            name: pod-network-corruption-sa
+            name: pod-http-latency-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: Role
         metadata:
-          name: pod-network-corruption-sa
+          name: pod-http-latency-sa
           namespace: default
           labels:
-            name: pod-network-corruption-sa
+            name: pod-http-latency-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -99,18 +99,18 @@
         apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
         metadata:
-          name: pod-network-corruption-sa
+          name: pod-http-latency-sa
           namespace: default
           labels:
-            name: pod-network-corruption-sa
+            name: pod-http-latency-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: Role
-          name: pod-network-corruption-sa
+          name: pod-http-latency-sa
         subjects:
         - kind: ServiceAccount
-          name: pod-network-corruption-sa
+          name: pod-http-latency-sa
           namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
@@ -163,7 +163,7 @@
       </tr>
       <tr>
         <td> TARGET_PODS </td>
-        <td> Comma separated list of application pod name subjected to pod network corruption chaos</td>
+        <td> Comma separated list of application pod name subjected to pod http latency chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
       </tr>    
       <tr>
