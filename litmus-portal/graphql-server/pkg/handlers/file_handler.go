@@ -22,7 +22,7 @@ const (
 
 var (
 	endpoint      = os.Getenv("CHAOS_CENTER_UI_ENDPOINT")
-	scope         = os.Getenv("PORTAL_SCOPE")
+	scope         = os.Getenv("CHAOS_CENTER_SCOPE")
 	tlsCert       = os.Getenv("TLS_CERT_B64")
 	tlsSecretName = os.Getenv("TLS_SECRET_NAME")
 )

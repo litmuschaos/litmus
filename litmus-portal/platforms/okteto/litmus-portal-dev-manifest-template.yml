@@ -575,7 +575,7 @@ spec:
               value: ${OKTETO_NAMESPACE}
             - name: SELF_CLUSTER
               value: "true"
-            - name: PORTAL_SCOPE
+            - name: CHAOS_CENTER_SCOPE
               value: "namespace"
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
