@@ -1,6 +1,6 @@
 ## Introduction
 
-- It causes chaos to disrupt state of GCP persistent disk volume filtered using a label by detaching it from its VM instance for a certain chaos duration.
+- It causes chaos to disrupt the state of GCP persistent disk volume filtered using a label by detaching it from its VM instance for a certain chaos duration.
 
 !!! tip "Scenario: detach the gcp disk"    
     ![GCP VM Disk Loss By Label](../../images/gcp-vm-disk-loss.png)
@@ -132,7 +132,7 @@
       </tr>
       <tr> 
         <td> DISK_VOLUME_LABEL </td>
-        <td> Target non-boot persistent disk volume label</td>
+        <td>Label of the targeted non-boot persistent disk volume</td>
         <td> The <code>DISK_VOLUME_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>disk:target-disk</code> </td>
       </tr>  
       <tr>
@@ -185,7 +185,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Detach Volumes By Label
 
-It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label `DISK_VOLUME_LABEL` in zone `DISK_ZONES` within the `GCP_PROJECT_ID` project.  It reattaches the disk volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
+It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label `DISK_VOLUME_LABEL` in zone `DISK_ZONES` within the `GCP_PROJECT_ID` project.  It re-attaches the disk volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 `NOTE:` The `DISK_VOLUME_LABEL` accepts only one label and `DISK_ZONES` also accepts only one zone name. Therefore, all the disks must lie in the same zone.
 

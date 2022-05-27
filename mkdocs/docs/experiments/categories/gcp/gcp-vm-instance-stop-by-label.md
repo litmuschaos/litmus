@@ -142,7 +142,7 @@
       </tr>
       <tr>
         <td> INSTANCE_ZONES </td>
-        <td> The zones of the target VM instances </td>
+        <td> The zone of the target VM instances </td>
         <td> Only one zone can be provided i.e. all target instances should lie in the same zone </td>
       </tr>
     </table>
