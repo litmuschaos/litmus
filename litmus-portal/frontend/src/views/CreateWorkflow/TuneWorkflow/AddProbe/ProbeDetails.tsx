@@ -345,6 +345,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             label={t(
               'createWorkflow.tuneWorkflow.addProbe.inputLabels.criteria'
             )}
+            required
             value={
               isEdit
                 ? httpMethod === 'get'
