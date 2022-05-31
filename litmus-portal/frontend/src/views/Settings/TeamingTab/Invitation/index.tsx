@@ -1,9 +1,12 @@
 import { Box, Paper, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import config from '../../../../config';
-// import { LIST_PROJECTS } from '../../../../graphql';
 import { Member, Project } from '../../../../models/graphql/user';
+import useActions from '../../../../redux/actions';
+import * as TabActions from '../../../../redux/actions/tabs';
+import { RootState } from '../../../../redux/reducers';
 import { getToken, getUserId } from '../../../../utils/auth';
 import AcceptedInvitations from './AcceptedInvitations';
 import ReceivedInvitations from './ReceivedInvitations';
@@ -51,7 +54,11 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
   const classes = useStyles();
   const theme = useTheme();
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = React.useState(0);
+  const tabs = useActions(TabActions);
+
+  const invitationTabValue = useSelector(
+    (state: RootState) => state.tabNumber.invitation
+  );
 
   const userID = getUserId();
 
@@ -99,10 +106,10 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
 
   useEffect(() => {
     fetchProjectData();
-  }, []);
+  }, [invitationTabValue]);
 
-  const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
-    setActiveTab(actTab);
+  const handleChange = (event: React.ChangeEvent<{}>, activeTab: number) => {
+    tabs.changeInvitationTabs(activeTab);
     fetchProjectData();
   };
 
@@ -110,7 +117,7 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
     <div>
       <Paper className={classes.root} elevation={0}>
         <Tabs
-          value={activeTab}
+          value={invitationTabValue}
           onChange={handleChange}
           TabIndicatorProps={{
             style: {
@@ -122,7 +129,9 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
             data-cy="activeTab"
             label={
               <span
-                className={activeTab === 0 ? classes.active : classes.inActive}
+                className={
+                  invitationTabValue === 0 ? classes.active : classes.inActive
+                }
               >
                 <span className={classes.invitationCount}>
                   {projectOtherCount}
@@ -136,7 +145,9 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
             data-cy="receivedTab"
             label={
               <span
-                className={activeTab === 1 ? classes.active : classes.inActive}
+                className={
+                  invitationTabValue === 1 ? classes.active : classes.inActive
+                }
               >
                 <span className={classes.invitationCount}>
                   {invitationsCount}
@@ -148,13 +159,13 @@ const Invitation: React.FC<InvitationProps> = ({ getProjectDetail }) => {
           />
         </Tabs>
       </Paper>
-      <TabPanel value={activeTab} index={0}>
+      <TabPanel value={invitationTabValue} index={0}>
         <AcceptedInvitations
           fetchData={fetchProjectData}
           getProjectDetail={getProjectDetail}
         />
       </TabPanel>
-      <TabPanel value={activeTab} index={1}>
+      <TabPanel value={invitationTabValue} index={1}>
         <ReceivedInvitations
           fetchData={fetchProjectData}
           getProjectDetail={getProjectDetail}
