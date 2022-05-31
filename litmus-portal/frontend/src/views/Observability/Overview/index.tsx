@@ -11,14 +11,14 @@ import { UnconfiguredAgent } from '../../../components/UnconfiguredAgent';
 import Center from '../../../containers/layouts/Center';
 import {
   GET_CLUSTER_LENGTH,
-  LIST_DASHBOARD_OVERVIEW,
-  LIST_DATASOURCE_OVERVIEW,
+  GET_DASHBOARD_OVERVIEW,
+  GET_DATASOURCE_OVERVIEW,
   WORKFLOW_DETAILS,
 } from '../../../graphql';
-import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
+import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
-  DashboardList,
-  ListDashboardVars,
+  GetDashboard,
+  GetDashboardRequest,
 } from '../../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
@@ -26,7 +26,7 @@ import {
 } from '../../../models/graphql/dataSourceDetails';
 import {
   Workflow,
-  WorkflowDataVars,
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -54,15 +54,15 @@ const Overview: React.FC = () => {
   // Query to check if agent is present or not
   const { data: agentList, loading: agentListLoading } = useQuery<
     Clusters,
-    ClusterVars
+    ClusterRequest
   >(GET_CLUSTER_LENGTH, {
-    variables: { project_id: getProjectID() },
+    variables: { projectID: getProjectID() },
     fetchPolicy: 'network-only',
   });
 
   // Set boolean to conditionally render agent setup banner
   if (agentList) {
-    isAgentPresent = agentList.getCluster.length > 0;
+    isAgentPresent = agentList.listClusters.length > 0;
   }
 
   // Check for data source being present or not
@@ -70,17 +70,17 @@ const Overview: React.FC = () => {
     data: dataSourceListData,
     loading: dataSourceListLoading,
     error: dataSourceListError,
-  } = useQuery<DataSourceList, ListDataSourceVars>(LIST_DATASOURCE_OVERVIEW, {
+  } = useQuery<DataSourceList, ListDataSourceVars>(GET_DATASOURCE_OVERVIEW, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
-      setDataSourceCount(data.ListDataSource.length);
+      setDataSourceCount(data.listDataSource.length);
     },
   });
 
   // Set boolean to conditionally render the banner
   if (dataSourceListData) {
-    dataSource = dataSourceListData.ListDataSource.length > 0;
+    dataSource = dataSourceListData.listDataSource.length > 0;
   }
 
   // Fetch data to display for the workflow statistics cards
@@ -88,10 +88,10 @@ const Overview: React.FC = () => {
     data: workflowData,
     loading: workflowLoading,
     error: workflowError,
-  } = useQuery<Workflow, WorkflowDataVars>(WORKFLOW_DETAILS, {
+  } = useQuery<Workflow, WorkflowDataRequest>(WORKFLOW_DETAILS, {
     variables: {
-      workflowRunsInput: {
-        project_id: projectID,
+      request: {
+        projectID,
         pagination: {
           page: 0,
           limit: 3,
@@ -103,7 +103,7 @@ const Overview: React.FC = () => {
 
   // Get count for workflowData length to render conditionally
   if (workflowData) {
-    WorkflowStatisticsCount = workflowData.getWorkflowRuns.workflow_runs.length;
+    WorkflowStatisticsCount = workflowData.listWorkflowRuns.workflowRuns.length;
   }
 
   // Fetch data to display for the monitoring dashboard cards
@@ -111,14 +111,14 @@ const Overview: React.FC = () => {
     data: dashboardListData,
     loading: dashboardListLoading,
     error: dashboardListError,
-  } = useQuery<DashboardList, ListDashboardVars>(LIST_DASHBOARD_OVERVIEW, {
+  } = useQuery<GetDashboard, GetDashboardRequest>(GET_DASHBOARD_OVERVIEW, {
     variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
 
   // Get count for dashboardListData length to render conditionally
   if (dashboardListData) {
-    monitoringDashboardCount = dashboardListData.ListDashboard?.length;
+    monitoringDashboardCount = dashboardListData.listDashboard?.length;
   }
 
   // Loader for confirmation of agent presence
@@ -193,10 +193,11 @@ const Overview: React.FC = () => {
   let filteredDashboardListData;
   // Select the latest 3 dashboards
   if (monitoringDashboardCount > 0) {
-    filteredDashboardListData = dashboardListData?.ListDashboard.slice()
+    filteredDashboardListData = dashboardListData?.listDashboard
+      .slice()
       .sort((a, b) => {
-        const x = b.viewed_at as unknown as number;
-        const y = a.viewed_at as unknown as number;
+        const x = b.viewedAt as unknown as number;
+        const y = a.viewedAt as unknown as number;
         return sortNumAsc(x, y);
       })
       .slice(0, 3);
@@ -287,10 +288,10 @@ const Overview: React.FC = () => {
               <Loader />
             </Center>
           ) : (
-            workflowData?.getWorkflowRuns.workflow_runs.map((workflow) => {
+            workflowData?.listWorkflowRuns.workflowRuns.map((workflow) => {
               return (
                 <WorkflowStatisticsCard
-                  key={workflow.workflow_id}
+                  key={workflow.workflowID}
                   data={workflow}
                 />
               );
@@ -339,7 +340,7 @@ const Overview: React.FC = () => {
             filteredDashboardListData?.map((dashboard) => {
               return (
                 <MonitoringDashboardCard
-                  key={dashboard.db_id}
+                  key={dashboard.dbID}
                   data={dashboard}
                 />
               );

@@ -279,7 +279,7 @@ metadata:
     name: subscriber-cr-for-litmusportal-server
 rules:
 - apiGroups: [""]
-  resources: [configmaps]
+  resources: [configmaps, secrets]
   verbs: [get, create, delete, update]
 - apiGroups: [""]
   resources: [pods/log]
@@ -326,7 +326,7 @@ rules:
   resources: [eventtrackerpolicies/status]
   verbs: [get, patch, update]
 - apiGroups: ["", extensions, apps]
-  resources: [deployments, daemonsets, statefulsets, pods, configmaps]
+  resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
   verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -432,6 +432,10 @@ metadata:
   namespace: litmus
 data:
   default.conf: |
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+    }
     server {
         listen       8080;
         server_name  localhost;
@@ -439,6 +443,7 @@ data:
         #access_log  /var/log/nginx/host.access.log  main;
 
         location / {
+            proxy_http_version 1.1;
             root   /usr/share/nginx/html;
             index  index.html index.htm;
             try_files $uri /index.html;
@@ -461,6 +466,7 @@ data:
         #}
 
         location /auth/ {
+            proxy_http_version 1.1;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -469,6 +475,7 @@ data:
         }
 
         location /api/ {
+            proxy_http_version 1.1;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -477,8 +484,9 @@ data:
         }
 
         location /ws/ {
+            proxy_http_version 1.1;
             proxy_set_header   Upgrade              $http_upgrade;
-            proxy_set_header   Connection           "Upgrade";
+            proxy_set_header   Connection           $connection_upgrade;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -631,11 +639,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.7.0"
+              value: "litmuschaos/chaos-operator:2.8.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.7.0"
+              value: "litmuschaos/chaos-runner:2.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.7.0"
+              value: "litmuschaos/chaos-exporter:2.8.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -655,11 +663,13 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.7.x"
+              value: "v2.8.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
+            - name: LITMUS_CORE_VERSION
+              value: "2.8.0"
           ports:
             - containerPort: 8080
             - containerPort: 8000

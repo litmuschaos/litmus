@@ -20,7 +20,7 @@ import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
 import { CREATE_WORKFLOW } from '../../../graphql';
 import {
-  CreateWorkFlowInput,
+  CreateWorkFlowRequest,
   CreateWorkflowResponse,
   WeightMap,
 } from '../../../models/graphql/createWorkflowData';
@@ -90,7 +90,7 @@ const VerifyCommit = forwardRef(
       (state: RootState) => state.workflowData
     );
 
-    const { clusterid, cronSyntax, clustername } = workflowData;
+    const { clusterID, cronSyntax, clusterName } = workflowData;
 
     const { manifest, isCustomWorkflow, isUploaded } = useSelector(
       (state: RootState) => state.workflowManifest
@@ -226,7 +226,7 @@ const VerifyCommit = forwardRef(
 
     // Create Workflow Mutation
     const [createChaosWorkFlow, { loading, error: workflowError }] =
-      useMutation<CreateWorkflowResponse, CreateWorkFlowInput>(
+      useMutation<CreateWorkflowResponse, CreateWorkFlowRequest>(
         CREATE_WORKFLOW,
         {
           onError: () => {
@@ -246,7 +246,7 @@ const VerifyCommit = forwardRef(
 
         weights.forEach((data) => {
           weightData.push({
-            experiment_name: data.experimentName,
+            experimentName: data.experimentName,
             weightage: data.weight,
           });
         });
@@ -261,17 +261,17 @@ const VerifyCommit = forwardRef(
         const yamlJson = JSON.stringify(updatedYaml, null, 2); // Converted to Stringified JSON
 
         const chaosWorkFlowInputs = {
-          workflow_manifest: yamlJson,
+          workflowManifest: yamlJson,
           cronSyntax,
-          workflow_name: fetchWorkflowNameFromManifest(manifest),
-          workflow_description: workflow.description,
+          workflowName: fetchWorkflowNameFromManifest(manifest),
+          workflowDescription: workflow.description,
           isCustomWorkflow,
           weightages: weightData,
-          project_id: getProjectID(),
-          cluster_id: clusterid,
+          projectID: getProjectID(),
+          clusterID,
         };
         createChaosWorkFlow({
-          variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
+          variables: { request: chaosWorkFlowInputs },
         });
       }
     };
@@ -415,7 +415,7 @@ const VerifyCommit = forwardRef(
                   </Typography>
 
                   <Typography className={classes.right}>
-                    {clustername}
+                    {clusterName}
                   </Typography>
                 </div>
                 <div className={classes.itemWrapper}>

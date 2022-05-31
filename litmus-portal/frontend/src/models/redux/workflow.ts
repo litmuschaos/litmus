@@ -30,9 +30,9 @@ export interface customWorkflow {
 export interface WorkflowData {
   chaosEngineChanged: boolean;
   namespace: string;
-  workflow_id?: string;
-  clusterid: string;
-  clustername: string;
+  workflowID?: string;
+  clusterID: string;
+  clusterName: string;
   cronSyntax: string;
   scheduleType: scheduleType;
   scheduleInput: scheduleInput;
@@ -45,10 +45,15 @@ export interface WorkflowManifest {
   isUploaded: boolean;
 }
 
+export interface LitmusCoreVersion {
+  version: string;
+}
+
 export enum WorkflowActions {
   SET_WORKFLOW_DETAILS = 'SET_WORKFLOW_DETAILS',
   SET_CUSTOM_WORKFLOW = 'SET_CUSTOM_WORKFLOW',
   SET_WORKFLOW_MANIFEST = 'SET_WORKFLOW_MANIFEST',
+  SET_LITMUS_CORE_VERSION = 'SET_LITMUS_CORE_VERSION',
 }
 
 interface WorkflowActionType<T, P> {
@@ -65,4 +70,8 @@ export type WorkflowAction =
   | WorkflowActionType<
       typeof WorkflowActions.SET_WORKFLOW_MANIFEST,
       WorkflowManifest
+    >
+  | WorkflowActionType<
+      typeof WorkflowActions.SET_LITMUS_CORE_VERSION,
+      LitmusCoreVersion
     >;

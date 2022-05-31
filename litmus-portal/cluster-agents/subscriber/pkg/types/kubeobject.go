@@ -6,19 +6,34 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
+type KubeObjRequest struct {
+	RequestID      string
+	ClusterID      string         `json:"clusterID"`
+	ObjectType     string         `json:"objectType"`
+	KubeGVRRequest KubeGVRRequest `json:"kubeObjRequest"`
+}
+
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
+}
+
+//KubeObject consists of all the namespaces and its related K8S object details
 type KubeObject struct {
 	Namespace string       `json:"namespace"`
 	Data      []ObjectData `json:"data"`
 }
 
+//ObjectData consists of Kubernetes Objects related details
 type ObjectData struct {
 	Name                    string            `json:"name"`
 	UID                     types.UID         `json:"uid"`
 	Namespace               string            `json:"namespace"`
-	APIVersion              string            `json:"api_version"`
-	CreationTimestamp       metav1.Time       `json:"creation_timestamp"`
+	APIVersion              string            `json:"apiVersion"`
+	CreationTimestamp       metav1.Time       `json:"creationTimestamp"`
 	Containers              []v1.Container    `json:"containers"`
-	TerminationGracePeriods *int64            `json:"termination_grace_periods"`
+	TerminationGracePeriods *int64            `json:"terminationGracePeriods"`
 	Volumes                 []v1.Volume       `json:"volumes"`
 	Labels                  map[string]string `json:"labels"`
 }

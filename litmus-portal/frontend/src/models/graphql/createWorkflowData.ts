@@ -1,32 +1,33 @@
 export interface WeightMap {
-  experiment_name: string;
+  experimentName: string;
   weightage: number;
 }
-export interface CreateWorkFlowInput {
-  ChaosWorkFlowInput: {
-    workflow_id?: string;
-    workflow_manifest: string;
+
+export interface CreateWorkFlowRequest {
+  request: {
+    workflowID?: string;
+    workflowManifest: string;
     cronSyntax: string;
-    workflow_name: string;
-    workflow_description: string;
+    workflowName: string;
+    workflowDescription: string;
     isCustomWorkflow: boolean;
     weightages: WeightMap[];
-    project_id: string;
-    cluster_id: string;
+    projectID: string;
+    clusterID: string;
   };
 }
 
 export interface UpdateWorkflowResponse {
-  workflow_id: string;
-  workflow_name: string;
-  workflow_description: string;
+  workflowID: string;
+  workflowName: string;
+  workflowDescription: string;
   isCustomWorkflow: string;
   cronSyntax: string;
 }
 
 export interface CreateWorkflowResponse {
-  cluster_id: string;
-  is_active: boolean;
+  clusterID: string;
+  isActive: boolean;
 }
 
 export interface GVRRequest {
@@ -36,28 +37,28 @@ export interface GVRRequest {
 }
 
 export interface KubeObjRequest {
-  data: {
-    cluster_id: string;
-    object_type: string;
-    kube_obj_request: GVRRequest;
+  request: {
+    clusterID: string;
+    objectType: string;
+    kubeObjRequest: GVRRequest;
   };
 }
 
 export interface KubeObjResponse {
   getKubeObject: {
-    cluster_id: string;
-    kube_obj: string;
+    clusterID: string;
+    kubeObj: string;
   };
 }
 
 export interface KubeObjResource {
-  api_version: string;
+  apiVersion: string;
   containers: object;
-  creation_timestamp: string;
+  creationTimestamp: string;
   labels: string;
   name: string;
   namespace: string;
-  termination_grace_periods: string;
+  terminationGracePeriods: string;
   uid: string;
   volumes: object;
 }

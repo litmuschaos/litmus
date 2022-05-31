@@ -33,7 +33,7 @@ import (
 )
 
 // ProcessWorkflow takes the workflow and processes it as required
-func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowInput, *dbSchemaWorkflow.ChaosWorkflowType, error) {
+func ProcessWorkflow(workflow *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowRequest, *dbSchemaWorkflow.ChaosWorkflowType, error) {
 	// security check for cluster access
 	cluster, err := dbOperationsCluster.GetCluster(workflow.ClusterID)
 	if err != nil {
@@ -112,7 +112,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowInput) (*model.ChaosWorkFlowIn
 }
 
 // ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
-func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
+func ProcessWorkflowCreation(input *model.ChaosWorkFlowRequest, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
 	var Weightages []*dbSchemaWorkflow.WeightagesInput
 	if input.Weightages != nil {
 		copier.Copy(&Weightages, &input.Weightages)
@@ -124,7 +124,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, username string, w
 		return err
 	}
 
-	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowInput{
+	newChaosWorkflow := dbSchemaWorkflow.ChaosWorkFlowRequest{
 		WorkflowID:          *input.WorkflowID,
 		WorkflowManifest:    input.WorkflowManifest,
 		CronSyntax:          input.CronSyntax,
@@ -157,7 +157,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowInput, username string, w
 }
 
 // ProcessWorkflowUpdate updates the workflow entry and sends update resource request to required agent
-func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
+func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowRequest, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
 	var Weightages []*dbSchemaWorkflow.WeightagesInput
 	if workflow.Weightages != nil {
 		copier.Copy(&Weightages, &workflow.Weightages)
@@ -178,7 +178,7 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowInput, username string, 
 }
 
 // ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
-func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInput, username string, r *store.StateData) error {
+func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error {
 
 	update := bson.D{{"$set", bson.D{{"isRemoved", true}, {"last_updated_by", username}}}}
 	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
@@ -187,7 +187,7 @@ func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInp
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID:        workflow.ProjectID,
 			ClusterID:        workflow.ClusterID,
 			WorkflowManifest: workflow.WorkflowManifest,
@@ -197,7 +197,7 @@ func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowInp
 }
 
 // ProcessWorkflowRunDelete deletes a workflow entry and updates the database
-func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, username string, r *store.StateData) error {
+func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error {
 	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
@@ -206,7 +206,7 @@ func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow work
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID: workflow.ProjectID,
 			ClusterID: workflow.ClusterID,
 		}, &username, workflowRunID, "workflow_delete", r)
@@ -214,7 +214,7 @@ func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow work
 	return nil
 }
 
-func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowInput, r *store.StateData) error {
+func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, r *store.StateData) error {
 	var extData chaos_workflow.WorkflowSyncExternalData
 	extData.WorkflowID = workflowID
 	extData.WorkflowRunID = *workflowRunID
@@ -226,7 +226,7 @@ func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow w
 
 	str := string(strB)
 	if r != nil {
-		SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID: workflow.ProjectID,
 			ClusterID: workflow.ClusterID,
 		}, nil, &str, "workflow_sync", r)
@@ -235,7 +235,7 @@ func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow w
 }
 
 // SendWorkflowToSubscriber sends the workflow to the subscriber to be handled
-func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowInput, username *string, externalData *string, reqType string, r *store.StateData) {
+func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, username *string, externalData *string, reqType string, r *store.StateData) {
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 
 	if workflowNamespace == "" {
@@ -286,10 +286,16 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (typ
 
 	for _, value := range execData.Nodes {
 		if value.Type == "ChaosEngine" {
+			experimentName := ""
 			if value.ChaosExp == nil {
 				continue
 			}
-			weight, ok := weightMap[value.ChaosExp.ExperimentName]
+			for expName, _ := range weightMap {
+				if strings.Contains(value.ChaosExp.EngineName, expName) {
+					experimentName = expName
+				}
+			}
+			weight, ok := weightMap[experimentName]
 			// probeSuccessPercentage will be included only if chaosData is present
 			if ok {
 				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
@@ -319,7 +325,7 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (typ
 	return result, nil
 }
 
-func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
+func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest v1alpha1.Workflow
@@ -363,7 +369,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 				if strings.ToLower(meta.Kind) == "chaosengine" {
 					var exprname string
 					if len(meta.Spec.Experiments) > 0 {
-						exprname = meta.Spec.Experiments[0].Name
+						exprname = meta.GenerateName
 						if len(exprname) == 0 {
 							return errors.New("empty chaos experiment name")
 						}
@@ -409,7 +415,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[str
 	return nil
 }
 
-func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
+func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
 	var (
 		newWeights           []*model.WeightagesInput
 		cronWorkflowManifest v1alpha1.CronWorkflow
@@ -477,7 +483,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 				if strings.ToLower(meta.Kind) == "chaosengine" {
 					var exprname string
 					if len(meta.Spec.Experiments) > 0 {
-						exprname = meta.Spec.Experiments[0].Name
+						exprname = meta.GenerateName
 						if len(exprname) == 0 {
 							return errors.New("empty chaos experiment name")
 						}
@@ -520,7 +526,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowInput, weights map
 	return nil
 }
 
-func processChaosengineManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
+func processChaosengineManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest chaosTypes.ChaosEngine
@@ -544,7 +550,7 @@ func processChaosengineManifest(workflow *model.ChaosWorkFlowInput, weights map[
 	if len(workflowManifest.Spec.Experiments) == 0 {
 		return errors.New("no experiments specified in chaosengine - " + workflowManifest.Name)
 	}
-	exprname := workflowManifest.Spec.Experiments[0].Name
+	exprname := workflowManifest.GenerateName
 	if len(exprname) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
@@ -576,7 +582,7 @@ func processChaosengineManifest(workflow *model.ChaosWorkFlowInput, weights map[
 	return nil
 }
 
-func processChaosScheduleManifest(workflow *model.ChaosWorkFlowInput, weights map[string]int) error {
+func processChaosScheduleManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest scheduleTypes.ChaosSchedule
@@ -600,7 +606,7 @@ func processChaosScheduleManifest(workflow *model.ChaosWorkFlowInput, weights ma
 	if len(workflowManifest.Spec.EngineTemplateSpec.Experiments) == 0 {
 		return errors.New("no experiments specified in chaosengine - " + workflowManifest.Name)
 	}
-	exprname := workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Name
+	exprname := workflowManifest.GenerateName
 	if len(exprname) == 0 {
 		return errors.New("empty chaos experiment name")
 	}

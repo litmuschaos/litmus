@@ -41,7 +41,7 @@ const MyHub: React.FC = () => {
 
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: projectID },
+    variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -83,7 +83,7 @@ const MyHub: React.FC = () => {
     refetchQueries: [
       {
         query: GET_HUB_STATUS,
-        variables: { data: projectID },
+        variables: { projectID },
       },
     ],
     onError: () => {
@@ -98,7 +98,7 @@ const MyHub: React.FC = () => {
     },
   });
 
-  const totalHubs = data && data.getHubStatus;
+  const totalHubs = data && data.listHubStatus;
 
   const [deleteHub, setDeleteHub] = useState<DeleteHub>({
     deleteHubModal: false,
@@ -108,7 +108,7 @@ const MyHub: React.FC = () => {
   const handleHubDelete = () => {
     deleteRepo({
       variables: {
-        hub_id: deleteHub.hubID,
+        hubID: deleteHub.hubID,
         projectID,
       },
     });

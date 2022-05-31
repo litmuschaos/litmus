@@ -2,11 +2,11 @@ package types
 
 import "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
 
-// events data
+// WorkflowEvent consists of workflow related data
 type WorkflowEvent struct {
-	WorkflowType      string          `json:"workflow_type"`
+	WorkflowType      string          `json:"workflowType"`
 	WorkflowID        string          `json:"-"`
-	EventType         string          `json:"event_type"`
+	EventType         string          `json:"eventType"`
 	UID               string          `json:"-"`
 	Namespace         string          `json:"namespace"`
 	Name              string          `json:"name"`
@@ -16,10 +16,10 @@ type WorkflowEvent struct {
 	StartedAt         string          `json:"startedAt"`
 	FinishedAt        string          `json:"finishedAt"`
 	Nodes             map[string]Node `json:"nodes"`
-	ExecutedBy        string          `json:"executed_by"`
+	ExecutedBy        string          `json:"executedBy"`
 }
 
-// each node/step data
+// Node consist of node/step data
 type Node struct {
 	Name       string     `json:"name"`
 	Phase      string     `json:"phase"`
@@ -31,7 +31,7 @@ type Node struct {
 	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
 }
 
-// chaos data
+// ChaosData consists of ChaosEngine related data
 type ChaosData struct {
 	EngineUID              string                `json:"engineUID"`
 	EngineContext          string                `json:"engineContext"`

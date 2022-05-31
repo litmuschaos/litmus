@@ -26,7 +26,7 @@ const WorkflowGraphs: React.FC = () => {
   >(GET_WORKFLOW_RUNS_STATS, {
     variables: {
       workflowRunStatsRequest: {
-        project_id: projectID,
+        projectID,
       },
     },
     fetchPolicy: 'cache-and-network',
@@ -34,17 +34,17 @@ const WorkflowGraphs: React.FC = () => {
 
   const graphData: RadialChartMetric[] = [
     {
-      value: data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
+      value: data?.getWorkflowRunStats.succeededWorkflowRuns ?? 0,
       label: 'Succeeded',
       baseColor: theme.palette.status.workflow.completed,
     },
     {
-      value: data?.getWorkflowRunStats.failed_workflow_runs ?? 0,
+      value: data?.getWorkflowRunStats.failedWorkflowRuns ?? 0,
       label: 'Failed',
       baseColor: theme.palette.status.workflow.failed,
     },
     {
-      value: data?.getWorkflowRunStats.running_workflow_runs ?? 0,
+      value: data?.getWorkflowRunStats.runningWorkflowRuns ?? 0,
       label: 'Running',
       baseColor: theme.palette.status.workflow.running,
     },
@@ -67,7 +67,7 @@ const WorkflowGraphs: React.FC = () => {
                 radialData={graphData}
                 legendTableHeight={140}
                 heading={
-                  data?.getWorkflowRunStats.total_workflow_runs !== 1
+                  data?.getWorkflowRunStats.totalWorkflowRuns !== 1
                     ? 'Runs'
                     : 'Run'
                 }

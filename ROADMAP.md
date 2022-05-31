@@ -19,7 +19,7 @@ This document captures only the high level roadmap items. For the detailed backl
 -   Support for Docker, Containerd & CRI-O runtime
 -   Support for scheduling policies (nodeSelector, tolerations) and resource definitions for chaos pods
 -   Support for ARM64 nodes
--   Scaffolding scripts (SDK) to help bootstrap a new chaos experiment in Go, Ansible
+-   Scaffolding scripts (SDK) to help bootstrap a new chaos experiment in Go, Python, Ansible
 -   Support orchestration of non-native chaos libraries via the BYOC (Bring-Your-Own-Chaos) model
 -   Support for OpenShift platform 
 -   Integration tests & e2e framework creation for control plane components and chaos experiments
@@ -31,13 +31,21 @@ This document captures only the high level roadmap items. For the detailed backl
 
 ### In-Progress (Under Active Development) 
 
+-   Support for all ChaosEngine schema elements within workflow wizard 
+-   Workflow YAML linter addition
+-   Minimized role permissions for Chaos Service Accounts
+-   Chaos-center users account to chaosService account map
+-   Provide complete workflow termination/abort capability 
+-   Cross-hub experiment support within a Chaos Workflow 
+-   Helm Chart for Chaos Execution Plane
+-   Enhanced CRD schema for ChaosEngine to support advanced CommandProbe configuration
+-   Support for S3 artifact sink (helps performance/benchmark runs)
+-   ChaosHub refactor for 2.x user flow 
 -   Chaos experiments against virtual machines and cloud infrastructure (AWS, GCP, Azure, VMWare, Baremetal)
 -   Improved documentation and tutorials for Litmus Portal based execution flow 
--   Scaffolding scripts (SDK) to bootstrap experiments in Python
 -   Off the shelf chaos-integrated monitoring dashboards for application chaos categories 
 -   Support for user defined chaos experiment result definition 
 -   Increased fault injection types (IOChaos, HTTPChaos, JVMChaos) 
--   Improved runtime validation of chaos dependencies via litmus admission controllers
 -   Special Interest Groups (SIGs) around specific areas in the project to take the roadmap forward
 
 ------

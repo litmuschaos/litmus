@@ -27,7 +27,10 @@ import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import parsed, { updateManifestImage } from '../../../utils/yamlUtils';
+import parsed, {
+  updateManifestImage,
+  extractEngineNames,
+} from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
 const ConfigurationStepper = lazy(
@@ -69,6 +72,9 @@ const WorkflowTable = forwardRef(
     const imageRegistryData = useSelector(
       (state: RootState) => state.selectedImageRegistry
     );
+    const { version } = useSelector(
+      (state: RootState) => state.litmusCoreVersion
+    );
 
     /**
      * State variables to manage popover actions
@@ -91,7 +97,7 @@ const WorkflowTable = forwardRef(
     const addWeights = (manifest: string) => {
       const arr: experimentMap[] = [];
       const hashMap = new Map();
-      const tests = parsed(manifest);
+      const tests = extractEngineNames(manifest);
       tests.forEach((test) => {
         let value = 10;
         if (hashMap.has(test)) {
@@ -172,7 +178,7 @@ const WorkflowTable = forwardRef(
         parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
           name: 'revert-chaos',
           container: {
-            image: 'litmuschaos/k8s:latest',
+            image: `litmuschaos/k8s:${version}`,
             command: ['sh', '-c'],
             args: [
               `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
@@ -211,7 +217,7 @@ const WorkflowTable = forwardRef(
         ] = {
           name: 'revert-chaos',
           container: {
-            image: 'litmuschaos/k8s:latest',
+            image: `litmuschaos/k8s:${version}`,
             command: ['sh', '-c'],
             args: [deleteEngines],
           },

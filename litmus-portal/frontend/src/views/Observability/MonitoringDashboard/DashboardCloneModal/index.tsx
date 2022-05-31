@@ -10,7 +10,6 @@ import { CREATE_DASHBOARD } from '../../../../graphql/mutations';
 import { SelectedDashboardInformation } from '../../../../models/dashboardsData';
 import {
   ApplicationMetadata,
-  CreateDashboardInput,
   Panel,
   PanelGroup,
   PanelOption,
@@ -52,55 +51,52 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
     return true;
   };
 
-  const [createDashboard] = useMutation<CreateDashboardInput>(
-    CREATE_DASHBOARD,
-    {
-      onCompleted: (data) => {
-        onDashboardLoadRoutine(data.createDashBoard?.db_id ?? '').then(() => {
-          window.location.reload();
-        });
-      },
-      onError: () => {
-        setIsAlertOpen(true);
-      },
-    }
-  );
+  const [createDashboard] = useMutation(CREATE_DASHBOARD, {
+    onCompleted: (data) => {
+      onDashboardLoadRoutine(data.createDashBoard?.dbID ?? '').then(() => {
+        window.location.reload();
+      });
+    },
+    onError: () => {
+      setIsAlertOpen(true);
+    },
+  });
 
   const getPanelGroups = () => {
     const panelGroups: PanelGroup[] = [];
-    dashboardData.metaData?.panel_groups.forEach((panelGroup) => {
+    dashboardData.metaData?.panelGroups.forEach((panelGroup) => {
       const selectedPanels: Panel[] = [];
       panelGroup.panels.forEach((panel) => {
         const queries: PromQuery[] = [];
-        panel.prom_queries.forEach((query) => {
+        panel.promQueries.forEach((query) => {
           queries.push({
-            queryid: uuidv4(),
-            prom_query_name: query.prom_query_name,
+            queryID: uuidv4(),
+            promQueryName: query.promQueryName,
             legend: query.legend,
             resolution: query.resolution,
             minstep: query.minstep,
             line: query.line,
-            close_area: query.close_area,
+            closeArea: query.closeArea,
           });
         });
         const options: PanelOption = {
-          points: panel.panel_options.points,
-          grids: panel.panel_options.grids,
-          left_axis: panel.panel_options.left_axis,
+          points: panel.panelOptions.points,
+          grIDs: panel.panelOptions.grIDs,
+          leftAxis: panel.panelOptions.leftAxis,
         };
         const selectedPanel: Panel = {
-          prom_queries: queries,
-          panel_options: options,
-          panel_name: panel.panel_name,
-          y_axis_left: panel.y_axis_left,
-          y_axis_right: panel.y_axis_right,
-          x_axis_down: panel.x_axis_down,
+          promQueries: queries,
+          panelOptions: options,
+          panelName: panel.panelName,
+          yAxisLeft: panel.yAxisLeft,
+          yAxisRight: panel.yAxisRight,
+          xAxisDown: panel.xAxisDown,
           unit: panel.unit,
         };
         selectedPanels.push(selectedPanel);
       });
       panelGroups.push({
-        panel_group_name: panelGroup.panel_group_name,
+        panelGroupName: panelGroup.panelGroupName,
         panels: selectedPanels,
       });
     });
@@ -127,25 +123,25 @@ const DashboardCloneModal: React.FC<DashboardCloneModalProps> = ({
 
   const handleCreateMutation = () => {
     const dashboardInput = {
-      ds_id: dashboardData.metaData?.ds_id,
-      db_name: cloneName,
-      db_type_id: dashboardData.typeID,
-      db_type_name: dashboardData.typeName,
-      db_information: dashboardData.information,
-      chaos_event_query_template: dashboardData.chaosEventQueryTemplate,
-      chaos_verdict_query_template: dashboardData.chaosVerdictQueryTemplate,
-      application_metadata_map: getApplicationMetadataMap(),
-      panel_groups: getPanelGroups(),
-      end_time: `${Math.round(new Date().getTime() / 1000)}`,
-      start_time: `${
+      dsID: dashboardData.metaData?.dsID,
+      dbName: cloneName,
+      dbTypeID: dashboardData.typeID,
+      dbTypeName: dashboardData.typeName,
+      dbInformation: dashboardData.information,
+      chaosEventQueryTemplate: dashboardData.chaosEventQueryTemplate,
+      chaosVerdictQueryTemplate: dashboardData.chaosVerdictQueryTemplate,
+      applicationMetadataMap: getApplicationMetadataMap(),
+      panelGroups: getPanelGroups(),
+      endTime: `${Math.round(new Date().getTime() / 1000)}`,
+      startTime: `${
         Math.round(new Date().getTime() / 1000) - DEFAULT_RELATIVE_TIME_RANGE
       }`,
-      project_id: projectID,
-      cluster_id: dashboardData.agentID,
+      projectID,
+      clusterID: dashboardData.agentID,
       refresh_rate: `${DEFAULT_REFRESH_RATE}`,
     };
     createDashboard({
-      variables: { createDBInput: dashboardInput },
+      variables: { dashboard: dashboardInput },
     });
   };
 

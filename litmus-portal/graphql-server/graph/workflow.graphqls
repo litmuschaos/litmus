@@ -1,3 +1,215 @@
+directive @authorized on FIELD_DEFINITION
+
+"""
+Defines the details of the weightages of each chaos experiment in the workflow
+"""
+input WeightagesInput {
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Weightage of the experiment
+  """
+  weightage: Int!
+}
+
+"""
+Defines the details for a chaos workflow
+"""
+input ChaosWorkFlowRequest {
+  """
+  ID of the workflow
+  """
+  workflowID: String
+  """
+  Manifest of the workflow
+  """
+  workflowManifest: String!
+  """
+  Cron syntax of the workflow schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
+  weightages: [WeightagesInput!]!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
+  isCustomWorkflow: Boolean!
+  """
+  ID of the project under which the workflow is scheduled
+  """
+  projectID: ID!
+  """
+  ID of the target cluster in which the workflow will run
+  """
+  clusterID: ID!
+}
+
+"""
+Defines the response received for querying the details of chaos workflow
+"""
+type ChaosWorkFlowResponse {
+  """
+  ID of the workflow
+  """
+  workflowID: String!
+  """
+  Cron syntax of the workflow schedule
+  """
+  cronSyntax: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
+  isCustomWorkflow: Boolean!
+}
+
+"""
+Defines the details for a workflow run
+"""
+input WorkflowRunRequest {
+  """
+  ID of the workflow
+  """
+  workflowID: ID!
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Provides audit context to workflow run i.e who ran the workflow
+  """
+  executedBy: String!
+  """
+  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+  """
+  executionData: String!
+  """
+  ID of the cluster agent in which the workflow is running
+  """
+  clusterID: ClusterIdentity!
+  """
+  Bool value indicating if the workflow run has completed
+  """
+  completed: Boolean!
+  """
+  Bool value indicating if the workflow run has removed
+  """
+  isRemoved: Boolean
+}
+
+"""
+Defines the response received for querying querying the pod logs
+"""
+type PodLogResponse {
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are queried
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Response received for querying pod logs
+"""
+input PodLog {
+  """
+  ID of the cluster
+  """
+  clusterID: ClusterIdentity!
+  """
+  Unique request ID of a particular node which is being queried
+  """
+  requestID: ID!
+  """
+  ID of a workflow run
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Type of the pod: chaosengine
+  """
+  podType: String!
+  """
+  Logs for the pod
+  """
+  log: String!
+}
+
+"""
+Defines the details for fetching the pod logs
+"""
+input PodLogRequest {
+  """
+  ID of the cluster
+  """
+  clusterID: ID!
+  """
+  ID of a workflow run
+  """
+  workflowRunID: ID!
+  """
+  Name of the pod for which logs are required
+  """
+  podName: String!
+  """
+  Namespace where the pod is running
+  """
+  podNamespace: String!
+  """
+  Type of the pod: chaosEngine or not pod
+  """
+  podType: String!
+  """
+  Name of the experiment pod fetched from execution data
+  """
+  expPod: String
+  """
+  Name of the runner pod fetched from execution data
+  """
+  runnerPod: String
+  """
+  Namespace where the experiment is executing
+  """
+  chaosNamespace: String
+}
+
 enum WorkflowRunStatus {
   All
   Failed
@@ -6,112 +218,438 @@ enum WorkflowRunStatus {
   Terminated
 }
 
+"""
+Defines the start date and end date for the filtering the data
+"""
 input DateRange {
-  start_date: String!
-  end_date: String
+  """
+  Start date
+  """
+  startDate: String!
+  """
+  End date
+  """
+  endDate: String
 }
 
+"""
+Defines input type for workflow run filter
+"""
 input WorkflowRunFilterInput {
-  workflow_name: String
-  cluster_name: String
-  workflow_status: WorkflowRunStatus
-  date_range: DateRange
+  """
+  Name of the workflow
+  """
+  workflowName: String
+  """
+  Name of the cluster agent
+  """
+  clusterName: String
+  """
+  Status of the workflow run
+  """
+  workflowStatus: WorkflowRunStatus
+  """
+  Date range for filtering purpose
+  """
+  dateRange: DateRange
 }
 
+"""
+Defines data required to fetch paginated data
+"""
 input Pagination {
+  """
+  Page number for which data will be fetched
+  """
   page: Int!
+  """
+  Number of data to be fetched
+  """
   limit: Int!
 }
 
 enum WorkflowSortingField {
-  Name
-  Time
+  NAME
+  TIME
 }
 
+"""
+Defines sorting options for workflow runs
+"""
 input WorkflowRunSortInput {
+  """
+  Field in which sorting will be done
+  """
   field: WorkflowSortingField!
+  """
+  Bool value indicating whether the sorting will be done in descending order
+  """
   descending: Boolean
 }
 
-input GetWorkflowRunsInput {
-  project_id: ID!
-  workflow_run_ids: [ID]
-  workflow_ids: [ID]
+"""
+Defines the details for workflow runs
+"""
+input ListWorkflowRunsRequest {
+  """
+  ID of the project
+  """
+  projectID: ID!
+  """
+  Array of workflow run IDs for which details will be fetched
+  """
+  workflowRunIDs: [ID]
+  """
+  Array of workflow IDs for which details will be fetched
+  """
+  workflowIDs: [ID]
+  """
+  Details for fetching paginated data
+  """
   pagination: Pagination
+  """
+  Details for fetching sorted data
+  """
   sort: WorkflowRunSortInput
+  """
+  Details for fetching filtered data
+  """
   filter: WorkflowRunFilterInput
 }
 
-type weightages {
-  experiment_name: String!
+"""
+Defines the details of the weightages of each chaos experiment in the workflow
+"""
+type Weightages {
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Weightage of the experiment
+  """
   weightage: Int!
 }
 
+"""
+Defines the details of a workflow run
+"""
 type WorkflowRun {
-  workflow_run_id: ID!
-  workflow_id: ID!
-  cluster_name: String!
-  weightages: [weightages!]!
-  last_updated: String!
-  project_id: ID!
-  cluster_id: ID!
-  workflow_name: String!
-  cluster_type: String
+  """
+  ID of the workflow run which is to be queried
+  """
+  workflowRunID: ID!
+  """
+  ID of the workflow
+  """
+  workflowID: ID!
+  """
+  Name of the cluster agent in which the workflow is running
+  """
+  clusterName: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
+  weightages: [Weightages!]!
+  """
+  Timestamp at which workflow run was last updated
+  """
+  lastUpdated: String!
+  """
+  ID of the project
+  """
+  projectID: ID!
+  """
+  ID of the target cluster in which the workflow is running
+  """
+  clusterID: ID!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Cluster type : Internal or External
+  """
+  clusterType: String
+  """
+  Phase of the workflow run
+  """
   phase: String!
-  resiliency_score: Float
-  experiments_passed: Int
-  experiments_failed: Int
-  experiments_awaited: Int
-  experiments_stopped: Int
-  experiments_na: Int
-  total_experiments: Int
-  execution_data: String!
+  """
+  Resiliency score of the workflow
+  """
+  resiliencyScore: Float
+  """
+  Number of experiments passed
+  """
+  experimentsPassed: Int
+  """
+  Number of experiments failed
+  """
+  experimentsFailed: Int
+  """
+  Number of experiments awaited
+  """
+  experimentsAwaited: Int
+  """
+  Number of experiments stopped
+  """
+  experimentsStopped: Int
+  """
+  Number of experiments which are not available
+  """
+  experimentsNa: Int
+  """
+  Total number of experiments
+  """
+  totalExperiments: Int
+  """
+  Stores all the workflow run details related to the nodes of DAG graph and chaos results of the experiments
+  """
+  executionData: String!
+  """
+  Bool value indicating if the workflow run has removed
+  """
   isRemoved: Boolean
-  executed_by: String!
+  """
+  Provides audit context to workflow run i.e who ran the workflow
+  """
+  executedBy: String!
 }
 
-type GetWorkflowsOutput {
-  total_no_of_workflow_runs: Int!
-  workflow_runs: [WorkflowRun]!
+"""
+Defines the details of a workflow to sent as response
+"""
+type ListWorkflowRunsResponse {
+  """
+  Total number of workflow runs
+  """
+  totalNoOfWorkflowRuns: Int!
+  """
+  Defines details of workflow runs
+  """
+  workflowRuns: [WorkflowRun]!
 }
 
+"""
+Defines filter options for workflows
+"""
 input WorkflowFilterInput {
-  workflow_name: String
-  cluster_name: String
+  """
+  Name of the workflow
+  """
+  workflowName: String
+  """
+  Name of the cluster agent in which the workflow is running
+  """
+  clusterName: String
 }
 
-input ListWorkflowsInput {
-  project_id: ID!
-  workflow_ids: [ID]
+"""
+Defines the details for a workflow
+"""
+input ListWorkflowsRequest {
+  """
+  ID of the project
+  """
+  projectID: ID!
+  """
+  Array of workflow IDs for which details will be fetched
+  """
+  workflowIDs: [ID]
+  """
+  Details for fetching paginated data
+  """
   pagination: Pagination
+  """
+  Details for fetching sorted data
+  """
   sort: WorkflowSortInput
+  """
+  Details for fetching filtered data
+  """
   filter: WorkflowFilterInput
 }
 
+"""
+Defines sorting options for workflow
+"""
 input WorkflowSortInput {
+  """
+  Field in which sorting will be done
+  """
   field: WorkflowSortingField!
+  """
+  Bool value indicating whether the sorting will be done in descending order
+  """
   descending: Boolean
 }
 
+"""
+Defines the details for a workflow
+"""
 type Workflow {
-  workflow_id: String!
-  workflow_manifest: String!
+  """
+  ID of the workflow
+  """
+  workflowID: String!
+  """
+  Manifest of the workflow
+  """
+  workflowManifest: String!
+  """
+  Cron syntax of the workflow schedule
+  """
   cronSyntax: String!
-  cluster_name: String!
-  workflow_name: String!
-  workflow_description: String!
-  weightages: [weightages!]!
+  """
+  Name of the target cluster in which the workflow is running
+  """
+  clusterName: String!
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Description of the workflow
+  """
+  workflowDescription: String!
+  """
+  Array containing weightage and name of each chaos experiment in the workflow
+  """
+  weightages: [Weightages!]!
+  """
+  Bool value indicating whether the workflow is a custom workflow or not
+  """
   isCustomWorkflow: Boolean!
-  updated_at: String!
-  created_at: String!
-  project_id: ID!
-  cluster_id: ID!
-  cluster_type: String!
+  """
+  Timestamp when the workflow was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the workflow was created
+  """
+  createdAt: String!
+  """
+  ID of the project under which the workflow is scheduled
+  """
+  projectID: ID!
+  """
+  ID of the target cluster in which the workflow will run
+  """
+  clusterID: ID!
+  """
+  Cluster type : Internal or External
+  """
+  clusterType: String!
+  """
+  Bool value indicating if the workflow has removed
+  """
   isRemoved: Boolean!
-  last_updated_by: String
+  """
+  Provides audit context to workflow i.e who ran the workflow
+  """
+  lastUpdatedBy: String
 }
 
-type ListWorkflowsOutput {
-  total_no_of_workflows: Int!
+"""
+Defines the details for a workflow with total workflow count
+"""
+type ListWorkflowsResponse {
+  """
+  Total number of workflows
+  """
+  totalNoOfWorkflows: Int!
+  """
+  Details related to the workflows
+  """
   workflows: [Workflow]!
+}
+
+type Query {
+  # WORKFLOW OPERATIONS
+  """
+  Returns the list of workflows in a project based on various filter parameters
+  """
+  listWorkflows(request: ListWorkflowsRequest!): ListWorkflowsResponse!
+  @authorized
+
+  """
+  Returns the list of workflow runs in a project based on various filter parameters
+  """
+  listWorkflowRuns(
+    request: ListWorkflowRunsRequest!
+  ): ListWorkflowRunsResponse! @authorized
+
+  """
+  Returns the list of predefined workflows in a project based on various filter parameters
+  """
+  listPredefinedWorkflows(hubName: String!, projectID: String!): [String!]!
+  @authorized
+
+  """
+  Returns the list of predefined experiments in a project
+  """
+  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
+}
+
+type Mutation {
+  # WORKFLOW OPERATIONS
+  """
+  Creates a new workflow and applies its manifest
+  """
+  createChaosWorkFlow(request: ChaosWorkFlowRequest!): ChaosWorkFlowResponse!
+  @authorized
+
+  """
+  Reruns the workflow and applies its manifest
+  """
+  reRunChaosWorkFlow(projectID: String!, workflowID: String!): String!
+  @authorized
+
+  """
+  Updates the workflow
+  """
+  updateChaosWorkflow(request: ChaosWorkFlowRequest): ChaosWorkFlowResponse!
+  @authorized
+
+  """
+  Removes a workflow from cluster
+  """
+  deleteChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflowRunID: String
+  ): Boolean! @authorized
+
+  """
+  Removes workflow run from the cluster only
+  """
+  terminateChaosWorkflow(
+    projectID: String!
+    workflowID: String
+    workflowRunID: String
+  ): Boolean! @authorized
+
+  """
+  Creates a new workflow run and sends it to subscriber
+  """
+  # authorized directive not required
+  chaosWorkflowRun(request: WorkflowRunRequest!): String!
+
+  """
+  Manually sync the status of the workflow run
+  """
+  syncWorkflowRun(
+    projectID: String!
+    workflowID: String!
+    workflowRunID: String!
+  ): Boolean! @authorized
+}
+
+type Subscription {
+  # WORKFLOW OPERATIONS
+  """
+  Sends workflow events to the subscriber
+  """
+  getWorkflowEvents(projectID: String!): WorkflowRun! @authorized
 }

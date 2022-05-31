@@ -946,7 +946,7 @@ createWorkflow:
     pleaseAddExp: Please add experiments to see the data
     revertSchedule: Revert Schedule
     retainLogs: To retain experiment logs, turn this off.
-    retainLogsDesc: Enabling this will make the scheule to revert after completion.
+    retainLogsDesc: Enabling this will make the schedule to revert after completion.
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled workflows table.
     trueValue: 'True'

@@ -589,7 +589,7 @@ func createWorkflow(data, file string, config GitConfig) (bool, error) {
 	if fileName != wfName {
 		return false, errors.New("file name doesn't match workflow name")
 	}
-	workflow := model.ChaosWorkFlowInput{
+	workflow := model.ChaosWorkFlowRequest{
 		WorkflowID:          nil,
 		WorkflowManifest:    data,
 		CronSyntax:          "",
@@ -650,7 +650,7 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 		return nil
 	}
 
-	workflowData := model.ChaosWorkFlowInput{
+	workflowData := model.ChaosWorkFlowRequest{
 		WorkflowID:          &workflow[0].WorkflowID,
 		WorkflowManifest:    data,
 		CronSyntax:          workflow[0].CronSyntax,

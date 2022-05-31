@@ -1,180 +1,452 @@
 enum AuthType {
-	none
-	basic
-	token
-	ssh
+  BASIC
+  NONE
+  SSH
+  TOKEN
 }
 
 enum FileType {
-    EXPERIMENT
-    ENGINE
-    WORKFLOW
-    CSV
+  EXPERIMENT
+  ENGINE
+  WORKFLOW
+  CSV
 }
 
-type MyHub {
-	id: ID!
-	RepoURL: String!
-	RepoBranch: String!
-	ProjectID: String!
-	HubName: String!
-	IsPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	AuthType: AuthType!
-	Token: String
-	UserName: String
-	Password: String
-	SSHPrivateKey: String
-	IsRemoved: Boolean!
-	CreatedAt: String!
-	UpdatedAt: String!
-	LastSyncedAt: String!
+type ChaosHub {
+  """
+  ID of the chaos hub
+  """
+  id: ID!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  ID of the project in which the chaos hub is present
+  """
+  projectID: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Bool value indicating if the chaos hub is removed
+  """
+  isRemoved: Boolean!
+  """
+  Timestamp when the chaos hub was created
+  """
+  createdAt: String!
+  """
+  Timestamp when the chaos hub was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the chaos hub was last synced
+  """
+  lastSyncedAt: String!
 }
 
-type Charts {
-	Charts: [Chart!]!
-}
+#type Charts {
+#	charts: [Chart!]!
+#}
 
 type Chart {
-	ApiVersion: String!
-	Kind: String!
-	Metadata: Metadata!
-	Spec: Spec!
-	PackageInfo: PackageInformation!
+  apiVersion: String!
+  kind: String!
+  metadata: Metadata!
+  spec: Spec!
+  packageInfo: PackageInformation!
 }
 
+"""
+Defines the details of the maintainer
+"""
 type Maintainer {
-	Name: String!
-	Email: String!
+  """
+  Name of the maintainer
+  """
+  name: String!
+  """
+  Email of the maintainer
+  """
+  email: String!
 }
 
 type Link {
-	Name: String!
-	Url: String!
+  name: String!
+  url: String!
 }
 
 type Metadata {
-	Name: String!
-	Version: String!
-	Annotations: Annotation!
+  name: String!
+  version: String!
+  annotations: Annotation!
 }
 
 type Annotation {
-	Categories: String!
-	Vendor: String!
-	CreatedAt: String!
-	Repository: String!
-	Support: String!
-	ChartDescription: String!
+  categories: String!
+  vendor: String!
+  createdAt: String!
+  repository: String!
+  support: String!
+  chartDescription: String!
 }
 
 type Spec {
-	DisplayName: String!
-	CategoryDescription: String!
-	Keywords: [String!]!
-	Maturity: String!
-	Maintainers: [Maintainer!]!
-	MinKubeVersion: String!
-	Provider: String!
-	Links: [Link!]!
-	Experiments: [String!]!
-	ChaosExpCRDLink: String!
-	Platforms: [String!]!
-	ChaosType: String
+  displayName: String!
+  categoryDescription: String!
+  keywords: [String!]!
+  maturity: String!
+  maintainers: [Maintainer!]!
+  minKubeVersion: String!
+  provider: Provider!
+  links: [Link!]!
+  experiments: [String!]!
+  chaosExpCRDLink: String!
+  platforms: [String!]!
+  chaosType: String
 }
 
 type Provider {
-	Name: String!
+	name: String!
 }
 
 type PackageInformation {
-	PackageName: String!
-	Experiments: [Experiments!]!
+  packageName: String!
+  experiments: [Experiments!]!
 }
 
 type Experiments {
-	Name: String!
-	CSV: String!
-	Desc: String!
+  name: String!
+  CSV: String!
+  desc: String!
 }
 
-type MyHubStatus {
-	id: ID!
-	RepoURL: String!
-	RepoBranch: String!
-	IsAvailable: Boolean!
-	TotalExp: String!
-	HubName: String!
-	IsPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	AuthType: AuthType!
-	Token: String
-	UserName: String
-	Password: String
-	IsRemoved: Boolean!
-	SSHPrivateKey: String
-	SSHPublicKey: String
-	LastSyncedAt: String!
+type ChaosHubStatus {
+  """
+  ID of the hub
+  """
+  id: ID!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is available or not.
+  """
+  isAvailable: Boolean!
+  """
+  Total number of experiments in the hub
+  """
+  totalExp: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isRemoved: Boolean!
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Timestamp when the chaos hub was last synced
+  """
+  lastSyncedAt: String!
 }
 
-input CreateMyHub {
-	HubName: String!
-	RepoURL: String!
-	RepoBranch: String!
-	IsPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	AuthType: AuthType!
-	Token: String
-	UserName: String
-	Password: String
-	SSHPrivateKey: String
-	SSHPublicKey: String
+"""
+Defines the details required for creating a chaos hub
+"""
+input CreateChaosHubRequest {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
 }
 
-input ExperimentInput {
-	ProjectID: String!
-	ChartName: String!
-	ExperimentName: String!
-	HubName: String!
-	FileType: FileType!
+input ExperimentRequest {
+  """
+  ID of the project
+  """
+  projectID: String!
+  """
+  Name of the chart being used
+  """
+  chartName: String!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Name of the hub
+  """
+  hubName: String!
+  """
+  Type of thr file for workflow: chaosEngine/ experimentInput
+  """
+  fileType: String
 }
 
 input CloningInput {
-	HubName: String!
-	ProjectID: String!
-	RepoBranch: String!
-	RepoURL: String!
-	IsPrivate: Boolean!
-	# Auth Types-
-	#  token: Token based authentication
-	#  basic: Username/Password based authentication
-	#  ssh: SSH based authentication
-	AuthType: AuthType!
-	Token: String
-	UserName: String
-	Password: String
-	SSHPrivateKey: String
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  ID of the project
+  """
+  projectID: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  sshPrivateKey: String
 }
 
-input UpdateMyHub {
-	id: String!
-	HubName: String!
-	RepoURL: String!
-	RepoBranch: String!
-	IsPrivate: Boolean!
-	AuthType: AuthType!
-	Token: String
-	UserName: String
-	Password: String
-	SSHPrivateKey: String
-	SSHPublicKey: String
+input UpdateChaosHubRequest {
+  """
+  ID of the chaos hub
+  """
+  id: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
+}
+
+
+extend type Query {
+  # CHAOS-HUB OPERATIONS
+  """
+  List the Charts details of a ChaosHub
+  """
+  listCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
+
+  """
+  Get the Experiment list from a ChaosHub
+  """
+  getHubExperiment(request: ExperimentRequest!): Chart! @authorized
+
+  """
+  List the status of all the connected ChaosHub
+  """
+  listHubStatus(projectID: String!): [ChaosHubStatus]! @authorized
+
+  """
+  Get the YAML manifest of ChaosEngine/ChaosExperiment
+  """
+  getYAMLData(request: ExperimentRequest!): String! @authorized
+}
+
+extend type Mutation {
+  # CHAOS-HUB OPERATIONS
+  """
+  Add a ChaosHub (includes the git clone operation)
+  """
+  addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Save a ChaosHub configuration without cloning it
+  """
+  saveChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Sync changes from the Git repository of a ChaosHub
+  """
+  syncChaosHub(id: ID!, projectID: String!): [ChaosHubStatus!]! @authorized
+
+  """
+  Generates Private and Public key for SSH authentication
+  """
+  generateSSHKey: SSHKey! @authorized
+
+  """
+  Update the configuration of a ChaosHub
+  """
+  updateChaosHub(request: UpdateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Delete the ChaosHub
+  """
+  deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
 }

@@ -93,7 +93,7 @@ const ArgoWorkflow: React.FC<ArgoWorkflowProps> = ({
   useEffect(() => {
     nodeSelection.selectNode({
       ...nodes[selectedNodeID],
-      pod_name: selectedNodeID,
+      podName: selectedNodeID,
     });
   }, [selectedNodeID]);
 

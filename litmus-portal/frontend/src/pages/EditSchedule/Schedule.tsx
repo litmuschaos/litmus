@@ -94,7 +94,7 @@ const ScheduleWorkflow = () => {
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
       newParsedYaml.metadata.labels = {
-        workflow_id: workflowData.workflow_id,
+        workflow_id: workflowData.workflowID,
       };
       newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
       const tz = {
@@ -119,7 +119,7 @@ const ScheduleWorkflow = () => {
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
       newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
       newParsedYaml.metadata.labels = {
-        workflow_id: workflowData.workflow_id,
+        workflow_id: workflowData.workflowID,
       };
       NewYaml = YAML.stringify(newParsedYaml);
       workflowAction.setWorkflowManifest({
@@ -136,7 +136,7 @@ const ScheduleWorkflow = () => {
       //   newParsedYaml.spec.suspend = false;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
-      newParsedYaml.metadata.labels = { workflow_id: workflowData.workflow_id };
+      newParsedYaml.metadata.labels = { workflow_id: workflowData.workflowID };
       const tz = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       };

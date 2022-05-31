@@ -39,6 +39,7 @@ import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
   fetchWorkflowNameFromManifest,
+  updateChaosExpCRDImage,
   updateEngineName,
   updateManifestImage,
   updateNamespace,
@@ -128,6 +129,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const imageRegistryData = useSelector(
     (state: RootState) => state.selectedImageRegistry
   );
+  const { version } = useSelector(
+    (state: RootState) => state.litmusCoreVersion
+  );
   const { namespace } = useSelector((state: RootState) => state.workflowData);
 
   const [YAMLModal, setYAMLModal] = useState<boolean>(false);
@@ -145,10 +149,10 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [getCharts] = useLazyQuery<Charts>(GET_CHARTS_DATA, {
     onCompleted: (data) => {
       const allExp: ChartName[] = [];
-      data.getCharts.forEach((data) => {
-        return data.Spec.Experiments?.forEach((experiment) => {
+      data.listCharts.forEach((data) => {
+        return data.spec.experiments?.forEach((experiment) => {
           allExp.push({
-            ChaosName: data.Metadata.Name,
+            ChaosName: data.metadata.name,
             ExperimentName: experiment,
           });
         });
@@ -166,7 +170,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     {
       onCompleted: (data) => {
         const wfmanifest = updateEngineName(
-          YAML.parse(data.GetPredefinedExperimentYAML)
+          YAML.parse(data.getPredefinedExperimentYAML)
         );
         const updatedManifestImage = updateManifestImage(
           YAML.parse(wfmanifest),
@@ -189,7 +193,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
    */
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
-      const parsedYAML = YAML.parse(data.GetTemplateManifestByID.manifest);
+      const parsedYAML = YAML.parse(data.getWorkflowManifestByID.manifest);
 
       const updatedManifestImage = updateManifestImage(
         parsedYAML,
@@ -264,7 +268,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           container: {
             args: [`${installAllExp}`],
             command: ['sh', '-c'],
-            image: 'litmuschaos/k8s:latest',
+            image: `litmuschaos/k8s:${version}`,
           },
         },
       ],
@@ -308,12 +312,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
             localforage.getItem('selectedHub').then((hub) => {
               getPredefinedExperimentYaml({
                 variables: {
-                  experimentInput: {
-                    ProjectID: selectedProjectID,
-                    ChartName: 'predefined',
-                    ExperimentName: (value as WorkflowDetailsProps).CRDLink,
-                    HubName: hub as string,
-                    FileType: 'WORKFLOW',
+                  request: {
+                    projectID: selectedProjectID,
+                    chartName: 'predefined',
+                    experimentName: (value as WorkflowDetailsProps).CRDLink,
+                    hubName: hub as string,
+                    fileType: 'WORKFLOW',
                   },
                 },
               });
@@ -330,7 +334,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
             getTemplate({
               variables: {
                 projectID: getProjectID(),
-                data: (value as ChooseWorkflowRadio).id,
+                templateID: (value as ChooseWorkflowRadio).id,
               },
             });
           }
@@ -340,7 +344,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
         localforage.getItem('selectedHub').then((hub) => {
           setHubName(hub as string);
           getCharts({
-            variables: { projectID: selectedProjectID, HubName: hub as string },
+            variables: { projectID: selectedProjectID, hubName: hub as string },
           });
         });
       }
@@ -377,23 +381,23 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const handleDone = () => {
     getExperimentYaml({
       variables: {
-        experimentInput: {
-          ProjectID: selectedProjectID,
-          HubName: hubName,
-          ChartName: selectedExp.split('/')[0],
-          ExperimentName: selectedExp.split('/')[1],
-          FileType: 'EXPERIMENT',
+        request: {
+          projectID: selectedProjectID,
+          hubName,
+          chartName: selectedExp.split('/')[0],
+          experimentName: selectedExp.split('/')[1],
+          fileType: 'EXPERIMENT',
         },
       },
     });
     getEngineYaml({
       variables: {
-        experimentInput: {
-          ProjectID: selectedProjectID,
-          HubName: hubName,
-          ChartName: selectedExp.split('/')[0],
-          ExperimentName: selectedExp.split('/')[1],
-          FileType: 'ENGINE',
+        request: {
+          projectID: selectedProjectID,
+          hubName,
+          chartName: selectedExp.split('/')[0],
+          experimentName: selectedExp.split('/')[1],
+          fileType: 'ENGINE',
         },
       },
     });
@@ -506,7 +510,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           `-file=/tmp/chaosengine-${ExpName}.yaml`,
           `-saveName=/tmp/engine-name`,
         ],
-        image: 'litmuschaos/litmus-checker:latest',
+        image: `litmuschaos/litmus-checker:${version}`,
       },
     };
     if (generatedYAML.kind === 'Workflow')
@@ -604,9 +608,15 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
   useEffect(() => {
     if (engineData !== undefined && experimentData !== undefined) {
+      const experimentCRD = {
+        getYAMLData: updateChaosExpCRDImage(
+          experimentData.getYAMLData,
+          imageRegistryData
+        ),
+      };
       setExperiment({
         ChaosEngine: engineData,
-        Experiment: experimentData,
+        Experiment: experimentCRD,
       });
     }
   }, [engineDataLoading, experimentDataLoading]);

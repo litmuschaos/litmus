@@ -1,0 +1,97 @@
+"""
+Details for a workflow template
+"""
+type WorkflowTemplate {
+    """
+    ID of the template
+    """
+    templateID: ID!
+    """
+    Workflow manifest in JSON escaped string
+    """
+    manifest: String!
+    """
+    Name of the template
+    """
+    templateName: String!
+    """
+    Description of the template
+    """
+    templateDescription: String!
+    """
+    ID of the project
+    """
+    projectID: String!
+    """
+    Name of the project
+    """
+    projectName: String!
+    """
+    Time at which the manifest template was created
+    """
+    createdAt: String!
+    """
+    Bool value indicating if the workflow template has removed
+    """
+    isRemoved: Boolean!
+    """
+    Bool value indicating whether the workflow template is a custom or not
+    """
+    isCustomWorkflow: Boolean!
+}
+
+"""
+Details for saving the template
+"""
+input TemplateInput {
+    """
+    Workflow manifest in JSON escaped format
+    """
+    manifest: String!
+    """
+    Name of the template
+    """
+    templateName: String!
+    """
+    Description of the template
+    """
+    templateDescription: String!
+    """
+    Name of the project
+    """
+    projectID: String!
+    """
+    Bool value indicating whether the workflow is a custom workflow or not
+    """
+    isCustomWorkflow: Boolean!
+}
+
+extend type Query {
+    # WORKFLOW TEMPLATE OPERATIONS
+    """
+    Returns all the workflow templates for the projectID
+    """
+    listWorkflowManifests(projectID: String!): [WorkflowTemplate]! @authorized
+
+    """
+    Returns a single workflow templates given a projectID and a templateID
+    """
+    getWorkflowManifestByID(
+        projectID: String!
+        templateID: String!
+    ): WorkflowTemplate! @authorized
+}
+
+extend type Mutation {
+    # WORKFLOW TEMPLATE OPERATIONS
+    """
+    Creates a workflow template manifest
+    """
+    createWorkflowTemplate(request: TemplateInput): WorkflowTemplate! @authorized
+
+    """
+    Removes a workflow template manifest
+    """
+    deleteWorkflowTemplate(projectID: String!, templateID: String!): Boolean!
+    @authorized
+}

@@ -26,17 +26,17 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
-// ClusterRegister creates an entry for a new cluster in DB and generates the url used to apply manifest
-func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error) {
+// RegisterCluster creates an entry for a new cluster in DB and generates the url used to apply manifest
+func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
 	clusterID := uuid.New().String()
 
 	token, err := clusterOps.ClusterCreateJWT(clusterID)
 	if err != nil {
-		return &model.ClusterRegResponse{}, err
+		return &model.RegisterClusterResponse{}, err
 	}
 
-	if input.NodeSelector != nil {
-		selectors := strings.Split(*input.NodeSelector, ",")
+	if request.NodeSelector != nil {
+		selectors := strings.Split(*request.NodeSelector, ",")
 
 		for _, el := range selectors {
 			kv := strings.Split(el, "=")
@@ -50,42 +50,42 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 		}
 	}
 	var tolerations []*dbSchemaCluster.Toleration
-	err = copier.Copy(&tolerations, input.Tolerations)
+	err = copier.Copy(&tolerations, request.Tolerations)
 	if err != nil {
-		return &model.ClusterRegResponse{}, err
+		return &model.RegisterClusterResponse{}, err
 	}
 
 	newCluster := dbSchemaCluster.Cluster{
 		ClusterID:      clusterID,
-		ClusterName:    input.ClusterName,
-		Description:    input.Description,
-		ProjectID:      input.ProjectID,
+		ClusterName:    request.ClusterName,
+		Description:    request.Description,
+		ProjectID:      request.ProjectID,
 		AccessKey:      utils.RandomString(32),
-		ClusterType:    input.ClusterType,
-		PlatformName:   input.PlatformName,
-		AgentNamespace: input.AgentNamespace,
-		Serviceaccount: input.Serviceaccount,
-		AgentScope:     input.AgentScope,
-		AgentNsExists:  input.AgentNsExists,
-		AgentSaExists:  input.AgentSaExists,
+		ClusterType:    request.ClusterType,
+		PlatformName:   request.PlatformName,
+		AgentNamespace: request.AgentNamespace,
+		Serviceaccount: request.ServiceAccount,
+		AgentScope:     request.AgentScope,
+		AgentNsExists:  request.AgentNsExists,
+		AgentSaExists:  request.AgentSaExists,
 		CreatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		UpdatedAt:      strconv.FormatInt(time.Now().Unix(), 10),
 		Token:          token,
 		IsRemoved:      false,
-		NodeSelector:   input.NodeSelector,
+		NodeSelector:   request.NodeSelector,
 		Tolerations:    tolerations,
-		SkipSSL:        input.SkipSsl,
+		SkipSSL:        request.SkipSsl,
 		StartTime:      strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	err = dbOperationsCluster.InsertCluster(newCluster)
 	if err != nil {
-		return &model.ClusterRegResponse{}, err
+		return &model.RegisterClusterResponse{}, err
 	}
 
-	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", input.ProjectID)
+	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", request.ProjectID)
 
-	return &model.ClusterRegResponse{
+	return &model.RegisterClusterResponse{
 		ClusterID:   newCluster.ClusterID,
 		Token:       token,
 		ClusterName: newCluster.ClusterName,
@@ -93,26 +93,26 @@ func ClusterRegister(input model.ClusterInput) (*model.ClusterRegResponse, error
 }
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
-func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateData) (*model.ClusterConfirmResponse, error) {
+func ConfirmClusterRegistration(request model.ClusterIdentity, r store.StateData) (*model.ConfirmClusterRegistrationResponse, error) {
 	currentVersion := os.Getenv("VERSION")
-	if currentVersion != identity.Version {
-		return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v got %v)", currentVersion, identity.Version)
+	if currentVersion != request.Version {
+		return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v got %v)", currentVersion, request.Version)
 	}
 
-	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
+	cluster, err := dbOperationsCluster.GetCluster(request.ClusterID)
 	if err != nil {
-		return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
+		return &model.ConfirmClusterRegistrationResponse{IsClusterConfirmed: false}, err
 	}
 
-	if cluster.AccessKey == identity.AccessKey {
+	if cluster.AccessKey == request.AccessKey {
 		newKey := utils.RandomString(32)
 		time := strconv.FormatInt(time.Now().Unix(), 10)
-		query := bson.D{{"cluster_id", identity.ClusterID}}
+		query := bson.D{{"cluster_id", request.ClusterID}}
 		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_cluster_confirmed", true}, {"updated_at", time}}}}
 
 		err = dbOperationsCluster.UpdateCluster(query, update)
 		if err != nil {
-			return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
+			return &model.ConfirmClusterRegistrationResponse{IsClusterConfirmed: false}, err
 		}
 
 		cluster.IsRegistered = true
@@ -124,25 +124,25 @@ func ConfirmClusterRegistration(identity model.ClusterIdentity, r store.StateDat
 		log.Print("Cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
 		SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", newCluster, r)
 
-		return &model.ClusterConfirmResponse{IsClusterConfirmed: true, NewAccessKey: &newKey, ClusterID: &cluster.ClusterID}, err
+		return &model.ConfirmClusterRegistrationResponse{IsClusterConfirmed: true, NewAccessKey: &newKey, ClusterID: &cluster.ClusterID}, err
 	}
-	return &model.ClusterConfirmResponse{IsClusterConfirmed: false}, err
+	return &model.ConfirmClusterRegistrationResponse{IsClusterConfirmed: false}, err
 }
 
-// NewEvent takes a event from a subscriber, validates identity and broadcasts the event to the users
-func NewEvent(clusterEvent model.ClusterEventInput, r store.StateData) (string, error) {
-	cluster, err := dbOperationsCluster.GetCluster(clusterEvent.ClusterID)
+// NewClusterEvent takes an event from a subscriber, validates identity and broadcasts the event to the users
+func NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (string, error) {
+	cluster, err := dbOperationsCluster.GetCluster(request.ClusterID)
 	if err != nil {
 		return "", err
 	}
 
-	if cluster.AccessKey == clusterEvent.AccessKey && cluster.IsRegistered {
+	if cluster.AccessKey == request.AccessKey && cluster.IsRegistered {
 		log.Print("CLUSTER EVENT : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
 
 		newCluster := model.Cluster{}
 		copier.Copy(&newCluster, &cluster)
 
-		SendClusterEvent("cluster-event", clusterEvent.EventName, clusterEvent.Description, newCluster, r)
+		SendClusterEvent("cluster-event", request.EventName, request.Description, newCluster, r)
 		return "Event Published", nil
 	}
 
@@ -165,7 +165,7 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 	if err != nil {
 		return "", err
 	}
-	clusters, err := dbOperationsCluster.GetClusters(ctx, query)
+	clusters, err := dbOperationsCluster.ListClusters(ctx, query)
 	if err != nil {
 		return "", nil
 	}
@@ -208,8 +208,8 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 	return "Successfully deleted clusters", nil
 }
 
-// QueryGetClusters takes a projectID and clusterType to filter and return a list of clusters
-func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
+// ListClusters takes a projectID and clusterType to filter and return a list of clusters
+func ListClusters(projectID string, clusterType *string) ([]*model.Cluster, error) {
 	clusters, err := dbOperationsCluster.GetClusterWithProjectID(projectID, clusterType)
 	if err != nil {
 		return nil, err
@@ -245,7 +245,7 @@ func QueryGetClusters(projectID string, clusterType *string) ([]*model.Cluster, 
 
 // SendClusterEvent sends events from the clusters to the appropriate users listening for the events
 func SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData) {
-	newEvent := model.ClusterEvent{
+	newEvent := model.ClusterEventResponse{
 		EventID:     uuid.New().String(),
 		EventType:   eventType,
 		EventName:   eventName,
@@ -266,11 +266,11 @@ func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r 
 	if os.Getenv("AGENT_SCOPE") == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowInput model
+			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
 			for CreateChaosWorkflow mutation to be passed to this function.
 		*/
 	}
-	newAction := &model.ClusterAction{
+	newAction := &model.ClusterActionResponse{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
 			K8sManifest:  subscriberRequest.K8sManifest,

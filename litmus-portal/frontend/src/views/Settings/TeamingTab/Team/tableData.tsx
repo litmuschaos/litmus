@@ -99,7 +99,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
         </div>
       </TableCell>
 
-      {row.Role !== Role.owner ? (
+      {row.Role !== Role.OWNER ? (
         <TableCell
           className={`${classes.otherTC} ${
             row.DeactivatedAt ? classes.dark : ''

@@ -35,34 +35,34 @@ const (
 	UpdateDashboard              RoleQuery = "UpdateDashboard"
 	DeleteDashboard              RoleQuery = "DeleteDashboard"
 	DeleteDataSource             RoleQuery = "DeleteDataSource"
-	GetWorkflowRuns              RoleQuery = "GetWorkflowRuns"
-	GetCluster                   RoleQuery = "GetCluster"
+	ListWorkflowRuns             RoleQuery = "ListWorkflowRuns"
+	ListClusters                 RoleQuery = "ListClusters"
 	GetManifest                  RoleQuery = "GetManifest"
 	GetAgentDetails              RoleQuery = "GetAgentDetails"
 	GetProject                   RoleQuery = "GetProject"
-	GetHeatmapData               RoleQuery = "GetHeatmapData"
-	GetWorkflowStats             RoleQuery = "GetWorkflowStats"
-	GetCharts                    RoleQuery = "GetCharts"
+	ListHeatmapData              RoleQuery = "ListHeatmapData"
+	ListWorkflowStats            RoleQuery = "ListWorkflowStats"
+	ListCharts                   RoleQuery = "ListCharts"
 	GetHubExperiment             RoleQuery = "GetHubExperiment"
 	GetWorkflowRunStats          RoleQuery = "GetWorkflowRunStats"
-	GetHubStatus                 RoleQuery = "GetHubStatus"
-	PortalDashboardData          RoleQuery = "PortalDashboardData"
+	ListHubStatus                RoleQuery = "ListHubStatus"
+	ListPortalDashboardData      RoleQuery = "ListPortalDashboardData"
 	ListWorkflow                 RoleQuery = "ListWorkflow"
 	SaveMyHub                    RoleQuery = "SaveMyHub"
-	CreateManifestTemplate       RoleQuery = "CreateManifestTemplate"
-	DeleteManifestTemplate       RoleQuery = "DeleteManifestTemplate"
+	CreateWorkflowTemplate       RoleQuery = "CreateWorkflowTemplate"
+	DeleteWorkflowTemplate       RoleQuery = "DeleteWorkflowTemplate"
 	CreateImageRegistry          RoleQuery = "CreateImageRegistry"
 	UpdateImageRegistry          RoleQuery = "UpdateImageRegistry"
 	DeleteImageRegistry          RoleQuery = "DeleteImageRegistry"
 	GetYAMLData                  RoleQuery = "GetYAMLData"
 	PredefinedWorkflowOperations RoleQuery = "PredefinedWorkflowOperations"
-	GetPredefinedWorkflowList    RoleQuery = "GetPredefinedWorkflowList"
+	ListPredefinedWorkflows      RoleQuery = "ListPredefinedWorkflows"
 	GetPredefinedExperimentYaml  RoleQuery = "GetPredefinedExperimentYaml"
 	ListDataSource               RoleQuery = "ListDataSource"
 	ListDashboard                RoleQuery = "ListDashboard"
 	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
-	ListManifestTemplate         RoleQuery = "ListManifestTemplate"
-	GetTemplateManifestByID      RoleQuery = "GetTemplateManifestByID"
+	ListWorkflowManifests        RoleQuery = "ListWorkflowManifests"
+	GetWorkflowManifestByID      RoleQuery = "GetWorkflowManifestByID"
 	ListImageRegistry            RoleQuery = "ListImageRegistry"
 	GetImageRegistry             RoleQuery = "GetImageRegistry"
 
@@ -99,36 +99,36 @@ var MutationRbacRules = map[RoleQuery][]string{
 	UpdateDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
-	GetWorkflowRuns:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetCluster: {MemberRoleOwnerString, MemberRoleEditorString,
+	ListWorkflowRuns:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListClusters: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
 	GetManifest:     {MemberRoleOwnerString, MemberRoleEditorString},
 	GetAgentDetails: {MemberRoleOwnerString, MemberRoleEditorString},
 	GetProject: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
-	GetHeatmapData:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetWorkflowStats:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetCharts:                    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListHeatmapData:              {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflowStats:            {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListCharts:                   {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetHubExperiment:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetWorkflowRunStats:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetHubStatus:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	PortalDashboardData:          {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListHubStatus:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListPortalDashboardData:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	SaveMyHub:                    {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
-	DeleteManifestTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateImageRegistry:          {MemberRoleOwnerString},
 	UpdateImageRegistry:          {MemberRoleOwnerString},
 	DeleteImageRegistry:          {MemberRoleOwnerString},
 	GetYAMLData:                  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	PredefinedWorkflowOperations: {MemberRoleOwnerString, MemberRoleEditorString},
-	GetPredefinedWorkflowList:    {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListPredefinedWorkflows:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetPredefinedExperimentYaml:  {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDataSource:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListDashboard:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetGitOpsDetails:             {MemberRoleOwnerString},
-	ListManifestTemplate:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	GetTemplateManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflowManifests:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetWorkflowManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListImageRegistry:            {MemberRoleOwnerString},
 	GetImageRegistry:             {MemberRoleOwnerString},
 }

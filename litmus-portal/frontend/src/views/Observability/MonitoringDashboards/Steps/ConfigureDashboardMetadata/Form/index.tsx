@@ -14,8 +14,8 @@ import { GET_CLUSTER, KUBE_OBJ } from '../../../../../../graphql';
 import { DashboardDetails } from '../../../../../../models/dashboardsData';
 import {
   Cluster,
+  ClusterRequest,
   Clusters,
-  ClusterVars,
 } from '../../../../../../models/graphql/clusterData';
 import {
   GVRRequest,
@@ -184,8 +184,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
     data: agentList,
     loading,
     error,
-  } = useQuery<Clusters, ClusterVars>(GET_CLUSTER, {
-    variables: { project_id: projectID },
+  } = useQuery<Clusters, ClusterRequest>(GET_CLUSTER, {
+    variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -197,10 +197,10 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
     KubeObjRequest
   >(KUBE_OBJ, {
     variables: {
-      data: {
-        cluster_id: dashboardDetails.agentID ?? '',
-        object_type: 'kubeobject',
-        kube_obj_request: {
+      request: {
+        clusterID: dashboardDetails.agentID ?? '',
+        objectType: 'kubeobject',
+        kubeObjRequest: {
           group: kubeObjInput.group,
           version: kubeObjInput.version,
           resource: kubeObjInput.resource,
@@ -211,7 +211,7 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
       const newAvailableApplicationMetadataMap: ApplicationMetadata[] = [];
       try {
         const kubeData: KubeObjData[] = JSON.parse(
-          kubeObjectData?.getKubeObject.kube_obj ?? ''
+          kubeObjectData?.getKubeObject.kubeObj ?? ''
         );
         kubeData.forEach((obj: KubeObjData) => {
           const newAvailableApplicationMetadata: ApplicationMetadata = {
@@ -255,8 +255,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   const getSelectedDsURL = (selectedDsID: string) => {
     let selectedDsURL: string = '';
     dataSourceList.forEach((ds) => {
-      if (ds.ds_id === selectedDsID) {
-        selectedDsURL = ds.ds_url;
+      if (ds.dsID === selectedDsID) {
+        selectedDsURL = ds.dsURL;
       }
     });
     return selectedDsURL;
@@ -293,18 +293,18 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
   }, [update]);
 
   useEffect(() => {
-    const availableAgents = (agentList?.getCluster ?? []).filter((cluster) => {
-      return (
-        cluster.is_active &&
-        cluster.is_cluster_confirmed &&
-        cluster.is_registered
-      );
-    });
+    const availableAgents = (agentList?.listClusters ?? []).filter(
+      (cluster) => {
+        return (
+          cluster.isActive && cluster.isClusterConfirmed && cluster.isRegistered
+        );
+      }
+    );
     setActiveAgents(availableAgents);
     if (dashboardDetails.agentID === '' && !configure) {
       setDashboardDetails({
         ...dashboardDetails,
-        agentID: availableAgents.length ? availableAgents[0].cluster_id : '',
+        agentID: availableAgents.length ? availableAgents[0].clusterID : '',
       });
       setUpdate(true);
     }
@@ -312,17 +312,17 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
 
   useEffect(() => {
     const availableDataSources = dataSourceList.filter((dataSource) => {
-      return dataSource.health_status === 'Active';
+      return dataSource.healthStatus === 'Active';
     });
     setActiveDataSources(availableDataSources);
     if (dashboardDetails.dataSourceID === '' && !configure) {
       setDashboardDetails({
         ...dashboardDetails,
         dataSourceID: availableDataSources.length
-          ? availableDataSources[0].ds_id
+          ? availableDataSources[0].dsID
           : '',
         dataSourceURL: availableDataSources.length
-          ? availableDataSources[0].ds_url
+          ? availableDataSources[0].dsURL
           : '',
       });
       setUpdate(true);
@@ -471,8 +471,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             data-cy="agentName"
           >
             {activeAgents.map((agent: Cluster) => (
-              <MenuItem key={agent.cluster_id} value={agent.cluster_id}>
-                {agent.cluster_name}
+              <MenuItem key={agent.clusterID} value={agent.clusterID}>
+                {agent.clusterName}
               </MenuItem>
             ))}
           </Select>
@@ -482,14 +482,14 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
                 'monitoringDashboard.monitoringDashboards.configureDashboardMetadata.form.noActiveAgent'
               )}
             </Typography>
-          ) : !(agentList?.getCluster ?? []).filter((cluster) => {
+          ) : !(agentList?.listClusters ?? []).filter((cluster) => {
               return (
-                cluster.cluster_id === dashboardDetails.agentID &&
-                cluster.is_active &&
-                cluster.is_cluster_confirmed &&
-                cluster.is_registered
+                cluster.clusterID === dashboardDetails.agentID &&
+                cluster.isActive &&
+                cluster.isClusterConfirmed &&
+                cluster.isRegistered
               );
-            }).length && agentList?.getCluster.length ? (
+            }).length && agentList?.listClusters.length ? (
             <Typography className={classes.formErrorText}>
               {t(
                 'monitoringDashboard.monitoringDashboards.configureDashboardMetadata.form.agentInactive'
@@ -543,11 +543,11 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
           >
             {activeDataSources.map((dataSource: ListDataSourceResponse) => (
               <MenuItem
-                key={dataSource.ds_id}
-                value={dataSource.ds_id}
-                data-cy={dataSource.ds_name}
+                key={dataSource.dsID}
+                value={dataSource.dsID}
+                data-cy={dataSource.dsName}
               >
-                {dataSource.ds_name}
+                {dataSource.dsName}
               </MenuItem>
             ))}
           </Select>
@@ -559,8 +559,8 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
             </Typography>
           ) : !dataSourceList.filter((dataSource) => {
               return (
-                dataSource.health_status === 'Active' &&
-                dataSource.ds_id === dashboardDetails.dataSourceID
+                dataSource.healthStatus === 'Active' &&
+                dataSource.dsID === dashboardDetails.dataSourceID
               );
             }).length ? (
             <Typography className={classes.formErrorText}>

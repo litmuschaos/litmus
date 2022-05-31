@@ -28,24 +28,24 @@ const MyHub = () => {
   const projectID = getProjectID();
   // Get all MyHubs with status
   const { data: hubDetails } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: projectID },
+    variables: { projectID },
     fetchPolicy: 'cache-and-network',
   });
 
   // Filter the selected MyHub
-  const UserHub = hubDetails?.getHubStatus.filter((myHub) => {
-    return paramData.hubname === myHub.HubName;
+  const UserHub = hubDetails?.listHubStatus.filter((myHub) => {
+    return paramData.hubname === myHub.hubName;
   })[0];
 
   // Query to get charts of selected MyHub
   const { data, loading } = useQuery<ExperimentDetail>(GET_EXPERIMENT_DATA, {
     variables: {
-      data: {
-        HubName: paramData.hubname,
-        ProjectID: projectID,
-        ChartName: paramData.chart,
-        ExperimentName: paramData.experiment,
-        FileType: 'CSV',
+      request: {
+        hubName: paramData.hubname,
+        projectID,
+        chartName: paramData.chart,
+        experimentName: paramData.experiment,
+        fileType: 'CSV',
       },
     },
     fetchPolicy: 'cache-and-network',
@@ -54,10 +54,10 @@ const MyHub = () => {
 
   // State for default video URL
   let videoURL: string = '';
-  const video = data?.getHubExperiment.Spec.Links.filter(
-    (l: Link) => l.Name === 'Video'
+  const video = data?.getHubExperiment.spec.links.filter(
+    (l: Link) => l.name === 'Video'
   )[0];
-  videoURL = video ? video.Url : '';
+  videoURL = video ? video.url : '';
 
   // State for default icon URL
   const experimentDefaultImagePath = `${config.grahqlEndpoint}/icon`;
@@ -76,9 +76,9 @@ const MyHub = () => {
               {/* Exp title + Description */}
               <div className={classes.expMain}>
                 <ExperimentHeader
-                  title={experimentData?.Metadata.Name}
+                  title={experimentData?.metadata.name}
                   description={
-                    experimentData?.Spec.CategoryDescription.split('.')[0]
+                    experimentData?.spec.categoryDescription.split('.')[0]
                   }
                   urlToIcon={imageURL}
                 />
@@ -100,7 +100,7 @@ const MyHub = () => {
             <div className={classes.expInfo}>
               <div className={classes.expInfoDiv}>
                 <ExperimentInfo
-                  description={experimentData?.Spec.CategoryDescription}
+                  description={experimentData?.spec.categoryDescription}
                   videoURL={videoURL}
                 />
                 <div className={classes.installExp}>
@@ -120,10 +120,10 @@ const MyHub = () => {
               {/* Useful Links Section */}
               <div className={classes.info}>
                 <UsefulLinks
-                  links={experimentData?.Spec.Links}
-                  maintainers={experimentData?.Spec.Maintainers}
-                  platforms={experimentData?.Spec.Platforms}
-                  maturity={experimentData?.Spec.Maturity}
+                  links={experimentData?.spec.links}
+                  maintainers={experimentData?.spec.maintainers}
+                  platforms={experimentData?.spec.platforms}
+                  maturity={experimentData?.spec.maturity}
                 />
               </div>
             </div>
@@ -133,17 +133,17 @@ const MyHub = () => {
                 <InstallChaos
                   title={t('myhub.experimentPage.installExp')}
                   description={t('myhub.experimentPage.installExpDesc')}
-                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
                 />
                 <InstallChaos
                   title={t('myhub.experimentPage.installRBAC')}
                   description={t('myhub.experimentPage.installRBACDesc')}
-                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
                 />
                 <InstallChaos
                   title={t('myhub.experimentPage.installEngine')}
                   description={t('myhub.experimentPage.installEngineDesc')}
-                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
                 />
               </div>
             ) : (
@@ -151,7 +151,7 @@ const MyHub = () => {
                 <InstallChaos
                   title={t('myhub.experimentPage.checkPreDefined')}
                   description={t('myhub.experimentPage.checkPreDefinedDesc')}
-                  yamlLink={`${UserHub?.RepoURL}/raw/${UserHub?.RepoBranch}/workflows/${paramData.experiment}`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/workflows/${paramData.experiment}`}
                   isPredefined
                 />
               </>

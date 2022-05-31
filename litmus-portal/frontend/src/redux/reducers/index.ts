@@ -8,7 +8,11 @@ import { SelectedNode } from '../../models/redux/nodeSelection';
 import { TabState } from '../../models/redux/tabs';
 import { TemplateData } from '../../models/redux/template';
 import { ImageRegistryInfo } from '../../models/redux/image_registry';
-import { WorkflowData, WorkflowManifest } from '../../models/redux/workflow';
+import {
+  LitmusCoreVersion,
+  WorkflowData,
+  WorkflowManifest,
+} from '../../models/redux/workflow';
 import * as alertReducer from './alert';
 import * as analyticsReducer from './analytics';
 import * as dashboardReducer from './dashboards';
@@ -32,6 +36,7 @@ export interface RootState {
   selectDataSource: DataSourceData;
   selectDashboard: DashboardData;
   selectedImageRegistry: ImageRegistryInfo;
+  litmusCoreVersion: LitmusCoreVersion;
 }
 
 export default () =>

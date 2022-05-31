@@ -102,8 +102,8 @@ const UserManagement: React.FC = () => {
     )
     .filter((datarow) => {
       if (filters.status === 'all') return true;
-      if (filters.status === 'deactivated') return datarow.deactivated_at;
-      return !datarow.deactivated_at;
+      if (filters.status === 'deactivated') return datarow.deactivatedAt;
+      return !datarow.deactivatedAt;
     });
 
   const [currRow, setCurrRow] = React.useState<UserData>();

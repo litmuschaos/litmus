@@ -9,7 +9,7 @@ import {
 } from '../../../../models/dashboardsData';
 import {
   ApplicationMetadata,
-  ListDashboardResponse,
+  GetDashboardResponse,
   PanelOption,
   Resource,
 } from '../../../../models/graphql/dashboardsDetails';
@@ -27,7 +27,7 @@ import {
 import useStyles from './styles';
 
 interface MonitoringDashboardCardProps {
-  data: ListDashboardResponse;
+  data: GetDashboardResponse;
 }
 
 const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
@@ -40,8 +40,8 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
 
   const onDashboardLoadRoutine = async () => {
     dashboard.selectDashboard({
-      selectedDashboardID: data.db_id,
-      selectedAgentID: data.cluster_id,
+      selectedDashboardID: data.dbID,
+      selectedAgentID: data.clusterID,
     });
     return true;
   };
@@ -49,52 +49,52 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
   const getDashboard = () => {
     const panelGroupMap: PanelGroupMap[] = [];
     const panelGroups: PanelGroupExport[] = [];
-    data.panel_groups.forEach((panelGroup) => {
+    data.panelGroups.forEach((panelGroup) => {
       panelGroupMap.push({
-        groupName: panelGroup.panel_group_name,
+        groupName: panelGroup.panelGroupName,
         panels: [],
       });
       const len: number = panelGroupMap.length;
       const selectedPanels: PanelExport[] = [];
       panelGroup.panels.forEach((panel) => {
-        panelGroupMap[len - 1].panels.push(panel.panel_name);
+        panelGroupMap[len - 1].panels.push(panel.panelName);
         const queries: PromQueryExport[] = [];
-        panel.prom_queries.forEach((query) => {
+        panel.promQueries.forEach((query) => {
           queries.push({
-            prom_query_name: query.prom_query_name,
+            prom_query_name: query.promQueryName,
             legend: query.legend,
             resolution: query.resolution,
             minstep: query.minstep,
             line: query.line,
-            close_area: query.close_area,
+            close_area: query.closeArea,
           });
         });
         const options: PanelOption = {
-          points: panel.panel_options.points,
-          grids: panel.panel_options.grids,
-          left_axis: panel.panel_options.left_axis,
+          points: panel.panelOptions.points,
+          grIDs: panel.panelOptions.grIDs,
+          leftAxis: panel.panelOptions.leftAxis,
         };
         const selectedPanel: PanelExport = {
           prom_queries: queries,
           panel_options: options,
-          panel_name: panel.panel_name,
-          y_axis_left: panel.y_axis_left,
-          y_axis_right: panel.y_axis_right,
-          x_axis_down: panel.x_axis_down,
+          panel_name: panel.panelName,
+          y_axis_left: panel.yAxisLeft,
+          y_axis_right: panel.yAxisRight,
+          x_axis_down: panel.xAxisDown,
           unit: panel.unit,
         };
         selectedPanels.push(selectedPanel);
       });
       panelGroups.push({
-        panel_group_name: panelGroup.panel_group_name,
+        panel_group_name: panelGroup.panelGroupName,
         panels: selectedPanels,
       });
     });
 
     const applicationMetadataMap: ApplicationMetadata[] = [];
 
-    if (data.application_metadata_map) {
-      data.application_metadata_map.forEach((applicationMetadata) => {
+    if (data.applicationMetadataMap) {
+      data.applicationMetadataMap.forEach((applicationMetadata) => {
         const applications: Resource[] = [];
 
         applicationMetadata.applications.forEach((application) => {
@@ -112,11 +112,11 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
 
     const exportedDashboard: DashboardExport = {
       dashboardID:
-        data.db_type_id !== 'custom' ? data.db_type_id : 'custom-downloaded',
-      name: data.db_name,
-      information: data.db_information,
-      chaosEventQueryTemplate: data.chaos_event_query_template,
-      chaosVerdictQueryTemplate: data.chaos_verdict_query_template,
+        data.dbTypeID !== 'custom' ? data.dbTypeID : 'custom-downloaded',
+      name: data.dbName,
+      information: data.dbInformation,
+      chaosEventQueryTemplate: data.chaosEventQueryTemplate,
+      chaosVerdictQueryTemplate: data.chaosVerdictQueryTemplate,
       applicationMetadataMap,
       panelGroupMap,
       panelGroups,
@@ -132,7 +132,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
       type: 'text/json',
     });
     element.href = URL.createObjectURL(file);
-    element.download = `${data.db_name}.json`;
+    element.download = `${data.dbName}.json`;
     document.body.appendChild(element);
     element.click();
   };
@@ -145,27 +145,25 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
             <div className={classes.statusDiv}>
               <img
                 src={`./icons/${
-                  data.db_type_id.includes('custom')
-                    ? 'custom'
-                    : data.db_type_id
+                  data.dbTypeID.includes('custom') ? 'custom' : data.dbTypeID
                 }_dashboard.svg`}
                 alt="k8s"
-                title={data.db_type}
+                title={data.dbType}
               />
               <div>
                 <Typography
                   className={`${classes.testName} ${classes.noWrapProvider}`}
                 >
-                  {data.db_name}
+                  {data.dbName}
                 </Typography>
                 <Typography className={classes.hint}>
-                  Agent: {data.cluster_name}
+                  Agent: {data.clusterName}
                 </Typography>
               </div>
             </div>
           </div>
           <Typography className={`${classes.noWrapProvider} ${classes.hint}`}>
-            {timeDifferenceForDate(data.viewed_at)}
+            {timeDifferenceForDate(data.viewedAt)}
           </Typography>
           <section className={classes.cardActionsSection}>
             <div className={classes.cardActions}>
@@ -187,7 +185,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
               <IconButton
                 onClick={() => {
                   dashboard.selectDashboard({
-                    selectedDashboardID: data.db_id,
+                    selectedDashboardID: data.dbID,
                     activePanelID: '',
                   });
                   history.push({

@@ -1,0 +1,309 @@
+"""
+Defines the details for a cluster
+"""
+type Cluster {
+    """
+    ID of the cluster
+    """
+    clusterID: ID!
+    """
+    Project ID the cluster is being connected to
+    """
+    projectID: ID!
+    """
+    Name of the cluster
+    """
+    clusterName: String!
+    """
+    Description of the cluster
+    """
+    description: String
+    """
+    Cluster Platform Name eg. GKE,AWS, Others
+    """
+    platformName: String!
+
+    accessKey: String!
+    """
+    Bool value indicating if the cluster agent is registered or not
+    """
+    isRegistered: Boolean!
+    """
+    Bool value indicating if the cluster agent is confirmed or not
+    """
+    isClusterConfirmed: Boolean!
+    """
+    Bool value indicating if the cluster agent is active or not
+    """
+    isActive: Boolean!
+    """
+    Timestamp when the cluster agent was last updated
+    """
+    updatedAt: String!
+    """
+    Timestamp when the cluster agent was created
+    """
+    createdAt: String!
+    """
+    Cluster type : Internal or External
+    """
+    clusterType: String!
+    """
+    Number of schedules created in the cluster agent
+    """
+    noOfSchedules: Int
+    """
+    Number of workflows run in the cluster agent
+    """
+    noOfWorkflows: Int
+    """
+    Token used to verify and retrieve the cluster agent manifest
+    """
+    token: String!
+    """
+    Namespace where the cluster agent is being installed
+    """
+    agentNamespace: String
+    """
+    Name of service account used by cluster agent
+    """
+    serviceAccount: String
+    """
+    Scope of the cluster agent : ns or cluster
+    """
+    agentScope: String!
+    """
+    Bool value indicating whether agent ns used already exists on cluster or not
+    """
+    agentNsExists: Boolean
+    """
+    Bool value indicating whether service account used already exists on cluster or not
+    """
+    agentSaExists: Boolean
+    """
+    Timestamp of the last workflow run in the cluster agent
+    """
+    lastWorkflowTimestamp: String!
+    """
+    Timestamp when the cluster agent got connected
+    """
+    startTime: String!
+    """
+    Version of the cluster agent
+    """
+    version: String!
+}
+
+"""
+Defines the details for the new cluster being connected
+"""
+input RegisterClusterRequest {
+    """
+    Name of the cluster
+    """
+    clusterName: String!
+    """
+    Description of the cluster
+    """
+    description: String
+    """
+    Cluster Platform Name eg. GKE,AWS, Others
+    """
+    platformName: String!
+    """
+    Project ID the cluster is being connected to
+    """
+    projectID: ID!
+    """
+    Cluster type : Internal or External
+    """
+    clusterType: String!
+    """
+    Namespace where the cluster agent is being installed
+    """
+    agentNamespace: String
+    """
+    Name of service account used by cluster agent
+    """
+    serviceAccount: String
+    """
+    Scope of the cluster agent : ns or cluster
+    """
+    agentScope: String!
+    """
+    Bool value indicating whether agent ns used already exists on cluster or not
+    """
+    agentNsExists: Boolean
+    """
+    Bool value indicating whether service account used already exists on cluster or not
+    """
+    agentSaExists: Boolean
+    """
+    Bool value indicating whether agent will skip ssl checks or not
+    """
+    skipSsl: Boolean
+    """
+    Node selectors used by cluster agent
+    """
+    nodeSelector: String
+    """
+    Node tolerations used by cluster agent
+    """
+    tolerations: [Toleration]
+}
+
+input Toleration {
+    tolerationSeconds: Int
+    key: String
+    operator: String
+    effect: String
+    value: String
+}
+
+type ClusterEventResponse {
+    eventID: ID!
+    eventType: String!
+    eventName: String!
+    description: String!
+    cluster: Cluster!
+}
+
+type ActionPayload {
+    requestType: String!
+    k8sManifest: String!
+    namespace: String!
+    externalData: String
+    username: String
+}
+
+type ClusterActionResponse {
+    projectID: ID!
+    action: ActionPayload!
+}
+
+input NewClusterEventRequest {
+    eventName: String!
+    description: String!
+    clusterID: String!
+    accessKey: String!
+}
+
+input ClusterIdentity {
+    clusterID: String!
+    accessKey: String!
+    version: String!
+}
+
+type ConfirmClusterRegistrationResponse {
+    isClusterConfirmed: Boolean!
+    newAccessKey: String
+    clusterID: String
+}
+
+"""
+Response received for registering a new cluster
+"""
+type RegisterClusterResponse {
+    """
+    Token used to verify and retrieve the cluster agent manifest
+    """
+    token: String!
+    """
+    Unique ID for the newly registered cluster
+    """
+    clusterID: String!
+    """
+    Cluster name as sent in request
+    """
+    clusterName: String!
+}
+
+
+extend type Query {
+    # CLUSTER OPERATIONS
+    """
+    Returns clusters with a particular cluster type in the project
+    """
+    listClusters(projectID: String!, clusterType: String): [Cluster!]! @authorized
+
+    """
+    Query to fetch agent details based on projectID and agentName
+    """
+    getAgentDetails(clusterID: String!, projectID: String!): Cluster! @authorized
+
+    # MANIFEST OPERATIONS
+    """
+    Returns the manifest given projectID, clusterID and accessKey
+    """
+    getManifest(
+        projectID: String!
+        clusterID: String!
+        accessKey: String!
+    ): String! @authorized
+}
+
+extend type Mutation {
+    # CLUSTER OPERATIONS
+    """
+    Registers a new cluster for a user in a specified project
+    """
+    registerCluster(request: RegisterClusterRequest!): RegisterClusterResponse!
+    @authorized
+
+    """
+    Confirms the subscriber's registration with the control plane
+    """
+    # authorized directive not required
+    confirmClusterRegistration(
+        request: ClusterIdentity!
+    ): ConfirmClusterRegistrationResponse!
+
+    """
+    Sends cluster related events to the subscriber
+    """
+    # authorized directive not required
+    newClusterEvent(request: NewClusterEventRequest!): String!
+
+    """
+    Disconnects a cluster/agent and deletes its agent configuration from the control plane
+    """
+    deleteClusters(projectID: String!, clusterIDs: [String]!): String! @authorized
+
+    """
+    Receives pod logs for experiments from agent
+    """
+    # authorized directive not required
+    podLog(request: PodLog!): String!
+
+    """
+    Receives kubernetes object data from subscriber
+    """
+    # authorized directive not required
+    kubeObj(request: KubeObjectData!): String!
+}
+
+extend type Subscription {
+    # CLUSTER OPERATIONS
+    """
+    Listens cluster events from the graphql server
+    """
+    getClusterEvents(projectID: String!): ClusterEventResponse! @authorized
+
+    """
+    Listens cluster operation request from the graphql server
+    """
+    # authorized directive not required
+    clusterConnect(clusterInfo: ClusterIdentity!): ClusterActionResponse!
+
+    """
+    Returns experiment logs from the pods
+    """
+    getPodLog(request: PodLogRequest!): PodLogResponse! @authorized
+
+    # K8S OPERATIONS
+    """
+    Returns a kubernetes object given an input
+    """
+    getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+    @authorized
+}

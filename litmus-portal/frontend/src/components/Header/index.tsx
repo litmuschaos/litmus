@@ -29,7 +29,7 @@ const Header: React.FC = () => {
             className={classes.homeLink}
           >
             <Typography className={classes.chaosText} variant="body1">
-              Chaos Center
+              ChaosCenter
             </Typography>
           </Link>
           <div className={classes.details}>

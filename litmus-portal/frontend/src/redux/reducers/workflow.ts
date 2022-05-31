@@ -1,4 +1,5 @@
 import {
+  LitmusCoreVersion,
   WorkflowAction,
   WorkflowActions,
   WorkflowData,
@@ -9,7 +10,7 @@ import createReducer from './createReducer';
 const initialState: WorkflowData = {
   chaosEngineChanged: false,
   namespace: '',
-  clusterid: '',
+  clusterID: '',
   cronSyntax: '',
   scheduleType: {
     scheduleOnce: 'now',
@@ -22,7 +23,7 @@ const initialState: WorkflowData = {
     time: new Date(),
     date: new Date(),
   },
-  clustername: '',
+  clusterName: '',
 };
 
 const init: WorkflowManifest = {
@@ -30,6 +31,10 @@ const init: WorkflowManifest = {
   engineYAML: '',
   isCustomWorkflow: false,
   isUploaded: false,
+};
+
+const coreVersion: LitmusCoreVersion = {
+  version: 'latest',
 };
 
 export const workflowData = createReducer<WorkflowData>(initialState, {
@@ -52,6 +57,19 @@ export const workflowManifest = createReducer<WorkflowManifest>(init, {
     return {
       ...state,
       ...action.payload,
+    };
+  },
+});
+
+export const litmusCoreVersion = createReducer<LitmusCoreVersion>(coreVersion, {
+  [WorkflowActions.SET_LITMUS_CORE_VERSION](
+    state: LitmusCoreVersion,
+    action: WorkflowAction
+  ) {
+    const version = action.payload;
+    return {
+      ...state,
+      version,
     };
   },
 });

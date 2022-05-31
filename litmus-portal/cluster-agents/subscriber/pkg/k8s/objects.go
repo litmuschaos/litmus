@@ -24,12 +24,11 @@ var (
 
 //GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
 func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
-	ctx := context.TODO()
 	conf, err := GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
-	clientset, err := kubernetes.NewForConfig(conf)
+	clientSet, err := kubernetes.NewForConfig(conf)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +55,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 		}
 		ObjData = append(ObjData, KubeObj)
 	} else {
-		namespace, err := clientset.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
+		namespace, err := clientSet.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -74,7 +73,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 				ObjData = append(ObjData, KubeObj)
 			}
 		} else {
-			return nil, errors.New("No namespace available")
+			return nil, errors.New("no namespace available")
 		}
 
 	}
@@ -89,8 +88,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 
 //GetObjectDataByNamespace uses dynamic client to fetch Kubernetes Objects data.
 func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, resourceType schema.GroupVersionResource) ([]types.ObjectData, error) {
-	ctx := context.TODO()
-	list, err := dynamicClient.Resource(resourceType).Namespace(namespace).List(ctx, metav1.ListOptions{})
+	list, err := dynamicClient.Resource(resourceType).Namespace(namespace).List(context.TODO(), metav1.ListOptions{})
 	var kubeObjects []types.ObjectData
 	if err != nil {
 		return kubeObjects, nil
@@ -110,9 +108,9 @@ func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface,
 	return kubeObjects, nil
 }
 
-func GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
-	clusterID := `{cluster_id: \"` + cid + `\", version: \"` + version + `\", access_key: \"` + accessKey + `\"}`
-	kubeObj, err := GetKubernetesObjects(kubeobjectrequest)
+func GenerateKubeObject(cid string, accessKey, version string, kubeObjectRequest types.KubeObjRequest) ([]byte, error) {
+	clusterID := `{clusterID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
+	kubeObj, err := GetKubernetesObjects(kubeObjectRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -120,16 +118,16 @@ func GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ cluster_id: ` + clusterID + `, request_id:\"` + kubeobjectrequest.RequestID + `\", kube_obj:\"` + processed[1:len(processed)-1] + `\"}`
+	mutation := `{ clusterID: ` + clusterID + `, requestID:\"` + kubeObjectRequest.RequestID + `\", kubeObj:\"` + processed[1:len(processed)-1] + `\"}`
 
-	var payload = []byte(`{"query":"mutation { kubeObj(kubeData:` + mutation + ` )}"}`)
+	var payload = []byte(`{"query":"mutation { kubeObj(request:` + mutation + ` )}"}`)
 	return payload, nil
 }
 
 //SendKubeObjects generates graphql mutation to send kubernetes objects data to graphql server
-func SendKubeObjects(clusterData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
+func SendKubeObjects(clusterData map[string]string, kubeObjectRequest types.KubeObjRequest) error {
 	// generate graphql payload
-	payload, err := GenerateKubeObject(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], kubeobjectrequest)
+	payload, err := GenerateKubeObject(clusterData["CLUSTER_ID"], clusterData["ACCESS_KEY"], clusterData["VERSION"], kubeObjectRequest)
 	if err != nil {
 		logrus.WithError(err).Print("Error while getting KubeObject Data")
 		return err

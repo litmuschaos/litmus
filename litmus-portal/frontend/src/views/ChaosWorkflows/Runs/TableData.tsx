@@ -25,13 +25,13 @@ import { useTranslation } from 'react-i18next';
 import TimePopOver from '../../../components/TimePopOver';
 import {
   DELETE_WORKFLOW,
+  GET_WORKFLOW_DETAILS,
   SYNC_WORKFLOW,
   TERMINATE_WORKFLOW,
-  WORKFLOW_LIST_DETAILS,
 } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
 } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
@@ -74,12 +74,12 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
 
   const { data: scheduledWorkflowData } = useQuery<
     ScheduledWorkflows,
-    ListWorkflowsInput
-  >(WORKFLOW_LIST_DETAILS, {
+    GetWorkflowsRequest
+  >(GET_WORKFLOW_DETAILS, {
     variables: {
-      workflowInput: {
-        project_id: projectID,
-        workflow_ids: [data.workflow_id ?? ''],
+      request: {
+        projectID,
+        workflowIDs: [data.workflowID ?? ''],
       },
     },
   });
@@ -115,7 +115,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
    */
   const [syncWorkflow] = useMutation(SYNC_WORKFLOW, {
     onCompleted: (data) => {
-      if (data?.syncWorkflow) {
+      if (data?.syncWorkflowRun) {
         handleWarningPopOverClose();
         refetchQuery();
       }
@@ -184,7 +184,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
     <>
       {/* Table cell for warning (if the workflow is in running state from 20 mins) */}
       <TableCell className={classes.warningTableCell}>
-        {timeDiff(new Date().getTime(), data.last_updated ?? '') >= 20 &&
+        {timeDiff(new Date().getTime(), data.lastUpdated ?? '') >= 20 &&
         data.phase?.toLowerCase() === 'running' ? (
           <IconButton onClick={handleWarningPopOverClick}>
             <img src="./icons/warning.svg" alt="warning" width="20" />
@@ -220,7 +220,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               <Typography className={classes.runningText}>
                 {t('chaosWorkflows.browseWorkflows.runningFrom')}{' '}
                 {Math.round(
-                  timeDiff(new Date().getTime(), data.last_updated ?? '')
+                  timeDiff(new Date().getTime(), data.lastUpdated ?? '')
                 )}{' '}
                 {t('chaosWorkflows.browseWorkflows.min')}
               </Typography>
@@ -233,8 +233,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                   syncWorkflow({
                     variables: {
                       projectID: getProjectID(),
-                      workflowID: data.workflow_id,
-                      workflow_run_id: data.workflow_run_id,
+                      workflowID: data.workflowID,
+                      workflowRunID: data.workflowRunID,
                     },
                   });
                 }}
@@ -249,8 +249,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                   deleteWorkflow({
                     variables: {
                       projectID: getProjectID(),
-                      workflowID: data.workflow_id,
-                      workflow_run_id: data.workflow_run_id,
+                      workflowID: data.workflowID,
+                      workflowRunID: data.workflowRunID,
                     },
                   });
                 }}
@@ -278,43 +278,43 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         style={{ cursor: 'pointer' }}
         onClick={() => {
           nodeSelection.selectNode({
-            pod_name: '',
+            podName: '',
           });
           history.push({
-            pathname: `/workflows/${data.workflow_run_id}`,
+            pathname: `/workflows/${data.workflowRunID}`,
             search: `?projectID=${projectID}&projectRole=${projectRole}`,
           });
         }}
       >
         <Typography className={classes.boldText} data-cy="workflowName">
-          {data.workflow_name}
+          {data.workflowName}
         </Typography>
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterName}>
-          {nameCapitalized(data.cluster_name ?? '')}
+          {nameCapitalized(data.clusterName ?? '')}
         </Typography>
       </TableCell>
       <TableCell className={classes.reliabiltyData}>
-        {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
-          ?.experiment_name !== '' ? (
+        {scheduledWorkflowData?.listWorkflows.workflows[0]?.weightages[0]
+          ?.experimentName !== '' ? (
           <>
             <Typography data-cy="ResScore">
               <span>
                 {t('chaosWorkflows.browseWorkflows.tableData.overallRR')}
               </span>
-              {data.resiliency_score === undefined ||
-              data.resiliency_score === null ? (
+              {data.resiliencyScore === undefined ||
+              data.resiliencyScore === null ? (
                 <span className={classes.less}>
                   {t('chaosWorkflows.browseWorkflows.tableData.na')}
                 </span>
               ) : (
                 <span
                   className={`${classes.boldText} ${getResiliencyScoreColor(
-                    data.resiliency_score
+                    data.resiliencyScore
                   )}`}
                 >
-                  {data.resiliency_score}%
+                  {data.resiliencyScore}%
                 </span>
               )}
             </Typography>
@@ -324,23 +324,23 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                   'chaosWorkflows.browseWorkflows.tableData.experimentsPassed'
                 )}
               </span>
-              {data.experiments_passed === undefined ||
-              data.experiments_passed === null ||
-              data.total_experiments === undefined ||
-              data.total_experiments === null ||
-              data.total_experiments === 0 ||
-              data.resiliency_score === undefined ||
-              data.resiliency_score === null ? (
+              {data.experimentsPassed === undefined ||
+              data.experimentsPassed === null ||
+              data.totalExperiments === undefined ||
+              data.totalExperiments === null ||
+              data.totalExperiments === 0 ||
+              data.resiliencyScore === undefined ||
+              data.resiliencyScore === null ? (
                 <span className={classes.less}>
                   {t('chaosWorkflows.browseWorkflows.tableData.na')}
                 </span>
               ) : (
                 <span
                   className={`${classes.boldText} ${getResiliencyScoreColor(
-                    data.resiliency_score
+                    data.resiliencyScore
                   )}`}
                 >
-                  {data.experiments_passed}/{data.total_experiments}
+                  {data.experimentsPassed}/{data.totalExperiments}
                 </span>
               )}
             </Typography>
@@ -353,8 +353,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
       </TableCell>
       <TableCell>
         <div>
-          {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages[0]
-            ?.experiment_name !== '' ? (
+          {scheduledWorkflowData?.listWorkflows.workflows[0]?.weightages[0]
+            ?.experimentName !== '' ? (
             <>
               <Button
                 onClick={handlePopOverClick}
@@ -365,7 +365,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                     'chaosWorkflows.browseWorkflows.tableData.showExperiments'
                   )}
                   (
-                  {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages
+                  {scheduledWorkflowData?.listWorkflows.workflows[0]?.weightages
                     .length ?? 0}
                   )
                 </Typography>
@@ -392,14 +392,14 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 }}
               >
                 <div className={classes.popover}>
-                  {scheduledWorkflowData?.ListWorkflow.workflows[0]?.weightages.map(
+                  {scheduledWorkflowData?.listWorkflows.workflows[0]?.weightages.map(
                     (weightEntry) => (
                       <div
-                        key={weightEntry.experiment_name}
+                        key={weightEntry.experimentName}
                         style={{ marginBottom: 8 }}
                       >
                         <ExperimentPoints
-                          expName={weightEntry.experiment_name}
+                          expName={weightEntry.experimentName}
                           weight={weightEntry.weightage}
                         />
                       </div>
@@ -416,11 +416,11 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
         </div>
       </TableCell>
       <TableCell>
-        <TimePopOver unixTime={data.last_updated ?? ''} />
+        <TimePopOver unixTime={data.lastUpdated ?? ''} />
       </TableCell>
       <TableCell>
         <Typography className={classes.executedBy}>
-          {data.executed_by || '-'}
+          {data.executedBy || '-'}
         </Typography>
       </TableCell>
       <TableCell>
@@ -445,10 +445,10 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Workflow"
             onClick={() => {
               nodeSelection.selectNode({
-                pod_name: '',
+                podName: '',
               });
               history.push({
-                pathname: `/workflows/${data.workflow_run_id}`,
+                pathname: `/workflows/${data.workflowRunID}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -468,7 +468,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Analysis"
             onClick={() => {
               history.push({
-                pathname: `/analytics/workflowStatistics/${data.workflow_id}`,
+                pathname: `/analytics/workflowStatistics/${data.workflowID}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -510,10 +510,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               </ButtonOutlined>
             }
           >
-            <ManifestModal
-              project_id={projectID}
-              workflow_id={data.workflow_id}
-            />
+            <ManifestModal projectID={projectID} workflowID={data.workflowID} />
           </Modal>
           {data.phase?.toLowerCase() === 'running' && (
             <MenuItem
@@ -522,8 +519,8 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
                 terminateWorkflow({
                   variables: {
                     projectID: getProjectID(),
-                    workflowID: data.workflow_id,
-                    workflow_run_id: data.workflow_run_id,
+                    workflowID: data.workflowID,
+                    workflowRunID: data.workflowRunID,
                   },
                 });
               }}

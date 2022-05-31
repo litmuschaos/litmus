@@ -92,8 +92,8 @@ func DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
 	return true, nil
 }
 
-// GetGitOpsDetailsHandler returns the current gitops config for the requested project
-func GetGitOpsDetailsHandler(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
+// GetGitOpsDetails returns the current gitops config for the requested project
+func GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 	config, err := dbOperationsGitOps.GetGitConfig(ctx, projectID)
@@ -211,7 +211,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 
 	username := "git-ops"
 
-	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowInput{
+	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
@@ -221,7 +221,7 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 }
 
 // UpsertWorkflowToGit adds/updates workflow to git
-func UpsertWorkflowToGit(ctx context.Context, workflow *model.ChaosWorkFlowInput) error {
+func UpsertWorkflowToGit(ctx context.Context, workflow *model.ChaosWorkFlowRequest) error {
 	gitLock.Lock(workflow.ProjectID, nil)
 	defer gitLock.Unlock(workflow.ProjectID, nil)
 	config, err := dbOperationsGitOps.GetGitConfig(ctx, workflow.ProjectID)
@@ -274,7 +274,7 @@ func UpsertWorkflowToGit(ctx context.Context, workflow *model.ChaosWorkFlowInput
 }
 
 // DeleteWorkflowFromGit deletes workflow from git
-func DeleteWorkflowFromGit(ctx context.Context, workflow *model.ChaosWorkFlowInput) error {
+func DeleteWorkflowFromGit(ctx context.Context, workflow *model.ChaosWorkFlowRequest) error {
 	log.Print("Deleting Workflow...")
 	gitLock.Lock(workflow.ProjectID, nil)
 	defer gitLock.Unlock(workflow.ProjectID, nil)
