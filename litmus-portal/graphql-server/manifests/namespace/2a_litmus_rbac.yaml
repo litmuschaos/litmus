@@ -45,7 +45,7 @@ rules:
     resources: ["rollouts"]
     verbs: ["get", "list"]
   - apiGroups: [""]
-    resources: ["pods", "pods/exec", "configmaps", "events", "services"]
+    resources: ["pods", "pods/exec"]
     verbs:
       [
         "get",
@@ -56,6 +56,17 @@ rules:
         "list",
         "watch",
         "deletecollection",
+      ]
+  - apiGroups: [""]
+    resources: ["configmaps", "events", "services"]
+    verbs:
+      [
+        "get",
+        "create",
+        "update",
+        "patch",
+        "list",
+        "watch",
       ]
   - apiGroups: ["litmuschaos.io"]
     resources: ["chaosengines", "chaosexperiments", "chaosresults"]
