@@ -1,4 +1,4 @@
-## provide the target host ip
+## provide the target port of the service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,7 +16,7 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "31.123.231.45"
+        - name: TARGET_PORT
+          value: "9001"
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'

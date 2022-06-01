@@ -1,7 +1,7 @@
 ## Introduction
 
-- It injects http request latency on the specified container by starting proxy server and then redirecting the traffic to the proxy server.
-- It can test the application's resilience to lossy/flaky http requests
+- It injects http response latency on the service whose port is provided as `TARGET_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
+- It can test the application's resilience to lossy/flaky http responses.
 
 !!! tip "Scenario: Add latency to the HTTP request"    
     ![Pod HTTP Latency](../../images/pod-http.png)
@@ -118,7 +118,7 @@
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-    <h2>Optional Fields</h2>
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -131,10 +131,15 @@
         <td> Port of the service to target</td>
         <td>Defaults to port 80 </td>
       </tr>
+    </table>
+
+    <h2>Optional Fields</h2>
+
+    <table>
       <tr>
-        <td> TARGET_HOST  </td>
-        <td> IP address or hostname of the service to target. </td>
-        <td>If the service IP is not available, provide the hostname of the service without the protocol. Eg: google.com</td>
+        <th> Variables </th>
+        <th> Description </th>
+        <th> Notes </th>
       </tr>
       <tr>
         <td> LISTEN_PORT  </td>
@@ -194,15 +199,15 @@
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
-### Target Host (IP Address) 
+### Target Port
 
-It defines the target service for which http chaos has to be injected. It can be tuned via `TARGET_HOST` and `TARGET_PORT` ENV. 
+It defines the target port of the service that is being targetted. It can be tuned via `TARGET_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/target-host-ip.yaml yaml)
+[embedmd]:# (pod-http-latency/target-port.yaml yaml)
 ```yaml
-## provide the target host ip
+## provide the target port of the service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -220,42 +225,11 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "31.123.231.45"
+        - name: TARGET_PORT
+          value: "9001"
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
-
-### Target Host (Hostnane) 
-
-It defines the target service for which http chaos has to be injected. It can be tuned via `TARGET_HOST` and `TARGET_PORT` ENV. 
-
-Use the following example to tune this:
-
-[embedmd]:# (pod-http-latency/target-host-hostname.yaml yaml)
-```yaml
-## provide the target hostname
-apiVersion: litmuschaos.io/v1alpha1
-kind: ChaosEngine
-metadata:
-  name: engine-nginx
-spec:
-  engineState: "active"
-  annotationCheck: "false"
-  appinfo:
-    appns: "default"
-    applabel: "app=nginx"
-    appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
-  experiments:
-  - name: pod-http-chaos
-    spec:
-      components:
-        env:
-        - name: TARGET_HOST
-          value: "google.com"
-```
-
 ### Listen Port
 
 It defines the listen port for the proxy server. It can be tuned via `LISTEN_PORT` ENV.
