@@ -131,6 +131,11 @@
         <td> Port of the service to target</td>
         <td>Defaults to port 80 </td>
       </tr>
+      <tr>
+        <td> LATENCY  </td>
+        <td> Latency value in ms to be added to requests</td>
+        <td> Defaults to 2000 </td>
+      </tr>
     </table>
 
     <h2>Optional Fields</h2>
@@ -145,11 +150,6 @@
         <td> LISTEN_PORT  </td>
         <td> Port where the proxy will be listening for requests</td>
         <td> Defaults to 20000 </td>
-      </tr>
-      <tr>
-        <td> LATENCY  </td>
-        <td> Latency value in ms to be added to requests</td>
-        <td> Defaults to 2000 </td>
       </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
