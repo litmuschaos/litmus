@@ -43,7 +43,7 @@
 ## Default Validations
 
 ??? info "View the default validations" 
-    - VM instance should be in healthy state.
+    - All the VM instances having the target label are in a healthy state
 
 ## Minimal RBAC configuration example (optional)
 
