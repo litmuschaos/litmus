@@ -52,7 +52,7 @@ type ComplexityRoot struct {
 		K8sManifest  func(childComplexity int) int
 		Namespace    func(childComplexity int) int
 		RequestType  func(childComplexity int) int
-		Username     func(childComplexity int) int
+		UID          func(childComplexity int) int
 	}
 
 	AgentStat struct {
@@ -753,12 +753,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ActionPayload.RequestType(childComplexity), true
 
-	case "ActionPayload.username":
-		if e.complexity.ActionPayload.Username == nil {
+	case "ActionPayload.uid":
+		if e.complexity.ActionPayload.UID == nil {
 			break
 		}
 
-		return e.complexity.ActionPayload.Username(childComplexity), true
+		return e.complexity.ActionPayload.UID(childComplexity), true
 
 	case "AgentStat.active":
 		if e.complexity.AgentStat.Active == nil {
@@ -4542,7 +4542,7 @@ type ActionPayload {
     k8sManifest: String!
     namespace: String!
     externalData: String
-    username: String
+    uid: String
 }
 
 type ClusterActionResponse {
@@ -7778,7 +7778,7 @@ func (ec *executionContext) _ActionPayload_externalData(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ActionPayload_username(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
+func (ec *executionContext) _ActionPayload_uid(ctx context.Context, field graphql.CollectedField, obj *model.ActionPayload) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7795,7 +7795,7 @@ func (ec *executionContext) _ActionPayload_username(ctx context.Context, field g
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Username, nil
+		return obj.UID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25629,8 +25629,8 @@ func (ec *executionContext) _ActionPayload(ctx context.Context, sel ast.Selectio
 			}
 		case "externalData":
 			out.Values[i] = ec._ActionPayload_externalData(ctx, field, obj)
-		case "username":
-			out.Values[i] = ec._ActionPayload_username(ctx, field, obj)
+		case "uid":
+			out.Values[i] = ec._ActionPayload_uid(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

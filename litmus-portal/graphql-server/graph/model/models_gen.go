@@ -13,7 +13,7 @@ type ActionPayload struct {
 	K8sManifest  string  `json:"k8sManifest"`
 	Namespace    string  `json:"namespace"`
 	ExternalData *string `json:"externalData"`
-	Username     *string `json:"username"`
+	UID          *string `json:"uid"`
 }
 
 // Defines details of agent statistics
