@@ -45,7 +45,7 @@ func GetUsername(token string) (string, error) {
 
 	if err != nil {
 		log.Print("USER JWT ERROR: ", err)
-		return "", errors.New("Invalid Token")
+		return "", errors.New("invalid Token")
 	}
 
 	claims, ok := tkn.Claims.(jwt.MapClaims)
@@ -53,5 +53,23 @@ func GetUsername(token string) (string, error) {
 		return claims["username"].(string), nil
 	}
 
-	return "", errors.New("Invalid Token")
+	return "", errors.New("invalid Token")
+}
+
+func GetUID(token string) (string, error) {
+	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		log.Print("USER JWT ERROR: ", err)
+		return "", errors.New("invalid Token")
+	}
+
+	claims, ok := tkn.Claims.(jwt.MapClaims)
+	if ok {
+		return claims["uid"].(string), nil
+	}
+
+	return "", errors.New("invalid Token")
 }

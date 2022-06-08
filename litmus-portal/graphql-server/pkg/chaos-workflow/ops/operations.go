@@ -112,7 +112,7 @@ func ProcessWorkflow(workflow *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlow
 }
 
 // ProcessWorkflowCreation creates new workflow entry and sends the workflow to the specific agent for execution
-func ProcessWorkflowCreation(input *model.ChaosWorkFlowRequest, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
+func ProcessWorkflowCreation(input *model.ChaosWorkFlowRequest, uid string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
 	var Weightages []*dbSchemaWorkflow.WeightagesInput
 	if input.Weightages != nil {
 		copier.Copy(&Weightages, &input.Weightages)
@@ -141,7 +141,7 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowRequest, username string,
 		UpdatedAt:           strconv.FormatInt(time.Now().Unix(), 10),
 		WorkflowRuns:        []*dbSchemaWorkflow.ChaosWorkflowRun{},
 		IsRemoved:           false,
-		LastUpdatedBy:       username,
+		LastUpdatedBy:       uid,
 	}
 
 	err = dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
@@ -150,21 +150,21 @@ func ProcessWorkflowCreation(input *model.ChaosWorkFlowRequest, username string,
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(input, &username, nil, "create", r)
+		SendWorkflowToSubscriber(input, &uid, nil, "create", r)
 	}
 
 	return nil
 }
 
 // ProcessWorkflowUpdate updates the workflow entry and sends update resource request to required agent
-func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowRequest, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
+func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowRequest, uid string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error {
 	var Weightages []*dbSchemaWorkflow.WeightagesInput
 	if workflow.Weightages != nil {
 		copier.Copy(&Weightages, &workflow.Weightages)
 	}
 
 	query := bson.D{{"workflow_id", workflow.WorkflowID}, {"project_id", workflow.ProjectID}}
-	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"type", *wfType}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}, {"last_updated_by", username}}}}
+	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"type", *wfType}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}, {"last_updated_by", uid}}}}
 
 	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
@@ -172,15 +172,15 @@ func ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowRequest, username string
 	}
 
 	if r != nil {
-		SendWorkflowToSubscriber(workflow, &username, nil, "update", r)
+		SendWorkflowToSubscriber(workflow, &uid, nil, "update", r)
 	}
 	return nil
 }
 
 // ProcessWorkflowDelete deletes the workflow entry and sends delete resource request to required agent
-func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error {
+func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowRequest, uid string, r *store.StateData) error {
 
-	update := bson.D{{"$set", bson.D{{"isRemoved", true}, {"last_updated_by", username}}}}
+	update := bson.D{{"$set", bson.D{{"isRemoved", true}, {"last_updated_by", uid}}}}
 	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
@@ -191,13 +191,13 @@ func ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowReq
 			ProjectID:        workflow.ProjectID,
 			ClusterID:        workflow.ClusterID,
 			WorkflowManifest: workflow.WorkflowManifest,
-		}, &username, nil, "delete", r)
+		}, &uid, nil, "delete", r)
 	}
 	return nil
 }
 
 // ProcessWorkflowRunDelete deletes a workflow entry and updates the database
-func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error {
+func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, uid string, r *store.StateData) error {
 	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
 	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
@@ -209,7 +209,7 @@ func ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow work
 		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID: workflow.ProjectID,
 			ClusterID: workflow.ClusterID,
-		}, &username, workflowRunID, "workflow_delete", r)
+		}, &uid, workflowRunID, "workflow_delete", r)
 	}
 	return nil
 }
@@ -235,7 +235,7 @@ func ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow w
 }
 
 // SendWorkflowToSubscriber sends the workflow to the subscriber to be handled
-func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, username *string, externalData *string, reqType string, r *store.StateData) {
+func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, uid *string, externalData *string, reqType string, r *store.StateData) {
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 
 	if workflowNamespace == "" {
@@ -248,7 +248,7 @@ func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, username *st
 		ClusterID:    workflow.ClusterID,
 		Namespace:    workflowNamespace,
 		ExternalData: externalData,
-		Username:     username,
+		Username:     uid,
 	}, *r)
 }
 

@@ -38,7 +38,7 @@ type Action struct {
 	K8SManifest  string `json:"k8sManifest"`
 	ExternalData string `json:"externalData"`
 	RequestType  string `json:"requestType"`
-	Username     string `json:"username"`
+	Uid          string `json:"uid"`
 	Namespace    string `json:"namespace"`
 }
 

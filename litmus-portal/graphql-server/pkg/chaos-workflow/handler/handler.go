@@ -49,14 +49,14 @@ func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	uid, err := authorization.GetUID(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Print("Error getting uid: ", err)
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowCreation(request, username, wfType, r)
+	err = ops.ProcessWorkflowCreation(request, uid, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow: ", err)
 		return nil, err
@@ -82,10 +82,10 @@ func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *stri
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	uid, err := authorization.GetUID(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Print("Error getting uid: ", err)
 		return false, err
 	}
 
@@ -97,7 +97,7 @@ func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *stri
 			}
 		}
 
-		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, username, r)
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, uid, r)
 		if err != nil {
 			return false, err
 		}
@@ -118,7 +118,7 @@ func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *stri
 			return false, err
 		}
 
-		err = ops.ProcessWorkflowDelete(query, workflow, username, r)
+		err = ops.ProcessWorkflowDelete(query, workflow, uid, r)
 		if err != nil {
 			return false, err
 		}
@@ -141,10 +141,10 @@ func TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *s
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	uid, err := authorization.GetUID(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Print("Error getting uid: ", err)
 		return false, err
 	}
 
@@ -156,7 +156,7 @@ func TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *s
 			}
 		}
 
-		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, username, r)
+		err = ops.ProcessWorkflowRunDelete(query, workflowRunID, workflow, uid, r)
 		if err != nil {
 			return false, err
 		}
@@ -175,10 +175,10 @@ func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 	}
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	uid, err := authorization.GetUID(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Print("Error getting uid: ", err)
 		return nil, err
 	}
 
@@ -189,7 +189,7 @@ func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 		return nil, err
 	}
 
-	err = ops.ProcessWorkflowUpdate(request, username, wfType, r)
+	err = ops.ProcessWorkflowUpdate(request, uid, wfType, r)
 	if err != nil {
 		log.Print("Error executing workflow update: ", err)
 		return nil, err
@@ -458,7 +458,12 @@ func ListWorkflowRuns(request model.ListWorkflowRunsRequest) (*model.ListWorkflo
 		workflowRun := workflow.WorkflowRuns
 
 		var Weightages []*model.Weightages
-		copier.Copy(&Weightages, &workflow.Weightages)
+		err := copier.Copy(&Weightages, &workflow.Weightages)
+
+		if err != nil {
+			log.Print("Error getting weightages: ", err)
+			return nil, err
+		}
 
 		newWorkflowRun := model.WorkflowRun{
 			WorkflowName:       workflow.WorkflowName,
@@ -661,7 +666,11 @@ func ListWorkflows(request model.ListWorkflowsRequest) (*model.ListWorkflowsResp
 		}
 
 		var Weightages []*model.Weightages
-		copier.Copy(&Weightages, &workflow.Weightages)
+		err = copier.Copy(&Weightages, &workflow.Weightages)
+		if err != nil {
+			log.Print("error getting the weightages")
+			return nil, err
+		}
 
 		newChaosWorkflows := model.Workflow{
 			WorkflowID:          workflow.WorkflowID,
@@ -823,7 +832,7 @@ func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 }
 
 // ReRunChaosWorkFlow sends workflow run request(single run workflow only) to agent on workflow re-run request
-func ReRunChaosWorkFlow(projectID string, workflowID string, username string) (string, error) {
+func ReRunChaosWorkFlow(projectID string, workflowID string, uid string) (string, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"workflow_id", workflowID},
@@ -849,20 +858,20 @@ func ReRunChaosWorkFlow(projectID string, workflowID string, username string) (s
 	}
 	if cluster.IsActive != true {
 		log.Print("Agent not active to re-run the workflow")
-		return "", errors.New("Agent not active to re-run the selected workflow.")
+		return "", errors.New("agent not active to re-run the selected workflow")
 	}
 
 	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))
 	if err != nil {
 		log.Print("Failed to updated workflow name [re-run] :", err)
-		return "", errors.New("Failed to updated workflow name " + err.Error())
+		return "", errors.New("failed to updated workflow name " + err.Error())
 	}
 
 	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, &username, nil, "create", store.Store)
+	}, &uid, nil, "create", store.Store)
 
 	return "Request for re-run acknowledged, workflowID: " + workflowID, nil
 }
@@ -919,7 +928,7 @@ func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (
 		return nil, err
 	}
 	if IsExist == true {
-		return nil, errors.New("Template already exists")
+		return nil, errors.New("template already exists")
 	}
 
 	var conn *grpc2.ClientConn
@@ -951,7 +960,7 @@ func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (
 	return template.GetWorkflowTemplateOutput(), nil
 }
 
-// ListWorkflowTemplate is used to list all the workflow templates available in the project
+// ListWorkflowManifests is used to list all the workflow templates available in the project
 func ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {
@@ -965,7 +974,7 @@ func ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.Work
 	return templateList, err
 }
 
-// QueryTemplateWorkflowByID is used to fetch the workflow template with template id
+// GetWorkflowManifestByID is used to fetch the workflow template with template id
 func GetWorkflowManifestByID(ctx context.Context, templateID string) (*model.WorkflowTemplate, error) {
 	template, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
 	if err != nil {

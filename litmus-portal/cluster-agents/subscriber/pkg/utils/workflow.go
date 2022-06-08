@@ -14,7 +14,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func WorkflowRequest(clusterData map[string]string, requestType string, externalData string, username string) error {
+func WorkflowRequest(clusterData map[string]string, requestType string, externalData string, uid string) error {
 	if requestType == "workflow_delete" {
 		wfOb, err := events.GetWorkflowObj(externalData)
 		if err != nil {
@@ -50,6 +50,7 @@ func WorkflowRequest(clusterData map[string]string, requestType string, external
 				EventType:    "DELETE",
 				UID:          extData.WorkflowRunID,
 				Phase:        "NotAvailable",
+				ExecutedBy:   uid,
 			}
 
 			response, err := events.SendWorkflowUpdates(clusterData, evt)

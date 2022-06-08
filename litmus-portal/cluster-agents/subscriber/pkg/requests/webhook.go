@@ -15,7 +15,7 @@ import (
 )
 
 func ClusterConnect(clusterData map[string]string) {
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {clusterID: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", accessKey: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t projectID,\n     action{\n      k8sManifest,\n      externalData,\n      requestType\n     username\n     namespace\n     }\n  }\n}\n"}`
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {clusterID: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", accessKey: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t projectID,\n     action{\n      k8sManifest,\n      externalData,\n      requestType\n     uid\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to parse URL")
@@ -129,7 +129,7 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 			return errors.New("error performing cluster operation: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_sync", strings.ToLower(r.Payload.Data.ClusterConnect.Action.RequestType)) >= 0 {
-		err := utils.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData, r.Payload.Data.ClusterConnect.Action.Username)
+		err := utils.WorkflowRequest(clusterData, r.Payload.Data.ClusterConnect.Action.RequestType, r.Payload.Data.ClusterConnect.Action.ExternalData, r.Payload.Data.ClusterConnect.Action.Uid)
 		if err != nil {
 			return errors.New("error performing events operation: " + err.Error())
 		}

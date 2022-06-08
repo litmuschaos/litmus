@@ -209,13 +209,13 @@ func GitOpsNotificationHandler(ctx context.Context, clusterInfo model.ClusterIde
 		return "", errors.New("Failed to updated workflow name " + err.Error())
 	}
 
-	username := "git-ops"
+	uid := "git-ops"
 
 	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
-	}, &username, nil, "create", store.Store)
+	}, &uid, nil, "create", store.Store)
 
 	return "Request Acknowledged for workflowID: " + workflowID, nil
 }

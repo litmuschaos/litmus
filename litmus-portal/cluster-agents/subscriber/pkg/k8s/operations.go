@@ -313,7 +313,7 @@ func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, 
 		return nil, err
 	}
 
-	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Username})
+	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Uid})
 
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
