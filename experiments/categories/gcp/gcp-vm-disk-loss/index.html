@@ -17,7 +17,7 @@
     
     
       
-        <title>GCP Disk Loss - Litmus Experiments</title>
+        <title>GCP VM Disk Loss - Litmus Experiments</title>
       
     
     
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              GCP Disk Loss
+              GCP VM Disk Loss
             
           </span>
         </div>
@@ -1517,14 +1517,101 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4_1" type="checkbox" id="__nav_2_3_4_1" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_2_3_4_1">
+          VM Instance
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="VM Instance" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          VM Instance
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../gcp-vm-instance-stop/" class="md-nav__link">
-        GCP Instance Stop
+        GCP VM Instance Stop
       </a>
     </li>
   
 
             
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gcp-vm-instance-stop-by-label/" class="md-nav__link">
+        GCP VM Instance Stop By Label
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4_2" type="checkbox" id="__nav_2_3_4_2" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_2_3_4_2">
+          VM Disk
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="VM Disk" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          VM Disk
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
           
             
               
@@ -1540,12 +1627,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          GCP Disk Loss
+          GCP VM Disk Loss
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        GCP Disk Loss
+        GCP VM Disk Loss
       </a>
       
         
@@ -1641,6 +1728,27 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gcp-vm-disk-loss-by-label/" class="md-nav__link">
+        GCP VM Disk Loss By Label
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -2968,7 +3076,7 @@
 
 
 
-  <h1>GCP Disk Loss</h1>
+  <h1>GCP VM Disk Loss</h1>
 
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
@@ -2991,7 +3099,7 @@
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
 <li>Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a></li>
 <li>Ensure that your service account has an editor access or owner access for the GCP project.</li>
-<li>Ensure the target disk volume to be detached should not be the root volume its instance. </li>
+<li>Ensure that the target disk volume is not a boot disk of any VM instance.</li>
 <li>
 <p>Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
@@ -3143,7 +3251,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   </tr><br />
   <tr>
     <td> SEQUENCE </td>
-    <td> It defines sequence of chaos execution for multiple instance </td>
+    <td> It defines sequence of chaos execution for multiple disks </td>
     <td> Default value: parallel. Supported: serial, parallel </td>
   </tr> 
   <tr>
@@ -3250,7 +3358,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
         <!-- Link to previous page -->
         
         <a
-            href="../gcp-vm-instance-stop/"
+            href="../gcp-vm-instance-stop-by-label/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -3262,7 +3370,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                GCP Instance Stop
+                GCP VM Instance Stop By Label
             </div>
             </div>
         </a>
@@ -3271,7 +3379,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
         <!-- Link to next page -->
         
         <a
-            href="../../../concepts/chaos-resources/contents/"
+            href="../gcp-vm-disk-loss-by-label/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -3280,7 +3388,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Contents
+                GCP VM Disk Loss By Label
             </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -10,14 +10,14 @@
       
       
       
-        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/nodes/node-drain/">
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/gcp/gcp-vm-disk-loss-by-label/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.4">
     
     
       
-        <title>Node Drain - Litmus Experiments</title>
+        <title>GCP VM Disk Loss By Label - Litmus Experiments</title>
       
     
     
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Node Drain
+              GCP VM Disk Loss By Label
             
           </span>
         </div>
@@ -448,14 +448,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
       
       
       
@@ -484,14 +482,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1" type="checkbox" id="__nav_2_2_1" >
       
       
       
@@ -809,14 +805,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_2" type="checkbox" id="__nav_2_2_1_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2_1_2" type="checkbox" id="__nav_2_2_1_2" >
       
       
       
@@ -857,7 +851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../docker-service-kill/" class="md-nav__link">
+      <a href="../../nodes/docker-service-kill/" class="md-nav__link">
         Docker Service Kill
       </a>
     </li>
@@ -871,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kubelet-service-kill/" class="md-nav__link">
+      <a href="../../nodes/kubelet-service-kill/" class="md-nav__link">
         Kubelet Service Kill
       </a>
     </li>
@@ -885,7 +879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../node-cpu-hog/" class="md-nav__link">
+      <a href="../../nodes/node-cpu-hog/" class="md-nav__link">
         Node CPU Hog
       </a>
     </li>
@@ -897,110 +891,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Node Drain
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../nodes/node-drain/" class="md-nav__link">
         Node Drain
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#uses" class="md-nav__link">
-    Uses
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#default-validations" class="md-nav__link">
-    Default Validations
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
-    Minimal RBAC configuration example (optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-tunables" class="md-nav__link">
-    Experiment tunables
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-examples" class="md-nav__link">
-    Experiment Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Experiment Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-and-node-specific-tunables" class="md-nav__link">
-    Common and Node specific tunables
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#drain-node" class="md-nav__link">
-    Drain Node
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1012,7 +907,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../node-io-stress/" class="md-nav__link">
+      <a href="../../nodes/node-io-stress/" class="md-nav__link">
         Node IO Stress
       </a>
     </li>
@@ -1026,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../node-memory-hog/" class="md-nav__link">
+      <a href="../../nodes/node-memory-hog/" class="md-nav__link">
         Node Memory Hog
       </a>
     </li>
@@ -1040,7 +935,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../node-restart/" class="md-nav__link">
+      <a href="../../nodes/node-restart/" class="md-nav__link">
         Node Restart
       </a>
     </li>
@@ -1054,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../node-taint/" class="md-nav__link">
+      <a href="../../nodes/node-taint/" class="md-nav__link">
         Node Taint
       </a>
     </li>
@@ -1189,12 +1084,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" checked>
       
       
       
@@ -1585,12 +1482,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4" type="checkbox" id="__nav_2_3_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4" type="checkbox" id="__nav_2_3_4" checked>
       
       
       
@@ -1651,7 +1550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../gcp/gcp-vm-instance-stop/" class="md-nav__link">
+      <a href="../gcp-vm-instance-stop/" class="md-nav__link">
         GCP VM Instance Stop
       </a>
     </li>
@@ -1665,7 +1564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../gcp/gcp-vm-instance-stop-by-label/" class="md-nav__link">
+      <a href="../gcp-vm-instance-stop-by-label/" class="md-nav__link">
         GCP VM Instance Stop By Label
       </a>
     </li>
@@ -1684,12 +1583,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4_2" type="checkbox" id="__nav_2_3_4_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4_2" type="checkbox" id="__nav_2_3_4_2" checked>
       
       
       
@@ -1718,7 +1619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../gcp/gcp-vm-disk-loss/" class="md-nav__link">
+      <a href="../gcp-vm-disk-loss/" class="md-nav__link">
         GCP VM Disk Loss
       </a>
     </li>
@@ -1730,11 +1631,117 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../gcp/gcp-vm-disk-loss-by-label/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          GCP VM Disk Loss By Label
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         GCP VM Disk Loss By Label
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-experiment-tunables" class="md-nav__link">
+    Common Experiment Tunables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detach-volumes-by-label" class="md-nav__link">
+    Detach Volumes By Label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutiple-iterations-of-chaos" class="md-nav__link">
+    Mutiple Iterations Of Chaos
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3026,15 +3033,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#common-and-node-specific-tunables" class="md-nav__link">
-    Common and Node specific tunables
+  <a href="#common-experiment-tunables" class="md-nav__link">
+    Common Experiment Tunables
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#drain-node" class="md-nav__link">
-    Drain Node
+  <a href="#detach-volumes-by-label" class="md-nav__link">
+    Detach Volumes By Label
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mutiple-iterations-of-chaos" class="md-nav__link">
+    Mutiple Iterations Of Chaos
   </a>
   
 </li>
@@ -3056,21 +3070,21 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/nodes/node-drain.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/gcp/gcp-vm-disk-loss-by-label.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-  <h1>Node Drain</h1>
+  <h1>GCP VM Disk Loss By Label</h1>
 
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
-<li>It drain the node. The resources which are running on the target node should be reschedule on the other nodes.</li>
+<li>It causes chaos to disrupt the state of GCP persistent disk volume filtered using a label by detaching it from its VM instance for a certain chaos duration.</li>
 </ul>
 <div class="admonition tip">
-<p class="admonition-title">Scenario: Drain the node</p>
-<p><img alt="Node Drain" src="../../../images/node-drain.png" /></p>
+<p class="admonition-title">Scenario: detach the gcp disk</p>
+<p><img alt="GCP VM Disk Loss By Label" src="../../../images/gcp-vm-disk-loss.png" /></p>
 </div>
 <h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
 <details class="info">
@@ -3081,20 +3095,39 @@
 <details class="info">
 <summary>Verify the prerequisites</summary>
 <ul>
-<li>Ensure that Kubernetes Version &gt; 1.16 </li>
-<li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>node-drain</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-drain/experiment.yaml">here</a></li>
-<li>Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node which will be drained) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps:<ul>
-<li>Get node names against the applications pods: <code>kubectl get pods -o wide</code></li>
-<li>Cordon the node <code>kubectl cordon &lt;nodename&gt;</code></li>
-</ul>
+<li>Ensure that Kubernetes Version &gt; 1.17</li>
+<li>Ensure that the Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
+<li>Ensure that the <code>gcp-vm-disk-loss-by-label</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss-by-label/experiment.yaml">here</a></li>
+<li>Ensure that your service account has an editor access or owner access for the GCP project.</li>
+<li>Ensure that the target disk volume is not a boot disk of any VM instance.</li>
+<li>
+<p>Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cloud-secret</span><span class="w"></span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span><span class="w"></span>
+<span class="nt">stringData</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">private_key_id</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">private_key</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">client_email</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">client_id</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">auth_uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">token_uri</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">auth_provider_x509_cert_url</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">client_x509_cert_url</span><span class="p">:</span><span class="w"> </span>
+</code></pre></div>
 </li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
 <details class="info">
 <summary>View the default validations</summary>
-<p>The target nodes should be in ready state before and after chaos injection.</p>
+<ul>
+<li>All the disk volumes having the target label are attached to their respective instances</li>
+</ul>
 </details>
 <h2 id="minimal-rbac-configuration-example-optional">Minimal RBAC configuration example (optional)<a class="headerlink" href="#minimal-rbac-configuration-example-optional" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
@@ -3102,25 +3135,25 @@
 <p>If you are using this experiment as part of a litmus workflow scheduled constructed &amp; executed from chaos-center, then you may be making use of the <a href="https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml">litmus-admin</a> RBAC, which is pre installed in the cluster as part of the agent setup.</p>
 <details class="note">
 <summary>View the Minimal RBAC permissions</summary>
-<div class="highlight"><pre><span></span><code><span class="nn">---</span><span class="w"></span>
+<p><div class="highlight"><pre><span></span><code><span class="nn">---</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nn">---</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nt">rules</span><span class="p">:</span><span class="w"></span>
-<span class="c1"># Create and monitor the experiment &amp; helper pods</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Create and monitor the experiment &amp; helper pods</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;delete&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;update&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;deletecollection&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3128,22 +3161,14 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;events&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;update&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Fetch configmaps details and mount it to the experiment pod (if specified)</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Fetch configmaps &amp; secrets details and mount it to the experiment pod (if specified)</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;configmaps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;configmaps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,]</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log </span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/log&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span>
-<span class="w">  </span><span class="c1"># for creating and managing to execute comands inside target container</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/exec&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;pods/eviction&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># ignore daemonsets while draining the node</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;daemonsets&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;delete&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># for configuring and monitor the experiment job by the chaos-runner pod</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;batch&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;jobs&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3152,28 +3177,24 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;litmuschaos.io&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;chaosengines&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosexperiments&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;chaosresults&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;create&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;update&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;delete&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># for experiment to perform node status checks</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;nodes&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;patch&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="nn">---</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nt">roleRef</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span><span class="w"></span>
 <span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="nt">subjects</span><span class="p">:</span><span class="w"></span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 </code></pre></div>
-<p>Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.</p>
+Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.</p>
 </details>
 </div>
 <h2 id="experiment-tunables">Experiment tunables<a class="headerlink" href="#experiment-tunables" title="Permanent link">&para;</a></h2>
@@ -3186,15 +3207,20 @@
     <th> Description </th>
     <th> Notes </th>
   </tr>
-  <tr>
-    <td> TARGET_NODE </td>
-    <td> Name of the node to be tainted</td>
-    <td> </td>
+  <tr> 
+    <td> GCP_PROJECT_ID </td>
+    <td> The ID of the GCP Project of which the disk volumes are a part of </td>
+    <td> All the target disk volumes should belong to a single GCP Project </td>
   </tr>
+  <tr> 
+    <td> DISK_VOLUME_LABEL </td>
+    <td>Label of the targeted non-boot persistent disk volume</td>
+    <td> The <code>DISK_VOLUME_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>disk:target-disk</code> </td>
+  </tr><br />
   <tr>
-    <td> NODE_LABEL </td>
-    <td> It contains node label, which will be used to filter the target node if TARGET_NODE ENV is not set </td>
-    <td>It is mutually exclusive with the TARGET_NODE ENV. If both are provided then it will use the TARGET_NODE</td>
+    <td> DISK_ZONES </td>
+    <td> The zone of target disk volumes </td>
+    <td> Only one zone can be provided i.e. all target disks should lie in the same zone </td>
   </tr>
 </table></p>
 <p><h2>Optional Fields</h2></p>
@@ -3204,30 +3230,41 @@
     <th> Description </th>
     <th> Notes </th>
   </tr>
-  <tr>
+  <tr> 
     <td> TOTAL_CHAOS_DURATION </td>
-    <td> The time duration for chaos insertion (seconds)  </td>
-    <td> Defaults to 60s </td>
+    <td> The total time duration for chaos insertion (sec) </td>
+    <td> Defaults to 30s </td>
   </tr>
+   <tr> 
+    <td> CHAOS_INTERVAL </td>
+    <td> The interval (in sec) between the successive chaos iterations (sec) </td>
+    <td> Defaults to 30s </td>
+  </tr><br />
+  <tr> 
+    <td> DISK_AFFECTED_PERC </td>
+    <td> The percentage of total disks filtered using the label to target </td>
+    <td> Defaults to 0 (corresponds to 1 disk), provide numeric value only </td>
+  </tr> 
   <tr>
-    <td> LIB  </td>
-    <td> The chaos lib used to inject the chaos </td>
-    <td> Defaults to <code>litmus</code> </td>
-  </tr>
+    <td> SEQUENCE </td>
+    <td> It defines sequence of chaos execution for multiple disks </td>
+    <td> Default value: parallel. Supported: serial, parallel </td>
+  </tr> 
   <tr>
     <td> RAMP_TIME </td>
-    <td> Period to wait before injection of chaos in sec </td>
+    <td> Period to wait before and after injection of chaos in sec </td>
     <td> </td>
   </tr>
 </table></p>
 </details>
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
-<h3 id="common-and-node-specific-tunables">Common and Node specific tunables<a class="headerlink" href="#common-and-node-specific-tunables" title="Permanent link">&para;</a></h3>
-<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-node-experiments/">Node specific tunable</a> to tune the common tunables for all experiments and node specific tunables.  </p>
-<h3 id="drain-node">Drain Node<a class="headerlink" href="#drain-node" title="Permanent link">&para;</a></h3>
-<p>It contains name of target node subjected to the chaos. It can be tuned via <code>TARGET_NODE</code> ENV.</p>
+<h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
+<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
+<h3 id="detach-volumes-by-label">Detach Volumes By Label<a class="headerlink" href="#detach-volumes-by-label" title="Permanent link">&para;</a></h3>
+<p>It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label <code>DISK_VOLUME_LABEL</code> in zone <code>DISK_ZONES</code> within the <code>GCP_PROJECT_ID</code> project.  It re-attaches the disk volume after waiting for the specified <code>TOTAL_CHAOS_DURATION</code> duration.</p>
+<p><code>NOTE:</code> The <code>DISK_VOLUME_LABEL</code> accepts only one label and <code>DISK_ZONES</code> also accepts only one zone name. Therefore, all the disks must lie in the same zone.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># drain the targeted node</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## details of the gcp disk</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3235,17 +3272,55 @@
 <span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># name of the target node</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_NODE</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;node01&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_VOLUME_LABEL</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;disk:target-disk&#39;</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_ZONES</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-project-4513&#39;</span><span class="w"></span>
+
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
 <span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="mutiple-iterations-of-chaos">Mutiple Iterations Of Chaos<a class="headerlink" href="#mutiple-iterations-of-chaos" title="Permanent link">&para;</a></h3>
+<p>The multiple iterations of chaos can be tuned via setting <code>CHAOS_INTERVAL</code> ENV. Which defines the delay between each iteration of chaos.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># defines delay between each successive iteration of the chaos</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcp-vm-disk-loss-by-label</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHAOS_INTERVAL</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;15&#39;</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_VOLUME_LABEL</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;disk:target-disk&#39;</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_ZONES</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
+
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-project-4513&#39;</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3274,7 +3349,7 @@
         <!-- Link to previous page -->
         
         <a
-            href="../node-cpu-hog/"
+            href="../gcp-vm-disk-loss/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -3286,7 +3361,7 @@
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Node CPU Hog
+                GCP VM Disk Loss
             </div>
             </div>
         </a>
@@ -3295,7 +3370,7 @@
         <!-- Link to next page -->
         
         <a
-            href="../node-io-stress/"
+            href="../../../concepts/chaos-resources/contents/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -3304,7 +3379,7 @@
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Node IO Stress
+                Contents
             </div>
             </div>
             <div class="md-footer__button md-icon">

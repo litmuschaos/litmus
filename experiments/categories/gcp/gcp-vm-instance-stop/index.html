@@ -17,7 +17,7 @@
     
     
       
-        <title>GCP Instance Stop - Litmus Experiments</title>
+        <title>GCP VM Instance Stop - Litmus Experiments</title>
       
     
     
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              GCP Instance Stop
+              GCP VM Instance Stop
             
           </span>
         </div>
@@ -1519,6 +1519,40 @@
     
   
   
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4_1" type="checkbox" id="__nav_2_3_4_1" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_2_3_4_1">
+          VM Instance
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="VM Instance" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          VM Instance
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
@@ -1526,12 +1560,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          GCP Instance Stop
+          GCP VM Instance Stop
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        GCP Instance Stop
+        GCP VM Instance Stop
       </a>
       
         
@@ -1612,8 +1646,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#autoscaling-nodegroup" class="md-nav__link">
-    Autoscaling NodeGroup
+  <a href="#managed-instance-group" class="md-nav__link">
+    Managed Instance Group
   </a>
   
 </li>
@@ -1645,9 +1679,83 @@
   
   
     <li class="md-nav__item">
-      <a href="../gcp-vm-disk-loss/" class="md-nav__link">
-        GCP Disk Loss
+      <a href="../gcp-vm-instance-stop-by-label/" class="md-nav__link">
+        GCP VM Instance Stop By Label
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3_4_2" type="checkbox" id="__nav_2_3_4_2" >
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_2_3_4_2">
+          VM Disk
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="VM Disk" data-md-level="4">
+        <label class="md-nav__title" for="__nav_2_3_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          VM Disk
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gcp-vm-disk-loss/" class="md-nav__link">
+        GCP VM Disk Loss
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gcp-vm-disk-loss-by-label/" class="md-nav__link">
+        GCP VM Disk Loss By Label
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -2946,8 +3054,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#autoscaling-nodegroup" class="md-nav__link">
-    Autoscaling NodeGroup
+  <a href="#managed-instance-group" class="md-nav__link">
+    Managed Instance Group
   </a>
   
 </li>
@@ -2982,13 +3090,13 @@
 
 
 
-  <h1>GCP Instance Stop</h1>
+  <h1>GCP VM Instance Stop</h1>
 
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
 <li>It causes power-off of a GCP VM instance by instance name or list of instance names before bringing it back to the running state after the specified chaos duration.</li>
 <li>It helps to check the performance of the application/process running on the VM instance.</li>
-<li>When the <code>AUTO_SCALING_GROUP</code> is enable then the experiment will not try to start the instance post chaos, instead it will check the addition of the new node instances to the cluster.</li>
+<li>When the <code>MANAGED_INSTANCE_GROUP</code> is <code>enable</code> then the experiment will not try to start the instances post chaos, instead it will check the addition of new instances to the instance group.</li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Scenario: stop the gcp vm</p>
@@ -3156,8 +3264,8 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> Defaults to 30s </td>
   </tr><br />
   <tr> 
-    <td> AUTO_SCALING_GROUP </td>
-    <td> Set to <code>enable</code> if the target instance is the part of a auto-scaling group </td>
+    <td> MANAGED_INSTANCE_GROUP </td>
+    <td> Set to <code>enable</code> if the target instance is the part of a managed instance group </td>
     <td> Defaults to <code>disable</code> </td>
   </tr><br />
   <tr>
@@ -3206,8 +3314,8 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
 <span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="autoscaling-nodegroup">Autoscaling NodeGroup<a class="headerlink" href="#autoscaling-nodegroup" title="Permanent link">&para;</a></h3>
-<p>If vm instances belong to the autoscaling group then provide the <code>AUTO_SCALING_GROUP</code> as <code>enable</code> else provided it as <code>disable</code>. The default value of <code>AUTO_SCALING_GROUP</code> is <code>disable</code>.</p>
+<h3 id="managed-instance-group">Managed Instance Group<a class="headerlink" href="#managed-instance-group" title="Permanent link">&para;</a></h3>
+<p>If vm instances belong to a managed instance group then provide the <code>MANAGED_INSTANCE_GROUP</code> as <code>enable</code> else provided it as <code>disable</code>, which is the default value. </p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## scale up and down to maintain the available instance counts</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
@@ -3223,9 +3331,9 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># tells if instances are part of autoscaling group</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># tells if instances are part of managed instance group</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># supports: enable, disable. default: disable</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AUTO_SCALING_GROUP</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MANAGED_INSTANCE_GROUP</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;enable&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># comma separated list of vm instance names</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VM_INSTANCE_NAMES</span><span class="w"></span>
@@ -3318,7 +3426,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
         <!-- Link to next page -->
         
         <a
-            href="../gcp-vm-disk-loss/"
+            href="../gcp-vm-instance-stop-by-label/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -3327,7 +3435,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
                 <span class="md-footer__direction">
                 Next
                 </span>
-                GCP Disk Loss
+                GCP VM Instance Stop By Label
             </div>
             </div>
             <div class="md-footer__button md-icon">

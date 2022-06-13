@@ -81,7 +81,17 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/gcp/gcp-vm-disk-loss-by-label/</loc>
+         <lastmod>2022-06-13</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/categories/gcp/gcp-vm-disk-loss/</loc>
+         <lastmod>2022-06-13</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/gcp/gcp-vm-instance-stop-by-label/</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
