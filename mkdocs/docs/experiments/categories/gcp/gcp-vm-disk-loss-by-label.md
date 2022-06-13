@@ -1,9 +1,9 @@
 ## Introduction
 
-- It causes chaos to disrupt state of GCP persistent disk volume by detaching it from its VM instance for a certain chaos duration using the disk name.
+- It causes chaos to disrupt the state of GCP persistent disk volume filtered using a label by detaching it from its VM instance for a certain chaos duration.
 
 !!! tip "Scenario: detach the gcp disk"    
-    ![GCP VM Disk Loss](../../images/gcp-vm-disk-loss.png)
+    ![GCP VM Disk Loss By Label](../../images/gcp-vm-disk-loss.png)
 
 ## Uses
 
@@ -13,9 +13,9 @@
 ## Prerequisites
 
 ??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a>
+    - Ensure that Kubernetes Version > 1.17
+    -  Ensure that the Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>gcp-vm-disk-loss-by-label</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss-by-label/experiment.yaml">here</a>
     - Ensure that your service account has an editor access or owner access for the GCP project.
     - Ensure that the target disk volume is not a boot disk of any VM instance.
     - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:
@@ -42,7 +42,7 @@
 ## Default Validations
 
 ??? info "View the default validations" 
-    - Disk volumes are attached to their respective instances
+    - All the disk volumes having the target label are attached to their respective instances
 
 ## Minimal RBAC configuration example (optional)
 
@@ -51,24 +51,24 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-disk-loss/rbac.yaml yaml)
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-disk-loss-by-label/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: gcp-vm-disk-loss-sa
+          name: gcp-vm-disk-loss-by-label-sa
           namespace: default
           labels:
-            name: gcp-vm-disk-loss-sa
+            name: gcp-vm-disk-loss-by-label-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
         metadata:
-          name: gcp-vm-disk-loss-sa
+          name: gcp-vm-disk-loss-by-label-sa
           labels:
-            name: gcp-vm-disk-loss-sa
+            name: gcp-vm-disk-loss-by-label-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -87,10 +87,6 @@
           - apiGroups: [""]
             resources: ["pods/log"]
             verbs: ["get","list","watch"]  
-          # for creating and managing to execute comands inside target container
-          - apiGroups: [""]
-            resources: ["pods/exec"]
-            verbs: ["get","list","create"]
           # for configuring and monitor the experiment job by the chaos-runner pod
           - apiGroups: ["batch"]
             resources: ["jobs"]
@@ -103,17 +99,17 @@
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         metadata:
-          name: gcp-vm-disk-loss-sa
+          name: gcp-vm-disk-loss-by-label-sa
           labels:
-            name: gcp-vm-disk-loss-sa
+            name: gcp-vm-disk-loss-by-label-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: ClusterRole
-          name: gcp-vm-disk-loss-sa
+          name: gcp-vm-disk-loss-by-label-sa
         subjects:
         - kind: ServiceAccount
-          name: gcp-vm-disk-loss-sa
+          name: gcp-vm-disk-loss-by-label-sa
           namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
@@ -135,20 +131,15 @@
         <td> All the target disk volumes should belong to a single GCP Project </td>
       </tr>
       <tr> 
-        <td> DISK_VOLUME_NAMES </td>
-        <td> Target non-boot persistent disk volume names</td>
-        <td> Multiple disk volume names can be provided as disk1,disk2,... </td>
+        <td> DISK_VOLUME_LABEL </td>
+        <td>Label of the targeted non-boot persistent disk volume</td>
+        <td> The <code>DISK_VOLUME_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>disk:target-disk</code> </td>
       </tr>  
       <tr>
         <td> DISK_ZONES </td>
-        <td> The zones of respective target disk volumes </td>
-        <td> Provide the zone for every target disk name as zone1,zone2... in the respective order of <code>DISK_VOLUME_NAMES</code>  </td>
+        <td> The zone of target disk volumes </td>
+        <td> Only one zone can be provided i.e. all target disks should lie in the same zone </td>
       </tr>
-      <tr>
-        <td> DEVICE_NAMES </td>
-        <td> The device names of respective target disk volumes </td>
-        <td> Provide the device name for every target disk name as deviceName1,deviceName2... in the respective order of <code>DISK_VOLUME_NAMES</code>  </td>
-      </tr> 
     </table>
     
     <h2>Optional Fields</h2>
@@ -169,6 +160,11 @@
         <td> The interval (in sec) between the successive chaos iterations (sec) </td>
         <td> Defaults to 30s </td>
       </tr>  
+      <tr> 
+        <td> DISK_AFFECTED_PERC </td>
+        <td> The percentage of total disks filtered using the label to target </td>
+        <td> Defaults to 0 (corresponds to 1 disk), provide numeric value only </td>
+      </tr> 
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple disks </td>
@@ -187,15 +183,15 @@
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) to tune the common tunables for all the experiments.
 
-### Detach Volumes By Names
+### Detach Volumes By Label
 
-It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given `DISK_VOLUME_NAMES` disk names and corresponding `DISK_ZONES` zone names and the `DEVICE_NAMES` device names in `GCP_PROJECT_ID` project.  It reattached the volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
+It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label `DISK_VOLUME_LABEL` in zone `DISK_ZONES` within the `GCP_PROJECT_ID` project.  It re-attaches the disk volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
-`NOTE:` The `DISK_VOLUME_NAMES` contains multiple comma-separated disk names. The comma-separated zone names should be provided in the same order as disk names.
+`NOTE:` The `DISK_VOLUME_LABEL` accepts only one label and `DISK_ZONES` also accepts only one zone name. Therefore, all the disks must lie in the same zone.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-disk-loss/gcp-disk-loss.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-disk-loss-by-label/gcp-disk-loss.yaml yaml)
 ```yaml
 ## details of the gcp disk
 apiVersion: litmuschaos.io/v1alpha1
@@ -205,26 +201,21 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: gcp-vm-disk-loss-sa
+  chaosServiceAccount: gcp-vm-disk-loss-by-label-sa
   experiments:
-  - name: gcp-vm-disk-loss
+  - name: gcp-vm-disk-loss-by-label
     spec:
       components:
         env:
-        # comma separated list of disk volume names
-        - name: DISK_VOLUME_NAMES
-          value: 'disk-01,disk-02'
-        # comma separated list of zone names corresponds to the DISK_VOLUME_NAMES
-        # it should be provided in same order of DISK_VOLUME_NAMES
+        - name: DISK_VOLUME_LABEL
+          value: 'disk:target-disk'
+        
         - name: DISK_ZONES
-          value: 'zone-01,zone-02'
-        # comma separated list of device names corresponds to the DISK_VOLUME_NAMES
-        # it should be provided in same order of DISK_VOLUME_NAMES
-        - name: DEVICE_NAMES
-          value: 'device-01,device-02'
-        # gcp project id to which disk volume belongs
+          value: 'us-east1-b'
+        
         - name: GCP_PROJECT_ID
-          value: 'project-id'
+          value: 'my-project-4513'
+        
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
@@ -235,7 +226,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-disk-loss/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-disk-loss-by-label/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1
@@ -245,25 +236,25 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: gcp-vm-disk-loss-sa
+  chaosServiceAccount: gcp-vm-disk-loss-by-label-sa
   experiments:
-  - name: gcp-vm-disk-loss
+  - name: gcp-vm-disk-loss-by-label
     spec:
       components:
         env:
-        # delay between each iteration of chaos
         - name: CHAOS_INTERVAL
           value: '15'
-        # time duration for the chaos execution
+        
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
-        - name: DISK_VOLUME_NAMES
-          value: 'disk-01,disk-02'
+        
+        - name: DISK_VOLUME_LABEL
+          value: 'disk:target-disk'
+        
         - name: DISK_ZONES
-          value: 'zone-01,zone-02'
-        - name: DEVICE_NAMES
-          value: 'device-01,device-02'
+          value: 'us-east1-b'
+        
         - name: GCP_PROJECT_ID
-          value: 'project-id'
+          value: 'my-project-4513'
         
 ```

@@ -139,15 +139,18 @@
       <tr>
         <td> TARGET_CONTAINER  </td>
         <td> Name of container which is subjected to network latency </td>
-        <td> Optional </td>
         <td> Applicable for containerd & CRI-O runtime only. Even with these runtimes, if the value is not provided, it injects chaos on the first container of the pod </td>
       </tr>
       <tr>
         <td> NETWORK_LATENCY </td>
         <td> The latency/delay in milliseconds </td>
-        <td> Optional </td>
         <td> Default 2000, provide numeric value only </td>
       </tr>
+      <tr>
+        <td> JITTER </td>
+        <td> The network jitter value in ms </td>
+        <td> Default 0, provide numeric value only </td>
+      </tr> 
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
@@ -183,7 +186,7 @@
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
       </tr> 
-    <tr>
+      <tr>
         <td> LIB </td>
         <td> The chaos lib used to inject the chaos </td>
         <td> Default value: litmus, supported values: pumba and litmus </td>

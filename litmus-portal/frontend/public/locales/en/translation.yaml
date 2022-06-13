@@ -84,6 +84,8 @@ workflowStepper:
     errorSnackbar: Please provide a valid Workflow Name
   step4:
     errorSnackbar: Please select atleast one experiment to proceed
+  step5:
+    errorSnackbar: Please select a valid schedule option to proceed
   step6:
     errorSnackbar: Please validate and retry scheduling with correct parameters
   finish: Finish
