@@ -16,7 +16,9 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "google.com"
+        # provide the listen port for proxy
         - name: LISTEN_PORT
           value: '8080'
+        # provide the target port of the service
+        - name: TARGET_PORT
+          value: "80"

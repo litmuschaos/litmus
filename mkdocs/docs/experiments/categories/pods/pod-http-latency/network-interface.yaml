@@ -1,4 +1,4 @@
-## provide the latency value
+## provide the listen port for proxy
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,9 +16,9 @@ spec:
     spec:
       components:
         env:
-        # provide the latency value
-        - name: LATENCY
-          value: '2000'
+        # provide the network interface for proxy
+        - name: NETWORK_INTERFACE
+          value: "eth0"
         # provide the target port of the service
         - name: TARGET_PORT
-          value: "80"
+          value: '80'

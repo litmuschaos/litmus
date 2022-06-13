@@ -152,6 +152,10 @@
         <td> Defaults to 20000 </td>
       </tr>
       <tr>
+        <td> NETWORK_INTERFACE  </td>
+        <td> Network interface to be used for the proxy</td>
+        <td> Defaults to `eth0` </td>
+      <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
         <td> Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
@@ -293,6 +297,13 @@ spec:
         - name: LATENCY
           value: '2000'
 ```
+
+### Network Interface
+It defines the network interface to be used for the proxy. It can be tuned via `NETWORK_INTERFACE` ENV.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-http-latency/network-interface.yaml yaml)
 
 ### Container Runtime Socket Path
 

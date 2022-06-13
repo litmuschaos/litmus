@@ -16,8 +16,6 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "google.com"
         # runtime for the container
         # supports docker, containerd, crio
         - name: CONTAINER_RUNTIME
@@ -25,5 +23,6 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+        # provide the target port of the service
+        - name: TARGET_PORT
+          value: "80"

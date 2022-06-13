@@ -16,7 +16,6 @@ spec:
     spec:
       components:
         env:
+        # provide the target port of the service
         - name: TARGET_PORT
-          value: "9001"
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: "80"
