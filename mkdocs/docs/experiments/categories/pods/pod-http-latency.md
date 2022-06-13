@@ -229,10 +229,9 @@ spec:
     spec:
       components:
         env:
+        # provide the target port of the service
         - name: TARGET_PORT
-          value: "9001"
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: "80"
 ```
 ### Listen Port
 
@@ -260,10 +259,12 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "google.com"
+        # provide the listen port for proxy
         - name: LISTEN_PORT
           value: '8080'
+        # provide the target port of the service
+        - name: TARGET_PORT
+          value: "80"
 ```
 
 ### Latency
@@ -292,10 +293,12 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "google.com"
+        # provide the latency value
         - name: LATENCY
           value: '2000'
+        # provide the target port of the service
+        - name: TARGET_PORT
+          value: "80"
 ```
 
 ### Network Interface
@@ -304,6 +307,32 @@ It defines the network interface to be used for the proxy. It can be tuned via `
 Use the following example to tune this:
 
 [embedmd]:# (pod-http-latency/network-interface.yaml yaml)
+```yaml
+## provide the listen port for proxy
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-chaos-sa
+  experiments:
+  - name: pod-http-chaos
+    spec:
+      components:
+        env:
+        # provide the network interface for proxy
+        - name: NETWORK_INTERFACE
+          value: "eth0"
+        # provide the target port of the service
+        - name: TARGET_PORT
+          value: '80'
+```
 
 ### Container Runtime Socket Path
 
@@ -334,8 +363,6 @@ spec:
     spec:
       components:
         env:
-        - name: TARGET_HOST
-          value: "google.com"
         # runtime for the container
         # supports docker, containerd, crio
         - name: CONTAINER_RUNTIME
@@ -343,6 +370,7 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+        # provide the target port of the service
+        - name: TARGET_PORT
+          value: "80"
 ```
