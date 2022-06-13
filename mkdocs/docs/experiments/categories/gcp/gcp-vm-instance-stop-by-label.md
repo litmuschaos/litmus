@@ -1,11 +1,11 @@
 ## Introduction
 
-- It causes power-off of a GCP VM instance by instance name or list of instance names before bringing it back to the running state after the specified chaos duration.
+- It causes power-off of GCP VM instances filtered by a label before bringing it back to the running state after the specified chaos duration.
 - It helps to check the performance of the application/process running on the VM instance.
 - When the `MANAGED_INSTANCE_GROUP` is `enable` then the experiment will not try to start the instances post chaos, instead it will check the addition of new instances to the instance group.
 
 !!! tip "Scenario: stop the gcp vm"    
-    ![GCP VM Instance Stop](../../images/gcp-vm-instance-stop.png)
+    ![GCP VM Instance Stop By Label](../../images/gcp-vm-instance-stop.png)
 
 ## Uses
 
@@ -17,7 +17,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>gcp-vm-instance-stop</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop/experiment.yaml">here</a>
+    -  Ensure that the <code>gcp-vm-instance-stop-by-label</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-instance-stop-by-label/experiment.yaml">here</a>
     - Ensure that you have sufficient GCP permissions to stop and start the GCP VM instances. 
     - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:
 
@@ -43,7 +43,7 @@
 ## Default Validations
 
 ??? info "View the default validations" 
-    - VM instance should be in healthy state.
+    - All the VM instances having the target label are in a healthy state
 
 ## Minimal RBAC configuration example (optional)
 
@@ -52,24 +52,24 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-instance-stop/rbac.yaml yaml)
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-instance-stop-by-label/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: gcp-vm-instance-stop-sa
+          name: gcp-vm-instance-stop-by-label-sa
           namespace: default
           labels:
-            name: gcp-vm-instance-stop-sa
+            name: gcp-vm-instance-stop-by-label-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
         metadata:
-          name: gcp-vm-instance-stop-sa
+          name: gcp-vm-instance-stop-by-label-sa
           labels:
-            name: gcp-vm-instance-stop-sa
+            name: gcp-vm-instance-stop-by-label-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -87,11 +87,7 @@
           # Track and get the runner, experiment, and helper pods log 
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
-          # for creating and managing to execute comands inside target container
-          - apiGroups: [""]
-            resources: ["pods/exec"]
-            verbs: ["get","list","create"]
+            verbs: ["get","list","watch"]
           # for configuring and monitor the experiment job by the chaos-runner pod
           - apiGroups: ["batch"]
             resources: ["jobs"]
@@ -108,17 +104,17 @@
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         metadata:
-          name: gcp-vm-instance-stop-sa
+          name: gcp-vm-instance-stop-by-label-sa
           labels:
-            name: gcp-vm-instance-stop-sa
+            name: gcp-vm-instance-stop-by-label-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: ClusterRole
-          name: gcp-vm-instance-stop-sa
+          name: gcp-vm-instance-stop-by-label-sa
         subjects:
         - kind: ServiceAccount
-          name: gcp-vm-instance-stop-sa
+          name: gcp-vm-instance-stop-by-label-sa
           namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
@@ -140,14 +136,14 @@
         <td> All the VM instances must belong to a single GCP project </td>
       </tr>
       <tr> 
-        <td> VM_INSTANCE_NAMES </td>
+        <td> INSTANCE_LABEL </td>
         <td> Name of target VM instances </td>
-        <td> Multiple instance names can be provided as instance1,instance2,... </td>
+        <td> The <code>INSTANCE_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>vm:target-vm</code> </td>
       </tr>
       <tr>
         <td> INSTANCE_ZONES </td>
-        <td> The zones of the target VM instances </td>
-        <td> Zone for every instance name has to be provided as zone1,zone2,... in the same order of <code>VM_INSTANCE_NAMES</code> </td>
+        <td> The zone of the target VM instances </td>
+        <td> Only one zone can be provided i.e. all target instances should lie in the same zone </td>
       </tr>
     </table>
     
@@ -173,7 +169,12 @@
         <td> MANAGED_INSTANCE_GROUP </td>
         <td> Set to <code>enable</code> if the target instance is the part of a managed instance group </td>
         <td> Defaults to <code>disable</code> </td>
-      </tr>  
+      </tr> 
+      <tr> 
+        <td> INSTANCE_AFFECTED_PERC </td>
+        <td> The percentage of total VMs filtered using the label to target </td>
+        <td> Defaults to 0 (corresponds to 1 instance), provide numeric value only </td>
+      </tr> 
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple instance </td>
@@ -194,13 +195,13 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target GCP Instances
 
-It will stop all the instances with the given `VM_INSTANCE_NAMES` instance names and corresponding `INSTANCE_ZONES` zone names in `GCP_PROJECT_ID` project. 
+It will stop all the instances with filtered by the label `INSTANCE_LABEL` and corresponding `INSTANCE_ZONES` zone in `GCP_PROJECT_ID` project. 
 
-`NOTE:` The `VM_INSTANCE_NAMES` contains multiple comma-separated vm instances. The comma-separated zone names should be provided in the same order as instance names.
+`NOTE:` The `INSTANCE_LABEL` accepts only one label and `INSTANCE_ZONES` also accepts only one zone name. Therefore, all the instances must lie in the same zone.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/gcp-instance.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop-by-label/gcp-instance.yaml yaml)
 ```yaml
 ## details of the gcp instance
 apiVersion: litmuschaos.io/v1alpha1
@@ -210,33 +211,32 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: gcp-vm-instance-stop-sa
+  chaosServiceAccount: gcp-vm-instance-stop-by-label-sa
   experiments:
-  - name: gcp-vm-instance-stop
+  - name: gcp-vm-instance-stop-by-label
     spec:
       components:
         env:
-        # comma separated list of vm instance names
-        - name: VM_INSTANCE_NAMES
-          value: 'instance-01,instance-02'
-        # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
-        # it should be provided in same order of VM_INSTANCE_NAMES
+        - name: INSTANCE_LABEL
+          value: 'vm:target-vm'
+        
         - name: INSTANCE_ZONES
-          value: 'zone-01,zone-02'
-        # gcp project id to which vm instance belongs
+          value: 'us-east1-b'
+        
         - name: GCP_PROJECT_ID
-          value: 'project-id'
+          value: 'my-project-4513'
+        
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
 
-### Managed Instance Group
+### Manged Instance Group
 
 If vm instances belong to a managed instance group then provide the `MANAGED_INSTANCE_GROUP` as `enable` else provided it as `disable`, which is the default value. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/managed-instance-group.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop-by-label/managed-instance-group.yaml yaml)
 ```yaml
 ## scale up and down to maintain the available instance counts
 apiVersion: litmuschaos.io/v1alpha1
@@ -246,26 +246,24 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: gcp-vm-instance-stop-sa
+  chaosServiceAccount: gcp-vm-instance-stop-by-label-sa
   experiments:
-  - name: gcp-vm-instance-stop
+  - name: gcp-vm-instance-stop-by-label
     spec:
       components:
         env:
-        # tells if instances are part of managed instance group
-        # supports: enable, disable. default: disable
         - name: MANAGED_INSTANCE_GROUP
           value: 'enable'
-        # comma separated list of vm instance names
-        - name: VM_INSTANCE_NAMES
-          value: 'instance-01,instance-02'
-        # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
-        # it should be provided in same order of VM_INSTANCE_NAMES
+        
+        - name: INSTANCE_LABEL
+          value: 'vm:target-vm'
+        
         - name: INSTANCE_ZONES
-          value: 'zone-01,zone-02'
-        # gcp project id to which vm instance belongs
+          value: 'us-east1-b'
+        
         - name: GCP_PROJECT_ID
-          value: 'project-id'
+          value: 'my-project-4513'
+        
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```
@@ -276,7 +274,7 @@ The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/chaos-interval.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop-by-label/chaos-interval.yaml yaml)
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1
@@ -286,23 +284,25 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: gcp-vm-instance-stop-sa
+  chaosServiceAccount: gcp-vm-instance-stop-by-label-sa
   experiments:
-  - name: gcp-vm-instance-stop
+  - name: gcp-vm-instance-stop-by-label
     spec:
       components:
         env:
-        # delay between each iteration of chaos
         - name: CHAOS_INTERVAL
           value: '15'
-        # time duration for the chaos execution
+        
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
-        - name: VM_INSTANCE_NAMES
-          value: 'instance-01,instance-02'
+
+        - name: INSTANCE_LABEL
+          value: 'vm:target-vm'
+
         - name: INSTANCE_ZONES
-          value: 'zone-01,zone-02'
+          value: 'us-east1-b'
+
         - name: GCP_PROJECT_ID
-          value: 'project-id'
+          value: 'my-project-4513'
        
 ```

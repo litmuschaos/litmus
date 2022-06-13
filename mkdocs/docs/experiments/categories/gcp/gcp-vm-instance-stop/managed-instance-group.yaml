@@ -12,9 +12,9 @@ spec:
     spec:
       components:
         env:
-        # tells if instances are part of autoscaling group
+        # tells if instances are part of managed instance group
         # supports: enable, disable. default: disable
-        - name: AUTO_SCALING_GROUP
+        - name: MANAGED_INSTANCE_GROUP
           value: 'enable'
         # comma separated list of vm instance names
         - name: VM_INSTANCE_NAMES

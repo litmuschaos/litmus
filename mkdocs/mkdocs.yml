@@ -129,8 +129,12 @@ nav:
             - Azure Instance Stop: experiments/categories/azure/azure-instance-stop.md
             - Azure Disk Loss: experiments/categories/azure/azure-disk-loss.md
         - GCP:
-            - GCP Instance Stop: experiments/categories/gcp/gcp-vm-instance-stop.md
-            - GCP Disk Loss: experiments/categories/gcp/gcp-vm-disk-loss.md
+            - VM Instance:
+              - GCP VM Instance Stop: experiments/categories/gcp/gcp-vm-instance-stop.md
+              - GCP VM Instance Stop By Label: experiments/categories/gcp/gcp-vm-instance-stop-by-label.md
+            - VM Disk:
+              - GCP VM Disk Loss: experiments/categories/gcp/gcp-vm-disk-loss.md
+              - GCP VM Disk Loss By Label: experiments/categories/gcp/gcp-vm-disk-loss-by-label.md
     - Concepts:
       - Chaos Resources:
         - Contents: experiments/concepts/chaos-resources/contents.md
