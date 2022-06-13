@@ -167,7 +167,7 @@
       </tr>
       <tr>
         <td> TOTAL_CHAOS_DURATION </td>
-        <td> The time duration for chaos insertion (seconds) </td>
+        <td> The duration of chaos injection (seconds) </td>
         <td> Default (60s) </td>
       </tr>
       <tr>
