@@ -498,6 +498,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
     }
     if (imageRegData.enable_registry && imageRegData.update_registry) {
       if (imageRegData.image_registry_type?.toLowerCase() === 'private') {
+        ChaosEngine.spec.components = {
+          runner: {
+            imagePullSecrets: [{ name: imageRegData.secret_name }],
+          },
+        };
         ChaosEngine.spec.experiments[0].spec.components[
           'experimentImagePullSecrets'
         ] = [{ name: imageRegData.secret_name }];
