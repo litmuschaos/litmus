@@ -1,5 +1,5 @@
 ## Adidas
-[Adidas](https://www.adidas.de) is a German multinational corporation, founded and headquartered in Herzogenaurach, Bavaria, that designs and manufactures shoes, clothing and accessories. 
+[Adidas](https://adidas.com) is a German multinational corporation, founded and headquartered in Herzogenaurach, Bavaria, that designs and manufactures shoes, clothing and accessories. 
 
 
 ## Why do we use Litmus.  
