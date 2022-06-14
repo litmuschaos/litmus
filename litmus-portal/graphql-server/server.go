@@ -50,7 +50,7 @@ type Config struct {
 	LitmusPortalNamespace       string `required:"true" split_words:"true"`
 	DbUser                      string `required:"true" split_words:"true"`
 	DbPassword                  string `required:"true" split_words:"true"`
-	PortalScope                 string `required:"true" split_words:"true"`
+	ChaosCenterScope            string `required:"true" split_words:"true"`
 	SubscriberImage             string `required:"true" split_words:"true"`
 	EventTrackerImage           string `required:"true" split_words:"true"`
 	ArgoWorkflowControllerImage string `required:"true" split_words:"true"`

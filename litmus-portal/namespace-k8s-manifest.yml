@@ -408,6 +408,10 @@ metadata:
   name: litmusportal-frontend-nginx-configuration
 data:
   default.conf: |
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+    }
     server {
         listen       8080;
         server_name  localhost;
@@ -415,6 +419,7 @@ data:
         #access_log  /var/log/nginx/host.access.log  main;
 
         location / {
+            proxy_http_version 1.1;
             root   /usr/share/nginx/html;
             index  index.html index.htm;
             try_files $uri /index.html;
@@ -437,6 +442,7 @@ data:
         #}
 
         location /auth/ {
+            proxy_http_version 1.1;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -445,6 +451,7 @@ data:
         }
 
         location /api/ {
+            proxy_http_version 1.1;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -453,8 +460,9 @@ data:
         }
 
         location /ws/ {
+            proxy_http_version 1.1;
             proxy_set_header   Upgrade              $http_upgrade;
-            proxy_set_header   Connection           "Upgrade";
+            proxy_set_header   Connection           $connection_upgrade;
             proxy_set_header   Host                 $host;
             proxy_set_header   X-Real-IP            $remote_addr;
             proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
@@ -601,12 +609,12 @@ spec:
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64
               value: ""
-            - name: PORTAL_SCOPE
+            - name: CHAOS_CENTER_SCOPE
               value: "namespace"
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
-            - name: PORTAL_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
+            - name: CHAOS_CENTER_UI_ENDPOINT
+              value: "http://litmusportal-frontend-service:9091"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE

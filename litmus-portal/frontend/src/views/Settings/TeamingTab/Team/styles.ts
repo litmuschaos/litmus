@@ -326,14 +326,14 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: theme.palette.text.hint,
     },
   },
-  invitationButton: {
+  teamInfoFlex: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    flexDirection: 'row-reverse',
+  },
+  invitationButton: {
+    border: `1px solid ${theme.palette.warning.main}`,
   },
   invitationButtonFlex: {
-    borderRadius: '0.1875rem',
-    border: `1px solid ${theme.palette.warning.main}`,
-    padding: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
     '& p': {

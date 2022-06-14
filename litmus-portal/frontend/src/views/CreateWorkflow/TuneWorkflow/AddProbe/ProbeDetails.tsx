@@ -345,6 +345,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
             label={t(
               'createWorkflow.tuneWorkflow.addProbe.inputLabels.criteria'
             )}
+            required
             value={
               isEdit
                 ? httpMethod === 'get'
@@ -821,6 +822,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           </div>
           <ProbesMenu
             id="comparator-type"
+            required
             label={t('createWorkflow.tuneWorkflow.addProbe.inputLabels.type')}
             value={probeData['promProbe/inputs']?.comparator?.type}
             handleChange={(e) =>
@@ -829,7 +831,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 'promProbe/inputs': {
                   ...probeData['promProbe/inputs'],
                   comparator: {
-                    ...probeData['promProbe/inputs'].comparator,
+                    ...probeData['promProbe/inputs']?.comparator,
                     type: e.target.value,
                   },
                 },
@@ -850,7 +852,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 'promProbe/inputs': {
                   ...probeData['promProbe/inputs'],
                   comparator: {
-                    ...probeData['promProbe/inputs'].comparator,
+                    ...probeData['promProbe/inputs']?.comparator,
                     criteria: e.target.value,
                   },
                 },
