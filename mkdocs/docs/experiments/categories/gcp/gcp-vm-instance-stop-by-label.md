@@ -203,7 +203,6 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop-by-label/gcp-instance.yaml yaml)
 ```yaml
-## details of the gcp instance
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -238,7 +237,6 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop-by-label/managed-instance-group.yaml yaml)
 ```yaml
-## scale up and down to maintain the available instance counts
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -276,7 +274,6 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop-by-label/chaos-interval.yaml yaml)
 ```yaml
-# defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -304,5 +301,4 @@ spec:
 
         - name: GCP_PROJECT_ID
           value: 'my-project-4513'
-       
 ```

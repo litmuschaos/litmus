@@ -180,7 +180,7 @@ It defines the target application pod selection from a specific node. It is help
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/default-app-health-check.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/node-label-filter.yaml yaml)
 ```yaml
 ## node label to filter target pods
 apiVersion: litmuschaos.io/v1alpha1
