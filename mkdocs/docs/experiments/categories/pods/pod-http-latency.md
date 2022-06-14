@@ -1,6 +1,6 @@
 ## Introduction
 
-- It injects http response latency on the service whose port is provided as `TARGET_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
+- It injects http response latency on the service whose port is provided as `TARGET_SERVICE_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
 - It can test the application's resilience to lossy/flaky http responses.
 
 !!! tip "Scenario: Add latency to the HTTP request"    
@@ -127,7 +127,7 @@
         <th> Notes </th>
       </tr>
       <tr>
-        <td> TARGET_PORT </td>
+        <td> TARGET_SERVICE_PORT </td>
         <td> Port of the service to target</td>
         <td>Defaults to port 80 </td>
       </tr>
@@ -147,7 +147,7 @@
         <th> Notes </th>
       </tr>
       <tr>
-        <td> LISTEN_PORT  </td>
+        <td> PROXY_PORT  </td>
         <td> Port where the proxy will be listening for requests</td>
         <td> Defaults to 20000 </td>
       </tr>
@@ -205,7 +205,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target Port
 
-It defines the target port of the service that is being targetted. It can be tuned via `TARGET_PORT` ENV.
+It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
@@ -230,12 +230,12 @@ spec:
       components:
         env:
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: "80"
 ```
 ### Listen Port
 
-It defines the listen port for the proxy server. It can be tuned via `LISTEN_PORT` ENV.
+It defines the listen port for the proxy server. It can be tuned via `PROXY_PORT` ENV.
 
 Use the following example to tune this:
 
@@ -260,10 +260,10 @@ spec:
       components:
         env:
         # provide the listen port for proxy
-        - name: LISTEN_PORT
+        - name: PROXY_PORT
           value: '8080'
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: "80"
 ```
 
@@ -297,7 +297,7 @@ spec:
         - name: LATENCY
           value: '2000'
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: "80"
 ```
 
@@ -330,7 +330,7 @@ spec:
         - name: NETWORK_INTERFACE
           value: "eth0"
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: '80'
 ```
 
@@ -371,6 +371,6 @@ spec:
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: "80"
 ```

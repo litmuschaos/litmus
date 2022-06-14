@@ -17,8 +17,8 @@ spec:
       components:
         env:
         # provide the listen port for proxy
-        - name: LISTEN_PORT
+        - name: PROXY_PORT
           value: '8080'
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: "80"

@@ -24,5 +24,5 @@ spec:
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
         # provide the target port of the service
-        - name: TARGET_PORT
+        - name: TARGET_SERVICE_PORT
           value: "80"
