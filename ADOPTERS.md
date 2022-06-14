@@ -23,6 +23,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[iFood](https://www.ifood.com.br/)|Chaos Engineering for a Food Delivery Platform|[Our Story](adopters/organizations/ifood.md)|
 |[FIS](https://www.fisglobal.com/en/)|Larger SRE Transformation with Chaos Engineering|[Our Story](adopters/organizations/fis.md)|
 |[Adidas](https://adidas.com/)|Implementing Chaos Engineering as a practice at Adidas|[Our Story](adopters/organizations/adidas.md)|
+|[Cyren](https://www.cyren.com/)|Implementing Chaos Engineering as a practice at Cyren|[Our Story](https://www.infoq.com/articles/chaos-engineering-cloud-native/)|
 
 ### Cloud-Native Vendors
 
