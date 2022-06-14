@@ -580,7 +580,7 @@ spec:
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: CHAOS_CENTER_UI_ENDPOINT
-              value: "https://litmusportal-server-service-${OKTETO_NAMESPACE}.cloud.okteto.net"
+              value: "https://litmusportal-frontend-service-${OKTETO_NAMESPACE}.cloud.okteto.net"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE

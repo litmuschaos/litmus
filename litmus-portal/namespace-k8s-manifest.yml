@@ -614,7 +614,7 @@ spec:
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
             - name: CHAOS_CENTER_UI_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
+              value: "http://litmusportal-frontend-service:9091"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
