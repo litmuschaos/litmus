@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 
 	"github.com/google/uuid"
@@ -28,8 +30,16 @@ import (
 
 // RegisterCluster creates an entry for a new cluster in DB and generates the url used to apply manifest
 func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
-	clusterID := uuid.New().String()
+	endpoint, err := handlers.GetEndpoint()
+	if err != nil {
+		return nil, err
+	}
 
+	if endpoint == "" {
+		return nil, errors.New("failed to retrieve the server endpoint")
+	}
+
+	clusterID := uuid.New().String()
 	token, err := clusterOps.ClusterCreateJWT(clusterID)
 	if err != nil {
 		return &model.RegisterClusterResponse{}, err

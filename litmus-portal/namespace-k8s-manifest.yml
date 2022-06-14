@@ -609,12 +609,12 @@ spec:
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64
               value: ""
-            - name: PORTAL_SCOPE
+            - name: CHAOS_CENTER_SCOPE
               value: "namespace"
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
-            - name: PORTAL_ENDPOINT
-              value: "http://litmusportal-server-service:9002"
+            - name: CHAOS_CENTER_UI_ENDPOINT
+              value: "http://litmusportal-frontend-service:9091"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
