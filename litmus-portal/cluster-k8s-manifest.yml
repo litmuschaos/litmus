@@ -604,7 +604,7 @@ spec:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
           volumeMounts:
-            - mountPath: /tmp/gitops
+            - mountPath: /tmp/
               name: gitops-storage
             - mountPath: /tmp/version
               name: hub-storage
