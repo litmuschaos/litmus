@@ -131,23 +131,15 @@ func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error
 		return nil, errors.New("Access Key is invalid")
 	}
 
-	if scope == namespaceScope && endpoint == "" {
-		return nil, errors.New("CHAOS_CENTER_UI_ENDPOINT env is empty for namespace scope installation")
+	subscriberConfiguration.GQLServerURI, err = GetEndpoint()
+	if err != nil {
+		return nil, err
 	}
 
-	if endpoint != "" {
-		subscriberConfiguration.GQLServerURI = endpoint + "/query"
-	} else if scope == clusterScope {
-		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+	if scope == clusterScope && tlsSecretName != "" {
+		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
 		if err != nil {
 			return nil, err
-		}
-
-		if tlsSecretName != "" {
-			subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
-			if err != nil {
-				return nil, err
-			}
 		}
 	}
 
