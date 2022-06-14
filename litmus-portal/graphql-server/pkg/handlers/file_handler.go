@@ -59,6 +59,20 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+func GetEndpoint() (string, error) {
+	if scope == namespaceScope && endpoint == "" {
+		return "", errors.New("CHAOS_CENTER_UI_ENDPOINT env is empty for namespace scope installation")
+	}
+
+	if endpoint != "" {
+		return endpoint + "/ws/query", nil
+	} else if scope == clusterScope {
+		return k8s.GetServerEndpoint()
+	}
+
+	return "", errors.New("failed to retrieve the server endpoint")
+}
+
 func GetManifest(token string) ([]byte, int, error) {
 	clusterID, err := cluster.ClusterValidateJWT(token)
 	if err != nil {
@@ -70,23 +84,15 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, 500, err
 	}
 
-	if scope == namespaceScope && endpoint == "" {
-		return nil, 500, errors.New("CHAOS_CENTER_UI_ENDPOINT env is empty for namespace scope installation")
+	subscriberConfiguration.GQLServerURI, err = GetEndpoint()
+	if err != nil {
+		return nil, 500, err
 	}
 
-	if endpoint != "" {
-		subscriberConfiguration.GQLServerURI = endpoint + "/query"
-	} else if scope == clusterScope {
-		subscriberConfiguration.GQLServerURI, err = k8s.GetServerEndpoint()
+	if scope == clusterScope && tlsSecretName != "" {
+		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
 		if err != nil {
 			return nil, 500, err
-		}
-
-		if tlsSecretName != "" {
-			subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
-			if err != nil {
-				return nil, 500, err
-			}
 		}
 	}
 
