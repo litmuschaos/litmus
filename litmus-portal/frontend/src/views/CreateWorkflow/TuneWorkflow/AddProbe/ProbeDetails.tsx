@@ -679,13 +679,11 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
           <div className={classes.inputFormField}>
             <InputLabel className={classes.formLabel} htmlFor="group">
               {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.group')}
-              <span className={classes.required}>*</span>
             </InputLabel>
             <InputField
               variant="primary"
               width="50%"
               id="group"
-              required
               name="group"
               type="text"
               value={probeData['k8sProbe/inputs']?.group}

@@ -30,6 +30,7 @@ import {
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
+import { ImageRegistryInfo } from '../../../models/redux/image_registry';
 import { Charts } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
@@ -424,7 +425,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
   /**
    * UpdateCRD is used to updated the manifest while adding experiments from MyHub
    */
-  const updateCRD = (crd: CustomYAML, experiment: WorkflowExperiment) => {
+  const updateCRD = (
+    crd: CustomYAML,
+    experiment: WorkflowExperiment,
+    imageRegData: ImageRegistryInfo
+  ) => {
     const hash = (+new Date()).toString(36).slice(-3);
     const generatedYAML: CustomYAML = crd;
     let installAll = '';
@@ -491,6 +496,18 @@ const TuneWorkflow = forwardRef((_, ref) => {
     if (ChaosEngine.spec.jobCleanUpPolicy) {
       ChaosEngine.spec.jobCleanUpPolicy = 'retain';
     }
+    if (imageRegData.enable_registry && imageRegData.update_registry) {
+      if (imageRegData.image_registry_type?.toLowerCase() === 'private') {
+        ChaosEngine.spec.components = {
+          runner: {
+            imagePullSecrets: [{ name: imageRegData.secret_name }],
+          },
+        };
+        ChaosEngine.spec.experiments[0].spec.components[
+          'experimentImagePullSecrets'
+        ] = [{ name: imageRegData.secret_name }];
+      }
+    }
     ChaosEngine.spec.chaosServiceAccount = 'litmus-admin';
     const templateToBePushed = {
       name: ExpName,
@@ -532,7 +549,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
     ) {
       const savedManifest =
         manifest !== '' ? YAML.parse(manifest) : generatedYAML;
-      const updatedManifest = updateCRD(savedManifest, experiment);
+      const updatedManifest = updateCRD(
+        savedManifest,
+        experiment,
+        imageRegistryData
+      );
       const updatedManifestImage = updateManifestImage(
         updatedManifest,
         imageRegistryData
