@@ -40,7 +40,7 @@ devops/reliability pipelines (such as for customer portals/websites etc.,) withi
 |[RedHat](https://www.redhat.com/en)|[RedHat Openshift Virtualization Maturity](https://www.youtube.com/watch?v=VITGHJ47gx8&list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&index=7)|[Our Story](adopters/organizations/redhat.md)|
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 |[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Chaos Project](https://github.com/zebrium/zebrium-kubernetes-demo)|[Our Story](adopters/organizations/zebrium.md)|
-|[Container Solutions](https://www.container-solutions.com/)|Building Chaos Engineering for E-Commerce Customers|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-968705665)|
+|[Container Solutions](https://www.container-solutions.com/)|Building Chaos Engineering for E-Commerce Customers|[Our Story](adopters/organizations/containersolutions.md)|
 
 ### Cloud-Native Solutions & Service Providers
 
