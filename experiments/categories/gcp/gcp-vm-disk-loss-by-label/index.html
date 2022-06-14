@@ -556,6 +556,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2_1_1">
@@ -788,6 +790,20 @@
     <li class="md-nav__item">
       <a href="../../pods/pod-network-partition/" class="md-nav__link">
         Pod Network Partition
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-http-latency/" class="md-nav__link">
+        Pod HTTP Latency
       </a>
     </li>
   
@@ -3264,8 +3280,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <p>It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label <code>DISK_VOLUME_LABEL</code> in zone <code>DISK_ZONES</code> within the <code>GCP_PROJECT_ID</code> project.  It re-attaches the disk volume after waiting for the specified <code>TOTAL_CHAOS_DURATION</code> duration.</p>
 <p><code>NOTE:</code> The <code>DISK_VOLUME_LABEL</code> accepts only one label and <code>DISK_ZONES</code> also accepts only one zone name. Therefore, all the disks must lie in the same zone.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## details of the gcp disk</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
@@ -3293,8 +3308,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="mutiple-iterations-of-chaos">Mutiple Iterations Of Chaos<a class="headerlink" href="#mutiple-iterations-of-chaos" title="Permanent link">&para;</a></h3>
 <p>The multiple iterations of chaos can be tuned via setting <code>CHAOS_INTERVAL</code> ENV. Which defines the delay between each iteration of chaos.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># defines delay between each successive iteration of the chaos</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>

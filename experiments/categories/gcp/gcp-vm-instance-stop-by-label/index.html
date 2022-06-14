@@ -556,6 +556,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2_1_1">
@@ -788,6 +790,20 @@
     <li class="md-nav__item">
       <a href="../../pods/pod-network-partition/" class="md-nav__link">
         Pod Network Partition
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pods/pod-http-latency/" class="md-nav__link">
+        Pod HTTP Latency
       </a>
     </li>
   
@@ -3288,8 +3304,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <p>It will stop all the instances with filtered by the label <code>INSTANCE_LABEL</code> and corresponding <code>INSTANCE_ZONES</code> zone in <code>GCP_PROJECT_ID</code> project. </p>
 <p><code>NOTE:</code> The <code>INSTANCE_LABEL</code> accepts only one label and <code>INSTANCE_ZONES</code> also accepts only one zone name. Therefore, all the instances must lie in the same zone.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## details of the gcp instance</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
@@ -3317,8 +3332,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="manged-instance-group">Manged Instance Group<a class="headerlink" href="#manged-instance-group" title="Permanent link">&para;</a></h3>
 <p>If vm instances belong to a managed instance group then provide the <code>MANAGED_INSTANCE_GROUP</code> as <code>enable</code> else provided it as <code>disable</code>, which is the default value. </p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## scale up and down to maintain the available instance counts</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
@@ -3349,8 +3363,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="mutiple-iterations-of-chaos">Mutiple Iterations Of Chaos<a class="headerlink" href="#mutiple-iterations-of-chaos" title="Permanent link">&para;</a></h3>
 <p>The multiple iterations of chaos can be tuned via setting <code>CHAOS_INTERVAL</code> ENV. Which defines the delay between each iteration of chaos.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># defines delay between each successive iteration of the chaos</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>

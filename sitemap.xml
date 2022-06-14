@@ -196,6 +196,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-latency/</loc>
+         <lastmod>2022-06-14</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-io-stress/</loc>
          <lastmod>2022-06-14</lastmod>
          <changefreq>daily</changefreq>
