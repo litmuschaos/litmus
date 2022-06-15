@@ -46,7 +46,7 @@ Or
 > Master (Latest) Cluster scope. Install in litmus namespace by default.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal//manifests/cluster-k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/cluster-k8s-manifest.yml
 ```
 
 Or
@@ -59,7 +59,7 @@ kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
 kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
 #Install ChaosCenter
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal//manifests/namespace-k8s-manifest.yml -n litmus
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/namespace-k8s-manifest.yml -n litmus
 ```
 
 #### Configuration Options for Cluster scope.
@@ -105,7 +105,7 @@ You can upgrade using the steps from [section here](https://docs.litmuschaos.io/
 
 ### **Uninstallation**
 
-You can uninstall using the steps from [section here](http://docs.litmuschaos.io//docs/user-guides/uninstall-litmus)
+You can uninstall using the steps from [section here](http://docs.litmuschaos.io/docs/user-guides/uninstall-litmus)
 
 - <a href="https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-design-specification" target="_blank">Litmus Portal Design Specification</a><br>
 - <a href="https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide" target="_blank">Litmus Portal Development Guide</a>
