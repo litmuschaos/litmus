@@ -604,7 +604,7 @@ spec:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
           volumeMounts:
-            - mountPath: /tmp/gitops
+            - mountPath: /tmp/
               name: gitops-storage
             - mountPath: /tmp/version
               name: hub-storage
@@ -628,7 +628,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: PORTAL_SCOPE
+            - name: CHAOS_CENTER_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
@@ -656,6 +656,8 @@ spec:
               value: ""
             - name: SELF_AGENT_TOLERATIONS
               value: ""
+            - name: CHAOS_CENTER_UI_ENDPOINT
+              value: ""
             - name: INGRESS
               value: "false"
             - name: INGRESS_NAME
@@ -668,7 +670,7 @@ spec:
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
-            - name: LITMUS_CORE_VERSION
+            - name: WORKFLOW_HELPER_IMAGE_VERSION
               value: "2.8.0"
           ports:
             - containerPort: 8080

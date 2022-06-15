@@ -193,7 +193,6 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-disk-loss-by-label/gcp-disk-loss.yaml yaml)
 ```yaml
-## details of the gcp disk
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -228,7 +227,6 @@ Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-disk-loss-by-label/chaos-interval.yaml yaml)
 ```yaml
-# defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -256,5 +254,4 @@ spec:
         
         - name: GCP_PROJECT_ID
           value: 'my-project-4513'
-        
 ```
