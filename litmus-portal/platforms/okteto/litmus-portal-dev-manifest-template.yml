@@ -592,7 +592,7 @@ spec:
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
               value: "litmuschaos/chaos-operator:2.8.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.8.0
+              value: "litmuschaos/chaos-runner:2.8.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
               value: "litmuschaos/chaos-exporter:2.8.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
@@ -601,6 +601,8 @@ spec:
               value: "v2.8.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "127.0.0.1"
+            - name: WORKFLOW_HELPER_IMAGE_VERSION
+              value: "2.8.0"              
           ports:
             - containerPort: 8080
             - containerPort: 8000
