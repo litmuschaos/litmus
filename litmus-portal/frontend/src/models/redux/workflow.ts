@@ -53,7 +53,7 @@ export enum WorkflowActions {
   SET_WORKFLOW_DETAILS = 'SET_WORKFLOW_DETAILS',
   SET_CUSTOM_WORKFLOW = 'SET_CUSTOM_WORKFLOW',
   SET_WORKFLOW_MANIFEST = 'SET_WORKFLOW_MANIFEST',
-  SET_LITMUS_CORE_VERSION = 'SET_LITMUS_CORE_VERSION',
+  SET_WORKFLOW_HELPER_IMAGE_VERSION = 'SET_WORKFLOW_HELPER_IMAGE_VERSION',
 }
 
 interface WorkflowActionType<T, P> {
@@ -72,6 +72,6 @@ export type WorkflowAction =
       WorkflowManifest
     >
   | WorkflowActionType<
-      typeof WorkflowActions.SET_LITMUS_CORE_VERSION,
+      typeof WorkflowActions.SET_WORKFLOW_HELPER_IMAGE_VERSION,
       LitmusCoreVersion
     >;
