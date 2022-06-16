@@ -203,13 +203,13 @@
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
-### Target Port
+### Target Service Port
 
 It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/target-port.yaml yaml)
+[embedmd]:# (pod-http-latency/target-service-port.yaml yaml)
 ```yaml
 ## provide the target port of the service
 apiVersion: litmuschaos.io/v1alpha1
@@ -233,15 +233,15 @@ spec:
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
-### Listen Port
+### Proxy Port
 
-It defines the listen port for the proxy server. It can be tuned via `PROXY_PORT` ENV.
+It defines the port on which the proxy server will listen for requests. It can be tuned via `PROXY_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/listen-port.yaml yaml)
+[embedmd]:# (pod-http-latency/proxy-port.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+# provide the port for proxy to listen on
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -259,7 +259,7 @@ spec:
     spec:
       components:
         env:
-        # provide the listen port for proxy
+        # provide the port for proxy to listen on
         - name: PROXY_PORT
           value: '8080'
         # provide the target port of the service
