@@ -19,7 +19,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
-    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^11.2.6",
     "ace-builds": "^1.4.12",
     "brace": "^0.11.1",
