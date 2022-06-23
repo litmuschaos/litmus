@@ -1,4 +1,4 @@
-## provide the listen port for proxy
+## provide the network interface for proxy
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -10,15 +10,15 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-latency-sa
+  chaosServiceAccount: pod-http-reset-peer-sa
   experiments:
-  - name: pod-http-latency
+  - name: pod-http-reset-peer
     spec:
       components:
         env:
-        # provide the listen port for proxy
-        - name: PROXY_PORT
-          value: '8080'
+        # provide the network interface for proxy
+        - name: NETWORK_INTERFACE
+          value: "eth0"
         # provide the target port of the service
         - name: TARGET_SERVICE_PORT
-          value: "80"
+          value: '80'
