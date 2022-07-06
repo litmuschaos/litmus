@@ -237,6 +237,9 @@ spec:
         # provide the target port of the service
         - name: TARGET_SERVICE_PORT
           value: "80"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
 ```
 ### Listen Port
 
@@ -270,6 +273,9 @@ spec:
         # provide the target port of the service
         - name: TARGET_SERVICE_PORT
           value: "80"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
 ```
 
 ### Status Code
@@ -374,6 +380,9 @@ spec:
         # provide the target port of the service
         - name: TARGET_SERVICE_PORT
           value: '80'
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
 ```
 
 ### Container Runtime Socket Path
@@ -415,4 +424,7 @@ spec:
         # provide the target port of the service
         - name: TARGET_SERVICE_PORT
           value: "80"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
 ```
