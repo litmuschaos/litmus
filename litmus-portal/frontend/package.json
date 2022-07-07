@@ -41,7 +41,7 @@
     "litmus-ui": "1.6.1",
     "localforage": "^1.7.3",
     "lodash": "^4.17.20",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "plotly.js": "^1.58.4",
     "prop-types": "^15.7.2",
     "rc-progress": "^3.0.0",
