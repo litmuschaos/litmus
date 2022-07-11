@@ -1331,9 +1331,9 @@ myhub:
   myhubChart:
     header: MyHub
     github: github.com/
-    syncingRepo: Loading Charts, Please Wait...!
+    syncingRepo: Loading Experiments, Please Wait...!
     preDefined: Pre-defined chaos scenarios
-    chaosCharts: Chaos-charts
+    chaosCharts: Chaos-experiments
     noPredefinedExp: No predefined chaos scenarios available with information in this Hub
     noExp: No experiments found
     lastSynced: 'Last synced at: '

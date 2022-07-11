@@ -133,17 +133,17 @@ const MyHub = () => {
                 <InstallChaos
                   title={t('myhub.experimentPage.installExp')}
                   description={t('myhub.experimentPage.installExpDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/experiments/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
                 />
                 <InstallChaos
                   title={t('myhub.experimentPage.installRBAC')}
                   description={t('myhub.experimentPage.installRBACDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/experiments/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
                 />
                 <InstallChaos
                   title={t('myhub.experimentPage.installEngine')}
                   description={t('myhub.experimentPage.installEngineDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/experiments/${paramData.chart}/${paramData.experiment}/engine.yaml`}
                 />
               </div>
             ) : (
