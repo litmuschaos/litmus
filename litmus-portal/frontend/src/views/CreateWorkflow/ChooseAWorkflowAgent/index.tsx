@@ -6,14 +6,14 @@ import {
   LitmusCard,
   Modal,
   RadioButton,
-  Search,
+  Search
 } from 'litmus-ui';
 import React, {
   forwardRef,
   lazy,
   useEffect,
   useImperativeHandle,
-  useState,
+  useState
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -22,7 +22,7 @@ import { constants } from '../../../constants';
 import {
   GET_CLUSTER,
   GET_IMAGE_REGISTRY,
-  LIST_IMAGE_REGISTRY_BY_PROJECT_ID,
+  LIST_IMAGE_REGISTRY_BY_PROJECT_ID
 } from '../../../graphql';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
@@ -274,7 +274,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
           </div>
         ) : (
           <RadioGroup
-            name="Agent Selection"
+            name="Chaos Delegate Selection"
             value={currentlySelectedAgent}
             onChange={(e) => handleChange(e)}
             data-cy="AgentRadioGroup"

@@ -9,7 +9,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
@@ -23,12 +23,12 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
 import {
   GET_WORKFLOW_DETAILS,
-  WORKFLOW_RUN_DETAILS,
+  WORKFLOW_RUN_DETAILS
 } from '../../../../graphql/queries';
 import {
   Workflow,
   WorkflowDataRequest,
-  WorkflowRun,
+  WorkflowRun
 } from '../../../../models/graphql/workflowData';
 import {
   ExecutionData,
@@ -36,14 +36,14 @@ import {
   Pagination,
   ScheduledWorkflow,
   ScheduledWorkflows,
-  WeightageMap,
+  WeightageMap
 } from '../../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
-  sortNumDesc,
+  sortNumDesc
 } from '../../../../utils/sort';
 import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
 import WorkflowGraphs from '../WorkflowGraphs';
@@ -446,7 +446,7 @@ const WorkflowComparisonTable = () => {
     if (document.getElementById('statistics')) {
       const heads = [
         {
-          cluster_name: 'Agent Name',
+          cluster_name: 'Chaos Delegate Name',
           workflow_name: 'Workflow Name',
           run_date: 'Date-Time',
           tests_passed: '#Expts. Passed',

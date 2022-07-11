@@ -14,8 +14,8 @@ import { RootState } from '../../redux/reducers';
 import { getProjectRole } from '../../utils/getSearchParams';
 import { LitmusStepper } from '../LitmusStepper';
 import Loader from '../Loader';
-import useStyles from './styles';
 import { SuspenseLoader } from '../SuspenseLoader';
+import useStyles from './styles';
 
 const ChooseAWorkflowAgent = lazy(
   () => import('../../views/CreateWorkflow/ChooseAWorkflowAgent')
@@ -139,14 +139,14 @@ const WorkflowStepper = () => {
   );
   const steps: string[] = isWorkflowUploaded
     ? [
-        'Choose Agent',
+        'Choose Chaos Delegate',
         'Choose a workflow',
         'Workflow Settings',
         'Schedule',
         'Verify and Commit',
       ]
     : [
-        'Choose Agent',
+        'Choose Chaos Delegate',
         'Choose a workflow',
         'Workflow Settings',
         'Tune workflow',

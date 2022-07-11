@@ -110,7 +110,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="ChaosAgents"
+            label="ChaosDelegates"
             selected={['targets', 'target-connect'].includes(pathName)}
           >
             <TargetsIcon />

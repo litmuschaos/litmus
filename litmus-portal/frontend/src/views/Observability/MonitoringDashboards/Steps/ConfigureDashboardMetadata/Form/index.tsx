@@ -4,7 +4,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { AutocompleteChipInput, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
@@ -15,23 +15,23 @@ import { DashboardDetails } from '../../../../../../models/dashboardsData';
 import {
   Cluster,
   ClusterRequest,
-  Clusters,
+  Clusters
 } from '../../../../../../models/graphql/clusterData';
 import {
   GVRRequest,
   KubeObjData,
   KubeObjRequest,
   KubeObjResource,
-  KubeObjResponse,
+  KubeObjResponse
 } from '../../../../../../models/graphql/createWorkflowData';
 import {
   ApplicationMetadata,
-  Resource,
+  Resource
 } from '../../../../../../models/graphql/dashboardsDetails';
 import { ListDataSourceResponse } from '../../../../../../models/graphql/dataSourceDetails';
 import {
   DEFAULT_CHAOS_EVENT_PROMETHEUS_QUERY,
-  DEFAULT_CHAOS_VERDICT_PROMETHEUS_QUERY,
+  DEFAULT_CHAOS_VERDICT_PROMETHEUS_QUERY
 } from '../../../../../../pages/MonitoringDashboard/constants';
 import useActions from '../../../../../../redux/actions';
 import * as DashboardActions from '../../../../../../redux/actions/dashboards';

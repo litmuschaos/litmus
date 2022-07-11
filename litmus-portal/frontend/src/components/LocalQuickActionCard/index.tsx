@@ -61,7 +61,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     homePage || returningHome || observability
       ? {
           src: './icons/target.svg',
-          alt: 'agent',
+          alt: 'delegate',
           onClick: () =>
             history.push({
               pathname: '/target-connect',

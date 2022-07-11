@@ -82,7 +82,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
 
           {/* Column 2 */}
           <div>
-            <Typography className={classes.infoHeader}>Agent :</Typography>
+            <Typography className={classes.infoHeader}>Chaos Delegate :</Typography>
             <Typography>
               Name :{' '}
               <span className={classes.infoHint} data-cy="infoAgentName">

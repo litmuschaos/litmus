@@ -57,8 +57,8 @@ quickActionCard:
   readAPIDocs: Read the Litmus Portal API docs
   addDashboard: Create a dashboard
   addDataSource: Add a data source
-  addAgent: Add an agent
-  connectNewAgent: Connect a new agent
+  addAgent: Add a chaos delegate
+  connectNewAgent: Connect a new chaos delegate
   scheduleWorkflow: Schedule a workflow
 
 customWorkflowCard:
@@ -76,7 +76,7 @@ workflowStepper:
   workflowFailed: Failed to create a new workflow.
   workflowBtn: Go to Workflow
   step1:
-    errorSnackbar: You haven't selected any Target Agent
+    errorSnackbar: You haven't selected any Chaos Delegate
     errorSnackbarViewer: You cannot schedule a workflow as a Viewer
   step2:
     errorSnackbar: Please select a workflow type
@@ -174,13 +174,13 @@ observability:
   lowestScore: 'Lowest Score:'
   exportPDF: Export PDF
   compareWorkflows: Compare workflows
-  targetCluster: Target agent
+  targetCluster: Chaos delegate
   workflowSelected: workflow selected
   workflowsSelected: workflows selected
   tableHead1: Workflow Name
   tableHead2: Starting Date
   tableHead3: Regularity
-  tableHead4: Agent
+  tableHead4: Chaos Delegate
   tableHead5: Last Updated By
   workflowInfoStats:
     noRuns: No completed runs yet
@@ -226,7 +226,7 @@ monitoringDashboard:
       metaData1: Name
       metaData2: Type
       metaData3: DataSource
-      metaData4: Agent
+      metaData4: Chaos Delegate
     rangeSelector:
       to: to
       last30Mins: Last 30 mins
@@ -293,7 +293,7 @@ monitoringDashboard:
     selectPeriod: Select period
     all: All
     tableHead1: Name
-    tableHead2: Agent name
+    tableHead2: Chaos Delegate name
     tableHead3: Dashboard type
     tableHead4: Data source type
     tableHead5: Last viewed
@@ -330,14 +330,14 @@ monitoringDashboard:
         successMessage: Successfully uploaded
     configureDashboardMetadata:
       header: Dashboard metadata
-      description: Provide the dashboard information like names, data source, agents etc.
+      description: Provide the dashboard information like names, data source, chaos delegates etc.
       form:
         name: Name
-        agent: Agent
-        noActiveAgent: No active agent found
-        agentInactive: Agent is inactive
-        fetchingAgents: Loading agents ...
-        errorFetchingAgents: Error loading agents
+        agent: Chaos Delegate
+        noActiveAgent: No active chaos delegate found
+        agentInactive: Chaos Delegate is inactive
+        fetchingAgents: Loading chaos delegates ...
+        errorFetchingAgents: Error loading chaos delegates
         dataSource: Data source
         noActiveDataSource: No active data source found
         dataSourceInactive: Data source is inactive
@@ -500,7 +500,7 @@ monitoringDashboard:
     buttonText: Schedule a workflow
   configureBanner:
     case-0:
-      heading: No data source is configured yet for any agent
+      heading: No data source is configured yet for any chaos delegate
       description: To configure your first monitoring dashboard you need to connect a data source. Select "Add a data source" to connect.
     case-1:
       heading: Data source(s) has been added, now configure a dashboard
@@ -540,11 +540,11 @@ workflowDetails:
 
 homeViews:
   landingHome:
-    heading: Deploy your first agent
+    heading: Deploy your first chaos delegate
     description: A Kubernetes cluster consists of a set of worker machines, called nodes, that run containerized applications. Every cluster has at least one worker node. The control plane manages the worker nodes and the Pods in the cluster. In production environments, the control plane usually runs across multiple computers and a cluster usually runs multiple nodes, providing fault-tolerance and high availability.
     deploy: Deploy
     agentDeployModal:
-      heading: Connect an agent
+      heading: Connect a chaos delegate
       firstStep: 1. Open the cluster console
       secondStep: 2. Download
       litmusctl: litmusctl
@@ -576,9 +576,9 @@ homeViews:
       viewAll: View all workflows
       schedule: Schedule workflow
     agentInfoContainer:
-      agent: Agent
+      agent: Chaos Delegate
       description: Cloud native chaos engineering can be setup on this cluster using Litmus Chaos
-      deploy: Deploy a new Agent
+      deploy: Deploy a new Chaos Delegate
 
 chaosWorkflows:
   browseStatistics:
@@ -595,7 +595,7 @@ chaosWorkflows:
       statistics: Statistics
   browseSchedules:
     name: Name
-    agent: Agent
+    agent: Chaos Delegate
     lastUpdatedBy: Last Updated By
     experiments: Experiments
     schedule: Schedule
@@ -633,7 +633,7 @@ chaosWorkflows:
     status: Status
     name: Name
     dateFilterHelperText: Select a period
-    targetAgent: Target Agent
+    targetAgent: Chaos Delegate
     reliabilityDetails: Reliability Details
     experiments: Experiments
     lastRun: Last Run
@@ -893,7 +893,7 @@ workflowDetailsView:
       endTime: 'End Time :'
     targets:
       targetsHeader: Target
-      cluster: 'Agent :'
+      cluster: 'Chaos Delegate :'
       namespace: 'Workflow Namespace :'
   workflowNodeInfo:
     name: Name
@@ -1159,7 +1159,7 @@ createWorkflow:
         continuous: Continuous
   verifyCommit:
     header: Confirmation of Results
-    info: Before committing the workflow changes to your agent, verify and if needed go back to a corresponding section of the wizard to modify.
+    info: Before committing the workflow changes to your chaos delegate, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Workflow CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
@@ -1181,9 +1181,9 @@ createWorkflow:
       disabled: Currently Disabled
       schedulingNow: Scheduling now
       adjustedWeights: Adjusted Weights
-      clustername: Agent Name
+      clustername: Chaos Delegate Name
   workflowCluster:
-    activeCluster: Choose an active agent
+    activeCluster: Choose an active chaos delegate
     none: None
 
 ######################################
@@ -1196,8 +1196,8 @@ targets:
     copyTargetID: Copy target ID
     disconnect: Disconnect
   connectHome:
-    head: ChaosAgents
-    connectText: Connect the Agent
+    head: ChaosDelegates
+    connectText: Connect the Chaos Delegate
   copy:
     copy: Copy
     copied: Copied
@@ -1208,14 +1208,14 @@ targets:
     head2: Download litmusctl
     head3: Paste and Run the following command into the cluster console
   modalUpgrade:
-    head1: Upgrade Agent
-    copyUpgradeCommand: Copy & Paste this command to your cluster console to upgrade the agent.
+    head1: Upgrade Chaos Delegate
+    copyUpgradeCommand: Copy & Paste this command to your cluster console to upgrade the chaos delegate.
     done: Done
   modalDelete:
     head1: Are you sure to
     head2: disconnect the current
     head3: It will be disconnect forever
-    head4: Agent?
+    head4: Chaos Delegate?
     disconnect: Disconnect
     yes: Yes
     no: No
@@ -1231,14 +1231,14 @@ connectTargets:
 workflowCluster:
   header:
     status: Current Status
-    target: Target Agent
-    chooseAgent: Choose the target Kubernetes Agent
+    target: Chaos Delegate
+    chooseAgent: Choose the target Kubernetes Chaos Delegate
     creatingNew: You are creating a
     creatingNewBold: new chaos workflow.
-    selectAgent: Select a target Kubernetes Agent to run this workflow.
-    selectCluster: Choose Active Agent
+    selectAgent: Select a target Kubernetes Chaos Delegate to run this workflow.
+    selectCluster: Choose Active Chaos Delegate
     select: Select and Continue
-    snackbar: No Agent Registered With Your Project ID, Please Wait...
+    snackbar: No Chaos Delegate Registered With Your Project ID, Please Wait...
     formControl:
       # For Header
       menu: All
@@ -1249,30 +1249,30 @@ workflowCluster:
       menu6: Pending
       # For Table
       tableStatus: Status
-      tableCluster: Target Agent
+      tableCluster: Chaos Delegate
       name: Name
       time: Time
       run: Last Workflow run
-      agentScope: Agent Scope
+      agentScope: Chaos Delegate Scope
       connectionDate: Connection Date
       noWorkflows: No. of Workflows
       noSchedules: No. of Schedules
       fetchingError: Unable to fetch data
       recordAvailable: No records available
       disconnect: Disconnect
-      clusterInfo: Agent information
-      about: About Litmus Agent
+      clusterInfo: Chaos Delegate information
+      about: About Litmus Chaos Delegate
       back: Back
 workflowAgent:
   header:
-    chooseAgent: Choose Agent to send the Litmus workflow to
+    chooseAgent: Choose Chaos Delegate to send the Litmus workflow to
     creatingNew: You are creating a new Litmus workflow
     selectAgent: Select a target Kubernetes cluster to run this workflow
   search:
     placeholder: Search
-  connectAgent: Connect an agent to start scheduling workflows
-  noAgents: You have not connected any agents yet
-  noAgentSearch: No agents found
+  connectAgent: Connect an chaos delegate to start scheduling workflows
+  noAgents: You have not connected any chaos delegates yet
+  noAgentSearch: No  chaos delegates found
 
 workflows:
   runs: Runs
@@ -1467,8 +1467,8 @@ usage:
     userSubtitle: Total number of Litmus users.
     projectHeader: Projects
     projectSubtitle: Total number of Litmus projects.
-    agentHeader: Agents
-    agentSubtitle: Total number of ChaosAgents connected to ChaosCenter.
+    agentHeader: Chaos Delegates
+    agentSubtitle: Total number of Chaos Delegates connected to ChaosCenter.
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Workflow Schedules
@@ -1480,7 +1480,7 @@ usage:
   table:
     project: Projects
     owner: Project Owner
-    agents: Agents
+    agents: Chaos Delegates
     schedules: Workflow Schedules
     wfRuns: Workflow runs
     expRuns: Experiment runs

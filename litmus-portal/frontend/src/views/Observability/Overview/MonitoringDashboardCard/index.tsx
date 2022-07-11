@@ -5,13 +5,13 @@ import {
   PanelExport,
   PanelGroupExport,
   PanelGroupMap,
-  PromQueryExport,
+  PromQueryExport
 } from '../../../../models/dashboardsData';
 import {
   ApplicationMetadata,
   GetDashboardResponse,
   PanelOption,
-  Resource,
+  Resource
 } from '../../../../models/graphql/dashboardsDetails';
 import useActions from '../../../../redux/actions';
 import * as DashboardActions from '../../../../redux/actions/dashboards';
@@ -22,7 +22,7 @@ import { ReactComponent as ObservabilityIcon } from '../../../../svg/observabili
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import {
   getProjectID,
-  getProjectRole,
+  getProjectRole
 } from '../../../../utils/getSearchParams';
 import useStyles from './styles';
 
@@ -157,7 +157,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
                   {data.dbName}
                 </Typography>
                 <Typography className={classes.hint}>
-                  Agent: {data.clusterName}
+                  Chaos Delegate: {data.clusterName}
                 </Typography>
               </div>
             </div>

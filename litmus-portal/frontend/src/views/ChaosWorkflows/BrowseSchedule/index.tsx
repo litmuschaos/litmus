@@ -15,7 +15,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -28,7 +28,7 @@ import {
   DELETE_WORKFLOW,
   GET_CLUSTER_NAMES,
   GET_WORKFLOW_DETAILS,
-  UPDATE_SCHEDULE,
+  UPDATE_SCHEDULE
 } from '../../../graphql';
 import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import { WeightMap } from '../../../models/graphql/createWorkflowData';
@@ -39,7 +39,7 @@ import {
   ScheduledWorkflow,
   ScheduledWorkflows,
   SortRequest,
-  WorkflowFilterRequest,
+  WorkflowFilterRequest
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
@@ -265,7 +265,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
           {/* Select Cluster */}
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel className={classes.selectText}>Target Agent</InputLabel>
+            <InputLabel className={classes.selectText}>Chaos Delegate</InputLabel>
             <Select
               value={filters.clusterName}
               onChange={(event) =>
