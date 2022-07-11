@@ -11,7 +11,7 @@ import { RootState } from '../../../redux/reducers';
 import {
   addWeights,
   updateNamespaceForUpload,
-  validateExperimentNames,
+  validateExperimentNames
 } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
@@ -55,7 +55,7 @@ const UploadYAML = () => {
           const nameValidation = validateExperimentNames(wfmanifest);
           if (!nameValidation) {
             setUploadError(true);
-            setErrorText('Workflow contains multiple steps with same name.');
+            setErrorText('Chaos scenario contains multiple steps with same name.');
           }
           addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
           workflowAction.setWorkflowManifest({
@@ -90,7 +90,7 @@ const UploadYAML = () => {
           const nameValidation = validateExperimentNames(wfmanifest);
           if (!nameValidation) {
             setUploadError(true);
-            setErrorText('Workflow contains multiple steps with same name.');
+            setErrorText('Chaos scenario contains multiple steps with same name.');
           }
           addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
           workflowAction.setWorkflowManifest({

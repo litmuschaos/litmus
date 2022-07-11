@@ -4,14 +4,14 @@ import {
   Paper,
   Select,
   Typography,
-  useTheme,
+  useTheme
 } from '@material-ui/core';
 import {
   getValueColor,
   PassFailBar,
   RadialChart,
   RadialChartMetric,
-  RadialProgressChart,
+  RadialProgressChart
 } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { resilienceScoreColourMap } from '../../../../colors/graphColors';
@@ -20,7 +20,7 @@ import Center from '../../../../containers/layouts/Center';
 import { GET_WORKFLOW_RUNS_STATS } from '../../../../graphql/queries';
 import {
   WorkflowRunStatsRequest,
-  WorkflowRunStatsResponse,
+  WorkflowRunStatsResponse
 } from '../../../../models/graphql/workflowData';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import useStyles from './styles';
@@ -127,7 +127,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
         <div className={classes.topDiv}>
           <Paper className={classes.containerBlock}>
             <Typography className={classes.cardText}>
-              {isSingleRun ? 'Experiment Statistics' : 'Workflow Statistics'}
+              {isSingleRun ? 'Experiment Statistics' : 'Chaos Scenario Statistics'}
             </Typography>
             <div className={classes.radialChart} data-cy="statsRadialChart">
               <RadialChart
@@ -166,7 +166,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             <Typography className={classes.cardBottomText}>
               {isSingleRun
                 ? 'Based on experiment results'
-                : 'Based on workflow results'}
+                : 'Based on chaos scenario results'}
             </Typography>
           </Paper>
           <Paper className={classes.containerBlock}>
@@ -184,7 +184,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                   className={classes.dropDown}
                   data-cy="statsDropdown"
                 >
-                  <MenuItem value={0}>Workflow Runs</MenuItem>
+                  <MenuItem value={0}>Scenario Runs</MenuItem>
                   <MenuItem value={1}>Experiments</MenuItem>
                 </Select>
               )}
@@ -206,7 +206,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             </div>
             <Typography className={classes.cardBottomText1}>
               {showWorkflowStats
-                ? 'Statistics taken from all workflow results'
+                ? 'Statistics taken from all scenario results'
                 : 'Statistics taken from all experiments results'}
             </Typography>
           </Paper>

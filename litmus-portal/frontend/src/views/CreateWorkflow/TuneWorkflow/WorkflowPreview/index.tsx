@@ -238,7 +238,7 @@ const WorkflowPreview: React.FC<WorkflowPreviewProps> = ({
       zoomable
     />
   ) : (
-    <div className={classes.load}>Visualizing your Workflow</div>
+    <div className={classes.load}>Visualizing your Chaos Scenario</div>
   );
 };
 

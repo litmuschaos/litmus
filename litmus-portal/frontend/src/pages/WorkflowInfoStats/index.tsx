@@ -5,14 +5,14 @@ import {
   MenuItem,
   Select,
   Typography,
-  useTheme,
+  useTheme
 } from '@material-ui/core';
 import {
   ButtonFilled,
   CalendarHeatmap,
   CalendarHeatmapTooltipProps,
   Icon,
-  Modal,
+  Modal
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -24,17 +24,17 @@ import Center from '../../containers/layouts/Center';
 import Wrapper from '../../containers/layouts/Wrapper';
 import {
   GET_WORKFLOW_DETAILS,
-  WORKFLOW_RUN_DETAILS,
+  WORKFLOW_RUN_DETAILS
 } from '../../graphql/queries';
 import {
   HeatmapDataRequest,
   HeatmapDataResponse,
   Workflow,
-  WorkflowDataRequest,
+  WorkflowDataRequest
 } from '../../models/graphql/workflowData';
 import {
   GetWorkflowsRequest,
-  ScheduledWorkflows,
+  ScheduledWorkflows
 } from '../../models/graphql/workflowListData';
 import { history } from '../../redux/configureStore';
 import { getProjectID } from '../../utils/getSearchParams';
@@ -214,7 +214,7 @@ const WorkflowInfoStats: React.FC = () => {
             {data?.listWorkflows.workflows[0].workflowName}
           </Typography>
           <Typography className={classes.subHeading}>
-            Here’s the statistics of the selected workflow
+            Here’s the statistics of the selected chaos scenario
           </Typography>
         </div>
         {/* For later: */}

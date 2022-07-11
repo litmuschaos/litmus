@@ -142,14 +142,14 @@ const Overview: React.FC = () => {
     return (
       <MainInfoContainer
         src="./icons/workflowScheduleHome.svg"
-        alt="Schedule a workflow"
+        alt="Schedule a scenario"
         heading={t('homeViews.agentConfiguredHome.noWorkflow.heading')}
         description={t('homeViews.agentConfiguredHome.noWorkflow.description')}
         button={
           <ButtonFilled
             onClick={() => {
               history.push({
-                pathname: '/create-workflow',
+                pathname: '/create-scenario',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -220,7 +220,7 @@ const Overview: React.FC = () => {
       {!dataSource && (
         <MainInfoContainer
           src="./icons/cloud.svg"
-          alt="Schedule a workflow"
+          alt="Schedule a chaos scenario"
           heading="Connect data source"
           description="To configure your first Kubernetes dashboard you need to connect a data source. Select “Add data source” to connect."
           button={
@@ -257,7 +257,7 @@ const Overview: React.FC = () => {
       {dataSource && !monitoringDashboardCount && (
         <MainInfoContainer
           src="./icons/dashboardCloud.svg"
-          alt="Schedule a workflow"
+          alt="Schedule a scenario"
           heading="Configure a chaos interleaved dashboard"
           description="Data source(s) have been found to be connected in this project. Select “Create dashboard” to configure a chaos interleaved dashboard"
           button={
@@ -277,11 +277,11 @@ const Overview: React.FC = () => {
       )}{' '}
       {WorkflowStatisticsCount > 0 ? (
         <RecentOverviewContainer
-          heading="Recently updated workflow statistics"
-          buttonLink="/create-workflow"
+          heading="Recently updated scenario statistics"
+          buttonLink="/create-scenario"
           buttonImgSrc="./icons/calendarBlank.svg"
-          buttonImgAlt="Schedule workflow"
-          buttonText="Schedule workflow"
+          buttonImgAlt="Schedule chaos scenario"
+          buttonText="Schedule chaos scenario"
         >
           {workflowLoading ? (
             <Center>
@@ -301,15 +301,15 @@ const Overview: React.FC = () => {
       ) : (
         <OverviewContainer
           count={0}
-          countUnit="workflows"
-          description="Create complex chaos workflows, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability work flows and compliance reports"
+          countUnit="scenarios"
+          description="Create complex chaos scenarios, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability work flows and compliance reports"
           maxWidth="38.5625rem"
           button={
             <>
               <ButtonOutlined
                 onClick={() => {
                   history.push({
-                    pathname: '/create-workflow',
+                    pathname: '/create-scenario',
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

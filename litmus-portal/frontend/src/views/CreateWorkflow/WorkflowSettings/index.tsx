@@ -3,7 +3,7 @@ import {
   Avatar,
   Checkbox,
   FormControlLabel,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { ButtonOutlined, InputField, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -11,7 +11,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useState,
+  useState
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -168,18 +168,18 @@ const WorkflowSettings = forwardRef((_, ref) => {
         workflowAction.setWorkflowManifest({ manifest: '' });
       }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
-        setName('custom-chaos-workflow');
+        setName('custom-chaos-scenario');
         workflowAction.setWorkflowManifest({ manifest: manifest ?? '' });
-        setDescription('Custom Chaos Workflow');
+        setDescription('Custom Chaos Scenario');
         setIcon('./avatars/litmus.svg');
         setDisplayRegChange(true);
       }
       if ((value as ChooseWorkflowRadio).selected === 'D') {
-        const wfName = `custom-workflow-${Math.round(
+        const wfName = `custom-scenario-${Math.round(
           new Date().getTime() / 1000
         )}`;
         setName(wfName);
-        setDescription('Chaos Workflow');
+        setDescription('Chaos Scenario');
         setIcon('./avatars/litmus.svg');
         setDisplayRegChange(false);
       }

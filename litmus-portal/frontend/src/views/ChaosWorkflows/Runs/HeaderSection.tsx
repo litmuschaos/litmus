@@ -8,7 +8,7 @@ import {
   MenuItem,
   Popover,
   Select,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -102,12 +102,12 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         {/* Select Workflow */}
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>
-            Workflow Status
+            Scenario Status
           </InputLabel>
           <Select
             value={statusValue}
             onChange={changeStatus}
-            label="Workflow Status"
+            label="Scenario Status"
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>

@@ -9,7 +9,7 @@ import { ScheduledWorkflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
-  getProjectRole,
+  getProjectRole
 } from '../../../../utils/getSearchParams';
 import useStyles, { StyledTableCell } from './styles';
 
@@ -95,7 +95,7 @@ const TableData: React.FC<TableDataProps> = ({
             aria-haspopup="true"
             onClick={() => {
               history.push({
-                pathname: `/analytics/workflowStatistics/${data.workflowID}`,
+                pathname: `/analytics/scenarioStatistics/${data.workflowID}`,
                 search: `?projectID=${projectID}&projectRole=${userRole}`,
               });
             }}

@@ -151,7 +151,7 @@ const MyHub = () => {
                 <InstallChaos
                   title={t('myhub.experimentPage.checkPreDefined')}
                   description={t('myhub.experimentPage.checkPreDefinedDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/workflows/${paramData.experiment}`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/scenarios/${paramData.experiment}`}
                   isPredefined
                 />
               </>

@@ -69,7 +69,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   const workflowRunCount = data?.listWorkflowRuns.totalNoOfWorkflowRuns ?? 0;
 
   if (error) {
-    console.error('Error fetching Workflow Data');
+    console.error('Error fetching Scenario Data');
     return (
       <Center>
         <Typography>{t('homeViews.agentConfiguredHome.error')}</Typography>
@@ -95,7 +95,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
               onClick={() => {
                 tabs.changeWorkflowsTabs(0);
                 history.push({
-                  pathname: '/workflows',
+                  pathname: '/scenarios',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}
@@ -105,7 +105,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
               </Typography>
             </TextButton>
           }
-          buttonLink="/create-workflow"
+          buttonLink="/create-scenario"
           buttonImgSrc="./icons/calendarBlank.svg"
           buttonImgAlt="calendar"
           buttonText={t(
@@ -121,7 +121,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
       ) : (
         <MainInfoContainer
           src="./icons/workflowScheduleHome.svg"
-          alt="Schedule a workflow"
+          alt="Schedule a Chaos Scenario"
           heading={t('homeViews.agentConfiguredHome.noWorkflow.heading')}
           description={t(
             'homeViews.agentConfiguredHome.noWorkflow.description'
@@ -130,7 +130,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
             <ButtonFilled
               onClick={() => {
                 history.push({
-                  pathname: '/create-workflow',
+                  pathname: '/create-scenario',
                   search: `?projectID=${projectID}&projectRole=${projectRole}`,
                 });
               }}

@@ -7,7 +7,7 @@ import Center from '../../../../containers/layouts/Center';
 import { GET_WORKFLOW_RUNS_STATS } from '../../../../graphql';
 import {
   WorkflowRunStatsRequest,
-  WorkflowRunStatsResponse,
+  WorkflowRunStatsResponse
 } from '../../../../models/graphql/workflowData';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import ScheduleAndRunStats from './ScheduleAndRunStats';
@@ -55,7 +55,7 @@ const WorkflowGraphs: React.FC = () => {
         <ScheduleAndRunStats />
         <Paper elevation={0} className={classes.radialChartContainer}>
           <Typography className={classes.radialChartContainerHeading}>
-            Workflow Run stats
+            Scenario Run stats
           </Typography>
           <div className={classes.radialChart}>
             {loading ? (

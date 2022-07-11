@@ -3,7 +3,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Select,
+  Select
 } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { Search } from 'litmus-ui';
@@ -112,7 +112,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             </MenuItem>
             {workflows.map((availableWorkflow: string) => (
               <MenuItem
-                key={`${availableWorkflow}-workflow-chaos-table-toolbar`}
+                key={`${availableWorkflow}-scenario-chaos-table-toolbar`}
                 value={availableWorkflow}
                 className={classes.menuListItem}
               >

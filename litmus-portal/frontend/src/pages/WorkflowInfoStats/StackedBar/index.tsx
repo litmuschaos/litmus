@@ -4,7 +4,7 @@ import {
   BarDateValue,
   LineMetricSeries,
   StackBar,
-  StackBarMetric,
+  StackBarMetric
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -13,7 +13,7 @@ import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
   Workflow,
-  WorkflowDataRequest,
+  WorkflowDataRequest
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import WorkflowRunTable from '../WorkflowRunTable';
@@ -135,7 +135,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   return (
     <div>
       <Typography className={classes.stackbarHeader}>
-        Workflow Activity
+        Scenario Activity
       </Typography>
       <div className={classes.date}>
         <Typography>{formatDate(date.toString())}</Typography>
@@ -143,7 +143,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       </div>
       <div className={classes.stackbarHelperTextArea}>
         <Typography className={classes.stackbarHelperText}>
-          Click on a bar to see the details of the workflow run
+          Click on a bar to see the details of the scenario run
         </Typography>
         <Typography className={classes.resiliencyScore}>
           Resiliency score: {Math.round(averageResiliency)}%

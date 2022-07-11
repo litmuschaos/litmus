@@ -87,20 +87,20 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                   });
                   if (data.phase?.toLowerCase() !== 'notavailable')
                     history.push({
-                      pathname: `/workflows/${data.workflowRunID}`,
+                      pathname: `/scenarios/${data.workflowRunID}`,
                       search: `?projectID=${projectID}&projectRole=${projectRole}`,
                     });
                 }}
               >
                 <WorkflowRunIcon />
               </IconButton>
-              <Typography align="center">See workflow run</Typography>
+              <Typography align="center">See scenario run</Typography>
             </div>
             <div className={classes.cardActions}>
               <IconButton
                 onClick={() => {
                   history.push({
-                    pathname: `/analytics/workflowStatistics/${data.workflowID}`,
+                    pathname: `/analytics/scenarioStatistics/${data.workflowID}`,
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

@@ -7,7 +7,7 @@ import {
   TablePagination,
   TableRow,
   Typography,
-  useTheme,
+  useTheme
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
-  sortNumDesc,
+  sortNumDesc
 } from '../../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';
@@ -312,7 +312,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                   <div className={classes.toolTipGroup}>
                     <Typography className={classes.resultText} display="inline">
                       Resilience Score{' '}
-                      <InfoTooltip value="Resilience Score is the weighted average of all tests in the workflow." />
+                      <InfoTooltip value="Resilience Score is the weighted average of all tests in the chaos scenario." />
                     </Typography>
                     <Typography
                       className={classes.reliabilityScore}

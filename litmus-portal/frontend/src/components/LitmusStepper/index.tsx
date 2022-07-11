@@ -4,7 +4,7 @@ import {
   StepLabel,
   Stepper,
   Tooltip,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
@@ -86,7 +86,7 @@ const LitmusStepper: React.FC<LitmusStepperProps> = ({
       <div className={classes.stepperActions} data-cy="controlButtons">
         {activeStep === 2 ? (
           <Tooltip
-            title="All selected Workflow Data will be lost"
+            title="All selected Chaos Scenarios Data will be lost"
             placement="top"
             leaveDelay={300}
           >

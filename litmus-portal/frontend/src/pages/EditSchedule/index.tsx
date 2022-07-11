@@ -19,11 +19,11 @@ import { GET_WORKFLOW_DETAILS } from '../../graphql/queries';
 import {
   CreateWorkFlowRequest,
   UpdateWorkflowResponse,
-  WeightMap,
+  WeightMap
 } from '../../models/graphql/createWorkflowData';
 import {
   GetWorkflowsRequest,
-  ScheduledWorkflows,
+  ScheduledWorkflows
 } from '../../models/graphql/workflowListData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';
@@ -233,7 +233,7 @@ const EditSchedule: React.FC = () => {
 
   const handleFinishModal = () => {
     history.push({
-      pathname: `/workflows`,
+      pathname: `/scenarios`,
       search: `?projectID=${projectID}&projectRole=${userRole}`,
     });
     setFinishModalOpen(false);
@@ -350,7 +350,7 @@ const EditSchedule: React.FC = () => {
                           className={classes.editButton}
                           onClick={() =>
                             history.push({
-                              pathname: `/workflows/schedule/${projectID}/${fetchWorkflowNameFromManifest(
+                              pathname: `/scenarios/schedule/${projectID}/${fetchWorkflowNameFromManifest(
                                 manifest
                               )}/set`,
                               search: `?projectID=${projectID}&projectRole=${userRole}`,
@@ -434,7 +434,7 @@ const EditSchedule: React.FC = () => {
             <ButtonOutlined
               onClick={() => {
                 history.push({
-                  pathname: `/workflows/`,
+                  pathname: `/scenarios/`,
                   search: `?projectID=${projectID}&projectRole=${userRole}`,
                 });
               }}
@@ -504,7 +504,7 @@ const EditSchedule: React.FC = () => {
                       handleFinishModal();
                       tabs.changeWorkflowsTabs(0);
                       history.push({
-                        pathname: '/workflows',
+                        pathname: '/scenarios',
                         search: `?projectID=${projectID}&projectRole=${userRole}`,
                       });
                     }}

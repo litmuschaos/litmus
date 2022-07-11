@@ -10,7 +10,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
+  useState
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -22,7 +22,7 @@ import { CREATE_WORKFLOW } from '../../../graphql';
 import {
   CreateWorkFlowRequest,
   CreateWorkflowResponse,
-  WeightMap,
+  WeightMap
 } from '../../../models/graphql/createWorkflowData';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
@@ -38,11 +38,11 @@ import {
   validateStartEmptySpacing,
   validateSubject,
   validateTextEmpty,
-  validateWorkflowName,
+  validateWorkflowName
 } from '../../../utils/validate';
 import {
   fetchWorkflowNameFromManifest,
-  updateWorkflowNameLabel,
+  updateWorkflowNameLabel
 } from '../../../utils/yamlUtils';
 import useStyles from './styles';
 
@@ -292,7 +292,7 @@ const VerifyCommit = forwardRef(
 
       tabs.changeWorkflowsTabs(0);
       history.push({
-        pathname: '/workflows',
+        pathname: '/scenarios',
         search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
       });
     };
