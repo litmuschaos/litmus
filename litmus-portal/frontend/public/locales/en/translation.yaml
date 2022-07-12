@@ -562,7 +562,7 @@ homeViews:
     error: Error fetching the data!
     noWorkflow:
       heading: Schedule your first Litmus chaos scenario
-      description: Now it is successfully running on your Kubernetes cluster. Once you schedule chaos chaos scenarios, reliability statistics will be displayed here.
+      description: Now it is successfully running on your Kubernetes cluster. Once you schedule a chaos scenarios, reliability statistics will be displayed here.
       schedule: Schedule a chaos scenario
       explore: Explore pre defined chaos scenarios
     recentWorkflowRuns:
@@ -574,7 +574,7 @@ homeViews:
         downloadManifest: Download manifest
       heading: Recent Chaos Scenario runs
       viewAll: View all chaos scenarios
-      schedule: Schedule chaos scenario
+      schedule: Schedule a chaos scenario
     agentInfoContainer:
       agent: Chaos Delegate
       description: Cloud native chaos engineering can be setup on this cluster using Litmus Chaos
@@ -866,7 +866,7 @@ settings:
     save: Save Changes
     provideInfo: Please provide the namespace and secret name. For more information,
     visit: visit here
-    noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos chaos scenarios.
+    noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos scenarios.
 
 workflowDetailsView:
   logs: Logs
@@ -1232,10 +1232,10 @@ workflowCluster:
   header:
     status: Current Status
     target: Chaos Delegate
-    chooseAgent: Choose the target Kubernetes Chaos Delegate
+    chooseAgent: Choose the Kubernetes Chaos Delegate
     creatingNew: You are creating a
     creatingNewBold: new chaos chaos scenario.
-    selectAgent: Select a target Kubernetes Chaos Delegate to run this chaos scenario.
+    selectAgent: Select a Kubernetes Chaos Delegate to run this chaos scenario.
     selectCluster: Choose Active Chaos Delegate
     select: Select and Continue
     snackbar: No Chaos Delegate Registered With Your Project ID, Please Wait...
@@ -1267,7 +1267,7 @@ workflowAgent:
   header:
     chooseAgent: Choose Chaos Delegate to send the Litmus chaos scenario to
     creatingNew: You are creating a new Litmus chaos scenario
-    selectAgent: Select a target Kubernetes cluster to run this chaos scenario
+    selectAgent: Select a Chaos Delegate to run this chaos scenario
   search:
     placeholder: Search
   connectAgent: Connect an chaos delegate to start scheduling chaos scenarios

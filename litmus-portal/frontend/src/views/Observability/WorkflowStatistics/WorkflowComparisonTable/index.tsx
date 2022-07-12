@@ -9,7 +9,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import ExpandMoreTwoToneIcon from '@material-ui/icons/ExpandMoreTwoTone';
@@ -23,12 +23,12 @@ import { useTranslation } from 'react-i18next';
 import Loader from '../../../../components/Loader';
 import {
   GET_WORKFLOW_DETAILS,
-  WORKFLOW_RUN_DETAILS
+  WORKFLOW_RUN_DETAILS,
 } from '../../../../graphql/queries';
 import {
   Workflow,
   WorkflowDataRequest,
-  WorkflowRun
+  WorkflowRun,
 } from '../../../../models/graphql/workflowData';
 import {
   ExecutionData,
@@ -36,14 +36,14 @@ import {
   Pagination,
   ScheduledWorkflow,
   ScheduledWorkflows,
-  WeightageMap
+  WeightageMap,
 } from '../../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
-  sortNumDesc
+  sortNumDesc,
 } from '../../../../utils/sort';
 import ResilienceScoreComparisonPlot from '../WorkflowComparisonPlot/index';
 import WorkflowGraphs from '../WorkflowGraphs';
@@ -670,13 +670,13 @@ const WorkflowComparisonTable = () => {
             ) : (
               <div />
             )}{' '}
-            Workflow comparison
+            Chaos scenario comparison
           </strong>
         </Typography>
         <Typography className={classes.description}>
           {compare === true
-            ? 'Choose the right scenarios and get comparative results'
-            : 'Choose scenarios to compare their resilience scores'}
+            ? 'Choose the right chaos scenarios and get comparative results'
+            : 'Choose chaos scenarios to compare their resilience scores'}
         </Typography>
         <br />
       </div>

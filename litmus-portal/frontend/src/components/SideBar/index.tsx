@@ -95,7 +95,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Litmus Scenarios"
+            label="Chaos Scenarios"
             selected={['scenarios', 'create-scenario'].includes(pathName)}
           >
             <WorkflowsIcon />

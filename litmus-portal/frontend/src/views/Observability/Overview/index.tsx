@@ -13,20 +13,20 @@ import {
   GET_CLUSTER_LENGTH,
   GET_DASHBOARD_OVERVIEW,
   GET_DATASOURCE_OVERVIEW,
-  WORKFLOW_DETAILS
+  WORKFLOW_DETAILS,
 } from '../../../graphql';
 import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
   GetDashboard,
-  GetDashboardRequest
+  GetDashboardRequest,
 } from '../../../models/graphql/dashboardsDetails';
 import {
   DataSourceList,
-  ListDataSourceVars
+  ListDataSourceVars,
 } from '../../../models/graphql/dataSourceDetails';
 import {
   Workflow,
-  WorkflowDataRequest
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -277,11 +277,11 @@ const Overview: React.FC = () => {
       )}{' '}
       {WorkflowStatisticsCount > 0 ? (
         <RecentOverviewContainer
-          heading="Recently updated scenario statistics"
+          heading="Recently updated chaos scenario statistics"
           buttonLink="/create-scenario"
           buttonImgSrc="./icons/calendarBlank.svg"
-          buttonImgAlt="Schedule chaos scenario"
-          buttonText="Schedule chaos scenario"
+          buttonImgAlt="Schedule a chaos scenario"
+          buttonText="Schedule a chaos scenario"
         >
           {workflowLoading ? (
             <Center>

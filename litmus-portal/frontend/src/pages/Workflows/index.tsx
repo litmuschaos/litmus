@@ -57,7 +57,7 @@ const Workflows = () => {
     <Wrapper>
       <section>
         <div className={classes.header}>
-          <Typography variant="h3">Litmus Scenarios</Typography>
+          <Typography variant="h3">Chaos Scenarios</Typography>
           <div data-cy="scheduleWorkflowButton" className={classes.scheduleBtn}>
             <ButtonFilled onClick={handleScheduleWorkflow}>
               {t('workflows.scheduleAWorkflow')}

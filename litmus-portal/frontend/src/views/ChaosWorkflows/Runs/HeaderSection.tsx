@@ -8,7 +8,7 @@ import {
   MenuItem,
   Popover,
   Select,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -119,11 +119,11 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
 
         {/* Select Cluster */}
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel className={classes.selectText}>Target Cluster</InputLabel>
+          <InputLabel className={classes.selectText}>Chaos Delegate</InputLabel>
           <Select
             value={clusterValue}
             onChange={changeCluster}
-            label="Target Cluster"
+            label="Chaos Delegate"
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>
