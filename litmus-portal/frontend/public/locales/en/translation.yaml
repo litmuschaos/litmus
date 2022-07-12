@@ -1274,7 +1274,7 @@ workflowAgent:
   noAgents: You have not connected any chaos delegates yet
   noAgentSearch: No  chaos delegates found
 
-chaos scenarios:
+workflows:
   runs: Runs
   schedules: Schedules
   templates: Templates

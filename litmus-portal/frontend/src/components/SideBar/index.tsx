@@ -95,7 +95,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Litmus Chaos Scenarios"
+            label="Litmus Scenarios"
             selected={['scenarios', 'create-scenario'].includes(pathName)}
           >
             <WorkflowsIcon />
@@ -110,7 +110,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="ChaosDelegates"
+            label="Chaos Delegates"
             selected={['targets', 'target-connect'].includes(pathName)}
           >
             <TargetsIcon />

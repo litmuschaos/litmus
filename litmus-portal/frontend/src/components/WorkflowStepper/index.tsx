@@ -140,16 +140,16 @@ const WorkflowStepper = () => {
   const steps: string[] = isWorkflowUploaded
     ? [
         'Choose Chaos Delegate',
-        'Choose a workflow',
-        'Workflow Settings',
+        'Choose a Chaos Scenario',
+        'Scenario Settings',
         'Schedule',
         'Verify and Commit',
       ]
     : [
         'Choose Chaos Delegate',
-        'Choose a workflow',
-        'Workflow Settings',
-        'Tune workflow',
+        'Choose a Scenario',
+        'Scenario Settings',
+        'Tune Scenario',
         'Reliability score',
         'Schedule',
         'Verify and Commit',
@@ -205,7 +205,7 @@ const WorkflowStepper = () => {
         ) : activeStep === 2 ? (
           <div className={classes.headerButtonWrapper} aria-label="buttons">
             <Tooltip
-              title="All selected Workflow Data will be lost"
+              title="All selected Chaos Scenario Data will be lost"
               placement="top"
               leaveDelay={300}
             >
