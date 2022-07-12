@@ -9,7 +9,7 @@ import { ReactComponent as WorkflowRunIcon } from '../../../../svg/workflowRun.s
 import timeDifferenceForDate from '../../../../utils/datesModifier';
 import {
   getProjectID,
-  getProjectRole
+  getProjectRole,
 } from '../../../../utils/getSearchParams';
 import {
   FAILED,
@@ -17,7 +17,7 @@ import {
   PENDING,
   RUNNING,
   SUCCEEDED,
-  TERMINATED
+  TERMINATED,
 } from '../../../WorkflowDetails/workflowConstants';
 import useStyles from './styles';
 

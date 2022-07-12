@@ -4,7 +4,7 @@ import {
   BarDateValue,
   LineMetricSeries,
   StackBar,
-  StackBarMetric
+  StackBarMetric,
 } from 'litmus-ui';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -13,7 +13,7 @@ import Center from '../../../containers/layouts/Center';
 import { WORKFLOW_DETAILS } from '../../../graphql';
 import {
   Workflow,
-  WorkflowDataRequest
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import WorkflowRunTable from '../WorkflowRunTable';

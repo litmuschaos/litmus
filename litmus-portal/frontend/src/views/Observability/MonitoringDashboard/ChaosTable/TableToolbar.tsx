@@ -3,7 +3,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Select
+  Select,
 } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { Search } from 'litmus-ui';

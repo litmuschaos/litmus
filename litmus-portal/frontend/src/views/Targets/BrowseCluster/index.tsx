@@ -9,7 +9,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -20,14 +20,14 @@ import {
   Cluster,
   ClusterRequest,
   Clusters,
-  DeleteClusters
+  DeleteClusters,
 } from '../../../models/graphql/clusterData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
-  sortNumDesc
+  sortNumDesc,
 } from '../../../utils/sort';
 import HeaderSection from './HeaderSection';
 import useStyles from './styles';

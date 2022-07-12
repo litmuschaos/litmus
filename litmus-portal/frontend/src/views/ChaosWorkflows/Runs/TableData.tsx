@@ -7,7 +7,7 @@ import {
   Popover,
   TableCell,
   Typography,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -18,7 +18,7 @@ import {
   ButtonOutlined,
   Icon,
   Modal,
-  OutlinedPills
+  OutlinedPills,
 } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,12 +27,12 @@ import {
   DELETE_WORKFLOW,
   GET_WORKFLOW_DETAILS,
   SYNC_WORKFLOW,
-  TERMINATE_WORKFLOW
+  TERMINATE_WORKFLOW,
 } from '../../../graphql';
 import { WorkflowRun } from '../../../models/graphql/workflowData';
 import {
   GetWorkflowsRequest,
-  ScheduledWorkflows
+  ScheduledWorkflows,
 } from '../../../models/graphql/workflowListData';
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';

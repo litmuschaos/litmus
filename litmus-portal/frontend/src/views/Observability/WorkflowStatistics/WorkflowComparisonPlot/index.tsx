@@ -4,7 +4,7 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Select
+  Select,
 } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';

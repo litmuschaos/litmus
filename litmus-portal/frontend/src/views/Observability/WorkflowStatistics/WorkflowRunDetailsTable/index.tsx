@@ -7,7 +7,7 @@ import {
   TablePagination,
   TableRow,
   Typography,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ import {
   sortAlphaAsc,
   sortAlphaDesc,
   sortNumAsc,
-  sortNumDesc
+  sortNumDesc,
 } from '../../../../utils/sort';
 import useStyles from './styles';
 import TableData from './TableData';

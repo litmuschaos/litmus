@@ -10,7 +10,7 @@ import {
   Popover,
   Select,
   Typography,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';

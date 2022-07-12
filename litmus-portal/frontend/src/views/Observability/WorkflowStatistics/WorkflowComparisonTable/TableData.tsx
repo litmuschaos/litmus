@@ -9,7 +9,7 @@ import { ScheduledWorkflow } from '../../../../models/graphql/workflowListData';
 import { history } from '../../../../redux/configureStore';
 import {
   getProjectID,
-  getProjectRole
+  getProjectRole,
 } from '../../../../utils/getSearchParams';
 import useStyles, { StyledTableCell } from './styles';
 

@@ -13,7 +13,7 @@ import { WORKFLOW_DETAILS } from '../../../graphql';
 import { Role } from '../../../models/graphql/user';
 import {
   Workflow,
-  WorkflowDataRequest
+  WorkflowDataRequest,
 } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';

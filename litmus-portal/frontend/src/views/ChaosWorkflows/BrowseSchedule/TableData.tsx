@@ -7,7 +7,7 @@ import {
   Popover,
   Snackbar,
   TableCell,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { InsertDriveFileOutlined } from '@material-ui/icons';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';

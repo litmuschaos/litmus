@@ -4,14 +4,14 @@ import {
   Paper,
   Select,
   Typography,
-  useTheme
+  useTheme,
 } from '@material-ui/core';
 import {
   getValueColor,
   PassFailBar,
   RadialChart,
   RadialChartMetric,
-  RadialProgressChart
+  RadialProgressChart,
 } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { resilienceScoreColourMap } from '../../../../colors/graphColors';
@@ -20,7 +20,7 @@ import Center from '../../../../containers/layouts/Center';
 import { GET_WORKFLOW_RUNS_STATS } from '../../../../graphql/queries';
 import {
   WorkflowRunStatsRequest,
-  WorkflowRunStatsResponse
+  WorkflowRunStatsResponse,
 } from '../../../../models/graphql/workflowData';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import useStyles from './styles';
@@ -127,7 +127,9 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
         <div className={classes.topDiv}>
           <Paper className={classes.containerBlock}>
             <Typography className={classes.cardText}>
-              {isSingleRun ? 'Experiment Statistics' : 'Chaos Scenario Statistics'}
+              {isSingleRun
+                ? 'Experiment Statistics'
+                : 'Chaos Scenario Statistics'}
             </Typography>
             <div className={classes.radialChart} data-cy="statsRadialChart">
               <RadialChart

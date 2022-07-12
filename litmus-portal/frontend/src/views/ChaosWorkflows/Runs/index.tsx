@@ -9,7 +9,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import {
   GET_CLUSTER_NAMES,
   WORKFLOW_DETAILS,
-  WORKFLOW_EVENTS
+  WORKFLOW_EVENTS,
 } from '../../../graphql';
 import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import {
@@ -31,7 +31,7 @@ import {
   WorkflowRunFilterRequest,
   WorkflowStatus,
   WorkflowSubscription,
-  WorkflowSubscriptionRequest
+  WorkflowSubscriptionRequest,
 } from '../../../models/graphql/workflowData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import HeaderSection from './HeaderSection';

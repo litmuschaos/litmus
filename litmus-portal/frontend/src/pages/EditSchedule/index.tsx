@@ -19,11 +19,11 @@ import { GET_WORKFLOW_DETAILS } from '../../graphql/queries';
 import {
   CreateWorkFlowRequest,
   UpdateWorkflowResponse,
-  WeightMap
+  WeightMap,
 } from '../../models/graphql/createWorkflowData';
 import {
   GetWorkflowsRequest,
-  ScheduledWorkflows
+  ScheduledWorkflows,
 } from '../../models/graphql/workflowListData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
 import useActions from '../../redux/actions';

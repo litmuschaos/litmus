@@ -4,7 +4,7 @@ import {
   StepLabel,
   Stepper,
   Tooltip,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';

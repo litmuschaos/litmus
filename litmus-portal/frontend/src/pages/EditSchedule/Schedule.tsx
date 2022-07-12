@@ -5,7 +5,7 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
 import localforage from 'localforage';

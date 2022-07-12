@@ -6,7 +6,7 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import useTheme from '@material-ui/core/styles/useTheme';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';

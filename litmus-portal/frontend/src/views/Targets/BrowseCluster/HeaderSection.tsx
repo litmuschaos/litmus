@@ -7,7 +7,7 @@ import {
   MenuItem,
   Popover,
   Select,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
