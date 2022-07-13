@@ -202,6 +202,9 @@ func ListCharts(ctx context.Context, hubName string, projectID string) ([]*model
 
 	chartsInput := model.CloningInput{}
 	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
 	for _, n := range myhubs {
 		if n.HubName == hubName {
 			chartsInput = model.CloningInput{
@@ -216,14 +219,7 @@ func ListCharts(ctx context.Context, hubName string, projectID string) ([]*model
 	ChartsPath := handler.GetChartsPath(chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
-		err = myHubOps.GitClone(chartsInput)
-		if err != nil {
-			return nil, err
-		}
-		ChartsData, err = handler.GetChartsData(ChartsPath)
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	return ChartsData, nil
@@ -246,10 +242,10 @@ func GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*mo
 }
 
 // SyncHub is used for syncing the hub again if some not present or some error happens.
-func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.ChaosHubStatus, error) {
+func SyncHub(ctx context.Context, hubID string, projectID string) (string, error) {
 	myhub, err := dbOperationsMyHub.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	syncHubInput := model.CloningInput{
@@ -271,15 +267,15 @@ func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.Chao
 
 	err = myHubOps.GitSyncHandlerForProjects(syncHubInput)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	// Updating the last_synced_at time using hubID
 	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
-		return nil, err
+		return "", err
 	}
-	return ListHubStatus(ctx, syncHubInput.ProjectID)
+	return "Successfully synced ChaosHub", nil
 }
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
