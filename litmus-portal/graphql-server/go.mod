@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/99designs/gqlgen v0.11.3
 	github.com/argoproj/argo-workflows/v3 v3.2.9
+	github.com/emicklei/go-restful/v3 v3.8.0 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-git/go-git/v5 v5.3.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -27,6 +28,7 @@ require (
 	github.com/vektah/gqlparser/v2 v2.1.0
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
+	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/grpc v1.42.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
