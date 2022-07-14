@@ -134,7 +134,7 @@ const TableData: React.FC<TableDataProps> = ({
 
   const editSchedule = () => {
     history.push({
-      pathname: `/workflows/schedule/${data.projectID}/${data.workflowName}`,
+      pathname: `/scenarios/schedule/${data.projectID}/${data.workflowName}`,
       search: `?projectID=${projectID}&projectRole=${projectRole}`,
     });
   };

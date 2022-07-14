@@ -49,10 +49,10 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     returningHome
       ? {
           src: './icons/calendarWorkflowIcon.svg',
-          alt: 'workflow',
+          alt: 'chaos scenario',
           onClick: () =>
             history.push({
-              pathname: '/create-workflow',
+              pathname: '/create-scenario',
               search: `?projectID=${projectID}&projectRole=${userRole}`,
             }),
           text: t('quickActionCard.scheduleWorkflow'),
@@ -61,7 +61,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     homePage || returningHome || observability
       ? {
           src: './icons/target.svg',
-          alt: 'agent',
+          alt: 'delegate',
           onClick: () =>
             history.push({
               pathname: '/target-connect',
