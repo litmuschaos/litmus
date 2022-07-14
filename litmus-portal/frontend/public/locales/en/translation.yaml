@@ -130,9 +130,9 @@ schedule:
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new chaos scenario on this project.
   contact: Contact portal administrator to upgrade your permission.
-  chaosWorkflow: Chaos chaos scenario,
+  chaosWorkflow: Chaos scenario,
   successful: was successfully updated!
-  congratulationsSub1: Chaos chaos scenario updated successfully! Now information about
+  congratulationsSub1: Chaos scenario updated successfully! Now information about
   congratulationsSub2: it will be displayed on the chaos scenario schedules.
   workflowBtn: Go to Chaos Scenario
   backBtn: Go Back
@@ -923,7 +923,7 @@ createWorkflow:
   chooseWorkflow:
     title: Start creating your Litmus chaos scenario
     subtitle: Simulate the chaos scenario run and see the suggested reliability score
-    optionA: Create a new chaos scenario from one of the pre-defined chaos chaos scenario templates
+    optionA: Create a new chaos scenario from one of the pre-defined chaos scenario templates
     optionB: Create a new chaos scenario by cloning an existing chaos scenario
     optionC: Create a new chaos scenario using the experiments from
     optionD: Import a chaos scenario using YAML
@@ -986,8 +986,8 @@ createWorkflow:
     key: key
     operator: operator
     value: value
-    cleanUp: Cleanup Chaos Chaos Scenario Pods
-    cleanUpDesc: Delete Chaos Chaos Scenario pods after completion or successful execution.
+    cleanUp: Cleanup Chaos Scenario Pods
+    cleanUpDesc: Delete Chaos Scenario pods after completion or successful execution.
     strategy: 'podGC.strategy'
     podGC: podGC
     complete: OnWorkflowCompletion
@@ -1017,7 +1017,7 @@ createWorkflow:
         testPoints: Test Points
   scheduleWorkflow:
     header: Choose a chaos schedule
-    info: Choose the right time to start your first Litmus chaos scenario. Below your first chaos scenario. Below you can find any option convenient for you.
+    info: Choose the right time to start your first Litmus chaos scenario. Below you can find any option convenient for you.
     min: min
     mins: mins
     at: at
@@ -1173,7 +1173,7 @@ createWorkflow:
       viewYaml: View YAML
     summary:
       header: Summary
-      subjectDesc: The subject is used as a chaos chaos scenario label. It’s value will be used for analysing chaos results and metrics. This subject will be also used to filter out chaos events in monitoring dashboards.
+      subjectDesc: The subject is used as a chaos scenario label. It’s value will be used for analysing chaos results and metrics. This subject will be also used to filter out chaos events in monitoring dashboards.
       subject: Subject
       workflowName: Chaos Scenario name
       desc: Description
@@ -1234,7 +1234,7 @@ workflowCluster:
     target: Chaos Delegate
     chooseAgent: Choose the Kubernetes Chaos Delegate
     creatingNew: You are creating a
-    creatingNewBold: new chaos chaos scenario.
+    creatingNewBold: new chaos scenario.
     selectAgent: Select a Kubernetes Chaos Delegate to run this chaos scenario.
     selectCluster: Choose Active Chaos Delegate
     select: Select and Continue
@@ -1392,7 +1392,7 @@ myhub:
 ######################################
 customWorkflow:
   createWorkflow:
-    create: Creating a new chaos chaos scenario
+    create: Creating a new chaos scenario
     createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
     workflowInfo: Chaos Scenario information
     workflowName: Chaos Scenario Name
@@ -1418,7 +1418,7 @@ customWorkflow:
     nextBtn: Next
     uploadFailMessage: Failed to upload YAML, please check the syntax
   scheduleWorkflow:
-    scheduleHeader: Schedule a new chaos chaos scenario
+    scheduleHeader: Schedule a new chaos scenario
     addedExp: Your added experiments to the chaos scenario
     finishText: Tap finish to end or you can add a new experiments and edit the sequence of currently added experiments
     experiment: Experiment
