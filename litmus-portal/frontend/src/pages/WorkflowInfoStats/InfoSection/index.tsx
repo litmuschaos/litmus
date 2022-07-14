@@ -121,7 +121,9 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                     .toString()}
                 </span>
               ) : (
-                <span className={classes.infoHint}>Non cron scenario</span>
+                <span className={classes.infoHint}>
+                  Non cron chaos scenario
+                </span>
               )}
             </Typography>
           </div>
@@ -129,7 +131,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
           <div className={classes.regularity} data-cy="infoWorkflowRegularity">
             <Typography className={classes.infoHeader}>Regularity :</Typography>
             {data.listWorkflows.workflows[0].cronSyntax === '' ? (
-              <Typography>Non cron workflow</Typography>
+              <Typography>Non cron chaos scenario</Typography>
             ) : (
               data.listWorkflows.workflows[0].cronSyntax !== undefined && (
                 <Typography>
