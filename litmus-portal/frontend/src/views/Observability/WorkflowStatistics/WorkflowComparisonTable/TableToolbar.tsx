@@ -205,9 +205,9 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
       />
 
       <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel className={classes.selectText}>Workflow Type</InputLabel>
+        <InputLabel className={classes.selectText}>Scenario Type</InputLabel>
         <Select
-          label="Workflow Type"
+          label="Scenario Type"
           value={workflowType}
           onChange={handleWorkflowTypeChange}
           className={classes.selectText}
@@ -243,7 +243,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           {t('observability.targetCluster')}
         </InputLabel>
         <Select
-          label="Target cluster"
+          label="Chaos delegate"
           value={cluster}
           onChange={handleClusterChange}
           className={classes.selectText}

@@ -48,7 +48,7 @@ const Workflows = () => {
     });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
     history.push({
-      pathname: '/create-workflow',
+      pathname: '/create-scenario',
       search: `?projectID=${projectID}&projectRole=${userRole}`,
     });
   };
@@ -57,7 +57,7 @@ const Workflows = () => {
     <Wrapper>
       <section>
         <div className={classes.header}>
-          <Typography variant="h3">Litmus Workflows</Typography>
+          <Typography variant="h3">Chaos Scenarios</Typography>
           <div data-cy="scheduleWorkflowButton" className={classes.scheduleBtn}>
             <ButtonFilled onClick={handleScheduleWorkflow}>
               {t('workflows.scheduleAWorkflow')}

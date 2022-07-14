@@ -34,7 +34,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
           {/* Individual Column for infoStats */}
           <div>
             <Typography className={classes.infoHeader}>
-              Workflow details :
+              Chaos Scenario details :
             </Typography>
             <Typography>
               Name :{' '}
@@ -82,7 +82,9 @@ const InfoSection: React.FC<InfoSectionProps> = ({
 
           {/* Column 2 */}
           <div>
-            <Typography className={classes.infoHeader}>Agent :</Typography>
+            <Typography className={classes.infoHeader}>
+              Chaos Delegate :
+            </Typography>
             <Typography>
               Name :{' '}
               <span className={classes.infoHint} data-cy="infoAgentName">
@@ -119,7 +121,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                     .toString()}
                 </span>
               ) : (
-                <span className={classes.infoHint}>Non cron workflow</span>
+                <span className={classes.infoHint}>Non cron scenario</span>
               )}
             </Typography>
           </div>

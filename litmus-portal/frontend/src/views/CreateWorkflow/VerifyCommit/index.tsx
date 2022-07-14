@@ -292,7 +292,7 @@ const VerifyCommit = forwardRef(
 
       tabs.changeWorkflowsTabs(0);
       history.push({
-        pathname: '/workflows',
+        pathname: '/scenarios',
         search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
       });
     };
