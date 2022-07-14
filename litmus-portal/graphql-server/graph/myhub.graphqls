@@ -433,7 +433,7 @@ extend type Mutation {
   """
   Sync changes from the Git repository of a ChaosHub
   """
-  syncChaosHub(id: ID!, projectID: String!): [ChaosHubStatus!]! @authorized
+  syncChaosHub(id: ID!, projectID: String!): String! @authorized
 
   """
   Generates Private and Public key for SSH authentication
