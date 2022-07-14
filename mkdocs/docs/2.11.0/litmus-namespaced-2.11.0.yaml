@@ -124,7 +124,7 @@ rules:
     verbs: [get, list, watch]
 
   - apiGroups: [""]
-    resources: [pods, namespaces, nodes, services]
+    resources: [pods, services]
     verbs: [get, list, watch]
 
   - apiGroups: [litmuschaos.io]
@@ -255,11 +255,6 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [create, list, get, patch, update, delete]
-
-    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
-  - apiGroups: [""]
-    resources: [nodes]
-    verbs: [patch, get, list, update]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -324,8 +319,11 @@ rules:
   - apiGroups: [eventtracker.litmuschaos.io]
     resources: [eventtrackerpolicies/status]
     verbs: [get, patch, update]
-  - apiGroups: ["", extensions, apps]
-    resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
+  - apiGroups: [""]
+    resources: [pods, configmaps, secrets]
+    verbs: [get, list, watch]
+  - apiGroups: [extensions, apps]
+    resources: [deployments, daemonsets, statefulsets]
     verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
