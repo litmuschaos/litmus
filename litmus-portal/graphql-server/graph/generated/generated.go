@@ -666,7 +666,7 @@ type MutationResolver interface {
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
 	AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
 	SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
-	SyncChaosHub(ctx context.Context, id string, projectID string) ([]*model.ChaosHubStatus, error)
+	SyncChaosHub(ctx context.Context, id string, projectID string) (string, error)
 	GenerateSSHKey(ctx context.Context) (*model.SSHKey, error)
 	UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error)
 	DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error)
@@ -5428,7 +5428,7 @@ extend type Mutation {
   """
   Sync changes from the Git repository of a ChaosHub
   """
-  syncChaosHub(id: ID!, projectID: String!): [ChaosHubStatus!]! @authorized
+  syncChaosHub(id: ID!, projectID: String!): String! @authorized
 
   """
   Generates Private and Public key for SSH authentication
@@ -15471,10 +15471,10 @@ func (ec *executionContext) _Mutation_syncChaosHub(ctx context.Context, field gr
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*model.ChaosHubStatus); ok {
+		if data, ok := tmp.(string); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHubStatus`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15486,9 +15486,9 @@ func (ec *executionContext) _Mutation_syncChaosHub(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.ChaosHubStatus)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatusᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_generateSSHKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -29202,10 +29202,6 @@ func (ec *executionContext) marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlit
 	return ec._ChaosHub(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNChaosHubStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v model.ChaosHubStatus) graphql.Marshaler {
-	return ec._ChaosHubStatus(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v []*model.ChaosHubStatus) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -29241,53 +29237,6 @@ func (ec *executionContext) marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmusch
 	}
 	wg.Wait()
 	return ret
-}
-
-func (ec *executionContext) marshalNChaosHubStatus2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ChaosHubStatus) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNChaosHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
-func (ec *executionContext) marshalNChaosHubStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHubStatus(ctx context.Context, sel ast.SelectionSet, v *model.ChaosHubStatus) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ChaosHubStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNChaosWorkFlowRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosWorkFlowRequest(ctx context.Context, v interface{}) (model.ChaosWorkFlowRequest, error) {

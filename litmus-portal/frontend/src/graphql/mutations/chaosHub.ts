@@ -23,14 +23,7 @@ export const UPDATE_MY_HUB = gql`
 
 export const SYNC_REPO = gql`
   mutation syncChaosHub($id: ID!, $projectID: String!) {
-    syncChaosHub(id: $id, projectID: $projectID) {
-      id
-      repoURL
-      repoBranch
-      isAvailable
-      totalExp
-      hubName
-    }
+    syncChaosHub(id: $id, projectID: $projectID)
   }
 `;
 

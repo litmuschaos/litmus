@@ -21,7 +21,7 @@ const CustomWorkflowCard: React.FC<CustomWorkflowCardProps> = ({
       onKeyPress={() => {}}
       tabIndex={0}
     >
-      <img src="./icons/custom_workflow.svg" alt="Custom Workflow Icon" />
+      <img src="./icons/custom_workflow.svg" alt="Custom Scenario Icon" />
       <Typography className={classes.customWorkflowContent}>
         {t('customWorkflowCard.customWorkflow')}
       </Typography>

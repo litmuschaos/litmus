@@ -58,7 +58,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/version: v2.11.0
     app.kubernetes.io/component: operator-role
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -94,7 +94,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/version: v2.11.0
     app.kubernetes.io/component: operator-rolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -255,7 +255,6 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [create, list, get, patch, update, delete]
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -398,7 +397,7 @@ metadata:
 data:
   AGENT_SCOPE: namespace
   DB_SERVER: "mongodb://mongo-service:27017"
-  VERSION: "ci"
+  VERSION: "2.11.0"
   SKIP_SSL_VERIFY: "false"
 ---
 apiVersion: v1
@@ -489,7 +488,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:2.11.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -552,7 +551,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.7.0
+          image: litmuschaos/curl:2.10.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -574,7 +573,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:2.11.0
           volumeMounts:
             - mountPath: /tmp/gitops
               name: gitops-storage
@@ -615,29 +614,29 @@ spec:
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: "http://litmusportal-frontend-service:9091"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:2.11.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:2.11.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.2.9"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.2.9"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.8.0"
+              value: "litmuschaos/chaos-operator:2.10.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.8.0"
+              value: "litmuschaos/chaos-runner:2.10.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.8.0"
+              value: "litmuschaos/chaos-exporter:2.10.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.8.x"
+              value: "v2.10.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "2.8.0"
+              value: "2.10.0"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -688,7 +687,7 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.7.0
+          image: litmuschaos/curl:2.10.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -705,7 +704,7 @@ spec:
               ephemeral-storage: "1Gi"
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:2.11.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false

@@ -95,7 +95,7 @@ const TableData: React.FC<TableDataProps> = ({
             aria-haspopup="true"
             onClick={() => {
               history.push({
-                pathname: `/analytics/workflowStatistics/${data.workflowID}`,
+                pathname: `/analytics/scenarioStatistics/${data.workflowID}`,
                 search: `?projectID=${projectID}&projectRole=${userRole}`,
               });
             }}

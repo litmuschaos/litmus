@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { Tooltip, Zoom } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Typography from '@material-ui/core/Typography';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { preDefinedWorkflowData } from '../../models/predefinedWorkflow';
 import { RootState } from '../../redux/reducers';
 import trimString from '../../utils/trim';
@@ -103,7 +103,7 @@ const CardContent: React.FC<preDefinedWorkflowData> = ({
         <div>
           {urlToIcon ? (
             <div className={classes.cardMedia}>
-              <img src={urlToIcon} alt="chart provider logo" />
+              <img src={urlToIcon} alt="experiment provider logo" />
             </div>
           ) : (
             <div className={classes.noImage}>Image</div>

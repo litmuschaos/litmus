@@ -34,12 +34,12 @@ func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.Creat
 	return myhub.SaveChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) ([]*model.ChaosHubStatus, error) {
+func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
 		model.InvitationAccepted.String())
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	return myhub.SyncHub(ctx, id, projectID)
 }
