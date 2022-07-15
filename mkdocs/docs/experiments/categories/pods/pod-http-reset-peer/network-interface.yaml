@@ -19,6 +19,6 @@ spec:
         # provide the network interface for proxy
         - name: NETWORK_INTERFACE
           value: "eth0"
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: '80'

@@ -19,6 +19,6 @@ spec:
         # provide the latency value
         - name: LATENCY
           value: '2000'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"

@@ -203,15 +203,15 @@
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
-### Target Port
+### Target Service Port
 
-It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-reset-peer/target-port.yaml yaml)
+[embedmd]:# (pod-http-reset-peer/target-service-port.yaml yaml)
 ```yaml
-## provide the target port of the service
+## provide the port of the targeted service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -229,21 +229,20 @@ spec:
     spec:
       components:
         env:
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
 
 
-### Listen Port
+### Proxy Port
 
-It defines the listen port for the proxy server. It can be tuned via `PROXY_PORT` ENV.
-
+It defines the port on which the proxy server will listen for requests. It can be tuned via `PROXY_PORT` ENV.
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-reset-peer/listen-port.yaml yaml)
+[embedmd]:# (pod-http-reset-peer/proxy-port.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+## provide the port for proxy server
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -261,10 +260,10 @@ spec:
     spec:
       components:
         env:
-        # provide the listen port for proxy
+        # provide the port for proxy server
         - name: PROXY_PORT
           value: '8080'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -299,7 +298,7 @@ spec:
         # reset timeout specifies after how much duration to reset the connection
         - name: RESET_TIMEOUT #in ms
           value: '2000'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -333,7 +332,7 @@ spec:
         # provide the network interface for proxy
         - name: NETWORK_INTERFACE
           value: "eth0"
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: '80'
 ```
@@ -375,7 +374,7 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
