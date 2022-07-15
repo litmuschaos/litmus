@@ -134,12 +134,14 @@
       <tr>
         <td> STATUS_CODE  </td>
         <td> Modified status code for the HTTP response</td>
-        <td> Defaults to 500 </td>
+        <td> If no value is provided, then a random value is selected from the list of supported values.
+        Supported values: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504].
+        Defaults to random status code </td>
       </tr>
       <tr>
         <td> MODIFY_RESPONSE_BODY  </td>
-        <td> Whether to modify the body as per the status code provided</td>
-        <td> Defaults to true </td>
+        <td> Whether to modify the body as per the status code provided.</td>
+        <td> If true, then the body is replaced by a default template for the status code. Defaults to true </td>
       </tr>
     </table>
 
@@ -305,6 +307,9 @@ spec:
       components:
         env:
         # modified status code for the http response
+        # if no value is provided, a random status code from the supported code list will selected
+        # if an invalid status code is provided, the experiment will fail
+        # supported status code list: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504]
         - name: STATUS_CODE
           value: '500'
         # provide the target port of the service
