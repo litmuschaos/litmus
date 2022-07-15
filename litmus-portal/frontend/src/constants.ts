@@ -49,7 +49,7 @@ export const constants = {
    */
   adminMode: 'adminModeNamespace',
   chaosHub: 'Chaos Hub',
-  workflow: 'Workflow',
+  workflow: 'Chaos Scenarios',
 
   /**
    * Image Registry constants

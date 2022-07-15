@@ -14,8 +14,8 @@ import { RootState } from '../../redux/reducers';
 import { getProjectRole } from '../../utils/getSearchParams';
 import { LitmusStepper } from '../LitmusStepper';
 import Loader from '../Loader';
-import useStyles from './styles';
 import { SuspenseLoader } from '../SuspenseLoader';
+import useStyles from './styles';
 
 const ChooseAWorkflowAgent = lazy(
   () => import('../../views/CreateWorkflow/ChooseAWorkflowAgent')
@@ -139,17 +139,17 @@ const WorkflowStepper = () => {
   );
   const steps: string[] = isWorkflowUploaded
     ? [
-        'Choose Agent',
-        'Choose a workflow',
-        'Workflow Settings',
+        'Choose Chaos Delegate',
+        'Choose a Chaos Scenario',
+        'Scenario Settings',
         'Schedule',
         'Verify and Commit',
       ]
     : [
-        'Choose Agent',
-        'Choose a workflow',
-        'Workflow Settings',
-        'Tune workflow',
+        'Choose Chaos Delegate',
+        'Choose a Scenario',
+        'Scenario Settings',
+        'Tune Scenario',
         'Reliability score',
         'Schedule',
         'Verify and Commit',
@@ -205,7 +205,7 @@ const WorkflowStepper = () => {
         ) : activeStep === 2 ? (
           <div className={classes.headerButtonWrapper} aria-label="buttons">
             <Tooltip
-              title="All selected Workflow Data will be lost"
+              title="All selected Chaos Scenario Data will be lost"
               placement="top"
               leaveDelay={300}
             >

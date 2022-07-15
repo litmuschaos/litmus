@@ -233,7 +233,7 @@ const EditSchedule: React.FC = () => {
 
   const handleFinishModal = () => {
     history.push({
-      pathname: `/workflows`,
+      pathname: `/scenarios`,
       search: `?projectID=${projectID}&projectRole=${userRole}`,
     });
     setFinishModalOpen(false);
@@ -350,7 +350,7 @@ const EditSchedule: React.FC = () => {
                           className={classes.editButton}
                           onClick={() =>
                             history.push({
-                              pathname: `/workflows/schedule/${projectID}/${fetchWorkflowNameFromManifest(
+                              pathname: `/scenarios/schedule/${projectID}/${fetchWorkflowNameFromManifest(
                                 manifest
                               )}/set`,
                               search: `?projectID=${projectID}&projectRole=${userRole}`,
@@ -434,7 +434,7 @@ const EditSchedule: React.FC = () => {
             <ButtonOutlined
               onClick={() => {
                 history.push({
-                  pathname: `/workflows/`,
+                  pathname: `/scenarios/`,
                   search: `?projectID=${projectID}&projectRole=${userRole}`,
                 });
               }}
@@ -504,7 +504,7 @@ const EditSchedule: React.FC = () => {
                       handleFinishModal();
                       tabs.changeWorkflowsTabs(0);
                       history.push({
-                        pathname: '/workflows',
+                        pathname: '/scenarios',
                         search: `?projectID=${projectID}&projectRole=${userRole}`,
                       });
                     }}

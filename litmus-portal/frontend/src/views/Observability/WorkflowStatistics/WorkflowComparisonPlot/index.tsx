@@ -255,7 +255,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           color: palette.primary.main,
           width: 3,
         },
-        name: 'Average Workflows',
+        name: 'Average Chaos Scenario',
       };
       data.push(avgResult);
       const normalized = Array(labels?.length).fill(0);

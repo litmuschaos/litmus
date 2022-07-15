@@ -229,10 +229,10 @@ export const extractEngineNames = (manifest: string) => {
   const parsedManifest = YAML.parse(manifest);
   if (parsedManifest.spec !== undefined) {
     const yamlData =
-      parsedManifest.kind === constants.workflow
+      parsedManifest.kind.toLowerCase() === 'workflow'
         ? parsedManifest.spec
         : parsedManifest.spec.workflowSpec;
-    yamlData.templates?.forEach((template: any) => {
+    yamlData?.templates?.forEach((template: any) => {
       template?.inputs?.artifacts?.forEach((artifact: any) => {
         if (artifact?.raw?.data) {
           const artifactManifest = YAML.parse(artifact.raw.data);
@@ -468,7 +468,7 @@ export const validateExperimentNames = (manifest: any): boolean => {
       manifest.kind === constants.workflow
         ? manifest.spec
         : manifest.spec.workflowSpec;
-    yamlData.templates[0]?.steps?.forEach((step: any) => {
+    yamlData?.templates[0]?.steps?.forEach((step: any) => {
       step.forEach((values: any) => {
         // if exp name exists append the count
         if (value[`${values.name}`]) {

@@ -265,7 +265,9 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
           {/* Select Cluster */}
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel className={classes.selectText}>Target Agent</InputLabel>
+            <InputLabel className={classes.selectText}>
+              Chaos Delegate
+            </InputLabel>
             <Select
               value={filters.clusterName}
               onChange={(event) =>
@@ -274,7 +276,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                   clusterName: event.target.value as string,
                 })
               }
-              label="Target Cluster"
+              label="Chaos Delegate"
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
