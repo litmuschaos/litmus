@@ -895,15 +895,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#target-port" class="md-nav__link">
-    Target Port
+  <a href="#target-service-port" class="md-nav__link">
+    Target Service Port
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#listen-port" class="md-nav__link">
-    Listen Port
+  <a href="#proxy-port" class="md-nav__link">
+    Proxy Port
   </a>
   
 </li>
@@ -3077,15 +3077,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#target-port" class="md-nav__link">
-    Target Port
+  <a href="#target-service-port" class="md-nav__link">
+    Target Service Port
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#listen-port" class="md-nav__link">
-    Listen Port
+  <a href="#proxy-port" class="md-nav__link">
+    Proxy Port
   </a>
   
 </li>
@@ -3336,7 +3336,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-pod-specific-tunables">Common and Pod specific tunables<a class="headerlink" href="#common-and-pod-specific-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables. </p>
-<h3 id="target-port">Target Port<a class="headerlink" href="#target-port" title="Permanent link">&para;</a></h3>
+<h3 id="target-service-port">Target Service Port<a class="headerlink" href="#target-service-port" title="Permanent link">&para;</a></h3>
 <p>It defines the target port of the service that is being targetted. It can be tuned via <code>TARGET_SERVICE_PORT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## provide the target port of the service</span><span class="w"></span>
@@ -3361,10 +3361,10 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="listen-port">Listen Port<a class="headerlink" href="#listen-port" title="Permanent link">&para;</a></h3>
-<p>It defines the listen port for the proxy server. It can be tuned via <code>PROXY_PORT</code> ENV.</p>
+<h3 id="proxy-port">Proxy Port<a class="headerlink" href="#proxy-port" title="Permanent link">&para;</a></h3>
+<p>It defines the port on which the proxy server will listen for requests. It can be tuned via <code>PROXY_PORT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## provide the listen port for proxy</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1"># provide the port for proxy to listen on</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3382,7 +3382,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># provide the listen port for proxy</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port for proxy to listen on</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PROXY_PORT</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8080&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># provide the target port of the service</span><span class="w"></span>
