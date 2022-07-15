@@ -20,6 +20,6 @@ spec:
         # to remove a header, just set the value to ""; Eg: {"X-Litmus-Test-Header": ""}
         - name: HEADERS_MAP
           value: '{"X-Litmus-Test-Header": "X-Litmus-Test-Value"}'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"

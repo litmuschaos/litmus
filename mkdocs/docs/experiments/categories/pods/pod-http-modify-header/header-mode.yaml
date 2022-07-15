@@ -19,7 +19,7 @@ spec:
         # whether to modify response headers or request headers. Accepted values: request, response
         - name: HEADER_MODE
           value: 'response'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # map of headers to modify/add
