@@ -55,7 +55,7 @@ const WorkflowGraphs: React.FC = () => {
         <ScheduleAndRunStats />
         <Paper elevation={0} className={classes.radialChartContainer}>
           <Typography className={classes.radialChartContainerHeading}>
-            Workflow Run stats
+            Chaos Scenario Run stats
           </Typography>
           <div className={classes.radialChart}>
             {loading ? (

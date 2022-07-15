@@ -281,7 +281,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             podName: '',
           });
           history.push({
-            pathname: `/workflows/${data.workflowRunID}`,
+            pathname: `/scenarios/${data.workflowRunID}`,
             search: `?projectID=${projectID}&projectRole=${projectRole}`,
           });
         }}
@@ -442,13 +442,13 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
           onClose={handleClose}
         >
           <MenuItem
-            value="Workflow"
+            value="Scenario"
             onClick={() => {
               nodeSelection.selectNode({
                 podName: '',
               });
               history.push({
-                pathname: `/workflows/${data.workflowRunID}`,
+                pathname: `/scenarios/${data.workflowRunID}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -456,7 +456,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             <div className={classes.expDiv} data-cy="workflowDetails">
               <img
                 src="./icons/show-workflow.svg"
-                alt="Display Workflow"
+                alt="Display Scenario"
                 className={classes.btnImg}
               />
               <Typography className={classes.btnText}>
@@ -468,7 +468,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             value="Analysis"
             onClick={() => {
               history.push({
-                pathname: `/analytics/workflowStatistics/${data.workflowID}`,
+                pathname: `/analytics/scenarioStatistics/${data.workflowID}`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -487,7 +487,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
             </div>
           </MenuItem>
           <MenuItem
-            value="ViewWorkflow"
+            value="ViewScenario"
             onClick={() => {
               setManifestModal(true);
             }}
@@ -528,7 +528,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               <div className={classes.expDiv} data-cy="terminateWorkflow">
                 <img
                   src="./icons/terminate-wf-dark.svg"
-                  alt="Terminate Workflow"
+                  alt="Terminate Scenario"
                   className={classes.terminateImg}
                 />
                 <Typography className={classes.btnText}>

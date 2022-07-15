@@ -214,7 +214,7 @@ const WorkflowInfoStats: React.FC = () => {
             {data?.listWorkflows.workflows[0].workflowName}
           </Typography>
           <Typography className={classes.subHeading}>
-            Here’s the statistics of the selected workflow
+            Here’s the statistics of the selected chaos scenario
           </Typography>
         </div>
         {/* For later: */}

@@ -170,7 +170,7 @@ const Routes: React.FC = () => {
             <Switch>
               <Route exact path="/home" component={HomePage} />
               <Redirect exact path="/" to="/home" />
-              <Route exact path="/workflows" component={Workflows} />
+              <Route exact path="/scenarios" component={Workflows} />
               <Route
                 exact
                 path="/analytics"
@@ -203,25 +203,25 @@ const Routes: React.FC = () => {
                 path="/analytics/monitoring-dashboard"
                 component={() => <DashboardPage />}
               />
-              <Route exact path="/create-workflow" component={CreateWorkflow} />
+              <Route exact path="/create-scenario" component={CreateWorkflow} />
               <Route
                 exact
-                path="/workflows/:workflowRunID"
+                path="/scenarios/:workflowRunID"
                 component={WorkflowDetails}
               />
               <Route
                 exact
-                path="/workflows/schedule/:scheduleProjectID/:workflowName"
+                path="/scenarios/schedule/:scheduleProjectID/:workflowName"
                 component={EditSchedule}
               />
               <Route
                 exact
-                path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
+                path="/scenarios/schedule/:scheduleProjectID/:workflowName/set"
                 component={SetNewSchedule}
               />
               <Route
                 exact
-                path="/analytics/workflowStatistics/:workflowID"
+                path="/analytics/scenarioStatistics/:workflowID"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -257,8 +257,8 @@ const Routes: React.FC = () => {
               <Route exact path="/404" component={ErrorPage} />
               {/* Redirects */}
               <Redirect exact path="/getStarted" to="/home" />
-              <Redirect exact path="/workflows/schedule" to="/workflows" />
-              <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/scenarios/schedule" to="/scenarios" />
+              <Redirect exact path="/scenarios/template" to="/scenarios" />
               <Redirect exact path="/analytics/overview" to="/analytics" />
               <Redirect
                 exact

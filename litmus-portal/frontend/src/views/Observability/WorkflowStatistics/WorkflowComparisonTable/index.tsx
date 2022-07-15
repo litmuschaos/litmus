@@ -446,8 +446,8 @@ const WorkflowComparisonTable = () => {
     if (document.getElementById('statistics')) {
       const heads = [
         {
-          cluster_name: 'Agent Name',
-          workflow_name: 'Workflow Name',
+          cluster_name: 'Chaos Delegate Name',
+          workflow_name: 'Chaos Scenario Name',
           run_date: 'Date-Time',
           tests_passed: '#Expts. Passed',
           tests_failed: '#Expts. Failed',
@@ -492,7 +492,7 @@ const WorkflowComparisonTable = () => {
         doc.text('Time of Generation:', 10, 15);
         doc.text(new Date().toString(), 42, 15);
         doc.text(
-          'Total Number of Chaos Workflow Schedules under consideration:',
+          'Total Number of Chaos Scenario Schedules under consideration:',
           10,
           20
         );
@@ -504,7 +504,7 @@ const WorkflowComparisonTable = () => {
           20
         );
         doc.text(
-          'Total Number of Chaos Workflow Runs under consideration:',
+          'Total Number of Chaos Scenario Runs under consideration:',
           10,
           25
         );
@@ -515,7 +515,7 @@ const WorkflowComparisonTable = () => {
         doc.line(0, 33, 300, 33);
         doc.setLineWidth(5.0);
         doc.text(
-          'Workflow Run Details Table & Workflow Schedules Table with Resilience Score Comparison Graph',
+          'Scenario Run Details Table & Scenario Schedules Table with Resilience Score Comparison Graph',
           27.5,
           39
         );
@@ -670,13 +670,13 @@ const WorkflowComparisonTable = () => {
             ) : (
               <div />
             )}{' '}
-            Workflow comparison
+            Chaos scenario comparison
           </strong>
         </Typography>
         <Typography className={classes.description}>
           {compare === true
-            ? 'Choose the right workflows and get comparative results'
-            : 'Choose workflows to compare their resilience scores'}
+            ? 'Choose the right chaos scenarios and get comparative results'
+            : 'Choose chaos scenarios to compare their resilience scores'}
         </Typography>
         <br />
       </div>

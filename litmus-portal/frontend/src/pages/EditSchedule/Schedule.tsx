@@ -738,7 +738,7 @@ const ScheduleWorkflow = () => {
         <ButtonOutlined
           onClick={() => {
             history.push({
-              pathname: `/workflows/`,
+              pathname: `/scenarios/`,
               search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
             });
           }}
@@ -750,7 +750,7 @@ const ScheduleWorkflow = () => {
           onClick={() => {
             EditYaml();
             history.push({
-              pathname: `/workflows/schedule/${getProjectID()}/${fetchWorkflowNameFromManifest(
+              pathname: `/scenarios/schedule/${getProjectID()}/${fetchWorkflowNameFromManifest(
                 manifest
               )}`,
               search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
