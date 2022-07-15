@@ -22,6 +22,6 @@ spec:
         # supported status code list: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504]
         - name: STATUS_CODE
           value: '500'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"

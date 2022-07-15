@@ -212,13 +212,13 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target Service Port
 
-It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
 [embedmd]:# (pod-http-status-code/target-service-port.yaml yaml)
 ```yaml
-## provide the target port of the service
+## provide the port of the targeted service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -236,7 +236,7 @@ spec:
     spec:
       components:
         env:
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # modified status code for the http response
@@ -251,7 +251,7 @@ Use the following example to tune this:
 
 [embedmd]:# (pod-http-status-code/proxy-port.yaml yaml)
 ```yaml
-## provide the port for proxy to listen on
+## provide the port for proxy server
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -269,10 +269,10 @@ spec:
     spec:
       components:
         env:
-        # provide the port for proxy to listen on
+        # provide the port for proxy server
         - name: PROXY_PORT
           value: '8080'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # modified status code for the http response
@@ -312,7 +312,7 @@ spec:
         # supported status code list: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504]
         - name: STATUS_CODE
           value: '500'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -349,7 +349,7 @@ spec:
         # modified status code for the http response
         - name: STATUS_CODE
           value: '500'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -361,7 +361,7 @@ Use the following example to tune this:
 
 [embedmd]:# (pod-http-status-code/network-interface.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+## provide the network interface for proxy
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -382,7 +382,7 @@ spec:
         # provide the network interface for proxy
         - name: NETWORK_INTERFACE
           value: "eth0"
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: '80'
         # modified status code for the http response
@@ -426,7 +426,7 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # modified status code for the http response

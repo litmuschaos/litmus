@@ -1,4 +1,4 @@
-## provide the port for proxy to listen on
+## provide the port for proxy server
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,10 +16,10 @@ spec:
     spec:
       components:
         env:
-        # provide the port for proxy to listen on
+        # provide the port for proxy server
         - name: PROXY_PORT
           value: '8080'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # modified status code for the http response

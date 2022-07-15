@@ -22,6 +22,6 @@ spec:
         # modified status code for the http response
         - name: STATUS_CODE
           value: '500'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
