@@ -1,4 +1,4 @@
-## provide the listen port for proxy
+## provide the network interface for proxy
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:

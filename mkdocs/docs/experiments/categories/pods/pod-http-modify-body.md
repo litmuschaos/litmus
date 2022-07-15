@@ -135,7 +135,7 @@
       <tr>
         <td> RESPONSE_BODY  </td>
         <td> Body string to overwrite the http response body</td>
-        <td> Defaults to no change </td>
+        <td> If no value is provided, response will be an empty body. Defaults to empty body </td>
       </tr>
     </table>
 
@@ -204,15 +204,15 @@
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
-### Target Port
+### Target Service Port
 
-It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-modify-body/target-port.yaml yaml)
+[embedmd]:# (pod-http-modify-body/target-service-port.yaml yaml)
 ```yaml
-## provide the target port of the service
+## provide the port of the targeted service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -230,22 +230,22 @@ spec:
     spec:
       components:
         env:
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # provide the body string to overwrite the response body
         - name: RESPONSE_BODY
           value: '2000'
 ```
-### Listen Port
+### Proxy Port
 
-It defines the listen port for the proxy server. It can be tuned via `PROXY_PORT` ENV.
+It defines the port on which the proxy server will listen for requests. It can be tuned via `PROXY_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-modify-body/listen-port.yaml yaml)
+[embedmd]:# (pod-http-modify-body/proxy-port.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+## provide the port for proxy server
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -263,10 +263,10 @@ spec:
     spec:
       components:
         env:
-        # provide the listen port for proxy
+        # provide the port for proxy server
         - name: PROXY_PORT
           value: '8080'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -300,7 +300,7 @@ spec:
         # provide the body string to overwrite the response body
         - name: RESPONSE_BODY
           value: '2000'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -312,7 +312,7 @@ Use the following example to tune this:
 
 [embedmd]:# (pod-http-modify-body/network-interface.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+## provide the network interface for proxy
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -333,7 +333,7 @@ spec:
         # provide the network interface for proxy
         - name: NETWORK_INTERFACE
           value: "eth0"
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: '80'
         # provide the body string to overwrite the response body
@@ -377,7 +377,7 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
         # provide the body string to overwrite the response body

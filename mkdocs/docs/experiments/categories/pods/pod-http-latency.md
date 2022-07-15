@@ -308,7 +308,7 @@ Use the following example to tune this:
 
 [embedmd]:# (pod-http-latency/network-interface.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+## provide the network interface for proxy
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
