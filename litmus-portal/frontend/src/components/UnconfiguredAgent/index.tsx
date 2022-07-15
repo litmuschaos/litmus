@@ -23,7 +23,7 @@ const UnconfiguredAgent: React.FC = () => {
       {/* First Agent Deployment Container */}
       <MainInfoContainer
         src="./icons/agentDeploy.svg"
-        alt="Deploy Agent"
+        alt="Deploy Chaos Delegate"
         heading={t('homeViews.landingHome.heading')}
         description={t('homeViews.landingHome.description')}
         button={

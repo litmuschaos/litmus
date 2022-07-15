@@ -72,7 +72,7 @@ const WorkflowRunCard: React.FC<WorkflowRunCardProps> = ({ data }) => {
         });
 
         history.push({
-          pathname: `/workflows/${data.workflowRunID}`,
+          pathname: `/scenarios/${data.workflowRunID}`,
           search: `?projectID=${projectID}&projectRole=${projectRole}`,
         });
       }}

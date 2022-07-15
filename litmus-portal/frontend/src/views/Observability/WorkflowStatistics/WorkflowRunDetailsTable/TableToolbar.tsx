@@ -151,7 +151,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <MenuItem value="All">All</MenuItem>
           {testResults.map((testResult: string) => (
             <MenuItem
-              key={`${testResult}-litmusDashboard-workflowRunDetails`}
+              key={`${testResult}-litmusDashboard-scenarioRunDetails`}
               value={testResult}
             >
               {testResult}
@@ -175,7 +175,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
           <MenuItem value="All">All</MenuItem>
           {tests.map((testName: string) => (
             <MenuItem
-              key={`${testName}-workflowRunDetailsTable`}
+              key={`${testName}-scenarioRunDetailsTable`}
               value={testName}
             >
               {testName}
