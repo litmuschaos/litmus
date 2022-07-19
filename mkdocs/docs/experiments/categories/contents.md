@@ -101,6 +101,11 @@ Chaos actions that apply to generic Kubernetes resources are classified into thi
     <td>Injects HTTP latency into Application Pod</td>
    <td><a href="/litmus/experiments/categories/pods/pod-http-latency">pod-http-latency</a></td>
   </tr>
+  <tr>
+    <td>Pod HTTP Modify Header</td>
+    <td>Injects HTTP Modify Header into Application Pod</td>
+   <td><a href="/litmus/experiments/categories/pods/pod-http-modify-header">pod-http-modify-header</a></td>
+  </tr>
 </table>
 
 #### Node Chaos
