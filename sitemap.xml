@@ -201,6 +201,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-modify-body/</loc>
+         <lastmod>2022-07-19</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-modify-header/</loc>
          <lastmod>2022-07-19</lastmod>
          <changefreq>daily</changefreq>

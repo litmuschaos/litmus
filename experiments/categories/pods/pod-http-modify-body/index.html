@@ -10,14 +10,14 @@
       
       
       
-        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-network-corruption/">
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-modify-body/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
-        <title>Pod Network Corruption - Litmus Experiments</title>
+        <title>Pod HTTP Modify Body - Litmus Experiments</title>
       
     
     
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Pod Network Corruption
+              Pod HTTP Modify Body
             
           </span>
         </div>
@@ -740,138 +740,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Pod Network Corruption
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../pod-network-corruption/" class="md-nav__link">
         Pod Network Corruption
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#uses" class="md-nav__link">
-    Uses
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#default-validations" class="md-nav__link">
-    Default Validations
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
-    Minimal RBAC configuration example (optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-tunables" class="md-nav__link">
-    Experiment tunables
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-examples" class="md-nav__link">
-    Experiment Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Experiment Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-and-pod-specific-tunables" class="md-nav__link">
-    Common and Pod specific tunables
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#network-packet-corruption" class="md-nav__link">
-    Network Packet Corruption
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#destination-ips-and-destination-hosts" class="md-nav__link">
-    Destination IPs And Destination Hosts
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#network-interface" class="md-nav__link">
-    Network Interface
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#container-runtime-socket-path" class="md-nav__link">
-    Container Runtime Socket Path
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pumba-chaos-library" class="md-nav__link">
-    Pumba Chaos Library
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -951,11 +824,138 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../pod-http-modify-body/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Pod HTTP Modify Body
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Pod HTTP Modify Body
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-and-pod-specific-tunables" class="md-nav__link">
+    Common and Pod specific tunables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-service-port" class="md-nav__link">
+    Target Service Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxy-port" class="md-nav__link">
+    Proxy Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-body" class="md-nav__link">
+    RESPONSE BODY
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-interface" class="md-nav__link">
+    Network Interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-runtime-socket-path" class="md-nav__link">
+    Container Runtime Socket Path
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3109,15 +3109,22 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#network-packet-corruption" class="md-nav__link">
-    Network Packet Corruption
+  <a href="#target-service-port" class="md-nav__link">
+    Target Service Port
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#destination-ips-and-destination-hosts" class="md-nav__link">
-    Destination IPs And Destination Hosts
+  <a href="#proxy-port" class="md-nav__link">
+    Proxy Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-body" class="md-nav__link">
+    RESPONSE BODY
   </a>
   
 </li>
@@ -3132,13 +3139,6 @@
           <li class="md-nav__item">
   <a href="#container-runtime-socket-path" class="md-nav__link">
     Container Runtime Socket Path
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pumba-chaos-library" class="md-nav__link">
-    Pumba Chaos Library
   </a>
   
 </li>
@@ -3160,22 +3160,23 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/pods/pod-network-corruption.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/pods/pod-http-modify-body.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-  <h1>Pod Network Corruption</h1>
+  <h1>Pod HTTP Modify Body</h1>
 
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
-<li>It injects packet corruption on the specified container by starting a traffic control (tc) process with netem rules to add egress packet corruption</li>
-<li>It can test the application's resilience to lossy/flaky network</li>
+<li>It injects http modify body chaos on the service whose port is provided as <code>TARGET_SERVICE_PORT</code> by starting proxy server and then redirecting the traffic through the proxy server.</li>
+<li>Can be used to overwrite the http response body by providing the new body value as <code>RESPONSE_BODY</code>.</li>
+<li>It can test the application's resilience to error or incorrect http response body.</li>
 </ul>
 <div class="admonition tip">
-<p class="admonition-title">Scenario: Corrupt the network packets of target pod</p>
-<p><img alt="Pod Network Corruption" src="../../../images/network-chaos.png" /></p>
+<p class="admonition-title">Scenario: Modify Body of the HTTP response</p>
+<p><img alt="Pod HTTP Modify Body" src="../../../images/pod-http.png" /></p>
 </div>
 <h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
 <details class="info">
@@ -3186,9 +3187,9 @@
 <details class="info">
 <summary>Verify the prerequisites</summary>
 <ul>
-<li>Ensure that Kubernetes Version &gt; 1.16 </li>
+<li>Ensure that Kubernetes Version &gt; 1.17</li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a> </li>
+<li>Ensure that the <code>pod-http-modify-body</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-modify-body/experiment.yaml">here</a> </li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
@@ -3206,19 +3207,19 @@
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nn">---</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nt">rules</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># Create and monitor the experiment &amp; helper pods</span><span class="w"></span>
@@ -3269,18 +3270,18 @@
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RoleBinding</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nt">roleRef</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span><span class="w"></span>
 <span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="nt">subjects</span><span class="p">:</span><span class="w"></span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 </code></pre></div>
 Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.</p>
@@ -3289,6 +3290,24 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h2 id="experiment-tunables">Experiment tunables<a class="headerlink" href="#experiment-tunables" title="Permanent link">&para;</a></h2>
 <details class="info">
 <summary>check the experiment tunables</summary>
+<p><h2>Mandatory Fields</h2></p>
+<p><table>
+  <tr>
+    <th> Variables </th>
+    <th> Description </th>
+    <th> Notes </th>
+  </tr>
+  <tr>
+    <td> TARGET_SERVICE_PORT </td>
+    <td> Port of the service to target</td>
+    <td>Defaults to port 80 </td>
+  </tr>
+  <tr>
+    <td> RESPONSE_BODY  </td>
+    <td> Body string to overwrite the http response body</td>
+    <td> If no value is provided, response will be an empty body. Defaults to empty body </td>
+  </tr>
+</table></p>
 <p><h2>Optional Fields</h2></p>
 <p><table>
   <tr>
@@ -3297,20 +3316,14 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <th> Notes </th>
   </tr>
   <tr>
-    <td> NETWORK_INTERFACE </td>
-    <td> Name of ethernet interface considered for shaping traffic  </td>
-    <td> </td>
+    <td> PROXY_PORT  </td>
+    <td> Port where the proxy will be listening for requests</td>
+    <td> Defaults to 20000 </td>
   </tr>
   <tr>
-    <td> TARGET_CONTAINER  </td>
-    <td> Name of container which is subjected to network corruption </td>
-    <td> Applicable for containerd &amp; CRI-O runtime only. Even with these runtimes, if the value is not provided, it injects chaos on the first container of the pod </td>
-  </tr>
-  <tr>
-    <td> NETWORK_PACKET_CORRUPTION_PERCENTAGE  </td>
-    <td> Packet corruption in percentage </td>
-    <td> Default (100) </td>
-  </tr>
+    <td> NETWORK_INTERFACE  </td>
+    <td> Network interface to be used for the proxy</td>
+    <td> Defaults to <code>eth0</code> </td>
   <tr>
     <td> CONTAINER_RUNTIME  </td>
     <td> container runtime interface for the cluster</td>
@@ -3323,39 +3336,19 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   </tr>
   <tr>
     <td> TOTAL_CHAOS_DURATION </td>
-    <td> The time duration for chaos insertion (seconds) </td>
+    <td> The duration of chaos injection (seconds) </td>
     <td> Default (60s) </td>
   </tr>
   <tr>
     <td> TARGET_PODS </td>
-    <td> Comma separated list of application pod name subjected to pod network corruption chaos</td>
+    <td> Comma separated list of application pod name subjected to pod http modify body chaos</td>
     <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-  </tr> 
-  <tr>
-    <td> DESTINATION_IPS </td>
-    <td> IP addresses of the services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
-    <td> comma separated IP(S) or CIDR(S) can be provided. if not provided, it will induce network chaos for all ips/destinations</td>
-  </tr><br />
-  <tr>
-    <td> DESTINATION_HOSTS </td>
-    <td> DNS Names/FQDN names of the services, the accessibility to which, is impacted </td>
-    <td> if not provided, it will induce network chaos for all ips/destinations or DESTINATION_IPS if already defined</td>
-  </tr>    <br />
+  </tr>  <br />
   <tr>
     <td> PODS_AFFECTED_PERC </td>
     <td> The Percentage of total pods to target  </td>
     <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
   </tr> 
-<tr>
-    <td> LIB </td>
-    <td> The chaos lib used to inject the chaos </td>
-    <td> Default value: litmus, supported values: pumba and litmus </td>
-  </tr>
-  <tr>
-    <td> TC_IMAGE </td>
-    <td> Image used for traffic control in linux </td>
-    <td> default value is <code>gaiadocker/iproute2</code> </td>
-  </tr>
   <tr>
     <td> LIB_IMAGE  </td>
     <td> Image used to run the netem command </td>
@@ -3376,10 +3369,10 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-pod-specific-tunables">Common and Pod specific tunables<a class="headerlink" href="#common-and-pod-specific-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables. </p>
-<h3 id="network-packet-corruption">Network Packet Corruption<a class="headerlink" href="#network-packet-corruption" title="Permanent link">&para;</a></h3>
-<p>It defines the network packet corruption percentage to be injected in the targeted application. It can be tuned via <code>NETWORK_PACKET_CORRUPTION_PERCENTAGE</code> ENV. </p>
+<h3 id="target-service-port">Target Service Port<a class="headerlink" href="#target-service-port" title="Permanent link">&para;</a></h3>
+<p>It defines the port of the targeted service that is being targeted. It can be tuned via <code>TARGET_SERVICE_PORT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># it inject the network-corruption for the ingrees and egress traffic</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the port of the targeted service</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3391,26 +3384,23 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># network packet corruption percentage</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NETWORK_PACKET_CORRUPTION_PERCENTAGE</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;100&#39;</span><span class="w"> </span><span class="c1">#in percentage</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the body string to overwrite the response body</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESPONSE_BODY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2000&#39;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="destination-ips-and-destination-hosts">Destination IPs And Destination Hosts<a class="headerlink" href="#destination-ips-and-destination-hosts" title="Permanent link">&para;</a></h3>
-<p>The network experiments interrupt traffic for all the IPs/hosts by default. The interruption of specific IPs/Hosts can be tuned via <code>DESTINATION_IPS</code> and <code>DESTINATION_HOSTS</code> ENV.</p>
-<ul>
-<li><code>DESTINATION_IPS</code>: It contains the IP addresses of the services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted.</li>
-<li><code>DESTINATION_HOSTS</code>: It contains the DNS Names/FQDN names of the services, the accessibility to which, is impacted.</li>
-</ul>
+<h3 id="proxy-port">Proxy Port<a class="headerlink" href="#proxy-port" title="Permanent link">&para;</a></h3>
+<p>It defines the port on which the proxy server will listen for requests. It can be tuned via <code>PROXY_PORT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># it inject the chaos for the ingrees and egress traffic for specific ips/hosts</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the port for proxy server</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3422,25 +3412,51 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># supports comma separated destination ips</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DESTINATION_IPS</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8.8.8.8,192.168.5.6&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># supports comma separated destination hosts</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DESTINATION_HOSTS</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;nginx.default.svc.cluster.local,google.com&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port for proxy server</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PROXY_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8080&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="response-body">RESPONSE BODY<a class="headerlink" href="#response-body" title="Permanent link">&para;</a></h3>
+<p>It defines the body string that will overwrite the http response body. It can be tuned via <code>RESPONSE_BODY</code> ENV.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the response body value</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the body string to overwrite the response body</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESPONSE_BODY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2000&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="network-interface">Network Interface<a class="headerlink" href="#network-interface" title="Permanent link">&para;</a></h3>
-<p>The defined name of the ethernet interface, which is considered for shaping traffic. It can be tuned via <code>NETWORK_INTERFACE</code> ENV. Its default value is <code>eth0</code>.</p>
+<p>It defines the network interface to be used for the proxy. It can be tuned via <code>NETWORK_INTERFACE</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># provide the network interface</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the network interface for proxy</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3452,17 +3468,21 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># name of the network interface </span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the network interface for proxy</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NETWORK_INTERFACE</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;eth0&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;eth0&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;80&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the body string to overwrite the response body</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESPONSE_BODY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2000&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="container-runtime-socket-path">Container Runtime Socket Path<a class="headerlink" href="#container-runtime-socket-path" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
@@ -3483,9 +3503,9 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-modify-body</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
@@ -3496,41 +3516,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="c1"># path of the socket file</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOCKET_PATH</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/var/run/docker.sock&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="pumba-chaos-library">Pumba Chaos Library<a class="headerlink" href="#pumba-chaos-library" title="Permanent link">&para;</a></h3>
-<p>It specifies the Pumba chaos library for the chaos injection. It can be tuned via <code>LIB</code> ENV. The defaults chaos library is <code>litmus</code>.
-Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba library.</p>
-<p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># use pumba chaoslib for the network chaos</span><span class="w"></span>
-<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
-<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption-sa</span><span class="w"></span>
-<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-corruption</span><span class="w"></span>
-<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># name of the chaoslib</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># supports litmus and pumba lib</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LIB</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;pumba&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># image used for the traffic control in linux</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># applicable for pumba lib only</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TC_IMAGE</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;gaiadocker/iproute2&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the body string to overwrite the response body</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESPONSE_BODY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2000&#39;</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3559,7 +3550,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
         <!-- Link to previous page -->
         
         <a
-            href="../pod-memory-hog/"
+            href="../pod-http-latency/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -3571,7 +3562,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Pod Memory Hog
+                Pod HTTP Latency
             </div>
             </div>
         </a>
@@ -3580,7 +3571,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
         <!-- Link to next page -->
         
         <a
-            href="../pod-network-duplication/"
+            href="../pod-http-modify-header/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -3589,7 +3580,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Pod Network Duplication
+                Pod HTTP Modify Header
             </div>
             </div>
             <div class="md-footer__button md-icon">
