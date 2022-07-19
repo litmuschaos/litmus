@@ -10,14 +10,14 @@
       
       
       
-        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/pods/disk-fill/">
+        <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-reset-peer/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
-        <title>Disk Fill - Litmus Experiments</title>
+        <title>Pod HTTP Reset Peer - Litmus Experiments</title>
       
     
     
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Disk Fill
+              Pod HTTP Reset Peer
             
           </span>
         </div>
@@ -604,131 +604,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Disk Fill
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../disk-fill/" class="md-nav__link">
         Disk Fill
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
-    Introduction
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#uses" class="md-nav__link">
-    Uses
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#default-validations" class="md-nav__link">
-    Default Validations
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
-    Minimal RBAC configuration example (optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-tunables" class="md-nav__link">
-    Experiment tunables
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#experiment-examples" class="md-nav__link">
-    Experiment Examples
-  </a>
-  
-    <nav class="md-nav" aria-label="Experiment Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#common-and-pod-specific-tunables" class="md-nav__link">
-    Common and Pod specific tunables
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#disk-fill-percentage" class="md-nav__link">
-    Disk Fill Percentage
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#disk-fill-mebibytes" class="md-nav__link">
-    Disk Fill Mebibytes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#data-block-size" class="md-nav__link">
-    Data Block Size
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#container-path" class="md-nav__link">
-    Container Path
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -948,11 +828,138 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../pod-http-reset-peer/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Pod HTTP Reset Peer
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Pod HTTP Reset Peer
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    Uses
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-validations" class="md-nav__link">
+    Default Validations
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rbac-configuration-example-optional" class="md-nav__link">
+    Minimal RBAC configuration example (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-tunables" class="md-nav__link">
+    Experiment tunables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiment-examples" class="md-nav__link">
+    Experiment Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiment Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-and-pod-specific-tunables" class="md-nav__link">
+    Common and Pod specific tunables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-service-port" class="md-nav__link">
+    Target Service Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxy-port" class="md-nav__link">
+    Proxy Port
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset-timeout" class="md-nav__link">
+    RESET TIMEOUT
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-interface" class="md-nav__link">
+    Network Interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-runtime-socket-path" class="md-nav__link">
+    Container Runtime Socket Path
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3134,29 +3141,36 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#disk-fill-percentage" class="md-nav__link">
-    Disk Fill Percentage
+  <a href="#target-service-port" class="md-nav__link">
+    Target Service Port
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#disk-fill-mebibytes" class="md-nav__link">
-    Disk Fill Mebibytes
+  <a href="#proxy-port" class="md-nav__link">
+    Proxy Port
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#data-block-size" class="md-nav__link">
-    Data Block Size
+  <a href="#reset-timeout" class="md-nav__link">
+    RESET TIMEOUT
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#container-path" class="md-nav__link">
-    Container Path
+  <a href="#network-interface" class="md-nav__link">
+    Network Interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-runtime-socket-path" class="md-nav__link">
+    Container Runtime Socket Path
   </a>
   
 </li>
@@ -3178,24 +3192,22 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/pods/disk-fill.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/litmuschaos/litmus/edit/master/docs/experiments/categories/pods/pod-http-reset-peer.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-  <h1>Disk Fill</h1>
+  <h1>Pod HTTP Reset Peer</h1>
 
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <ul>
-<li>It causes Disk Stress by filling up the ephemeral storage of the pod on any given node.</li>
-<li>It causes the application pod to get evicted if the capacity filled exceeds the pod's ephemeral storage limit.</li>
-<li>It tests the Ephemeral Storage Limits, to ensure those parameters are sufficient.</li>
-<li>It tests the application's resiliency to disk stress/replica evictions.</li>
+<li>It injects http reset on the service whose port is provided as <code>TARGET_SERVICE_PORT</code> which stops outgoing http requests by resetting the TCP connection by starting proxy server and then redirecting the traffic through the proxy server.</li>
+<li>It can test the application's resilience to lossy/flaky http connection.</li>
 </ul>
 <div class="admonition tip">
-<p class="admonition-title">Scenario: Fill ephemeral-storage</p>
-<p><img alt="Disk Fill" src="../../../images/disk-fill.png" /></p>
+<p class="admonition-title">Scenario: Add reset peer to the HTTP request</p>
+<p><img alt="Pod HTTP Reset Peer" src="../../../images/pod-http.png" /></p>
 </div>
 <h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
 <details class="info">
@@ -3206,34 +3218,9 @@
 <details class="info">
 <summary>Verify the prerequisites</summary>
 <ul>
-<li>Ensure that Kubernetes Version &gt; 1.16 </li>
+<li>Ensure that Kubernetes Version &gt; 1.17</li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>disk-fill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/disk-fill/experiment.yaml">here</a> </li>
-<li>Appropriate Ephemeral Storage Requests and Limits should be set for the application before running the experiment. An example specification is shown below:
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend</span><span class="w"></span>
-<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db</span><span class="w"></span>
-<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="w"></span>
-<span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD</span><span class="w"></span>
-<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">requests</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ephemeral-storage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">limits</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ephemeral-storage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4Gi&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp</span><span class="w"></span>
-<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wordpress</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">requests</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ephemeral-storage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2Gi&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">limits</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ephemeral-storage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4Gi&quot;</span><span class="w"></span>
-</code></pre></div></li>
+<li>Ensure that the <code>pod-http-reset-peer</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-reset-peer/experiment.yaml">here</a> </li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
@@ -3251,19 +3238,19 @@
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nn">---</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nt">rules</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># Create and monitor the experiment &amp; helper pods</span><span class="w"></span>
@@ -3314,18 +3301,18 @@
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RoleBinding</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">    </span><span class="nt">app.kubernetes.io/part-of</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmus</span><span class="w"></span>
 <span class="nt">roleRef</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span><span class="w"></span>
 <span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="nt">subjects</span><span class="p">:</span><span class="w"></span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
 </code></pre></div>
 Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.</p>
@@ -3341,15 +3328,15 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <th> Description </th>
     <th> Notes </th>
   </tr>
-  <tr> 
-    <td> FILL_PERCENTAGE </td>
-    <td> Percentage to fill the Ephemeral storage limit </td>
-    <td> Can be set to more than 100 also, to force evict the pod. The ephemeral-storage limits must be set in targeted pod to use this ENV.</td>
+  <tr>
+    <td> TARGET_SERVICE_PORT </td>
+    <td> Port of the service to target</td>
+    <td>Defaults to port 80 </td>
   </tr>
   <tr>
-    <td> EPHEMERAL_STORAGE_MEBIBYTES </td>
-    <td> Ephemeral storage which need to fill (unit: MiBi)</td>
-    <td>It is mutually exclusive with the <code>FILL_PERCENTAGE</code> ENV. If both are provided then it will use the <code>FILL_PERCENTAGE</code></td>
+    <td> RESET_TIMEOUT  </td>
+    <td> Reset Timeout specifies after how much duration to reset the connection</td>
+    <td> Defaults to 0 </td>
   </tr>
 </table></p>
 <p><h2>Optional Fields</h2></p>
@@ -3359,49 +3346,48 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <th> Description </th>
     <th> Notes </th>
   </tr>
-  <tr> 
-    <td> TARGET_CONTAINER </td>
-    <td> Name of container which is subjected to disk-fill </td>
-    <td> If not provided, the first container in the targeted pod will be subject to chaos </td>
+  <tr>
+    <td> PROXY_PORT  </td>
+    <td> Port where the proxy will be listening for requests</td>
+    <td> Defaults to 20000 </td>
   </tr>
-  <tr> 
-    <td> CONTAINER_PATH </td>
-    <td> Storage Location of containers</td>
-    <td> Defaults to '/var/lib/docker/containers' </td>
+  <tr>
+    <td> NETWORK_INTERFACE  </td>
+    <td> Network interface to be used for the proxy</td>
+    <td> Defaults to <code>eth0</code> </td>
+  <tr>
+    <td> CONTAINER_RUNTIME  </td>
+    <td> container runtime interface for the cluster</td>
+    <td> Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
   </tr>
-  <tr> 
+  <tr>
+    <td> SOCKET_PATH </td>
+    <td> Path of the containerd/crio/docker socket file </td>
+    <td> Defaults to <code>/var/run/docker.sock</code> </td>
+  </tr>
+  <tr>
     <td> TOTAL_CHAOS_DURATION </td>
-    <td> The time duration for chaos insertion (sec) </td>
-    <td> Defaults to 60s </td>
+    <td> The duration of chaos injection (seconds) </td>
+    <td> Default (60s) </td>
   </tr>
   <tr>
     <td> TARGET_PODS </td>
-    <td> Comma separated list of application pod name subjected to disk fill chaos</td>
+    <td> Comma separated list of application pod name subjected to pod http reset peer chaos</td>
     <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-  </tr> 
-  <tr>
-    <td> DATA_BLOCK_SIZE </td>
-    <td> It contains data block size used to fill the disk(in KB)</td>
-    <td> Defaults to 256, it supports unit as KB only</td>
-  </tr> 
+  </tr>  <br />
   <tr>
     <td> PODS_AFFECTED_PERC </td>
     <td> The Percentage of total pods to target  </td>
     <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
   </tr> 
   <tr>
-    <td> LIB  </td>
-    <td> The chaos lib used to inject the chaos </td>
-    <td> Defaults to <code>litmus</code> supported litmus only </td>
-  </tr>
-  <tr>
     <td> LIB_IMAGE  </td>
-    <td> The image used to fill the disk </td>
+    <td> Image used to run the netem command </td>
     <td> Defaults to <code>litmuschaos/go-runner:latest</code> </td>
   </tr>
   <tr>
     <td> RAMP_TIME </td>
-    <td> Period to wait before injection of chaos in sec </td>
+    <td> Period to wait before and after injection of chaos in sec </td>
     <td> </td>
   </tr>
   <tr>
@@ -3414,10 +3400,10 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-pod-specific-tunables">Common and Pod specific tunables<a class="headerlink" href="#common-and-pod-specific-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables. </p>
-<h3 id="disk-fill-percentage">Disk Fill Percentage<a class="headerlink" href="#disk-fill-percentage" title="Permanent link">&para;</a></h3>
-<p>It fills the <code>FILL_PERCENTAGE</code> percentage of the ephemeral-storage limit specified at <code>resource.limits.ephemeral-storage</code> inside the target application. </p>
+<h3 id="target-service-port">Target Service Port<a class="headerlink" href="#target-service-port" title="Permanent link">&para;</a></h3>
+<p>It defines the port of the targeted service that is being targeted. It can be tuned via <code>TARGET_SERVICE_PORT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## percentage of ephemeral storage limit specified at `resource.limits.ephemeral-storage` inside target application </span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the port of the targeted service</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3429,24 +3415,20 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1">## percentage of ephemeral storage limit, which needs to be filled</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FILL_PERCENTAGE</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;80&#39;</span><span class="w"> </span><span class="c1"># in percentage</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="disk-fill-mebibytes">Disk Fill Mebibytes<a class="headerlink" href="#disk-fill-mebibytes" title="Permanent link">&para;</a></h3>
-<p>It fills the <code>EPHEMERAL_STORAGE_MEBIBYTES</code> MiBi of ephemeral storage of the targeted pod. 
-It is mutually exclusive with the <code>FILL_PERCENTAGE</code> ENV. If <code>FILL_PERCENTAGE</code> ENV is set then it will use the percentage for the fill otherwise, it will fill the ephemeral storage based on <code>EPHEMERAL_STORAGE_MEBIBYTES</code> ENV.</p>
-<p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># ephemeral storage which needs to fill in will application</span><span class="w"></span>
-<span class="c1"># if ephemeral-storage limits is not specified inside target application</span><span class="w"></span>
+<h3 id="proxy-port">Proxy Port<a class="headerlink" href="#proxy-port" title="Permanent link">&para;</a></h3>
+<p>It defines the port on which the proxy server will listen for requests. It can be tuned via <code>PROXY_PORT</code> ENV.
+Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the port for proxy server</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3458,23 +3440,23 @@ It is mutually exclusive with the <code>FILL_PERCENTAGE</code> ENV. If <code>FIL
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1">## ephemeral storage size, which needs to be filled</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EPHEMERAL_STORAGE_MEBIBYTES</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;256&#39;</span><span class="w"> </span><span class="c1">#in MiBi</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port for proxy server</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PROXY_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8080&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="data-block-size">Data Block Size<a class="headerlink" href="#data-block-size" title="Permanent link">&para;</a></h3>
-<p>It defines the size of the data block used to fill the ephemeral storage of the targeted pod. It can be tuned via <code>DATA_BLOCK_SIZE</code> ENV. Its unit is <code>KB</code>.
-The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
+<h3 id="reset-timeout">RESET TIMEOUT<a class="headerlink" href="#reset-timeout" title="Permanent link">&para;</a></h3>
+<p>It defines the reset timeout value to be added to the http request. It can be tuned via <code>RESET_TIMEOUT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># size of the data block used to fill the disk</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the reset timeout value</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3486,22 +3468,23 @@ The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1">## size of data block used to fill the disk</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATA_BLOCK_SIZE</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;256&#39;</span><span class="w"> </span><span class="c1">#in KB</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># reset timeout specifies after how much duration to reset the connection</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESET_TIMEOUT</span><span class="w"> </span><span class="c1">#in ms</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2000&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="container-path">Container Path<a class="headerlink" href="#container-path" title="Permanent link">&para;</a></h3>
-<p>It defines the storage location of the containers inside the host(node/VM). It can be tuned via <code>CONTAINER_PATH</code> ENV. </p>
+<h3 id="network-interface">Network Interface<a class="headerlink" href="#network-interface" title="Permanent link">&para;</a></h3>
+<p>It defines the network interface to be used for the proxy. It can be tuned via <code>NETWORK_INTERFACE</code> ENV.</p>
 <p>Use the following example to tune this:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># path inside node/vm where containers are present </span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the network interface for proxy</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3513,17 +3496,54 @@ The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
 <span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-fill</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer</span><span class="w"></span>
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># storage location of the containers</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_PATH</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/var/lib/docker/containers&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the network interface for proxy</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NETWORK_INTERFACE</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;eth0&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;80&#39;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="container-runtime-socket-path">Container Runtime Socket Path<a class="headerlink" href="#container-runtime-socket-path" title="Permanent link">&para;</a></h3>
+<p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
+<ul>
+<li><code>CONTAINER_RUNTIME</code>: It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes. The default value is <code>docker</code>.</li>
+<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>). For other runtimes provide the appropriate path.</li>
+</ul>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the container runtime and socket file path</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># runtime for the container</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># supports docker, containerd, crio</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_RUNTIME</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;docker&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># path of the socket file</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOCKET_PATH</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/var/run/docker.sock&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
 </code></pre></div>
 
               
@@ -3552,7 +3572,7 @@ The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
         <!-- Link to previous page -->
         
         <a
-            href="../container-kill/"
+            href="../pod-http-latency/"
             class="md-footer__link md-footer__link--prev"
             rel="prev"
         >
@@ -3564,7 +3584,7 @@ The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
                 <span class="md-footer__direction">
                 Previous
                 </span>
-                Container Kill
+                Pod HTTP Latency
             </div>
             </div>
         </a>
@@ -3573,7 +3593,7 @@ The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
         <!-- Link to next page -->
         
         <a
-            href="../pod-autoscaler/"
+            href="../pod-http-status-code/"
             class="md-footer__link md-footer__link--next"
             rel="next"
         >
@@ -3582,7 +3602,7 @@ The default value of <code>DATA_BLOCK_SIZE</code> is <code>256</code>.</p>
                 <span class="md-footer__direction">
                 Next
                 </span>
-                Pod Autoscaler
+                Pod HTTP Status Code
             </div>
             </div>
             <div class="md-footer__button md-icon">

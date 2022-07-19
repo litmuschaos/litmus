@@ -10,9 +10,9 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-latency-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-latency
     spec:
       components:
         env:
@@ -23,6 +23,6 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"

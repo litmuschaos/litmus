@@ -10,9 +10,9 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-latency-sa
+  chaosServiceAccount: pod-http-reset-peer-sa
   experiments:
-  - name: pod-http-latency
+  - name: pod-http-reset-peer
     spec:
       components:
         env:
