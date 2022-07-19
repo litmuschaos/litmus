@@ -101,6 +101,9 @@ nav:
             - Pod Network Partition: experiments/categories/pods/pod-network-partition.md
             - Pod HTTP Latency: experiments/categories/pods/pod-http-latency.md
             - Pod HTTP Reset Peer: experiments/categories/pods/pod-http-reset-peer.md
+            - Pod HTTP Status Code: experiments/categories/pods/pod-http-status-code.md
+            - Pod HTTP Modify Body: experiments/categories/pods/pod-http-modify-body.md
+            - Pod HTTP Modify Header: experiments/categories/pods/pod-http-modify-header.md
           - Node Chaos:
             - Docker Service Kill: experiments/categories/nodes/docker-service-kill.md
             - Kubelet Service Kill: experiments/categories/nodes/kubelet-service-kill.md

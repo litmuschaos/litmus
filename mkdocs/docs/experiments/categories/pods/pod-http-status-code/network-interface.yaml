@@ -1,0 +1,27 @@
+## provide the network interface for proxy
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # provide the network interface for proxy
+        - name: NETWORK_INTERFACE
+          value: "eth0"
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: '80'
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
