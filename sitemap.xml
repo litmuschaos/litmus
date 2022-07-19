@@ -211,6 +211,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-status-code/</loc>
+         <lastmod>2022-07-19</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-io-stress/</loc>
          <lastmod>2022-07-19</lastmod>
          <changefreq>daily</changefreq>
