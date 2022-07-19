@@ -104,7 +104,17 @@ Chaos actions that apply to generic Kubernetes resources are classified into thi
   <tr>
     <td>Pod HTTP Status Code</td>
     <td>Injects HTTP status code chaos into Application Pod</td>
-   <td><a href="/litmus/experiments/categories/pods/pod-http-status-code">pod-http-status-code</a></td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-status-code">pod-http-status-code</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Modify Body</td>
+    <td>Injects HTTP modify body into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-modify-body">pod-http-modify-body</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Modify Header</td>
+    <td>Injects HTTP Modify Header into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-modify-header">pod-http-modify-header</a></td>
   </tr>
 </table>
 

@@ -1,10 +1,11 @@
 ## Introduction
 
-- It injects http response latency on the service whose port is provided as `TARGET_SERVICE_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
-- It can test the application's resilience to lossy/flaky http responses.
+- It injects http modify body chaos on the service whose port is provided as `TARGET_SERVICE_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
+- Can be used to overwrite the http response body by providing the new body value as `RESPONSE_BODY`.
+- It can test the application's resilience to error or incorrect http response body.
 
-!!! tip "Scenario: Add latency to the HTTP request"    
-    ![Pod HTTP Latency](../../images/pod-http.png)
+!!! tip "Scenario: Modify Body of the HTTP response"    
+    ![Pod HTTP Modify Body](../../images/pod-http.png)
 
 ## Uses
 
@@ -16,7 +17,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.17
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-http-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-latency/experiment.yaml">here</a> 
+    - Ensure that the <code>pod-http-modify-body</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-modify-body/experiment.yaml">here</a> 
     
 ## Default Validations
 
@@ -30,25 +31,25 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-http-latency/rbac.yaml yaml)
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-http-modify-body/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: pod-http-latency-sa
+          name: pod-http-modify-body-sa
           namespace: default
           labels:
-            name: pod-http-latency-sa
+            name: pod-http-modify-body-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: Role
         metadata:
-          name: pod-http-latency-sa
+          name: pod-http-modify-body-sa
           namespace: default
           labels:
-            name: pod-http-latency-sa
+            name: pod-http-modify-body-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -99,18 +100,18 @@
         apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
         metadata:
-          name: pod-http-latency-sa
+          name: pod-http-modify-body-sa
           namespace: default
           labels:
-            name: pod-http-latency-sa
+            name: pod-http-modify-body-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: Role
-          name: pod-http-latency-sa
+          name: pod-http-modify-body-sa
         subjects:
         - kind: ServiceAccount
-          name: pod-http-latency-sa
+          name: pod-http-modify-body-sa
           namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
@@ -132,9 +133,9 @@
         <td>Defaults to port 80 </td>
       </tr>
       <tr>
-        <td> LATENCY  </td>
-        <td> Latency value in ms to be added to requests</td>
-        <td> Defaults to 2000 </td>
+        <td> RESPONSE_BODY  </td>
+        <td> Body string to overwrite the http response body</td>
+        <td> If no value is provided, response will be an empty body. Defaults to empty body </td>
       </tr>
     </table>
 
@@ -172,7 +173,7 @@
       </tr>
       <tr>
         <td> TARGET_PODS </td>
-        <td> Comma separated list of application pod name subjected to pod http latency chaos</td>
+        <td> Comma separated list of application pod name subjected to pod http modify body chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
       </tr>    
       <tr>
@@ -205,13 +206,13 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target Service Port
 
-It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/target-service-port.yaml yaml)
+[embedmd]:# (pod-http-modify-body/target-service-port.yaml yaml)
 ```yaml
-## provide the target port of the service
+## provide the port of the targeted service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -223,15 +224,18 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-modify-body-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-modify-body
     spec:
       components:
         env:
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'
 ```
 ### Proxy Port
 
@@ -239,9 +243,9 @@ It defines the port on which the proxy server will listen for requests. It can b
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/proxy-port.yaml yaml)
+[embedmd]:# (pod-http-modify-body/proxy-port.yaml yaml)
 ```yaml
-# provide the port for proxy to listen on
+## provide the port for proxy server
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -253,29 +257,29 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-modify-body-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-modify-body
     spec:
       components:
         env:
-        # provide the port for proxy to listen on
+        # provide the port for proxy server
         - name: PROXY_PORT
           value: '8080'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
 
-### Latency
+### RESPONSE BODY
 
-It defines the latency value to be added to the http request. It can be tuned via `LATENCY` ENV.
+It defines the body string that will overwrite the http response body. It can be tuned via `RESPONSE_BODY` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/latency.yaml yaml)
+[embedmd]:# (pod-http-modify-body/response-body.yaml yaml)
 ```yaml
-## provide the latency value
+## provide the response body value
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -287,16 +291,16 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-modify-body-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-modify-body
     spec:
       components:
         env:
-        # provide the latency value
-        - name: LATENCY
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
           value: '2000'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -306,7 +310,7 @@ It defines the network interface to be used for the proxy. It can be tuned via `
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/network-interface.yaml yaml)
+[embedmd]:# (pod-http-modify-body/network-interface.yaml yaml)
 ```yaml
 ## provide the network interface for proxy
 apiVersion: litmuschaos.io/v1alpha1
@@ -320,18 +324,21 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-modify-body-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-modify-body
     spec:
       components:
         env:
         # provide the network interface for proxy
         - name: NETWORK_INTERFACE
           value: "eth0"
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: '80'
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'
 ```
 
 ### Container Runtime Socket Path
@@ -343,7 +350,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/container-runtime-and-socket-path.yaml yaml)
+[embedmd]:# (pod-http-modify-body/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -357,9 +364,9 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-modify-body-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-modify-body
     spec:
       components:
         env:
@@ -370,7 +377,10 @@ spec:
         # path of the socket file
         - name: SOCKET_PATH
           value: '/var/run/docker.sock'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'
 ```

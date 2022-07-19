@@ -1,0 +1,31 @@
+## provide the container runtime and socket file path
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-modify-body-sa
+  experiments:
+  - name: pod-http-modify-body
+    spec:
+      components:
+        env:
+        # runtime for the container
+        # supports docker, containerd, crio
+        - name: CONTAINER_RUNTIME
+          value: 'docker'
+        # path of the socket file
+        - name: SOCKET_PATH
+          value: '/var/run/docker.sock'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'

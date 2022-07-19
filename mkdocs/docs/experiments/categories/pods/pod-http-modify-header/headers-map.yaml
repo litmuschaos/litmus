@@ -1,4 +1,4 @@
-## provide the network interface for proxy
+## provide the headers as a map
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,9 +16,10 @@ spec:
     spec:
       components:
         env:
-        # provide the network interface for proxy
-        - name: NETWORK_INTERFACE
-          value: "eth0"
-        # provide the target port of the service
+        # map of headers to modify/add; Eg: {"X-Litmus-Test-Header": "X-Litmus-Test-Value"}
+        # to remove a header, just set the value to ""; Eg: {"X-Litmus-Test-Header": ""}
+        - name: HEADERS_MAP
+          value: '{"X-Litmus-Test-Header": "X-Litmus-Test-Value"}'
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
-          value: '80'
+          value: "80"
