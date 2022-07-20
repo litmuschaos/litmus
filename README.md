@@ -67,7 +67,7 @@ in production.
 
 ## Getting Started with Litmus
 
-Check out the <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> to get started.
+To get started, check out the <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> and specifically the <a href="https://docs.litmuschaos.io/docs/getting-started/installation#prerequisites" target="_blank">Installation section</a> of the <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Getting Started with Litmus</a> page.
 
 ## Contributing to Chaos Hub
 
