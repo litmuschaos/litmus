@@ -227,7 +227,6 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 	}
 
 	return "clusters not found", nil
-	return "clusters not found", nil
 }
 
 // ListClusters takes a projectID and clusterType to filter and return a list of clusters
