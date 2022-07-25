@@ -2,6 +2,7 @@ package ops
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"time"
 
@@ -97,10 +98,19 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 }
 
 func DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
-	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
+	irData, err := GetImageRegistry(ctx, imageRegistryID, projectID)
+	if err != nil {
+		return "", err
+	}
+
+	if *irData.IsRemoved {
+		return "", errors.New("image registry not found (ID: " + imageRegistryID + " )")
+	}
+
+	query := bson.D{{"image_registry_id", imageRegistryID}, {"is_removed", false}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 
-	err := image_registry.UpdateImageRegistry(ctx, query, update)
+	err = image_registry.UpdateImageRegistry(ctx, query, update)
 	if err != nil {
 		return "", err
 	}

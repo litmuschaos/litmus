@@ -381,7 +381,11 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 	}
 
 	var newMyhub model.ChaosHub
-	copier.Copy(&newMyhub, &chaosHub)
+	err = copier.Copy(&newMyhub, &chaosHub)
+	if err != nil {
+		log.Print("ERROR", err)
+		return nil, err
+	}
 
 	newMyhub.UpdatedAt = time
 
@@ -389,10 +393,20 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 }
 
 func DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
+	hub, err := dbSchemaMyHub.GetHubByID(ctx, hubID, projectID)
+	if err != nil {
+		log.Print("ERROR", err)
+		return false, err
+	}
+
+	if hub.IsRemoved {
+		return false, errors.New("chaos hub not found (ID: " + hubID + " )")
+	}
+
 	query := bson.D{{"myhub_id", hubID}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := dbOperationsMyHub.UpdateMyHub(ctx, query, update)
+	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err

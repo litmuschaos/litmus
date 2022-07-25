@@ -150,7 +150,10 @@ func NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (s
 		log.Print("CLUSTER EVENT : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
 
 		newCluster := model.Cluster{}
-		copier.Copy(&newCluster, &cluster)
+		err := copier.Copy(&newCluster, &cluster)
+		if err != nil {
+			return "", err
+		}
 
 		SendClusterEvent("cluster-event", request.EventName, request.Description, newCluster, r)
 		return "Event Published", nil
@@ -163,10 +166,12 @@ func NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (s
 func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string, r store.StateData) (string, error) {
 	query := bson.D{
 		{"project_id", projectID},
+		{"is_removed", false},
 		{"cluster_id", bson.D{
 			{"$in", clusterIds},
 		}},
 	}
+
 	// Update cluster info in db
 	updatedAtTime := strconv.FormatInt(time.Now().Unix(), 10)
 	update := bson.D{{"$set", bson.D{{"is_removed", true}, {"updated_at", updatedAtTime}}}}
@@ -175,6 +180,7 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 	if err != nil {
 		return "", err
 	}
+
 	clusters, err := dbOperationsCluster.ListClusters(ctx, query)
 	if err != nil {
 		return "", nil
@@ -215,7 +221,12 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 		}
 
 	}
-	return "Successfully deleted clusters", nil
+
+	if len(clusters) > 0 {
+		return "clusters deleted successfully", nil
+	} else {
+		return "clusters not found", nil
+	}
 }
 
 // ListClusters takes a projectID and clusterType to filter and return a list of clusters

@@ -81,6 +81,10 @@ func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *stri
 		return false, err
 	}
 
+	if workflow.IsRemoved {
+		return false, errors.New("chaos workflow not found (ID: " + *workflowID + " )")
+	}
+
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
 
@@ -976,12 +980,22 @@ func GetWorkflowManifestByID(ctx context.Context, templateID string) (*model.Wor
 
 // DeleteWorkflowTemplate is used to delete the workflow template (update the is_removed field as true)
 func DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
+	templateData, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
+	if err != nil {
+		return false, err
+	}
+
+	if templateData.IsRemoved {
+		return false, errors.New("workflow template not found (ID: " + templateID + " )")
+	}
+
 	query := bson.D{
 		{"project_id", projectID},
 		{"template_id", templateID},
 	}
+
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
-	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
+	err = dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
 		log.Print("Err", err)
 		return false, err

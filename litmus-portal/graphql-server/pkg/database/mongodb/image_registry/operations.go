@@ -26,7 +26,6 @@ func UpdateImageRegistry(ctx context.Context, query bson.D, update bson.D) error
 }
 
 func ListImageRegistries(ctx context.Context, query bson.D) ([]ImageRegistry, error) {
-
 	results, err := mongodb.Operator.List(ctx, mongodb.ImageRegistryCollection, query)
 	if err != nil {
 		return nil, err
