@@ -33,6 +33,7 @@ func RandomString(n int) string {
 	return string(s)
 }
 
+// URLDecodeBase64 decader String of type base64 or return the text if error happens
 func URLDecodeBase64(enconded string) string {
 	decoded, err := base64.RawURLEncoding.DecodeString(enconded)
 	if err != nil {
