@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -30,6 +31,14 @@ func RandomString(n int) string {
 		s[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(s)
+}
+
+func URLDecodeBase64(enconded string) string {
+	decoded, err := base64.RawURLEncoding.DecodeString(enconded)
+	if err != nil {
+		return enconded
+	}
+	return string(decoded)
 }
 
 // ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
