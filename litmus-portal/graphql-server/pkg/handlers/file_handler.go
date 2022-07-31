@@ -59,18 +59,20 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-func GetEndpoint() (string, error) {
-	if scope == namespaceScope && endpoint == "" {
-		return "", errors.New("CHAOS_CENTER_UI_ENDPOINT env is empty for namespace scope installation")
-	}
-
+func GetEndpoint(agentType string) (string, error) {
+	// returns endpoint from env, if provided by user
 	if endpoint != "" {
 		return endpoint + "/ws/query", nil
-	} else if scope == clusterScope {
-		return k8s.GetServerEndpoint()
 	}
 
-	return "", errors.New("failed to retrieve the server endpoint")
+	// generating endpoint based on ChaosCenter Scope & AgentType (Self or External)
+	agentEndpoint, err := k8s.GetServerEndpoint(scope, agentType)
+
+	if agentEndpoint == "" || err != nil {
+		return "", errors.New("failed to retrieve the server endpoint")
+	}
+
+	return agentEndpoint, err
 }
 
 func GetManifest(token string) ([]byte, int, error) {
@@ -84,7 +86,7 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, 500, err
 	}
 
-	subscriberConfiguration.GQLServerURI, err = GetEndpoint()
+	subscriberConfiguration.GQLServerURI, err = GetEndpoint(reqCluster.ClusterType)
 	if err != nil {
 		return nil, 500, err
 	}
@@ -131,7 +133,7 @@ func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error
 		return nil, errors.New("Access Key is invalid")
 	}
 
-	subscriberConfiguration.GQLServerURI, err = GetEndpoint()
+	subscriberConfiguration.GQLServerURI, err = GetEndpoint(reqCluster.ClusterType)
 	if err != nil {
 		return nil, err
 	}

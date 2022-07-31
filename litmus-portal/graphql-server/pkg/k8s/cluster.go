@@ -82,7 +82,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 	- Ingress
 	- LoadBalancer > NodePort > ClusterIP
 */
-func GetServerEndpoint() (string, error) {
+func GetServerEndpoint(portalScope, agentType string) (string, error) {
 	var (
 		NodePort          int32
 		Port              int32
@@ -103,6 +103,25 @@ func GetServerEndpoint() (string, error) {
 		return "", err
 	}
 
+	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ctx, ServerServiceName, metaV1.GetOptions{})
+	if err != nil {
+		return "", err
+	}
+
+	for _, port := range svc.Spec.Ports {
+		if port.Name == "graphql-server" {
+			NodePort = port.NodePort
+			Port = port.Port
+		}
+	}
+
+	// If current agent is self-agent, then servicename FQDN will be used irrespective of service type.
+	if agentType == "internal" {
+		FinalUrl = "http://" + ServerServiceName + "." + LitmusPortalNS + ":" + strconv.Itoa(int(Port)) + "/query"
+		return FinalUrl, nil
+	}
+
+	// Ingress endpoint will be generated for external agents only.
 	if Ingress == "true" {
 		getIng, err := clientset.NetworkingV1().Ingresses(LitmusPortalNS).Get(ctx, IngressName, metaV1.GetOptions{})
 		if err != nil {
@@ -161,18 +180,6 @@ func GetServerEndpoint() (string, error) {
 
 	} else if Ingress == "false" || Ingress == "" {
 
-		svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ctx, ServerServiceName, metaV1.GetOptions{})
-		if err != nil {
-			return "", err
-		}
-
-		for _, port := range svc.Spec.Ports {
-			if port.Name == "graphql-server" {
-				NodePort = port.NodePort
-				Port = port.Port
-			}
-		}
-
 		exp := strings.ToLower(string(svc.Spec.Type))
 		switch exp {
 		case "loadbalancer":
@@ -189,6 +196,12 @@ func GetServerEndpoint() (string, error) {
 			}
 			FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(Port)) + "/query"
 		case "nodeport":
+
+			// Cannot fetch Node Ip Address when ChaosCenter is installed in Namespaced scope
+			if portalScope == "namespace" {
+				return "", errors.New("Cannot get NodeIP in namespaced mode")
+			}
+
 			nodeIP, err := clientset.CoreV1().Nodes().Get(ctx, NodeName, metaV1.GetOptions{})
 			if err != nil {
 				return "", err
