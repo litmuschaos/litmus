@@ -70,6 +70,9 @@ rules:
         "watch",
         "deletecollection",
       ]
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines/finalizers"]
+    verbs: ["update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

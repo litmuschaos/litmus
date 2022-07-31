@@ -85,6 +85,9 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines/finalizers"]
+    verbs: ["update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
