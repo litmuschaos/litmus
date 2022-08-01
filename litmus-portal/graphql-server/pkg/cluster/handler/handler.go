@@ -30,7 +30,7 @@ import (
 
 // RegisterCluster creates an entry for a new cluster in DB and generates the url used to apply manifest
 func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
-	endpoint, err := handlers.GetEndpoint()
+	endpoint, err := handlers.GetEndpoint(request.ClusterType)
 	if err != nil {
 		return nil, err
 	}
