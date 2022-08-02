@@ -131,7 +131,7 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  jobCleanupPolicy: "delete"
+  jobCleanUpPolicy: "delete"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
