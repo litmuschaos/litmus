@@ -32,6 +32,7 @@ import (
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	dbSchemaWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
 func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
@@ -480,7 +481,7 @@ func ListWorkflowRuns(request model.ListWorkflowRunsRequest) (*model.ListWorkflo
 			ClusterName:        workflow.ClusterName,
 			ClusterType:        &workflow.ClusterType,
 			IsRemoved:          workflowRun.IsRemoved,
-			ExecutedBy:         workflowRun.ExecutedBy,
+			ExecutedBy:         utils.URLDecodeBase64(workflowRun.ExecutedBy),
 		}
 		result = append(result, &newWorkflowRun)
 	}
@@ -736,7 +737,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 		ExecutionData:      request.ExecutionData,
 		Completed:          request.Completed,
 		IsRemoved:          &isRemoved,
-		ExecutedBy:         request.ExecutedBy,
+		ExecutedBy:         utils.URLDecodeBase64(request.ExecutedBy),
 	})
 
 	if err != nil {
@@ -766,7 +767,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 		ExecutionData:      request.ExecutionData,
 		WorkflowID:         request.WorkflowID,
 		IsRemoved:          &isRemoved,
-		ExecutedBy:         request.ExecutedBy,
+		ExecutedBy:         utils.URLDecodeBase64(request.ExecutedBy),
 	}, &r)
 
 	return "Workflow Run Accepted", nil
