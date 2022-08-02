@@ -156,6 +156,12 @@
         <td> NETWORK_INTERFACE  </td>
         <td> Network interface to be used for the proxy</td>
         <td> Defaults to `eth0` </td>
+      </tr>
+      <tr>
+        <td> TOXICITY </td>
+        <td> Percentage of HTTP requests to be affected </td>
+        <td> Defaults to 100% </td>
+      </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>

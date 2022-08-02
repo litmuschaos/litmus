@@ -135,6 +135,7 @@
         <td> STATUS_CODE  </td>
         <td> Modified status code for the HTTP response</td>
         <td> If no value is provided, then a random value is selected from the list of supported values.
+        Multiple values can be provided as comma separated, a random value from the provided list will be selected
         Supported values: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504].
         Defaults to random status code </td>
       </tr>
@@ -162,6 +163,12 @@
         <td> NETWORK_INTERFACE  </td>
         <td> Network interface to be used for the proxy</td>
         <td> Defaults to `eth0` </td>
+      </tr>
+      <tr>
+        <td> TOXICITY </td>
+        <td> Percentage of HTTP requests to be affected </td>
+        <td> Defaults to 100% </td>
+      </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
@@ -308,6 +315,7 @@ spec:
         env:
         # modified status code for the http response
         # if no value is provided, a random status code from the supported code list will selected
+        # if multiple comma separated values are provided, then a random value from the provided list will be selected
         # if an invalid status code is provided, the experiment will fail
         # supported status code list: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504]
         - name: STATUS_CODE
