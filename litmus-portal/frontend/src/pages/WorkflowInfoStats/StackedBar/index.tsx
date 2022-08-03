@@ -135,7 +135,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
   return (
     <div>
       <Typography className={classes.stackbarHeader}>
-        Scenario Activity
+        Chaos Scenario Activity
       </Typography>
       <div className={classes.date}>
         <Typography>{formatDate(date.toString())}</Typography>
@@ -143,7 +143,7 @@ const StackedBarGraph: React.FC<StackedBarGraphProps> = ({
       </div>
       <div className={classes.stackbarHelperTextArea}>
         <Typography className={classes.stackbarHelperText}>
-          Click on a bar to see the details of the scenario run
+          Click on a bar to see the details of the Chaos Scenario run
         </Typography>
         <Typography className={classes.resiliencyScore}>
           Resiliency score: {Math.round(averageResiliency)}%

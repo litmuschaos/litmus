@@ -142,7 +142,7 @@ const Overview: React.FC = () => {
     return (
       <MainInfoContainer
         src="./icons/workflowScheduleHome.svg"
-        alt="Schedule a scenario"
+        alt="Schedule a Chaos Scenario"
         heading={t('homeViews.agentConfiguredHome.noWorkflow.heading')}
         description={t('homeViews.agentConfiguredHome.noWorkflow.description')}
         button={
@@ -220,7 +220,7 @@ const Overview: React.FC = () => {
       {!dataSource && (
         <MainInfoContainer
           src="./icons/cloud.svg"
-          alt="Schedule a chaos scenario"
+          alt="Schedule a Chaos Scenario"
           heading="Connect data source"
           description="To configure your first Kubernetes dashboard you need to connect a data source. Select “Add data source” to connect."
           button={
@@ -257,7 +257,7 @@ const Overview: React.FC = () => {
       {dataSource && !monitoringDashboardCount && (
         <MainInfoContainer
           src="./icons/dashboardCloud.svg"
-          alt="Schedule a scenario"
+          alt="Schedule a Chaos Scenario"
           heading="Configure a chaos interleaved dashboard"
           description="Data source(s) have been found to be connected in this project. Select “Create dashboard” to configure a chaos interleaved dashboard"
           button={
@@ -277,11 +277,11 @@ const Overview: React.FC = () => {
       )}{' '}
       {WorkflowStatisticsCount > 0 ? (
         <RecentOverviewContainer
-          heading="Recently updated chaos scenario statistics"
+          heading="Recently updated Chaos Scenario statistics"
           buttonLink="/create-scenario"
           buttonImgSrc="./icons/calendarBlank.svg"
-          buttonImgAlt="Schedule a chaos scenario"
-          buttonText="Schedule a chaos scenario"
+          buttonImgAlt="Schedule a Chaos Scenario"
+          buttonText="Schedule a Chaos Scenario"
         >
           {workflowLoading ? (
             <Center>
@@ -302,7 +302,7 @@ const Overview: React.FC = () => {
         <OverviewContainer
           count={0}
           countUnit="scenarios"
-          description="Create complex chaos scenarios, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability work flows and compliance reports"
+          description="Create complex Chaos Scenarios, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability work flows and compliance reports"
           maxWidth="38.5625rem"
           button={
             <>

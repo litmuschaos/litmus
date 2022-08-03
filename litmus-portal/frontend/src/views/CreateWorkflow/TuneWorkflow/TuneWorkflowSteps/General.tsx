@@ -97,7 +97,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
               </>
             )}
             <InputField
-              label="Experiment Name"
+              label="Chaos Experiment Name"
               value={experimentName}
               onChange={(e) => {
                 setExperimentName(e.target.value);

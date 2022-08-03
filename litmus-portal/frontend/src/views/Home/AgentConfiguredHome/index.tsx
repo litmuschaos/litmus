@@ -69,7 +69,7 @@ const AgentConfiguredHome: React.FC<AgentConfiguredHomeProps> = ({
   const workflowRunCount = data?.listWorkflowRuns.totalNoOfWorkflowRuns ?? 0;
 
   if (error) {
-    console.error('Error fetching Scenario Data');
+    console.error('Error fetching Chaos Scenario Data');
     return (
       <Center>
         <Typography>{t('homeViews.agentConfiguredHome.error')}</Typography>

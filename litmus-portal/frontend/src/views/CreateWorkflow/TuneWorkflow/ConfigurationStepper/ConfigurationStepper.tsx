@@ -1,14 +1,14 @@
-import React from 'react';
-import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
+import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import { ButtonOutlined } from 'litmus-ui';
+import React from 'react';
+import EnvironmentVariables from '../TuneWorkflowSteps/EnvironmentVariables';
 import General from '../TuneWorkflowSteps/General';
 import SteadyState from '../TuneWorkflowSteps/SteadyState';
 import TargetApplication from '../TuneWorkflowSteps/TargetApplication';
-import EnvironmentVariables from '../TuneWorkflowSteps/EnvironmentVariables';
 import useStyles from './styles';
 
 interface ConfigurationStepperProps {
@@ -61,7 +61,7 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
     'General',
     'Target Application',
     'Define the steady state for this application',
-    'Tune Experiment',
+    'Tune Chaos Experiment',
   ];
 
   const gotoStep = (page: number) => {

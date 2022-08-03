@@ -312,7 +312,7 @@ const WorkflowDetailsTable: React.FC<WorkflowRunDetailsTableProps> = ({
                   <div className={classes.toolTipGroup}>
                     <Typography className={classes.resultText} display="inline">
                       Resilience Score{' '}
-                      <InfoTooltip value="Resilience Score is the weighted average of all tests in the chaos scenario." />
+                      <InfoTooltip value="Resilience Score is the weighted average of all tests in the Chaos Scenario." />
                     </Typography>
                     <Typography
                       className={classes.reliabilityScore}

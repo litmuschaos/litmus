@@ -528,7 +528,7 @@ const TableData: React.FC<TableDataProps> = ({ data, refetchQuery }) => {
               <div className={classes.expDiv} data-cy="terminateWorkflow">
                 <img
                   src="./icons/terminate-wf-dark.svg"
-                  alt="Terminate Scenario"
+                  alt="Terminate Chaos Scenario"
                   className={classes.terminateImg}
                 />
                 <Typography className={classes.btnText}>

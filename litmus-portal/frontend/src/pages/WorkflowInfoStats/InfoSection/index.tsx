@@ -122,7 +122,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                 </span>
               ) : (
                 <span className={classes.infoHint}>
-                  Non cron chaos scenario
+                  Non Cron Chaos Scenario
                 </span>
               )}
             </Typography>

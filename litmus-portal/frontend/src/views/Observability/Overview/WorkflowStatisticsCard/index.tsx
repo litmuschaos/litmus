@@ -94,7 +94,7 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
               >
                 <WorkflowRunIcon />
               </IconButton>
-              <Typography align="center">See scenario run</Typography>
+              <Typography align="center">See Chaos Scenario run</Typography>
             </div>
             <div className={classes.cardActions}>
               <IconButton
