@@ -3,7 +3,7 @@ module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber
 go 1.16
 
 require (
-	github.com/argoproj/argo-workflows/v3 v3.3.8
+	github.com/argoproj/argo-workflows/v3 v3.2.11
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gorilla/websocket v1.5.0
 	github.com/kelseyhightower/envconfig v1.4.0
