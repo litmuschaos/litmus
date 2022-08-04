@@ -23,11 +23,11 @@ import {
 } from '../../../graphql/mutations';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
 import {
-  SSHKey,
-  MyHubData,
   CreateMyHub,
-  SSHKeys,
+  MyHubData,
   MyHubType,
+  SSHKey,
+  SSHKeys,
 } from '../../../models/graphql/chaoshub';
 import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
@@ -107,7 +107,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
         setAlertState(true);
         setAlertResult({
           type: constants.success,
-          message: 'My Hub was successfully created',
+          message: 'ChaosHub was successfully created',
         });
         refetchQuery();
       },
@@ -133,7 +133,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
       setAlertState(true);
       setAlertResult({
         type: constants.success,
-        message: 'My Hub configurations successfully updated',
+        message: 'ChaosHub configurations successfully updated',
       });
       refetchQuery();
     },
@@ -342,7 +342,7 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
               <div className={classes.hubNameInput}>
                 <InputField
                   data-cy="hubName"
-                  label="Hub Name"
+                  label="ChaosHub Name"
                   value={gitHub.HubName}
                   helperText={
                     validateStartEmptySpacing(gitHub.HubName)
@@ -468,52 +468,60 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                             }
                           />
                           {privateHub === 'ssh' ? (
-                            <div className={classes.sshDiv}>
+                            <>
                               <Typography className={classes.sshAlert}>
-                                {t('myhub.connectHubPage.sshAlert')}
+                                Warning: SSH method won’t work with GitHub in
+                                this version.
                               </Typography>
-                              <Typography className={classes.alertText}>
-                                {t('myhub.connectHubPage.sshText')}
-                              </Typography>
-                              <div className={classes.sshDataDiv}>
-                                {sshLoading ? (
-                                  <Loader />
-                                ) : (
-                                  <>
-                                    <Typography className={classes.sshText}>
-                                      {sshKey.publicKey}
-                                    </Typography>
-                                    <div className={classes.copyBtn}>
-                                      <ButtonOutlined
-                                        onClick={() =>
-                                          copyTextToClipboard(sshKey.publicKey)
-                                        }
-                                      >
-                                        {!copying ? (
-                                          <div className={classes.rowDiv}>
-                                            <img
-                                              src="./icons/copy.svg"
-                                              className={classes.copyBtnImg}
-                                              alt="copy"
-                                            />
-                                            <Typography>
-                                              {t('myhub.installChaos.copy')}
-                                            </Typography>
-                                          </div>
-                                        ) : (
-                                          <div className={classes.rowDiv}>
-                                            <Done className={classes.done} />
-                                            <Typography>
-                                              {t('myhub.installChaos.copied')}
-                                            </Typography>
-                                          </div>
-                                        )}
-                                      </ButtonOutlined>
-                                    </div>
-                                  </>
-                                )}
+                              <div className={classes.sshDiv}>
+                                <Typography className={classes.sshAlert}>
+                                  {t('myhub.connectHubPage.sshAlert')}
+                                </Typography>
+                                <Typography className={classes.alertText}>
+                                  {t('myhub.connectHubPage.sshText')}
+                                </Typography>
+                                <div className={classes.sshDataDiv}>
+                                  {sshLoading ? (
+                                    <Loader />
+                                  ) : (
+                                    <>
+                                      <Typography className={classes.sshText}>
+                                        {sshKey.publicKey}
+                                      </Typography>
+                                      <div className={classes.copyBtn}>
+                                        <ButtonOutlined
+                                          onClick={() =>
+                                            copyTextToClipboard(
+                                              sshKey.publicKey
+                                            )
+                                          }
+                                        >
+                                          {!copying ? (
+                                            <div className={classes.rowDiv}>
+                                              <img
+                                                src="./icons/copy.svg"
+                                                className={classes.copyBtnImg}
+                                                alt="copy"
+                                              />
+                                              <Typography>
+                                                {t('myhub.installChaos.copy')}
+                                              </Typography>
+                                            </div>
+                                          ) : (
+                                            <div className={classes.rowDiv}>
+                                              <Done className={classes.done} />
+                                              <Typography>
+                                                {t('myhub.installChaos.copied')}
+                                              </Typography>
+                                            </div>
+                                          )}
+                                        </ButtonOutlined>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
                               </div>
-                            </div>
+                            </>
                           ) : null}
                         </RadioGroup>
                       </FormControl>
