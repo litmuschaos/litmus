@@ -11,10 +11,10 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"github.com/sirupsen/logrus"
 )
 
+// CreateChaosWorkFlow is the resolver for the createChaosWorkFlow field.
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateChaosWorkFlow],
@@ -25,6 +25,7 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request mode
 	return wfHandler.CreateChaosWorkflow(ctx, &request, data_store.Store)
 }
 
+// ReRunChaosWorkFlow is the resolver for the reRunChaosWorkFlow field.
 func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ReRunChaosWorkFlow],
@@ -44,6 +45,7 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 	return wfHandler.ReRunChaosWorkFlow(projectID, workflowID, username)
 }
 
+// UpdateChaosWorkflow is the resolver for the updateChaosWorkflow field.
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
@@ -54,6 +56,7 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *mod
 	return wfHandler.UpdateChaosWorkflow(ctx, request, data_store.Store)
 }
 
+// DeleteChaosWorkflow is the resolver for the deleteChaosWorkflow field.
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteChaosWorkflow],
@@ -65,6 +68,7 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID st
 	return wfHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
+// TerminateChaosWorkflow is the resolver for the terminateChaosWorkflow field.
 func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.TerminateChaosWorkflow],
@@ -76,10 +80,12 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID
 	return wfHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
+// ChaosWorkflowRun is the resolver for the chaosWorkflowRun field.
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunRequest) (string, error) {
 	return wfHandler.ChaosWorkflowRun(request, *data_store.Store)
 }
 
+// SyncWorkflowRun is the resolver for the syncWorkflowRun field.
 func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.SyncWorkflow],
@@ -91,6 +97,7 @@ func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string
 	return wfHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, data_store.Store)
 }
 
+// ListWorkflows is the resolver for the listWorkflows field.
 func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.ListWorkflow],
@@ -102,6 +109,7 @@ func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWor
 	return wfHandler.ListWorkflows(request)
 }
 
+// ListWorkflowRuns is the resolver for the listWorkflowRuns field.
 func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.ListWorkflowRunsRequest) (*model.ListWorkflowRunsResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.ListWorkflowRuns],
@@ -113,27 +121,7 @@ func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.List
 	return wfHandler.ListWorkflowRuns(request)
 }
 
-func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListPredefinedWorkflows],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return myhub.ListPredefinedWorkflows(hubName, projectID)
-}
-
-func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
-	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.GetPredefinedExperimentYaml],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return "", err
-	}
-	return myhub.GetPredefinedExperimentYAMLData(request)
-}
-
+// GetWorkflowEvents is the resolver for the getWorkflowEvents field.
 func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
 	logrus.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)

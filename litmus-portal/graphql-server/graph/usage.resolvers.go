@@ -13,6 +13,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 )
 
+// GetUsageData is the resolver for the getUsageData field.
 func (r *queryResolver) GetUsageData(ctx context.Context, request model.UsageDataRequest) (*model.UsageDataResponse, error) {
 	claims := ctx.Value(authorization.UserClaim).(jwt.MapClaims)
 	if claims["role"].(string) != "admin" {

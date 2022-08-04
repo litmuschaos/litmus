@@ -11,6 +11,7 @@ import (
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 )
 
+// CreateWorkflowTemplate is the resolver for the createWorkflowTemplate field.
 func (r *mutationResolver) CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.CreateWorkflowTemplate],
@@ -22,6 +23,7 @@ func (r *mutationResolver) CreateWorkflowTemplate(ctx context.Context, request *
 	return wfHandler.CreateWorkflowTemplate(ctx, request)
 }
 
+// DeleteWorkflowTemplate is the resolver for the deleteWorkflowTemplate field.
 func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteWorkflowTemplate],
@@ -33,6 +35,7 @@ func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID
 	return wfHandler.DeleteWorkflowTemplate(ctx, projectID, templateID)
 }
 
+// ListWorkflowManifests is the resolver for the listWorkflowManifests field.
 func (r *queryResolver) ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListWorkflowManifests],
@@ -44,6 +47,7 @@ func (r *queryResolver) ListWorkflowManifests(ctx context.Context, projectID str
 	return wfHandler.ListWorkflowManifests(ctx, projectID)
 }
 
+// GetWorkflowManifestByID is the resolver for the getWorkflowManifestByID field.
 func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetWorkflowManifestByID],

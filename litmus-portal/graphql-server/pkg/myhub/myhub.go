@@ -294,6 +294,9 @@ func GetYAMLData(request model.ExperimentRequest) (string, error) {
 // GetPredefinedExperimentYAMLData is responsible for sending the workflow.yaml for a given pre-defined workflow.
 func GetPredefinedExperimentYAMLData(request model.ExperimentRequest) (string, error) {
 	var YAMLPath string
+	if request.FileType == nil {
+		return "", errors.New("provide a valid filetype")
+	}
 	if strings.ToLower(*request.FileType) != "workflow" {
 		return "", errors.New("invalid file type")
 	}
@@ -305,6 +308,39 @@ func GetPredefinedExperimentYAMLData(request model.ExperimentRequest) (string, e
 		return "", err
 	}
 	return YAMLData, nil
+}
+
+// GetExperimentManifestDetails is used to send the ChaosEngine and ChaosExperiment YAMLs
+func GetExperimentManifestDetails(ctx context.Context, request model.ExperimentRequest) (*model.ExperimentDetails, error) {
+
+	engineType := model.FileTypeEngine
+	experimentType := model.FileTypeExperiment
+
+	engineData, err := GetYAMLData(model.ExperimentRequest{
+		ProjectID:      request.ProjectID,
+		ChartName:      request.ChartName,
+		ExperimentName: request.ExperimentName,
+		HubName:        request.HubName,
+		FileType:       (*string)(&engineType),
+	})
+	if err != nil {
+		engineData = ""
+	}
+	experimentData, err := GetYAMLData(model.ExperimentRequest{
+		ProjectID:      request.ProjectID,
+		ChartName:      request.ChartName,
+		ExperimentName: request.ExperimentName,
+		HubName:        request.HubName,
+		FileType:       (*string)(&experimentType),
+	})
+	if err != nil {
+		experimentData = ""
+	}
+	experimentDetails := &model.ExperimentDetails{
+		EngineDetails:     engineData,
+		ExperimentDetails: experimentData,
+	}
+	return experimentDetails, nil
 }
 
 // GetAllHubs ...
@@ -457,10 +493,10 @@ func RecurringHubSync() {
 	}
 }
 
-func ListPredefinedWorkflows(hubname string, projectID string) ([]string, error) {
-	expList, err := handler.GetPredefinedWorkflowFileList(hubname, projectID)
+func ListPredefinedWorkflows(hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
+	workflowsList, err := handler.ListPredefinedWorkflowDetails(hubName, projectID)
 	if err != nil {
 		return nil, err
 	}
-	return expList, nil
+	return workflowsList, nil
 }

@@ -7,16 +7,14 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import AddIcon from '@material-ui/icons/Add';
-import { WorkflowManifest } from '../../../../models/redux/workflow';
 import useActions from '../../../../redux/actions';
 import * as WorkflowActions from '../../../../redux/actions/workflow';
 import { RootState } from '../../../../redux/reducers';
 import useStyles from './styles';
 
 interface EnvVariableProps {
-  engineIndex: number;
+  infra: boolean;
   gotoStep: (page: number) => void;
-  closeStepper: () => void;
 }
 
 interface EnvValues {
@@ -25,17 +23,12 @@ interface EnvValues {
 }
 
 const EnvironmentVariables: React.FC<EnvVariableProps> = ({
+  infra,
   gotoStep,
-  engineIndex,
-  closeStepper,
 }) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const workflow = useActions(WorkflowActions);
-  const manifest: WorkflowManifest = useSelector(
-    (state: RootState) => state.workflowManifest
-  );
-
   /**
    * State variable for managing the additional key-value pair
    */
@@ -79,14 +72,10 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
    */
   const handleMainYAMLChange = () => {
     engineYAML.spec.experiments[0].spec.components.env = env;
-    const mainManifest = YAML.parse(manifest.manifest);
-    mainManifest.spec.templates[engineIndex].inputs.artifacts[0].raw.data =
-      YAML.stringify(engineYAML);
     workflow.setWorkflowManifest({
-      manifest: YAML.stringify(mainManifest),
       engineYAML: YAML.stringify(engineYAML),
     });
-    closeStepper();
+    gotoStep(infra ? 2 : 3);
   };
 
   return (
@@ -195,7 +184,10 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
       </div>
 
       <div data-cy="TuneExperimentControlButtons">
-        <Button onClick={() => gotoStep(2)} className={classes.button}>
+        <Button
+          onClick={() => gotoStep(infra ? 0 : 1)}
+          className={classes.button}
+        >
           {t('workflowStepper.back')}
         </Button>
 
@@ -205,7 +197,7 @@ const EnvironmentVariables: React.FC<EnvVariableProps> = ({
           onClick={() => handleMainYAMLChange()}
           className={classes.button}
         >
-          {t('createWorkflow.tuneWorkflow.env.finish')}
+          {t('workflowStepper.next')}
         </Button>
       </div>
     </div>

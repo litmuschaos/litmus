@@ -373,6 +373,13 @@ type DsDetails struct {
 	End   string `json:"end"`
 }
 
+type ExperimentDetails struct {
+	// Engine Manifest
+	EngineDetails string `json:"engineDetails"`
+	// Experiment Manifest
+	ExperimentDetails string `json:"experimentDetails"`
+}
+
 type ExperimentRequest struct {
 	// ID of the project
 	ProjectID string `json:"projectID"`
@@ -388,7 +395,7 @@ type ExperimentRequest struct {
 
 type Experiments struct {
 	Name string `json:"name"`
-	Csv  string `json:"CSV"`
+	CSV  string `json:"CSV"`
 	Desc string `json:"desc"`
 }
 
@@ -766,6 +773,15 @@ type PodLogResponse struct {
 type PortalDashboardDataResponse struct {
 	Name          string `json:"name"`
 	DashboardData string `json:"dashboardData"`
+}
+
+type PredefinedWorkflowList struct {
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Workflow CSV
+	WorkflowCSV string `json:"workflowCSV"`
+	// Workflow Manifest
+	WorkflowManifest string `json:"workflowManifest"`
 }
 
 // Defines all the stats under a project
@@ -1308,19 +1324,19 @@ const (
 	FileTypeExperiment FileType = "EXPERIMENT"
 	FileTypeEngine     FileType = "ENGINE"
 	FileTypeWorkflow   FileType = "WORKFLOW"
-	FileTypeCsv        FileType = "CSV"
+	FileTypeCSV        FileType = "CSV"
 )
 
 var AllFileType = []FileType{
 	FileTypeExperiment,
 	FileTypeEngine,
 	FileTypeWorkflow,
-	FileTypeCsv,
+	FileTypeCSV,
 }
 
 func (e FileType) IsValid() bool {
 	switch e {
-	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCSV:
 		return true
 	}
 	return false

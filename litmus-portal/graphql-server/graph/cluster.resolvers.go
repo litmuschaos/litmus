@@ -23,6 +23,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// RegisterCluster is the resolver for the registerCluster field.
 func (r *mutationResolver) RegisterCluster(ctx context.Context, request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.UserClusterReg],
@@ -34,14 +35,17 @@ func (r *mutationResolver) RegisterCluster(ctx context.Context, request model.Re
 	return clusterHandler.RegisterCluster(request)
 }
 
+// ConfirmClusterRegistration is the resolver for the confirmClusterRegistration field.
 func (r *mutationResolver) ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error) {
 	return clusterHandler.ConfirmClusterRegistration(request, *data_store.Store)
 }
 
+// NewClusterEvent is the resolver for the newClusterEvent field.
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error) {
 	return clusterHandler.NewClusterEvent(request, *data_store.Store)
 }
 
+// DeleteClusters is the resolver for the deleteClusters field.
 func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string, clusterIDs []*string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteClusters],
@@ -53,14 +57,17 @@ func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string,
 	return clusterHandler.DeleteClusters(ctx, projectID, clusterIDs, *data_store.Store)
 }
 
+// PodLog is the resolver for the podLog field.
 func (r *mutationResolver) PodLog(ctx context.Context, request model.PodLog) (string, error) {
 	return wfHandler.PodLog(request, *data_store.Store)
 }
 
+// KubeObj is the resolver for the kubeObj field.
 func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObjectData) (string, error) {
 	return wfHandler.KubeObj(request, *data_store.Store)
 }
 
+// ListClusters is the resolver for the listClusters field.
 func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListClusters],
@@ -72,6 +79,7 @@ func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clus
 	return clusterHandler.ListClusters(projectID, clusterType)
 }
 
+// GetAgentDetails is the resolver for the getAgentDetails field.
 func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetAgentDetails],
@@ -83,6 +91,7 @@ func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, p
 	return clusterHandler.GetAgentDetails(ctx, clusterID, projectID)
 }
 
+// GetManifest is the resolver for the getManifest field.
 func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetManifest],
@@ -99,6 +108,7 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 	return string(response), nil
 }
 
+// GetClusterEvents is the resolver for the getClusterEvents field.
 func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID string) (<-chan *model.ClusterEventResponse, error) {
 	logrus.Print("NEW EVENT ", projectID)
 	clusterEvent := make(chan *model.ClusterEventResponse, 1)
@@ -114,6 +124,7 @@ func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID s
 	return clusterEvent, nil
 }
 
+// ClusterConnect is the resolver for the clusterConnect field.
 func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterActionResponse, error) {
 	logrus.Print("NEW CLUSTER CONNECT: ", clusterInfo.ClusterID)
 	clusterAction := make(chan *model.ClusterActionResponse, 1)
@@ -166,6 +177,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	return clusterAction, nil
 }
 
+// GetPodLog is the resolver for the getPodLog field.
 func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
 	logrus.Print("NEW LOG REQUEST: ", request.ClusterID, request.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
@@ -182,6 +194,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodL
 	return workflowLog, nil
 }
 
+// GetKubeObject is the resolver for the getKubeObject field.
 func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
 	logrus.Print("NEW KUBEOBJECT REQUEST", request.ClusterID)
 	kubeObjData := make(chan *model.KubeObjectResponse)

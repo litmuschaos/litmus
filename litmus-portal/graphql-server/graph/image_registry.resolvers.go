@@ -12,6 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// CreateImageRegistry is the resolver for the createImageRegistry field.
 func (r *mutationResolver) CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.CreateImageRegistry],
@@ -27,6 +28,7 @@ func (r *mutationResolver) CreateImageRegistry(ctx context.Context, projectID st
 	return ciResponse, err
 }
 
+// UpdateImageRegistry is the resolver for the updateImageRegistry field.
 func (r *mutationResolver) UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.UpdateImageRegistry],
@@ -43,6 +45,7 @@ func (r *mutationResolver) UpdateImageRegistry(ctx context.Context, imageRegistr
 	return uiRegistry, err
 }
 
+// DeleteImageRegistry is the resolver for the deleteImageRegistry field.
 func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteImageRegistry],
@@ -59,6 +62,7 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 	return diRegistry, err
 }
 
+// ListImageRegistry is the resolver for the listImageRegistry field.
 func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListImageRegistry],
@@ -75,6 +79,7 @@ func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string)
 	return imageRegistries, err
 }
 
+// GetImageRegistry is the resolver for the getImageRegistry field.
 func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetImageRegistry],
