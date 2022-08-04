@@ -178,7 +178,7 @@ const MyHub: React.FC = () => {
               backgroundColor: theme.palette.highlight,
             },
           }}
-          variant="fullWidth"
+          variant="standard"
         >
           <StyledTab
             label={`${t('myhub.myhubChart.preDefined')}`}
