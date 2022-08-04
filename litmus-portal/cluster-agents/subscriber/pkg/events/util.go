@@ -26,7 +26,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd := &types.ChaosData{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
-	crd, err := chaosClient.ChaosEngines(cd.Namespace).Get(cd.EngineName, v1.GetOptions{})
+	crd, err := chaosClient.ChaosEngines(cd.Namespace).Get(context.Background(), cd.EngineName, v1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		cd.ExperimentStatus = string(crd.Status.EngineStatus)
 	}
 	if len(crd.Status.Experiments) == 1 {
-		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
+		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(context.Background(), crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
 		if err != nil {
 			return cd, err
 		}
