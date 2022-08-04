@@ -42,7 +42,7 @@ const AdvanceEngineTuning: React.FC<AdvanceTuningProps> = ({
     engineManifest?.spec?.annotationCheck === 'true'
   );
   const [enableNodeSelector, setEnableNodeSelector] = useState<boolean>(
-    !!engineManifest.spec.experiments[0].spec.components.nodeSelector
+    !!engineManifest.spec?.experiments[0]?.spec?.components?.nodeSelector
   );
   const [enableToleration, setEnableToleration] = useState<boolean>(
     !!engineManifest?.spec?.experiments[0]?.spec?.components?.tolerations
@@ -51,7 +51,7 @@ const AdvanceEngineTuning: React.FC<AdvanceTuningProps> = ({
   const expSpec = engineManifest?.spec?.experiments[0]?.spec;
 
   const [nodeSelectorKey, setNodeSelectorKey] = useState<string>(
-    engineManifest.spec.experiments[0].spec.components.nodeSelector &&
+    engineManifest.spec?.experiments[0]?.spec?.components?.nodeSelector &&
       Object.keys(
         engineManifest.spec.experiments[0].spec.components.nodeSelector
       )[0]
@@ -61,7 +61,7 @@ const AdvanceEngineTuning: React.FC<AdvanceTuningProps> = ({
       : ''
   );
   const [nodeSelectorValue, setNodeSelectorValue] = useState<string>(
-    engineManifest.spec.experiments[0].spec.components.nodeSelector &&
+    engineManifest.spec?.experiments[0]?.spec?.components?.nodeSelector &&
       Object.keys(
         engineManifest.spec.experiments[0].spec.components.nodeSelector
       )[0]
