@@ -395,7 +395,7 @@ type ExperimentRequest struct {
 
 type Experiments struct {
 	Name string `json:"name"`
-	CSV  string `json:"CSV"`
+	Csv  string `json:"CSV"`
 	Desc string `json:"desc"`
 }
 
@@ -779,7 +779,7 @@ type PredefinedWorkflowList struct {
 	// Name of the workflow
 	WorkflowName string `json:"workflowName"`
 	// Workflow CSV
-	WorkflowCSV string `json:"workflowCSV"`
+	WorkflowCsv string `json:"workflowCSV"`
 	// Workflow Manifest
 	WorkflowManifest string `json:"workflowManifest"`
 }
@@ -1324,19 +1324,19 @@ const (
 	FileTypeExperiment FileType = "EXPERIMENT"
 	FileTypeEngine     FileType = "ENGINE"
 	FileTypeWorkflow   FileType = "WORKFLOW"
-	FileTypeCSV        FileType = "CSV"
+	FileTypeCsv        FileType = "CSV"
 )
 
 var AllFileType = []FileType{
 	FileTypeExperiment,
 	FileTypeEngine,
 	FileTypeWorkflow,
-	FileTypeCSV,
+	FileTypeCsv,
 }
 
 func (e FileType) IsValid() bool {
 	switch e {
-	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCSV:
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
 		return true
 	}
 	return false
