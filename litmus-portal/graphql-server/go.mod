@@ -4,34 +4,33 @@ go 1.16
 
 require (
 	github.com/99designs/gqlgen v0.11.3
-	github.com/argoproj/argo-workflows/v3 v3.2.9
+	github.com/argoproj/argo-workflows/v3 v3.3.8
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
-	github.com/go-git/go-git/v5 v5.3.0
+	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
-	github.com/google/uuid v1.1.2
-	github.com/gorilla/mux v1.7.4
-	github.com/gorilla/websocket v1.4.2
+	github.com/google/uuid v1.3.0
+	github.com/gorilla/mux v1.8.0
+	github.com/gorilla/websocket v1.5.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/litmuschaos/chaos-operator v0.0.0-20211109081056-46bcd99c3daf
-	github.com/litmuschaos/chaos-scheduler v0.0.0-20210607090343-9952190ad032
+	github.com/litmuschaos/chaos-operator v0.0.0-20220801091134-90e8141ab787
+	github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.1
 	github.com/prometheus/common v0.32.1
 	github.com/rs/cors v1.8.2
 	github.com/sirupsen/logrus v1.8.1
-	github.com/tidwall/gjson v1.12.1
-	github.com/tidwall/sjson v1.1.1
+	github.com/tidwall/gjson v1.14.0
+	github.com/tidwall/sjson v1.2.4
 	github.com/vektah/gqlparser/v2 v2.1.0
-	go.mongodb.org/mongo-driver v1.5.3
+	go.mongodb.org/mongo-driver v1.8.2
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
-	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/apimachinery v0.22.2
+	k8s.io/apimachinery v0.23.3
 	k8s.io/client-go v12.0.0+incompatible
 )
 

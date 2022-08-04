@@ -1,6 +1,6 @@
 package chaos_workflow
 
-import chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+import chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 
 type WorkflowRunMetrics struct {
 	ResiliencyScore    float64 `json:"resiliency_score"`

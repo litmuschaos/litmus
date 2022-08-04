@@ -3,15 +3,15 @@ module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber
 go 1.16
 
 require (
-	github.com/argoproj/argo-workflows/v3 v3.2.9
+	github.com/argoproj/argo-workflows/v3 v3.3.8
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
-	github.com/gorilla/websocket v1.4.2
+	github.com/gorilla/websocket v1.5.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/litmuschaos/chaos-operator v0.0.0-20211109081056-46bcd99c3daf
-	github.com/sirupsen/logrus v1.7.0
+	github.com/litmuschaos/chaos-operator v0.0.0-20220801091134-90e8141ab787
+	github.com/sirupsen/logrus v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/api v0.22.2
-	k8s.io/apimachinery v0.22.1
+	k8s.io/api v0.23.3
+	k8s.io/apimachinery v0.23.3
 	k8s.io/client-go v12.0.0+incompatible
 )
 
