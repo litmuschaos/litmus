@@ -86,7 +86,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
             {hubName.length > 0 && (
               <>
                 <InputField
-                  label="Hub"
+                  label="ChaosHub"
                   value={hubName}
                   InputProps={{
                     readOnly: true,

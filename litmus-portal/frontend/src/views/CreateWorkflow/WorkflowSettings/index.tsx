@@ -168,7 +168,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
         workflowAction.setWorkflowManifest({ manifest: '' });
       }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
-        setName('custom-chaos-scenario');
+        setName('custom');
         workflowAction.setWorkflowManifest({ manifest: manifest ?? '' });
         setDescription('Custom Chaos Scenario');
         setIcon('./avatars/litmus.svg');
