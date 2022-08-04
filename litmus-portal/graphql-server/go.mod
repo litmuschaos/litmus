@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/99designs/gqlgen v0.11.3
-	github.com/argoproj/argo-workflows/v3 v3.2.11
+	github.com/argoproj/argo-workflows/v3 v3.3.8
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -50,7 +50,7 @@ replace (
 	k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.21.2
 	k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.21.2
 	k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.21.2
-	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20210305001622-591a79e4bda7
+	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20220627174259-011e075b9cb8
 	k8s.io/kube-proxy => k8s.io/kube-proxy v0.21.2
 	k8s.io/kube-scheduler => k8s.io/kube-scheduler v0.21.2
 	k8s.io/kubectl => k8s.io/kubectl v0.21.2
