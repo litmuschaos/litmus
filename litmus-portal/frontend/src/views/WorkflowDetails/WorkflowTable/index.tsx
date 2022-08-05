@@ -8,14 +8,14 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
-import useStyles, { StyledTableCell } from './styles';
+import { useTranslation } from 'react-i18next';
+import { ExecutionData, Node } from '../../../models/graphql/workflowData';
 import useActions from '../../../redux/actions';
 import * as NodeSelectionActions from '../../../redux/actions/nodeSelection';
-import TableData from './TableData';
-import { ExecutionData, Node } from '../../../models/graphql/workflowData';
 import { stepEmbeddedYAMLExtractor } from '../../../utils/yamlUtils';
+import useStyles, { StyledTableCell } from './styles';
+import TableData from './TableData';
 
 interface NodeTableProps {
   manifest: string;
@@ -92,17 +92,17 @@ const NodeTable: React.FC<NodeTableProps> = ({
                 </Typography>
               </StyledTableCell>
 
-              {/* Duration of Node execution */}
-              <StyledTableCell className={classes.tableCellWidth}>
-                <Typography>
-                  {t('workflowDetailsView.tableView.tableHeader.duration')}
-                </Typography>
-              </StyledTableCell>
-
               {/* Start Time */}
               <StyledTableCell className={classes.tableCellWidth}>
                 <Typography>
                   {t('workflowDetailsView.tableView.tableHeader.startTime')}
+                </Typography>
+              </StyledTableCell>
+
+              {/* End Time of Node execution */}
+              <StyledTableCell className={classes.tableCellWidth}>
+                <Typography>
+                  {t('workflowDetailsView.tableView.tableHeader.endTime')}
                 </Typography>
               </StyledTableCell>
 

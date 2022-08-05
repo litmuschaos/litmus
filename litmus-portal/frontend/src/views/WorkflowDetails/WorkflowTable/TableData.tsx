@@ -46,22 +46,12 @@ const TableData: React.FC<TableDataProps> = ({
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
         <Typography className={classes.primaryText}>
-          {data.finishedAt !== ''
-            ? (
-                (parseInt(data.finishedAt, 10) - parseInt(data.startedAt, 10)) /
-                60
-              ).toFixed(1)
-            : (
-                (new Date().getTime() / 1000 - parseInt(data.startedAt, 10)) /
-                60
-              ).toFixed(1)}
-          &nbsp;
-          {t('workflowDetailsView.tableView.minutes')}
+          {timeDifference(data.startedAt)}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>
         <Typography className={classes.primaryText}>
-          {timeDifference(data.startedAt)}
+          {data.finishedAt !== '' ? timeDifference(data.finishedAt) : '- -'}
         </Typography>
       </StyledTableCell>
       <StyledTableCell className={classes.tableCellWidth}>

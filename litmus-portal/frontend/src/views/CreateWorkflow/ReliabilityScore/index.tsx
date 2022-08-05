@@ -68,9 +68,6 @@ const ReliablityScore = forwardRef((_, ref) => {
               {t('createWorkflow.reliabilityScore.info')} {weights.length}{' '}
               {t('createWorkflow.reliabilityScore.tests')} {`"${workflowName}"`}{' '}
               {t('createWorkflow.reliabilityScore.infoNext')}{' '}
-              <strong>
-                {t('createWorkflow.reliabilityScore.infoNextStrong')}
-              </strong>
             </Typography>
           </div>
           <hr className={classes.horizontalLine} />
