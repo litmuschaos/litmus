@@ -17,8 +17,13 @@ import {
   GET_HUB_STATUS,
   GET_PREDEFINED_WORKFLOW_LIST,
 } from '../../../graphql';
-import { PreDefinedScenarios } from '../../../models/graphql/chaoshub';
-import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
+import {
+  Chart,
+  Charts,
+  HubStatus,
+  HubType,
+  PreDefinedScenarios,
+} from '../../../models/graphql/chaoshub';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { RootState } from '../../../redux/reducers';
@@ -161,10 +166,15 @@ const MyHub: React.FC = () => {
           {t('myhub.myhubChart.repoLink')}
           <strong>{UserHub?.repoURL}</strong>
         </Typography>
-        <Typography variant="h5">
-          {t('myhub.myhubChart.repoBranch')}
-          <strong>{UserHub?.repoBranch}</strong>
-        </Typography>
+        {UserHub?.hubType.toLowerCase() === HubType.remote.toLowerCase() ? (
+          <></>
+        ) : (
+          <Typography variant="h5">
+            {t('myhub.myhubChart.repoBranch')}
+            <strong>{UserHub?.repoBranch}</strong>
+          </Typography>
+        )}
+
         <Typography className={classes.lastSyncText}>
           {t('myhub.myhubChart.lastSynced')}{' '}
           {formatDate(UserHub ? UserHub.lastSyncedAt : '')}

@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 400,
     marginBottom: theme.spacing(2.5),
     marginTop: theme.spacing(2.5),
-    width: '31.25rem',
+    maxWidth: '31.25rem',
   },
   disconnectConfirm: {
     fontSize: '1.25rem',
@@ -122,15 +122,15 @@ const useStyles = makeStyles((theme) => ({
   modalDiv: {
     display: 'flex',
     flexDirection: 'column',
-    height: '25rem',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: theme.spacing(5),
   },
   disconnectBtns: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '16rem',
+    width: '20rem',
   },
   cardOption: {
     color: theme.palette.text.primary,

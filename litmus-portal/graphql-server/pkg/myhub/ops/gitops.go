@@ -18,7 +18,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-// MyHubConfig ...
+// MyHubConfig is the config used for all git operations
 type MyHubConfig struct {
 	ProjectID     string
 	RepositoryURL string
@@ -64,7 +64,7 @@ func GitConfigConstruct(repoData model.CloningInput) MyHubConfig {
 	return gitConfig
 }
 
-// GitClone Trigger is reponsible for setting off the go routine for git-op
+// GitClone Trigger is responsible for setting off the go routine for git-op
 func GitClone(repoData model.CloningInput) error {
 	gitConfig := GitConfigConstruct(repoData)
 	if repoData.IsPrivate {

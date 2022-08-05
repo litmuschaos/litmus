@@ -80,6 +80,7 @@ export const GET_HUB_STATUS = gql`
       authType
       isPrivate
       token
+      hubType
       userName
       password
       sshPrivateKey

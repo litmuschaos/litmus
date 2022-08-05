@@ -7,13 +7,20 @@ export interface SSHKeys {
   generateSSHKey: SSHKey;
 }
 
+export enum HubType {
+  git = 'GIT',
+  remote = 'REMOTE',
+  edit = 'EDIT',
+  none = 'NONE',
+}
+
 export interface MyHubRequest {
   id?: string;
   hubName: string;
   repoURL: string;
   repoBranch: string;
   isPrivate: Boolean;
-  authType: MyHubType;
+  authType: AuthType;
   token?: string;
   userName?: string;
   password?: string;
@@ -32,11 +39,31 @@ export interface MyHubData {
   updatedAt: string;
 }
 
+export interface EditHub {
+  isEditing: boolean;
+  hubType: string;
+}
+
 export interface CreateMyHub {
   request: MyHubRequest;
 }
 
-export enum MyHubType {
+export interface CreateRemoteMyHub {
+  request: {
+    hubName: string;
+    repoURL: string;
+    projectID: string;
+  };
+}
+
+export interface GitHub {
+  HubName: string;
+  GitURL: string;
+  GitBranch: string;
+  RemoteURL?: string;
+}
+
+export enum AuthType {
   BASIC = 'BASIC',
   TOKEN = 'TOKEN',
   SSH = 'SSH',
@@ -67,6 +94,11 @@ export interface Spec {
   chaosExpCRDLink: string;
   platforms: string[];
   chaosType: string;
+}
+
+export interface ExperimentDetails {
+  name: string;
+  description: string;
 }
 
 export interface Maintainer {
@@ -124,4 +156,31 @@ export interface PreDefinedScenarios {
   workflowCSV: string;
   workflowManifest: string;
   workflowName: string;
+}
+
+export interface PreDefinedScenariosList {
+  listPredefinedWorkflows: PreDefinedScenarios[];
+}
+
+export interface HubDetails {
+  id: string;
+  hubName: string;
+  repoURL: string;
+  repoBranch: string;
+  totalExp: string;
+  totalScenarios: string;
+  isAvailable: boolean;
+  authType?: AuthType;
+  hubType: HubType;
+  isPrivate: boolean;
+  token: string;
+  userName: string;
+  password: string;
+  sshPrivateKey: string;
+  sshPublicKey: string;
+  lastSyncedAt: string;
+}
+
+export interface HubStatus {
+  listHubStatus: HubDetails[];
 }
