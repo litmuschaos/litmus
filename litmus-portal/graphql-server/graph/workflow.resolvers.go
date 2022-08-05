@@ -11,7 +11,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"github.com/sirupsen/logrus"
 )
 
@@ -111,27 +110,6 @@ func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.List
 	}
 
 	return wfHandler.ListWorkflowRuns(request)
-}
-
-func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error) {
-	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListPredefinedWorkflows],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return myhub.ListPredefinedWorkflows(hubName, projectID)
-}
-
-func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
-	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.GetPredefinedExperimentYaml],
-		model.InvitationAccepted.String())
-	if err != nil {
-		return "", err
-	}
-	return myhub.GetPredefinedExperimentYAMLData(request)
 }
 
 func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {

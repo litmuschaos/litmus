@@ -17,6 +17,7 @@ import {
   GET_HUB_STATUS,
   GET_PREDEFINED_WORKFLOW_LIST,
 } from '../../../graphql';
+import { PreDefinedScenarios } from '../../../models/graphql/chaoshub';
 import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
@@ -127,8 +128,9 @@ const MyHub: React.FC = () => {
 
   const filteredWorkflow =
     predefinedData?.listPredefinedWorkflows &&
-    predefinedData?.listPredefinedWorkflows.filter((data: string) =>
-      data.toLowerCase().includes(searchPredefined.trim())
+    predefinedData?.listPredefinedWorkflows.filter(
+      (data: PreDefinedScenarios) =>
+        data.workflowName.toLowerCase().includes(searchPredefined.trim())
     );
 
   const filteredExperiment =
@@ -198,13 +200,13 @@ const MyHub: React.FC = () => {
           />
           <div className={classes.chartsGroup}>
             {filteredWorkflow?.length > 0 ? (
-              filteredWorkflow.map((expName: string) => {
+              filteredWorkflow.map((workflow: PreDefinedScenarios) => {
                 return (
                   <ChartCard
-                    key={expName}
+                    key={workflow.workflowName}
                     expName={{
                       ChaosName: 'predefined',
-                      ExperimentName: expName,
+                      ExperimentName: workflow.workflowName,
                     }}
                     UserHub={UserHub}
                     setSearch={setSearchPredefined}

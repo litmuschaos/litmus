@@ -9,6 +9,7 @@ import {
 } from 'litmus-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../../components/Loader';
 import useStyles from './styles';
 
 interface ChartName {
@@ -29,6 +30,7 @@ interface AddExperimentModalProps {
   ) => void;
   allExperiments: ChartName[];
   handleDone: () => void;
+  doneLoader: boolean;
 }
 
 const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
@@ -39,6 +41,7 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
   onSelectChange,
   allExperiments,
   handleDone,
+  doneLoader,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -129,8 +132,13 @@ const AddExperimentModal: React.FC<AddExperimentModalProps> = ({
           }}
           data-cy="AddExperimentDoneButton"
           className={classes.doneBtn}
+          disabled={doneLoader}
         >
-          {t('createWorkflow.tuneWorkflow.done')}
+          {doneLoader ? (
+            <Loader size={20} />
+          ) : (
+            t('createWorkflow.tuneWorkflow.done')
+          )}
         </ButtonFilled>
       </div>
     </Modal>

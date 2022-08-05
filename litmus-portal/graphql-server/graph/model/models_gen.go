@@ -373,6 +373,13 @@ type DsDetails struct {
 	End   string `json:"end"`
 }
 
+type ExperimentDetails struct {
+	// Engine Manifest
+	EngineDetails string `json:"engineDetails"`
+	// Experiment Manifest
+	ExperimentDetails string `json:"experimentDetails"`
+}
+
 type ExperimentRequest struct {
 	// ID of the project
 	ProjectID string `json:"projectID"`
@@ -766,6 +773,15 @@ type PodLogResponse struct {
 type PortalDashboardDataResponse struct {
 	Name          string `json:"name"`
 	DashboardData string `json:"dashboardData"`
+}
+
+type PredefinedWorkflowList struct {
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Workflow CSV
+	WorkflowCsv string `json:"workflowCSV"`
+	// Workflow Manifest
+	WorkflowManifest string `json:"workflowManifest"`
 }
 
 // Defines all the stats under a project

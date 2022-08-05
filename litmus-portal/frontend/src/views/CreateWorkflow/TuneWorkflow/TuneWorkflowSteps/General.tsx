@@ -91,6 +91,7 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
                   InputProps={{
                     readOnly: true,
                   }}
+                  disabled
                   data-cy="HubName"
                 />
                 <br />

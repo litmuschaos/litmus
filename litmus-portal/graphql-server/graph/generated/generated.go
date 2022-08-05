@@ -208,6 +208,11 @@ type ComplexityRoot struct {
 		DashboardMetricsResponse func(childComplexity int) int
 	}
 
+	ExperimentDetails struct {
+		EngineDetails     func(childComplexity int) int
+		ExperimentDetails func(childComplexity int) int
+	}
+
 	Experiments struct {
 		Csv  func(childComplexity int) int
 		Desc func(childComplexity int) int
@@ -416,6 +421,12 @@ type ComplexityRoot struct {
 		Name          func(childComplexity int) int
 	}
 
+	PredefinedWorkflowList struct {
+		WorkflowCsv      func(childComplexity int) int
+		WorkflowManifest func(childComplexity int) int
+		WorkflowName     func(childComplexity int) int
+	}
+
 	ProjectData struct {
 		Agents    func(childComplexity int) int
 		ProjectID func(childComplexity int) int
@@ -452,6 +463,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		GetAgentDetails             func(childComplexity int, clusterID string, projectID string) int
+		GetExperimentDetails        func(childComplexity int, request model.ExperimentRequest) int
 		GetGitOpsDetails            func(childComplexity int, projectID string) int
 		GetHubExperiment            func(childComplexity int, request model.ExperimentRequest) int
 		GetImageRegistry            func(childComplexity int, imageRegistryID string, projectID string) int
@@ -676,8 +688,6 @@ type MutationResolver interface {
 type QueryResolver interface {
 	ListWorkflows(ctx context.Context, request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error)
 	ListWorkflowRuns(ctx context.Context, request model.ListWorkflowRunsRequest) (*model.ListWorkflowRunsResponse, error)
-	ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]string, error)
-	GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error)
 	ListHeatmapData(ctx context.Context, projectID string, workflowID string, year int) ([]*model.HeatmapDataResponse, error)
 	ListWorkflowStats(ctx context.Context, projectID string, filter model.TimeFrequency, showWorkflowRuns bool) ([]*model.WorkflowStatsResponse, error)
 	GetWorkflowRunStats(ctx context.Context, workflowRunStatsRequest model.WorkflowRunStatsRequest) (*model.WorkflowRunStatsResponse, error)
@@ -697,6 +707,9 @@ type QueryResolver interface {
 	GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error)
 	ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error)
 	GetYAMLData(ctx context.Context, request model.ExperimentRequest) (string, error)
+	GetExperimentDetails(ctx context.Context, request model.ExperimentRequest) (*model.ExperimentDetails, error)
+	ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]*model.PredefinedWorkflowList, error)
+	GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error)
 	GetUsageData(ctx context.Context, request model.UsageDataRequest) (*model.UsageDataResponse, error)
 	ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error)
 	GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error)
@@ -1515,6 +1528,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DashboardPromResponse.DashboardMetricsResponse(childComplexity), true
+
+	case "ExperimentDetails.engineDetails":
+		if e.complexity.ExperimentDetails.EngineDetails == nil {
+			break
+		}
+
+		return e.complexity.ExperimentDetails.EngineDetails(childComplexity), true
+
+	case "ExperimentDetails.experimentDetails":
+		if e.complexity.ExperimentDetails.ExperimentDetails == nil {
+			break
+		}
+
+		return e.complexity.ExperimentDetails.ExperimentDetails(childComplexity), true
 
 	case "Experiments.CSV":
 		if e.complexity.Experiments.Csv == nil {
@@ -2617,6 +2644,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PortalDashboardDataResponse.Name(childComplexity), true
 
+	case "PredefinedWorkflowList.workflowCSV":
+		if e.complexity.PredefinedWorkflowList.WorkflowCsv == nil {
+			break
+		}
+
+		return e.complexity.PredefinedWorkflowList.WorkflowCsv(childComplexity), true
+
+	case "PredefinedWorkflowList.workflowManifest":
+		if e.complexity.PredefinedWorkflowList.WorkflowManifest == nil {
+			break
+		}
+
+		return e.complexity.PredefinedWorkflowList.WorkflowManifest(childComplexity), true
+
+	case "PredefinedWorkflowList.workflowName":
+		if e.complexity.PredefinedWorkflowList.WorkflowName == nil {
+			break
+		}
+
+		return e.complexity.PredefinedWorkflowList.WorkflowName(childComplexity), true
+
 	case "ProjectData.agents":
 		if e.complexity.ProjectData.Agents == nil {
 			break
@@ -2740,6 +2788,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetAgentDetails(childComplexity, args["clusterID"].(string), args["projectID"].(string)), true
+
+	case "Query.getExperimentDetails":
+		if e.complexity.Query.GetExperimentDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getExperimentDetails_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetExperimentDetails(childComplexity, args["request"].(model.ExperimentRequest)), true
 
 	case "Query.getGitOpsDetails":
 		if e.complexity.Query.GetGitOpsDetails == nil {
@@ -5389,6 +5449,32 @@ input UpdateChaosHubRequest {
   projectID: String!
 }
 
+type ExperimentDetails{
+  """
+  Engine Manifest
+  """
+  engineDetails: String!
+
+  """
+  Experiment Manifest
+  """
+  experimentDetails: String!
+}
+
+type PredefinedWorkflowList {
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Workflow CSV
+  """
+  workflowCSV: String!
+  """
+  Workflow Manifest
+  """
+  workflowManifest: String!
+}
 
 extend type Query {
   # CHAOS-HUB OPERATIONS
@@ -5411,6 +5497,21 @@ extend type Query {
   Get the YAML manifest of ChaosEngine/ChaosExperiment
   """
   getYAMLData(request: ExperimentRequest!): String! @authorized
+
+  """
+  Get Engine and Experiment YAML
+  """
+  getExperimentDetails(request: ExperimentRequest!): ExperimentDetails! @authorized
+
+  """
+  List the PredefinedWorkflows present in the hub
+  """
+  listPredefinedWorkflows(hubName: String!, projectID: String!): [PredefinedWorkflowList!]! @authorized
+
+  """
+  Get the predefined workflow YAML
+  """
+  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
 }
 
 extend type Mutation {
@@ -6188,17 +6289,6 @@ type Query {
   listWorkflowRuns(
     request: ListWorkflowRunsRequest!
   ): ListWorkflowRunsResponse! @authorized
-
-  """
-  Returns the list of predefined workflows in a project based on various filter parameters
-  """
-  listPredefinedWorkflows(hubName: String!, projectID: String!): [String!]!
-  @authorized
-
-  """
-  Returns the list of predefined experiments in a project
-  """
-  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
 }
 
 type Mutation {
@@ -7036,6 +7126,20 @@ func (ec *executionContext) field_Query_getAgentDetails_args(ctx context.Context
 		}
 	}
 	args["projectID"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getExperimentDetails_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ExperimentRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNExperimentRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
 	return args, nil
 }
 
@@ -11362,6 +11466,74 @@ func (ec *executionContext) _DashboardPromResponse_annotationsResponse(ctx conte
 	res := resTmp.([]*model.AnnotationsPromResponse)
 	fc.Result = res
 	return ec.marshalOAnnotationsPromResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐAnnotationsPromResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExperimentDetails_engineDetails(ctx context.Context, field graphql.CollectedField, obj *model.ExperimentDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExperimentDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EngineDetails, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExperimentDetails_experimentDetails(ctx context.Context, field graphql.CollectedField, obj *model.ExperimentDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExperimentDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentDetails, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Experiments_name(ctx context.Context, field graphql.CollectedField, obj *model.Experiments) (ret graphql.Marshaler) {
@@ -16566,6 +16738,108 @@ func (ec *executionContext) _PortalDashboardDataResponse_dashboardData(ctx conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PredefinedWorkflowList_workflowName(ctx context.Context, field graphql.CollectedField, obj *model.PredefinedWorkflowList) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PredefinedWorkflowList",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PredefinedWorkflowList_workflowCSV(ctx context.Context, field graphql.CollectedField, obj *model.PredefinedWorkflowList) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PredefinedWorkflowList",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowCsv, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PredefinedWorkflowList_workflowManifest(ctx context.Context, field graphql.CollectedField, obj *model.PredefinedWorkflowList) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PredefinedWorkflowList",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkflowManifest, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ProjectData_workflows(ctx context.Context, field graphql.CollectedField, obj *model.ProjectData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17200,128 +17474,6 @@ func (ec *executionContext) _Query_listWorkflowRuns(ctx context.Context, field g
 	res := resTmp.(*model.ListWorkflowRunsResponse)
 	fc.Result = res
 	return ec.marshalNListWorkflowRunsResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐListWorkflowRunsResponse(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_listPredefinedWorkflows(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_listPredefinedWorkflows_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListPredefinedWorkflows(rctx, args["hubName"].(string), args["projectID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getPredefinedExperimentYAML(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getPredefinedExperimentYAML_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["request"].(model.ExperimentRequest))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_listHeatmapData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18442,6 +18594,189 @@ func (ec *executionContext) _Query_getYAMLData(ctx context.Context, field graphq
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Query().GetYAMLData(rctx, args["request"].(model.ExperimentRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getExperimentDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getExperimentDetails_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetExperimentDetails(rctx, args["request"].(model.ExperimentRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ExperimentDetails); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ExperimentDetails`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ExperimentDetails)
+	fc.Result = res
+	return ec.marshalNExperimentDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listPredefinedWorkflows(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listPredefinedWorkflows_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ListPredefinedWorkflows(rctx, args["hubName"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.PredefinedWorkflowList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.PredefinedWorkflowList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PredefinedWorkflowList)
+	fc.Result = res
+	return ec.marshalNPredefinedWorkflowList2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPredefinedWorkflowListᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getPredefinedExperimentYAML(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPredefinedExperimentYAML_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPredefinedExperimentYaml(rctx, args["request"].(model.ExperimentRequest))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -26395,6 +26730,38 @@ func (ec *executionContext) _DashboardPromResponse(ctx context.Context, sel ast.
 	return out
 }
 
+var experimentDetailsImplementors = []string{"ExperimentDetails"}
+
+func (ec *executionContext) _ExperimentDetails(ctx context.Context, sel ast.SelectionSet, obj *model.ExperimentDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, experimentDetailsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExperimentDetails")
+		case "engineDetails":
+			out.Values[i] = ec._ExperimentDetails_engineDetails(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experimentDetails":
+			out.Values[i] = ec._ExperimentDetails_experimentDetails(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var experimentsImplementors = []string{"Experiments"}
 
 func (ec *executionContext) _Experiments(ctx context.Context, sel ast.SelectionSet, obj *model.Experiments) graphql.Marshaler {
@@ -27476,6 +27843,43 @@ func (ec *executionContext) _PortalDashboardDataResponse(ctx context.Context, se
 	return out
 }
 
+var predefinedWorkflowListImplementors = []string{"PredefinedWorkflowList"}
+
+func (ec *executionContext) _PredefinedWorkflowList(ctx context.Context, sel ast.SelectionSet, obj *model.PredefinedWorkflowList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, predefinedWorkflowListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PredefinedWorkflowList")
+		case "workflowName":
+			out.Values[i] = ec._PredefinedWorkflowList_workflowName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workflowCSV":
+			out.Values[i] = ec._PredefinedWorkflowList_workflowCSV(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "workflowManifest":
+			out.Values[i] = ec._PredefinedWorkflowList_workflowManifest(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var projectDataImplementors = []string{"ProjectData"}
 
 func (ec *executionContext) _ProjectData(ctx context.Context, sel ast.SelectionSet, obj *model.ProjectData) graphql.Marshaler {
@@ -27696,34 +28100,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_listWorkflowRuns(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "listPredefinedWorkflows":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_listPredefinedWorkflows(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "getPredefinedExperimentYAML":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getPredefinedExperimentYAML(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -27984,6 +28360,48 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getYAMLData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getExperimentDetails":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getExperimentDetails(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "listPredefinedWorkflows":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listPredefinedWorkflows(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getPredefinedExperimentYAML":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPredefinedExperimentYAML(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -29518,6 +29936,20 @@ func (ec *executionContext) unmarshalNDsDetails2ᚖgithubᚗcomᚋlitmuschaosᚋ
 	return &res, err
 }
 
+func (ec *executionContext) marshalNExperimentDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentDetails(ctx context.Context, sel ast.SelectionSet, v model.ExperimentDetails) graphql.Marshaler {
+	return ec._ExperimentDetails(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExperimentDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentDetails(ctx context.Context, sel ast.SelectionSet, v *model.ExperimentDetails) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExperimentDetails(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNExperimentRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐExperimentRequest(ctx context.Context, v interface{}) (model.ExperimentRequest, error) {
 	return ec.unmarshalInputExperimentRequest(ctx, v)
 }
@@ -30034,6 +30466,57 @@ func (ec *executionContext) marshalNPortalDashboardDataResponse2ᚖgithubᚗcom�
 		return graphql.Null
 	}
 	return ec._PortalDashboardDataResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPredefinedWorkflowList2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPredefinedWorkflowList(ctx context.Context, sel ast.SelectionSet, v model.PredefinedWorkflowList) graphql.Marshaler {
+	return ec._PredefinedWorkflowList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPredefinedWorkflowList2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPredefinedWorkflowListᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PredefinedWorkflowList) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPredefinedWorkflowList2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPredefinedWorkflowList(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNPredefinedWorkflowList2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPredefinedWorkflowList(ctx context.Context, sel ast.SelectionSet, v *model.PredefinedWorkflowList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PredefinedWorkflowList(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNProjectData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐProjectData(ctx context.Context, sel ast.SelectionSet, v []*model.ProjectData) graphql.Marshaler {
