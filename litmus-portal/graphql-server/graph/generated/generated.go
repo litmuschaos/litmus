@@ -460,6 +460,7 @@ type ComplexityRoot struct {
 		GetPromLabelNamesAndValues  func(childComplexity int, request *model.PromSeriesInput) int
 		GetPromSeriesList           func(childComplexity int, request *model.DsDetails) int
 		GetPrometheusData           func(childComplexity int, request *model.PrometheusDataRequest) int
+		GetServerVersion            func(childComplexity int) int
 		GetUsageData                func(childComplexity int, request model.UsageDataRequest) int
 		GetWorkflowManifestByID     func(childComplexity int, projectID string, templateID string) int
 		GetWorkflowRunStats         func(childComplexity int, workflowRunStatsRequest model.WorkflowRunStatsRequest) int
@@ -493,6 +494,11 @@ type ComplexityRoot struct {
 	SSHKey struct {
 		PrivateKey func(childComplexity int) int
 		PublicKey  func(childComplexity int) int
+	}
+
+	ServerVersionResponse struct {
+		Key   func(childComplexity int) int
+		Value func(childComplexity int) int
 	}
 
 	Spec struct {
@@ -687,6 +693,7 @@ type QueryResolver interface {
 	GetPromSeriesList(ctx context.Context, request *model.DsDetails) (*model.PromSeriesListResponse, error)
 	ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error)
 	ListPortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardDataResponse, error)
+	GetServerVersion(ctx context.Context) (*model.ServerVersionResponse, error)
 	ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
 	GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error)
 	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
@@ -2837,6 +2844,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPrometheusData(childComplexity, args["request"].(*model.PrometheusDataRequest)), true
 
+	case "Query.getServerVersion":
+		if e.complexity.Query.GetServerVersion == nil {
+			break
+		}
+
+		return e.complexity.Query.GetServerVersion(childComplexity), true
+
 	case "Query.getUsageData":
 		if e.complexity.Query.GetUsageData == nil {
 			break
@@ -3089,6 +3103,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SSHKey.PublicKey(childComplexity), true
+
+	case "ServerVersionResponse.key":
+		if e.complexity.ServerVersionResponse.Key == nil {
+			break
+		}
+
+		return e.complexity.ServerVersionResponse.Key(childComplexity), true
+
+	case "ServerVersionResponse.value":
+		if e.complexity.ServerVersionResponse.Value == nil {
+			break
+		}
+
+		return e.complexity.ServerVersionResponse.Value(childComplexity), true
 
 	case "Spec.categoryDescription":
 		if e.complexity.Spec.CategoryDescription == nil {
@@ -4587,8 +4615,15 @@ type RegisterClusterResponse {
     clusterName: String!
 }
 
+type ServerVersionResponse {
+    key: String!
+    value: String!
+}
 
 extend type Query {
+
+    getServerVersion: ServerVersionResponse! @authorized
+
     # CLUSTER OPERATIONS
     """
     Returns clusters with a particular cluster type in the project
@@ -4649,6 +4684,8 @@ extend type Mutation {
     """
     # authorized directive not required
     kubeObj(request: KubeObjectData!): String!
+
+
 }
 
 extend type Subscription {
@@ -17870,6 +17907,60 @@ func (ec *executionContext) _Query_listPortalDashboardData(ctx context.Context, 
 	return ec.marshalNPortalDashboardDataResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardDataResponseᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_getServerVersion(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetServerVersion(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ServerVersionResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ServerVersionResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ServerVersionResponse)
+	fc.Result = res
+	return ec.marshalNServerVersionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐServerVersionResponse(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_listClusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18948,6 +19039,74 @@ func (ec *executionContext) _SSHKey_privateKey(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.PrivateKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServerVersionResponse_key(ctx context.Context, field graphql.CollectedField, obj *model.ServerVersionResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ServerVersionResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Key, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ServerVersionResponse_value(ctx context.Context, field graphql.CollectedField, obj *model.ServerVersionResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ServerVersionResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -27852,6 +28011,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "getServerVersion":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getServerVersion(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "listClusters":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -28130,6 +28303,38 @@ func (ec *executionContext) _SSHKey(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "privateKey":
 			out.Values[i] = ec._SSHKey_privateKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var serverVersionResponseImplementors = []string{"ServerVersionResponse"}
+
+func (ec *executionContext) _ServerVersionResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ServerVersionResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, serverVersionResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServerVersionResponse")
+		case "key":
+			out.Values[i] = ec._ServerVersionResponse_key(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "value":
+			out.Values[i] = ec._ServerVersionResponse_value(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -30255,6 +30460,20 @@ func (ec *executionContext) marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmu
 		return graphql.Null
 	}
 	return ec._SSHKey(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNServerVersionResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐServerVersionResponse(ctx context.Context, sel ast.SelectionSet, v model.ServerVersionResponse) graphql.Marshaler {
+	return ec._ServerVersionResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNServerVersionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐServerVersionResponse(ctx context.Context, sel ast.SelectionSet, v *model.ServerVersionResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ServerVersionResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSpec2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSpec(ctx context.Context, sel ast.SelectionSet, v model.Spec) graphql.Marshaler {

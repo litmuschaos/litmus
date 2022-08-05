@@ -218,8 +218,15 @@ type RegisterClusterResponse {
     clusterName: String!
 }
 
+type ServerVersionResponse {
+    key: String!
+    value: String!
+}
 
 extend type Query {
+
+    getServerVersion: ServerVersionResponse! @authorized
+
     # CLUSTER OPERATIONS
     """
     Returns clusters with a particular cluster type in the project
@@ -280,6 +287,8 @@ extend type Mutation {
     """
     # authorized directive not required
     kubeObj(request: KubeObjectData!): String!
+
+
 }
 
 extend type Subscription {

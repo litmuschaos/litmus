@@ -902,6 +902,11 @@ type SSHKey struct {
 	PrivateKey string `json:"privateKey"`
 }
 
+type ServerVersionResponse struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
 type Spec struct {
 	DisplayName         string        `json:"displayName"`
 	CategoryDescription string        `json:"categoryDescription"`

@@ -61,6 +61,10 @@ func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObject
 	return wfHandler.KubeObj(request, *data_store.Store)
 }
 
+func (r *queryResolver) GetServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
+	return wfHandler.QueryServerVersion(ctx)
+}
+
 func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListClusters],
