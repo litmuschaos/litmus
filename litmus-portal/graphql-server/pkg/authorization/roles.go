@@ -58,6 +58,7 @@ const (
 	PredefinedWorkflowOperations RoleQuery = "PredefinedWorkflowOperations"
 	ListPredefinedWorkflows      RoleQuery = "ListPredefinedWorkflows"
 	GetPredefinedExperimentYaml  RoleQuery = "GetPredefinedExperimentYaml"
+	GetExperimentDetails         RoleQuery = "GetExperimentDetails"
 	ListDataSource               RoleQuery = "ListDataSource"
 	ListDashboard                RoleQuery = "ListDashboard"
 	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
@@ -128,6 +129,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	ListDashboard:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetGitOpsDetails:             {MemberRoleOwnerString},
 	ListWorkflowManifests:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetExperimentDetails:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	GetWorkflowManifestByID:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListImageRegistry:            {MemberRoleOwnerString},
 	GetImageRegistry:             {MemberRoleOwnerString},

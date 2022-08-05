@@ -11,6 +11,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -22,16 +23,15 @@ import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
 import {
   GET_CHARTS_DATA,
-  GET_ENGINE_YAML,
-  GET_EXPERIMENT_YAML,
+  GET_EXPERIMENT_MANIFEST_DETAILS,
   GET_PREDEFINED_EXPERIMENT_YAML,
-  GET_TEMPLATE_BY_ID,
-} from '../../../graphql/queries';
+} from '../../../graphql/queries/chaosHub';
+import { GET_TEMPLATE_BY_ID } from '../../../graphql/queries/manifest';
+import { Charts } from '../../../models/graphql/chaoshub';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
 import { CustomYAML } from '../../../models/redux/customyaml';
 import { ImageRegistryInfo } from '../../../models/redux/image_registry';
-import { Charts } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as WorkflowActions from '../../../redux/actions/workflow';
@@ -40,7 +40,6 @@ import capitalize from '../../../utils/capitalize';
 import { getProjectID } from '../../../utils/getSearchParams';
 import {
   fetchWorkflowNameFromManifest,
-  updateChaosExpCRDImage,
   updateEngineName,
   updateManifestImage,
   updateNamespace,
@@ -71,6 +70,7 @@ interface StepType {
 interface ChartName {
   ChaosName: string;
   ExperimentName: string;
+  Keywords: string[];
 }
 
 interface ChildRef {
@@ -79,12 +79,8 @@ interface ChildRef {
 }
 
 interface WorkflowExperiment {
-  ChaosEngine: {
-    getYAMLData: string;
-  };
-  Experiment: {
-    getYAMLData: string;
-  };
+  engineDetails: string;
+  experimentDetails: string;
 }
 
 interface AlertBoxProps {
@@ -101,7 +97,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
    * State Variables for Tune Workflow
    */
   const [hubName, setHubName] = useState<string>('');
-  const [experiment, setExperiment] = useState<WorkflowExperiment>();
   const [allExperiments, setAllExperiments] = useState<ChartName[]>([]);
   const [selectedRadio, setSelectedRadio] = useState<string>('');
   const [selectedExp, setSelectedExp] = useState('');
@@ -110,7 +105,11 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [editManifest, setEditManifest] = useState('');
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [addExpAlert, setAddExpAlert] = useState(false);
+
   const [isEditorSaveAlertOpen, setIsEditorSaveAlertOpen] = useState(false);
+  const [addExpLoader, setAddExpLoader] = useState(false);
+
   const [isExpNameValid, setIsExpNameValid] = useState(false);
   const [isConfigurationAlertOpen, setIsConfigurationAlertOpen] =
     useState(false);
@@ -155,6 +154,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
           allExp.push({
             ChaosName: data.metadata.name,
             ExperimentName: experiment,
+            Keywords: data.spec.keywords,
           });
         });
       });
@@ -195,7 +195,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
   const [getTemplate] = useLazyQuery(GET_TEMPLATE_BY_ID, {
     onCompleted: (data) => {
       const parsedYAML = YAML.parse(data.getWorkflowManifestByID.manifest);
-
       const updatedManifestImage = updateManifestImage(
         parsedYAML,
         imageRegistryData
@@ -356,55 +355,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
     getSelectedWorkflowDetails();
   }, [manifest]);
 
-  /**
-   * Graphql Query for fetching Engine YAML
-   */
-  const [getEngineYaml, { data: engineData, loading: engineDataLoading }] =
-    useLazyQuery(GET_ENGINE_YAML, {
-      fetchPolicy: 'network-only',
-    });
-
-  /**
-   * Graphql Query for fetching Experiment YAML
-   */
-  const [
-    getExperimentYaml,
-    { data: experimentData, loading: experimentDataLoading },
-  ] = useLazyQuery(GET_EXPERIMENT_YAML, {
-    fetchPolicy: 'network-only',
-  });
-
-  /**
-   * On Clicking the Done button present at Add Experiment Modal this function will get triggered
-   * Click => Done
-   * Function => handleDone()
-   * */
-  const handleDone = () => {
-    getExperimentYaml({
-      variables: {
-        request: {
-          projectID: selectedProjectID,
-          hubName,
-          chartName: selectedExp.split('/')[0],
-          experimentName: selectedExp.split('/')[1],
-          fileType: 'EXPERIMENT',
-        },
-      },
-    });
-    getEngineYaml({
-      variables: {
-        request: {
-          projectID: selectedProjectID,
-          hubName,
-          chartName: selectedExp.split('/')[0],
-          experimentName: selectedExp.split('/')[1],
-          fileType: 'ENGINE',
-        },
-      },
-    });
-    setAddExpModal(false);
-  };
-
   const AlertBox: React.FC<AlertBoxProps> = ({
     message,
     isOpen,
@@ -441,15 +391,15 @@ const TuneWorkflow = forwardRef((_, ref) => {
       steps.push([
         {
           name: `${
-            YAML.parse(experiment.Experiment.getYAMLData).metadata.name
+            YAML.parse(experiment.experimentDetails).metadata.name
           }-${hash}`,
           template: `${
-            YAML.parse(experiment.Experiment.getYAMLData).metadata.name
+            YAML.parse(experiment.experimentDetails).metadata.name
           }-${hash}`,
         },
       ]);
     installAll = `${installAllExp}kubectl apply -f /tmp/${`${
-      YAML.parse(experiment.Experiment.getYAMLData).metadata.name
+      YAML.parse(experiment.experimentDetails).metadata.name
     }-${hash}`}.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
     const arg =
       generatedYAML.kind === 'Workflow'
@@ -464,7 +414,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     /**
      * Adding experiment YAML
      */
-    const ExperimentYAML = YAML.parse(experiment.Experiment.getYAMLData);
+    const ExperimentYAML = YAML.parse(experiment.experimentDetails);
     const artifacts =
       generatedYAML.kind === 'Workflow'
         ? generatedYAML.spec.templates[1].inputs?.artifacts
@@ -482,9 +432,9 @@ const TuneWorkflow = forwardRef((_, ref) => {
     /**
      * Adding engine YAML
      */
-    const ChaosEngine = YAML.parse(experiment.ChaosEngine.getYAMLData);
+    const ChaosEngine = YAML.parse(experiment.engineDetails);
     const ExpName = `${
-      YAML.parse(experiment.Experiment.getYAMLData).metadata.name
+      YAML.parse(experiment.experimentDetails).metadata.name
     }-${hash}`;
     ChaosEngine.metadata.generateName = ExpName;
     delete ChaosEngine.metadata.name;
@@ -538,32 +488,65 @@ const TuneWorkflow = forwardRef((_, ref) => {
   };
 
   /**
-   * UseEffect to make changes in the generated YAML
-   * when a new experiment is added from MyHub
+   * Graphql Query for fetching Experiment Details (ChaosEngine and ChaosExperiment)
    */
-  useEffect(() => {
-    if (
-      isCustomWorkflow &&
-      experiment?.ChaosEngine.getYAMLData &&
-      experiment?.Experiment.getYAMLData
-    ) {
-      const savedManifest =
-        manifest !== '' ? YAML.parse(manifest) : generatedYAML;
-      const updatedManifest = updateCRD(
-        savedManifest,
-        experiment,
-        imageRegistryData
-      );
-      const updatedManifestImage = updateManifestImage(
-        updatedManifest,
-        imageRegistryData
-      );
-      setGeneratedYAML(YAML.parse(updatedManifestImage));
-      workflowAction.setWorkflowManifest({
-        manifest: updatedManifestImage,
-      });
+  const [getExperimentManifestDetails] = useLazyQuery(
+    GET_EXPERIMENT_MANIFEST_DETAILS,
+    {
+      fetchPolicy: 'cache-and-network',
+      onCompleted: (data) => {
+        try {
+          const savedManifest =
+            manifest !== '' ? YAML.parse(manifest) : generatedYAML;
+          const updatedManifest = updateCRD(
+            savedManifest,
+            data.getExperimentDetails,
+            imageRegistryData
+          );
+          const updatedManifestImage = updateManifestImage(
+            updatedManifest,
+            imageRegistryData
+          );
+          setGeneratedYAML(YAML.parse(updatedManifestImage));
+          workflowAction.setWorkflowManifest({
+            manifest: updatedManifestImage,
+          });
+          setAddExpLoader(false);
+          setAddExpModal(false);
+        } catch (error) {
+          console.error(error);
+          setAddExpLoader(false);
+          setAddExpAlert(true);
+          setAddExpModal(false);
+        }
+      },
+      onError: (err) => {
+        console.error(err);
+        setAddExpLoader(false);
+        setAddExpAlert(true);
+        setAddExpModal(false);
+      },
     }
-  }, [experiment]);
+  );
+
+  /**
+   * On Clicking the Done button present at Add Experiment Modal this function will get triggered
+   * Click => Done
+   * Function => handleDone()
+   * */
+  const handleDone = () => {
+    setAddExpLoader(true);
+    getExperimentManifestDetails({
+      variables: {
+        request: {
+          projectID: selectedProjectID,
+          hubName,
+          chartName: selectedExp.split('/')[0],
+          experimentName: selectedExp.split('/')[1],
+        },
+      },
+    });
+  };
 
   const saveManifestChanges = () => {
     if (yamlValid) {
@@ -576,7 +559,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     }
   };
 
-  useEffect(() => {
+  useMemo(() => {
     const parsedManifest =
       manifest !== '' ? YAML.parse(manifest) : generatedYAML;
     parsedManifest.metadata.name = `${workflow.name}-${Math.round(
@@ -608,13 +591,13 @@ const TuneWorkflow = forwardRef((_, ref) => {
 
       parsedManifest.spec.workflowSpec.templates.pop(); // Remove the last template -> Revert Chaos Template
     }
-
     workflowAction.setWorkflowManifest({
       manifest: YAML.stringify(parsedManifest),
     });
   }, [manifest, workflow.name]);
 
   const onModalClose = () => {
+    setAddExpLoader(false);
     setAddExpModal(false);
   };
 
@@ -626,21 +609,6 @@ const TuneWorkflow = forwardRef((_, ref) => {
   ) => {
     setSelectedExp(e.target.value as string);
   };
-
-  useEffect(() => {
-    if (engineData !== undefined && experimentData !== undefined) {
-      const experimentCRD = {
-        getYAMLData: updateChaosExpCRDImage(
-          experimentData.getYAMLData,
-          imageRegistryData
-        ),
-      };
-      setExperiment({
-        ChaosEngine: engineData,
-        Experiment: experimentCRD,
-      });
-    }
-  }, [engineDataLoading, experimentDataLoading]);
 
   function onNext() {
     const parsedManifest =
@@ -713,6 +681,12 @@ const TuneWorkflow = forwardRef((_, ref) => {
         isOpen={isAlertOpen}
         setOpen={setIsAlertOpen}
         message="The YAML contains errors, resolve them first to proceed"
+        type="error"
+      />
+      <AlertBox
+        isOpen={addExpAlert}
+        setOpen={setAddExpAlert}
+        message="Failed to add experiments, try again"
         type="error"
       />
       {YAMLModal ? (
@@ -849,6 +823,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
             onSelectChange={onSelectChange}
             allExperiments={allExperiments}
             handleDone={handleDone}
+            doneLoader={addExpLoader}
           />
 
           {/* Experiment Details */}

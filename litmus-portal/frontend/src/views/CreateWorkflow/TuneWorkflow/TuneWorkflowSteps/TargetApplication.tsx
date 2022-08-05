@@ -1,23 +1,19 @@
 import { useSubscription } from '@apollo/client';
 import {
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   Typography,
-  useTheme,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import YAML from 'yaml';
+import Loader from '../../../../components/Loader';
 import { constants } from '../../../../constants';
 import { KUBE_OBJ } from '../../../../graphql';
 import {
@@ -46,7 +42,6 @@ interface TargetApplicationData {
   appns: string | undefined;
   appkind: string;
   applabel: string;
-  annotationCheck: boolean;
 }
 
 interface TargetApplicationProp {
@@ -59,7 +54,6 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
    * State Variables to manage theme changes
    */
   const classes = useStyles();
-  const theme = useTheme();
 
   /**
    * State variable for redux
@@ -81,21 +75,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
     appns: engineManifest.spec.appinfo?.appns ?? '',
     applabel: engineManifest.spec.appinfo?.applabel ?? '',
     appkind: engineManifest.spec.appinfo?.appkind ?? '',
-    annotationCheck:
-      typeof engineManifest.spec.annotationCheck === 'boolean'
-        ? engineManifest.spec.annotationCheck
-        : engineManifest.spec.annotationCheck === 'true',
   });
-  const [addNodeSelector, setAddNodeSelector] = useState<boolean>(
-    !!engineManifest.spec.experiments[0].spec.components['nodeSelector']
-  );
-  const [nodeSelector, setNodeSelector] = useState(
-    engineManifest.spec.experiments[0].spec.components.nodeSelector
-      ? engineManifest.spec.experiments[0].spec.components.nodeSelector[
-          'kubernetes.io/hostname'
-        ]
-      : ''
-  );
   const [appinfoData, setAppInfoData] = useState<AppInfoData[]>([]);
   const [GVRObj, setGVRObj] = useState<GVRRequest>({
     group: '',
@@ -107,22 +87,22 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
   /**
    * Function for handling AnnotationCheck toggle button
    */
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: boolean
-  ) => {
-    if (newAlignment !== null) {
-      setTargetApp({ ...targetApp, annotationCheck: newAlignment });
-      engineManifest.spec.annotationCheck = newAlignment.toString();
-    }
-  };
+  // const handleAlignment = (
+  //   event: React.MouseEvent<HTMLElement>,
+  //   newAlignment: boolean
+  // ) => {
+  //   if (newAlignment !== null) {
+  //     setTargetApp({ ...targetApp, annotationCheck: newAlignment });
+  //     engineManifest.spec.annotationCheck = newAlignment.toString();
+  //   }
+  // };
 
   /**
    * handleMainYAMLChange handles the change in configuration
    * of the Chaos Engine accroding to the index of the main manifest
    */
   const handleMainYAMLChange = () => {
-    engineManifest.spec.annotationCheck = targetApp.annotationCheck.toString();
+    // engineManifest.spec.annotationCheck = targetApp.annotationCheck.toString();
     if (engineManifest.spec.appinfo !== undefined) {
       engineManifest.spec.appinfo.appns = targetApp.appns;
       engineManifest.spec.appinfo.applabel = targetApp.applabel;
@@ -135,44 +115,33 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
       )[0].replace(/\s/g, '');
       engineManifest.metadata.namespace = `{${namespace}}`;
     }
-    /**
-     * If addNodeSelector is true, the value of nodeselector is added
-     * else if the addNodeSelector is false and it exists, the value is removed
-     */
-    if (addNodeSelector) {
-      engineManifest.spec.experiments[0].spec.components['nodeSelector'] = {
-        'kubernetes.io/hostname': nodeSelector,
-      };
-    } else if (
-      !addNodeSelector &&
-      engineManifest.spec.experiments[0].spec.components['nodeSelector']
-    ) {
-      delete engineManifest.spec.experiments[0].spec.components['nodeSelector'];
-    }
 
     workflow.setWorkflowManifest({
       engineYAML: YAML.stringify(engineManifest),
     });
-    return gotoStep(2);
+    return gotoStep(1);
   };
 
   /**
    * GraphQL subscription to fetch the KubeObjData from the server
    */
-  const { data } = useSubscription<KubeObjResponse, KubeObjRequest>(KUBE_OBJ, {
-    variables: {
-      request: {
-        clusterID,
-        objectType: 'kubeobject',
-        kubeObjRequest: {
-          group: GVRObj.group,
-          version: GVRObj.version,
-          resource: GVRObj.resource,
+  const { data, loading } = useSubscription<KubeObjResponse, KubeObjRequest>(
+    KUBE_OBJ,
+    {
+      variables: {
+        request: {
+          clusterID,
+          objectType: 'kubeobject',
+          kubeObjRequest: {
+            group: GVRObj.group,
+            version: GVRObj.version,
+            resource: GVRObj.resource,
+          },
         },
       },
-    },
-    fetchPolicy: 'network-only',
-  });
+      fetchPolicy: 'network-only',
+    }
+  );
 
   /**
    * UseEffect to filter the labels according to the namespace provided
@@ -258,7 +227,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
       <br />
       <div className={classes.inputDiv}>
         {/* Annotation Check  */}
-        <div className={classes.flexDisplay}>
+        {/* <div className={classes.flexDisplay}>
           <Typography className={classes.annotation}>
             {t('createWorkflow.tuneWorkflow.verticalStepper.annotation')}
           </Typography>
@@ -313,11 +282,11 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
               </Typography>
             </ToggleButton>
           </ToggleButtonGroup>
-        </div>
-        <br />
+        </div> */}
+        {/* <br />
         <Typography className={classes.annotationDesc}>
           {t('createWorkflow.tuneWorkflow.verticalStepper.annotationDesc')}
-        </Typography>
+        </Typography> */}
         <br />
         <>
           {/* AutoComplete textfield for Namespace */}
@@ -346,6 +315,15 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                     }}
                     {...params}
                     label={constants.appns}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {loading ? <Loader size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
                     helperText={
                       appinfoData.filter(
                         (data) => data.namespace === targetApp.appns
@@ -446,6 +424,15 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                       )
                     }
                     {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {loading ? <Loader size={20} /> : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
                     label={constants.appLabel}
                     data-cy="AppLabel"
                   />
@@ -456,7 +443,7 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
           )}
 
           {/* Checkbox for adding NodeSelector */}
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Checkbox
                 checked={addNodeSelector}
@@ -489,15 +476,14 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
                 }}
               />
             </div>
-          )}
+          )} */}
         </>
       </div>
-      <br />
 
       <div data-cy="TargetControlButtons">
-        <Button onClick={() => gotoStep(0)} className={classes.button}>
+        {/* <Button onClick={() => gotoStep(0)} className={classes.button}>
           {t('workflowStepper.back')}
-        </Button>
+        </Button> */}
 
         <Button
           variant="contained"

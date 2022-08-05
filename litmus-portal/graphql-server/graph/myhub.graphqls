@@ -394,6 +394,32 @@ input UpdateChaosHubRequest {
   projectID: String!
 }
 
+type ExperimentDetails{
+  """
+  Engine Manifest
+  """
+  engineDetails: String!
+
+  """
+  Experiment Manifest
+  """
+  experimentDetails: String!
+}
+
+type PredefinedWorkflowList {
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Workflow CSV
+  """
+  workflowCSV: String!
+  """
+  Workflow Manifest
+  """
+  workflowManifest: String!
+}
 
 extend type Query {
   # CHAOS-HUB OPERATIONS
@@ -416,6 +442,21 @@ extend type Query {
   Get the YAML manifest of ChaosEngine/ChaosExperiment
   """
   getYAMLData(request: ExperimentRequest!): String! @authorized
+
+  """
+  Get Engine and Experiment YAML
+  """
+  getExperimentDetails(request: ExperimentRequest!): ExperimentDetails! @authorized
+
+  """
+  List the PredefinedWorkflows present in the hub
+  """
+  listPredefinedWorkflows(hubName: String!, projectID: String!): [PredefinedWorkflowList!]! @authorized
+
+  """
+  Get the predefined workflow YAML
+  """
+  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
 }
 
 extend type Mutation {
