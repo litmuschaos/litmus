@@ -43,7 +43,7 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const selectedProjectID = getProjectID();
     const [selectedHub, setSelectedHub] = useState('');
     const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
-    const [workflowList, setWorkflowlist] = useState([]);
+    const [workflowList, setWorkflowlist] = useState<string[]>([]);
 
     // Get all MyHubs with status
     const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
@@ -57,8 +57,12 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const [getPredefinedWorkflow] = useLazyQuery(GET_PREDEFINED_WORKFLOW_LIST, {
       fetchPolicy: 'network-only',
       onCompleted: (data) => {
+        const wfList: string[] = [];
         if (data.listPredefinedWorkflows !== undefined) {
-          setWorkflowlist(data.listPredefinedWorkflows);
+          data.listPredefinedWorkflows.forEach((workflow: any) => {
+            wfList.push(workflow.workflowName);
+          });
+          setWorkflowlist(wfList);
         }
       },
       onError: () => {

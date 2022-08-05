@@ -25,10 +25,11 @@ import AddProbe from '../AddProbe';
 import useStyles from './styles';
 
 interface SteadyStateProps {
+  infra: boolean;
   gotoStep: (page: number) => void;
 }
 
-const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
+const SteadyState: React.FC<SteadyStateProps> = ({ infra, gotoStep }) => {
   const classes = useStyles();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -103,7 +104,7 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
   const handleNext = () => {
     chaosEngine.spec.experiments[0].spec.probe = probesData;
     handleMainYAMLChange();
-    gotoStep(3);
+    gotoStep(infra ? 1 : 2);
   };
 
   return (
@@ -286,9 +287,11 @@ const SteadyState: React.FC<SteadyStateProps> = ({ gotoStep }) => {
         open={addProbe}
       />
       <div data-cy="SteadyStateControlButtons">
-        <Button onClick={() => gotoStep(1)} className={classes.button}>
-          {t('createWorkflow.tuneWorkflow.steadyState.back')}
-        </Button>
+        {!infra && (
+          <Button onClick={() => gotoStep(0)} className={classes.button}>
+            {t('createWorkflow.tuneWorkflow.steadyState.back')}
+          </Button>
+        )}
         <Button
           variant="contained"
           color="primary"

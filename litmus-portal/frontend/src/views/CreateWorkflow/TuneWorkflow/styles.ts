@@ -259,6 +259,9 @@ const useStyles = makeStyles((theme) => ({
     width: '3rem',
     height: '3rem',
   },
+  tooltip: {
+    fontSize: '1rem',
+  },
 }));
 
 export default useStyles;
