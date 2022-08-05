@@ -219,8 +219,17 @@ type RegisterClusterResponse {
     clusterName: String!
 }
 
+"""
+Response received for fetching GQL server version
+"""
 type ServerVersionResponse {
+    """
+    Returns server version key
+    """
     key: String!
+    """
+    Returns server version value
+    """
     value: String!
 }
 
