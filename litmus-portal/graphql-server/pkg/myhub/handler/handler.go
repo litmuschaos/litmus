@@ -281,8 +281,11 @@ func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteMyHub) error {
 
 //CopyZipItems is used to copy the content from the extracted zip file to
 //the ChaosHub directory
-func CopyZipItems(file *zip.File, extractPath string, chartsPath string) {
+func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 	path := filepath.Join(extractPath, chartsPath)
+	if !strings.HasPrefix(path, filepath.Clean(extractPath)+string(os.PathSeparator)) {
+		return fmt.Errorf("illegal file path: %s", path)
+	}
 	err := os.MkdirAll(filepath.Dir(path), os.ModeDir|os.ModePerm)
 	if err != nil {
 		fmt.Println(err)
@@ -303,6 +306,8 @@ func CopyZipItems(file *zip.File, extractPath string, chartsPath string) {
 		fileCopy.Close()
 	}
 	fileReader.Close()
+
+	return nil
 }
 
 //SyncRemoteRepo is used to sync the remote ChaosHub
