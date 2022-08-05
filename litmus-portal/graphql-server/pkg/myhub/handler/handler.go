@@ -216,6 +216,9 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
 		fmt.Println(err)
 		return err
 	}
+
+	defer download.Body.Close()
+
 	if download.StatusCode != http.StatusOK {
 		err = fmt.Errorf("err: ", download.Status)
 		return err
@@ -241,8 +244,6 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
 		err = fmt.Errorf("err: Invalid file type %s", contentType)
 		return err
 	}
-
-	defer download.Body.Close()
 
 	//copy the downloaded content to the created zip file
 	_, err = io.Copy(destDir, download.Body)
