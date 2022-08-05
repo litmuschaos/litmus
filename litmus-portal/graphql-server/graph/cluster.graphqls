@@ -204,6 +204,7 @@ type ConfirmClusterRegistrationResponse {
 Response received for registering a new cluster
 """
 type RegisterClusterResponse {
+
     """
     Token used to verify and retrieve the cluster agent manifest
     """
@@ -218,8 +219,16 @@ type RegisterClusterResponse {
     clusterName: String!
 }
 
+type ServerVersionResponse {
+    key: String!
+    value: String!
+}
 
 extend type Query {
+    """
+    Returns version of gql server
+    """
+    getServerVersion: ServerVersionResponse!
     # CLUSTER OPERATIONS
     """
     Returns clusters with a particular cluster type in the project
