@@ -970,7 +970,7 @@ createWorkflow:
       cancel: Cancel
       save: Save
     noMyHub: No ChaosHub selected
-    selectHub: Select a hub and continue with a pre-defined Chaos Scenario
+    selectHub: Select a ChaosHub and continue with a pre-defined Chaos Scenario
     noPredefined: No pre-defined Chaos Scenarios present in this ChaosHub.
     addPredefined: Add a pre-defined Chaos Scenario to continue scheduling.
     morePredefined: More pre-defined Chaos Scenarios can be found
@@ -1298,26 +1298,26 @@ internetIssues:
 ############     ChaosHub     ###########
 ######################################
 myhub:
-  title: MyHubs
+  title: ChaosHubs
   connectTarget: Connect the target
-  viewMyHub: View My Hub
+  viewMyHub: View My ChaosHub
   error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
-  edit: Edit Hub
-  refresh: Refresh Hub
-  disconnect: Disconnect Hub
+  edit: Edit ChaosHub
+  refresh: Refresh ChaosHub
+  disconnect: Disconnect ChaosHub
   lastSync: 'Last synced at:'
   mainPage:
     header: ChaosHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
-    devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
-    devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
-    connectNewHub: Connect a new chaos hub
-    connect: Connect New Hub
+    devGuideHeader: You have no hubs currently connected. Start connecting your first ChaosHub.
+    devGuideDescription: You should have your litmus ChaosHubforked and made ready before connecting to it.
+    connectNewHub: Connect a new ChaosHub
+    connect: Connect New ChaosHub
     noGithubCredentials: You have not given your Github credential
     submitBtn: Submit Now
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
@@ -1326,7 +1326,7 @@ myhub:
     disconnectHeader: Are you sure you want to disconnect ChaosHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
-    deleteHub: Delete Hub
+    deleteHub: Delete ChaosHub
     syncError: Failed while syncing repo, try again!
   myhubChart:
     header: ChaosHub
@@ -1334,23 +1334,23 @@ myhub:
     syncingRepo: Loading Experiments, Please Wait...!
     preDefined: Pre-defined Chaos Scenarios
     chaosCharts: Chaos-experiments
-    noPredefinedExp: No predefined Chaos Scenarios available with information in this Hub
+    noPredefinedExp: No predefined Chaos Scenarios available with information in this ChaosHub
     noExp: No experiments found
     lastSynced: 'Last synced at: '
     repoLink: 'Repository Link: '
     repoBranch: 'Repository Branch: '
   connectHubPage:
-    connectHub: Connect a new chaos hub
-    editHub: Edit hub configuration
+    connectHub: Connect a new ChaosHub
+    editHub: Edit ChaosHub configuration
     enterInfo: Enter information in the required fields
     connectBtn: Then click on the connect button
     submitBtn: Submit Now
     cloningText: Please wait while we are cloning your repo!
     errorText: Error
     creatingHub: while creating ChaosHub
-    newHub: A new chaos hub
+    newHub: A new ChaosHub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
+    newHubCreated: A new ChaosHub will be added to the main page of the MyHubs section
     myHub: Back to ChaosHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
@@ -1378,7 +1378,7 @@ myhub:
     checkPreDefined: Check the pre-defined Chaos Scenario
     checkPreDefinedDesc: You can view the Chaos Scenario details here
   editPage:
-    edit: Edit the Hub
+    edit: Edit the ChaosHub
     click: Then click on the update button
     submit: Update ChaosHub
     wait: Please wait while we are updating your repo!
@@ -1398,9 +1398,9 @@ customWorkflow:
     workflowName: Chaos Scenario Name
     workflowDesc: Description
     chooseNamespace: Choose Namespace
-    firstChaos: Choose the hub
-    selectHub: Select the hub
-    public: Public Hub
+    firstChaos: Choose the ChaosHub
+    selectHub: Select the ChaosHub
+    public: Public ChaosHub
     configure: Construct your Chaos Scenario
     construct: Using Chaos Experiments from MyHubs
     upload: Upload your
