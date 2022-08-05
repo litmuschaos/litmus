@@ -145,6 +145,43 @@ func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, 
 	return expNames, nil
 }
 
+// ListPredefinedWorkflowDetails reads the workflow directory for all the predefined experiments
+// and returns the csv, workflow manifest and workflow name
+func ListPredefinedWorkflowDetails(hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
+	experimentsPath := defaultPath + projectID + "/" + hubName + "/workflows"
+	var predefinedWorkflows []*model.PredefinedWorkflowList
+	files, err := ioutil.ReadDir(experimentsPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		csvManifest := ""
+		workflowManifest := ""
+		isExist, err := IsFileExisting(experimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+		if err != nil {
+			return nil, err
+		}
+		if isExist {
+			csvManifest, err = ReadExperimentYAMLFile(experimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+			if err != nil {
+				csvManifest = "na"
+			}
+			workflowManifest, err = ReadExperimentYAMLFile(experimentsPath + "/" + file.Name() + "/" + "workflow.yaml")
+			if err != nil {
+				workflowManifest = "na"
+			}
+			preDefinedWorkflow := &model.PredefinedWorkflowList{
+				WorkflowName:     file.Name(),
+				WorkflowManifest: workflowManifest,
+				WorkflowCsv:      csvManifest,
+			}
+			predefinedWorkflows = append(predefinedWorkflows, preDefinedWorkflow)
+		}
+	}
+	return predefinedWorkflows, nil
+}
+
 func IsFileExisting(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err != nil {

@@ -74,26 +74,26 @@ const Workflows = () => {
               backgroundColor: theme.palette.highlight,
             },
           }}
-          variant="fullWidth"
+          variant="standard"
         >
-          <StyledTab label={`${t('workflows.runs')}`} data-cy="runs" />
           <StyledTab
             label={`${t('workflows.schedules')}`}
             data-cy="browseSchedule"
           />
+          <StyledTab label={`${t('workflows.runs')}`} data-cy="runs" />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
+        <SuspenseLoader style={{ height: '50vh' }}>
+          <BrowseSchedule setWorkflowName={setSearchWorkflow} />
+        </SuspenseLoader>
+      </TabPanel>
+      <TabPanel value={workflowTabValue} index={1}>
         <SuspenseLoader style={{ height: '50vh' }}>
           <BrowseWorkflow
             workflowName={searchWorkflow}
             setWorkflowName={setSearchWorkflow}
           />
-        </SuspenseLoader>
-      </TabPanel>
-      <TabPanel value={workflowTabValue} index={1}>
-        <SuspenseLoader style={{ height: '50vh' }}>
-          <BrowseSchedule setWorkflowName={setSearchWorkflow} />
         </SuspenseLoader>
       </TabPanel>
     </Wrapper>

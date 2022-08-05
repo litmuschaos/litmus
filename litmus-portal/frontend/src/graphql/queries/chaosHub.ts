@@ -106,3 +106,22 @@ export const GET_EXPERIMENT_YAML = gql`
     getYAMLData(request: $request)
   }
 `;
+
+export const GET_EXPERIMENT_MANIFEST_DETAILS = gql`
+  query getExperimentDetails($request: ExperimentRequest!) {
+    getExperimentDetails(request: $request) {
+      engineDetails
+      experimentDetails
+    }
+  }
+`;
+
+export const GET_PREDEFINED_WORKFLOW_LIST = gql`
+  query listPredefinedWorkflows($hubName: String!, $projectID: String!) {
+    listPredefinedWorkflows(hubName: $hubName, projectID: $projectID) {
+      workflowName
+      workflowCSV
+      workflowManifest
+    }
+  }
+`;

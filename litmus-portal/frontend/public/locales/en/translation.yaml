@@ -549,7 +549,7 @@ homeViews:
       secondStep: 2. Download
       litmusctl: litmusctl
       thirdStep: 3. Paste and run the following command into the cluster console
-      agentRegister: $ litmusctl connect agent
+      agentRegister: $ litmusctl connect chaos-delegate
       copy: Copy
       done: Done
   projectInfoContainer:
@@ -691,7 +691,7 @@ settings:
     projectInvite: Projects by invite
     invitations: Invitations
     active: Active
-    manageTeam: Manage your team, invite a member to your project or change the role of members in the team
+    manageTeam: Manage your team and invite members to your project
     header: Members
     invitedProject: Projects you were invited to
     noUsers: No users available
@@ -806,7 +806,7 @@ settings:
         button: Choose an avatar
       newUserModal:
         header: A new user
-        headerInfo: was successfully created
+        headerInfo: is successfully created
         headerErr: while creating a new user.
         error: Error
         info: Now information about the user will be displayed on the user management screen of the application.
@@ -883,18 +883,17 @@ workflowDetailsView:
     couldNot: Could not get logs
     chaosLogs: Chaos logs unavailable
   workflowInfo:
-    header: Overall Chaos Scenario Description
+    header: Chaos Scenario Overview
     resilienceScore: Resilience Score
     Completed: Completed
     status: Chaos Scenario Status
     runTime:
-      runTimeHeader: Run Time
+      duration: Duration
       startTime: 'Start Time :'
       endTime: 'End Time :'
     targets:
-      targetsHeader: Target
-      cluster: 'Chaos Delegate :'
-      namespace: 'Chaos Scenario Namespace :'
+      targetsHeader: Chaos Delegate
+      namespace: 'Chaos Scenario Namespace'
   workflowNodeInfo:
     name: Name
     type: Type
@@ -908,7 +907,7 @@ workflowDetailsView:
     tableHeader:
       stepName: Step Name
       status: Status
-      duration: Duration
+      endTime: End Time
       startTime: Start Time
       applicationDetails: Application Details
     showProperties: Show properties
@@ -970,7 +969,7 @@ createWorkflow:
       cancel: Cancel
       save: Save
     noMyHub: No MyHub selected
-    selectHub: Select a hub and continue with a pre-defined chaos scenario
+    selectHub: Select a ChaosHub and continue with a pre-defined chaos scenario
     noPredefined: No pre-defined chaos scenarios present in this ChaosHub.
     addPredefined: Add a pre-defined chaos scenario to continue scheduling.
     morePredefined: More pre-defined chaos scenarios can be found
@@ -996,8 +995,7 @@ createWorkflow:
     header: Adjust the weights of the experiments in the Litmus chaos scenario
     info: You have selected
     tests: tests in the
-    infoNext: chaos scenario. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weightage against.
-    infoNextStrong: These weights are used to calculate the resiliency score at the end of test.
+    infoNext: Chaos Scenario. Successful outcome of each test carries a certain weight. All experiments carry maximum weight by default.
     testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
     button:
       demo: Demo Launch
@@ -1193,7 +1191,7 @@ createWorkflow:
 targets:
   options:
     upgrade: Upgrade
-    copyTargetID: Copy target ID
+    copyTargetID: Copy Chaos Delegate ID
     disconnect: Disconnect
   connectHome:
     head: ChaosDelegates
@@ -1275,8 +1273,8 @@ workflowAgent:
   noAgentSearch: No  chaos delegates found
 
 workflows:
-  runs: Runs
-  schedules: Schedules
+  runs: Chaos Scenario Runs
+  schedules: Chaos Scenarios
   templates: Templates
   scheduleAWorkflow: Schedule a chaos scenario
 
@@ -1300,24 +1298,24 @@ internetIssues:
 myhub:
   title: MyHubs
   connectTarget: Connect the target
-  viewMyHub: View My Hub
+  viewMyHub: View ChaosHub
   error: '[Error: could not connect]'
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
-  edit: Edit Hub
-  refresh: Refresh Hub
-  disconnect: Disconnect Hub
+  edit: Edit ChaosHub
+  refresh: Refresh ChaosHub
+  disconnect: Disconnect ChaosHub
   lastSync: 'Last synced at:'
   mainPage:
     header: ChaosHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
-    devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
-    devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
-    connectNewHub: Connect a new chaos hub
-    connect: Connect New Hub
+    devGuideHeader: You have no hubs currently connected. Start connecting your first ChaosHub.
+    devGuideDescription: You should have your litmus ChaosHub forked and made ready before connecting to it.
+    connectNewHub: Connect a new ChaosHub
+    connect: Connect New ChaosHub
     noGithubCredentials: You have not given your Github credential
     submitBtn: Submit Now
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
@@ -1326,7 +1324,7 @@ myhub:
     disconnectHeader: Are you sure you want to disconnect MyHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
-    deleteHub: Delete Hub
+    deleteHub: Delete ChaosHub
     syncError: Failed while syncing repo, try again!
   myhubChart:
     header: MyHub
@@ -1334,23 +1332,23 @@ myhub:
     syncingRepo: Loading Experiments, Please Wait...!
     preDefined: Pre-defined chaos scenarios
     chaosCharts: Chaos-experiments
-    noPredefinedExp: No predefined chaos scenarios available with information in this Hub
+    noPredefinedExp: No predefined chaos scenarios available with information in this ChaosHub
     noExp: No experiments found
     lastSynced: 'Last synced at: '
     repoLink: 'Repository Link: '
     repoBranch: 'Repository Branch: '
   connectHubPage:
-    connectHub: Connect a new chaos hub
-    editHub: Edit hub configuration
+    connectHub: Connect a new ChaosHub
+    editHub: Edit ChaosHub configuration
     enterInfo: Enter information in the required fields
     connectBtn: Then click on the connect button
     submitBtn: Submit Now
     cloningText: Please wait while we are cloning your repo!
     errorText: Error
     creatingHub: while creating MyHub
-    newHub: A new chaos hub
+    newHub: A new ChaosHub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
+    newHubCreated: A new ChaosHub will be added to the main page of the MyHubs section
     myHub: Back to MyHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
@@ -1378,7 +1376,7 @@ myhub:
     checkPreDefined: Check the pre-defined chaos scenario
     checkPreDefinedDesc: You can view the chaos scenario details here
   editPage:
-    edit: Edit the Hub
+    edit: Edit the ChaosHub
     click: Then click on the update button
     submit: Update MyHub
     wait: Please wait while we are updating your repo!
@@ -1398,9 +1396,9 @@ customWorkflow:
     workflowName: Chaos Scenario Name
     workflowDesc: Description
     chooseNamespace: Choose Namespace
-    firstChaos: Choose the hub
-    selectHub: Select the hub
-    public: Public Hub
+    firstChaos: Choose the ChaosHub
+    selectHub: Select the ChaosHub
+    public: Public ChaosHub
     configure: Construct your chaos scenario
     construct: Using experiments from MyHubs
     upload: Upload your

@@ -18,7 +18,7 @@ import {
   UPDATE_GITOPS,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
-import { SSHKey, SSHKeys, MyHubType } from '../../../models/graphql/chaoshub';
+import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/chaoshub';
 import { GetGitOpsDetailRequest } from '../../../models/graphql/gitOps';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
@@ -453,12 +453,18 @@ const GitOpsTab = () => {
                                     }
                                   />
                                   {privateHub === 'ssh' ? (
-                                    <SSHField
-                                      sshLoading={sshLoading}
-                                      copying={copying}
-                                      publicKey={sshKey.publicKey}
-                                      copyPublicKey={copyTextToClipboard}
-                                    />
+                                    <>
+                                      <Typography className={classes.sshAlert}>
+                                        Warning: SSH method won’t work with
+                                        GitHub in this version.
+                                      </Typography>
+                                      <SSHField
+                                        sshLoading={sshLoading}
+                                        copying={copying}
+                                        publicKey={sshKey.publicKey}
+                                        copyPublicKey={copyTextToClipboard}
+                                      />
+                                    </>
                                   ) : null}
                                   <div
                                     className={classes.submitBtnDiv}
