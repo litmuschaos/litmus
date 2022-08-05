@@ -1191,7 +1191,7 @@ createWorkflow:
 targets:
   options:
     upgrade: Upgrade
-    copyTargetID: Copy ChaosDelegate ID
+    copyTargetID: Copy Chaos Delegate ID
     disconnect: Disconnect
   connectHome:
     head: ChaosDelegates
