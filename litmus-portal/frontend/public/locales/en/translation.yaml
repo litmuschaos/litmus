@@ -934,7 +934,7 @@ createWorkflow:
     settings: Chaos Scenario Settings
     descriptionA: You have selected a pre-defined Chaos Scenario
     descriptionB: You have selected an existing Chaos Scenario
-    descriptionC: You have selected a MyHub Chaos Scenario
+    descriptionC: You have selected a ChaosHub Chaos Scenario
     descriptionD: You have imported a Chaos Scenario YAML
     description2: Provide a name and description to the new Litmus Chaos Scenario.
     edit: Edit Photo
@@ -969,7 +969,7 @@ createWorkflow:
       edit: Edit Chaos Scenario name
       cancel: Cancel
       save: Save
-    noMyHub: No MyHub selected
+    noMyHub: No ChaosHub selected
     selectHub: Select a hub and continue with a pre-defined Chaos Scenario
     noPredefined: No pre-defined Chaos Scenarios present in this ChaosHub.
     addPredefined: Add a pre-defined Chaos Scenario to continue scheduling.
@@ -1295,7 +1295,7 @@ internetIssues:
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
-############     MyHub     ###########
+############     ChaosHub     ###########
 ######################################
 myhub:
   title: MyHubs
@@ -1323,13 +1323,13 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect MyHub?
+    disconnectHeader: Are you sure you want to disconnect ChaosHub?
     disconnectDesc: Action is not revertable
     cancel: Cancel
     deleteHub: Delete Hub
     syncError: Failed while syncing repo, try again!
   myhubChart:
-    header: MyHub
+    header: ChaosHub
     github: github.com/
     syncingRepo: Loading Experiments, Please Wait...!
     preDefined: Pre-defined Chaos Scenarios
@@ -1347,18 +1347,18 @@ myhub:
     submitBtn: Submit Now
     cloningText: Please wait while we are cloning your repo!
     errorText: Error
-    creatingHub: while creating MyHub
+    creatingHub: while creating ChaosHub
     newHub: A new chaos hub
     success: is successfully created
     newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
-    myHub: Back to MyHubs
+    myHub: Back to ChaosHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
     sshAlert: '*Make sure to provide the SSH link of the Git Repository'
     saveLater: Save for later
-    updateHub: Update the MyHub with correct details from the MyHubs section
+    updateHub: Update the ChaosHub with correct details from the MyHubs section
     cancel: Cancel
   videoCarousel:
     video: Video Tips
@@ -1380,12 +1380,12 @@ myhub:
   editPage:
     edit: Edit the Hub
     click: Then click on the update button
-    submit: Update MyHub
+    submit: Update ChaosHub
     wait: Please wait while we are updating your repo!
-    updating: while updating MyHub
-    success: MyHub successfully updated
-    desc: MyHub will be updated in the main page of the MyHubs section
-    error: Error while updating MyHub
+    updating: while updating ChaosHub
+    success: ChaosHub successfully updated
+    desc: ChaosHub will be updated in the main page of the MyHubs section
+    error: Error while updating ChaosHub
 
 ######################################
 ########   Custom Chaos Scenario     #######
