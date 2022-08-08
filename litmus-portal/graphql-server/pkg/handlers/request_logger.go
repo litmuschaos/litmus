@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -39,6 +40,9 @@ func LoggingMiddleware() func(http.Handler) http.Handler {
 			start := time.Now()
 			wrapped := wrapResponseWriter(w)
 			next.ServeHTTP(wrapped, r)
+
+			escapedURL := strings.Replace(r.URL.EscapedPath(), "\n", "", -1)
+			escapedURL = strings.Replace(escapedURL, "\r", "", -1)
 
 			logrus.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
 		}
