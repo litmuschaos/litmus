@@ -67,8 +67,8 @@ customWorkflowCard:
 
 workflowStepper:
   continueError: To continue, please check the error in code.
-  scheduleNewChaosWorkflow: Schedule a new Litmus Chaos Scenario
-  aNewChaosWorkflow: A new Litmus Chaos Scenario,
+  scheduleNewChaosWorkflow: Schedule a new Chaos Scenario
+  aNewChaosWorkflow: A new Chaos Scenario,
   successful: is successfully created!
   congratulationsSub1: Congratulations on creating your Chaos Scenario! Now information about
   congratulationsSub2: it will be displayed on the Chaos Scenario schedules.
@@ -104,7 +104,7 @@ home:
 
 login:
   heading: Welcome to Chaos Center
-  subHeading1: Login to create, orchestrate, analyze and collaborate your Litmus Chaos Scenarios.
+  subHeading1: Login to create, orchestrate, analyze and collaborate your Chaos Scenarios.
   subHeading2: With your own private ChaosHub, you can create your new Chaos Experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
   forgotPassword: Forgot your password?
@@ -561,7 +561,7 @@ homeViews:
   agentConfiguredHome:
     error: Error fetching the data!
     noWorkflow:
-      heading: Schedule your first Litmus Chaos Scenario
+      heading: Schedule your first Chaos Scenario
       description: Now it is successfully running on your Kubernetes cluster. Once you schedule a Chaos Scenarios, reliability statistics will be displayed here.
       schedule: Schedule a Chaos Scenario
       explore: Explore pre defined Chaos Scenarios
@@ -600,7 +600,7 @@ chaosWorkflows:
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
-    nonCron: Non cron Chaos Scenario
+    nonCron: Non Cron Chaos Scenario
     runs: Runs
     wfRuns: Chaos Scenario Runs
     regularity: Regularity
@@ -920,7 +920,7 @@ workflowDetailsView:
 
 createWorkflow:
   chooseWorkflow:
-    title: Start creating your Litmus Chaos Scenario
+    title: Start creating your Chaos Scenario
     subtitle: Simulate the Chaos Scenario run and see the suggested reliability score
     optionA: Create a new Chaos Scenario from one of the pre-defined Chaos Scenario templates
     optionB: Create a new Chaos Scenario by cloning an existing Chaos Scenario
@@ -935,7 +935,7 @@ createWorkflow:
     descriptionB: You have selected an existing Chaos Scenario
     descriptionC: You have selected a ChaosHub Chaos Scenario
     descriptionD: You have imported a Chaos Scenario YAML
-    description2: Provide a name and description to the new Litmus Chaos Scenario.
+    description2: Provide a name and description to the new Chaos Scenario.
     edit: Edit Photo
     changeImage: Change Chaos Scenario logo
     changeImgDescription: You can choose a logo from given below
@@ -992,7 +992,7 @@ createWorkflow:
     complete: OnWorkflowCompletion
     success: OnWorkflowSuccess
   reliabilityScore:
-    header: Adjust the weights of the experiments in the Litmus Chaos Scenario
+    header: Adjust the weights of the experiments in the Chaos Scenario
     info: You have selected
     tests: tests in the
     infoNext: Chaos Scenario. Successful outcome of each test carries a certain weight. All experiments carry maximum weight by default.
@@ -1015,7 +1015,7 @@ createWorkflow:
         testPoints: Test Points
   scheduleWorkflow:
     header: Choose a chaos schedule
-    info: Choose the right time to start your first Litmus Chaos Scenario. Below you can find any option convenient for you.
+    info: Choose the right time to start your first Chaos Scenario. Below you can find any option convenient for you.
     min: min
     mins: mins
     at: at
@@ -1263,8 +1263,8 @@ workflowCluster:
       back: Back
 workflowAgent:
   header:
-    chooseAgent: Choose Chaos Delegate to send the Litmus Chaos Scenario to
-    creatingNew: You are creating a new Litmus Chaos Scenario
+    chooseAgent: Choose Chaos Delegate to send the Chaos Scenario to
+    creatingNew: You are creating a new Chaos Scenario
     selectAgent: Select a Chaos Delegate to run this Chaos Scenario
   search:
     placeholder: Search

@@ -131,7 +131,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
           <div className={classes.regularity} data-cy="infoWorkflowRegularity">
             <Typography className={classes.infoHeader}>Regularity :</Typography>
             {data.listWorkflows.workflows[0].cronSyntax === '' ? (
-              <Typography>Non cron chaos scenario</Typography>
+              <Typography>Non Cron Chaos Scenario</Typography>
             ) : (
               data.listWorkflows.workflows[0].cronSyntax !== undefined && (
                 <Typography>
