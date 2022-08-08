@@ -312,16 +312,7 @@ func SyncHub(ctx context.Context, hubID string, projectID string) (string, error
 	update := bson.D{{"$set", bson.D{{"last_synced_at", time}}}}
 
 	if myhub.HubType == string(model.HubTypeRemote) {
-		clonePath := defaultPath + syncHubInput.ProjectID + "/" + syncHubInput.HubName
-		err = os.RemoveAll(clonePath)
-		if err != nil {
-			return "", err
-		}
-		err = handler.DownloadRemoteHub(model.CreateRemoteMyHub{
-			HubName:   myhub.HubName,
-			RepoURL:   myhub.RepoURL,
-			ProjectID: myhub.ProjectID,
-		})
+		err = handler.SyncRemoteRepo(syncHubInput)
 		if err != nil {
 			return "", err
 		}

@@ -6,13 +6,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 
 	"gopkg.in/yaml.v2"
 
@@ -313,25 +312,22 @@ func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 }
 
 //SyncRemoteRepo is used to sync the remote ChaosHub
-func SyncRemoteRepo(hubData model.CloningInput) {
-	hubPath := defaultPath + hubData.ProjectID + "/" + hubData.HubName + "/experiments"
+func SyncRemoteRepo(hubData model.CloningInput) error {
+	hubPath := defaultPath + hubData.ProjectID + "/" + hubData.HubName
+	err := os.RemoveAll(hubPath)
+	if err != nil {
+		return err
+	}
 	updateHub := model.CreateRemoteMyHub{
 		HubName:   hubData.HubName,
 		RepoURL:   hubData.RepoURL,
 		ProjectID: hubData.ProjectID,
 	}
-	_, err := os.ReadDir(hubPath)
+	log.Println("Downloading remote hub")
+	err = DownloadRemoteHub(updateHub)
 	if err != nil {
-		if os.IsNotExist(err) {
-			log.WithFields(log.Fields{"remoteRepoExists": false}).Info("Executed SyncRemoteRepo()... ")
-			log.Println("Downloading remote hub")
-			err = DownloadRemoteHub(updateHub)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
-	} else {
-		log.WithFields(log.Fields{"remoteRepoExists": true}).Info("Executed SyncRemoteRepo()... ")
-		return
+		return err
 	}
+	log.Println("Remote hub ", hubData.HubName, "downloaded ")
+	return nil
 }
