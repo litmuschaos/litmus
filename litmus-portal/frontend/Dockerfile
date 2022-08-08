@@ -30,7 +30,7 @@ RUN npm ci
 COPY . ./
 
 # Finally runs the application
-RUN npm run build
+RUN NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
 # Stage 2: the production environment
 FROM nginxinc/nginx-unprivileged:1.21-alpine
