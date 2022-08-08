@@ -452,7 +452,8 @@ const WorkflowComparisonTable = () => {
           tests_passed: '#Expts. Passed',
           tests_failed: '#Expts. Failed',
           resilience_score: 'Reliability Score',
-          test_details_string: 'Experiment Details\nName\nWeight / Verdict',
+          test_details_string:
+            'Chaos Experiment Details\nName\nWeight / Verdict',
         },
       ];
       const rows: any[] = [];
@@ -515,7 +516,7 @@ const WorkflowComparisonTable = () => {
         doc.line(0, 33, 300, 33);
         doc.setLineWidth(5.0);
         doc.text(
-          'Scenario Run Details Table & Scenario Schedules Table with Resilience Score Comparison Graph',
+          'Chaos  Run Details Table & Chaos Scenario Schedules Table with Resilience Score Comparison Graph',
           27.5,
           39
         );
@@ -670,13 +671,13 @@ const WorkflowComparisonTable = () => {
             ) : (
               <div />
             )}{' '}
-            Chaos scenario comparison
+            Chaos Scenario comparison
           </strong>
         </Typography>
         <Typography className={classes.description}>
           {compare === true
-            ? 'Choose the right chaos scenarios and get comparative results'
-            : 'Choose chaos scenarios to compare their resilience scores'}
+            ? 'Choose the right Chaos Scenarios and get comparative results'
+            : 'Choose Chaos Scenarios to compare their resilience scores'}
         </Typography>
         <br />
       </div>

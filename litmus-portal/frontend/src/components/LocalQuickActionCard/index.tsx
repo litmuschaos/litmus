@@ -49,7 +49,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     returningHome
       ? {
           src: './icons/calendarWorkflowIcon.svg',
-          alt: 'chaos scenario',
+          alt: 'Chaos Scenario',
           onClick: () =>
             history.push({
               pathname: '/create-scenario',
