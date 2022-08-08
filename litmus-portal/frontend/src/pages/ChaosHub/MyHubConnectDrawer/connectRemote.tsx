@@ -56,7 +56,7 @@ const ConnectRemote: React.FC<ConnectRemoteProp> = ({
   const [editHubLoader, setEditHubLoader] = useState(!!editHub.isEditing);
 
   /**
-   * Add MyHub mutation to create a new hub
+   * addRemoteChaosHub mutation to create a new hub
    */
   const [addRemoteMyHub, { loading }] = useMutation<
     MyHubData,
@@ -64,7 +64,7 @@ const ConnectRemote: React.FC<ConnectRemoteProp> = ({
   >(ADD_REMOTE_MY_HUB, {
     onCompleted: () => {
       alertState(true);
-      alertMessage(constants.success, 'My Hub was successfully created');
+      alertMessage(constants.success, 'ChaosHub is successfully connected');
       refetchQuery();
     },
     onError: (error) => {
@@ -75,7 +75,7 @@ const ConnectRemote: React.FC<ConnectRemoteProp> = ({
   });
 
   /**
-   * Update MyHub mutation to edit the myhub configuration
+   * updateChaosHub mutation to edit the chaoshub configuration
    */
   const [updateMyHub, { loading: updateHubLoader }] = useMutation<
     MyHubData,
@@ -117,7 +117,7 @@ const ConnectRemote: React.FC<ConnectRemoteProp> = ({
       });
     } else
     /**
-     * This will call the add myhub mutation
+     * This will call the addRemoteChaosHub mutation
      */
       addRemoteMyHub({
         variables: {

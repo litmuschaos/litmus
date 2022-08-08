@@ -93,14 +93,14 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
   const [editHubLoader, setEditHubLoader] = useState(!!editHub.isEditing);
 
   /**
-   * Add MyHub mutation to create a new hub
+   * addChaosHub mutation to create a new hub
    */
   const [addMyHub, { loading }] = useMutation<MyHubData, CreateMyHub>(
     ADD_MY_HUB,
     {
       onCompleted: () => {
         alertState(true);
-        alertMessage(constants.success, 'My Hub was successfully created');
+        alertMessage(constants.success, 'ChaosHub is successfully connected');
 
         refetchQuery();
       },
@@ -113,7 +113,7 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
   );
 
   /**
-   * Update MyHub mutation to edit the myhub configuration
+   * updateChaosHub mutation to edit the myhub configuration
    */
   const [updateMyHub, { loading: updateHubLoader }] = useMutation<
     MyHubData,
@@ -152,7 +152,7 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     /**
-     * If editHub is true, edit myhub mutation will be called
+     * If editHub is true, updateChaosHub mutation will be called
      */
     if (editHub.isEditing) {
       updateMyHub({
@@ -183,7 +183,7 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
       });
     } else
     /**
-     * This will call the add myhub mutation
+     * This will call the addChaosHub mutation
      */
       addMyHub({
         variables: {
