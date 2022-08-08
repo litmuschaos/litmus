@@ -116,7 +116,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
     } else if (e.target.name === 'data') {
       setProbeData({
         ...probeData,
-        [e.target.name]: e.target.value,
+        data: e.target.value,
       });
     } else {
       setProbeData({
@@ -512,7 +512,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   'cmdProbe/inputs': {
                     ...probeData['cmdProbe/inputs'],
                     source: {
-                      ...probeData['cmdProbe/inputs'].source,
+                      ...probeData['cmdProbe/inputs']?.source,
                       image: event.target.value,
                     },
                   },
@@ -537,7 +537,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                   'cmdProbe/inputs': {
                     ...probeData['cmdProbe/inputs'],
                     source: {
-                      ...probeData['cmdProbe/inputs'].source,
+                      ...probeData['cmdProbe/inputs']?.source,
                       hostNetwork: event.target.value === 'true',
                     },
                   },
@@ -546,6 +546,54 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               inputProps={{
                 id: 'hostNetwork',
                 name: 'hostNetwork',
+              }}
+            >
+              <MenuItem value="true">true</MenuItem>
+              <MenuItem value="false">false</MenuItem>
+            </Select>
+          </div>
+          <ProbesMenu
+            id="imagePullPolicy"
+            label="imagePullPolicy"
+            value={probeData['cmdProbe/inputs']?.source?.imagePullPolicy}
+            handleChange={(e) =>
+              setProbeData({
+                ...probeData,
+                'cmdProbe/inputs': {
+                  ...probeData['cmdProbe/inputs'],
+                  source: {
+                    ...probeData['cmdProbe/inputs']?.source,
+                    imagePullPolicy: e.target.value,
+                  },
+                },
+              })
+            }
+            valueList={['Always', 'Never', 'IfNotPresent']}
+          />
+          <div className={classes.inputFormField}>
+            <InputLabel className={classes.formLabel} htmlFor="privileged">
+              Privileged
+            </InputLabel>
+            <Select
+              style={{ width: '50%' }}
+              value={probeData['cmdProbe/inputs']?.source?.privileged}
+              className={classes.select}
+              variant="outlined"
+              onChange={(event) => {
+                setProbeData({
+                  ...probeData,
+                  'cmdProbe/inputs': {
+                    ...probeData['cmdProbe/inputs'],
+                    source: {
+                      ...probeData['cmdProbe/inputs']?.source,
+                      privileged: event.target.value === 'true',
+                    },
+                  },
+                });
+              }}
+              inputProps={{
+                id: 'privileged',
+                name: 'privileged',
               }}
             >
               <MenuItem value="true">true</MenuItem>
@@ -667,7 +715,7 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
                 name="data"
                 type="text"
                 multiline
-                value={probeData['k8sProbe/inputs']?.data}
+                value={probeData?.data}
                 onChange={handleK8s}
               />
             </div>

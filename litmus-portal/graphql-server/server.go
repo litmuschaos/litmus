@@ -151,7 +151,7 @@ func main() {
 		AllowCredentials: true,
 	}).Handler)
 
-	router.Use(handlers.LoggingMiddleware())
+	//router.Use(handlers.LoggingMiddleware())
 
 	// routers
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
