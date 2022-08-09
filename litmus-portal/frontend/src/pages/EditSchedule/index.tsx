@@ -175,7 +175,7 @@ const EditSchedule: React.FC = () => {
         workflow_id: wfDetails?.workflowID,
         clusterID: wfDetails?.clusterID,
         clusterName: wfDetails.clusterName,
-        cronSyntax,
+        cronSyntax: wfDetails.cronSyntax,
         scheduleType: {
           scheduleOnce:
             wfDetails?.cronSyntax === '' ? 'now' : 'recurringSchedule',

@@ -742,6 +742,7 @@ const ScheduleWorkflow: React.FC<ScheduleWorkflowProps> = ({ handleNext }) => {
           Cancel
         </ButtonOutlined>
         <ButtonFilled
+          disabled={value !== 'now' && valueDef === ''}
           data-cy="VerifyButton"
           onClick={() => {
             EditYaml();
