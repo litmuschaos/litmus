@@ -10,7 +10,11 @@ import UsefulLinks from '../../../components/UsefulLinks';
 import config from '../../../config';
 import Wrapper from '../../../containers/layouts/Wrapper';
 import { GET_EXPERIMENT_DATA, GET_HUB_STATUS } from '../../../graphql';
-import { ExperimentDetail, HubStatus, Link } from '../../../models/redux/myhub';
+import {
+  ExperimentDetail,
+  HubStatus,
+  Link,
+} from '../../../models/graphql/chaoshub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import ExperimentHeader from '../ExperimentHeader';
 import useStyles from './styles';

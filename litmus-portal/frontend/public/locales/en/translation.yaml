@@ -36,7 +36,7 @@ header:
     otherProjects: Other Projects
     noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
-    signedIn: 'Signed in as:'
+    signedIn: "Signed in as:"
     emailUnset: Email not set
     emailSet: Set up your email
     switchProject: Please switch to a project you own to access settings
@@ -93,7 +93,7 @@ workflowStepper:
   back: Back
 
 editor:
-  status: 'YAML Status:'
+  status: "YAML Status:"
 
 ######################################
 ############    Pages    #############
@@ -111,14 +111,14 @@ login:
   tooltipText: You need to contact your admin to reset your password.
 
 schedule:
-  heading: 'Schedule a Chaos Scenario'
-  headingDesc: 'Click on test to see detailed log of your Chaos Scenario'
-  headingText: 'Schedule details:'
-  description: 'Choose the right time to schedule your first Chaos Scenario. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  heading: "Schedule a Chaos Scenario"
+  headingDesc: "Click on test to see detailed log of your Chaos Scenario"
+  headingText: "Schedule details:"
+  description: "Choose the right time to schedule your first Chaos Scenario. Below you can find some options that may be convenient for you."
+  save: "Save Changes"
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start Chaos Scenario'
+  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start Chaos Scenario"
   scheduleSpecificTime: Schedule at a specific time
   scheduleFuture: Select date and time to start Chaos Scenario in future
   scheduleRecurring: Recurring Schedule
@@ -126,7 +126,7 @@ schedule:
   after: After
   at: at
   At: At
-  scheduleOn: 'On'
+  scheduleOn: "On"
   missingPerm: Missing sufficient permissions :(
   requiredPerm: Looks like you do not have the required permission to create a new Chaos Scenario on this project.
   contact: Contact portal administrator to upgrade your permission.
@@ -147,11 +147,11 @@ editSchedule:
   successfullyCreated: is successfully created
 
 community:
-  title: 'Community'
-  heading: 'Litmus Insights'
-  headingDesc: 'Stats for the Litmus community'
-  analyticDesc: 'Periodic growth of Litmus'
-  statsHeading: 'Litmus users around the world'
+  title: "Community"
+  heading: "Litmus Insights"
+  headingDesc: "Stats for the Litmus community"
+  analyticDesc: "Periodic growth of Litmus"
+  statsHeading: "Litmus users around the world"
   litmusChaos: Litmuschaos
   follow: Follow
   feedback:
@@ -170,8 +170,8 @@ observability:
   comingSoon: Statistics Coming Soon !
   waitingMessage: Waiting for Chaos Scenario to start running !
   chaosCompleteWaitingMessage: Waiting for Chaos Experiment to finish !
-  highestScore: 'Highest Score:'
-  lowestScore: 'Lowest Score:'
+  highestScore: "Highest Score:"
+  lowestScore: "Lowest Score:"
   exportPDF: Export PDF
   compareWorkflows: Compare Chaos Scenarios
   targetCluster: Chaos Delegate
@@ -463,7 +463,7 @@ monitoringDashboard:
     warning:
       text: Unexpected bad things will happen if you don’t read this!
       info: The data source seems to be connected to following monitoring dashboards. Dashboards will be unable to show metrics if the data source is deleted.
-      connectedDashboards: 'Connected Dashboards :'
+      connectedDashboards: "Connected Dashboards :"
       showLess: Show Less Dashboards
       dashboards: Dashboards
     deletionSuccess: Successfully deleted the data source
@@ -568,8 +568,8 @@ homeViews:
     recentWorkflowRuns:
       workflowRunCard:
         cardTitle: Browse Chaos Scenario
-        resilienceRate: 'Overall resilience rate:'
-        lastRun: 'Last Run:'
+        resilienceRate: "Overall resilience rate:"
+        lastRun: "Last Run:"
         showStatistics: Show the statistics
         downloadManifest: Download manifest
       heading: Recent Chaos Scenario runs
@@ -619,7 +619,7 @@ chaosWorkflows:
     disableSchedule: Disable Schedule
     enableSchedule: Enable Schedule
     saveTemplate: Save Template
-    updateEngine: 'Note: Make sure to update the chaos engine names'
+    updateEngine: "Note: Make sure to update the chaos engine names"
     saveChanges: Save Changes
     savedSuccessfully: Successfully saved template.
     cancel: Cancel
@@ -646,8 +646,8 @@ chaosWorkflows:
     delete: Delete Chaos Scenario
     workflowManifest: Chaos Scenario Manifest
     tableData:
-      overallRR: 'Overall RR : '
-      experimentsPassed: 'Experiments Passed : '
+      overallRR: "Overall RR : "
+      experimentsPassed: "Experiments Passed : "
       showExperiments: Show Experiments
       showTheWorkflow: Show the Chaos Scenario
       showTheStatistics: Show the statistics
@@ -837,7 +837,7 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: '* Any existing or active Chaos Scenarios saved locally will not be synced into the git repository'
+    desc: "* Any existing or active Chaos Scenarios saved locally will not be synced into the git repository"
     connect: Connect
     branch: Branch
     URL: Git URL
@@ -852,11 +852,11 @@ settings:
     headingDesc: Your image registry for the Chaos Scenario manifest
     defaultValues: Use the default values
     defaultText: All YAML files use these default values provided by Litmus. The values cannot be changed.
-    registry: 'Registry Server : '
-    repo: 'Registry : '
-    repoType: 'Registry Type : '
-    dockerio: 'docker.io'
-    litmus: 'litmuschaos'
+    registry: "Registry Server : "
+    repo: "Registry : "
+    repoType: "Registry Type : "
+    dockerio: "docker.io"
+    litmus: "litmuschaos"
     public: Public
     private: Private
     defaultReg: Use Default Registry
@@ -889,11 +889,11 @@ workflowDetailsView:
     status: Chaos Scenario Status
     runTime:
       duration: Duration
-      startTime: 'Start Time :'
-      endTime: 'End Time :'
+      startTime: "Start Time :"
+      endTime: "End Time :"
     targets:
       targetsHeader: Chaos Delegate
-      namespace: 'Chaos Scenario Namespace'
+      namespace: "Chaos Scenario Namespace"
   workflowNodeInfo:
     name: Name
     type: Type
@@ -950,8 +950,8 @@ createWorkflow:
     retainLogsDesc: Enabling this will make the schedule to revert after completion.
     noTemplates: No template available.
     addTemplate: You can add a template from the scheduled Chaos Scenarios table.
-    trueValue: 'True'
-    falseValue: 'False'
+    trueValue: "True"
+    falseValue: "False"
     enableRegistry: Enable Image Registry Changes
     table:
       head1: Sequence
@@ -978,7 +978,7 @@ createWorkflow:
     advanceDesc: Modify node selector, cleanup Chaos Scenario resource and tolerations.
     nodeSelector: Node Selector
     nodeSelectorDesc: NodeSelector is a selector which will result in all pods of the Chaos Scenario to be scheduled on the selected node.
-    nodeSelectorValue: 'kubernetes.io/hostname'
+    nodeSelectorValue: "kubernetes.io/hostname"
     toleration: Toleration
     tolerationDesc: Tolerations are applied to pods, and allow the pods to schedule onto nodes with matching taints.
     effect: effect
@@ -987,7 +987,7 @@ createWorkflow:
     value: value
     cleanUp: Cleanup Chaos Scenario Pods
     cleanUpDesc: Delete Chaos Scenario pods after completion or successful execution.
-    strategy: 'podGC.strategy'
+    strategy: "podGC.strategy"
     podGC: podGC
     complete: OnWorkflowCompletion
     success: OnWorkflowSuccess
@@ -1065,8 +1065,8 @@ createWorkflow:
       myHubInfo: Chaos Experiment details
       annotationInfo: Provide target application details where you want to induce the chaos.
       annotation: Annotation Check
-      true: 'True'
-      false: 'False'
+      true: "True"
+      false: "False"
       annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this Chaos Experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
       appkind: appKind
       deployment: Deployment
@@ -1075,7 +1075,7 @@ createWorkflow:
       deploymentconfig: Deploymentconfig
       rollout: Rollout
       nodeselector: NodeSelector
-      selector: 'kubernetes.io/hostname :'
+      selector: "kubernetes.io/hostname :"
       nsError: Namespace not available
       labelError: Label not available in the resource or namespace
       deleteExp: Delete the Chaos Experiment
@@ -1089,7 +1089,7 @@ createWorkflow:
       showDetails: Show Details
       showProp: Show Properties
       addProbe: Please add probes to see the data
-      addNewProbe: '+ Add a new Probe'
+      addNewProbe: "+ Add a new Probe"
       back: Back
       finish: Finish
     env:
@@ -1289,7 +1289,7 @@ browseTemplate:
 #########################################
 
 internetIssues:
-  fetchData: 'Fetching the data...'
+  fetchData: "Fetching the data..."
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
@@ -1299,14 +1299,14 @@ myhub:
   title: ChaosHubs
   connectTarget: Connect the target
   viewMyHub: View ChaosHub
-  error: '[Error: could not connect]'
+  error: "[Error: could not connect]"
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
   edit: Edit ChaosHub
   refresh: Refresh ChaosHub
   disconnect: Disconnect ChaosHub
-  lastSync: 'Last synced at:'
+  lastSync: "Last synced at:"
   mainPage:
     header: ChaosHubs
     github: github.com/
@@ -1321,7 +1321,7 @@ myhub:
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect ChaosHub?
+    disconnectHeader: Are you sure you want to disconnect
     disconnectDesc: Action is not revertable
     cancel: Cancel
     deleteHub: Delete ChaosHub
@@ -1334,9 +1334,9 @@ myhub:
     chaosCharts: Chaos-experiments
     noPredefinedExp: No predefined Chaos Scenarios available with information in this ChaosHub
     noExp: No experiments found
-    lastSynced: 'Last synced at: '
-    repoLink: 'Repository Link: '
-    repoBranch: 'Repository Branch: '
+    lastSynced: "Last synced at: "
+    repoLink: "Repository Link: "
+    repoBranch: "Repository Branch: "
   connectHubPage:
     connectHub: Connect a new ChaosHub
     editHub: Edit ChaosHub configuration
@@ -1354,7 +1354,7 @@ myhub:
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
-    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
+    sshAlert: "*Make sure to provide the SSH link of the Git Repository"
     saveLater: Save for later
     updateHub: Update the ChaosHub with correct details from the MyHubs section
     cancel: Cancel

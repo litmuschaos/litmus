@@ -14,7 +14,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/Loader';
 import Center from '../../containers/layouts/Center';
-import { HubDetails } from '../../models/redux/myhub';
+import { HubDetails, HubType } from '../../models/graphql/chaoshub';
 import { history } from '../../redux/configureStore';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import useStyles from './styles';
@@ -22,10 +22,10 @@ import useStyles from './styles';
 interface customMyHubCardProp {
   hub: HubDetails;
   keyValue: string;
-  handleDelete: (hubId: string) => void;
+  handleDelete: (hubId: string, hubName: string) => void;
   handleRefresh: (hubId: string) => void;
   refreshLoader: boolean;
-  handleEditHub: (hubName: string) => void;
+  handleEditHub: (hubName: string, hubType: string) => void;
 }
 
 const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
@@ -128,7 +128,10 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                     data-cy="myHubEdit"
                     value="View"
                     onClick={() => {
-                      handleEditHub(hub.hubName);
+                      handleEditHub(
+                        hub.hubName,
+                        hub.hubType ? hub.hubType : 'git'
+                      );
                       handleClose();
                     }}
                   >
@@ -148,7 +151,7 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
                     data-cy="myHubDelete"
                     value="Delete"
                     onClick={() => {
-                      handleDelete(hub.id);
+                      handleDelete(hub.id, hub.hubName);
                     }}
                   >
                     <div className={classes.cardMenu}>
@@ -195,7 +198,13 @@ const CustomMyHubCard: React.FC<customMyHubCardProp> = ({
             align="center"
             className={classes.hubName}
           >
-            <strong>{hub.hubName}</strong>/{hub.repoBranch}
+            {hub.hubType.toLowerCase() === HubType.remote.toLowerCase() ? (
+              <strong>{hub.hubName}</strong>
+            ) : (
+              <>
+                <strong>{hub.hubName}</strong>/{hub.repoBranch}
+              </>
+            )}
           </Typography>
           <Typography className={classes.totalExp} gutterBottom>
             {parseInt(hub.totalExp, 10) > 0

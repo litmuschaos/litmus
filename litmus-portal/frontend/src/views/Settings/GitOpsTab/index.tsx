@@ -18,7 +18,7 @@ import {
   UPDATE_GITOPS,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
-import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/chaoshub';
+import { SSHKey, SSHKeys, AuthType } from '../../../models/graphql/chaoshub';
 import { GetGitOpsDetailRequest } from '../../../models/graphql/gitOps';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
@@ -246,10 +246,10 @@ const GitOpsTab = () => {
               branch: gitHub.GitBranch,
               authType:
                 privateHub === 'token'
-                  ? MyHubType.TOKEN
+                  ? AuthType.TOKEN
                   : privateHub === 'ssh'
-                  ? MyHubType.SSH
-                  : MyHubType.NONE,
+                  ? AuthType.SSH
+                  : AuthType.NONE,
               token: accessToken,
               userName: 'user',
               password: 'user',
@@ -269,10 +269,10 @@ const GitOpsTab = () => {
                 privateHub === ''
                   ? data?.getGitOpsDetails.authType
                   : privateHub === 'token'
-                  ? MyHubType.TOKEN
+                  ? AuthType.TOKEN
                   : privateHub === 'ssh'
-                  ? MyHubType.SSH
-                  : MyHubType.NONE,
+                  ? AuthType.SSH
+                  : AuthType.NONE,
               token:
                 privateHub === '' ? data?.getGitOpsDetails.token : accessToken,
               userName: 'user',

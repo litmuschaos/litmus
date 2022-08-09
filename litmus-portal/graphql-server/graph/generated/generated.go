@@ -92,6 +92,7 @@ type ComplexityRoot struct {
 		AuthType      func(childComplexity int) int
 		CreatedAt     func(childComplexity int) int
 		HubName       func(childComplexity int) int
+		HubType       func(childComplexity int) int
 		ID            func(childComplexity int) int
 		IsPrivate     func(childComplexity int) int
 		IsRemoved     func(childComplexity int) int
@@ -109,6 +110,7 @@ type ComplexityRoot struct {
 	ChaosHubStatus struct {
 		AuthType      func(childComplexity int) int
 		HubName       func(childComplexity int) int
+		HubType       func(childComplexity int) int
 		ID            func(childComplexity int) int
 		IsAvailable   func(childComplexity int) int
 		IsPrivate     func(childComplexity int) int
@@ -340,6 +342,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddChaosHub                func(childComplexity int, request model.CreateChaosHubRequest) int
+		AddRemoteChaosHub          func(childComplexity int, request model.CreateRemoteMyHub) int
 		ChaosWorkflowRun           func(childComplexity int, request model.WorkflowRunRequest) int
 		ConfirmClusterRegistration func(childComplexity int, request model.ClusterIdentity) int
 		CreateChaosWorkFlow        func(childComplexity int, request model.ChaosWorkFlowRequest) int
@@ -683,6 +686,7 @@ type MutationResolver interface {
 	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
 	AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
+	AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteMyHub) (*model.ChaosHub, error)
 	SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
 	SyncChaosHub(ctx context.Context, id string, projectID string) (string, error)
 	GenerateSSHKey(ctx context.Context) (*model.SSHKey, error)
@@ -927,6 +931,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ChaosHub.HubName(childComplexity), true
 
+	case "ChaosHub.hubType":
+		if e.complexity.ChaosHub.HubType == nil {
+			break
+		}
+
+		return e.complexity.ChaosHub.HubType(childComplexity), true
+
 	case "ChaosHub.id":
 		if e.complexity.ChaosHub.ID == nil {
 			break
@@ -1024,6 +1035,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ChaosHubStatus.HubName(childComplexity), true
+
+	case "ChaosHubStatus.hubType":
+		if e.complexity.ChaosHubStatus.HubType == nil {
+			break
+		}
+
+		return e.complexity.ChaosHubStatus.HubType(childComplexity), true
 
 	case "ChaosHubStatus.id":
 		if e.complexity.ChaosHubStatus.ID == nil {
@@ -2079,6 +2097,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddChaosHub(childComplexity, args["request"].(model.CreateChaosHubRequest)), true
+
+	case "Mutation.addRemoteChaosHub":
+		if e.complexity.Mutation.AddRemoteChaosHub == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addRemoteChaosHub_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddRemoteChaosHub(childComplexity, args["request"].(model.CreateRemoteMyHub)), true
 
 	case "Mutation.chaosWorkflowRun":
 		if e.complexity.Mutation.ChaosWorkflowRun == nil {
@@ -5104,6 +5134,11 @@ enum FileType {
   CSV
 }
 
+enum HubType {
+  GIT
+  REMOTE
+}
+
 type ChaosHub {
   """
   ID of the chaos hub
@@ -5125,6 +5160,10 @@ type ChaosHub {
   Name of the chaos hub
   """
   hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -5272,6 +5311,10 @@ type ChaosHubStatus {
   Name of the chaos hub
   """
   hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -5435,6 +5478,22 @@ input CloningInput {
   sshPrivateKey: String
 }
 
+input CreateRemoteMyHub {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  ProjectID of the ChaosHub
+  """
+  projectID: String!
+}
+
+
 input UpdateChaosHubRequest {
   """
   ID of the chaos hub
@@ -5557,6 +5616,11 @@ extend type Mutation {
   Add a ChaosHub (includes the git clone operation)
   """
   addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Add a ChaosHub (remote hub download)
+  """
+  addRemoteChaosHub(request: CreateRemoteMyHub!): ChaosHub! @authorized
 
   """
   Save a ChaosHub configuration without cloning it
@@ -6500,6 +6564,20 @@ func (ec *executionContext) field_Mutation_addChaosHub_args(ctx context.Context,
 	var arg0 model.CreateChaosHubRequest
 	if tmp, ok := rawArgs["request"]; ok {
 		arg0, err = ec.unmarshalNCreateChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateChaosHubRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addRemoteChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreateRemoteMyHub
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNCreateRemoteMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateRemoteMyHub(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -8714,6 +8792,40 @@ func (ec *executionContext) _ChaosHub_hubName(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ChaosHub_hubType(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHub",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HubType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.HubType)
+	fc.Result = res
+	return ec.marshalNHubType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHubType(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ChaosHub_isPrivate(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHub) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9244,6 +9356,40 @@ func (ec *executionContext) _ChaosHubStatus_hubName(ctx context.Context, field g
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ChaosHubStatus_hubType(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ChaosHubStatus",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HubType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.HubType)
+	fc.Result = res
+	return ec.marshalNHubType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHubType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ChaosHubStatus_isPrivate(ctx context.Context, field graphql.CollectedField, obj *model.ChaosHubStatus) (ret graphql.Marshaler) {
@@ -15543,6 +15689,67 @@ func (ec *executionContext) _Mutation_addChaosHub(ctx context.Context, field gra
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().AddChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ChaosHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosHub)
+	fc.Result = res
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addRemoteChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addRemoteChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AddRemoteChaosHub(rctx, args["request"].(model.CreateRemoteMyHub))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -24351,6 +24558,36 @@ func (ec *executionContext) unmarshalInputCreateDBInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateRemoteMyHub(ctx context.Context, obj interface{}) (model.CreateRemoteMyHub, error) {
+	var it model.CreateRemoteMyHub
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "hubName":
+			var err error
+			it.HubName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "repoURL":
+			var err error
+			it.RepoURL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "projectID":
+			var err error
+			it.ProjectID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDSInput(ctx context.Context, obj interface{}) (model.DSInput, error) {
 	var it model.DSInput
 	var asMap = obj.(map[string]interface{})
@@ -26334,6 +26571,11 @@ func (ec *executionContext) _ChaosHub(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "hubType":
+			out.Values[i] = ec._ChaosHub_hubType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "isPrivate":
 			out.Values[i] = ec._ChaosHub_isPrivate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -26421,6 +26663,11 @@ func (ec *executionContext) _ChaosHubStatus(ctx context.Context, sel ast.Selecti
 			}
 		case "hubName":
 			out.Values[i] = ec._ChaosHubStatus_hubName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "hubType":
+			out.Values[i] = ec._ChaosHubStatus_hubType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -27698,6 +27945,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "addChaosHub":
 			out.Values[i] = ec._Mutation_addChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addRemoteChaosHub":
+			out.Values[i] = ec._Mutation_addRemoteChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -30020,6 +30272,10 @@ func (ec *executionContext) unmarshalNCreateChaosHubRequest2githubᚗcomᚋlitmu
 	return ec.unmarshalInputCreateChaosHubRequest(ctx, v)
 }
 
+func (ec *executionContext) unmarshalNCreateRemoteMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateRemoteMyHub(ctx context.Context, v interface{}) (model.CreateRemoteMyHub, error) {
+	return ec.unmarshalInputCreateRemoteMyHub(ctx, v)
+}
+
 func (ec *executionContext) unmarshalNDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDSInput(ctx context.Context, v interface{}) (model.DSInput, error) {
 	return ec.unmarshalInputDSInput(ctx, v)
 }
@@ -30257,6 +30513,15 @@ func (ec *executionContext) marshalNHeatmapDataResponse2ᚕᚖgithubᚗcomᚋlit
 	}
 	wg.Wait()
 	return ret
+}
+
+func (ec *executionContext) unmarshalNHubType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHubType(ctx context.Context, v interface{}) (model.HubType, error) {
+	var res model.HubType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNHubType2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐHubType(ctx context.Context, sel ast.SelectionSet, v model.HubType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

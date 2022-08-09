@@ -23,6 +23,17 @@ func (r *mutationResolver) AddChaosHub(ctx context.Context, request model.Create
 	return myhub.AddChaosHub(ctx, request)
 }
 
+func (r *mutationResolver) AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteMyHub) (*model.ChaosHub, error) {
+	err := authorization.ValidateRole(ctx, request.ProjectID,
+		authorization.MutationRbacRules[authorization.SaveMyHub],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return myhub.AddRemoteMyHub(ctx, request)
+}
+
 func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.SaveMyHub],

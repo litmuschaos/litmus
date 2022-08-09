@@ -12,6 +12,11 @@ enum FileType {
   CSV
 }
 
+enum HubType {
+  GIT
+  REMOTE
+}
+
 type ChaosHub {
   """
   ID of the chaos hub
@@ -33,6 +38,10 @@ type ChaosHub {
   Name of the chaos hub
   """
   hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -180,6 +189,10 @@ type ChaosHubStatus {
   Name of the chaos hub
   """
   hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -343,6 +356,22 @@ input CloningInput {
   sshPrivateKey: String
 }
 
+input CreateRemoteMyHub {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  ProjectID of the ChaosHub
+  """
+  projectID: String!
+}
+
+
 input UpdateChaosHubRequest {
   """
   ID of the chaos hub
@@ -465,6 +494,11 @@ extend type Mutation {
   Add a ChaosHub (includes the git clone operation)
   """
   addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Add a ChaosHub (remote hub download)
+  """
+  addRemoteChaosHub(request: CreateRemoteMyHub!): ChaosHub! @authorized
 
   """
   Save a ChaosHub configuration without cloning it
