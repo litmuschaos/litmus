@@ -2,10 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 type APIStatus struct {

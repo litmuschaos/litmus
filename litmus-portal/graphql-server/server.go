@@ -151,17 +151,19 @@ func main() {
 		AllowCredentials: true,
 	}).Handler)
 
-	//router.Use(handlers.LoggingMiddleware())
-
 	// routers
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
-	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
-	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
 
-	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
-	router.HandleFunc("/status", handlers.StatusHandler)
-	router.HandleFunc("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
+	restRouter := router.PathPrefix("/").Subrouter()
+
+	restRouter.Handle("/readiness", handlers.ReadinessHandler(srv, client))
+	restRouter.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
+
+	restRouter.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
+	restRouter.HandleFunc("/status", handlers.StatusHandler)
+	restRouter.HandleFunc("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
+	restRouter.Use(authorization.LoggingMiddleware())
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
