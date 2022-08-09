@@ -21,7 +21,6 @@ const Settings = lazy(() => import('../../pages/Settings'));
 const UsageStatistics = lazy(() => import('../../pages/UsageStatistics'));
 const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
-const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const WorkflowInfoStats = lazy(() => import('../../pages/WorkflowInfoStats'));
 const ObservabilityDashboard = lazy(
@@ -213,11 +212,6 @@ const Routes: React.FC = () => {
                 exact
                 path="/scenarios/schedule/:scheduleProjectID/:workflowName"
                 component={EditSchedule}
-              />
-              <Route
-                exact
-                path="/scenarios/schedule/:scheduleProjectID/:workflowName/set"
-                component={SetNewSchedule}
               />
               <Route
                 exact
