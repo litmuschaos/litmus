@@ -400,7 +400,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
       ]);
     installAll = `${installAllExp}kubectl apply -f /tmp/${`${
       YAML.parse(experiment.experimentDetails).metadata.name
-    }-${hash}`}.yaml -n {{workflow.parameters.adminModeNamespace}} | `;
+    }-${hash}`}.yaml -n {{workflow.parameters.adminModeNamespace}} && `;
     const arg =
       generatedYAML.kind === 'Workflow'
         ? generatedYAML.spec.templates[1]?.container

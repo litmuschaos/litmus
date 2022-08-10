@@ -350,7 +350,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     }, [currentGranularity]);
 
     return (
-      <div style={{ alignContent: 'center', width: '100%' }}>
+      <div>
         <div className={classes.flexDisplay}>
           <div className={classes.adjust}>
             <Score

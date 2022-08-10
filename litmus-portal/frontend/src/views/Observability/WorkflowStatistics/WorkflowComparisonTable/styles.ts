@@ -194,12 +194,11 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     width: '100%',
-    height: '40rem',
     borderTop: `1px solid ${theme.palette.border.main}`,
   },
 
   comparisonHeadingFix: {
-    paddingTop: theme.spacing(3),
+    padding: theme.spacing(3),
     backgroundColor: theme.palette.background.paper,
   },
 

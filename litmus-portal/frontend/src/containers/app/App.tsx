@@ -26,13 +26,13 @@ const WorkflowInfoStats = lazy(() => import('../../pages/WorkflowInfoStats'));
 const ObservabilityDashboard = lazy(
   () => import('../../pages/ObservabilityPage')
 );
-const DataSourceConfigurePage = lazy(
-  () => import('../../pages/ConfigureDataSources')
-);
-const ChooseAndConfigureDashboards = lazy(
-  () => import('../../pages/ChooseAndConfigureDashboards')
-);
-const DashboardPage = lazy(() => import('../../pages/MonitoringDashboard'));
+// const DataSourceConfigurePage = lazy(
+//   () => import('../../pages/ConfigureDataSources')
+// );
+// const ChooseAndConfigureDashboards = lazy(
+//   () => import('../../pages/ChooseAndConfigureDashboards')
+// );
+// const DashboardPage = lazy(() => import('../../pages/MonitoringDashboard'));
 const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
@@ -175,7 +175,7 @@ const Routes: React.FC = () => {
                 path="/analytics"
                 component={ObservabilityDashboard}
               />
-              <Route
+              {/* <Route
                 exact
                 path="/analytics/datasource/create"
                 component={() => <DataSourceConfigurePage configure={false} />}
@@ -201,7 +201,7 @@ const Routes: React.FC = () => {
                 exact
                 path="/analytics/monitoring-dashboard"
                 component={() => <DashboardPage />}
-              />
+              /> */}
               <Route exact path="/create-scenario" component={CreateWorkflow} />
               <Route
                 exact
