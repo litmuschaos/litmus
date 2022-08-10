@@ -143,7 +143,7 @@ const TableData: React.FC<TableDataProps> = ({
 
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
-      tabs.changeWorkflowsTabs(0);
+      tabs.changeWorkflowsTabs(1);
     },
     onError: (error) => {
       setReRunMessage(error.message);
@@ -375,7 +375,7 @@ const TableData: React.FC<TableDataProps> = ({
       <TableCell>
         <IconButton
           onClick={() => {
-            tabs.changeWorkflowsTabs(0);
+            tabs.changeWorkflowsTabs(1);
             setWorkflowName(data.workflowName);
           }}
           data-cy="showSchedules"

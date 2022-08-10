@@ -274,7 +274,7 @@ const VerifyCommit = forwardRef(
       localforage.removeItem('editSchedule');
       setFinishModalOpen(false);
 
-      tabs.changeWorkflowsTabs(0);
+      tabs.changeWorkflowsTabs(1);
       history.push({
         pathname: '/scenarios',
         search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
