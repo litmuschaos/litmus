@@ -12,9 +12,22 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   // WorkflowName Header
   title: {
-    margin: theme.spacing(2, 0, 0, 0),
+    margin: theme.spacing(3, 0),
     fontSize: '1.5rem',
-    fontWeight: 'bold',
+  },
+
+  desc: {
+    fontSize: '0.875rem',
+    width: '80%',
+    color: theme.palette.text.hint,
+  },
+
+  viewAll: {
+    fontSize: '0.775rem',
+    color: theme.palette.primary.main,
+    borderBottom: `1px solid ${theme.palette.primary.main}`,
+    marginLeft: theme.spacing(10),
+    cursor: 'pointer',
   },
 
   // Second Heading

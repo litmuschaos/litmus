@@ -96,7 +96,10 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                   setHubType(HubType.git);
                 }}
               >
-                <div className={classes.connectHubIconDiv}>
+                <div
+                  className={classes.connectHubIconDiv}
+                  data-cy="connectFromGithubButton"
+                >
                   <img
                     src="./icons/gitops-image.svg"
                     alt="Gitops"
@@ -115,7 +118,10 @@ const MyHubConnectDrawer: React.FC<MyHubConnectDrawerProps> = ({
                   setHubType(HubType.remote);
                 }}
               >
-                <div className={classes.connectHubIconDiv}>
+                <div
+                  className={classes.connectHubIconDiv}
+                  data-cy="connectFromRemoteButton"
+                >
                   <img
                     src="./icons/remote-git.svg"
                     alt="Download"
