@@ -3,7 +3,7 @@ export interface UserInvite {
   name: string;
   username: string;
   email: string;
-  createdAt: string;
+  created_at: string;
   deactivated_at: string;
 }
 
