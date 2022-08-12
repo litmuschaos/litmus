@@ -167,7 +167,7 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
               ? false
               : !!isToggled.isPrivateToggled,
             authType: isToggled.isPublicToggled
-              ? AuthType.BASIC
+              ? AuthType.NONE
               : privateHub === 'token'
               ? AuthType.TOKEN
               : privateHub === 'ssh'
@@ -196,7 +196,7 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
               ? false
               : !!isToggled.isPrivateToggled,
             authType: isToggled.isPublicToggled
-              ? AuthType.BASIC
+              ? AuthType.NONE
               : privateHub === 'token'
               ? AuthType.TOKEN
               : privateHub === 'ssh'
