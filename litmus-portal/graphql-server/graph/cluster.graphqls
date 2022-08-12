@@ -238,6 +238,7 @@ extend type Query {
     Returns version of gql server
     """
     getServerVersion: ServerVersionResponse!
+
     # CLUSTER OPERATIONS
     """
     Returns clusters with a particular cluster type in the project
