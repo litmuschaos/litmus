@@ -2,6 +2,7 @@ package events
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"regexp"
 	"strconv"
@@ -156,6 +157,8 @@ func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent 
 		wfEvent.Nodes[id] = event
 	}
 
+	wfEvent.ExecutedBy = URLDecodeBase64(wfEvent.ExecutedBy)
+
 	processed, err := graphql.MarshalGQLData(wfEvent)
 	if err != nil {
 		return nil, err
@@ -163,4 +166,12 @@ func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent 
 	mutation := `{ workflowID: \"` + wfEvent.WorkflowID + `\", workflowRunID: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflowName:\"` + wfEvent.Name + `\", clusterID: ` + clusterID + `, executedBy:\"` + wfEvent.ExecutedBy + `\", executionData:\"` + processed[1:len(processed)-1] + `\"}`
 	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(request:` + mutation + ` )}"}`)
 	return payload, nil
+}
+
+func URLDecodeBase64(encoded string) string {
+	decoded, err := base64.RawURLEncoding.DecodeString(encoded)
+	if err != nil {
+		return encoded
+	}
+	return string(decoded)
 }
