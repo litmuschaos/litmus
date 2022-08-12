@@ -95,7 +95,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -105,7 +105,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             data-cy="avatar"
             alt="User"
             className={`${
-              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
+              row.deactivated_at ? classes.darkBg : classes.avatarBackground
             } `}
           >
             {memberDetails?.username && userInitials(memberDetails.username)}
@@ -115,13 +115,13 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
       >
         <div className={classes.dropDown}>
           {role}
           <IconButton
-            disabled={row.DeactivatedAt !== null}
+            disabled={row.deactivated_at !== null}
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
@@ -196,7 +196,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
@@ -222,14 +222,14 @@ const InvitedTableData: React.FC<TableDataProps> = ({
             classes={{
               tooltip: classes.tooltip,
             }}
-            disableHoverListener={!row.DeactivatedAt}
+            disableHoverListener={!row.deactivated_at}
             disableFocusListener
             placement="bottom"
             title="User has been deactivated"
           >
             <div data-cy="resendButton">
               <ButtonFilled
-                disabled={row.DeactivatedAt !== null}
+                disabled={row.deactivated_at !== null}
                 onClick={() => {
                   SendInvite(row.UserID, role);
                 }}
