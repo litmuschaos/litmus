@@ -648,6 +648,10 @@ spec:
               value: "2.11.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
+            - name: INGRESS
+              value: "false"
+            - name: INGRESS_NAME
+              value: "litmus-ingress"              
           ports:
             - containerPort: 8080
             - containerPort: 8000
