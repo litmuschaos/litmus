@@ -646,6 +646,8 @@ spec:
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
               value: "2.11.0"
+            - name: REMOTE_HUB_MAX_SIZE
+              value: "5000000"
           ports:
             - containerPort: 8080
             - containerPort: 8000
