@@ -164,6 +164,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.25rem',
     marginLeft: theme.spacing(2.5),
   },
+  warningText: {
+    color: theme.palette.warning.main,
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 export default useStyles;

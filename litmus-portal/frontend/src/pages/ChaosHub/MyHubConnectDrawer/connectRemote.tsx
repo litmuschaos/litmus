@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { Typography } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined, InputField } from 'litmus-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -152,6 +153,9 @@ const ConnectRemote: React.FC<ConnectRemoteProp> = ({
         <Loader size={40} />
       ) : (
         <form id="login-form" autoComplete="on" onSubmit={handleSubmit}>
+          <Typography className={classes.warningText}>
+            Warning: Remote Zip name and ChaosHub name should be same.
+          </Typography>
           <div className={classes.inputDivRemote}>
             <InputField
               className={classes.hubName}
