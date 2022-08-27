@@ -714,13 +714,12 @@ spec:
             # supports: string, int, float
             type: "string"
             # criteria which should be followed by the actual output and the expected output
-            #supports [>=, <=, >, <, ==, !=] for int and float
-            # supports [contains, equal, notEqual, matches, notMatches] for string values
+            #supports [>=, <=, >, <, ==, !=, oneOf, between] for int and float
+            # supports [contains, equal, notEqual, matches, notMatches, oneOf] for string values
             criteria: "contains"
             # expected value, which should follow the specified criteria
             value: "<value-for-criteria-match>"
           # source for the cmdProbe
-          # it can be “inline” or any image
           source:
             image: "<source-image>"
             imagePullPolicy: Always
