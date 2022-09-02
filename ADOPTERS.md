@@ -53,6 +53,7 @@ They use LitmusChaos as the tool of choice for carrying out chaos experiments in
 | [Neudesic](https://www.neudesic.com/) | Chaos Engineering | [Our Story](adopters/organizations/neudesic.md) |
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[Our Story](adopters/organizations/wescale.md)|
 |[Wipro](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Wipro AppAnywhere](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Our Story](adopters/organizations/wipro.md)|
+|[HCL Cloud Native Labs](https://www.hcltech.com/)|SRE Enablement Service|[Our Story(TBA)]|
 
 ### Cloud-Native OSS Projects 
 
