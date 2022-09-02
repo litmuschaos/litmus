@@ -24,6 +24,7 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[FIS](https://www.fisglobal.com/en/)|Larger SRE Transformation with Chaos Engineering|[Our Story](adopters/organizations/fis.md)|
 |[Adidas](https://adidas.com/)|Implementing Chaos Engineering as a practice at Adidas|[Our Story](adopters/organizations/adidas.md)|
 |[Cyren](https://www.cyren.com/)|Implementing Chaos Engineering as a practice at Cyren|[Our Story](https://www.infoq.com/articles/chaos-engineering-cloud-native/)|
+|[AB-Inbev](https://www.ab-inbev.com/)|Implementing Chaos Engineering as a practice at AB-Inbev|[Our Story](adopters/organizations/abinbev.md)|
 
 ### Cloud-Native Vendors
 
@@ -54,6 +55,7 @@ They use LitmusChaos as the tool of choice for carrying out chaos experiments in
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[Our Story](adopters/organizations/wescale.md)|
 |[Wipro](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Wipro AppAnywhere](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Our Story](adopters/organizations/wipro.md)|
 |[HCL Cloud Native Labs](https://www.hcltech.com/)|SRE Enablement Service|[Our Story(TBA)]|
+|[CI&T](https://ciandt.com/us/en-us)|Chaos Engineering Implementation|[Our Story](adopters/organizations/ci&t.md)|
 
 ### Cloud-Native OSS Projects 
 
