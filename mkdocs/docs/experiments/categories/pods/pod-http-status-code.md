@@ -129,7 +129,7 @@
       <tr>
         <td> TARGET_SERVICE_PORT </td>
         <td> Port of the service to target</td>
-        <td>This should be the port where the application runs at the pod level, not at the service level. Defaults to port 80 </td>
+        <td>This should be the port on which the application container runs at the pod level, not at the service level. Defaults to port 80 </td>
       </tr>
       <tr>
         <td> STATUS_CODE  </td>
