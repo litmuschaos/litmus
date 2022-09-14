@@ -34,7 +34,7 @@ import { experimentMap } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as WorkflowActions from '../../../redux/actions/workflow';
 import { RootState } from '../../../redux/reducers';
-import parsed, {
+import {
   extractEngineNames,
   updateManifestImage,
 } from '../../../utils/yamlUtils';
@@ -174,7 +174,6 @@ const WorkflowTable = forwardRef(
     // Revert Chaos
     const toggleRevertChaos = (manifest: string) => {
       const parsedYAML = YAML.parse(manifest);
-      let deleteEngines: string = '';
 
       // Else if Revert Chaos is set to true and it is not already set in the manifest
       // For Workflows
@@ -189,21 +188,13 @@ const WorkflowTable = forwardRef(
           },
         ]);
 
-        parsed(manifest).forEach((_, i) => {
-          deleteEngines += `${
-            YAML.parse(
-              parsedYAML.spec.templates[2 + i].inputs.artifacts[0].raw.data
-            ).metadata.labels['instance_id']
-          }, `;
-        });
-
         parsedYAML.spec.templates[parsedYAML.spec.templates.length] = {
           name: 'revert-chaos',
           container: {
             image: `litmuschaos/k8s:${version}`,
             command: ['sh', '-c'],
             args: [
-              `kubectl delete chaosengine -l 'instance_id in (${deleteEngines})' -n {{workflow.parameters.adminModeNamespace}} `,
+              'kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}',
             ],
           },
         };
@@ -222,18 +213,6 @@ const WorkflowTable = forwardRef(
           },
         ]);
 
-        parsed(manifest).forEach((_, i) => {
-          deleteEngines = `${
-            deleteEngines +
-            YAML.parse(
-              parsedYAML.spec.workflowSpec.templates[2 + i].inputs.artifacts[0]
-                .raw.data
-            ).metadata.name
-          } `;
-        });
-
-        deleteEngines += '-n {{workflow.parameters.adminModeNamespace}}';
-
         parsedYAML.spec.workflowSpec.templates[
           parsedYAML.spec.workflowSpec.templates.length
         ] = {
@@ -241,7 +220,9 @@ const WorkflowTable = forwardRef(
           container: {
             image: `litmuschaos/k8s:${version}`,
             command: ['sh', '-c'],
-            args: [deleteEngines],
+            args: [
+              'kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}',
+            ],
           },
         };
       }
@@ -299,17 +280,6 @@ const WorkflowTable = forwardRef(
           : wfManifest.spec.workflowSpec.templates[experimentIndex].name;
 
       /**
-       * Get instance_id of Chaos Engines
-       */
-      const selectedEngine =
-        wfManifest.kind.toLowerCase() === 'workflow'
-          ? wfManifest.spec.templates[experimentIndex].inputs.artifacts[0]
-          : wfManifest.spec.workflowSpec.templates[experimentIndex].inputs
-              .artifacts[0];
-      const { instance_id } = YAML.parse(selectedEngine.raw.data).metadata
-        .labels;
-
-      /**
        * if the template is a revert-chaos template
        * the engine name is removed from the
        * revert-chaos template args
@@ -319,9 +289,8 @@ const WorkflowTable = forwardRef(
           ? wfManifest.spec
           : wfManifest.spec.workflowSpec;
       if (spec.templates[spec.templates.length - 1].name.includes('revert-')) {
-        const argument = spec.templates[
-          spec.templates.length - 1
-        ].container.args[0].replace(`${instance_id}, `, '');
+        const argument =
+          'kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}';
         spec.templates[spec.templates.length - 1].container.args[0] = argument;
       }
 

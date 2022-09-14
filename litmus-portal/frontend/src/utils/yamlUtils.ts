@@ -3,7 +3,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-expressions */
 import localforage from 'localforage';
-import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import { constants } from '../constants';
 import { ImageRegistryInfo } from '../models/redux/image_registry';
@@ -38,7 +37,6 @@ const nameextractor = (val: any) => {
 };
 
 export const updateEngineName = (parsedYaml: any) => {
-  let engineInstance: string = '';
   try {
     if (parsedYaml.spec !== undefined) {
       const yamlData = parsedYaml.spec;
@@ -55,7 +53,7 @@ export const updateEngineName = (parsedYaml: any) => {
                 delete chaosEngine.metadata.name;
               }
               chaosEngine.metadata['labels'] = {
-                instance_id: uuidv4(),
+                workflow_run_id: '{{workflow.uid}}',
               };
               validateNamespace(chaosEngine);
 
@@ -70,7 +68,6 @@ export const updateEngineName = (parsedYaml: any) => {
                   )[0].replace(/\s/g, '');
                   chaosEngine.spec.appinfo.appns = `{${appns}}`;
                 }
-              engineInstance += `${chaosEngine.metadata.labels['instance_id']}, `;
             }
             // Update the artifact in template
             const artifactData = artifact;
@@ -80,7 +77,8 @@ export const updateEngineName = (parsedYaml: any) => {
         if (template.name.includes('revert-')) {
           // Update the args in revert chaos template
           const revertTemplate = template;
-          revertTemplate.container.args[0] = `kubectl delete chaosengine -l 'instance_id in (${engineInstance})' -n {{workflow.parameters.adminModeNamespace}} `;
+          revertTemplate.container.args[0] =
+            'kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}';
         }
       });
     }
@@ -110,9 +108,12 @@ export const updateWorkflowNameLabel = (
             if (chaosEngine.kind === 'ChaosEngine') {
               if (chaosEngine.metadata.labels !== undefined) {
                 chaosEngine.metadata.labels['workflow_name'] = workflowName;
+                chaosEngine.metadata.labels['workflow_run_id'] =
+                  '{{workflow.uid}}';
               } else {
                 chaosEngine.metadata['labels'] = {
                   workflow_name: workflowName,
+                  workflow_run_id: '{{workflow.uid}}',
                 };
               }
 
