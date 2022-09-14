@@ -17,7 +17,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
 import YAML from 'yaml';
 import Row from '../../../containers/layouts/Row';
 import Width from '../../../containers/layouts/Width';
@@ -441,7 +440,7 @@ const TuneWorkflow = forwardRef((_, ref) => {
     ChaosEngine.metadata.namespace =
       '{{workflow.parameters.adminModeNamespace}}';
     ChaosEngine.metadata['labels'] = {
-      instance_id: uuidv4(),
+      workflow_run_id: '{{workflow.uid}}',
     };
     if (ChaosEngine.spec.jobCleanUpPolicy) {
       ChaosEngine.spec.jobCleanUpPolicy = 'retain';
