@@ -529,12 +529,6 @@ spec:
             runAsNonRoot: true
           ports:
             - containerPort: 8080
-          env:
-            - name: AGENT_SCOPE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: AGENT_SCOPE
           resources:
             requests:
               memory: "150Mi"
