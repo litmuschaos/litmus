@@ -529,15 +529,6 @@ spec:
             runAsNonRoot: true
           ports:
             - containerPort: 8080
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "125m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           volumeMounts:
           - name: nginx-config
             mountPath: /etc/nginx/conf.d/default.conf
