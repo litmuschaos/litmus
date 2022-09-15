@@ -529,12 +529,6 @@ spec:
             runAsNonRoot: true
           ports:
             - containerPort: 8080
-          env:
-            - name: AGENT_SCOPE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: AGENT_SCOPE
           resources:
             requests:
               memory: "150Mi"
@@ -586,7 +580,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.11.0
+          image: litmuschaos/curl:2.12.0
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -645,11 +639,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "argoproj/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.11.0"
+              value: "litmuschaos/chaos-operator:2.12.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.11.0"
+              value: "litmuschaos/chaos-runner:2.12.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.11.0"
+              value: "litmuschaos/chaos-exporter:2.12.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: AGENT_DEPLOYMENTS
@@ -671,13 +665,13 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.11.x"
+              value: "v2.12.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "2.11.0"
+              value: "2.12.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
           ports:
@@ -732,7 +726,7 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.11.0
+          image: litmuschaos/curl:2.12.0
           command: ["/bin/sh", "-c"]
           args:
             [
