@@ -3,29 +3,29 @@
 - Pod-dns-error injects chaos to disrupt dns resolution in kubernetes pods.
 - It causes loss of access to services by blocking dns resolution of hostnames/domains
 
-!!! tip "Scenario: DNS error for the target pod"    
+!!! tip "Scenario: DNS error for the target pod"
     ![Pod DNS Error](../../images/dns-chaos.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
+??? info "View the uses of the experiment"
     coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
+??? info "Verify the prerequisites"
+    - Ensure that Kubernetes Version > 1.16
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>pod-dns-error</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-error/experiment.yaml">here</a> 
+    -  Ensure that the <code>pod-dns-error</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-error/experiment.yaml">here</a>
 
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -63,10 +63,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -75,7 +75,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -117,7 +117,7 @@
 
 ## Experiment tunables
 
-??? info "check the experiment tunables" 
+??? info "check the experiment tunables"
     <h2>Optional Fields</h2>
 
     <table>
@@ -140,25 +140,25 @@
         <td> TARGET_HOSTNAMES </td>
         <td> List of the target hostnames or keywords eg. '["litmuschaos","chaosnative.com"]'</td>
         <td> If not provided, all hostnames/domains will be targeted</td>
-      </tr> 
+      </tr>
       <tr>
         <td> MATCH_SCHEME </td>
         <td> Determines whether the dns query has to match exactly with one of the targets or can have any of the targets as substring. Can be either <code>exact</code> or <code>substring</code> </td>
         <td> if not provided, it will be set as <code>exact</code></td>
-      </tr>     
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
-        <td> Defaults to docker, supported values: docker, containerd and crio </td>
+        <td> Defaults to docker, supported values: docker</td>
       </tr>
       <tr>
         <td> SOCKET_PATH </td>
-        <td> Path of the containerd/crio/docker socket file </td>
+        <td> Path of the docker socket file </td>
         <td> Defaults to <code>/var/run/docker.sock</code> </td>
       </tr>
       <tr>
@@ -187,7 +187,7 @@
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Target Host Names
 
