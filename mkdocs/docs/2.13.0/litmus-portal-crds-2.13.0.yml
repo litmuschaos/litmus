@@ -949,9 +949,20 @@ spec:
                                         description: Image for the source pod
                                         type: string
                                       imagePullPolicy:
-                                        description: ImagePullPolicy for the source
-                                          pod
+                                        description: ImagePullPolicy for the source pod
                                         type: string
+                                      imagePullSecrets:
+                                        description: ImagePullSecrets for source pod
+                                        items:
+                                          description: LocalObjectReference contains enough information
+                                            to let you locate the referenced object inside the same
+                                            namespace.
+                                          properties:
+                                            name:
+                                              description: 'Name of the referent'
+                                              type: string
+                                          type: object
+                                        type: array
                                       labels:
                                         additionalProperties:
                                           type: string
@@ -1693,7 +1704,7 @@ spec:
                                                 allowed to see the host machine. Most
                                                 containers will NOT need this. More
                                                 info: https://kubernetes.io/docs/concepts/storage/volumes#hostpath
-                                                ## TODO(jonesdl) We need to restrict
+                                                # TODO(jonesdl) We need to restrict
                                                 who can use host directory mounts and
                                                 who can/can not mount host directories
                                                 as read/write.'
