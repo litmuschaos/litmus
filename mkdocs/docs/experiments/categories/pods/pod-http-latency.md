@@ -3,29 +3,29 @@
 - It injects http response latency on the service whose port is provided as `TARGET_SERVICE_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
 - It can test the application's resilience to lossy/flaky http responses.
 
-!!! tip "Scenario: Add latency to the HTTP request"    
+!!! tip "Scenario: Add latency to the HTTP request"
     ![Pod HTTP Latency](../../images/pod-http.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
+??? info "View the uses of the experiment"
     coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
+??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.17
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-http-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-latency/experiment.yaml">here</a> 
-    
+    - Ensure that the <code>pod-http-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-latency/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -63,10 +63,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -75,7 +75,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -159,7 +159,7 @@
       <tr>
         <td> TOXICITY </td>
         <td> Percentage of HTTP requests to be affected </td>
-        <td> Defaults to 100% </td>
+        <td> Defaults to 100 </td>
       </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
@@ -180,12 +180,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod http latency chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr>    
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> LIB_IMAGE  </td>
         <td> Image used to run the netem command </td>
@@ -203,11 +203,11 @@
       </tr>
     </table>
 
-## Experiment Examples 
+## Experiment Examples
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Target Service Port
 
