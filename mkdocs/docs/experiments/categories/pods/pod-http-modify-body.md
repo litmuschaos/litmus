@@ -4,29 +4,29 @@
 - Can be used to overwrite the http response body by providing the new body value as `RESPONSE_BODY`.
 - It can test the application's resilience to error or incorrect http response body.
 
-!!! tip "Scenario: Modify Body of the HTTP response"    
+!!! tip "Scenario: Modify Body of the HTTP response"
     ![Pod HTTP Modify Body](../../images/pod-http.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
+??? info "View the uses of the experiment"
     coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
+??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.17
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-http-modify-body</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-modify-body/experiment.yaml">here</a> 
-    
+    - Ensure that the <code>pod-http-modify-body</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-modify-body/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -64,10 +64,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -76,7 +76,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -148,6 +148,16 @@
         <th> Notes </th>
       </tr>
       <tr>
+        <td> CONTENT_ENCODING </td>
+        <td> Encoding type to compress/encodde the response body </td>
+        <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
+      </td>
+      <tr>
+        <td> CONTENT_TYPE </td>
+        <td> Content type of the response body </td>
+        <td> Defaults to text/plain </td>
+      </tr>
+      <tr>
         <td> PROXY_PORT  </td>
         <td> Port where the proxy will be listening for requests</td>
         <td> Defaults to 20000 </td>
@@ -175,12 +185,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod http modify body chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr>    
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> LIB_IMAGE  </td>
         <td> Image used to run the netem command </td>
@@ -198,11 +208,11 @@
       </tr>
     </table>
 
-## Experiment Examples 
+## Experiment Examples
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Target Service Port
 
@@ -297,6 +307,45 @@ spec:
     spec:
       components:
         env:
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
+### Content Encoding and Content Type
+It defines the content encoding and content type of the response body. It can be tuned via `CONTENT_ENCODING` and `CONTENT_TYPE` ENV.
+
+Use the following example to tune this:
+[embedmd]:# (pod-http-modify-body/modify-body-with-encoding-type.yaml yaml)
+```yaml
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-modify-body-sa
+  experiments:
+  - name: pod-http-modify-body
+    spec:
+      components:
+        env:
+        # provide the encoding type for the response body
+        # currently supported value are gzip, deflate
+        # if empty no encoding will be applied
+        - name: CONTENT_ENCODING
+          value: 'gzip'
+        # provide the content type for the response body
+        - name: CONTENT_TYPE
+          value: 'text/html'
         # provide the body string to overwrite the response body
         - name: RESPONSE_BODY
           value: '2000'

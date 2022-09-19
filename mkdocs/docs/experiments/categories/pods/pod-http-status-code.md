@@ -3,29 +3,29 @@
 - It injects http status code chaos inside the pod which modifies the status code of the response from the provided application server to desired status code provided by user on the service whose port is provided as `TARGET_SERVICE_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
 - It can test the application's resilience to error code http responses from the provided application server.
 
-!!! tip "Scenario: Modify http response status code of the HTTP request"    
+!!! tip "Scenario: Modify http response status code of the HTTP request"
     ![Pod HTTP Status Code](../../images/pod-http.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
+??? info "View the uses of the experiment"
     coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
+??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.17
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-http-status-code</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-status-code/experiment.yaml">here</a> 
-    
+    - Ensure that the <code>pod-http-status-code</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-status-code/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -63,10 +63,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -75,7 +75,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -129,7 +129,7 @@
       <tr>
         <td> TARGET_SERVICE_PORT </td>
         <td> Port of the service to target</td>
-        <td>Defaults to port 80 </td>
+        <td>This should be the port on which the application container runs at the pod level, not at the service level. Defaults to port 80 </td>
       </tr>
       <tr>
         <td> STATUS_CODE  </td>
@@ -152,6 +152,21 @@
         <th> Variables </th>
         <th> Description </th>
         <th> Notes </th>
+      </tr>
+      <tr>
+        <td> RESPONSE_BODY  </td>
+        <td> Body string to overwrite the http response body</td>
+        <td> This will be used only if MODIFY_RESPONSE_BODY is set to true. If no value is provided, response will be an empty body. Defaults to empty body </td>
+      </tr>
+      <tr>
+        <td> CONTENT_ENCODING </td>
+        <td> Encoding type to compress/encodde the response body </td>
+        <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
+      </td>
+      <tr>
+        <td> CONTENT_TYPE </td>
+        <td> Content type of the response body </td>
+        <td> Defaults to text/plain </td>
       </tr>
       <tr>
         <td> PROXY_PORT  </td>
@@ -181,12 +196,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod http status code chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr>    
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> LIB_IMAGE  </td>
         <td> Image used to run the netem command </td>
@@ -204,15 +219,16 @@
       </tr>
     </table>
 
-## Experiment Examples 
+## Experiment Examples
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Target Service Port
 
 It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+This should be the port where the application runs at the pod level, not at the service level. This means if the application pod is running the service at port 8080 and we create a service exposing that at port 80, then the target service port should be 8080 and not 80, which is the port at pod-level.
 
 Use the following example to tune this:
 
@@ -323,7 +339,7 @@ It defines whether to modify the respone body with a pre-defined template to mat
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-status-code/modify-body-with-response.yaml yaml)
+[embedmd]:# (pod-http-status-code/modify-body-with-response-pre-defined.yaml yaml)
 ```yaml
 ##  whether to modify the body as per the status code provided
 apiVersion: litmuschaos.io/v1alpha1
@@ -343,6 +359,90 @@ spec:
     spec:
       components:
         env:
+        #  whether to modify the body as per the status code provided
+        - name: "MODIFY_RESPONSE_BODY"
+          value: "true"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
+### RESPONSE BODY
+
+It defines the body string that will overwrite the http response body. It can be tuned via `RESPONSE_BODY` and `MODIFY_RESPONSE_BODY` ENV.
+The `MODIFY_RESPONSE_BODY` ENV should be set to `true` to enable this feature.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-http-status-code/modify-body-with-response.yaml yaml)
+```yaml
+## provide the response body value
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # provide the body string to overwrite the response body. This will be used only if MODIFY_RESPONSE_BODY is set to true
+        - name: RESPONSE_BODY
+          value: '<h1>Hello World</h1>'
+        #  whether to modify the body as per the status code provided
+        - name: "MODIFY_RESPONSE_BODY"
+          value: "true"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
+### Content Encoding and Content Type
+It defines the content encoding and content type of the response body. It can be tuned via `CONTENT_ENCODING` and `CONTENT_TYPE` ENV.
+
+Use the following example to tune this:
+[embedmd]:# (pod-http-status-code/modify-body-with-encoding-type.yaml yaml)
+```yaml
+##  whether to modify the body as per the status code provided
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # provide the encoding type for the response body
+        # currently supported value are gzip, deflate
+        # if empty no encoding will be applied
+        - name: CONTENT_ENCODING
+          value: 'gzip'
+        # provide the content type for the response body
+        - name: CONTENT_TYPE
+          value: 'text/html'
         #  whether to modify the body as per the status code provided
         - name: "MODIFY_RESPONSE_BODY"
           value: "true"
