@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-dns-error/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.0">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2e8b5541.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9f9400aa.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -3192,9 +3192,9 @@
 <details class="info">
 <summary>Verify the prerequisites</summary>
 <ul>
-<li>Ensure that Kubernetes Version &gt; 1.16 </li>
+<li>Ensure that Kubernetes Version &gt; 1.16</li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>pod-dns-error</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-error/experiment.yaml">here</a> </li>
+<li>Ensure that the <code>pod-dns-error</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-error/experiment.yaml">here</a></li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
@@ -3239,10 +3239,10 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;configmaps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log </span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/log&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span>
+<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># for creating and managing to execute comands inside target container</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/exec&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3251,7 +3251,7 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deployments&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;statefulsets&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;replicasets&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;daemonsets&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># deriving the parent/owner details of the pod(if parent is deploymentConfig)  </span><span class="w"></span>
+<span class="w">  </span><span class="c1"># deriving the parent/owner details of the pod(if parent is deploymentConfig)</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps.openshift.io&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deploymentconfigs&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3316,25 +3316,25 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> TARGET_HOSTNAMES </td>
     <td> List of the target hostnames or keywords eg. '["litmuschaos","chaosnative.com"]'</td>
     <td> If not provided, all hostnames/domains will be targeted</td>
-  </tr> 
+  </tr>
   <tr>
     <td> MATCH_SCHEME </td>
     <td> Determines whether the dns query has to match exactly with one of the targets or can have any of the targets as substring. Can be either <code>exact</code> or <code>substring</code> </td>
     <td> if not provided, it will be set as <code>exact</code></td>
-  </tr>   <br />
+  </tr>
   <tr>
     <td> PODS_AFFECTED_PERC </td>
     <td> The Percentage of total pods to target  </td>
     <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-  </tr> 
+  </tr>
   <tr>
     <td> CONTAINER_RUNTIME  </td>
     <td> container runtime interface for the cluster</td>
-    <td> Defaults to docker, supported values: docker, containerd and crio </td>
+    <td> Defaults to docker, supported values: docker</td>
   </tr>
   <tr>
     <td> SOCKET_PATH </td>
-    <td> Path of the containerd/crio/docker socket file </td>
+    <td> Path of the docker socket file </td>
     <td> Defaults to <code>/var/run/docker.sock</code> </td>
   </tr>
   <tr>
@@ -3361,7 +3361,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </details>
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-pod-specific-tunables">Common and Pod specific tunables<a class="headerlink" href="#common-and-pod-specific-tunables" title="Permanent link">&para;</a></h3>
-<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables. </p>
+<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables.</p>
 <h3 id="target-host-names">Target Host Names<a class="headerlink" href="#target-host-names" title="Permanent link">&para;</a></h3>
 <p>It defines the comma-separated name of the target hosts subjected to chaos. It can be tuned with the <code>TARGET_HOSTNAMES</code> ENV.
 If <code>TARGET_HOSTNAMES</code>not provided then all hostnames/domains will be targeted.</p>
@@ -3547,7 +3547,7 @@ If <code>TARGET_HOSTNAMES</code>not provided then all hostnames/domains will be 
     
     
   
-      <script src="../../../../assets/javascripts/bundle.48f2be22.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
     
 

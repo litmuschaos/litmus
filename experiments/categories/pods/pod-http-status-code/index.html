@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/categories/pods/pod-http-status-code/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.0">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.5.2">
     
     
       
@@ -21,7 +21,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.2e8b5541.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.9f9400aa.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -954,6 +954,20 @@
           <li class="md-nav__item">
   <a href="#modify-response-body" class="md-nav__link">
     Modify Response Body
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-body" class="md-nav__link">
+    RESPONSE BODY
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#content-encoding-and-content-type" class="md-nav__link">
+    Content Encoding and Content Type
   </a>
   
 </li>
@@ -3176,6 +3190,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#response-body" class="md-nav__link">
+    RESPONSE BODY
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#content-encoding-and-content-type" class="md-nav__link">
+    Content Encoding and Content Type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-interface" class="md-nav__link">
     Network Interface
   </a>
@@ -3236,7 +3264,7 @@
 <ul>
 <li>Ensure that Kubernetes Version &gt; 1.17</li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>pod-http-status-code</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-status-code/experiment.yaml">here</a> </li>
+<li>Ensure that the <code>pod-http-status-code</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-status-code/experiment.yaml">here</a></li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
@@ -3281,10 +3309,10 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;configmaps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log </span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/log&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span>
+<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># for creating and managing to execute comands inside target container</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/exec&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3293,7 +3321,7 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deployments&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;statefulsets&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;replicasets&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;daemonsets&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># deriving the parent/owner details of the pod(if parent is deploymentConfig)  </span><span class="w"></span>
+<span class="w">  </span><span class="c1"># deriving the parent/owner details of the pod(if parent is deploymentConfig)</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps.openshift.io&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deploymentconfigs&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3347,7 +3375,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   <tr>
     <td> TARGET_SERVICE_PORT </td>
     <td> Port of the service to target</td>
-    <td>Defaults to port 80 </td>
+    <td>This should be the port on which the application container runs at the pod level, not at the service level. Defaults to port 80 </td>
   </tr>
   <tr>
     <td> STATUS_CODE  </td>
@@ -3368,6 +3396,21 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <th> Variables </th>
     <th> Description </th>
     <th> Notes </th>
+  </tr>
+  <tr>
+    <td> RESPONSE_BODY  </td>
+    <td> Body string to overwrite the http response body</td>
+    <td> This will be used only if MODIFY_RESPONSE_BODY is set to true. If no value is provided, response will be an empty body. Defaults to empty body </td>
+  </tr>
+  <tr>
+    <td> CONTENT_ENCODING </td>
+    <td> Encoding type to compress/encodde the response body </td>
+    <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
+  </td>
+  <tr>
+    <td> CONTENT_TYPE </td>
+    <td> Content type of the response body </td>
+    <td> Defaults to text/plain </td>
   </tr>
   <tr>
     <td> PROXY_PORT  </td>
@@ -3397,12 +3440,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> TARGET_PODS </td>
     <td> Comma separated list of application pod name subjected to pod http status code chaos</td>
     <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-  </tr>  <br />
+  </tr>
   <tr>
     <td> PODS_AFFECTED_PERC </td>
     <td> The Percentage of total pods to target  </td>
     <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-  </tr> 
+  </tr>
   <tr>
     <td> LIB_IMAGE  </td>
     <td> Image used to run the netem command </td>
@@ -3422,9 +3465,10 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </details>
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-pod-specific-tunables">Common and Pod specific tunables<a class="headerlink" href="#common-and-pod-specific-tunables" title="Permanent link">&para;</a></h3>
-<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables. </p>
+<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables.</p>
 <h3 id="target-service-port">Target Service Port<a class="headerlink" href="#target-service-port" title="Permanent link">&para;</a></h3>
-<p>It defines the port of the targeted service that is being targeted. It can be tuned via <code>TARGET_SERVICE_PORT</code> ENV.</p>
+<p>It defines the port of the targeted service that is being targeted. It can be tuned via <code>TARGET_SERVICE_PORT</code> ENV.
+This should be the port where the application runs at the pod level, not at the service level. This means if the application pod is running the service at port 8080 and we create a service exposing that at port 80, then the target service port should be 8080 and not 80, which is the port at pod-level.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## provide the port of the targeted service</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
@@ -3534,6 +3578,80 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1">#  whether to modify the body as per the status code provided</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MODIFY_RESPONSE_BODY&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># modified status code for the http response</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STATUS_CODE</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;500&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="response-body">RESPONSE BODY<a class="headerlink" href="#response-body" title="Permanent link">&para;</a></h3>
+<p>It defines the body string that will overwrite the http response body. It can be tuned via <code>RESPONSE_BODY</code> and <code>MODIFY_RESPONSE_BODY</code> ENV.
+The <code>MODIFY_RESPONSE_BODY</code> ENV should be set to <code>true</code> to enable this feature.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the response body value</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-status-code-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-status-code</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the body string to overwrite the response body. This will be used only if MODIFY_RESPONSE_BODY is set to true</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESPONSE_BODY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&lt;h1&gt;Hello</span><span class="nv"> </span><span class="s">World&lt;/h1&gt;&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1">#  whether to modify the body as per the status code provided</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MODIFY_RESPONSE_BODY&quot;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># modified status code for the http response</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STATUS_CODE</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;500&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="content-encoding-and-content-type">Content Encoding and Content Type<a class="headerlink" href="#content-encoding-and-content-type" title="Permanent link">&para;</a></h3>
+<p>It defines the content encoding and content type of the response body. It can be tuned via <code>CONTENT_ENCODING</code> and <code>CONTENT_TYPE</code> ENV.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">##  whether to modify the body as per the status code provided</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-status-code-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-status-code</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the encoding type for the response body</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># currently supported value are gzip, deflate</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># if empty no encoding will be applied</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTENT_ENCODING</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;gzip&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the content type for the response body</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTENT_TYPE</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;text/html&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1">#  whether to modify the body as per the status code provided</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MODIFY_RESPONSE_BODY&quot;</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"></span>
@@ -3708,7 +3826,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     
     
   
-      <script src="../../../../assets/javascripts/bundle.48f2be22.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
     
 
