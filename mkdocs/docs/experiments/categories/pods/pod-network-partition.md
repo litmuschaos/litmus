@@ -239,7 +239,7 @@ spec:
 ```
 ### Target Specific Pod(s)
 
-The network partition experiment interrupt traffic for all the extranal pods by default. The access to/from specific pod(s) can be aloowed via providing pod labels inside `POD_SELECTOR` ENV.
+The network partition experiment interrupt traffic for all the extranal pods by default. The access to/from specific pod(s) can be allowed via providing pod labels inside `POD_SELECTOR` ENV.
 
 Use the following example to tune this:
 
