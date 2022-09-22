@@ -326,10 +326,10 @@ metadata:
   name: event-tracker-cr-for-litmusportal-server
 rules:
 - apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolies]
+  resources: [eventtrackerpolicies]
   verbs: [create, delete, get, list, patch, update, watch]
 - apiGroups: [eventtracker.litmuschaos.io]
-  resources: [eventtrackerpolies/status]
+  resources: [eventtrackerpolicies/status]
   verbs: [get, patch, update]
 - apiGroups: ["", extensions, apps]
   resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
