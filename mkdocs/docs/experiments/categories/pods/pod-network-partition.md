@@ -307,7 +307,8 @@ spec:
 
 ### Destination Ports
 
-The network partition experiment interrupt traffic for all the extranal ports by default. The interruption of specific port(s) can be tuned via providing comma separated list of ports inside `PORTS` ENV.
+The network partition experiment interrupt traffic for all the external ports by default. The interruption of specific port(s) can be tuned via providing comma separated list of ports inside `PORTS` ENV. Note: The Ports will be added under Ingress & Egress rules according to provided policy-type under `POLICY_TYPES` ENV.
+
 Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-partition/ports.yaml yaml)
@@ -332,7 +333,7 @@ spec:
         env:
         # comma separated list of ports
         - name: PORTS
-          value: '8080,8088'
+          value: 'tcp: [8080,80], udp: [9000,90]'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
