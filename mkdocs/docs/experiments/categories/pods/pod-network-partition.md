@@ -307,7 +307,7 @@ spec:
 
 ### Destination Ports
 
-The network partition experiment interrupt traffic for all the external ports by default. The interruption of specific port(s) can be tuned via providing comma separated list of ports inside `PORTS` ENV. Note: The Ports will be added under Ingress & Egress rules according to provided policy-type under `POLICY_TYPES` ENV.
+The network partition experiment interrupt traffic for all the external ports by default. Access to specific port(s) can be allowed by providing comma separated list of ports inside `PORTS` ENV. Note: The Ports will be added under Ingress & Egress rules according to provided policy-type under `POLICY_TYPES` ENV.
 
 Use the following example to tune this:
 
