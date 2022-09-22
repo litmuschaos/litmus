@@ -3402,7 +3402,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="target-specific-namespaces">Target Specific Namespace(s)<a class="headerlink" href="#target-specific-namespaces" title="Permanent link">&para;</a></h3>
-<p>The network partition experiment interrupt traffic for all the namespaces by default. The interruption of specific namespace can be tuned via providing namespace labels inside <code>NAMESPACE_SELECTOR</code> ENV.</p>
+<p>The network partition experiment interrupt traffic for all the namespaces by default. The access to/from pods in specific namespace can be allowed via providing namespace labels inside <code>NAMESPACE_SELECTOR</code> ENV.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># it inject the chaos for specified namespaces, matched by labels</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
@@ -3429,7 +3429,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="target-specific-pods">Target Specific Pod(s)<a class="headerlink" href="#target-specific-pods" title="Permanent link">&para;</a></h3>
-<p>The network partition experiment interrupt traffic for all the extranal pods by default. The interruption of specific pod(s) can be tuned via providing pod labels inside <code>POD_SELECTOR</code> ENV.</p>
+<p>The network partition experiment interrupt traffic for all the extranal pods by default. The access to/from specific pod(s) can be allowed via providing pod labels inside <code>POD_SELECTOR</code> ENV.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># it inject the chaos for specified pods, matched by labels</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
@@ -3485,8 +3485,13 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="destination-ports">Destination Ports<a class="headerlink" href="#destination-ports" title="Permanent link">&para;</a></h3>
-<p>The network partition experiment interrupt traffic for all the extranal ports by default. The interruption of specific port(s) can be tuned via providing comma separated list of ports inside <code>PORTS</code> ENV.
-Use the following example to tune this:</p>
+<p>The network partition experiment interrupt traffic for all the external ports by default. Access to specific port(s) can be allowed by providing comma separated list of ports inside <code>PORTS</code> ENV. </p>
+<p>Note: </p>
+<ul>
+<li>If <code>PORT</code> is not set and none of the pod-selector, namespace-selector and destination_ips are provided then it will block traffic for all ports for all pods/ips</li>
+<li>If <code>PORT</code> is not set but any of the podselector, nsselector and destination ips are provided then it will allow all ports for all the pods/ips filtered by the specified selectors</li>
+</ul>
+<p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># it inject the chaos for specified ports</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
@@ -3507,7 +3512,7 @@ Use the following example to tune this:</p>
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># comma separated list of ports</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORTS</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8080,8088&#39;</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;tcp:</span><span class="nv"> </span><span class="s">[8080,80],</span><span class="nv"> </span><span class="s">udp:</span><span class="nv"> </span><span class="s">[9000,90]&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 </code></pre></div>
