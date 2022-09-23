@@ -322,6 +322,20 @@ spec:
                                         description: ImagePullPolicy for the source
                                           pod
                                         type: string
+                                        imagePullPolicy:
+                                          description: ImagePullPolicy for the source pod
+                                          type: string
+                                        imagePullSecrets:
+                                          description: ImagePullSecrets for source pod
+                                          items:
+                                            description: LocalObjectReference contains enough information 
+                                              to let you locate the referenced object inside the same namespace
+                                            properties:
+                                              name:
+                                                description: 'Name of the referent'
+                                                type: string
+                                            type: object
+                                          type: array
                                       labels:
                                         additionalProperties:
                                           type: string
