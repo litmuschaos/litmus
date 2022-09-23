@@ -90,12 +90,12 @@ func (c MyHubConfig) getChaosChartRepo() (string, error) {
 	ClonePath := GetClonePath(c)
 	os.RemoveAll(ClonePath)
 	_, err := git.PlainClone(ClonePath, false, &git.CloneOptions{
-		URL: c.RepositoryURL, Progress: os.Stdout,
+		URL: c.RepositoryURL, Progress: os.Stdout, Depth: 1,
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 	})
 	if err != nil {
 		_, err = git.PlainClone(ClonePath, false, &git.CloneOptions{
-			URL: c.RepositoryURL, Progress: os.Stdout,
+			URL: c.RepositoryURL, Progress: os.Stdout, Depth: 1,
 			ReferenceName: plumbing.NewTagReferenceName(c.Branch),
 		})
 		return c.Branch, err
@@ -117,12 +117,14 @@ func (c MyHubConfig) getPrivateChaosChartRepo() (string, error) {
 		Auth:          auth,
 		URL:           c.RepositoryURL,
 		Progress:      os.Stdout,
+		Depth:         1,
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 	})
 	if err != nil {
 		_, err = git.PlainClone(ClonePath, false, &git.CloneOptions{
 			Auth:          auth,
 			URL:           c.RepositoryURL,
+			Depth:         1,
 			Progress:      os.Stdout,
 			ReferenceName: plumbing.NewTagReferenceName(c.Branch),
 		})
