@@ -141,7 +141,7 @@
         <td> The <code>INSTANCE_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>vm:target-vm</code> </td>
       </tr>
       <tr>
-        <td> INSTANCE_ZONES </td>
+        <td> ZONES </td>
         <td> The zone of the target VM instances </td>
         <td> Only one zone can be provided i.e. all target instances should lie in the same zone </td>
       </tr>
@@ -195,9 +195,9 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target GCP Instances
 
-It will stop all the instances with filtered by the label `INSTANCE_LABEL` and corresponding `INSTANCE_ZONES` zone in `GCP_PROJECT_ID` project. 
+It will stop all the instances with filtered by the label `INSTANCE_LABEL` and corresponding `ZONES` zone in `GCP_PROJECT_ID` project. 
 
-`NOTE:` The `INSTANCE_LABEL` accepts only one label and `INSTANCE_ZONES` also accepts only one zone name. Therefore, all the instances must lie in the same zone.
+`NOTE:` The `INSTANCE_LABEL` accepts only one label and `ZONES` also accepts only one zone name. Therefore, all the instances must lie in the same zone.
 
 Use the following example to tune this:
 
@@ -219,7 +219,7 @@ spec:
         - name: INSTANCE_LABEL
           value: 'vm:target-vm'
         
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'us-east1-b'
         
         - name: GCP_PROJECT_ID
@@ -256,7 +256,7 @@ spec:
         - name: INSTANCE_LABEL
           value: 'vm:target-vm'
         
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'us-east1-b'
         
         - name: GCP_PROJECT_ID
@@ -296,7 +296,7 @@ spec:
         - name: INSTANCE_LABEL
           value: 'vm:target-vm'
 
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'us-east1-b'
 
         - name: GCP_PROJECT_ID
