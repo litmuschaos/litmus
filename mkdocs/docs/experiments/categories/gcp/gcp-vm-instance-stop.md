@@ -145,7 +145,7 @@
         <td> Multiple instance names can be provided as instance1,instance2,... </td>
       </tr>
       <tr>
-        <td> INSTANCE_ZONES </td>
+        <td> ZONES </td>
         <td> The zones of the target VM instances </td>
         <td> Zone for every instance name has to be provided as zone1,zone2,... in the same order of <code>VM_INSTANCE_NAMES</code> </td>
       </tr>
@@ -194,7 +194,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target GCP Instances
 
-It will stop all the instances with the given `VM_INSTANCE_NAMES` instance names and corresponding `INSTANCE_ZONES` zone names in `GCP_PROJECT_ID` project. 
+It will stop all the instances with the given `VM_INSTANCE_NAMES` instance names and corresponding `ZONES` zone names in `GCP_PROJECT_ID` project. 
 
 `NOTE:` The `VM_INSTANCE_NAMES` contains multiple comma-separated vm instances. The comma-separated zone names should be provided in the same order as instance names.
 
@@ -221,7 +221,7 @@ spec:
           value: 'instance-01,instance-02'
         # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
         # it should be provided in same order of VM_INSTANCE_NAMES
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # gcp project id to which vm instance belongs
         - name: GCP_PROJECT_ID
@@ -261,7 +261,7 @@ spec:
           value: 'instance-01,instance-02'
         # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
         # it should be provided in same order of VM_INSTANCE_NAMES
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # gcp project id to which vm instance belongs
         - name: GCP_PROJECT_ID
@@ -300,7 +300,7 @@ spec:
           VALUE: '60'
         - name: VM_INSTANCE_NAMES
           value: 'instance-01,instance-02'
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         - name: GCP_PROJECT_ID
           value: 'project-id'
