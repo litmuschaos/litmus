@@ -166,6 +166,12 @@
         <td> NETWORK_INTERFACE  </td>
         <td> Network interface to be used for the proxy</td>
         <td> Defaults to `eth0` </td>
+      </tr>
+      <tr>
+        <td> TOXICITY </td>
+        <td> Percentage of HTTP requests to be affected </td>
+        <td> Defaults to 100 </td>
+      </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
@@ -315,7 +321,45 @@ spec:
           value: "80"
 ```
 
+### Toxicity
+
+It defines the toxicity value to be added to the http request. It can be tuned via `TOXICITY` ENV.
+Toxicity value defines the percentage of the total number of http requests to be affected.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-http-modify-body/toxicity.yaml yaml)
+```yaml
+## provide the toxicity
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-modify-body-sa
+  experiments:
+  - name: pod-http-modify-body
+    spec:
+      components:
+        env:
+        # toxicity is the probability of the request to be affected
+        # provide the percentage value in the range of 0-100
+        # 0 means no request will be affected and 100 means all request will be affected
+        - name: TOXICITY
+          value: "100"
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
 ### Content Encoding and Content Type
+
 It defines the content encoding and content type of the response body. It can be tuned via `CONTENT_ENCODING` and `CONTENT_TYPE` ENV.
 
 Use the following example to tune this:
@@ -355,6 +399,7 @@ spec:
 ```
 
 ### Network Interface
+
 It defines the network interface to be used for the proxy. It can be tuned via `NETWORK_INTERFACE` ENV.
 
 Use the following example to tune this:
