@@ -56,7 +56,7 @@ const UploadYAML = () => {
           if (!nameValidation) {
             setUploadError(true);
             setErrorText(
-              'Chaos scenario contains multiple steps with same name.'
+              'Chaos Scenario contains multiple steps with same name.'
             );
           }
           addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));
@@ -93,7 +93,7 @@ const UploadYAML = () => {
           if (!nameValidation) {
             setUploadError(true);
             setErrorText(
-              'Chaos scenario contains multiple steps with same name.'
+              'Chaos Scenario contains multiple steps with same name.'
             );
           }
           addWeights(YAML.stringify(wfmanifest, { prettyErrors: true }));

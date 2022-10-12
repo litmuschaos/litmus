@@ -70,6 +70,8 @@ type ChaosHub struct {
 	ProjectID string `json:"projectID"`
 	// Name of the chaos hub
 	HubName string `json:"hubName"`
+	// Type of ChaosHub
+	HubType HubType `json:"hubType"`
 	// Bool value indicating whether the hub is private or not.
 	IsPrivate bool `json:"isPrivate"`
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
@@ -105,6 +107,8 @@ type ChaosHubStatus struct {
 	TotalExp string `json:"totalExp"`
 	// Name of the chaos hub
 	HubName string `json:"hubName"`
+	// Type of ChaosHub
+	HubType HubType `json:"hubType"`
 	// Bool value indicating whether the hub is private or not.
 	IsPrivate bool `json:"isPrivate"`
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
@@ -308,6 +312,15 @@ type CreateDBInput struct {
 	RefreshRate               string                 `json:"refreshRate"`
 }
 
+type CreateRemoteMyHub struct {
+	// Name of the chaos hub
+	HubName string `json:"hubName"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// ProjectID of the ChaosHub
+	ProjectID string `json:"projectID"`
+}
+
 type DSInput struct {
 	DsID              *string `json:"dsID"`
 	DsName            string  `json:"dsName"`
@@ -371,6 +384,13 @@ type DsDetails struct {
 	URL   string `json:"url"`
 	Start string `json:"start"`
 	End   string `json:"end"`
+}
+
+type ExperimentDetails struct {
+	// Engine Manifest
+	EngineDetails string `json:"engineDetails"`
+	// Experiment Manifest
+	ExperimentDetails string `json:"experimentDetails"`
 }
 
 type ExperimentRequest struct {
@@ -768,6 +788,15 @@ type PortalDashboardDataResponse struct {
 	DashboardData string `json:"dashboardData"`
 }
 
+type PredefinedWorkflowList struct {
+	// Name of the workflow
+	WorkflowName string `json:"workflowName"`
+	// Workflow CSV
+	WorkflowCsv string `json:"workflowCSV"`
+	// Workflow Manifest
+	WorkflowManifest string `json:"workflowManifest"`
+}
+
 // Defines all the stats under a project
 type ProjectData struct {
 	// Workflow related statistics
@@ -900,6 +929,11 @@ type SSHKey struct {
 	PublicKey string `json:"publicKey"`
 	// Private SSH key authenticating into git repository
 	PrivateKey string `json:"privateKey"`
+}
+
+type ServerVersionResponse struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type Spec struct {
@@ -1344,6 +1378,47 @@ func (e *FileType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FileType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type HubType string
+
+const (
+	HubTypeGit    HubType = "GIT"
+	HubTypeRemote HubType = "REMOTE"
+)
+
+var AllHubType = []HubType{
+	HubTypeGit,
+	HubTypeRemote,
+}
+
+func (e HubType) IsValid() bool {
+	switch e {
+	case HubTypeGit, HubTypeRemote:
+		return true
+	}
+	return false
+}
+
+func (e HubType) String() string {
+	return string(e)
+}
+
+func (e *HubType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = HubType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid HubType", str)
+	}
+	return nil
+}
+
+func (e HubType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

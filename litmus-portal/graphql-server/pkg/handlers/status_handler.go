@@ -13,7 +13,6 @@ type APIStatus struct {
 }
 
 func StatusHandler(w http.ResponseWriter, r *http.Request) {
-
 	var status = APIStatus{Status: "up"}
 	statusByte, err := json.Marshal(status)
 	if err != nil {

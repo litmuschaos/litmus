@@ -110,14 +110,13 @@ It can be executed by setting `type` as `cmdProbe` inside `.spec.experiments[].s
     </tr>
     <tr>
     <th>Range</th>
-    <td> <code>inline</code>, <code>any source docker image</code></td>
+    <td> It contains the source attributes i.e, image, imagePullPolicy</td>
     </tr>
     <tr>
     <th>Notes</th>
-    <td>The <code>.cmdProbe/inputs.source</code> It supports <code>inline</code> value when command can be run from within the experiment image. Otherwise provide the source image which can be used to launch a external pod where the command execution is carried out.</td>
+    <td>The <code>.cmdProbe/inputs.source</code> It supports <code>inline</code> mode where command should be run within the experiment pod, and it can be tuned by omiting source field. Otherwise provide the source details(i.e, image) which can be used to launch a external pod where the command execution is carried out.</td>
     </tr>
     </table>
-
 
     <table>
     <tr>
@@ -332,8 +331,8 @@ Refer the [common attributes](litmus-probes.md) to tune the common tunables for 
 
 ### Inline Mode
 
-In inline mode, the command probe is executed from within the experiment image. It is preferred for simple shell commands.
-It can be tuned by setting `source` as `inline`.
+In inline mode, the command probe is executed from within the experiment pod. It is preferred for simple shell commands. 
+It is default mode, and it can be tuned by omitting source field.
 
 Use the following example to tune this:
 
@@ -371,9 +370,6 @@ spec:
             criteria: "contains"
             # expected value, which should follow the specified criteria
             value: "<value-for-criteria-match>"
-          # source for the cmdProbe
-          # it can be “inline” or any image
-          source: "inline" 
         mode: "Edge"
         runProperties:
           probeTimeout: 5
@@ -385,7 +381,307 @@ spec:
 ### Source Mode
 
 In source mode, the command execution is carried out from within a new pod whose image can be specified. It can be used when application-specific binaries are required.
-It can be tuned by setting `source` as `<source-image>`.
+
+??? info "View the source probe schema"
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.image</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the image of the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Mandatory</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>n/a  (type: string)</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.image</code> holds the image of the source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.hostNetwork</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to enable the hostNetwork for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: boolean)</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.hostNetwork</code> flag to enable the hostnetwork. It supports boolean values and default value is false/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.args</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the args for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []string])</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.args</code> flag to hold the args for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.env</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the envs for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []corev1.EnvVar])</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.env</code> flag to hold the envs for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.labels</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the labels for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: map[string]string)</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.labels</code> flag to hold the labels for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.annotations</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the annotations for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: map[string]string)</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.annotations</code> flag to hold the annotations for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.command</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the command for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []string</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.command</code> flag to hold the command for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.imagePullPolicy</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to set the imagePullPolicy for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: corev1.PullPolicy</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.imagePullPolicy</code> Flag to set the imagePullPolicy for the source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.privileged</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to set the privileged for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: boolean</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.privileged</code> Flag to set the privileged for the source pod. Default value is false/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.nodeSelector</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the node selectors for the probe pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: map[string]string</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.nodeSelector</code> Flag to hold the node selectors for the probe pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.volumes</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the volumes for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []corev1.Volume</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.volumes</code> Flag to hold the volumes for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.volumeMount</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to hold the volume mounts for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []corev1.VolumeMount</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.volumes</code> Flag to hold the volume Mounts for source pod/td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+    <th>Field</th>
+    <td><code>.imagePullSecrets</code></td>
+    </tr>
+    <tr>
+    <th>Description</th>
+    <td>Flag to set the imagePullSecrets for the source pod</td>
+    </tr>
+    <tr>
+    <th>Type</th>
+    <td>Optional</td>
+    </tr>
+    <tr>
+    <th>Range</th>
+    <td>(type: []corev1.LocalObjectReference</td>
+    </tr>
+    <tr>
+    <th>Notes</th>
+    <td>The <code>.imagePullSecrets</code> Flag to set the imagePullSecrets for the source pod/td>
+    </tr>
+    </table>
 
 Use the following example to tune this:
 
@@ -418,14 +714,17 @@ spec:
             # supports: string, int, float
             type: "string"
             # criteria which should be followed by the actual output and the expected output
-            #supports [>=, <=, >, <, ==, !=] for int and float
-            # supports [contains, equal, notEqual, matches, notMatches] for string values
+            #supports [>=, <=, >, <, ==, !=, oneOf, between] for int and float
+            # supports [contains, equal, notEqual, matches, notMatches, oneOf] for string values
             criteria: "contains"
             # expected value, which should follow the specified criteria
             value: "<value-for-criteria-match>"
           # source for the cmdProbe
-          # it can be “inline” or any image
-          source: "<source-image>" 
+          source:
+            image: "<source-image>"
+            imagePullPolicy: Always
+            privileged: true
+            hostNetwork: false
         mode: "Edge"
         runProperties:
           probeTimeout: 5

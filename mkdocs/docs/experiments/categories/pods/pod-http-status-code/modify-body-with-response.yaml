@@ -1,4 +1,4 @@
-##  whether to modify the body as per the status code provided
+## provide the response body value
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,6 +16,9 @@ spec:
     spec:
       components:
         env:
+        # provide the body string to overwrite the response body. This will be used only if MODIFY_RESPONSE_BODY is set to true
+        - name: RESPONSE_BODY
+          value: '<h1>Hello World</h1>'
         #  whether to modify the body as per the status code provided
         - name: "MODIFY_RESPONSE_BODY"
           value: "true"

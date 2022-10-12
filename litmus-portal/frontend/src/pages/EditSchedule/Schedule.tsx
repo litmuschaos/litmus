@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import { ButtonFilled, ButtonOutlined } from 'litmus-ui';
-import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -38,7 +37,11 @@ interface ScheduleSyntax {
   day_week: string;
 }
 
-const ScheduleWorkflow = () => {
+interface ScheduleWorkflowProps {
+  handleNext: () => void;
+}
+
+const ScheduleWorkflow: React.FC<ScheduleWorkflowProps> = ({ handleNext }) => {
   // Initial Cron State
   const [cronValue, setCronValue] = useState<ScheduleSyntax>({
     minute: '*',
@@ -93,9 +96,6 @@ const ScheduleWorkflow = () => {
       newParsedYaml.spec.schedule = cronSyntax;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
-      newParsedYaml.metadata.labels = {
-        workflow_id: workflowData.workflowID,
-      };
       newParsedYaml.spec.workflowSpec = oldParsedYaml.spec;
       const tz = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
@@ -118,9 +118,6 @@ const ScheduleWorkflow = () => {
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
       newParsedYaml.spec = oldParsedYaml.spec.workflowSpec;
-      newParsedYaml.metadata.labels = {
-        workflow_id: workflowData.workflowID,
-      };
       NewYaml = YAML.stringify(newParsedYaml);
       workflowAction.setWorkflowManifest({
         manifest: NewYaml,
@@ -136,7 +133,6 @@ const ScheduleWorkflow = () => {
       //   newParsedYaml.spec.suspend = false;
       delete newParsedYaml.metadata.generateName;
       newParsedYaml.metadata.name = fetchWorkflowNameFromManifest(manifest);
-      newParsedYaml.metadata.labels = { workflow_id: workflowData.workflowID };
       const tz = {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       };
@@ -148,6 +144,7 @@ const ScheduleWorkflow = () => {
         manifest: NewYaml,
       });
     }
+    handleNext();
     // if (oldParsedYaml.kind === 'CronWorkflow' && isDisabled === true) {
     //   const newParsedYaml = YAML.parse(yaml);
     //   newParsedYaml.spec.suspend = true;
@@ -163,7 +160,6 @@ const ScheduleWorkflow = () => {
     //     yaml: NewYaml,
     //   });
     // }
-    localforage.setItem('editSchedule', true);
   }
 
   // UseEffect to update the cron syntax with changes
@@ -746,15 +742,10 @@ const ScheduleWorkflow = () => {
           Cancel
         </ButtonOutlined>
         <ButtonFilled
+          disabled={value !== 'now' && valueDef === ''}
           data-cy="VerifyButton"
           onClick={() => {
             EditYaml();
-            history.push({
-              pathname: `/scenarios/schedule/${getProjectID()}/${fetchWorkflowNameFromManifest(
-                manifest
-              )}`,
-              search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
-            });
           }}
         >
           {t('editSchedule.verify')}

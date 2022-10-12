@@ -413,12 +413,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
                 className={classes.select}
                 variant="outlined"
                 onChange={(e) =>
-                  setProbeData({
-                    ...probeData,
-                    runProperties: {
-                      ...probeData.runProperties,
-                      stopOnFailure: e.target.value === 'true',
-                    },
+                  setRunProperties({
+                    ...runProperties,
+                    stopOnFailure: e.target.value === 'true',
                   })
                 }
                 inputProps={{

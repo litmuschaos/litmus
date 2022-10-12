@@ -224,7 +224,7 @@ const WorkflowComparisonTable = () => {
                     const weightageMap: WeightageMap[] = data.weightages;
                     weightageMap.forEach((weightage) => {
                       if (
-                        weightage.experimentName === chaosData.experimentName
+                        chaosData.engineName.includes(weightage.experimentName)
                       ) {
                         if (chaosData.experimentVerdict === 'Pass') {
                           experimentTestResultsArrayPerWorkflowRun.push(
@@ -237,19 +237,14 @@ const WorkflowComparisonTable = () => {
                         if (chaosData.experimentVerdict === 'Fail') {
                           experimentTestResultsArrayPerWorkflowRun.push(0);
                         }
-                        if (
-                          chaosData.experimentVerdict === 'Pass' ||
-                          chaosData.experimentVerdict === 'Fail'
-                        ) {
-                          weightsSum += weightage.weightage;
-                          testDetails.testNames.push(weightage.experimentName);
-                          testDetails.testWeights.push(weightage.weightage);
-                          testDetails.testResults.push(
-                            chaosData.experimentVerdict
-                          );
-                          isValid = true;
-                          isWorkflowValid = true;
-                        }
+                        weightsSum += weightage.weightage;
+                        testDetails.testNames.push(weightage.experimentName);
+                        testDetails.testWeights.push(weightage.weightage);
+                        testDetails.testResults.push(
+                          chaosData.experimentVerdict
+                        );
+                        isValid = true;
+                        isWorkflowValid = true;
                       }
                     });
                   }
@@ -452,7 +447,8 @@ const WorkflowComparisonTable = () => {
           tests_passed: '#Expts. Passed',
           tests_failed: '#Expts. Failed',
           resilience_score: 'Reliability Score',
-          test_details_string: 'Experiment Details\nName\nWeight / Verdict',
+          test_details_string:
+            'Chaos Experiment Details\nName\nWeight / Verdict',
         },
       ];
       const rows: any[] = [];
@@ -515,7 +511,7 @@ const WorkflowComparisonTable = () => {
         doc.line(0, 33, 300, 33);
         doc.setLineWidth(5.0);
         doc.text(
-          'Scenario Run Details Table & Scenario Schedules Table with Resilience Score Comparison Graph',
+          'Chaos  Run Details Table & Chaos Scenario Schedules Table with Resilience Score Comparison Graph',
           27.5,
           39
         );
@@ -560,7 +556,7 @@ const WorkflowComparisonTable = () => {
           contentDataURL,
           'PNG',
           2,
-          showAll ? position : -55,
+          showAll ? position : 4,
           imgWidth,
           imgHeight
         );
@@ -649,7 +645,7 @@ const WorkflowComparisonTable = () => {
   }, [filter, compare]);
 
   return (
-    <div className={classes.root} id="statistics">
+    <div className={classes.root}>
       {compare !== true && <WorkflowGraphs />}
       <div className={classes.statisticsDiv}>
         <Typography className={classes.heading}>
@@ -670,13 +666,13 @@ const WorkflowComparisonTable = () => {
             ) : (
               <div />
             )}{' '}
-            Chaos scenario comparison
+            Chaos Scenario comparison
           </strong>
         </Typography>
         <Typography className={classes.description}>
           {compare === true
-            ? 'Choose the right chaos scenarios and get comparative results'
-            : 'Choose chaos scenarios to compare their resilience scores'}
+            ? 'Choose the right Chaos Scenarios and get comparative results'
+            : 'Choose Chaos Scenarios to compare their resilience scores'}
         </Typography>
         <br />
       </div>
@@ -869,21 +865,23 @@ const WorkflowComparisonTable = () => {
           </section>
         </div>
       </div>
-      {compare === true && isDataAvailable === true ? (
-        <Paper variant="outlined" className={classes.backgroundFix}>
-          <div className={classes.comparisonHeadingFix}>
-            <Typography className={classes.heading}>
-              <strong>
+      <div id="statistics">
+        {compare === true && isDataAvailable === true ? (
+          <Paper variant="outlined" className={classes.backgroundFix}>
+            <div className={classes.comparisonHeadingFix}>
+              <Typography className={classes.heading}>
+                <strong>
+                  {t(
+                    'chaosWorkflows.browseStatistics.workFlowComparisonTable.resilienceScoreComparison'
+                  )}
+                </strong>
+              </Typography>
+              <Typography className={classes.description}>
                 {t(
-                  'chaosWorkflows.browseStatistics.workFlowComparisonTable.resilienceScoreComparison'
+                  'chaosWorkflows.browseStatistics.workFlowComparisonTable.comparativeResults'
                 )}
-              </strong>
-            </Typography>
-            <Typography className={classes.description}>
-              {t(
-                'chaosWorkflows.browseStatistics.workFlowComparisonTable.comparativeResults'
-              )}
-            </Typography>
+              </Typography>
+            </div>
             {plotDataForComparison && !loadingRuns && !errorFetchingRuns ? (
               <ResilienceScoreComparisonPlot
                 xData={plotDataForComparison.xData}
@@ -917,19 +915,19 @@ const WorkflowComparisonTable = () => {
                 </Typography>
               </Paper>
             )}
-          </div>
-        </Paper>
-      ) : (
-        compare === true && (
-          <Paper variant="outlined" className={classes.noData}>
-            <Typography variant="h5" align="center" className={classes.error}>
-              {t(
-                'chaosWorkflows.browseStatistics.workFlowComparisonTable.noRuns'
-              )}
-            </Typography>
           </Paper>
-        )
-      )}
+        ) : (
+          compare === true && (
+            <Paper variant="outlined" className={classes.noData}>
+              <Typography variant="h5" align="center" className={classes.error}>
+                {t(
+                  'chaosWorkflows.browseStatistics.workFlowComparisonTable.noRuns'
+                )}
+              </Typography>
+            </Paper>
+          )
+        )}
+      </div>
     </div>
   );
 };

@@ -18,9 +18,9 @@ import { useSelector } from 'react-redux';
 import YAML from 'yaml';
 import config from '../../../config';
 import { GET_EXPERIMENT_DATA, GET_TEMPLATE_BY_ID } from '../../../graphql';
+import { ExperimentDetail } from '../../../models/graphql/chaoshub';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
 import { WorkflowDetailsProps } from '../../../models/localforage/workflow';
-import { ExperimentDetail } from '../../../models/redux/myhub';
 import useActions from '../../../redux/actions';
 import * as AlertActions from '../../../redux/actions/alert';
 import * as ImageRegistryActions from '../../../redux/actions/image_registry';
@@ -168,7 +168,7 @@ const WorkflowSettings = forwardRef((_, ref) => {
         workflowAction.setWorkflowManifest({ manifest: '' });
       }
       if ((value as ChooseWorkflowRadio).selected === 'C') {
-        setName('custom-chaos-scenario');
+        setName('custom');
         workflowAction.setWorkflowManifest({ manifest: manifest ?? '' });
         setDescription('Custom Chaos Scenario');
         setIcon('./avatars/litmus.svg');

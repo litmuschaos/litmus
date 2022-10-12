@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client';
-import { Divider, Tooltip, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import InfoIcon from '@material-ui/icons/Info';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -194,21 +193,6 @@ const VerifyCommit = forwardRef(
       });
     };
 
-    const handleSubjectChange = ({
-      changedSubject,
-    }: {
-      changedSubject: string;
-    }) => {
-      setSubject(changedSubject);
-      const parsedManifest = YAML.parse(manifest);
-      parsedManifest.metadata['labels'] = {
-        subject: changedSubject,
-      };
-      workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(parsedManifest),
-      });
-    };
-
     const WorkflowTestData: experimentMap[] = weights as any;
 
     useEffect(() => {
@@ -290,7 +274,7 @@ const VerifyCommit = forwardRef(
       localforage.removeItem('editSchedule');
       setFinishModalOpen(false);
 
-      tabs.changeWorkflowsTabs(0);
+      tabs.changeWorkflowsTabs(1);
       history.push({
         pathname: '/scenarios',
         search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
@@ -436,46 +420,6 @@ const VerifyCommit = forwardRef(
                           multiline
                           onSave={(value: any) =>
                             handleDescChange({ changedDesc: value })
-                          }
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-                <div className={classes.itemWrapper}>
-                  <div className={classes.leftFlex}>
-                    <Typography className={classes.verticalAlign}>
-                      {t('createWorkflow.verifyCommit.summary.subject')}:
-                    </Typography>
-                    <Tooltip
-                      title={
-                        <Typography className={classes.subjectDesc}>
-                          {t('createWorkflow.verifyCommit.summary.subjectDesc')}
-                        </Typography>
-                      }
-                    >
-                      <InfoIcon className={classes.info} />
-                    </Tooltip>
-                  </div>
-
-                  <div className={classes.right} data-cy="WorkflowSubject">
-                    {subject !== '' ? (
-                      <div style={{ width: '100%' }}>
-                        <EditableText
-                          defaultValue={subject}
-                          id="subject"
-                          fullWidth
-                          multiline
-                          error={checkSubjectValidation()}
-                          onSave={(value: any) =>
-                            handleSubjectChange({ changedSubject: value })
-                          }
-                          helperText={
-                            checkSubjectValidation()
-                              ? `${t(
-                                  'createWorkflow.verifyCommit.subjectValidationMessage'
-                                )}`
-                              : undefined
                           }
                         />
                       </div>

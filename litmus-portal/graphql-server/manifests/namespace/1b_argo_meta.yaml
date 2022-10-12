@@ -5,12 +5,11 @@ metadata:
   name: workflow-controller-configmap
   namespace: #{AGENT-NAMESPACE}
 data:
-  config: |
-    containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
-    executor:
-      imagePullPolicy: IfNotPresent
-      resources:
-        limits:
-          cpu: 0.15
-          memory: 512Mi
-    instanceID: #{CLUSTER_ID}
+  containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
+  executor: |
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 0.15
+        memory: 512Mi
+  instanceID: #{CLUSTER_ID}

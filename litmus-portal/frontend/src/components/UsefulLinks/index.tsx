@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Maintainer } from '../../models/redux/myhub';
+import { Link, Maintainer } from '../../models/graphql/chaoshub';
 import useStyles from './styles';
 
 interface UsefulLinkProps {

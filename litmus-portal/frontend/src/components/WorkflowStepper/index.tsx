@@ -141,15 +141,15 @@ const WorkflowStepper = () => {
     ? [
         'Choose Chaos Delegate',
         'Choose a Chaos Scenario',
-        'Scenario Settings',
+        'Chaos Scenario Settings',
         'Schedule',
         'Verify and Commit',
       ]
     : [
         'Choose Chaos Delegate',
-        'Choose a Scenario',
-        'Scenario Settings',
-        'Tune Scenario',
+        'Choose a Chaos Scenario',
+        'Chaos Scenario Settings',
+        'Tune Chaos Scenario',
         'Reliability score',
         'Schedule',
         'Verify and Commit',

@@ -36,7 +36,7 @@ header:
     otherProjects: Other Projects
     noProjectsOther: You are not part of any projects not owned by you
   profileDropdown:
-    signedIn: 'Signed in as:'
+    signedIn: "Signed in as:"
     emailUnset: Email not set
     emailSet: Set up your email
     switchProject: Please switch to a project you own to access settings
@@ -57,33 +57,33 @@ quickActionCard:
   readAPIDocs: Read the Litmus Portal API docs
   addDashboard: Create a dashboard
   addDataSource: Add a data source
-  addAgent: Add a chaos delegate
-  connectNewAgent: Connect a new chaos delegate
-  scheduleWorkflow: Schedule a chaos scenario
+  addAgent: Add a Chaos Delegate
+  connectNewAgent: Connect a new Chaos Delegate
+  scheduleWorkflow: Schedule a Chaos Scenario
 
 customWorkflowCard:
-  customWorkflow: Create your own chaos scenario
+  customWorkflow: Create your own Chaos Scenario
   infraChaos: Infra-Chaos
 
 workflowStepper:
   continueError: To continue, please check the error in code.
-  scheduleNewChaosWorkflow: Schedule a new Litmus chaos scenario
-  aNewChaosWorkflow: A new Litmus chaos scenario,
+  scheduleNewChaosWorkflow: Schedule a new Chaos Scenario
+  aNewChaosWorkflow: A new Chaos Scenario,
   successful: is successfully created!
-  congratulationsSub1: Congratulations on creating your chaos scenario! Now information about
-  congratulationsSub2: it will be displayed on the chaos scenario schedules.
+  congratulationsSub1: Congratulations on creating your Chaos Scenario! Now information about
+  congratulationsSub2: it will be displayed on the Chaos Scenario schedules.
   error: Error
-  workflowFailed: Failed to create a new chaos scenario.
+  workflowFailed: Failed to create a new Chaos Scenario.
   workflowBtn: Go to Chaos Scenario
   step1:
     errorSnackbar: You haven't selected any Chaos Delegate
-    errorSnackbarViewer: You cannot schedule a chaos scenario as a Viewer
+    errorSnackbarViewer: You cannot schedule a Chaos Scenario as a Viewer
   step2:
-    errorSnackbar: Please select a chaos scenario type
+    errorSnackbar: Please select a Chaos Scenario type
   step3:
     errorSnackbar: Please provide a valid Chaos Scenario Name
   step4:
-    errorSnackbar: Please select atleast one experiment to proceed
+    errorSnackbar: Please select atleast one Chaos Experiment to proceed
   step5:
     errorSnackbar: Please select a valid schedule option to proceed
   step6:
@@ -93,7 +93,7 @@ workflowStepper:
   back: Back
 
 editor:
-  status: 'YAML Status:'
+  status: "YAML Status:"
 
 ######################################
 ############    Pages    #############
@@ -104,36 +104,36 @@ home:
 
 login:
   heading: Welcome to Chaos Center
-  subHeading1: Login to create, orchestrate, analyze and collaborate your Litmus chaos scenarios.
-  subHeading2: With your own private ChaosHub, you can create your new chaos experiments and share them with your team.
+  subHeading1: Login to create, orchestrate, analyze and collaborate your Chaos Scenarios.
+  subHeading2: With your own private ChaosHub, you can create your new Chaos Experiments and share them with your team.
   wrongCredentials: Wrong Credentials - Try again with correct username or password
   forgotPassword: Forgot your password?
   tooltipText: You need to contact your admin to reset your password.
 
 schedule:
-  heading: 'Schedule a chaos scenario'
-  headingDesc: 'Click on test to see detailed log of your chaos scenario'
-  headingText: 'Schedule details:'
-  description: 'Choose the right time to schedule your first chaos scenario. Below you can find some options that may be convenient for you.'
-  save: 'Save Changes'
+  heading: "Schedule a Chaos Scenario"
+  headingDesc: "Click on test to see detailed log of your Chaos Scenario"
+  headingText: "Schedule details:"
+  description: "Choose the right time to schedule your first Chaos Scenario. Below you can find some options that may be convenient for you."
+  save: "Save Changes"
   scheduleNow: Schedule now
   scheduleAfter: Schedule after some time
-  scheduleAfterSometime: 'Choose the minutes, hours, or days when you want to start chaos scenario'
+  scheduleAfterSometime: "Choose the minutes, hours, or days when you want to start Chaos Scenario"
   scheduleSpecificTime: Schedule at a specific time
-  scheduleFuture: Select date and time to start chaos scenario in future
+  scheduleFuture: Select date and time to start Chaos Scenario in future
   scheduleRecurring: Recurring Schedule
-  scheduleRecurringTime: Choose the right recurring time to start your chaos scenario
+  scheduleRecurringTime: Choose the right recurring time to start your Chaos Scenario
   after: After
   at: at
   At: At
-  scheduleOn: 'On'
+  scheduleOn: "On"
   missingPerm: Missing sufficient permissions :(
-  requiredPerm: Looks like you do not have the required permission to create a new chaos scenario on this project.
+  requiredPerm: Looks like you do not have the required permission to create a new Chaos Scenario on this project.
   contact: Contact portal administrator to upgrade your permission.
-  chaosWorkflow: Chaos scenario,
+  chaosWorkflow: Chaos Scenario,
   successful: was successfully updated!
-  congratulationsSub1: Chaos scenario updated successfully! Now information about
-  congratulationsSub2: it will be displayed on the chaos scenario schedules.
+  congratulationsSub1: Chaos Scenario updated successfully! Now information about
+  congratulationsSub2: it will be displayed on the Chaos Scenario schedules.
   workflowBtn: Go to Chaos Scenario
   backBtn: Go Back
 
@@ -147,11 +147,11 @@ editSchedule:
   successfullyCreated: is successfully created
 
 community:
-  title: 'Community'
-  heading: 'Litmus Insights'
-  headingDesc: 'Stats for the Litmus community'
-  analyticDesc: 'Periodic growth of Litmus'
-  statsHeading: 'Litmus users around the world'
+  title: "Community"
+  heading: "Litmus Insights"
+  headingDesc: "Stats for the Litmus community"
+  analyticDesc: "Periodic growth of Litmus"
+  statsHeading: "Litmus users around the world"
   litmusChaos: Litmuschaos
   follow: Follow
   feedback:
@@ -168,15 +168,15 @@ observability:
   fetchError: An error has occurred while fetching the data
   viewTestResult: Click on test to view the results for the selected period
   comingSoon: Statistics Coming Soon !
-  waitingMessage: Waiting for chaos scenario to start running !
-  chaosCompleteWaitingMessage: Waiting for chaos experiment to finish !
-  highestScore: 'Highest Score:'
-  lowestScore: 'Lowest Score:'
+  waitingMessage: Waiting for Chaos Scenario to start running !
+  chaosCompleteWaitingMessage: Waiting for Chaos Experiment to finish !
+  highestScore: "Highest Score:"
+  lowestScore: "Lowest Score:"
   exportPDF: Export PDF
-  compareWorkflows: Compare chaos scenarios
-  targetCluster: Chaos delegate
-  workflowSelected: chaos scenario selected
-  workflowsSelected: chaos scenarios selected
+  compareWorkflows: Compare Chaos Scenarios
+  targetCluster: Chaos Delegate
+  workflowSelected: Chaos Scenario selected
+  workflowsSelected: Chaos Scenarios selected
   tableHead1: Chaos Scenario Name
   tableHead2: Starting Date
   tableHead3: Regularity
@@ -187,18 +187,18 @@ observability:
     back: Back to Analytics
   workflowRunDetailsTable:
     tableHead0: Test Name
-    tableHead1: Experiment Name
-    tableHead2: Experiment Verdict
+    tableHead1: Chaos Experiment Name
+    tableHead2: Chaos Experiment Verdict
     tableHead3: Weight of the test
     tableHead4: Resulting Points
     tableHead5: Last run
     close: Close
   subData:
     workflowStatus: Chaos Scenario Status
-    experimentStatus: Experiment Status
+    experimentStatus: Chaos Experiment Status
     resilienceScore: Resilience Score
     probeSuccessPercentage: Probe Success Percentage
-    experimentVerdict: Experiment Verdict
+    experimentVerdict: Chaos Experiment Verdict
 
 monitoringDashboard:
   heading: Analytics
@@ -250,7 +250,7 @@ monitoringDashboard:
       tableHead3: Engine context
       tableHead4:
         title: Verdict
-        infoText: Latest Chaos experiment verdict
+        infoText: Latest Chaos Experiment verdict
       noRecords: No chaos happened during the interval
       showTable: Show Chaos during this interval
       hideTable: Hide Chaos during this interval
@@ -276,7 +276,7 @@ monitoringDashboard:
       pdf: PDF
   workflowScheduleTable:
     title: Chaos Scenario Schedules
-    noRecordMessage: No chaos scenario has been schedule
+    noRecordMessage: No Chaos Scenario has been schedule
   workflowStatistics: Chaos Scenario statistics
   overviewTabdataSourceTable: Connected Data Sources
   monitoringDashboard: Monitoring dashboards
@@ -330,14 +330,14 @@ monitoringDashboard:
         successMessage: Successfully uploaded
     configureDashboardMetadata:
       header: Dashboard metadata
-      description: Provide the dashboard information like names, data source, chaos delegates etc.
+      description: Provide the dashboard information like names, data source, Chaos Delegates etc.
       form:
         name: Name
         agent: Chaos Delegate
-        noActiveAgent: No active chaos delegate found
+        noActiveAgent: No active Chaos Delegate found
         agentInactive: Chaos Delegate is inactive
-        fetchingAgents: Loading chaos delegates ...
-        errorFetchingAgents: Error loading chaos delegates
+        fetchingAgents: Loading Chaos Delegates ...
+        errorFetchingAgents: Error loading Chaos Delegates
         dataSource: Data source
         noActiveDataSource: No active data source found
         dataSourceInactive: Data source is inactive
@@ -463,7 +463,7 @@ monitoringDashboard:
     warning:
       text: Unexpected bad things will happen if you don’t read this!
       info: The data source seems to be connected to following monitoring dashboards. Dashboards will be unable to show metrics if the data source is deleted.
-      connectedDashboards: 'Connected Dashboards :'
+      connectedDashboards: "Connected Dashboards :"
       showLess: Show Less Dashboards
       dashboards: Dashboards
     deletionSuccess: Successfully deleted the data source
@@ -495,12 +495,12 @@ monitoringDashboard:
     mainHeading-0: Schedule your
     mainHeading-1: Chaos Scenario
     mainHeading-2: now
-    subHeading: Worflow dashboards are available once the chaos scenarios are run
-    description: Create complex chaos scenario, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability chaos scenarios and compliance reports
-    buttonText: Schedule a chaos scenario
+    subHeading: Worflow dashboards are available once the Chaos Scenarios are run
+    description: Create complex Chaos Scenario, automate them and monitor the variations in resilience levels. You can use this Kubernetes cluster to create new reliability Chaos Scenarios and compliance reports
+    buttonText: Schedule a Chaos Scenario
   configureBanner:
     case-0:
-      heading: No data source is configured yet for any chaos delegate
+      heading: No data source is configured yet for any Chaos Delegate
       description: To configure your first monitoring dashboard you need to connect a data source. Select "Add a data source" to connect.
     case-1:
       heading: Data source(s) has been added, now configure a dashboard
@@ -531,7 +531,7 @@ error:
   goBack: Go back
 
 workflowDetails:
-  workflowNotStarted: Please check the configuration, the chaos scenario was not able to start
+  workflowNotStarted: Please check the configuration, the Chaos Scenario was not able to start
   fetchError: An error has occurred while fetching the data
 
   ######################################
@@ -540,16 +540,16 @@ workflowDetails:
 
 homeViews:
   landingHome:
-    heading: Deploy your first chaos delegate
+    heading: Deploy your first Chaos Delegate
     description: A Kubernetes cluster consists of a set of worker machines, called nodes, that run containerized applications. Every cluster has at least one worker node. The control plane manages the worker nodes and the Pods in the cluster. In production environments, the control plane usually runs across multiple computers and a cluster usually runs multiple nodes, providing fault-tolerance and high availability.
     deploy: Deploy
     agentDeployModal:
-      heading: Connect a chaos delegate
+      heading: Connect a Chaos Delegate
       firstStep: 1. Open the cluster console
       secondStep: 2. Download
       litmusctl: litmusctl
       thirdStep: 3. Paste and run the following command into the cluster console
-      agentRegister: $ litmusctl connect agent
+      agentRegister: $ litmusctl connect chaos-delegate
       copy: Copy
       done: Done
   projectInfoContainer:
@@ -561,20 +561,20 @@ homeViews:
   agentConfiguredHome:
     error: Error fetching the data!
     noWorkflow:
-      heading: Schedule your first Litmus chaos scenario
-      description: Now it is successfully running on your Kubernetes cluster. Once you schedule a chaos scenarios, reliability statistics will be displayed here.
-      schedule: Schedule a chaos scenario
-      explore: Explore pre defined chaos scenarios
+      heading: Schedule your first Chaos Scenario
+      description: Now it is successfully running on your Kubernetes cluster. Once you schedule a Chaos Scenarios, reliability statistics will be displayed here.
+      schedule: Schedule a Chaos Scenario
+      explore: Explore pre defined Chaos Scenarios
     recentWorkflowRuns:
       workflowRunCard:
-        cardTitle: Browse chaos scenario
-        resilienceRate: 'Overall resilience rate:'
-        lastRun: 'Last Run:'
+        cardTitle: Browse Chaos Scenario
+        resilienceRate: "Overall resilience rate:"
+        lastRun: "Last Run:"
         showStatistics: Show the statistics
         downloadManifest: Download manifest
       heading: Recent Chaos Scenario runs
-      viewAll: View all chaos scenarios
-      schedule: Schedule a chaos scenario
+      viewAll: View all Chaos Scenarios
+      schedule: Schedule a Chaos Scenario
     agentInfoContainer:
       agent: Chaos Delegate
       description: Cloud native chaos engineering can be setup on this cluster using Litmus Chaos
@@ -585,12 +585,12 @@ chaosWorkflows:
     workFlowComparisonTable:
       unableToFetch: Unable to fetch data
       noRecords: No records available
-      loadingRuns: Loading chaos scenario runs ...
-      errorFetchingRuns: Error while fetching chaos scenario runs !
-      noRuns: No chaos scenario runs available for selected chaos scenarios
-      showSelectedWorkflows: Show all selected chaos scenarios
+      loadingRuns: Loading Chaos Scenario runs ...
+      errorFetchingRuns: Error while fetching Chaos Scenario runs !
+      noRuns: No Chaos Scenario runs available for selected Chaos Scenarios
+      showSelectedWorkflows: Show all selected Chaos Scenarios
       resilienceScoreComparison: Resilience score comparison
-      comparativeResults: Comparative results of selected chaos scenarios which ran successfully
+      comparativeResults: Comparative results of selected Chaos Scenarios which ran successfully
       once: Once
       statistics: Statistics
   browseSchedules:
@@ -600,7 +600,7 @@ chaosWorkflows:
     experiments: Experiments
     schedule: Schedule
     nextRun: Next Run
-    nonCron: Non cron chaos scenario
+    nonCron: Non Cron Chaos Scenario
     runs: Runs
     wfRuns: Chaos Scenario Runs
     regularity: Regularity
@@ -619,7 +619,7 @@ chaosWorkflows:
     disableSchedule: Disable Schedule
     enableSchedule: Enable Schedule
     saveTemplate: Save Template
-    updateEngine: 'Note: Make sure to update the chaos engine names'
+    updateEngine: "Note: Make sure to update the chaos engine names"
     saveChanges: Save Changes
     savedSuccessfully: Successfully saved template.
     cancel: Cancel
@@ -627,7 +627,7 @@ chaosWorkflows:
       all: All
       enabledOnly: Show Enabled Chaos Scenarios Only
       disabledOnly: Show Disabled Chaos Scenarios Only
-      chaos scenario: One Time Run
+      workflow: One Time Run
       cronworkflow: Cron Chaos Scenario
   browseWorkflows:
     status: Status
@@ -638,7 +638,7 @@ chaosWorkflows:
     experiments: Experiments
     lastRun: Last Run
     executedBy: Executed By
-    wfIssue: Seems like there has been some issue in chaos scenario.
+    wfIssue: Seems like there has been some issue in Chaos Scenario.
     runningFrom: Running from last
     min: mins.
     sync: Sync Chaos Scenario
@@ -646,10 +646,10 @@ chaosWorkflows:
     delete: Delete Chaos Scenario
     workflowManifest: Chaos Scenario Manifest
     tableData:
-      overallRR: 'Overall RR : '
-      experimentsPassed: 'Experiments Passed : '
+      overallRR: "Overall RR : "
+      experimentsPassed: "Experiments Passed : "
       showExperiments: Show Experiments
-      showTheWorkflow: Show the chaos scenario
+      showTheWorkflow: Show the Chaos Scenario
       showTheStatistics: Show the statistics
       viewManifest: View Manifest
       na: NA
@@ -691,7 +691,7 @@ settings:
     projectInvite: Projects by invite
     invitations: Invitations
     active: Active
-    manageTeam: Manage your team, invite a member to your project or change the role of members in the team
+    manageTeam: Manage your team and invite members to your project
     header: Members
     invitedProject: Projects you were invited to
     noUsers: No users available
@@ -806,7 +806,7 @@ settings:
         button: Choose an avatar
       newUserModal:
         header: A new user
-        headerInfo: was successfully created
+        headerInfo: is successfully created
         headerErr: while creating a new user.
         error: Error
         info: Now information about the user will be displayed on the user management screen of the application.
@@ -837,26 +837,26 @@ settings:
     disconnect: Are you sure you want to disconnect?
     save: Save Locally
     repo: Git Repository
-    desc: '* Any existing or active chaos scenarios saved locally will not be synced into the git repository'
+    desc: "* Any existing or active Chaos Scenarios saved locally will not be synced into the git repository"
     connect: Connect
     branch: Branch
     URL: Git URL
     setting: Back to settings
     editHeader: Are you sure you want to edit the GitOps configuration?
-    editDescription: This will affect all the chaos scenarios. Few of the chaos scenarios may not work as expected.
+    editDescription: This will affect all the Chaos Scenarios. Few of the Chaos Scenarios may not work as expected.
     edit: Edit
     cancel: Cancel
     proceed: Yes, proceed
   imageRegistry:
     heading: Image Registry
-    headingDesc: Your image registry for the chaos scenario manifest
+    headingDesc: Your image registry for the Chaos Scenario manifest
     defaultValues: Use the default values
     defaultText: All YAML files use these default values provided by Litmus. The values cannot be changed.
-    registry: 'Registry Server : '
-    repo: 'Registry : '
-    repoType: 'Registry Type : '
-    dockerio: 'docker.io'
-    litmus: 'litmuschaos'
+    registry: "Registry Server : "
+    repo: "Registry : "
+    repoType: "Registry Type : "
+    dockerio: "docker.io"
+    litmus: "litmuschaos"
     public: Public
     private: Private
     defaultReg: Use Default Registry
@@ -866,12 +866,12 @@ settings:
     save: Save Changes
     provideInfo: Please provide the namespace and secret name. For more information,
     visit: visit here
-    noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your chaos scenarios.
+    noRegistry: You don't have any image registry configured. Please select the default image registry to schedule your Chaos Scenarios.
 
 workflowDetailsView:
   logs: Logs
   headerDesc: Chaos Scenario statistics of
-  headerMiniDesc: Description of the chaos scenario
+  headerMiniDesc: Description of the Chaos Scenario
   argoWorkflow:
     loading: Loading Graph...
     controls:
@@ -883,18 +883,17 @@ workflowDetailsView:
     couldNot: Could not get logs
     chaosLogs: Chaos logs unavailable
   workflowInfo:
-    header: Overall Chaos Scenario Description
+    header: Chaos Scenario Overview
     resilienceScore: Resilience Score
     Completed: Completed
     status: Chaos Scenario Status
     runTime:
-      runTimeHeader: Run Time
-      startTime: 'Start Time :'
-      endTime: 'End Time :'
+      duration: Duration
+      startTime: "Start Time :"
+      endTime: "End Time :"
     targets:
-      targetsHeader: Target
-      cluster: 'Chaos Delegate :'
-      namespace: 'Chaos Scenario Namespace :'
+      targetsHeader: Chaos Delegate
+      namespace: "Chaos Scenario Namespace"
   workflowNodeInfo:
     name: Name
     type: Type
@@ -908,7 +907,7 @@ workflowDetailsView:
     tableHeader:
       stepName: Step Name
       status: Status
-      duration: Duration
+      endTime: End Time
       startTime: Start Time
       applicationDetails: Application Details
     showProperties: Show properties
@@ -921,24 +920,24 @@ workflowDetailsView:
 
 createWorkflow:
   chooseWorkflow:
-    title: Start creating your Litmus chaos scenario
-    subtitle: Simulate the chaos scenario run and see the suggested reliability score
-    optionA: Create a new chaos scenario from one of the pre-defined chaos scenario templates
-    optionB: Create a new chaos scenario by cloning an existing chaos scenario
-    optionC: Create a new chaos scenario using the experiments from
-    optionD: Import a chaos scenario using YAML
+    title: Start creating your Chaos Scenario
+    subtitle: Simulate the Chaos Scenario run and see the suggested reliability score
+    optionA: Create a new Chaos Scenario from one of the pre-defined Chaos Scenario templates
+    optionB: Create a new Chaos Scenario by cloning an existing Chaos Scenario
+    optionC: Create a new Chaos Scenario using the experiments from
+    optionD: Import a Chaos Scenario using YAML
     myHubs: ChaosHubs
     saved: Name saved as
     modalHeading: Create your
-    modalHeadingStrong: chaos scenario name
+    modalHeadingStrong: Chaos Scenario name
     settings: Chaos Scenario Settings
-    descriptionA: You have selected a pre-defined chaos scenario
-    descriptionB: You have selected an existing chaos scenario
-    descriptionC: You have selected a MyHub chaos scenario
-    descriptionD: You have imported a chaos scenario YAML
-    description2: Provide a name and description to the new Litmus chaos scenario.
+    descriptionA: You have selected a pre-defined Chaos Scenario
+    descriptionB: You have selected an existing Chaos Scenario
+    descriptionC: You have selected a ChaosHub Chaos Scenario
+    descriptionD: You have imported a Chaos Scenario YAML
+    description2: Provide a name and description to the new Chaos Scenario.
     edit: Edit Photo
-    changeImage: Change chaos scenario logo
+    changeImage: Change Chaos Scenario logo
     changeImgDescription: You can choose a logo from given below
     saveChanges: Save Changes
     imageNotChanged: You have not changed the image.
@@ -947,12 +946,12 @@ createWorkflow:
     validate: Chaos Scenario name can only contain - and alphanumeric characters
     pleaseAddExp: Please add experiments to see the data
     revertSchedule: Revert Schedule
-    retainLogs: To retain experiment logs, turn this off.
+    retainLogs: To retain Chaos Experiment logs, turn this off.
     retainLogsDesc: Enabling this will make the schedule to revert after completion.
     noTemplates: No template available.
-    addTemplate: You can add a template from the scheduled chaos scenarios table.
-    trueValue: 'True'
-    falseValue: 'False'
+    addTemplate: You can add a template from the scheduled Chaos Scenarios table.
+    trueValue: "True"
+    falseValue: "False"
     enableRegistry: Enable Image Registry Changes
     table:
       head1: Sequence
@@ -966,20 +965,20 @@ createWorkflow:
       desc: Description
       namespace: Namespace
     button:
-      edit: Edit chaos scenario name
+      edit: Edit Chaos Scenario name
       cancel: Cancel
       save: Save
-    noMyHub: No MyHub selected
-    selectHub: Select a hub and continue with a pre-defined chaos scenario
-    noPredefined: No pre-defined chaos scenarios present in this ChaosHub.
-    addPredefined: Add a pre-defined chaos scenario to continue scheduling.
-    morePredefined: More pre-defined chaos scenarios can be found
+    noMyHub: No ChaosHub selected
+    selectHub: Select a ChaosHub and continue with a pre-defined Chaos Scenario
+    noPredefined: No pre-defined Chaos Scenarios present in this ChaosHub.
+    addPredefined: Add a pre-defined Chaos Scenario to continue scheduling.
+    morePredefined: More pre-defined Chaos Scenarios can be found
     searchTerm: Enter a correct search term
-    advance: Advanced options to tune chaos scenario
-    advanceDesc: Modify node selector, cleanup chaos scenario resource and tolerations.
+    advance: Advanced options to tune Chaos Scenario
+    advanceDesc: Modify node selector, cleanup Chaos Scenario resource and tolerations.
     nodeSelector: Node Selector
-    nodeSelectorDesc: NodeSelector is a selector which will result in all pods of the chaos scenario to be scheduled on the selected node.
-    nodeSelectorValue: 'kubernetes.io/hostname'
+    nodeSelectorDesc: NodeSelector is a selector which will result in all pods of the Chaos Scenario to be scheduled on the selected node.
+    nodeSelectorValue: "kubernetes.io/hostname"
     toleration: Toleration
     tolerationDesc: Tolerations are applied to pods, and allow the pods to schedule onto nodes with matching taints.
     effect: effect
@@ -988,22 +987,21 @@ createWorkflow:
     value: value
     cleanUp: Cleanup Chaos Scenario Pods
     cleanUpDesc: Delete Chaos Scenario pods after completion or successful execution.
-    strategy: 'podGC.strategy'
+    strategy: "podGC.strategy"
     podGC: podGC
     complete: OnWorkflowCompletion
     success: OnWorkflowSuccess
   reliabilityScore:
-    header: Adjust the weights of the experiments in the Litmus chaos scenario
+    header: Adjust the weights of the experiments in the Chaos Scenario
     info: You have selected
     tests: tests in the
-    infoNext: chaos scenario. Successful outcome of each test carries a certain weight. We have pre-selected weights for each test for you. However, you may review and modify the weightage against.
-    infoNextStrong: These weights are used to calculate the resiliency score at the end of test.
+    infoNext: Chaos Scenario. Successful outcome of each test carries a certain weight. All experiments carry maximum weight by default.
     testInfo: Compare the importance of the items above and launch a demo version of Kubernetes conformance test to see how it works.
     button:
       demo: Demo Launch
       gotIt: Got it
     resultTable:
-      header: Simulate the chaos scenario run and see the suggested reliability score
+      header: Simulate the Chaos Scenario run and see the suggested reliability score
       headerDesc: workflow1 K8S conformance test on Ignite cluster
       info: Tips from Litmus Portal
       tips: When you set the test result, then pay attention to the total values of the total score. This will help you in setting up your tests, getting the maximum result and the correct operation of the test in the future.
@@ -1017,7 +1015,7 @@ createWorkflow:
         testPoints: Test Points
   scheduleWorkflow:
     header: Choose a chaos schedule
-    info: Choose the right time to start your first Litmus chaos scenario. Below you can find any option convenient for you.
+    info: Choose the right time to start your first Chaos Scenario. Below you can find any option convenient for you.
     min: min
     mins: mins
     at: at
@@ -1030,9 +1028,9 @@ createWorkflow:
     radio:
       now: Schedule now
       specific: Schedule at a specific time
-      future: Select date and time to start chaos scenario in future
+      future: Select date and time to start Chaos Scenario in future
       recurr: Recurring Schedule
-      rightRecurr: Choose the right recurring time to start your chaos scenario
+      rightRecurr: Choose the right recurring time to start your Chaos Scenario
     modalHeader: Are you sure you want to delete this Schedule
     modalSubheader: This action is irreversible
     cancelBtn: Cancel
@@ -1041,35 +1039,35 @@ createWorkflow:
     pass: Pass
     fail: Fail
   tuneWorkflow:
-    header: Tune the selected chaos scenario
-    selectedPreDefinedWorkflowInfo: You have selected a pre-defined chaos scenario
+    header: Tune the selected Chaos Scenario
+    selectedPreDefinedWorkflowInfo: You have selected a pre-defined Chaos Scenario
     selectedTemplateInfo: You have selected a template
-    selectedCustomWorkflowInfo: You have selected a custom chaos scenario
-    selectedUploadYAML: You have imported a chaos scenario YAML
+    selectedCustomWorkflowInfo: You have selected a custom Chaos Scenario
+    selectedUploadYAML: You have imported a Chaos Scenario YAML
     description: Fine tune the application  names and other variables to suit your needs
     view: View YAML
     edit: Edit YAML
-    firstExperiment: Add your first experiment
+    firstExperiment: Add your first Chaos Experiment
     choose: Choose Experiments
     selectAvailableExp: Select experiments available in
     afterSelect: After selecting you can fine tune them.
-    selectExp: Select An Experiment
+    selectExp: Select a Chaos Experiment
     done: Done
     editSequence: Edit Sequence
-    dragndrop: Drag and drop an experiment as per your desire for scheduling
-    addANewExperiment: Add a new experiment
+    dragndrop: Drag and drop a Chaos Experiment as per your desire for scheduling
+    addANewExperiment: Add a new Chaos Experiment
     confirmText: Are you sure you want to continue without saving?
     back: Back
     continue: Continue
-    updateChanges: Update changes in the chaos scenario manifest
+    updateChanges: Update changes in the Chaos Scenario manifest
     saveChange: Save Changes
     verticalStepper:
-      myHubInfo: Experiment details
+      myHubInfo: Chaos Experiment details
       annotationInfo: Provide target application details where you want to induce the chaos.
       annotation: Annotation Check
-      true: 'True'
-      false: 'False'
-      annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
+      true: "True"
+      false: "False"
+      annotationDesc: The target application does not have an annotation “Chaos=true”. Ideally, you cannot run this Chaos Experiment unless the annotation is patched to the application. However, this service account has the privileges to disable the enforcement of annotation checks. Mark the annotation as false to proceed.
       appkind: appKind
       deployment: Deployment
       statefulset: Statefulset
@@ -1077,11 +1075,11 @@ createWorkflow:
       deploymentconfig: Deploymentconfig
       rollout: Rollout
       nodeselector: NodeSelector
-      selector: 'kubernetes.io/hostname :'
+      selector: "kubernetes.io/hostname :"
       nsError: Namespace not available
       labelError: Label not available in the resource or namespace
-      deleteExp: Delete the experiment
-      editExp: Edit the experiment
+      deleteExp: Delete the Chaos Experiment
+      editExp: Edit the Chaos Experiment
     steadyState:
       name: Probe Name
       type: Type
@@ -1091,11 +1089,11 @@ createWorkflow:
       showDetails: Show Details
       showProp: Show Properties
       addProbe: Please add probes to see the data
-      addNewProbe: '+ Add a new Probe'
+      addNewProbe: "+ Add a new Probe"
       back: Back
       finish: Finish
     env:
-      envHeading: Tune the environment variables of the experiment
+      envHeading: Tune the environment variables of the Chaos Experiment
       showMoreEnv: Show more environment variables
       showLessEnv: Show less environment variables
       key: Key Tunables
@@ -1159,7 +1157,7 @@ createWorkflow:
         continuous: Continuous
   verifyCommit:
     header: Confirmation of Results
-    info: Before committing the chaos scenario changes to your chaos delegate, verify and if needed go back to a corresponding section of the wizard to modify.
+    info: Before committing the Chaos Scenario changes to your Chaos Delegate, verify and if needed go back to a corresponding section of the wizard to modify.
     error: Invalid Chaos Scenario CRD found ! Please correct the errors.
     errYaml: Error in CRD Yaml.
     codeIsFine: Your code is fine.
@@ -1173,7 +1171,7 @@ createWorkflow:
       viewYaml: View YAML
     summary:
       header: Summary
-      subjectDesc: The subject is used as a chaos scenario label. It’s value will be used for analysing chaos results and metrics. This subject will be also used to filter out chaos events in monitoring dashboards.
+      subjectDesc: The subject is used as a Chaos Scenario label. It’s value will be used for analysing chaos results and metrics. This subject will be also used to filter out chaos events in monitoring dashboards.
       subject: Subject
       workflowName: Chaos Scenario name
       desc: Description
@@ -1183,7 +1181,7 @@ createWorkflow:
       adjustedWeights: Adjusted Weights
       clustername: Chaos Delegate Name
   workflowCluster:
-    activeCluster: Choose an active chaos delegate
+    activeCluster: Choose an active Chaos Delegate
     none: None
 
 ######################################
@@ -1193,7 +1191,7 @@ createWorkflow:
 targets:
   options:
     upgrade: Upgrade
-    copyTargetID: Copy target ID
+    copyTargetID: Copy Chaos Delegate ID
     disconnect: Disconnect
   connectHome:
     head: ChaosDelegates
@@ -1209,7 +1207,7 @@ targets:
     head3: Paste and Run the following command into the cluster console
   modalUpgrade:
     head1: Upgrade Chaos Delegate
-    copyUpgradeCommand: Copy & Paste this command to your cluster console to upgrade the chaos delegate.
+    copyUpgradeCommand: Copy & Paste this command to your cluster console to upgrade the Chaos Delegate.
     done: Done
   modalDelete:
     head1: Are you sure to
@@ -1227,15 +1225,15 @@ connectTargets:
   mainLine: will be displayed on "Targets".
   button:
     buttonBack: Back to Targets
-    buttonSchedule: Schedule a chaos scenario
+    buttonSchedule: Schedule a Chaos Scenario
 workflowCluster:
   header:
     status: Current Status
     target: Chaos Delegate
     chooseAgent: Choose the Kubernetes Chaos Delegate
     creatingNew: You are creating a
-    creatingNewBold: new chaos scenario.
-    selectAgent: Select a Kubernetes Chaos Delegate to run this chaos scenario.
+    creatingNewBold: new Chaos Scenario.
+    selectAgent: Select a Kubernetes Chaos Delegate to run this Chaos Scenario.
     selectCluster: Choose Active Chaos Delegate
     select: Select and Continue
     snackbar: No Chaos Delegate Registered With Your Project ID, Please Wait...
@@ -1265,24 +1263,24 @@ workflowCluster:
       back: Back
 workflowAgent:
   header:
-    chooseAgent: Choose Chaos Delegate to send the Litmus chaos scenario to
-    creatingNew: You are creating a new Litmus chaos scenario
-    selectAgent: Select a Chaos Delegate to run this chaos scenario
+    chooseAgent: Choose Chaos Delegate to send the Chaos Scenario to
+    creatingNew: You are creating a new Chaos Scenario
+    selectAgent: Select a Chaos Delegate to run this Chaos Scenario
   search:
     placeholder: Search
-  connectAgent: Connect an chaos delegate to start scheduling chaos scenarios
-  noAgents: You have not connected any chaos delegates yet
-  noAgentSearch: No  chaos delegates found
+  connectAgent: Connect an Chaos Delegate to start scheduling Chaos Scenarios
+  noAgents: You have not connected any Chaos Delegates yet
+  noAgentSearch: No  Chaos Delegates found
 
 workflows:
-  runs: Runs
-  schedules: Schedules
+  runs: Chaos Scenario Runs
+  schedules: Chaos Scenarios
   templates: Templates
-  scheduleAWorkflow: Schedule a chaos scenario
+  scheduleAWorkflow: Schedule a Chaos Scenario
 
 browseTemplate:
-  browseAWorkflow: Browse a chaos scenario template
-  seeDetails: See details of your chaos scenario template
+  browseAWorkflow: Browse a Chaos Scenario template
+  seeDetails: See details of your Chaos Scenario template
   back: Back
   scheduleThisTemplate: Schedule this template
 
@@ -1291,74 +1289,74 @@ browseTemplate:
 #########################################
 
 internetIssues:
-  fetchData: 'Fetching the data...'
+  fetchData: "Fetching the data..."
   connectionError: It seems you have no internet connection, Please try again When connectivity resumes.
 
 ######################################
-############     MyHub     ###########
+############     ChaosHub     ###########
 ######################################
 myhub:
-  title: MyHubs
+  title: ChaosHubs
   connectTarget: Connect the target
-  viewMyHub: View My Hub
-  error: '[Error: could not connect]'
+  viewMyHub: View ChaosHub
+  error: "[Error: could not connect]"
   view: View
   validationEmptySpace: Should not start with an empty space
   validURL: Enter a valid URL
-  edit: Edit Hub
-  refresh: Refresh Hub
-  disconnect: Disconnect Hub
-  lastSync: 'Last synced at:'
+  edit: Edit ChaosHub
+  refresh: Refresh ChaosHub
+  disconnect: Disconnect ChaosHub
+  lastSync: "Last synced at:"
   mainPage:
     header: ChaosHubs
     github: github.com/
     availableHubs: Available chaos hubs
     switchHub: You can switch between connected hubs or connect a new one.
-    devGuideHeader: You have no hubs currently connected. Start connecting your first hub.
-    devGuideDescription: You should have your litmus chaos hub forked and made ready before connecting to it.
-    connectNewHub: Connect a new chaos hub
-    connect: Connect New Hub
+    devGuideHeader: You have no hubs currently connected. Start connecting your first ChaosHub.
+    devGuideDescription: You should have your litmus ChaosHub forked and made ready before connecting to it.
+    connectNewHub: Connect a new ChaosHub
+    connect: Connect New ChaosHub
     noGithubCredentials: You have not given your Github credential
     submitBtn: Submit Now
     videoDescription: Get resilient and compliance scores for your Kuberenetes product
     sync: Syncing Repo...
     retry: Retry Connection
-    disconnectHeader: Are you sure you want to disconnect MyHub?
+    disconnectHeader: Are you sure you want to disconnect
     disconnectDesc: Action is not revertable
     cancel: Cancel
-    deleteHub: Delete Hub
+    deleteHub: Delete ChaosHub
     syncError: Failed while syncing repo, try again!
   myhubChart:
-    header: MyHub
+    header: ChaosHub
     github: github.com/
     syncingRepo: Loading Experiments, Please Wait...!
-    preDefined: Pre-defined chaos scenarios
+    preDefined: Pre-defined Chaos Scenarios
     chaosCharts: Chaos-experiments
-    noPredefinedExp: No predefined chaos scenarios available with information in this Hub
+    noPredefinedExp: No predefined Chaos Scenarios available with information in this ChaosHub
     noExp: No experiments found
-    lastSynced: 'Last synced at: '
-    repoLink: 'Repository Link: '
-    repoBranch: 'Repository Branch: '
+    lastSynced: "Last synced at: "
+    repoLink: "Repository Link: "
+    repoBranch: "Repository Branch: "
   connectHubPage:
-    connectHub: Connect a new chaos hub
-    editHub: Edit hub configuration
+    connectHub: Connect a new ChaosHub
+    editHub: Edit ChaosHub configuration
     enterInfo: Enter information in the required fields
     connectBtn: Then click on the connect button
     submitBtn: Submit Now
     cloningText: Please wait while we are cloning your repo!
     errorText: Error
-    creatingHub: while creating MyHub
-    newHub: A new chaos hub
+    creatingHub: while creating ChaosHub
+    newHub: A new ChaosHub
     success: is successfully created
-    newHubCreated: A new chaos hub will be added to the main page of the MyHubs section
-    myHub: Back to MyHubs
+    newHubCreated: A new ChaosHub will be added to the main page of the ChaosHubs section
+    myHub: Back to ChaosHubs
     videoDesc: Get resilient and compliance scores for your Kuberenetes product
     accessToken: Access Token
     ssh: SSH
     sshText: Please enable read / write access on the above git repository for the following key
-    sshAlert: '*Make sure to provide the SSH link of the Git Repository'
+    sshAlert: "*Make sure to provide the SSH link of the Git Repository"
     saveLater: Save for later
-    updateHub: Update the MyHub with correct details from the MyHubs section
+    updateHub: Update the ChaosHub with correct details from the MyHubs section
     cancel: Cancel
   videoCarousel:
     video: Video Tips
@@ -1368,41 +1366,41 @@ myhub:
   usefulLink:
     maintainer: Maintainers
   experimentPage:
-    congrats: Congratulations! You have created a template for new experiment. Finish it on GitHub using a developer`s guide.
+    congrats: Congratulations! You have created a template for new Chaos Experiment. Finish it on GitHub using a developer`s guide.
     installExp: Install this Chaos Experiment
     installExpDesc: You can install the Chaos Experiment using the following command
     installRBAC: Setup Service Account (RBAC)
     installRBACDesc: Create a service account using the following command
     installEngine: Sample Chaos Engine
     installEngineDesc: Copy and edit this sample Chaos Engine yaml according to your application needs
-    checkPreDefined: Check the pre-defined chaos scenario
-    checkPreDefinedDesc: You can view the chaos scenario details here
+    checkPreDefined: Check the pre-defined Chaos Scenario
+    checkPreDefinedDesc: You can view the Chaos Scenario details here
   editPage:
-    edit: Edit the Hub
+    edit: Edit the ChaosHub
     click: Then click on the update button
-    submit: Update MyHub
+    submit: Update ChaosHub
     wait: Please wait while we are updating your repo!
-    updating: while updating MyHub
-    success: MyHub successfully updated
-    desc: MyHub will be updated in the main page of the MyHubs section
-    error: Error while updating MyHub
+    updating: while updating ChaosHub
+    success: ChaosHub successfully updated
+    desc: ChaosHub will be updated in the main page of the MyHubs section
+    error: Error while updating ChaosHub
 
 ######################################
 ########   Custom Chaos Scenario     #######
 ######################################
 customWorkflow:
   createWorkflow:
-    create: Creating a new chaos scenario
-    createDesc: Add new experiments from your ChaosHubs defined at MyHubs section
+    create: Creating a new Chaos Scenario
+    createDesc: Add new Chaos Experiments from your ChaosHubs defined at MyHubs section
     workflowInfo: Chaos Scenario information
     workflowName: Chaos Scenario Name
     workflowDesc: Description
     chooseNamespace: Choose Namespace
-    firstChaos: Choose the hub
-    selectHub: Select the hub
-    public: Public Hub
-    configure: Construct your chaos scenario
-    construct: Using experiments from MyHubs
+    firstChaos: Choose the ChaosHub
+    selectHub: Select the ChaosHub
+    public: Public ChaosHub
+    configure: Construct your Chaos Scenario
+    construct: Using Chaos Experiments from ChaosHubs
     upload: Upload your
     yaml: YAML
     uploadFile: Select YAML file from your device
@@ -1410,47 +1408,47 @@ customWorkflow:
     retryUpload: Retry Upload
     uploadSuccess: Successfully uploaded
     drag: Drag & Drop YAML file to upload
-    chooseExp: Choose the experiment
-    loadingExp: Loading Experiments, please wait...
-    selectExp: Select the experiment
-    selectAnExp: Select an experiment
-    noExp: No experiments found
+    chooseExp: Choose the Chaos Experiment
+    loadingExp: Loading Chaos Experiments, please wait...
+    selectExp: Select the Chaos Experiment
+    selectAnExp: Select a Chaos Experiment
+    noExp: No Chaos Experiments found
     nextBtn: Next
     uploadFailMessage: Failed to upload YAML, please check the syntax
   scheduleWorkflow:
-    scheduleHeader: Schedule a new chaos scenario
-    addedExp: Your added experiments to the chaos scenario
-    finishText: Tap finish to end or you can add a new experiments and edit the sequence of currently added experiments
-    experiment: Experiment
+    scheduleHeader: Schedule a new Chaos Scenario
+    addedExp: Your added Chaos Experiments to the Chaos Scenario
+    finishText: Tap finish to end or you can add a new Chaos Experiments and edit the sequence of currently added Chaos Experiments
+    experiment: Chaos Experiment
     viewYAML: View YAML
     editBtn: Edit
     deleteBtn: Delete
-    addExp: Add a new experiment
-    finish: Finish adding experiments
+    addExp: Add a new Chaos Experiment
+    finish: Finish adding Chaos Experiments
     proceed: Proceed to construct the
-    selection: YAML based on the experiment selection.
+    selection: YAML based on the Chaos Experiment selection.
     revert: Revert Chaos
-    unselect: Unselect the check box if you don't want to have revert chaos stage at the end of chaos scenario.
+    unselect: Unselect the check box if you don't want to have revert chaos stage at the end of Chaos Scenario.
     cancel: Cancel
     construct: Construct Chaos Scenario
   tuneExperiment:
     headerText: Tune the chaos engine
-    addKey: Add keys for add experiments
-    experimentInfo: Experiment information
-    expName: Experiment name
+    addKey: Add keys for add Chaos Experiments
+    experimentInfo: Chaos Experiment information
+    expName: Chaos Experiment name
     description: Description
     sequence: Sequence
-    sequenceFirstExp: This is your first experiment
-    sequenceNotFirstExp: This Experiment will execute after
-    appInfo: Specify the appinfo for the experiment
-    envText: We have created a chaos engine specification for this experiment. You can tune the following variables for the chaos engine.
-    customEnvText: To change the variables in chaos experiment specific to this chaos scenario, You can tune it here.
+    sequenceFirstExp: This is your first Chaos Experiment
+    sequenceNotFirstExp: This Chaos Experiment will execute after
+    appInfo: Specify the appinfo for the Chaos Experiment
+    envText: We have created a chaos engine specification for this Chaos Experiment. You can tune the following variables for the chaos engine.
+    customEnvText: To change the variables in Chaos Experiment specific to this Chaos Scenario, You can tune it here.
     addEnv: Add Key
-    addExp: Add experiment
+    addExp: Add Chaos Experiment
   viewYAML:
     view: View the YAML here
   sequence:
-    dragexp: Drag the selected experiment between the rows or to the end of rows to make it sequential experiment or drag into the rows to make it parallel experiment.
+    dragexp: Drag the selected Chaos Experiment between the rows or to the end of rows to make it sequential Chaos Experiment or drag into the rows to make it parallel Chaos Experiment.
     saveChanges: Save changes
     discard: Discard changes
 
@@ -1461,7 +1459,7 @@ usage:
   usageHeader: Usage
   usageSubtitle: Global and project level usage details. Available only to the admin user.
   projectStatistics: Project Statistics
-  projectSubtitle: Includes the number of schedules, chaos scenario runs and experiment run in each project.
+  projectSubtitle: Includes the number of schedules, Chaos Scenario runs and Chaos Experiment run in each project.
   card:
     userHeader: Users
     userSubtitle: Total number of Litmus users.
@@ -1472,17 +1470,17 @@ usage:
     agentClusterScope: cluster scope
     agentNamespaceScope: namespace scope
     workflowScheduleHeader: Chaos Scenario Schedules
-    workflowScheduleSubtitle: Total number of scheduled chaos scenarios.
+    workflowScheduleSubtitle: Total number of scheduled Chaos Scenarios.
     workflowRunHeader: Chaos Scenario Runs
-    workflowRunSubtitle: Total number of chaos scenario runs.
-    experimentRunHeader: Experiments Runs
-    experimentRunSubtitle: Total number of chaos experiment runs.
+    workflowRunSubtitle: Total number of Chaos Scenario runs.
+    experimentRunHeader: Chaos Experiments Runs
+    experimentRunSubtitle: Total number of Chaos Experiment runs.
   table:
     project: Projects
     owner: Project Owner
     agents: Chaos Delegates
     schedules: Chaos Scenario Schedules
     wfRuns: Chaos Scenario runs
-    expRuns: Experiment runs
+    expRuns: Chaos Experiment runs
     team: Team Members
     noProject: No Projects Found

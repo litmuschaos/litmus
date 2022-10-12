@@ -9,7 +9,12 @@ import Loader from '../../components/Loader';
 import { constants } from '../../constants';
 import Wrapper from '../../containers/layouts/Wrapper';
 import { DELETE_HUB, GET_HUB_STATUS, SYNC_REPO } from '../../graphql';
-import { HubDetails, HubStatus } from '../../models/redux/myhub';
+import {
+  EditHub,
+  HubDetails,
+  HubStatus,
+  HubType,
+} from '../../models/graphql/chaoshub';
 import { getProjectID } from '../../utils/getSearchParams';
 import CustomMyHubCard from './customMyHubCard';
 import useStyles from './styles';
@@ -19,6 +24,7 @@ const MyHubConnectDrawer = lazy(() => import('./MyHubConnectDrawer'));
 interface DeleteHub {
   deleteHubModal: boolean;
   hubID: string;
+  hubName: string;
 }
 
 interface CloneResult {
@@ -39,6 +45,11 @@ const MyHub: React.FC = () => {
     message: '',
   });
 
+  const [edit, setEdit] = useState<EditHub>({
+    isEditing: false,
+    hubType: HubType.git,
+  });
+
   // Get MyHubs with Status
   const { data, loading, refetch } = useQuery<HubStatus>(GET_HUB_STATUS, {
     variables: { projectID },
@@ -52,21 +63,33 @@ const MyHub: React.FC = () => {
    */
   const [hubName, setHubName] = useState(''); // To distinguish between create or edit MyHub
 
-  const openHubDrawer = (myHubName: string) => {
+  const openHubDrawer = (myHubName: string, hubType: string) => {
     setHubName(myHubName);
+    setEdit({
+      isEditing: true,
+      hubType,
+    });
     setDrawerState(true);
   };
 
   const handleDrawerClose = () => {
-    if (hubName.length) {
+    if (hubName.length && edit.isEditing) {
       setHubName('');
+      setEdit({
+        ...edit,
+        isEditing: false,
+      });
     }
     setDrawerState(false);
   };
 
   const handleDrawerCloseWithRefetch = () => {
     setDrawerState(false);
-    if (hubName.length) {
+    if (hubName.length && edit.isEditing) {
+      setEdit({
+        ...edit,
+        isEditing: false,
+      });
       setHubName('');
     }
     refetch();
@@ -103,6 +126,7 @@ const MyHub: React.FC = () => {
   const [deleteHub, setDeleteHub] = useState<DeleteHub>({
     deleteHubModal: false,
     hubID: '',
+    hubName: '',
   });
 
   const handleHubDelete = () => {
@@ -115,13 +139,15 @@ const MyHub: React.FC = () => {
     setDeleteHub({
       deleteHubModal: false,
       hubID: '',
+      hubName: '',
     });
   };
 
-  const handleDelete = (hubId: string) => {
+  const handleDelete = (hubId: string, hubName: string) => {
     setDeleteHub({
       deleteHubModal: true,
       hubID: hubId,
+      hubName,
     });
   };
 
@@ -129,6 +155,7 @@ const MyHub: React.FC = () => {
     setDeleteHub({
       deleteHubModal: false,
       hubID: '',
+      hubName: '',
     });
   };
 
@@ -199,14 +226,14 @@ const MyHub: React.FC = () => {
                   </ButtonOutlined>
                 }
                 data-cy="deleteHubModal"
+                width="50%"
+                height="fit-content"
               >
                 <div className={classes.modalDiv}>
                   <img src="./icons/red-cross.svg" alt="disconnect" />
                   <Typography className={classes.disconnectHeader}>
-                    {t('myhub.mainPage.disconnectHeader')}
-                  </Typography>
-                  <Typography className={classes.disconnectConfirm}>
-                    {t('myhub.mainPage.disconnectDesc')}
+                    {t('myhub.mainPage.disconnectHeader')}{' '}
+                    <strong>{deleteHub.hubName}</strong>?
                   </Typography>
                   <div className={classes.disconnectBtns}>
                     <ButtonOutlined onClick={handleClose}>
@@ -226,6 +253,7 @@ const MyHub: React.FC = () => {
       {/* Add/Edit MyHub Drawer */}
       <MyHubConnectDrawer
         hubName={hubName}
+        editHub={edit}
         drawerState={drawerState}
         handleDrawerClose={handleDrawerClose}
         refetchQuery={handleDrawerCloseWithRefetch}

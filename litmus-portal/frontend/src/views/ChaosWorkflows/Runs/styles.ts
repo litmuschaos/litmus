@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5),
     marginRight: theme.spacing(2.5),
     height: '2.5rem',
-    minWidth: '9rem',
+    minWidth: '11rem',
   },
 
   selectText: {

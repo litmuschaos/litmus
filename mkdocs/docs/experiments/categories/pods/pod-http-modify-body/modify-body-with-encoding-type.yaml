@@ -1,0 +1,31 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-modify-body-sa
+  experiments:
+  - name: pod-http-modify-body
+    spec:
+      components:
+        env:
+        # provide the encoding type for the response body
+        # currently supported value are gzip, deflate
+        # if empty no encoding will be applied
+        - name: CONTENT_ENCODING
+          value: 'gzip'
+        # provide the content type for the response body
+        - name: CONTENT_TYPE
+          value: 'text/html'
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"

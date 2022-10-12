@@ -579,17 +579,6 @@ type Query {
   listWorkflowRuns(
     request: ListWorkflowRunsRequest!
   ): ListWorkflowRunsResponse! @authorized
-
-  """
-  Returns the list of predefined workflows in a project based on various filter parameters
-  """
-  listPredefinedWorkflows(hubName: String!, projectID: String!): [String!]!
-  @authorized
-
-  """
-  Returns the list of predefined experiments in a project
-  """
-  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
 }
 
 type Mutation {

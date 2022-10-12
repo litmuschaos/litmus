@@ -12,6 +12,11 @@ enum FileType {
   CSV
 }
 
+enum HubType {
+  GIT
+  REMOTE
+}
+
 type ChaosHub {
   """
   ID of the chaos hub
@@ -33,6 +38,10 @@ type ChaosHub {
   Name of the chaos hub
   """
   hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -180,6 +189,10 @@ type ChaosHubStatus {
   Name of the chaos hub
   """
   hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
   """
   Bool value indicating whether the hub is private or not.
   """
@@ -343,6 +356,22 @@ input CloningInput {
   sshPrivateKey: String
 }
 
+input CreateRemoteMyHub {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  ProjectID of the ChaosHub
+  """
+  projectID: String!
+}
+
+
 input UpdateChaosHubRequest {
   """
   ID of the chaos hub
@@ -394,6 +423,32 @@ input UpdateChaosHubRequest {
   projectID: String!
 }
 
+type ExperimentDetails{
+  """
+  Engine Manifest
+  """
+  engineDetails: String!
+
+  """
+  Experiment Manifest
+  """
+  experimentDetails: String!
+}
+
+type PredefinedWorkflowList {
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Workflow CSV
+  """
+  workflowCSV: String!
+  """
+  Workflow Manifest
+  """
+  workflowManifest: String!
+}
 
 extend type Query {
   # CHAOS-HUB OPERATIONS
@@ -416,6 +471,21 @@ extend type Query {
   Get the YAML manifest of ChaosEngine/ChaosExperiment
   """
   getYAMLData(request: ExperimentRequest!): String! @authorized
+
+  """
+  Get Engine and Experiment YAML
+  """
+  getExperimentDetails(request: ExperimentRequest!): ExperimentDetails! @authorized
+
+  """
+  List the PredefinedWorkflows present in the hub
+  """
+  listPredefinedWorkflows(hubName: String!, projectID: String!): [PredefinedWorkflowList!]! @authorized
+
+  """
+  Get the predefined workflow YAML
+  """
+  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
 }
 
 extend type Mutation {
@@ -424,6 +494,11 @@ extend type Mutation {
   Add a ChaosHub (includes the git clone operation)
   """
   addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Add a ChaosHub (remote hub download)
+  """
+  addRemoteChaosHub(request: CreateRemoteMyHub!): ChaosHub! @authorized
 
   """
   Save a ChaosHub configuration without cloning it

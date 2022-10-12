@@ -148,6 +148,16 @@
         <th> Notes </th>
       </tr>
       <tr>
+        <td> CONTENT_ENCODING </td>
+        <td> Encoding type to compress/encodde the response body </td>
+        <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
+      </td>
+      <tr>
+        <td> CONTENT_TYPE </td>
+        <td> Content type of the response body </td>
+        <td> Defaults to text/plain </td>
+      </tr>
+      <tr>
         <td> PROXY_PORT  </td>
         <td> Port where the proxy will be listening for requests</td>
         <td> Defaults to 20000 </td>
@@ -312,6 +322,7 @@ spec:
 ```
 
 ### Toxicity
+
 It defines the toxicity value to be added to the http request. It can be tuned via `TOXICITY` ENV.
 Toxicity value defines the percentage of the total number of http requests to be affected.
 
@@ -347,7 +358,48 @@ spec:
           value: "80"
 ```
 
+### Content Encoding and Content Type
+
+It defines the content encoding and content type of the response body. It can be tuned via `CONTENT_ENCODING` and `CONTENT_TYPE` ENV.
+
+Use the following example to tune this:
+[embedmd]:# (pod-http-modify-body/modify-body-with-encoding-type.yaml yaml)
+```yaml
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-modify-body-sa
+  experiments:
+  - name: pod-http-modify-body
+    spec:
+      components:
+        env:
+        # provide the encoding type for the response body
+        # currently supported value are gzip, deflate
+        # if empty no encoding will be applied
+        - name: CONTENT_ENCODING
+          value: 'gzip'
+        # provide the content type for the response body
+        - name: CONTENT_TYPE
+          value: 'text/html'
+        # provide the body string to overwrite the response body
+        - name: RESPONSE_BODY
+          value: '2000'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
 ### Network Interface
+
 It defines the network interface to be used for the proxy. It can be tuned via `NETWORK_INTERFACE` ENV.
 
 Use the following example to tune this:

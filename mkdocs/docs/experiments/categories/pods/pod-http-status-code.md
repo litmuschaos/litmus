@@ -129,7 +129,7 @@
       <tr>
         <td> TARGET_SERVICE_PORT </td>
         <td> Port of the service to target</td>
-        <td>Defaults to port 80 </td>
+        <td>This should be the port on which the application container runs at the pod level, not at the service level. Defaults to port 80 </td>
       </tr>
       <tr>
         <td> STATUS_CODE  </td>
@@ -153,6 +153,21 @@
         <th> Variables </th>
         <th> Description </th>
         <th> Notes </th>
+      </tr>
+      <tr>
+        <td> RESPONSE_BODY  </td>
+        <td> Body string to overwrite the http response body</td>
+        <td> This will be used only if MODIFY_RESPONSE_BODY is set to true. If no value is provided, response will be an empty body. Defaults to empty body </td>
+      </tr>
+      <tr>
+        <td> CONTENT_ENCODING </td>
+        <td> Encoding type to compress/encodde the response body </td>
+        <td> Accepted values are: gzip, deflate, br, identity. Defaults to none (no encoding) </td>
+      </td>
+      <tr>
+        <td> CONTENT_TYPE </td>
+        <td> Content type of the response body </td>
+        <td> Defaults to text/plain </td>
       </tr>
       <tr>
         <td> PROXY_PORT  </td>
@@ -220,6 +235,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 ### Target Service Port
 
 It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+This should be the port where the application runs at the pod level, not at the service level. This means if the application pod is running the service at port 8080 and we create a service exposing that at port 80, then the target service port should be 8080 and not 80, which is the port at pod-level.
 
 Use the following example to tune this:
 
@@ -331,7 +347,7 @@ It defines whether to modify the respone body with a pre-defined template to mat
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-status-code/modify-body-with-response.yaml yaml)
+[embedmd]:# (pod-http-status-code/modify-body-with-response-pre-defined.yaml yaml)
 ```yaml
 ##  whether to modify the body as per the status code provided
 apiVersion: litmuschaos.io/v1alpha1
@@ -363,6 +379,7 @@ spec:
 ```
 
 ### Toxicity
+
 It defines the toxicity value to be added to the http request. It can be tuned via `TOXICITY` ENV.
 Toxicity value defines the percentage of the total number of http requests to be affected.
 
@@ -398,7 +415,93 @@ spec:
           value: "80"
 ```
 
+### RESPONSE BODY
+
+It defines the body string that will overwrite the http response body. It can be tuned via `RESPONSE_BODY` and `MODIFY_RESPONSE_BODY` ENV.
+The `MODIFY_RESPONSE_BODY` ENV should be set to `true` to enable this feature.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-http-status-code/modify-body-with-response.yaml yaml)
+```yaml
+## provide the response body value
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # provide the body string to overwrite the response body. This will be used only if MODIFY_RESPONSE_BODY is set to true
+        - name: RESPONSE_BODY
+          value: '<h1>Hello World</h1>'
+        #  whether to modify the body as per the status code provided
+        - name: "MODIFY_RESPONSE_BODY"
+          value: "true"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
+### Content Encoding and Content Type
+
+It defines the content encoding and content type of the response body. It can be tuned via `CONTENT_ENCODING` and `CONTENT_TYPE` ENV.
+
+Use the following example to tune this:
+[embedmd]:# (pod-http-status-code/modify-body-with-encoding-type.yaml yaml)
+```yaml
+##  whether to modify the body as per the status code provided
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # provide the encoding type for the response body
+        # currently supported value are gzip, deflate
+        # if empty no encoding will be applied
+        - name: CONTENT_ENCODING
+          value: 'gzip'
+        # provide the content type for the response body
+        - name: CONTENT_TYPE
+          value: 'text/html'
+        #  whether to modify the body as per the status code provided
+        - name: "MODIFY_RESPONSE_BODY"
+          value: "true"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
 ### Network Interface
+
 It defines the network interface to be used for the proxy. It can be tuned via `NETWORK_INTERFACE` ENV.
 
 Use the following example to tune this:

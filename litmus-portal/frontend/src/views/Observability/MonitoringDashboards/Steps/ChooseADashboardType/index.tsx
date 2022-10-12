@@ -14,7 +14,7 @@ import {
   GetPortalDashboard,
   PortalDashboardsRequest,
 } from '../../../../../models/graphql/dashboardsDetails';
-import { HubStatus } from '../../../../../models/redux/myhub';
+import { HubStatus } from '../../../../../models/graphql/chaoshub';
 import { DEFAULT_HUB_NAME } from '../../../../../pages/MonitoringDashboard/constants';
 import useActions from '../../../../../redux/actions';
 import * as AlertActions from '../../../../../redux/actions/alert';

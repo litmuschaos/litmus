@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
 	grpc2 "google.golang.org/grpc"
@@ -32,7 +34,6 @@ import (
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	dbSchemaWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
 func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
@@ -481,7 +482,7 @@ func ListWorkflowRuns(request model.ListWorkflowRunsRequest) (*model.ListWorkflo
 			ClusterName:        workflow.ClusterName,
 			ClusterType:        &workflow.ClusterType,
 			IsRemoved:          workflowRun.IsRemoved,
-			ExecutedBy:         utils.URLDecodeBase64(workflowRun.ExecutedBy),
+			ExecutedBy:         workflowRun.ExecutedBy,
 		}
 		result = append(result, &newWorkflowRun)
 	}
@@ -737,7 +738,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 		ExecutionData:      request.ExecutionData,
 		Completed:          request.Completed,
 		IsRemoved:          &isRemoved,
-		ExecutedBy:         utils.URLDecodeBase64(request.ExecutedBy),
+		ExecutedBy:         request.ExecutedBy,
 	})
 
 	if err != nil {
@@ -767,7 +768,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 		ExecutionData:      request.ExecutionData,
 		WorkflowID:         request.WorkflowID,
 		IsRemoved:          &isRemoved,
-		ExecutedBy:         utils.URLDecodeBase64(request.ExecutedBy),
+		ExecutedBy:         request.ExecutedBy,
 	}, &r)
 
 	return "Workflow Run Accepted", nil
@@ -1030,4 +1031,16 @@ func SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, w
 	}
 
 	return true, nil
+}
+
+// QueryServerVersion is used to fetch the version of the server
+func QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
+	dbVersion, err := config.GetConfig(ctx, "version")
+	if err != nil {
+		return nil, err
+	}
+	return &model.ServerVersionResponse{
+		Key:   dbVersion.Key,
+		Value: dbVersion.Value.(string),
+	}, nil
 }

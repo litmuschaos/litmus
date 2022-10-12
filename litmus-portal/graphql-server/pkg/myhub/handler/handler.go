@@ -1,10 +1,16 @@
 package handler
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -145,6 +151,43 @@ func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, 
 	return expNames, nil
 }
 
+// ListPredefinedWorkflowDetails reads the workflow directory for all the predefined experiments
+// and returns the csv, workflow manifest and workflow name
+func ListPredefinedWorkflowDetails(hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
+	experimentsPath := defaultPath + projectID + "/" + hubName + "/workflows"
+	var predefinedWorkflows []*model.PredefinedWorkflowList
+	files, err := ioutil.ReadDir(experimentsPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		csvManifest := ""
+		workflowManifest := ""
+		isExist, err := IsFileExisting(experimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+		if err != nil {
+			return nil, err
+		}
+		if isExist {
+			csvManifest, err = ReadExperimentYAMLFile(experimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+			if err != nil {
+				csvManifest = "na"
+			}
+			workflowManifest, err = ReadExperimentYAMLFile(experimentsPath + "/" + file.Name() + "/" + "workflow.yaml")
+			if err != nil {
+				workflowManifest = "na"
+			}
+			preDefinedWorkflow := &model.PredefinedWorkflowList{
+				WorkflowName:     file.Name(),
+				WorkflowManifest: workflowManifest,
+				WorkflowCsv:      csvManifest,
+			}
+			predefinedWorkflows = append(predefinedWorkflows, preDefinedWorkflow)
+		}
+	}
+	return predefinedWorkflows, nil
+}
+
 func IsFileExisting(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -153,4 +196,138 @@ func IsFileExisting(path string) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+//DownloadRemoteHub is used to download a remote hub from the url provided by the user
+func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
+	//create the destination directory where the hub will be downloaded
+	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
+	destDir, err := os.Create(hubpath)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer destDir.Close()
+
+	//download the zip file from the provided url
+	download, err := http.Get(hubDetails.RepoURL)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	defer download.Body.Close()
+
+	if download.StatusCode != http.StatusOK {
+		err = fmt.Errorf("err: ", download.Status)
+		return err
+	}
+
+	//validate the content length (in bytes)
+	maxSize, err := strconv.Atoi(os.Getenv("REMOTE_HUB_MAX_SIZE"))
+	if err != nil {
+		return err
+	}
+	contentLength := download.Header.Get("content-length")
+	length, err := strconv.Atoi(contentLength)
+	if length > maxSize {
+		_ = os.Remove(hubpath)
+		err = fmt.Errorf("err: File size exceeded the threshold %d", length)
+		return err
+	}
+
+	//validate the content-type
+	contentType := download.Header.Get("content-type")
+	if contentType != "application/zip" {
+		_ = os.Remove(hubpath)
+		err = fmt.Errorf("err: Invalid file type %s", contentType)
+		return err
+	}
+
+	//copy the downloaded content to the created zip file
+	_, err = io.Copy(destDir, download.Body)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	//unzip the ChaosHub to the default hub directory
+	err = UnzipRemoteHub(hubpath, hubDetails)
+	if err != nil {
+		return err
+	}
+
+	//remove the redundant zip file
+	err = os.Remove(hubpath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//UnzipRemoteHub is used to unzip the zip file
+func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteMyHub) error {
+	extractPath := defaultPath + hubDetails.ProjectID
+	zipReader, err := zip.OpenReader(zipPath)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer zipReader.Close()
+	for _, file := range zipReader.File {
+		CopyZipItems(file, extractPath, file.Name)
+	}
+	return nil
+}
+
+//CopyZipItems is used to copy the content from the extracted zip file to
+//the ChaosHub directory
+func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
+	path := filepath.Join(extractPath, chartsPath)
+	if !strings.HasPrefix(path, filepath.Clean(extractPath)+string(os.PathSeparator)) {
+		return fmt.Errorf("illegal file path: %s", path)
+	}
+	err := os.MkdirAll(filepath.Dir(path), os.ModeDir|os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileReader, err := file.Open()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if !file.FileInfo().IsDir() {
+		fileCopy, err := os.Create(path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		_, err = io.Copy(fileCopy, fileReader)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fileCopy.Close()
+	}
+	fileReader.Close()
+
+	return nil
+}
+
+//SyncRemoteRepo is used to sync the remote ChaosHub
+func SyncRemoteRepo(hubData model.CloningInput) error {
+	hubPath := defaultPath + hubData.ProjectID + "/" + hubData.HubName
+	err := os.RemoveAll(hubPath)
+	if err != nil {
+		return err
+	}
+	updateHub := model.CreateRemoteMyHub{
+		HubName:   hubData.HubName,
+		RepoURL:   hubData.RepoURL,
+		ProjectID: hubData.ProjectID,
+	}
+	log.Println("Downloading remote hub")
+	err = DownloadRemoteHub(updateHub)
+	if err != nil {
+		return err
+	}
+	log.Println("Remote hub ", hubData.HubName, "downloaded ")
+	return nil
 }

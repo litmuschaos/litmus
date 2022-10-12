@@ -102,12 +102,12 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         {/* Select Workflow */}
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>
-            Scenario Status
+            Chaos Scenario Status
           </InputLabel>
           <Select
             value={statusValue}
             onChange={changeStatus}
-            label="Scenario Status"
+            label="Chaos Scenario Status"
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>

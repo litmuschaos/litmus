@@ -16,8 +16,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { Alert } from '@material-ui/lab';
-import parser from 'cron-parser';
-import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Icon, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
@@ -32,6 +30,10 @@ import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import {
+  validateCronParser,
+  validateCronSyntax,
+} from '../../../utils/validate';
 import ExperimentPoints from './ExperimentPoints';
 import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
@@ -141,7 +143,7 @@ const TableData: React.FC<TableDataProps> = ({
 
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
-      tabs.changeWorkflowsTabs(0);
+      tabs.changeWorkflowsTabs(1);
     },
     onError: (error) => {
       setReRunMessage(error.message);
@@ -338,7 +340,7 @@ const TableData: React.FC<TableDataProps> = ({
               <span className={classes.scheduleDetailsValue}>
                 {data.cronSyntax === ''
                   ? `${t('chaosWorkflows.browseSchedules.regularityOnce')}`
-                  : cronstrue.toString(data.cronSyntax)}
+                  : validateCronSyntax(data.cronSyntax as string)}
               </span>
             </Typography>
           </div>
@@ -358,9 +360,9 @@ const TableData: React.FC<TableDataProps> = ({
             </Typography>
           ) : data.cronSyntax !== '' ? (
             <Typography>
-              {moment(
-                parser.parseExpression(data.cronSyntax).next().toString()
-              ).format('MMMM Do YYYY, h:mm:ss a')}
+              {moment(validateCronParser(data.cronSyntax)).format(
+                'MMMM Do YYYY, h:mm:ss a'
+              )}
             </Typography>
           ) : (
             <Typography>
@@ -373,7 +375,7 @@ const TableData: React.FC<TableDataProps> = ({
       <TableCell>
         <IconButton
           onClick={() => {
-            tabs.changeWorkflowsTabs(0);
+            tabs.changeWorkflowsTabs(1);
             setWorkflowName(data.workflowName);
           }}
           data-cy="showSchedules"
