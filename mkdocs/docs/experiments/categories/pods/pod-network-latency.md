@@ -3,13 +3,13 @@
 - It injects latency on the specified container by starting a traffic control (tc) process with netem rules to add egress delays
 - It can test the application's resilience to lossy/flaky network
 
-!!! tip "Scenario: Induce letency in the network of target pod"    
+!!! tip "Scenario: Induce letency in the network of target pod"
     ![Pod Network Latency](../../images/network-chaos.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
-    The experiment causes network degradation without the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container). The idea of this experiment is to simulate issues within your pod network OR microservice communication across services in different availability zones/regions etc. 
+??? info "View the uses of the experiment"
+    The experiment causes network degradation without the pod being marked unhealthy/unworthy of traffic by kube-proxy (unless you have a liveness probe of sorts that measures latency and restarts/crashes the container). The idea of this experiment is to simulate issues within your pod network OR microservice communication across services in different availability zones/regions etc.
 
     Mitigation (in this case keep the timeout i.e., access latency low) could be via some middleware that can switch traffic based on some SLOs/perf parameters. If such an arrangement is not available the next best thing would be to verify if such a degradation is highlighted via notification/alerts etc,. so the admin/SRE has the opportunity to investigate and fix things. Another utility of the test would be to see what the extent of impact caused to the end-user OR the last point in the app stack on account of degradation in access to a downstream/dependent microservice. Whether it is acceptable OR breaks the system to an unacceptable degree. The experiment provides DESTINATION_IPS or DESTINATION_HOSTS so that you can control the chaos against specific services within or outside the cluster.
 
@@ -18,19 +18,19 @@
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
+??? info "Verify the prerequisites"
+    - Ensure that Kubernetes Version > 1.16
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-latency/experiment.yaml">here</a> 
-    
+    - Ensure that the <code>pod-network-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-latency/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -68,10 +68,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -80,7 +80,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -150,7 +150,7 @@
         <td> JITTER </td>
         <td> The network jitter value in ms </td>
         <td> Default 0, provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
@@ -170,22 +170,22 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod network corruption chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr> 
+      </tr>
       <tr>
         <td> DESTINATION_IPS </td>
         <td> IP addresses of the services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
         <td> comma separated IP(S) or CIDR(S) can be provided. if not provided, it will induce network chaos for all ips/destinations</td>
-      </tr>  
+      </tr>
       <tr>
         <td> DESTINATION_HOSTS </td>
         <td> DNS Names/FQDN names of the services, the accessibility to which, is impacted </td>
         <td> if not provided, it will induce network chaos for all ips/destinations or DESTINATION_IPS if already defined</td>
-      </tr>      
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> LIB </td>
         <td> The chaos lib used to inject the chaos </td>
@@ -213,15 +213,15 @@
       </tr>
     </table>
 
-## Experiment Examples 
+## Experiment Examples
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Network Latency
 
-It defines the network latency(in ms) to be injected in the targeted application. It can be tuned via `NETWORK_LATENCY` ENV. 
+It defines the network latency(in ms) to be injected in the targeted application. It can be tuned via `NETWORK_LATENCY` ENV.
 
 Use the following example to tune this:
 
