@@ -3323,7 +3323,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> Multiple instance names can be provided as instance1,instance2,... </td>
   </tr>
   <tr>
-    <td> INSTANCE_ZONES </td>
+    <td> ZONES </td>
     <td> The zones of the target VM instances </td>
     <td> Zone for every instance name has to be provided as zone1,zone2,... in the same order of <code>VM_INSTANCE_NAMES</code> </td>
   </tr>
@@ -3366,7 +3366,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
 <h3 id="target-gcp-instances">Target GCP Instances<a class="headerlink" href="#target-gcp-instances" title="Permanent link">&para;</a></h3>
-<p>It will stop all the instances with the given <code>VM_INSTANCE_NAMES</code> instance names and corresponding <code>INSTANCE_ZONES</code> zone names in <code>GCP_PROJECT_ID</code> project. </p>
+<p>It will stop all the instances with the given <code>VM_INSTANCE_NAMES</code> instance names and corresponding <code>ZONES</code> zone names in <code>GCP_PROJECT_ID</code> project. </p>
 <p><code>NOTE:</code> The <code>VM_INSTANCE_NAMES</code> contains multiple comma-separated vm instances. The comma-separated zone names should be provided in the same order as instance names.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## details of the gcp instance</span><span class="w"></span>
@@ -3388,7 +3388,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;instance-01,instance-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># comma separated list of zone names corresponds to the VM_INSTANCE_NAMES</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># it should be provided in same order of VM_INSTANCE_NAMES</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;zone-01,zone-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># gcp project id to which vm instance belongs</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
@@ -3422,7 +3422,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;instance-01,instance-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># comma separated list of zone names corresponds to the VM_INSTANCE_NAMES</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># it should be provided in same order of VM_INSTANCE_NAMES</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;zone-01,zone-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># gcp project id to which vm instance belongs</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
@@ -3455,7 +3455,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VM_INSTANCE_NAMES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;instance-01,instance-02&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;zone-01,zone-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;project-id&#39;</span><span class="w"></span>

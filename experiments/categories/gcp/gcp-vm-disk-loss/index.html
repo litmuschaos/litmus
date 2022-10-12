@@ -3304,7 +3304,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> Multiple disk volume names can be provided as disk1,disk2,... </td>
   </tr><br />
   <tr>
-    <td> DISK_ZONES </td>
+    <td> ZONES </td>
     <td> The zones of respective target disk volumes </td>
     <td> Provide the zone for every target disk name as zone1,zone2... in the respective order of <code>DISK_VOLUME_NAMES</code>  </td>
   </tr>
@@ -3347,7 +3347,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
 <h3 id="detach-volumes-by-names">Detach Volumes By Names<a class="headerlink" href="#detach-volumes-by-names" title="Permanent link">&para;</a></h3>
-<p>It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given <code>DISK_VOLUME_NAMES</code> disk names and corresponding <code>DISK_ZONES</code> zone names and the <code>DEVICE_NAMES</code> device names in <code>GCP_PROJECT_ID</code> project.  It reattached the volume after waiting for the specified <code>TOTAL_CHAOS_DURATION</code> duration.</p>
+<p>It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given <code>DISK_VOLUME_NAMES</code> disk names and corresponding <code>ZONES</code> zone names and the <code>DEVICE_NAMES</code> device names in <code>GCP_PROJECT_ID</code> project.  It reattached the volume after waiting for the specified <code>TOTAL_CHAOS_DURATION</code> duration.</p>
 <p><code>NOTE:</code> The <code>DISK_VOLUME_NAMES</code> contains multiple comma-separated disk names. The comma-separated zone names should be provided in the same order as disk names.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## details of the gcp disk</span><span class="w"></span>
@@ -3369,7 +3369,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;disk-01,disk-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># comma separated list of zone names corresponds to the DISK_VOLUME_NAMES</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># it should be provided in same order of DISK_VOLUME_NAMES</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;zone-01,zone-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># comma separated list of device names corresponds to the DISK_VOLUME_NAMES</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># it should be provided in same order of DISK_VOLUME_NAMES</span><span class="w"></span>
@@ -3406,7 +3406,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_VOLUME_NAMES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;disk-01,disk-02&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;zone-01,zone-02&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEVICE_NAMES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;device-01,device-02&#39;</span><span class="w"></span>

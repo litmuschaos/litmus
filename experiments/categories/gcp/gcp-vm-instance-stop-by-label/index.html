@@ -3319,7 +3319,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> The <code>INSTANCE_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>vm:target-vm</code> </td>
   </tr>
   <tr>
-    <td> INSTANCE_ZONES </td>
+    <td> ZONES </td>
     <td> The zone of the target VM instances </td>
     <td> Only one zone can be provided i.e. all target instances should lie in the same zone </td>
   </tr>
@@ -3367,8 +3367,8 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
 <h3 id="target-gcp-instances">Target GCP Instances<a class="headerlink" href="#target-gcp-instances" title="Permanent link">&para;</a></h3>
-<p>It will stop all the instances with filtered by the label <code>INSTANCE_LABEL</code> and corresponding <code>INSTANCE_ZONES</code> zone in <code>GCP_PROJECT_ID</code> project. </p>
-<p><code>NOTE:</code> The <code>INSTANCE_LABEL</code> accepts only one label and <code>INSTANCE_ZONES</code> also accepts only one zone name. Therefore, all the instances must lie in the same zone.</p>
+<p>It will stop all the instances with filtered by the label <code>INSTANCE_LABEL</code> and corresponding <code>ZONES</code> zone in <code>GCP_PROJECT_ID</code> project. </p>
+<p><code>NOTE:</code> The <code>INSTANCE_LABEL</code> accepts only one label and <code>ZONES</code> also accepts only one zone name. Therefore, all the instances must lie in the same zone.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
@@ -3386,7 +3386,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_LABEL</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;vm:target-vm&#39;</span><span class="w"></span>
 
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
 
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
@@ -3417,7 +3417,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_LABEL</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;vm:target-vm&#39;</span><span class="w"></span>
 
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
 
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
@@ -3451,7 +3451,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_LABEL</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;vm:target-vm&#39;</span><span class="w"></span>
 
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
 
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>

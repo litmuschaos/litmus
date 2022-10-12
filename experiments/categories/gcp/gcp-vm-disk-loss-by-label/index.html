@@ -3300,7 +3300,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> The <code>DISK_VOLUME_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>disk:target-disk</code> </td>
   </tr><br />
   <tr>
-    <td> DISK_ZONES </td>
+    <td> ZONES </td>
     <td> The zone of target disk volumes </td>
     <td> Only one zone can be provided i.e. all target disks should lie in the same zone </td>
   </tr>
@@ -3343,8 +3343,8 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <h3 id="common-experiment-tunables">Common Experiment Tunables<a class="headerlink" href="#common-experiment-tunables" title="Permanent link">&para;</a></h3>
 <p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> to tune the common tunables for all the experiments.</p>
 <h3 id="detach-volumes-by-label">Detach Volumes By Label<a class="headerlink" href="#detach-volumes-by-label" title="Permanent link">&para;</a></h3>
-<p>It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label <code>DISK_VOLUME_LABEL</code> in zone <code>DISK_ZONES</code> within the <code>GCP_PROJECT_ID</code> project.  It re-attaches the disk volume after waiting for the specified <code>TOTAL_CHAOS_DURATION</code> duration.</p>
-<p><code>NOTE:</code> The <code>DISK_VOLUME_LABEL</code> accepts only one label and <code>DISK_ZONES</code> also accepts only one zone name. Therefore, all the disks must lie in the same zone.</p>
+<p>It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label <code>DISK_VOLUME_LABEL</code> in zone <code>ZONES</code> within the <code>GCP_PROJECT_ID</code> project.  It re-attaches the disk volume after waiting for the specified <code>TOTAL_CHAOS_DURATION</code> duration.</p>
+<p><code>NOTE:</code> The <code>DISK_VOLUME_LABEL</code> accepts only one label and <code>ZONES</code> also accepts only one zone name. Therefore, all the disks must lie in the same zone.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
@@ -3362,7 +3362,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_VOLUME_LABEL</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;disk:target-disk&#39;</span><span class="w"></span>
 
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
 
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
@@ -3396,7 +3396,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_VOLUME_LABEL</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;disk:target-disk&#39;</span><span class="w"></span>
 
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DISK_ZONES</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZONES</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-east1-b&#39;</span><span class="w"></span>
 
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GCP_PROJECT_ID</span><span class="w"></span>
