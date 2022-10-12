@@ -938,6 +938,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#toxicity" class="md-nav__link">
+    Toxicity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-interface" class="md-nav__link">
     Network Interface
   </a>
@@ -3162,6 +3169,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#toxicity" class="md-nav__link">
+    Toxicity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-interface" class="md-nav__link">
     Network Interface
   </a>
@@ -3222,7 +3236,7 @@
 <ul>
 <li>Ensure that Kubernetes Version &gt; 1.17</li>
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a></li>
-<li>Ensure that the <code>pod-http-reset-peer</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-reset-peer/experiment.yaml">here</a> </li>
+<li>Ensure that the <code>pod-http-reset-peer</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-reset-peer/experiment.yaml">here</a></li>
 </ul>
 </details>
 <h2 id="default-validations">Default Validations<a class="headerlink" href="#default-validations" title="Permanent link">&para;</a></h2>
@@ -3267,10 +3281,10 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;configmaps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log </span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Track and get the runner, experiment, and helper pods log</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/log&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span>
+<span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># for creating and managing to execute comands inside target container</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods/exec&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3279,7 +3293,7 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deployments&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;statefulsets&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;replicasets&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;daemonsets&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># deriving the parent/owner details of the pod(if parent is deploymentConfig)  </span><span class="w"></span>
+<span class="w">  </span><span class="c1"># deriving the parent/owner details of the pod(if parent is deploymentConfig)</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;apps.openshift.io&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;deploymentconfigs&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
@@ -3357,6 +3371,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> NETWORK_INTERFACE  </td>
     <td> Network interface to be used for the proxy</td>
     <td> Defaults to <code>eth0</code> </td>
+  </tr>
+  <tr>
+    <td> TOXICITY </td>
+    <td> Percentage of HTTP requests to be affected </td>
+    <td> Defaults to 100 </td>
+  </tr>
   <tr>
     <td> CONTAINER_RUNTIME  </td>
     <td> container runtime interface for the cluster</td>
@@ -3376,12 +3396,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> TARGET_PODS </td>
     <td> Comma separated list of application pod name subjected to pod http reset peer chaos</td>
     <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-  </tr>  <br />
+  </tr>
   <tr>
     <td> PODS_AFFECTED_PERC </td>
     <td> The Percentage of total pods to target  </td>
     <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-  </tr> 
+  </tr>
   <tr>
     <td> LIB_IMAGE  </td>
     <td> Image used to run the netem command </td>
@@ -3401,7 +3421,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </details>
 <h2 id="experiment-examples">Experiment Examples<a class="headerlink" href="#experiment-examples" title="Permanent link">&para;</a></h2>
 <h3 id="common-and-pod-specific-tunables">Common and Pod specific tunables<a class="headerlink" href="#common-and-pod-specific-tunables" title="Permanent link">&para;</a></h3>
-<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables. </p>
+<p>Refer the <a href="../../common/common-tunables-for-all-experiments/">common attributes</a> and <a href="../common-tunables-for-pod-experiments/">Pod specific tunable</a> to tune the common tunables for all experiments and pod specific tunables.</p>
 <h3 id="target-service-port">Target Service Port<a class="headerlink" href="#target-service-port" title="Permanent link">&para;</a></h3>
 <p>It defines the port of the targeted service that is being targeted. It can be tuned via <code>TARGET_SERVICE_PORT</code> ENV.</p>
 <p>Use the following example to tune this:</p>
@@ -3479,6 +3499,37 @@ Use the following example to tune this:</p>
 <span class="w">        </span><span class="c1"># reset timeout specifies after how much duration to reset the connection</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RESET_TIMEOUT</span><span class="w"> </span><span class="c1">#in ms</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2000&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="toxicity">Toxicity<a class="headerlink" href="#toxicity" title="Permanent link">&para;</a></h3>
+<p>It defines the toxicity value to be added to the http request. It can be tuned via <code>TOXICITY</code> ENV.
+Toxicity value defines the percentage of the total number of http requests to be affected.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the toxicity</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-reset-peer</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># toxicity is the probability of the request to be affected</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the percentage value in the range of 0-100</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># 0 means no request will be affected and 100 means all request will be affected</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOXICITY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>

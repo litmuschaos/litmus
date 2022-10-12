@@ -959,6 +959,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#toxicity" class="md-nav__link">
+    Toxicity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#response-body" class="md-nav__link">
     RESPONSE BODY
   </a>
@@ -3190,6 +3197,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#toxicity" class="md-nav__link">
+    Toxicity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#response-body" class="md-nav__link">
     RESPONSE BODY
   </a>
@@ -3381,6 +3395,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> STATUS_CODE  </td>
     <td> Modified status code for the HTTP response</td>
     <td> If no value is provided, then a random value is selected from the list of supported values.
+    Multiple values can be provided as comma separated, a random value from the provided list will be selected
     Supported values: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504].
     Defaults to random status code </td>
   </tr>
@@ -3421,6 +3436,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> NETWORK_INTERFACE  </td>
     <td> Network interface to be used for the proxy</td>
     <td> Defaults to <code>eth0</code> </td>
+  </tr>
+  <tr>
+    <td> TOXICITY </td>
+    <td> Percentage of HTTP requests to be affected </td>
+    <td> Defaults to 100 </td>
+  </tr>
   <tr>
     <td> CONTAINER_RUNTIME  </td>
     <td> container runtime interface for the cluster</td>
@@ -3549,6 +3570,7 @@ This should be the port where the application runs at the pod level, not at the 
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># modified status code for the http response</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># if no value is provided, a random status code from the supported code list will selected</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># if multiple comma separated values are provided, then a random value from the provided list will be selected</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># if an invalid status code is provided, the experiment will fail</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># supported status code list: [200, 201, 202, 204, 300, 301, 302, 304, 307, 400, 401, 403, 404, 500, 501, 502, 503, 504]</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STATUS_CODE</span><span class="w"></span>
@@ -3584,6 +3606,37 @@ This should be the port where the application runs at the pod level, not at the 
 <span class="w">        </span><span class="c1"># modified status code for the http response</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">STATUS_CODE</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;500&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="toxicity">Toxicity<a class="headerlink" href="#toxicity" title="Permanent link">&para;</a></h3>
+<p>It defines the toxicity value to be added to the http request. It can be tuned via <code>TOXICITY</code> ENV.
+Toxicity value defines the percentage of the total number of http requests to be affected.</p>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## provide the toxicity</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-status-code-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-http-status-code</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># toxicity is the probability of the request to be affected</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># provide the percentage value in the range of 0-100</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># 0 means no request will be affected and 100 means all request will be affected</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOXICITY</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># provide the port of the targeted service</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_SERVICE_PORT</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;80&quot;</span><span class="w"></span>
