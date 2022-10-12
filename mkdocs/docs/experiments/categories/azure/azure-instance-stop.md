@@ -136,7 +136,7 @@
         <th> Notes </th>
       </tr>
       <tr> 
-        <td> AZURE_INSTANCE_NAME </td>
+        <td> AZURE_INSTANCE_NAMES </td>
         <td> Instance name of the target azure instance</td>
         <td> For AKS nodes, the instance name is from the scale set section in Azure and not the node name from AKS node pool </td>
       </tr>
@@ -211,7 +211,7 @@ spec:
       components:
         env:
         # comma separated list of azure instance names
-        - name: AZURE_INSTANCE_NAME
+        - name: AZURE_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         # name of the resource group
         - name: RESOURCE_GROUP
@@ -243,7 +243,7 @@ spec:
       components:
         env:
         # comma separated list of azure instance names
-        - name: AZURE_INSTANCE_NAME
+        - name: AZURE_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         # name of the resource group
         - name: RESOURCE_GROUP
@@ -283,7 +283,7 @@ spec:
          # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
-        - name: AZURE_INSTANCE_NAME
+        - name: AZURE_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         - name: RESOURCE_GROUP
           value: '<resource group of AZURE_INSTANCE_NAME>'
