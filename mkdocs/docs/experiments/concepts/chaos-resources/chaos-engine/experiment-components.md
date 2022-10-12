@@ -371,7 +371,7 @@ spec:
     spec:
       components:
         # secret name for the experiment image, if using private registry
-        imagePullSecrets:
+        experimentImagePullSecrets:
         - name: regcred
 
   

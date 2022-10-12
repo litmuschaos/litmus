@@ -287,7 +287,7 @@ spec:
       components:
         env:
         # runtime for the container
-        # supports docker, containerd, crio
+        # supports docker
         - name: CONTAINER_RUNTIME
           value: 'docker'
         # path of the socket file
