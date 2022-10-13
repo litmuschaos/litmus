@@ -3046,13 +3046,20 @@ opting for the default <a href="https://kubernetes.io/docs/concepts/policy/pod-s
 <span class="nt">allowPrivilegeEscalation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 <span class="c1"># Allow core volume types.</span><span class="w"></span>
 <span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># To mount script files/templates like ssm-docs in experiment</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;configMap&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># Used for chaos injection like io chaos</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;emptyDir&#39;</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;projected&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># To authenticate with different cloud providers</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;secret&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># To derive the experiment pod name in the experimemnt</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;downwardAPI&#39;</span><span class="w"></span>
 <span class="w">    </span><span class="c1"># Assume that persistentVolumes set up by the cluster admin are safe to use.</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;persistentVolumeClaim&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># To mount the socket path directory used to perform container runtime operations</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;hostPath&#39;</span><span class="w"></span>
+
 <span class="nt">allowedHostPaths</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="c1"># substitutes this path with an appropriate socket path</span><span class="w"></span>
 <span class="w">    </span><span class="c1"># ex: &#39;/var/run/docker.sock&#39;, &#39;/run/containerd/containerd.sock&#39;, &#39;/run/crio/crio.sock&#39;</span><span class="w"></span>
@@ -3060,11 +3067,17 @@ opting for the default <a href="https://kubernetes.io/docs/concepts/policy/pod-s
 <span class="w">    </span><span class="c1"># substitutes this path with an appropriate container path</span><span class="w"></span>
 <span class="w">    </span><span class="c1"># ex: &#39;/var/lib/docker/containers&#39;, &#39;/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io&#39;, &#39;/var/lib/containers/storage/overlay/&#39;</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pathPrefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/lib/docker/containers&quot;</span><span class="w"></span>
+
 <span class="nt">allowedCapabilities</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># NET_ADMIN &amp; SYS_ADMIN: used in network chaos experiments to perform</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># network operations (running tc command in network ns of target container). </span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;NET_ADMIN&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># SYS_ADMIN: used in stress chaos experiment to perform cgroup operations.</span><span class="w"></span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;SYS_ADMIN&quot;</span><span class="w"></span>
 <span class="nt">hostNetwork</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
 <span class="nt">hostIPC</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># To run fault injection on a target container using pid namespace.</span><span class="w"></span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># It is used in stress, network, dns and http experiments.</span><span class="w"> </span>
 <span class="nt">hostPID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 <span class="nt">seLinux</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="c1"># This policy assumes the nodes are using AppArmor rather than SELinux.</span><span class="w"></span>
