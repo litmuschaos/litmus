@@ -1,5 +1,8 @@
 /* eslint-disable no-useless-escape */
 
+import cronstrue from 'cronstrue';
+import parser from 'cron-parser';
+
 export const validateTextEmpty = (value: string) => {
   if (value.trim() === '') return true;
   return false;
@@ -122,4 +125,26 @@ export const validateWorkflowParameter = (value: string) => {
     return true;
   }
   return false;
+};
+
+export const validateCronSyntax = (cronSyntax: string) => {
+  let cron = '';
+  try {
+    cron = cronstrue.toString(cronSyntax);
+  } catch (err) {
+    console.error(err);
+    cron = 'invalid cron syntax';
+  }
+  return cron;
+};
+
+export const validateCronParser = (cronSyntax: string) => {
+  let parsedDate = '';
+  try {
+    parsedDate = parser.parseExpression(cronSyntax).next().toString();
+  } catch (err) {
+    console.error(err);
+    parsedDate = 'invalid cron syntax';
+  }
+  return parsedDate;
 };

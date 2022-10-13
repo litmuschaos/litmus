@@ -26,6 +26,7 @@ import (
 
 const (
 	timeInterval = 6 * time.Hour
+	defaultPath  = "/tmp/version/"
 )
 
 // AddChaosHub is used for Adding a new MyHub
@@ -62,6 +63,7 @@ func AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*mo
 		HubName:       chaosHub.HubName,
 		IsPrivate:     chaosHub.IsPrivate,
 		AuthType:      string(chaosHub.AuthType),
+		HubType:       string(model.HubTypeGit),
 		Token:         chaosHub.Token,
 		UserName:      chaosHub.UserName,
 		Password:      chaosHub.Password,
@@ -84,6 +86,49 @@ func AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*mo
 	err = myHubOps.GitClone(cloneHub)
 	if err != nil {
 		log.Print("Error", err)
+	}
+
+	return newHub.GetOutputMyHub(), nil
+}
+
+func AddRemoteMyHub(ctx context.Context, chaosHub model.CreateRemoteMyHub) (*model.ChaosHub, error) {
+	IsExist, err := IsMyHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+	if IsExist == true {
+		return nil, errors.New("HubName Already exists")
+	}
+
+	// Initialize a UID for new Hub.
+	uuid := uuid.New()
+	newHub := &dbSchemaMyHub.MyHub{
+		ID:           uuid.String(),
+		ProjectID:    chaosHub.ProjectID,
+		RepoURL:      chaosHub.RepoURL,
+		RepoBranch:   "",
+		HubName:      chaosHub.HubName,
+		IsPrivate:    false,
+		HubType:      string(model.HubTypeRemote),
+		AuthType:     string(model.AuthTypeNone),
+		IsRemoved:    false,
+		CreatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+		UpdatedAt:    strconv.FormatInt(time.Now().Unix(), 10),
+		LastSyncedAt: strconv.FormatInt(time.Now().Unix(), 10),
+	}
+
+	// Adding the new hub into database with the given name.
+	err = dbSchemaMyHub.CreateMyHub(ctx, newHub)
+	if err != nil {
+		log.Print("ERROR", err)
+		return nil, err
+	}
+
+	err = handler.DownloadRemoteHub(chaosHub)
+	if err != nil {
+		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: " + err.Error())
+		log.Print("Error", err)
+		return nil, err
 	}
 
 	return newHub.GetOutputMyHub(), nil
@@ -167,6 +212,7 @@ func ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStat
 			RepoBranch:    hub.RepoBranch,
 			IsPrivate:     hub.IsPrivate,
 			AuthType:      model.AuthType(hub.AuthType),
+			HubType:       model.HubType(hub.HubType),
 			Token:         hub.Token,
 			UserName:      hub.UserName,
 			Password:      hub.Password,
@@ -202,6 +248,9 @@ func ListCharts(ctx context.Context, hubName string, projectID string) ([]*model
 
 	chartsInput := model.CloningInput{}
 	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
 	for _, n := range myhubs {
 		if n.HubName == hubName {
 			chartsInput = model.CloningInput{
@@ -216,14 +265,7 @@ func ListCharts(ctx context.Context, hubName string, projectID string) ([]*model
 	ChartsPath := handler.GetChartsPath(chartsInput)
 	ChartsData, err := handler.GetChartsData(ChartsPath)
 	if err != nil {
-		err = myHubOps.GitClone(chartsInput)
-		if err != nil {
-			return nil, err
-		}
-		ChartsData, err = handler.GetChartsData(ChartsPath)
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	return ChartsData, nil
@@ -246,10 +288,10 @@ func GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*mo
 }
 
 // SyncHub is used for syncing the hub again if some not present or some error happens.
-func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.ChaosHubStatus, error) {
+func SyncHub(ctx context.Context, hubID string, projectID string) (string, error) {
 	myhub, err := dbOperationsMyHub.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	syncHubInput := model.CloningInput{
@@ -269,17 +311,24 @@ func SyncHub(ctx context.Context, hubID string, projectID string) ([]*model.Chao
 	query := bson.D{{"myhub_id", hubID}, {"IsRemoved", false}}
 	update := bson.D{{"$set", bson.D{{"last_synced_at", time}}}}
 
-	err = myHubOps.GitSyncHandlerForProjects(syncHubInput)
-	if err != nil {
-		return nil, err
+	if myhub.HubType == string(model.HubTypeRemote) {
+		err = handler.SyncRemoteRepo(syncHubInput)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		err = myHubOps.GitSyncHandlerForProjects(syncHubInput)
+		if err != nil {
+			return "", err
+		}
 	}
 	// Updating the last_synced_at time using hubID
 	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
-		return nil, err
+		return "", err
 	}
-	return ListHubStatus(ctx, syncHubInput.ProjectID)
+	return "Successfully synced ChaosHub", nil
 }
 
 // GetYAMLData is responsible for sending the experiment/engine.yaml for a given experiment.
@@ -298,6 +347,9 @@ func GetYAMLData(request model.ExperimentRequest) (string, error) {
 // GetPredefinedExperimentYAMLData is responsible for sending the workflow.yaml for a given pre-defined workflow.
 func GetPredefinedExperimentYAMLData(request model.ExperimentRequest) (string, error) {
 	var YAMLPath string
+	if request.FileType == nil {
+		return "", errors.New("provide a valid filetype")
+	}
 	if strings.ToLower(*request.FileType) != "workflow" {
 		return "", errors.New("invalid file type")
 	}
@@ -309,6 +361,39 @@ func GetPredefinedExperimentYAMLData(request model.ExperimentRequest) (string, e
 		return "", err
 	}
 	return YAMLData, nil
+}
+
+// GetExperimentManifestDetails is used to send the ChaosEngine and ChaosExperiment YAMLs
+func GetExperimentManifestDetails(ctx context.Context, request model.ExperimentRequest) (*model.ExperimentDetails, error) {
+
+	engineType := model.FileTypeEngine
+	experimentType := model.FileTypeExperiment
+
+	engineData, err := GetYAMLData(model.ExperimentRequest{
+		ProjectID:      request.ProjectID,
+		ChartName:      request.ChartName,
+		ExperimentName: request.ExperimentName,
+		HubName:        request.HubName,
+		FileType:       (*string)(&engineType),
+	})
+	if err != nil {
+		engineData = ""
+	}
+	experimentData, err := GetYAMLData(model.ExperimentRequest{
+		ProjectID:      request.ProjectID,
+		ChartName:      request.ChartName,
+		ExperimentName: request.ExperimentName,
+		HubName:        request.HubName,
+		FileType:       (*string)(&experimentType),
+	})
+	if err != nil {
+		experimentData = ""
+	}
+	experimentDetails := &model.ExperimentDetails{
+		EngineDetails:     engineData,
+		ExperimentDetails: experimentData,
+	}
+	return experimentDetails, nil
 }
 
 // GetAllHubs ...
@@ -346,26 +431,39 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 	if err != nil {
 		return nil, err
 	}
-	if prevMyHub.HubName != chaosHub.HubName {
-		IsExist, err := IsMyHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
-		if err != nil {
-			return nil, err
-		}
-		if IsExist == true {
-			return nil, errors.New("HubName Already exists")
-		}
-	}
-	// Syncing/Cloning the repository at a path from myhub link structure.
-	if prevMyHub.RepoURL != chaosHub.RepoURL || prevMyHub.RepoBranch != chaosHub.RepoBranch || prevMyHub.IsPrivate != chaosHub.IsPrivate || prevMyHub.AuthType != chaosHub.AuthType.String() {
-		fmt.Println(chaosHub.AuthType.String())
-		err := myHubOps.GitClone(cloneHub)
-		if err != nil {
-			return nil, err
+	clonePath := defaultPath + prevMyHub.ProjectID + "/" + prevMyHub.HubName
+	if prevMyHub.HubType == string(model.HubTypeRemote) {
+		if prevMyHub.HubName != chaosHub.HubName || prevMyHub.RepoURL != chaosHub.RepoURL {
+			remoteHub := model.CreateRemoteMyHub{
+				HubName:   chaosHub.HubName,
+				RepoURL:   chaosHub.RepoURL,
+				ProjectID: chaosHub.ProjectID,
+			}
+			err = os.RemoveAll(clonePath)
+			if err != nil {
+				return nil, err
+			}
+			err = handler.DownloadRemoteHub(remoteHub)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		err := myHubOps.GitSyncHandlerForProjects(cloneHub)
-		if err != nil {
-			return nil, err
+		// Syncing/Cloning the repository at a path from myhub link structure.
+		if prevMyHub.HubName != chaosHub.HubName || prevMyHub.RepoURL != chaosHub.RepoURL || prevMyHub.RepoBranch != chaosHub.RepoBranch || prevMyHub.IsPrivate != chaosHub.IsPrivate || prevMyHub.AuthType != chaosHub.AuthType.String() {
+			err = os.RemoveAll(clonePath)
+			if err != nil {
+				return nil, err
+			}
+			err = myHubOps.GitClone(cloneHub)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			err := myHubOps.GitSyncHandlerForProjects(cloneHub)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -393,14 +491,26 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 }
 
 func DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
-	query := bson.D{{"myhub_id", hubID}, {"project_id", projectID}}
-	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
-
-	err := dbOperationsMyHub.UpdateMyHub(ctx, query, update)
+	myHub, err := dbOperationsMyHub.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err
 	}
+	query := bson.D{{"myhub_id", hubID}, {"project_id", projectID}}
+	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
+
+	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
+	if err != nil {
+		log.Print("ERROR", err)
+		return false, err
+	}
+	clonePath := defaultPath + projectID + "/" + myHub.HubName
+	err = os.RemoveAll(clonePath)
+	if err != nil {
+		log.Print("ERROR", err)
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -439,21 +549,25 @@ func RecurringHubSync() {
 		myhubs, _ := GetAllHubs(nil)
 
 		for _, myhub := range myhubs {
-
-			chartsInput := model.CloningInput{
-				HubName:       myhub.HubName,
-				ProjectID:     myhub.ProjectID,
-				RepoURL:       myhub.RepoURL,
-				RepoBranch:    myhub.RepoBranch,
-				IsPrivate:     myhub.IsPrivate,
-				AuthType:      myhub.AuthType,
-				Token:         myhub.Token,
-				UserName:      myhub.UserName,
-				Password:      myhub.Password,
-				SSHPrivateKey: myhub.SSHPrivateKey,
+			if !myhub.IsRemoved {
+				chartsInput := model.CloningInput{
+					HubName:       myhub.HubName,
+					ProjectID:     myhub.ProjectID,
+					RepoURL:       myhub.RepoURL,
+					RepoBranch:    myhub.RepoBranch,
+					IsPrivate:     myhub.IsPrivate,
+					AuthType:      myhub.AuthType,
+					Token:         myhub.Token,
+					UserName:      myhub.UserName,
+					Password:      myhub.Password,
+					SSHPrivateKey: myhub.SSHPrivateKey,
+				}
+				if myhub.HubType != model.HubTypeRemote {
+					myHubOps.GitSyncHandlerForProjects(chartsInput)
+				} else {
+					handler.SyncRemoteRepo(chartsInput)
+				}
 			}
-
-			myHubOps.GitSyncHandlerForProjects(chartsInput)
 		}
 
 		// Syncing Completed
@@ -461,10 +575,10 @@ func RecurringHubSync() {
 	}
 }
 
-func ListPredefinedWorkflows(hubname string, projectID string) ([]string, error) {
-	expList, err := handler.GetPredefinedWorkflowFileList(hubname, projectID)
+func ListPredefinedWorkflows(hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
+	workflowsList, err := handler.ListPredefinedWorkflowDetails(hubName, projectID)
 	if err != nil {
 		return nil, err
 	}
-	return expList, nil
+	return workflowsList, nil
 }

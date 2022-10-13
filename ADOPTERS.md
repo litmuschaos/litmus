@@ -20,6 +20,11 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Mercedes](https://www.mercedes-benz.com/)|Resiliency validation for applications|[Our Story](adopters/organizations/mercedes.md)|
 |[Orange](https://www.orange.com)|[Cloud Infra Resiliency](https://youtu.be/UOhjFbCrncw?list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&t=186...a)|[Our Story](adopters/organizations/orange.md)|
 |[Pôle Emploi](https://www.pole-emploi.fr)|Chaos Engineering as part of SRE practice|[Our Story](adopters/organizations/pole_emploi.md)|
+|[iFood](https://www.ifood.com.br/)|Chaos Engineering for a Food Delivery Platform|[Our Story](adopters/organizations/ifood.md)|
+|[FIS](https://www.fisglobal.com/en/)|Larger SRE Transformation with Chaos Engineering|[Our Story](adopters/organizations/fis.md)|
+|[Adidas](https://adidas.com/)|Implementing Chaos Engineering as a practice at Adidas|[Our Story](adopters/organizations/adidas.md)|
+|[Cyren](https://www.cyren.com/)|Implementing Chaos Engineering as a practice at Cyren|[Our Story](https://www.infoq.com/articles/chaos-engineering-cloud-native/)|
+|[AB-Inbev](https://www.ab-inbev.com/)|Implementing Chaos Engineering as a practice at AB-Inbev|[Our Story](adopters/organizations/abinbev.md)|
 
 ### Cloud-Native Vendors
 
@@ -36,6 +41,7 @@ devops/reliability pipelines (such as for customer portals/websites etc.,) withi
 |[RedHat](https://www.redhat.com/en)|[RedHat Openshift Virtualization Maturity](https://www.youtube.com/watch?v=VITGHJ47gx8&list=PLBuYBMjBLBzHPuPsvdbJvKu1KxSowWDYl&index=7)|[Our Story](adopters/organizations/redhat.md)|
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 |[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Chaos Project](https://github.com/zebrium/zebrium-kubernetes-demo)|[Our Story](adopters/organizations/zebrium.md)|
+|[Container Solutions](https://www.container-solutions.com/)|Building Chaos Engineering for E-Commerce Customers|[Our Story](adopters/organizations/containersolutions.md)|
 
 ### Cloud-Native Solutions & Service Providers
 
@@ -48,6 +54,8 @@ They use LitmusChaos as the tool of choice for carrying out chaos experiments in
 | [Neudesic](https://www.neudesic.com/) | Chaos Engineering | [Our Story](adopters/organizations/neudesic.md) |
 |[WeScale](https://www.wescale.fr)|[Chaos Engineering](https://blog.wescale.fr/2020/03/19/le-guide-de-chaos-engineering-partie-2/)|[Our Story](adopters/organizations/wescale.md)|
 |[Wipro](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Wipro AppAnywhere](https://www.wipro.com/en-IN/infrastructure/wipros-appanywhere/?utm_source=github&utm_campaign=litmuschaos_repo)|[Our Story](adopters/organizations/wipro.md)|
+|[HCL Cloud Native Labs](https://www.hcltech.com/)|SRE Enablement Service|[Our Story(TBA)]|
+|[CI&T](https://ciandt.com/us/en-us)|Chaos Engineering Implementation|[Our Story](adopters/organizations/ci&t.md)|
 
 ### Cloud-Native OSS Projects 
 

@@ -11,6 +11,16 @@ export const ADD_MY_HUB = gql`
   }
 `;
 
+export const ADD_REMOTE_MY_HUB = gql`
+  mutation addRemoteChaosHub($request: CreateRemoteMyHub!) {
+    addRemoteChaosHub(request: $request) {
+      hubName
+      repoURL
+      repoBranch
+    }
+  }
+`;
+
 export const UPDATE_MY_HUB = gql`
   mutation updateChaosHub($request: UpdateChaosHubRequest!) {
     updateChaosHub(request: $request) {
@@ -23,14 +33,7 @@ export const UPDATE_MY_HUB = gql`
 
 export const SYNC_REPO = gql`
   mutation syncChaosHub($id: ID!, $projectID: String!) {
-    syncChaosHub(id: $id, projectID: $projectID) {
-      id
-      repoURL
-      repoBranch
-      isAvailable
-      totalExp
-      hubName
-    }
+    syncChaosHub(id: $id, projectID: $projectID)
   }
 `;
 

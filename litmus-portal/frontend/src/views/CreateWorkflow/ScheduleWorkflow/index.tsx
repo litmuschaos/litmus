@@ -23,6 +23,7 @@ import { WorkflowData } from '../../../models/redux/workflow';
 import useActions from '../../../redux/actions';
 import * as TemplateSelectionActions from '../../../redux/actions/template';
 import * as WorkflowActions from '../../../redux/actions/workflow';
+import * as AlertActions from '../../../redux/actions/alert';
 import { RootState } from '../../../redux/reducers';
 import { cronWorkflow, workflowOnce } from '../../../utils/workflowTemplate';
 import { fetchWorkflowNameFromManifest } from '../../../utils/yamlUtils';
@@ -55,6 +56,7 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
   );
+  const alert = useActions(AlertActions);
   const workflow = useActions(WorkflowActions);
   const template = useActions(TemplateSelectionActions);
 
@@ -365,6 +367,10 @@ const ScheduleWorkflow = forwardRef((_, ref) => {
   }, [valueDef, value]);
 
   function onNext() {
+    if (value === 'recurringSchedule' && valueDef.length === 0) {
+      alert.changeAlertState(true);
+      return false;
+    }
     EditYaml();
     return true;
   }

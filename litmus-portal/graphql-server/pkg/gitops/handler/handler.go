@@ -55,6 +55,9 @@ func EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, err
 	defer conn.Close()
 
 	_, err := grpc.GetProjectById(client, config.ProjectID)
+	if err != nil {
+		return false, errors.New("Failed to setup GitOps : " + err.Error())
+	}
 
 	log.Print("Enabling Gitops")
 	gitDB := dbSchemaGitOps.GetGitConfigDB(config)

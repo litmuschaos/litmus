@@ -127,7 +127,9 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
         <div className={classes.topDiv}>
           <Paper className={classes.containerBlock}>
             <Typography className={classes.cardText}>
-              {isSingleRun ? 'Experiment Statistics' : 'Workflow Statistics'}
+              {isSingleRun
+                ? 'Experiment Statistics'
+                : 'Chaos Scenario Statistics'}
             </Typography>
             <div className={classes.radialChart} data-cy="statsRadialChart">
               <RadialChart
@@ -166,7 +168,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             <Typography className={classes.cardBottomText}>
               {isSingleRun
                 ? 'Based on experiment results'
-                : 'Based on workflow results'}
+                : 'Based on Chaos Scenario results'}
             </Typography>
           </Paper>
           <Paper className={classes.containerBlock}>
@@ -184,8 +186,8 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                   className={classes.dropDown}
                   data-cy="statsDropdown"
                 >
-                  <MenuItem value={0}>Workflow Runs</MenuItem>
-                  <MenuItem value={1}>Experiments</MenuItem>
+                  <MenuItem value={0}>Chaos Scenario Runs</MenuItem>
+                  <MenuItem value={1}>Chaos Experiments</MenuItem>
                 </Select>
               )}
             </div>
@@ -206,8 +208,8 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             </div>
             <Typography className={classes.cardBottomText1}>
               {showWorkflowStats
-                ? 'Statistics taken from all workflow results'
-                : 'Statistics taken from all experiments results'}
+                ? 'Statistics taken from all Chaos Scenario results'
+                : 'Statistics taken from all Chaos Experiments results'}
             </Typography>
           </Paper>
         </div>

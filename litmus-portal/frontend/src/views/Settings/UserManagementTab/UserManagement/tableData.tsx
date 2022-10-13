@@ -54,7 +54,7 @@ const TableData: React.FC<TableDataProps> = ({
       },
       body: JSON.stringify({
         username: row?.username,
-        is_deactivate: !row?.deactivatedAt,
+        is_deactivate: !row?.deactivated_at,
       }),
     })
       .then((response) => response.json())
@@ -81,9 +81,9 @@ const TableData: React.FC<TableDataProps> = ({
             }}
             disableFocusListener
             placement="bottom"
-            title={row.deactivatedAt ? 'Deactivated' : 'Active'}
+            title={row.deactivated_at ? 'Deactivated' : 'Active'}
           >
-            {!row.deactivatedAt ? (
+            {!row.deactivated_at ? (
               <svg viewBox="0 0 5 5">
                 <circle className={classes.statusActive} />
               </svg>
@@ -113,7 +113,7 @@ const TableData: React.FC<TableDataProps> = ({
             src="./icons/calendarIcon.svg"
             alt="calendar"
           />
-          <Typography>{formatDate(row.createdAt)}</Typography>
+          <Typography>{formatDate(row.created_at)}</Typography>
         </div>
       </TableCell>
       <TableCell className={classes.lastTC} key={row.username}>
@@ -162,14 +162,14 @@ const TableData: React.FC<TableDataProps> = ({
                   <img
                     alt="update state"
                     src={
-                      row.deactivatedAt
+                      row.deactivated_at
                         ? './icons/UserEnable.svg'
                         : './icons/UserDisable.svg'
                     }
                   />
                 </IconButton>
                 <Typography>
-                  {row.deactivatedAt ? 'Activate User' : 'Deactivate User'}
+                  {row.deactivated_at ? 'Activate User' : 'Deactivate User'}
                 </Typography>
               </MenuItem>
             </Menu>

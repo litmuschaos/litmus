@@ -9,13 +9,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type LitmusCoreComponentVersion struct {
-	CoreVersion string `json:"coreVersion"`
+type WorkflowHelperImageVersion struct {
+	Version string `json:"version"`
 }
 
-func LitmusCoreComponentVersionHandler(w http.ResponseWriter, r *http.Request) {
-	versionDetails := os.Getenv("LITMUS_CORE_VERSION")
-	version := LitmusCoreComponentVersion{CoreVersion: versionDetails}
+func WorkflowHelperImageVersionHandler(w http.ResponseWriter, r *http.Request) {
+	versionDetails := os.Getenv("WORKFLOW_HELPER_IMAGE_VERSION")
+	version := WorkflowHelperImageVersion{Version: versionDetails}
 	versionByte, err := json.Marshal(version)
 	if err != nil {
 		logrus.Error(err)

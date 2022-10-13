@@ -88,8 +88,28 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 			VersionManager: nil,
 		},
 
-		// latest version no more upgrades available
 		"2.9.0": {
+			NextVersion:    "2.10.0",
+			VersionManager: nil,
+		},
+
+		"2.10.0": {
+			NextVersion:    "2.11.0",
+			VersionManager: nil,
+		},
+
+		"2.11.0": {
+			NextVersion:    "2.12.0",
+			VersionManager: nil,
+		},
+
+		"2.12.0": {
+			NextVersion:    "2.13.0",
+			VersionManager: nil,
+		},
+
+		// latest version, no more upgrades available
+		"2.13.0": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},

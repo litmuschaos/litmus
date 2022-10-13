@@ -27,7 +27,7 @@ func GetMyHubByProjectID(ctx context.Context, projectID string) ([]MyHub, error)
 	}
 	results, err := mongodb.Operator.List(ctx, mongodb.MyHubCollection, query)
 	if err != nil {
-		log.Print("ERROR GETTING USERS : ", err)
+		log.Print("ERROR GETTING HUBS : ", err)
 		return []MyHub{}, err
 	}
 	var myHubs []MyHub

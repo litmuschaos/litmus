@@ -18,6 +18,6 @@ spec:
         env:
         # comma separated list of ports
         - name: PORTS
-          value: '8080,8088'
+          value: 'tcp: [8080,80], udp: [9000,90]'
         - name: TOTAL_CHAOS_DURATION
           value: '60'

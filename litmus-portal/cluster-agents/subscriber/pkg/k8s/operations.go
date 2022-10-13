@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
@@ -313,7 +314,7 @@ func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, 
 		return nil, err
 	}
 
-	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Username})
+	addCustomLabels(obj, map[string]string{"executed_by": base64.RawURLEncoding.EncodeToString([]byte(clusterAction.Username))})
 
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)

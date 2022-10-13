@@ -20,7 +20,7 @@ spec:
           VALUE: '60'
         - name: DISK_VOLUME_NAMES
           value: 'disk-01,disk-02'
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         - name: DEVICE_NAMES
           value: 'device-01,device-02'

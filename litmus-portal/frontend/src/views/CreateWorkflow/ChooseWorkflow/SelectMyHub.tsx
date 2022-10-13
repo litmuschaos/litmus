@@ -4,9 +4,9 @@ import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
+import { HubStatus } from '../../../models/graphql/chaoshub';
 import { MyHubDetail } from '../../../models/graphql/user';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
-import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles, { MenuProps } from './styles';
 

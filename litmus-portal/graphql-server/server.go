@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -30,7 +32,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
@@ -50,7 +51,7 @@ type Config struct {
 	LitmusPortalNamespace       string `required:"true" split_words:"true"`
 	DbUser                      string `required:"true" split_words:"true"`
 	DbPassword                  string `required:"true" split_words:"true"`
-	PortalScope                 string `required:"true" split_words:"true"`
+	ChaosCenterScope            string `required:"true" split_words:"true"`
 	SubscriberImage             string `required:"true" split_words:"true"`
 	EventTrackerImage           string `required:"true" split_words:"true"`
 	ArgoWorkflowControllerImage string `required:"true" split_words:"true"`
@@ -60,7 +61,7 @@ type Config struct {
 	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
 	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
 	HubBranchName               string `required:"true" split_words:"true"`
-	LitmusCoreVersion           string `required:"true" split_words:"true"`
+	WorkflowHelperImageVersion  string `required:"true" split_words:"true"`
 }
 
 const defaultPort = "8080"
@@ -150,10 +151,7 @@ func main() {
 		AllowCredentials: true,
 	}).Handler)
 
-	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
-
-	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
-	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
+	//router.Use(handlers.LoggingMiddleware())
 
 	// routers
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
@@ -163,7 +161,12 @@ func main() {
 
 	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
 	router.HandleFunc("/status", handlers.StatusHandler)
-	router.HandleFunc("/litmus_core_version", handlers.LitmusCoreComponentVersionHandler)
+	router.HandleFunc("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
+
+	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
+
+	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
+	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
 	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))

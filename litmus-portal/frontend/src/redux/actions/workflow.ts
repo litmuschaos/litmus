@@ -23,19 +23,19 @@ export const setWorkflowManifest = (data: WorkflowManifest): WorkflowAction => {
 
 export const setLitmusCoreVersion = () => {
   return (dispatch: Function) => {
-    fetch(`${config.grahqlEndpoint}/litmus_core_version`)
+    fetch(`${config.grahqlEndpoint}/workflow_helper_image_version`)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
         dispatch({
-          type: WorkflowActions.SET_LITMUS_CORE_VERSION,
-          payload: data.coreVersion as string,
+          type: WorkflowActions.SET_WORKFLOW_HELPER_IMAGE_VERSION,
+          payload: data.version as string,
         });
       })
       .catch(() => {
         dispatch({
-          type: WorkflowActions.SET_LITMUS_CORE_VERSION,
+          type: WorkflowActions.SET_WORKFLOW_HELPER_IMAGE_VERSION,
           payload: 'latest',
         });
       });

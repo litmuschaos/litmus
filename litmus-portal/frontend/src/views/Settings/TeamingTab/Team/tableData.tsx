@@ -52,7 +52,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
     <>
       <TableCell
         className={`${classes.firstTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
         component="th"
         scope="row"
@@ -62,7 +62,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
             data-cy="avatar"
             alt="User"
             className={`${
-              row.DeactivatedAt ? classes.darkBg : classes.avatarBackground
+              row.deactivated_at ? classes.darkBg : classes.avatarBackground
             } `}
           >
             {memberDetails?.username && userInitials(memberDetails.username)}
@@ -72,21 +72,21 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
       >
         {row.Role}
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
       >
         {memberDetails ? memberDetails.email : ''}
       </TableCell>
       <TableCell
         className={`${classes.otherTC} ${
-          row.DeactivatedAt ? classes.dark : ''
+          row.deactivated_at ? classes.dark : ''
         }`}
       >
         <div className={classes.dateDiv}>
@@ -102,7 +102,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       {row.Role !== Role.OWNER ? (
         <TableCell
           className={`${classes.otherTC} ${
-            row.DeactivatedAt ? classes.dark : ''
+            row.deactivated_at ? classes.dark : ''
           }`}
           key={row.UserID}
         >
@@ -113,7 +113,7 @@ const TableData: React.FC<TableDataProps> = ({ row, showModal }) => {
       ) : (
         <TableCell
           className={`${classes.otherTC} ${
-            row.DeactivatedAt ? classes.dark : ''
+            row.deactivated_at ? classes.dark : ''
           }`}
         />
       )}

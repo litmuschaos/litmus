@@ -2,7 +2,7 @@
 
 - It causes power-off of a GCP VM instance by instance name or list of instance names before bringing it back to the running state after the specified chaos duration.
 - It helps to check the performance of the application/process running on the VM instance.
-- When the `AUTO_SCALING_GROUP` is enable then the experiment will not try to start the instance post chaos, instead it will check the addition of the new node instances to the cluster.
+- When the `MANAGED_INSTANCE_GROUP` is `enable` then the experiment will not try to start the instances post chaos, instead it will check the addition of new instances to the instance group.
 
 !!! tip "Scenario: stop the gcp vm"    
     ![GCP VM Instance Stop](../../images/gcp-vm-instance-stop.png)
@@ -145,7 +145,7 @@
         <td> Multiple instance names can be provided as instance1,instance2,... </td>
       </tr>
       <tr>
-        <td> INSTANCE_ZONES </td>
+        <td> ZONES </td>
         <td> The zones of the target VM instances </td>
         <td> Zone for every instance name has to be provided as zone1,zone2,... in the same order of <code>VM_INSTANCE_NAMES</code> </td>
       </tr>
@@ -170,8 +170,8 @@
         <td> Defaults to 30s </td>
       </tr>  
       <tr> 
-        <td> AUTO_SCALING_GROUP </td>
-        <td> Set to <code>enable</code> if the target instance is the part of a auto-scaling group </td>
+        <td> MANAGED_INSTANCE_GROUP </td>
+        <td> Set to <code>enable</code> if the target instance is the part of a managed instance group </td>
         <td> Defaults to <code>disable</code> </td>
       </tr>  
       <tr>
@@ -194,7 +194,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Target GCP Instances
 
-It will stop all the instances with the given `VM_INSTANCE_NAMES` instance names and corresponding `INSTANCE_ZONES` zone names in `GCP_PROJECT_ID` project. 
+It will stop all the instances with the given `VM_INSTANCE_NAMES` instance names and corresponding `ZONES` zone names in `GCP_PROJECT_ID` project. 
 
 `NOTE:` The `VM_INSTANCE_NAMES` contains multiple comma-separated vm instances. The comma-separated zone names should be provided in the same order as instance names.
 
@@ -221,7 +221,7 @@ spec:
           value: 'instance-01,instance-02'
         # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
         # it should be provided in same order of VM_INSTANCE_NAMES
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # gcp project id to which vm instance belongs
         - name: GCP_PROJECT_ID
@@ -230,13 +230,13 @@ spec:
           VALUE: '60'
 ```
 
-### Autoscaling NodeGroup
+### Managed Instance Group
 
-If vm instances belong to the autoscaling group then provide the `AUTO_SCALING_GROUP` as `enable` else provided it as `disable`. The default value of `AUTO_SCALING_GROUP` is `disable`.
+If vm instances belong to a managed instance group then provide the `MANAGED_INSTANCE_GROUP` as `enable` else provided it as `disable`, which is the default value. 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/auto-scaling.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/gcp/gcp-vm-instance-stop/managed-instance-group.yaml yaml)
 ```yaml
 ## scale up and down to maintain the available instance counts
 apiVersion: litmuschaos.io/v1alpha1
@@ -252,16 +252,16 @@ spec:
     spec:
       components:
         env:
-        # tells if instances are part of autoscaling group
+        # tells if instances are part of managed instance group
         # supports: enable, disable. default: disable
-        - name: AUTO_SCALING_GROUP
+        - name: MANAGED_INSTANCE_GROUP
           value: 'enable'
         # comma separated list of vm instance names
         - name: VM_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
         # it should be provided in same order of VM_INSTANCE_NAMES
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # gcp project id to which vm instance belongs
         - name: GCP_PROJECT_ID
@@ -300,7 +300,7 @@ spec:
           VALUE: '60'
         - name: VM_INSTANCE_NAMES
           value: 'instance-01,instance-02'
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         - name: GCP_PROJECT_ID
           value: 'project-id'

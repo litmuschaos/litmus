@@ -10,7 +10,11 @@ import UsefulLinks from '../../../components/UsefulLinks';
 import config from '../../../config';
 import Wrapper from '../../../containers/layouts/Wrapper';
 import { GET_EXPERIMENT_DATA, GET_HUB_STATUS } from '../../../graphql';
-import { ExperimentDetail, HubStatus, Link } from '../../../models/redux/myhub';
+import {
+  ExperimentDetail,
+  HubStatus,
+  Link,
+} from '../../../models/graphql/chaoshub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import ExperimentHeader from '../ExperimentHeader';
 import useStyles from './styles';
@@ -133,17 +137,17 @@ const MyHub = () => {
                 <InstallChaos
                   title={t('myhub.experimentPage.installExp')}
                   description={t('myhub.experimentPage.installExpDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/experiments/${paramData.chart}/${paramData.experiment}/experiment.yaml`}
                 />
                 <InstallChaos
                   title={t('myhub.experimentPage.installRBAC')}
                   description={t('myhub.experimentPage.installRBACDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/experiments/${paramData.chart}/${paramData.experiment}/rbac.yaml`}
                 />
                 <InstallChaos
                   title={t('myhub.experimentPage.installEngine')}
                   description={t('myhub.experimentPage.installEngineDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/charts/${paramData.chart}/${paramData.experiment}/engine.yaml`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/experiments/${paramData.chart}/${paramData.experiment}/engine.yaml`}
                 />
               </div>
             ) : (
@@ -151,7 +155,7 @@ const MyHub = () => {
                 <InstallChaos
                   title={t('myhub.experimentPage.checkPreDefined')}
                   description={t('myhub.experimentPage.checkPreDefinedDesc')}
-                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/workflows/${paramData.experiment}`}
+                  yamlLink={`${UserHub?.repoURL}/raw/${UserHub?.repoBranch}/scenarios/${paramData.experiment}`}
                   isPredefined
                 />
               </>

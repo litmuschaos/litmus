@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
 	grpc2 "google.golang.org/grpc"
@@ -1029,4 +1031,16 @@ func SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, w
 	}
 
 	return true, nil
+}
+
+// QueryServerVersion is used to fetch the version of the server
+func QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
+	dbVersion, err := config.GetConfig(ctx, "version")
+	if err != nil {
+		return nil, err
+	}
+	return &model.ServerVersionResponse{
+		Key:   dbVersion.Key,
+		Value: dbVersion.Value.(string),
+	}, nil
 }

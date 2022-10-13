@@ -62,7 +62,7 @@ export const workflowManifest = createReducer<WorkflowManifest>(init, {
 });
 
 export const litmusCoreVersion = createReducer<LitmusCoreVersion>(coreVersion, {
-  [WorkflowActions.SET_LITMUS_CORE_VERSION](
+  [WorkflowActions.SET_WORKFLOW_HELPER_IMAGE_VERSION](
     state: LitmusCoreVersion,
     action: WorkflowAction
   ) {
