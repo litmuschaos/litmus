@@ -97,7 +97,7 @@ eks.amazonaws.com/role-arn=arn:aws:iam::<ACCOUNT_ID>:role/<IAM_ROLE_NAME>
 
 Verify that the experiment service account is now associated with the IAM.
 
-If you run an experiment and describe one of the pods and verify that the `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` environment variables exist.
+If you run an experiment and describe one of the pods, you can verify that the `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` environment variables exist.
 
 ```bash
 kubectl exec -n litmus <ec2-terminate-by-id-z4zdf> env | grep AWS
