@@ -29,7 +29,7 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
     allowPrivilegeEscalation: true
     # Allow core volume types.
     volumes:
-        # To mount script files/templates like ssm in experiment
+        # To mount script files/templates like ssm-docs in experiment
         - 'configMap'
         # Used for chaos injection like io chaos
         - 'emptyDir'
