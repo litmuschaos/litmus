@@ -41,7 +41,7 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
         # Assume that persistentVolumes set up by the cluster admin are safe to use.
         - 'persistentVolumeClaim'
         # To mount the socket path directory used to perform container runtime operations
-        - 'volumes'
+        - 'hostPath'
 
     allowedHostPaths:
         # substitutes this path with an appropriate socket path
