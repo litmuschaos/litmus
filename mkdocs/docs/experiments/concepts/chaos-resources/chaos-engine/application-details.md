@@ -1,6 +1,6 @@
 It contains AUT and auxiliary applications details provided at `spec.appinfo` and `spec.auxiliaryAppInfo` respectively inside chaosengine.
 
-??? info "View the application specification schema" 
+??? info "View the application specification schema"
 
     <table>
       <tr>
@@ -114,7 +114,7 @@ It contains AUT and auxiliary applications details provided at `spec.appinfo` an
 
 It defines the `appns`, `applabel`, and `appkind` to set the namespace, labels, and kind of the application under test.
 
-- `appkind`: It supports `deployment`, `statefulset`, `daemonset`, `deploymentconfig`, and `rollout`. 
+- `appkind`: It supports `deployment`, `statefulset`, `daemonset`, `deploymentconfig`, and `rollout`.
 It is mandatory for the pod-level experiments and optional for the rest of the experiments.
 
 Use the following example to tune this:
@@ -140,14 +140,16 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  
+
 ```
 
 ## Auxiliary Application Info
 
 The contains a (comma-separated) list of namespace-label pairs for downstream (dependent) apps of the primary app specified in `.spec.appInfo` in case of pod-level chaos experiments. In the case of infra-level chaos experiments, this flag specifies those apps that may be directly impacted by chaos and upon which health checks are necessary.
 It can be tuned via `auxiliaryAppInfo` field. It supports input the below format:
-- `auxiliaryAppInfo`: `<key1>=<value1>:<namespace1>,<key2>=<value2>:<namespace2>` 
+- `auxiliaryAppInfo`: `<key1>=<value1>:<namespace1>,<key2>=<value2>:<namespace2>`
+
+#### Note: Auxiliary application check is only supported for node-level experiments.
 
 Use the following example to tune this:
 
@@ -171,5 +173,5 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  
+
 ```
