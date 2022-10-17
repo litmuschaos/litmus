@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/IAM/awsIamIntegration/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
     
     
       
@@ -3121,18 +3121,18 @@
 <p>We need to perform this once for a cluster. We’re going to follow the <a href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">AWS documentation to setup an OIDC provider</a> with eksctl.</p>
 <p><strong>Check whether you have an existing IAM OIDC provider for your cluster:</strong> To check this you can follow the given instruction.</p>
 <p><strong><em>Note:</em></strong> <em>For demonstration we’ll be using cluster name as litmus-demo and region us-west-1 you can replace these values according to your ENV.</em></p>
-<p><div class="highlight"><pre><span></span><code>root@demo&gt; aws eks describe-cluster --name &lt;litmus-demo&gt; --query <span class="s2">&quot;cluster.identity.oidc.issuer&quot;</span> --output text
+<p><div class="highlight"><pre><span></span><code>aws eks describe-cluster --name &lt;litmus-demo&gt; --query <span class="s2">&quot;cluster.identity.oidc.issuer&quot;</span> --output text
 </code></pre></div>
 <strong>Output:</strong></p>
 <div class="highlight"><pre><span></span><code>https://oidc.eks.us-west-1.amazonaws.com/id/D054E55B6947B1A7B3F200297789662C
 </code></pre></div>
-<p>Now List the IAM OIDC providers in your account</p>
+<p>Now list the IAM OIDC providers in your account.</p>
 <p><i>Command:</i></p>
 <div class="highlight"><pre><span></span><code>aws iam list-open-id-connect-providers <span class="p">|</span> grep &lt;EXAMPLED539D4633E53DE1B716D3041E&gt;
 </code></pre></div>
 <p>Replace <code>&lt;D054E55B6947B1A7B3F200297789662C&gt;</code> (including <code>&lt;&gt;</code>) with the value returned from the previous command.</p>
 <p>So now here we don’t have an IAM OIDC identity provider, So we need to create it for your cluster with the following command. Replace <code>&lt;litmus-demo&gt;</code> (<code>including &lt;&gt;</code>) with your own value.</p>
-<div class="highlight"><pre><span></span><code>root@demo$ eksctl utils associate-iam-oidc-provider --cluster litmus-demo --approve
+<div class="highlight"><pre><span></span><code>eksctl utils associate-iam-oidc-provider --cluster litmus-demo --approve
 <span class="m">2021</span>-09-07 <span class="m">14</span>:54:01 <span class="o">[</span>ℹ<span class="o">]</span>  eksctl version <span class="m">0</span>.52.0
 <span class="m">2021</span>-09-07 <span class="m">14</span>:54:01 <span class="o">[</span>ℹ<span class="o">]</span>  using region us-west-1
 <span class="m">2021</span>-09-07 <span class="m">14</span>:54:04 <span class="o">[</span>ℹ<span class="o">]</span>  will create IAM Open ID Connect provider <span class="k">for</span> cluster <span class="s2">&quot;udit-cluster-11&quot;</span> <span class="k">in</span> <span class="s2">&quot;us-west-1&quot;</span>
@@ -3140,13 +3140,13 @@
 </code></pre></div>
 <h4 id="step-2-creating-an-iam-role-and-policy-for-your-service-account">Step 2: Creating an IAM role and policy for your service account<a class="headerlink" href="#step-2-creating-an-iam-role-and-policy-for-your-service-account" title="Permanent link">&para;</a></h4>
 <p>You must create an IAM policy that specifies the permissions that you would like the experiment should to have. You have several ways to create a new IAM permission policy. Check out the <a href="https://docs.aws.amazon.com/eks/latest/userguide/create-service-account-iam-policy-and-role.html#create-service-account-iam-policy">AWS docs for creating the IAM policy</a>. We will make use of eksctl command to setup the same.</p>
-<div class="highlight"><pre><span></span><code>root@demo&gt; eksctl create iamserviceaccount <span class="se">\</span>
-    --name &lt;service_account_name&gt; <span class="se">\</span>
-    --namespace &lt;service_account_namespace&gt; <span class="se">\</span>
-    --cluster &lt;cluster_name&gt; <span class="se">\</span>
-    --attach-policy-arn &lt;IAM_policy_ARN&gt; <span class="se">\</span>
-    --approve <span class="se">\</span>
-    --override-existing-serviceaccounts
+<div class="highlight"><pre><span></span><code>eksctl create iamserviceaccount <span class="se">\</span>
+--name &lt;service_account_name&gt; <span class="se">\</span>
+--namespace &lt;service_account_namespace&gt; <span class="se">\</span>
+--cluster &lt;cluster_name&gt; <span class="se">\</span>
+--attach-policy-arn &lt;IAM_policy_ARN&gt; <span class="se">\</span>
+--approve <span class="se">\</span>
+--override-existing-serviceaccounts
 </code></pre></div>
 <h4 id="step-3-associate-an-iam-role-with-a-service-account">Step 3: Associate an IAM role with a service account<a class="headerlink" href="#step-3-associate-an-iam-role-with-a-service-account" title="Permanent link">&para;</a></h4>
 <p>Complete this task for each Kubernetes service account that needs access to AWS resources. We can do this by defining the IAM role to associate with a service account in your cluster by adding the following annotation to the service account.</p>
@@ -3157,12 +3157,15 @@
 <span class="w">    </span><span class="nt">eks.amazonaws.com/role-arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE_NAME&gt;</span><span class="w"></span>
 </code></pre></div>
 <p>You can also annotate the experiment service account running the following command.</p>
+<p><strong><em>Notes:</em></strong> <br />
+<em>1. Ideally, annotating the <code>litmus-admin</code> service account in <code>litmus</code> namespace should work for most of the experiments.</em> <br />
+<em>2. For the cluster autoscaler experiment, annotate the service account in the <code>kube-system</code> namespace.</em></p>
 <div class="highlight"><pre><span></span><code>kubectl annotate serviceaccount -n &lt;SERVICE_ACCOUNT_NAMESPACE&gt; &lt;SERVICE_ACCOUNT_NAME&gt; <span class="se">\</span>
 eks.amazonaws.com/role-arn<span class="o">=</span>arn:aws:iam::&lt;ACCOUNT_ID&gt;:role/&lt;IAM_ROLE_NAME&gt;
 </code></pre></div>
-<p>Verify that the experiment service account is now associated with the IAM</p>
-<p>Describe one of the pods and verify that the <code>AWS_WEB_IDENTITY_TOKEN_FILE</code> and <code>AWS_ROLE_ARN</code> environment variables exist.</p>
-<p><div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> -n kube-system &lt;aws-node-9rgzw&gt; env <span class="p">|</span> grep AWS
+<p>Verify that the experiment service account is now associated with the IAM.</p>
+<p>If you run an experiment and describe one of the pods, you can verify that the <code>AWS_WEB_IDENTITY_TOKEN_FILE</code> and <code>AWS_ROLE_ARN</code> environment variables exist.</p>
+<p><div class="highlight"><pre><span></span><code>kubectl <span class="nb">exec</span> -n litmus &lt;ec2-terminate-by-id-z4zdf&gt; env <span class="p">|</span> grep AWS
 </code></pre></div>
 Output:
 <div class="highlight"><pre><span></span><code>AWS_VPC_K8S_CNI_LOGLEVEL=DEBUG
