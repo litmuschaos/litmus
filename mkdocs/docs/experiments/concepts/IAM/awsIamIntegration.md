@@ -88,7 +88,6 @@ You can also annotate the experiment service account running the following comma
 _1. Ideally, annotating the `litmus-admin` service account in `litmus` namespace should work for most of the experiments._   
 _2. For the cluster autoscaler experiment, annotate the service account in the `kube-system` namespace._
 
-```bash
 
 ```bash
 kubectl annotate serviceaccount -n <SERVICE_ACCOUNT_NAMESPACE> <SERVICE_ACCOUNT_NAME> \
