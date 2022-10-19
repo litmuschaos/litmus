@@ -673,9 +673,9 @@ spec:
               annotationCheck:
                 type: string
                 pattern: ^(true|false)$
-              defaultAppHealthCheck:
+              defaultHealthCheck:
                 type: string
-                pattern: ^(true|false)$ 
+                pattern: ^(true|false)$
               appinfo:
                 type: object
                 properties:
@@ -699,7 +699,7 @@ spec:
                 type: object
                 properties:
                   runner:
-                    x-kubernetes-preserve-unknown-fields: true 
+                    x-kubernetes-preserve-unknown-fields: true
                     type: object
                     properties:
                       image:
@@ -707,6 +707,8 @@ spec:
                       type:
                         type: string
                         pattern: ^(go)$
+                      runnerLabels:
+                        type: object
                       runnerAnnotations:
                         type: object
                         additionalProperties:
@@ -944,6 +946,11 @@ spec:
                                         description: HostNetwork define the hostNetwork
                                           of the external pod it supports boolean values
                                           and default value is false
+                                        type: boolean
+                                      inheritInputs:
+                                        description: InheritInputs define to inherit experiment
+                                          details in probe pod it supports boolean values
+                                          and default value is false.
                                         type: boolean
                                       image:
                                         description: Image for the source pod
@@ -2587,8 +2594,6 @@ spec:
                                     minLength: 1
                                   insecureSkipVerify:
                                     type: boolean
-                                  responseTimeout: 
-                                    type: integer
                                   method:
                                     type: object
                                     minProperties: 1
@@ -2610,14 +2615,14 @@ spec:
                                             minLength: 1
                                           body:
                                             type: string
-                                          bodyPath: 
+                                          bodyPath:
                                             type: string
                                           criteria:
                                             type: string
                                             minLength: 1
                                           responseCode:
                                             type: string
-                                            minLength: 1                                       
+                                            minLength: 1
                               promProbe/inputs:
                                 type: object
                                 properties:
@@ -2636,17 +2641,16 @@ spec:
                                         type: string
                               runProperties:
                                 type: object
-                                minProperties: 3
+                                minProperties: 2
                                 required:
                                   - probeTimeout
                                   - interval
-                                  - retry
                                 properties:
                                   probeTimeout:
                                     type: integer
                                   interval:
                                     type: integer
-                                  retry: 
+                                  retry:
                                     type: integer
                                   probePollingInterval:
                                     type: integer
@@ -2661,7 +2665,7 @@ spec:
                               data:
                                 type: string
                         components:
-                          x-kubernetes-preserve-unknown-fields: true 
+                          x-kubernetes-preserve-unknown-fields: true
                           type: object
                           properties:
                             statusCheckTimeouts:
@@ -2861,7 +2865,7 @@ spec:
             type: object
     served: true
     storage: true
-    subresources: {}  
+    subresources: {}
   conversion:
     strategy: None
 ---
@@ -2888,7 +2892,7 @@ spec:
               of an object. Servers should convert recognized schemas to the latest
               internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
             type: string
-          description: 
+          description:
             type: object
             additionalProperties:
               type: string
@@ -2901,7 +2905,7 @@ spec:
             type: object
           status:
             x-kubernetes-preserve-unknown-fields: true
-            type: object            
+            type: object
           spec:
             type: object
             properties:
