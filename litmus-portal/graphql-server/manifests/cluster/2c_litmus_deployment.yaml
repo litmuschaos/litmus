@@ -38,6 +38,8 @@ spec:
           image: #{LITMUS-CHAOS-OPERATOR}
           command:
             - chaos-operator
+          args:
+            - -leader-elect=true
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000

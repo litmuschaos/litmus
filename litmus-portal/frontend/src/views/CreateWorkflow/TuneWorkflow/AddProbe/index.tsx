@@ -337,14 +337,12 @@ const AddProbe: React.FC<AddProbeProps> = ({
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="retry">
                 {t('createWorkflow.tuneWorkflow.addProbe.labels.retry')}(times)
-                <span className={classes.required}>*</span>
               </InputLabel>
               <InputField
                 variant="primary"
                 width="50%"
                 id="retry"
                 name="retry"
-                required
                 type="number"
                 value={runProperties.retry}
                 onChange={handleRunProps}
