@@ -43,7 +43,7 @@ spec:
               annotationCheck:
                 type: string
                 pattern: ^(true|false)$
-              defaultAppHealthCheck:
+              defaultHealthCheck:
                 type: string
                 pattern: ^(true|false)$
               appinfo:
@@ -78,6 +78,8 @@ spec:
                         type: string
                         pattern: ^(go)$
                       runnerAnnotations:
+                        type: object
+                      runnerLabels:
                         type: object
                         additionalProperties:
                           type: string
