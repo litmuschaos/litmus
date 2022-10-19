@@ -57,15 +57,6 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
         },
       });
     }
-    if (e.target.name === 'responseTimeout') {
-      setProbeData({
-        ...probeData,
-        'httpProbe/inputs': {
-          ...probeData['httpProbe/inputs'],
-          [e.target.name]: parseInt(e.target.value as string, 10),
-        },
-      });
-    }
     if (e.target.name === 'insecureSkipVerify') {
       setProbeData({
         ...probeData,
@@ -196,23 +187,6 @@ const ProbeDetails: React.FC<ProbeDetailsProps> = ({
               <MenuItem value="true">True</MenuItem>
               <MenuItem value="false">False</MenuItem>
             </Select>
-          </div>
-          <div className={classes.formField}>
-            <InputLabel className={classes.formLabel} htmlFor="responseTimeout">
-              {t(
-                'createWorkflow.tuneWorkflow.addProbe.inputLabels.responseTimeout'
-              )}
-              (ms)
-            </InputLabel>
-            <InputField
-              variant="primary"
-              width="50%"
-              id="responseTimeout"
-              name="responseTimeout"
-              type="number"
-              value={probeData['httpProbe/inputs']?.responseTimeout}
-              onChange={handleHttp}
-            />
           </div>
           <div className={classes.inputSub}>
             {t('createWorkflow.tuneWorkflow.addProbe.inputLabels.request')}
