@@ -319,7 +319,8 @@ const AddProbe: React.FC<AddProbeProps> = ({
           <div className={classes.detailContainer}>
             <div className={classes.formField}>
               <InputLabel className={classes.formLabel} htmlFor="timeout">
-                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}(sec)
+                {t('createWorkflow.tuneWorkflow.addProbe.labels.timeout')}{' '}
+                {probeData.type === 'httpProbe' ? `(ms)` : `(sec)`}
                 <span className={classes.required}>*</span>
               </InputLabel>
               <InputField
