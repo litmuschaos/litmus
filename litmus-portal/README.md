@@ -25,7 +25,7 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 > Litmus-2.14.0 (Stable) Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.14.0/mkdocs/docs/2.14.0/litmus-2.14.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/2.14.0/litmus-2.14.0.yaml
 ```
 
 Or
