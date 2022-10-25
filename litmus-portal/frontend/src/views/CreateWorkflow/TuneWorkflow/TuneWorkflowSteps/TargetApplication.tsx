@@ -132,11 +132,13 @@ const TargetApplication: React.FC<TargetApplicationProp> = ({ gotoStep }) => {
         request: {
           clusterID,
           objectType: 'kubeobject',
-          kubeObjRequest: {
-            group: GVRObj.group,
-            version: GVRObj.version,
-            resource: GVRObj.resource,
-          },
+          kubeObjRequest: [
+            {
+              group: GVRObj.group,
+              version: GVRObj.version,
+              resource: GVRObj.resource,
+            },
+          ],
         },
       },
       fetchPolicy: 'network-only',
