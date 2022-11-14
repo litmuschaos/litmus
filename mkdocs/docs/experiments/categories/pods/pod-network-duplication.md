@@ -173,6 +173,16 @@
         <td> if not provided, it will induce network chaos for all ips/destinations or DESTINATION_IPS if already defined</td>
       </tr>
       <tr>
+        <td> SOURCE_PORTS </td>
+        <td> ports of the target application, the accessibility to which is impacted </td>
+        <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
+      </tr>  
+      <tr>
+        <td> DESTINATION_PORTS </td>
+        <td> ports of the destination services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
+        <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
+      </tr>
+      <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
@@ -278,6 +288,45 @@ spec:
         # supports comma separated destination hosts
         - name: DESTINATION_HOSTS
           value: 'nginx.default.svc.cluster.local,google.com'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```
+
+### Source And Destination Ports
+
+The network experiments interrupt traffic for all the source & destination ports by default. The interruption of specific port(s) can be tuned via `SOURCE_PORTS` and `DESTINATION_PORTS` ENV.
+
+- `SOURCE_PORTS`: It contains ports of the target application, the accessibility to which is impacted
+- `DESTINATION_PORTS`: It contains the ports of the destination services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-network-duplication/source-and-destination-ports.yaml yaml)
+```yaml
+# it inject the chaos for the ingrees and egress traffic for specific ports
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-duplication-sa
+  experiments:
+  - name: pod-network-duplication
+    spec:
+      components:
+        env:
+        # supports comma separated source ports
+        - name: SOURCE_PORTS
+          value: '80'
+        # supports comma separated destination ports
+        - name: DESTINATION_PORTS
+          value: '8080,9000'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
