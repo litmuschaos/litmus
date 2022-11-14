@@ -16,6 +16,6 @@ spec:
     spec:
       components:
         env:
-        # value of the network latency jitter (in ms) 
+        # value of the network latency jitter (in ms)
         - name: JITTER
           value: '200'
