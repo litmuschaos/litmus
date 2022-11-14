@@ -156,7 +156,7 @@ Use the following example to tune this:
 [embedmd]:# (../chaos-engine/engine-spec/auxiliary-appinfo.yaml yaml)
 ```yaml
 # contains the comma seperated list of auxiliary applications details
-# it is provide in `<key1>=<namespace1>:<value1>,<key2>=<namespace2>:<value2>` format
+# it is provide in `<namespace1>:<key1=value1>,<namespace2>:<key2=value2>` format
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -165,12 +165,14 @@ spec:
   engineState: "active"
   annotationCheck: "false"
   # provide the comma separated auxiliary applications details
-  auxiliaryAppInfo: "app=nginx:nginx,app=default:busybox"
-  appinfo:
-    appns: "default"
-    applabel: "app=nginx"
-    appkind: "deployment"
+  auxiliaryAppInfo: "nginx:app=nginx,default:app=busybox"
   chaosServiceAccount: node-drain-sa
   experiments:
   - name: node-drain
+    spec:
+      components:
+        env:
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'
 ```
