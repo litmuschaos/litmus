@@ -863,6 +863,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#source-and-destination-ports" class="md-nav__link">
+    Source And Destination Ports
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-interface" class="md-nav__link">
     Network Interface
   </a>
@@ -3157,6 +3164,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#source-and-destination-ports" class="md-nav__link">
+    Source And Destination Ports
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-interface" class="md-nav__link">
     Network Interface
   </a>
@@ -3379,6 +3393,16 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
     <td> if not provided, it will induce network chaos for all ips/destinations or DESTINATION_IPS if already defined</td>
   </tr>
   <tr>
+    <td> SOURCE_PORTS </td>
+    <td> ports of the target application, the accessibility to which is impacted </td>
+    <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
+  </tr><br />
+  <tr>
+    <td> DESTINATION_PORTS </td>
+    <td> ports of the destination services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
+    <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
+  </tr>
+  <tr>
     <td> PODS_AFFECTED_PERC </td>
     <td> The Percentage of total pods to target  </td>
     <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
@@ -3471,6 +3495,40 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="c1"># supports comma separated destination hosts</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DESTINATION_HOSTS</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;nginx.default.svc.cluster.local,google.com&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="source-and-destination-ports">Source And Destination Ports<a class="headerlink" href="#source-and-destination-ports" title="Permanent link">&para;</a></h3>
+<p>The network experiments interrupt traffic for all the source &amp; destination ports by default. The interruption of specific port(s) can be tuned via <code>SOURCE_PORTS</code> and <code>DESTINATION_PORTS</code> ENV.</p>
+<ul>
+<li><code>SOURCE_PORTS</code>: It contains ports of the target application, the accessibility to which is impacted</li>
+<li><code>DESTINATION_PORTS</code>: It contains the ports of the destination services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted</li>
+</ul>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># it inject the chaos for the ingrees and egress traffic for specific ports</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-duplication-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-duplication</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># supports comma separated source ports</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOURCE_PORTS</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;80&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># supports comma separated destination ports</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DESTINATION_PORTS</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8080,9000&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span><span class="w"></span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span><span class="w"></span>
 </code></pre></div>
