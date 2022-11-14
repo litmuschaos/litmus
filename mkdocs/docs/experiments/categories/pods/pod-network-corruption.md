@@ -3,29 +3,29 @@
 - It injects packet corruption on the specified container by starting a traffic control (tc) process with netem rules to add egress packet corruption
 - It can test the application's resilience to lossy/flaky network
 
-!!! tip "Scenario: Corrupt the network packets of target pod"    
+!!! tip "Scenario: Corrupt the network packets of target pod"
     ![Pod Network Corruption](../../images/network-chaos.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
+??? info "View the uses of the experiment"
     coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
+??? info "Verify the prerequisites"
+    - Ensure that Kubernetes Version > 1.16
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a> 
-    
+    - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -63,10 +63,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -75,7 +75,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -160,12 +160,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod network corruption chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr> 
+      </tr>
       <tr>
         <td> DESTINATION_IPS </td>
         <td> IP addresses of the services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
         <td> comma separated IP(S) or CIDR(S) can be provided. if not provided, it will induce network chaos for all ips/destinations</td>
-      </tr>  
+      </tr>
       <tr>
         <td> DESTINATION_HOSTS </td>
         <td> DNS Names/FQDN names of the services, the accessibility to which, is impacted </td>
@@ -174,19 +174,19 @@
       <tr>
         <td> SOURCE_PORTS </td>
         <td> ports of the target application, the accessibility to which is impacted </td>
-        <td> comma separated ports(S) can be provided. If not provided, it will induce network chaos for all ports</td>
+        <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
       </tr>  
       <tr>
         <td> DESTINATION_PORTS </td>
         <td> ports of the destination services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
-        <td> comma separated ports(S) can be provided. If not provided, it will induce network chaos for all ports</td>
-      </tr>     
+        <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
-    <tr>
+      </tr>
+      <tr>
         <td> LIB </td>
         <td> The chaos lib used to inject the chaos </td>
         <td> Default value: litmus, supported values: pumba and litmus </td>
@@ -213,21 +213,21 @@
       </tr>
     </table>
 
-## Experiment Examples 
+## Experiment Examples
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Network Packet Corruption
 
-It defines the network packet corruption percentage to be injected in the targeted application. It can be tuned via `NETWORK_PACKET_CORRUPTION_PERCENTAGE` ENV. 
+It defines the network packet corruption percentage to be injected in the targeted application. It can be tuned via `NETWORK_PACKET_CORRUPTION_PERCENTAGE` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-corruption/network-corruption.yaml yaml)
+[embedmd]:# (pod-network-corruption/network-corruption.yaml yaml)
 ```yaml
-# it inject the network-corruption for the ingrees and egress traffic
+# it inject the network-corruption for the egress traffic
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -261,9 +261,9 @@ The network experiments interrupt traffic for all the IPs/hosts by default. The 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-corruption/destination-ips-and-hosts.yaml yaml)
+[embedmd]:# (pod-network-corruption/destination-ips-and-hosts.yaml yaml)
 ```yaml
-# it inject the chaos for the ingrees and egress traffic for specific ips/hosts
+# it inject the chaos for the egress traffic for specific ips/hosts
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -336,7 +336,7 @@ The defined name of the ethernet interface, which is considered for shaping traf
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-corruption/network-interface.yaml yaml)
+[embedmd]:# (pod-network-corruption/network-interface.yaml yaml)
 ```yaml
 # provide the network interface
 apiVersion: litmuschaos.io/v1alpha1
@@ -356,7 +356,7 @@ spec:
     spec:
       components:
         env:
-        # name of the network interface 
+        # name of the network interface
         - name: NETWORK_INTERFACE
           value: 'eth0'
         - name: TOTAL_CHAOS_DURATION
@@ -372,7 +372,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-corruption/container-runtime-and-socket-path.yaml yaml)
+[embedmd]:# (pod-network-corruption/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -410,7 +410,7 @@ Provide the traffic control image via `TC_IMAGE` ENV for the pumba library.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-corruption/pumba-lib.yaml yaml)
+[embedmd]:# (pod-network-corruption/pumba-lib.yaml yaml)
 ```yaml
 # use pumba chaoslib for the network chaos
 apiVersion: litmuschaos.io/v1alpha1

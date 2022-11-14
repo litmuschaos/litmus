@@ -251,7 +251,7 @@ It allows developers to specify the custom annotations for the experiment pod. I
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-annotations.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-annotations.yaml yaml)
 ```yaml
 # contains annotations for the chaos runner pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -273,7 +273,6 @@ spec:
         # annotations for the experiment pod
         experimentAnnotations:
           name: chaos-experiment
-    
 ```
 
 ### Experiment Configmaps And Secrets
@@ -285,7 +284,7 @@ It defines the `configMaps` and `secrets` to set the configmaps and secrets moun
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-configmaps-and-secrets.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-configmaps-and-secrets.yaml yaml)
 ```yaml
 # contains configmaps and secrets for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -294,7 +293,7 @@ metadata:
   name: engine-nginx
 spec:
   engineState: "active"
-  annotationCheck: "false"   
+  annotationCheck: "false"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
@@ -312,7 +311,6 @@ spec:
         secrets:
         - name: "secret-01"
           mountPath: "/tmp"
-  
 ```
 
 ### Experiment Image
@@ -321,7 +319,7 @@ It overrides the experiment image for the chaosexperiment. It allows developers 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-image.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-image.yaml yaml)
 ```yaml
 # contains the custom image for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -330,7 +328,7 @@ metadata:
   name: engine-nginx
 spec:
   engineState: "active"
-  annotationCheck: "false"   
+  annotationCheck: "false"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
@@ -342,7 +340,6 @@ spec:
       components:
         # override the image of the experiment pod
         experimentImage: "litmuschaos/go-runner:ci"
-  
 ```
 
 ### Experiment ImagePullSecrets
@@ -351,7 +348,7 @@ It allows developers to specify the imagePullSecret name for ChaosExperiment. It
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-imagePullSecrets.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-imagePullSecrets.yaml yaml)
 ```yaml
 # contains the imagePullSecrets for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -360,7 +357,7 @@ metadata:
   name: engine-nginx
 spec:
   engineState: "active"
-  annotationCheck: "false"    
+  annotationCheck: "false"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
@@ -373,8 +370,6 @@ spec:
         # secret name for the experiment image, if using private registry
         experimentImagePullSecrets:
         - name: regcred
-
-  
 ```
 
 ### Experiment NodeSelectors
@@ -383,7 +378,7 @@ The nodeselector contains labels of the node on which experiment pod should be s
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-nodeSelectors.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-nodeSelectors.yaml yaml)
 ```yaml
 # contains the node-selector for the experiment pod
 # it will schedule the experiment pod on the coresponding node with matching labels
@@ -406,7 +401,6 @@ spec:
         # nodeselector for the experiment pod
         nodeSelector:
           context: chaos
-  
 ```
 
 ### Experiment Resource Requirements
@@ -415,7 +409,7 @@ It contains the resource requirements for the ChaosExperiment Pod, where we can 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-resources.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-resources.yaml yaml)
 ```yaml
 # contains the resource requirements for the experiment pod
 apiVersion: litmuschaos.io/v1alpha1
@@ -442,7 +436,6 @@ spec:
           limits:
           cpu: "500m"
           memory: "128Mi"
-  
 ```
 
 ### Experiment Tolerations
@@ -451,7 +444,7 @@ It provides tolerations for the experiment pod so that it can be scheduled on th
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-tolerations.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-tolerations.yaml yaml)
 ```yaml
 # contains the tolerations for the experiment pod
 # it will schedule the experiment pod on the tainted node
@@ -477,7 +470,6 @@ spec:
           operator: "Equal"
           value: "value1"
           effect: "Schedule"
-  
 ```
 
 ### Experiment Status Check Timeout
@@ -486,7 +478,7 @@ It overrides the status timeouts inside chaosexperiments. It contains timeout & 
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/experiment-components/experiment-statusCheckTimeout.yaml yaml)
+[embedmd]:# (../chaos-engine/experiment-components/experiment-statusCheckTimeout.yaml yaml)
 ```yaml
 # contains status check timeout for the experiment pod
 # it will set this timeout as upper bound while checking application status, node status in experiments
@@ -496,7 +488,7 @@ metadata:
   name: engine-nginx
 spec:
   engineState: "active"
-  annotationCheck: "false"   
+  annotationCheck: "false"
   appinfo:
     appns: "default"
     applabel: "app=nginx"
@@ -510,5 +502,4 @@ spec:
         statusCheckTimeouts:
           delay: 2
           timeout: 180
-  
 ```

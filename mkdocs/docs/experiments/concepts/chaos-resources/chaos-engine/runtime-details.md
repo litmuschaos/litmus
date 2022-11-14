@@ -91,7 +91,7 @@ It can be tuned via `annotationCheck` field. It supports the boolean value and t
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/engine-spec/annotation-check.yaml yaml)
+[embedmd]:# (../chaos-engine/engine-spec/annotation-check.yaml yaml)
 ```yaml
 # checks the AUT for the annoations. The AUT should be annotated with `litmuschaos.io/chaos: true` if provided as true
 # supports: true, false. default: false
@@ -110,7 +110,6 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  
 ```
 
 ## Jobcleanup Policy
@@ -120,7 +119,7 @@ It can be tuned via `jobCleanUpPolicy` fields. It supports `retain` and `delete`
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/engine-spec/jobcleanup-policy.yaml yaml)
+[embedmd]:# (../chaos-engine/engine-spec/jobcleanup-policy.yaml yaml)
 ```yaml
 # flag to delete or retain the chaos resources after completions of chaosengine
 # supports: delete, retain. default: retain
@@ -139,7 +138,6 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  
 ```
 
 ## Termination Grace Period Seconds
@@ -149,7 +147,7 @@ It can be tuned via `terminationGracePeriodSeconds` field.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/concepts/chaos-resources/chaos-engine/engine-spec/terminationGracePeriod.yaml yaml)
+[embedmd]:# (../chaos-engine/engine-spec/terminationGracePeriod.yaml yaml)
 ```yaml
 # contains flag to control the terminationGracePeriodSeconds for the chaos pod(abort case)
 apiVersion: litmuschaos.io/v1alpha1
@@ -168,5 +166,4 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  
 ```

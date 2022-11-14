@@ -8,12 +8,12 @@ spec:
   engineState: "active"
   annotationCheck: "false"
   components:
-    # override the args and command for the chaos-runner 
-    runner: 
-      # name of the custom image 
+    # override the args and command for the chaos-runner
+    runner:
+      # name of the custom image
       image: "<your repo>/chaos-runner:ci"
       # args for the image
-      args: 
+      args:
       - "/bin/sh"
       # command for the image
       command:
@@ -26,4 +26,3 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  
