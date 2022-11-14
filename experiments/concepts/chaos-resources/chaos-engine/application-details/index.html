@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://litmuschaos.github.io/litmus/experiments/concepts/chaos-resources/chaos-engine/application-details/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.7">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -21,10 +21,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.472b142f.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -119,6 +119,7 @@
         
           
           
+          
           <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
@@ -126,6 +127,7 @@
             </label>
           
         
+          
           
           
           <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
@@ -1955,6 +1957,19 @@
     Auxiliary Application Info
   </a>
   
+    <nav class="md-nav" aria-label="Auxiliary Application Info">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-auxiliary-application-check-is-only-supported-for-node-level-experiments" class="md-nav__link">
+    Note: Auxiliary application check is only supported for node-level experiments.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -3010,6 +3025,19 @@
     Auxiliary Application Info
   </a>
   
+    <nav class="md-nav" aria-label="Auxiliary Application Info">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#note-auxiliary-application-check-is-only-supported-for-node-level-experiments" class="md-nav__link">
+    Note: Auxiliary application check is only supported for node-level experiments.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -3145,7 +3173,7 @@
 <h2 id="application-under-test">Application Under Test<a class="headerlink" href="#application-under-test" title="Permanent link">&para;</a></h2>
 <p>It defines the <code>appns</code>, <code>applabel</code>, and <code>appkind</code> to set the namespace, labels, and kind of the application under test.</p>
 <ul>
-<li><code>appkind</code>: It supports <code>deployment</code>, <code>statefulset</code>, <code>daemonset</code>, <code>deploymentconfig</code>, and <code>rollout</code>. 
+<li><code>appkind</code>: It supports <code>deployment</code>, <code>statefulset</code>, <code>daemonset</code>, <code>deploymentconfig</code>, and <code>rollout</code>.
 It is mandatory for the pod-level experiments and optional for the rest of the experiments.</li>
 </ul>
 <p>Use the following example to tune this:</p>
@@ -3172,7 +3200,8 @@ It is mandatory for the pod-level experiments and optional for the rest of the e
 <h2 id="auxiliary-application-info">Auxiliary Application Info<a class="headerlink" href="#auxiliary-application-info" title="Permanent link">&para;</a></h2>
 <p>The contains a (comma-separated) list of namespace-label pairs for downstream (dependent) apps of the primary app specified in <code>.spec.appInfo</code> in case of pod-level chaos experiments. In the case of infra-level chaos experiments, this flag specifies those apps that may be directly impacted by chaos and upon which health checks are necessary.
 It can be tuned via <code>auxiliaryAppInfo</code> field. It supports input the below format:
-- <code>auxiliaryAppInfo</code>: <code>&lt;key1&gt;=&lt;value1&gt;:&lt;namespace1&gt;,&lt;key2&gt;=&lt;value2&gt;:&lt;namespace2&gt;</code> </p>
+- <code>auxiliaryAppInfo</code>: <code>&lt;key1&gt;=&lt;value1&gt;:&lt;namespace1&gt;,&lt;key2&gt;=&lt;value2&gt;:&lt;namespace2&gt;</code></p>
+<h4 id="note-auxiliary-application-check-is-only-supported-for-node-level-experiments">Note: Auxiliary application check is only supported for node-level experiments.<a class="headerlink" href="#note-auxiliary-application-check-is-only-supported-for-node-level-experiments" title="Permanent link">&para;</a></h4>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains the comma seperated list of auxiliary applications details</span><span class="w"></span>
 <span class="c1"># it is provide in `&lt;key1&gt;=&lt;value1&gt;:&lt;namespace1&gt;,&lt;key2&gt;=&lt;value2&gt;:&lt;namespace2&gt;` format</span><span class="w"></span>
@@ -3287,7 +3316,7 @@ It can be tuned via <code>auxiliaryAppInfo</code> field. It supports input the b
     
     
   
-      <script src="../../../../../assets/javascripts/bundle.8492ddcf.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
 
