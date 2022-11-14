@@ -18,4 +18,3 @@ spec:
         # annotations for the experiment pod
         experimentAnnotations:
           name: chaos-experiment
-    
