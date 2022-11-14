@@ -3120,7 +3120,7 @@
 
   <h1>Runner Specifications</h1>
 
-<p>It contains all the chaos-runner tunables provided at <code>.spec.components.runner</code> inside chaosengine. </p>
+<p>It contains all the chaos-runner tunables provided at <code>.spec.components.runner</code> inside chaosengine.</p>
 <details class="info">
 <summary>View the runner specification schema</summary>
 <p><table>
@@ -3411,7 +3411,7 @@
 </table></p>
 </details>
 <h3 id="chaosrunner-annotations">ChaosRunner Annotations<a class="headerlink" href="#chaosrunner-annotations" title="Permanent link">&para;</a></h3>
-<p>It allows developers to specify the custom annotations for the runner pod. It can be tuned via <code>runnerAnnotations</code> field. </p>
+<p>It allows developers to specify the custom annotations for the runner pod. It can be tuned via <code>runnerAnnotations</code> field.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains annotations for the chaos runner pod</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
@@ -3451,12 +3451,12 @@
 <span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="c1"># override the args and command for the chaos-runner </span><span class="w"></span>
-<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"> </span>
-<span class="w">      </span><span class="c1"># name of the custom image </span><span class="w"></span>
+<span class="w">    </span><span class="c1"># override the args and command for the chaos-runner</span><span class="w"></span>
+<span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># name of the custom image</span><span class="w"></span>
 <span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;your</span><span class="nv"> </span><span class="s">repo&gt;/chaos-runner:ci&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># args for the image</span><span class="w"></span>
-<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># command for the image</span><span class="w"></span>
 <span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"></span>
@@ -3506,7 +3506,7 @@
 <h3 id="chaosrunner-image-and-imagepullpoicy">ChaosRunner Image and ImagePullPoicy<a class="headerlink" href="#chaosrunner-image-and-imagepullpoicy" title="Permanent link">&para;</a></h3>
 <p>It defines the <code>image</code> and <code>imagePullPolicy</code> to set the image and imagePullPolicy for the chaos-runner respectively.</p>
 <ul>
-<li><code>image</code>: It allows developers to specify their own debug runner images. Defaults for the runner image can be enforced via the operator env <code>CHAOS_RUNNER_IMAGE</code>. </li>
+<li><code>image</code>: It allows developers to specify their own debug runner images. Defaults for the runner image can be enforced via the operator env <code>CHAOS_RUNNER_IMAGE</code>.</li>
 <li><code>imagePullPolicy</code>: It allows developers to specify the pull policy for chaos-runner. Set to Always during debug/test.</li>
 </ul>
 <p>Use the following example to tune this:</p>
@@ -3521,7 +3521,7 @@
 <span class="w">  </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">runner</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># override the image of the chaos-runner</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># by default it is used the image based on the litmus version </span><span class="w"></span>
+<span class="w">      </span><span class="c1"># by default it is used the image based on the litmus version</span><span class="w"></span>
 <span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;litmuschaos/chaos-runner:latest&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># imagePullPolicy for the runner image</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># supports: Always, IfNotPresent. default: IfNotPresent</span><span class="w"></span>

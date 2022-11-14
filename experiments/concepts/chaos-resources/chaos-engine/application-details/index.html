@@ -1957,19 +1957,6 @@
     Auxiliary Application Info
   </a>
   
-    <nav class="md-nav" aria-label="Auxiliary Application Info">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#note-auxiliary-application-check-is-only-supported-for-node-level-experiments" class="md-nav__link">
-    Note: Auxiliary application check is only supported for node-level experiments.
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -3025,19 +3012,6 @@
     Auxiliary Application Info
   </a>
   
-    <nav class="md-nav" aria-label="Auxiliary Application Info">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#note-auxiliary-application-check-is-only-supported-for-node-level-experiments" class="md-nav__link">
-    Note: Auxiliary application check is only supported for node-level experiments.
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -3199,12 +3173,14 @@ It is mandatory for the pod-level experiments and optional for the rest of the e
 </code></pre></div>
 <h2 id="auxiliary-application-info">Auxiliary Application Info<a class="headerlink" href="#auxiliary-application-info" title="Permanent link">&para;</a></h2>
 <p>The contains a (comma-separated) list of namespace-label pairs for downstream (dependent) apps of the primary app specified in <code>.spec.appInfo</code> in case of pod-level chaos experiments. In the case of infra-level chaos experiments, this flag specifies those apps that may be directly impacted by chaos and upon which health checks are necessary.
-It can be tuned via <code>auxiliaryAppInfo</code> field. It supports input the below format:
-- <code>auxiliaryAppInfo</code>: <code>&lt;key1&gt;=&lt;value1&gt;:&lt;namespace1&gt;,&lt;key2&gt;=&lt;value2&gt;:&lt;namespace2&gt;</code></p>
-<h4 id="note-auxiliary-application-check-is-only-supported-for-node-level-experiments">Note: Auxiliary application check is only supported for node-level experiments.<a class="headerlink" href="#note-auxiliary-application-check-is-only-supported-for-node-level-experiments" title="Permanent link">&para;</a></h4>
+It can be tuned via <code>auxiliaryAppInfo</code> field. It supports input the below format:</p>
+<ul>
+<li><code>auxiliaryAppInfo</code>: <code>&lt;namespace1&gt;:&lt;key1=value1&gt;,&lt;namespace2&gt;:&lt;key2=value2&gt;</code></li>
+</ul>
+<p><em>Note</em>: Auxiliary application check is only supported for node-level experiments.</p>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># contains the comma seperated list of auxiliary applications details</span><span class="w"></span>
-<span class="c1"># it is provide in `&lt;key1&gt;=&lt;value1&gt;:&lt;namespace1&gt;,&lt;key2&gt;=&lt;value2&gt;:&lt;namespace2&gt;` format</span><span class="w"></span>
+<span class="c1"># it is provide in `&lt;namespace1&gt;:&lt;key1=value1&gt;,&lt;namespace2&gt;:&lt;key2=value2&gt;` format</span><span class="w"></span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -3213,14 +3189,16 @@ It can be tuned via <code>auxiliaryAppInfo</code> field. It supports input the b
 <span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># provide the comma separated auxiliary applications details</span><span class="w"></span>
-<span class="w">  </span><span class="nt">auxiliaryAppInfo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx:nginx,app=busybox:default&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete-sa</span><span class="w"></span>
+<span class="w">  </span><span class="nt">auxiliaryAppInfo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx:app=nginx,default:app=busybox&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain-sa</span><span class="w"></span>
 <span class="w">  </span><span class="nt">experiments</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-delete</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-drain</span><span class="w"></span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># name of the target node</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET_NODE</span><span class="w"></span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;node01&#39;</span><span class="w"></span>
 </code></pre></div>
 
 
