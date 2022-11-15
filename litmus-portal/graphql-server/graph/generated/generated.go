@@ -4706,8 +4706,17 @@ type RegisterClusterResponse {
     clusterName: String!
 }
 
+"""
+Response received for fetching GQL server version
+"""
 type ServerVersionResponse {
+    """
+    Returns server version key
+    """
     key: String!
+    """
+    Returns server version value
+    """
     value: String!
 }
 
@@ -4716,6 +4725,7 @@ extend type Query {
     Returns version of gql server
     """
     getServerVersion: ServerVersionResponse!
+
     # CLUSTER OPERATIONS
     """
     Returns clusters with a particular cluster type in the project
@@ -5111,13 +5121,20 @@ input KubeObjectRequest {
     Type of the Kubernetes object to be fetched
     """
     objectType: String!
-    kubeObjRequest: KubeGVRRequest!
+    kubeObjRequest: [KubeGVRRequest]
+    workloads: [Workload]
 }
 
 input KubeGVRRequest {
     group: String!
     version: String!
     resource: String!
+}
+
+input Workload {
+    name: String!
+    kind: String!
+    namespace: String!
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
@@ -25028,7 +25045,13 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 			}
 		case "kubeObjRequest":
 			var err error
-			it.KubeObjRequest, err = ec.unmarshalNKubeGVRRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, v)
+			it.KubeObjRequest, err = ec.unmarshalOKubeGVRRequest2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "workloads":
+			var err error
+			it.Workloads, err = ec.unmarshalOWorkload2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26295,6 +26318,36 @@ func (ec *executionContext) unmarshalInputWorkflowSortInput(ctx context.Context,
 		case "descending":
 			var err error
 			it.Descending, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputWorkload(ctx context.Context, obj interface{}) (model.Workload, error) {
+	var it model.Workload
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kind":
+			var err error
+			it.Kind, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "namespace":
+			var err error
+			it.Namespace, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -30570,18 +30623,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (model.KubeGVRRequest, error) {
-	return ec.unmarshalInputKubeGVRRequest(ctx, v)
-}
-
-func (ec *executionContext) unmarshalNKubeGVRRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (*model.KubeGVRRequest, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalNKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, v)
-	return &res, err
-}
-
 func (ec *executionContext) unmarshalNKubeObjectData2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeObjectData(ctx context.Context, v interface{}) (model.KubeObjectData, error) {
 	return ec.unmarshalInputKubeObjectData(ctx, v)
 }
@@ -32432,6 +32473,38 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
+func (ec *executionContext) unmarshalOKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (model.KubeGVRRequest, error) {
+	return ec.unmarshalInputKubeGVRRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOKubeGVRRequest2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) ([]*model.KubeGVRRequest, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.KubeGVRRequest, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOKubeGVRRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOKubeGVRRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (*model.KubeGVRRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) marshalOLabelValue2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐLabelValue(ctx context.Context, sel ast.SelectionSet, v model.LabelValue) graphql.Marshaler {
 	return ec._LabelValue(ctx, sel, &v)
 }
@@ -33573,6 +33646,38 @@ func (ec *executionContext) marshalOWorkflowTemplate2ᚖgithubᚗcomᚋlitmuscha
 		return graphql.Null
 	}
 	return ec._WorkflowTemplate(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOWorkload2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkload(ctx context.Context, v interface{}) (model.Workload, error) {
+	return ec.unmarshalInputWorkload(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOWorkload2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkload(ctx context.Context, v interface{}) ([]*model.Workload, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.Workload, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOWorkload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkload(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOWorkload2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkload(ctx context.Context, v interface{}) (*model.Workload, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkload2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐWorkload(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {
