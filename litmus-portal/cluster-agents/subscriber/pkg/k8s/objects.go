@@ -34,10 +34,15 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 		return nil, err
 	}
 
+	_, dynamicClient, err := GetDynamicAndDiscoveryClient()
+	if err != nil {
+		return nil, err
+	}
+
 	var ObjData []*types.KubeObject
 
 	if len(request.Workloads) != 0 {
-		ObjData, err = getPodsFromWorkloads(request.Workloads, clientSet)
+		ObjData, err = getPodsFromWorkloads(request.Workloads, clientSet, dynamicClient)
 		if err != nil {
 			return nil, err
 		}
@@ -51,11 +56,6 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 				Resource: req.Resource,
 			}
 			gvrList = append(gvrList, resourceType)
-		}
-
-		_, dynamicClient, err := GetDynamicAndDiscoveryClient()
-		if err != nil {
-			return nil, err
 		}
 
 		if strings.ToLower(AgentScope) == "namespace" {
@@ -101,9 +101,9 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 	return kubeObjects, nil
 }
 
-func getPodsFromWorkloads(resources []types.Workload, k8sClient *kubernetes.Clientset) ([]*types.KubeObject, error) {
+func getPodsFromWorkloads(resources []types.Workload, k8sClient *kubernetes.Clientset, dynamicClient dynamic.Interface) ([]*types.KubeObject, error) {
 	var ObjData []*types.KubeObject
-	podNsMap, err := workloads.GetPodsFromWorkloads(resources, k8sClient)
+	podNsMap, err := workloads.GetPodsFromWorkloads(resources, k8sClient, dynamicClient)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +175,7 @@ func SendKubeObjects(clusterData map[string]string, kubeObjectRequest types.Kube
 			logrus.Print(reqErr.Error())
 			return reqErr
 		}
-		
+
 		logrus.Println("Response", body)
 		return err
 	}
