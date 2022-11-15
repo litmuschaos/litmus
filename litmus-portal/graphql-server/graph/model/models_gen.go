@@ -533,8 +533,9 @@ type KubeObjectRequest struct {
 	// ID of the cluster in which the Kubernetes object is present
 	ClusterID string `json:"clusterID"`
 	// Type of the Kubernetes object to be fetched
-	ObjectType     string          `json:"objectType"`
-	KubeObjRequest *KubeGVRRequest `json:"kubeObjRequest"`
+	ObjectType     string            `json:"objectType"`
+	KubeObjRequest []*KubeGVRRequest `json:"kubeObjRequest"`
+	Workloads      []*Workload       `json:"workloads"`
 }
 
 // Response received for querying Kubernetes Object
@@ -931,8 +932,11 @@ type SSHKey struct {
 	PrivateKey string `json:"privateKey"`
 }
 
+// Response received for fetching GQL server version
 type ServerVersionResponse struct {
-	Key   string `json:"key"`
+	// Returns server version key
+	Key string `json:"key"`
+	// Returns server version value
 	Value string `json:"value"`
 }
 
@@ -1289,6 +1293,12 @@ type WorkflowTemplate struct {
 	IsRemoved bool `json:"isRemoved"`
 	// Bool value indicating whether the workflow template is a custom or not
 	IsCustomWorkflow bool `json:"isCustomWorkflow"`
+}
+
+type Workload struct {
+	Name      string `json:"name"`
+	Kind      string `json:"kind"`
+	Namespace string `json:"namespace"`
 }
 
 type AuthType string
