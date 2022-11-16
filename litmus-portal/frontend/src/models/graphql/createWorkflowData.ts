@@ -40,7 +40,7 @@ export interface KubeObjRequest {
   request: {
     clusterID: string;
     objectType: string;
-    kubeObjRequest: GVRRequest;
+    kubeObjRequest: GVRRequest[];
   };
 }
 

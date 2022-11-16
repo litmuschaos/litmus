@@ -200,11 +200,13 @@ const DashboardMetadataForm: React.FC<DashboardMetadataFormProps> = ({
       request: {
         clusterID: dashboardDetails.agentID ?? '',
         objectType: 'kubeobject',
-        kubeObjRequest: {
-          group: kubeObjInput.group,
-          version: kubeObjInput.version,
-          resource: kubeObjInput.resource,
-        },
+        kubeObjRequest: [
+          {
+            group: kubeObjInput.group,
+            version: kubeObjInput.version,
+            resource: kubeObjInput.resource,
+          },
+        ],
       },
     },
     onSubscriptionComplete: () => {
