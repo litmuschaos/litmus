@@ -77,7 +77,7 @@ func init() {
 		logrus.Fatal(err)
 	}
 	// confirm version env is valid
-	if !strings.Contains(strings.ToLower(c.Version), cluster.CIVersion) || !strings.Contains(strings.ToLower(c.Version), "3.0-beta") {
+	if !strings.Contains(strings.ToLower(c.Version), cluster.CIVersion) && !strings.Contains(strings.ToLower(c.Version), "3.0-beta") {
 		splitCPVersion := strings.Split(c.Version, ".")
 		if len(splitCPVersion) != 3 {
 			logrus.Fatal("version doesn't follow semver semantic")
