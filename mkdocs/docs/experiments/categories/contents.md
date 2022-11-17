@@ -287,3 +287,38 @@ Following Platform Chaos experiments are available:
     <td><a href="/litmus/experiments/categories/vmware/vm-poweroff">vm-poweroff</a></td>
   </tr>
 </table>
+
+### Spring Boot
+
+<table style="width: 100%;">
+  <tr>
+    <th>Experiment Name</th>
+    <th>Description</th>
+    <th>User Guide</th>
+  </tr>
+  <tr>
+    <td>Spring Boot App Kill</td>
+    <td>Kill the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-app-kill">spring-boot-app-kill</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot CPU Stress</td>
+    <td>stress the cpu the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-cpu-stress">spring-boot-cpu-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Memory Stress</td>
+    <td>stress memory the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-memory-stress">spring-boot-memory-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Latency </td>
+    <td>Inject the network latency to the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-latency">spring-boot-latency</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Exception</td>
+    <td>Raise the exceptions to the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-exceptions">spring-boot-exceptions</a></td>
+  </tr>
+</table>

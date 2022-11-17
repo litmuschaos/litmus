@@ -1,0 +1,26 @@
+# provide the network latency
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-latency-sa
+  experiments:
+    - name: spring-boot-latency
+      spec:
+        components:
+          env:
+            # provide the latency (ms)
+            - name: LATENCY
+              value: '2000'
+
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'
