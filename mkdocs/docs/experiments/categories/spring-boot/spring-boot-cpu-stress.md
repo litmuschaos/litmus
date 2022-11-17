@@ -13,41 +13,52 @@
 ## Prerequisites
 
 ??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code> spring-boot-cpu-stress </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-cpu-stress/experiment.yaml">here</a>
-    -  Chaos Monkey Spring Boot dependency should be present in application. It can be enabled by two ways:
-        1. *Add internal dependency inside the spring boot application*
-            1.1 Add Chaos Monkey for Spring Boot as dependency for your project
-            ```maven
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>chaos-monkey-spring-boot</artifactId>
-                <version>2.6.1</version>
-            </dependency>
-            ```
-            1.2 Start your Spring Boot App with the chaos-monkey spring profile enabled
-            ```bash
-            java -jar your-app.jar --spring.profiles.active=chaos-monkey --chaos.monkey.enabled=true
-            ```
-        2. *Add as external dependency*
-           2.1 You can extend your existing application with the chaos-monkey and add it as an external dependency at startup. For this it is necessary to use the PropertiesLauncher of Spring Boot.
-           ```maven
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>chaos-monkey-spring-boot</artifactId>
-                <classifier>jar-with-dependencies</classifier>
-                <version>2.6.1</version>
-            </dependency>
-            ```
-           2.2 Start your Spring Boot application, add Chaos Monkey for Spring Boot JAR and properties.
-           ```bash
-            java -cp your-app.jar
-            -Dloader.path=chaos-monkey-spring-boot-2.6.1-jar-with-dependencies.jar
-            org.springframework.boot.loader.PropertiesLauncher
-            --spring.profiles.active=chaos-monkey
-            --spring.config.location=file:./chaos-monkey.properties
-            ```
+    <ul>
+        <li> Ensure that Kubernetes Version > 1.16 </li>
+        <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> </li>
+        <li> Ensure that the <code> spring-boot-cpu-stress </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-cpu-stress/experiment.yaml">here</a></li>
+        <li>Chaos Monkey Spring Boot dependency should be present in application. It can be enabled by two ways:
+          <ol>
+            <li>Add internal dependency inside the spring boot application
+                <ol>
+                    <li>Add Chaos Monkey for Spring Boot as dependency for your project
+                        ```maven
+                        <dependency>
+                            <groupId>de.codecentric</groupId>
+                            <artifactId>chaos-monkey-spring-boot</artifactId>
+                            <version>2.6.1</version>
+                        </dependency>
+                        ```
+                    </li>
+                    <li> Start your Spring Boot App with the chaos-monkey spring profile enabled
+                        ```bash
+                        java -jar your-app.jar --spring.profiles.active=chaos-monkey --chaos.monkey.enabled=true
+                        ```
+                    </li>
+                </ol> 
+            </li>
+            <li> Add as external dependency
+                <ol>
+                    <li>You can extend your existing application with the chaos-monkey and add it as an external dependency at startup, for this it is necessary to use the PropertiesLauncher of Spring Boot
+                        ```maven
+                        <dependency>
+                            <groupId>de.codecentric</groupId>
+                            <artifactId>chaos-monkey-spring-boot</artifactId>
+                            <classifier>jar-with-dependencies</classifier>
+                            <version>2.6.1</version>
+                        </dependency>
+                        ```
+                    </li>
+                    <li>Start your Spring Boot application, add Chaos Monkey for Spring Boot JAR and properties
+                        ```bash
+                        java -cp your-app.jar -Dloader.path=chaos-monkey-spring-boot-2.6.1-jar-with-dependencies.jar org.springframework.boot.loader.PropertiesLauncher --spring.profiles.active=chaos-monkey --spring.config.location=file:./chaos-monkey.properties
+                        ```
+                    </li>
+                </ol>
+            </li>
+          </ol>
+        </li>
+    </ul>
 
 ## Default Validations
 
@@ -147,7 +158,7 @@
         <td> default value is 0.9. It supports value in range [0.1,1.0]</td>
       </tr>
       </tr>
-    </tables>
+    </table>
     
     <h2>Optional Fields</h2>
 

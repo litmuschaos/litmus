@@ -121,7 +121,7 @@ nav:
             - Spring Boot App Kill: experiments/categories/spring-boot/spring-boot-app-kill.md
             - Spring Boot CPU Stress: experiments/categories/spring-boot/spring-boot-cpu-stress.md
             - Spring Boot Memory Stress: experiments/categories/spring-boot/spring-boot-memory-stress.md
-            - Spring Boot App Kill: experiments/categories/spring-boot/spring-boot-app-kill.md
+            - Spring Boot Exceptions: experiments/categories/spring-boot/spring-boot-exceptions.md
             - Spring Boot Latency: experiments/categories/spring-boot/spring-boot-latency.md
       - Cloud Infrastructure:
         - AWS: 
