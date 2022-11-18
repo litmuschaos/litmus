@@ -3,7 +3,7 @@
 - It can target random pods with a Spring Boot application and allows configuring the assaults to inject cpu-stress. It tests the resiliency of the system when some applications are having unexpected faulty behavior.
 
 !!! tip "Scenario: Inject exceptions to Spring Boot Application"    
-    ![Spring Boot Exceptions](../../images/spring-boot-exceptions.png)
+    ![Spring Boot Exceptions](../../images/spring-boot-chaos.png)
 
 ## Uses
 

@@ -3,7 +3,7 @@
 - It can target random pods with a Spring Boot application and allows configuring the assaults to inject cpu-stress. It tests the resiliency of the system when some applications are having unexpected faulty behavior.
 
 !!! tip "Scenario: Inject network latency to Spring Boot Application"    
-    ![Spring Boot Latency](../../images/spring-boot-latency.png)
+    ![Spring Boot Latency](../../images/spring-boot-chaos.png)
 
 ## Uses
 

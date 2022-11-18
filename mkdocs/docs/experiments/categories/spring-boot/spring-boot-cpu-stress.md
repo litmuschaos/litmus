@@ -3,7 +3,7 @@
 - It can target random pods with a Spring Boot application and allows configuring the assaults to inject cpu-stress. It tests the resiliency of the system when some applications are having unexpected faulty behavior.
 
 !!! tip "Scenario: Stress CPU of Spring Boot Application"    
-    ![Spring Boot CPU Stress](../../images/spring-boot-cpu-stress.png)
+    ![Spring Boot CPU Stress](../../images/spring-boot-chaos.png)
 
 ## Uses
 

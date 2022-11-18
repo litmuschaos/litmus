@@ -3,7 +3,7 @@
 - It can target random pods with a Spring Boot application and allows configuring the assaults to inject app-kill. It tests the resiliency of the system when some applications are having unexpected faulty behavior.
 
 !!! tip "Scenario: Kill Spring Boot Application"    
-    ![Spring Boot App Kill](../../images/spring-boot-app-kill.png)
+    ![Spring Boot App Kill](../../images/spring-boot-chaos.png)
 
 ## Uses
 
