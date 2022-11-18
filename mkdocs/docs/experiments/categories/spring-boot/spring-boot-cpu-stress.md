@@ -63,7 +63,7 @@
 ## Default Validations
 
 ??? info "View the default validations" 
-    - Spring boot pods are healthy before chaos injection
+    - Spring boot pods are healthy before and after chaos injection
 
 ## Minimal RBAC configuration example (optional)
 
@@ -152,11 +152,11 @@
         <td> CM_PORT </td>
         <td> It contains port of the spring boot application </td>
         <td> </td>
+      </tr>
       <tr>
         <td> CPU_LOAD_FRACTION </td>
         <td> It contains fraction of cpu to be stressed, 0.95 equals 95%</td>
         <td> default value is 0.9. It supports value in range [0.1,1.0]</td>
-      </tr>
       </tr>
     </table>
     

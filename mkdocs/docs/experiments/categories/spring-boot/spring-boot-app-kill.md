@@ -63,7 +63,7 @@
 ## Default Validations
 
 ??? info "View the default validations" 
-    - Spring boot pods are healthy before chaos injection
+    - Spring boot pods are healthy before and after chaos injection
 
 ## Minimal RBAC configuration example (optional)
 

@@ -1,9 +1,9 @@
 ## Introduction
 
-- It can target random pods with a Spring Boot application and allows configuring the assaults to inject memory-stress. Which attacks the memory of the Java Virtual Machine. It tests the resiliency of the system when some applications are having unexpected faulty behavior.
-
-!!! tip "Scenario: Stress Memory of Spring Boot Application"    
-    ![Spring Boot Memory Stress](../../images/spring-boot-chaos.png)
+- It can target random pods with a Spring Boot application and allows configuring the assaults to inject multiple spring boot faults simultaneously on the target pod.
+- It supports `app-kill`, `cpu-stress`, `memory-stress`, `latency`, and `exceptions` faults
+!!! tip "Scenario: Inject Spring Boot Faults"    
+    ![Spring Boot Faults](../../images/spring-boot-chaos.png)
 
 ## Uses
 
@@ -16,7 +16,7 @@
     <ul>
         <li> Ensure that Kubernetes Version > 1.16 </li>
         <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> </li>
-        <li> Ensure that the <code> spring-boot-memory-stress </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-memory-stress/experiment.yaml">here</a></li>
+        <li> Ensure that the <code> spring-boot-faults </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-faults/experiment.yaml">here</a></li>
         <li>Chaos Monkey Spring Boot dependency should be present in application. It can be enabled by two ways:
           <ol>
             <li>Add internal dependency inside the spring boot application
@@ -72,24 +72,24 @@
 
     ??? note "View the Minimal RBAC permissions"
     
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/spring-boot/spring-boot-memory-stress/rbac.yaml yaml)
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/spring-boot/spring-boot-faults/rbac.yaml yaml)
         ```yaml
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: spring-boot-memory-stress-sa
+          name: spring-boot-faults-sa
           namespace: default
           labels:
-            name: spring-boot-memory-stress-sa
+            name: spring-boot-faults-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: Role
         metadata:
-          name: spring-boot-memory-stress-sa
+          name: spring-boot-faults-sa
           namespace: default
           labels:
-            name: spring-boot-memory-stress-sa
+            name: spring-boot-faults-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -120,18 +120,18 @@
         apiVersion: rbac.authorization.k8s.io/v1
         kind: RoleBinding
         metadata:
-          name: spring-boot-memory-stress-sa
+          name: spring-boot-faults-sa
           namespace: default
           labels:
-            name: spring-boot-memory-stress-sa
+            name: spring-boot-faults-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: Role
-          name: spring-boot-memory-stress-sa
+          name: spring-boot-faults-sa
         subjects:
           - kind: ServiceAccount
-            name: spring-boot-memory-stress-sa
+            name: spring-boot-faults-sa
             namespace: default
         ```
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
@@ -152,6 +152,51 @@
         <td> CM_PORT </td>
         <td> It contains port of the spring boot application </td>
         <td> </td>
+      </tr>
+      <tr>
+        <td> CM_KILL_APPLICATION_ACTIVE </td>
+        <td> It enable the app-kill faults</td>
+        <td> It supports boolean values. Default is false</td>
+      </tr>
+      <tr>
+        <td> CM_LATENCY_ACTIVE </td>
+        <td> It enable the latency faults</td>
+        <td> It supports boolean values. Default is false</td>
+      </tr>
+      <tr>
+        <td> CM_MEMORY_ACTIVE </td>
+        <td> It enable the memory stress faults</td>
+        <td> It supports boolean values. Default is false</td>
+      </tr>
+      <tr>
+        <td> CM_CPU_ACTIVE </td>
+        <td> It enable the cpu stress faults</td>
+        <td> It supports boolean values. Default is false</td>
+      </tr>
+      <tr>
+        <td> CM_EXCEPTIONS_ACTIVE </td>
+        <td> It enable the exceptions faults</td>
+        <td> It supports boolean values. Default is false</td>
+      </tr>
+      <tr>
+        <td> CPU_LOAD_FRACTION </td>
+        <td> It contains fraction of cpu to be stressed, 0.95 equals 95%</td>
+        <td> default value is 0.9. It supports value in range [0.1,1.0]</td>
+      </tr>
+      <tr>
+        <td> CM_EXCEPTIONS_TYPE </td>
+        <td> It contains type of raised exception </td>
+        <td> Defaults value: <code> java.lang.IllegalArgumentException </code> </td>
+      </tr>
+       <tr>
+        <td> CM_EXCEPTIONS_ARGUMENTS </td>
+        <td> It contains argument of raised exception </td>
+        <td> Defaults value: <code> java.lang.String:custom illegal argument exception </code> </td>
+      </tr>
+      <tr>
+        <td> LATENCY </td>
+        <td> It contains network latency to be injected(in ms)</td>
+        <td> default value is 2000</td>
       </tr>
       <tr>
         <td> MEMORY_FILL_FRACTION </td>
@@ -216,15 +261,14 @@
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and  [Spring Boot specific tunable](spring-boot-experiments-tunables.md) to tune the common tunables for all experiments and spring-boot specific tunables.
 
-### Spring Boot Application Port
+### Inject Multiple Faults Simultaneously (CPU, Latency and Exceptions)
 
-It tunes the spring-boot application port via `CM_PORT` ENV
+It injects cpu, latency, and exceptions faults simultaneously on the target pods
 
 Use the following example to tune this:
 
-[embedmd]:# (./spring-boot-memory-stress/target-port.yaml yaml)
+[embedmd]:# (./spring-boot-faults/cpu-latency-exceptions-faults.yaml yaml)
 ```yaml
-# stress memory of spring-boot application
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -237,27 +281,68 @@ spec:
     appkind: 'deployment'
   # It can be active/stop
   engineState: 'active'
-  chaosServiceAccount: spring-boot-memory-stress-sa
+  chaosServiceAccount: spring-boot-faults-sa
   experiments:
-    - name: spring-boot-memory-stress
+    - name: spring-boot-faults
       spec:
         components:
           env:
+            # set chaos duration (in sec) as desired
+            - name: TOTAL_CHAOS_DURATION
+              value: '30'
+
             # port of the spring boot application
             - name: CM_PORT
               value: '8080'
 
+            # it enables spring-boot latency fault
+            - name: CM_LATENCY_ACTIVE
+              value: 'true'
+
+            # provide the latency (ms)
+            # it is applicable when latency is active
+            - name: LATENCY
+              value: '2000'
+
+            # it enables spring-boot cpu stress fault
+            - name: CM_CPU_ACTIVE
+              value: 'true'
+
+            # it contains fraction of cpu to be stressed(0.95 equals 95%)
+            # it supports value in range [0.1,1.0]
+            # it is applicable when cpu is active
+            - name: CPU_LOAD_FRACTION
+              value: '0.9'
+
+            # it enables spring-boot exceptions fault
+            - name: CM_EXCEPTIONS_ACTIVE
+              value: 'true'
+
+            # Type of raised exception
+            # it is applicable when exceptions is active
+            - name: CM_EXCEPTIONS_TYPE
+              value: 'java.lang.IllegalArgumentException'
+
+              # Argument of raised exception
+              # it is applicable when exceptions is active
+            - name: CM_EXCEPTIONS_ARGUMENTS
+              value: 'java.lang.String:custom illegal argument exception'
+
+            ## percentage of total pods to target
+            - name: PODS_AFFECTED_PERC
+              value: ''
+              
 ```
 
-### Memory Fill Fraction
 
-It contains fraction of memory to be stressed, 0.70 equals 70%. It can be tunes via `MEMORY_FILL_FRACTION` ENV
+### Inject Multiple Faults Simultaneously (Appkill and Memory)
+
+It injects appkill and memory stress faults simultaneously on the target pods
 
 Use the following example to tune this:
 
-[embedmd]:# (./spring-boot-memory-stress/memory-fill-fraction.yaml yaml)
+[embedmd]:# (./spring-boot-faults/appkill-memory-faults.yaml yaml)
 ```yaml
-# provide the memory fraction to be filled
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -270,18 +355,36 @@ spec:
     appkind: 'deployment'
   # It can be active/stop
   engineState: 'active'
-  chaosServiceAccount: spring-boot-memory-stress-sa
+  chaosServiceAccount: spring-boot-faults-sa
   experiments:
-    - name: spring-boot-memory-stress
+    - name: spring-boot-faults
       spec:
         components:
           env:
-            # it contains fraction of used cpu. 0.70 equals 70%.
-            # it supports value in range [0.01,0.95]
-            - name: MEMORY_FILL_FRACTION
-              value: '0.70'
+            # set chaos duration (in sec) as desired
+            - name: TOTAL_CHAOS_DURATION
+              value: '30'
 
             # port of the spring boot application
             - name: CM_PORT
               value: '8080'
+
+            # it enables spring app-kill fault
+            - name: CM_KILL_APPLICATION_ACTIVE
+              value: 'true'
+
+            # it enables spring-boot memory stress fault
+            - name: CM_MEMORY_ACTIVE
+              value: ''
+
+            # it contains fraction of memory to be stressed(0.70 equals 70%)
+            # it supports value in range [0.01,0.95]
+            # it is applicable when memory is active
+            - name: MEMORY_FILL_FRACTION
+              value: '0.70'
+            
+            ## percentage of total pods to target
+            - name: PODS_AFFECTED_PERC
+              value: ''
+              
 ```

@@ -218,6 +218,11 @@ While Chaos Experiments under the Generic category offer the ability to induce c
     <td>Raise the exceptions to the spring boot application</td>
     <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-exceptions">spring-boot-exceptions</a></td>
   </tr>
+  <tr>
+    <td>Spring Boot Faults</td>
+    <td>It injects the multiple spring boot faults simultaneously on the target pods</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-faults">spring-boot-faults</a></td>
+  </tr>
 </table>
 
 <hr/>

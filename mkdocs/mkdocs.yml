@@ -123,6 +123,7 @@ nav:
             - Spring Boot Memory Stress: experiments/categories/spring-boot/spring-boot-memory-stress.md
             - Spring Boot Exceptions: experiments/categories/spring-boot/spring-boot-exceptions.md
             - Spring Boot Latency: experiments/categories/spring-boot/spring-boot-latency.md
+            - Spring Boot Faults: experiments/categories/spring-boot/spring-boot-faults.md
       - Cloud Infrastructure:
         - AWS: 
             - EC2:
