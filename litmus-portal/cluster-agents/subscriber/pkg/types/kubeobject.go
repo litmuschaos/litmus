@@ -8,6 +8,7 @@ type KubeObjRequest struct {
 	KubeGVRRequest []*KubeGVRRequest `json:"kubeObjRequest"`
 }
 
+// Workload consists of workload details
 type Workload struct {
 	Name      string `json:"name"`
 	Kind      string `json:"kind"`

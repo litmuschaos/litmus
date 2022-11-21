@@ -1,3 +1,4 @@
+// Package workloads implements utility to derive the pods from the parent workloads
 package workloads
 
 import (
@@ -26,6 +27,7 @@ var (
 	}
 )
 
+// GetPodsFromWorkloads derives the pods from the parent workloads
 func GetPodsFromWorkloads(workloads []types.Workload, client *kubernetes.Clientset, dynamicClient dynamic.Interface) (map[string][]string, error) {
 
 	workloadMap := aggregateWorkloadsByNamespace(workloads)
@@ -78,7 +80,7 @@ func getPodsFromWorkload(wld map[string][]string, allPods *kcorev1.PodList, dyna
 func getPodsFromServices(ns string, wld []string, client *kubernetes.Clientset) ([]string, error) {
 	var pods []string
 	for _, svcName := range wld {
-		svc, err := client.kcorev1().Services(ns).Get(context.Background(), svcName, v1.GetOptions{})
+		svc, err := client.CoreV1().Services(ns).Get(context.Background(), svcName, v1.GetOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -94,7 +96,7 @@ func getPodsFromServices(ns string, wld []string, client *kubernetes.Clientset) 
 			svcSelector += fmt.Sprintf(",%s=%s", k, v)
 		}
 
-		res, err := client.kcorev1().Pods(svc.Namespace).List(context.Background(), v1.ListOptions{LabelSelector: svcSelector})
+		res, err := client.CoreV1().Pods(svc.Namespace).List(context.Background(), v1.ListOptions{LabelSelector: svcSelector})
 		if err != nil {
 			return nil, err
 		}
@@ -169,7 +171,7 @@ func aggregateWorkloadsByNamespace(workloads []types.Workload) map[string]worklo
 }
 
 func getAllPods(namespace string, client *kubernetes.Clientset) (*kcorev1.PodList, error) {
-	return client.kcorev1().Pods(namespace).List(context.Background(), v1.ListOptions{})
+	return client.CoreV1().Pods(namespace).List(context.Background(), v1.ListOptions{})
 }
 
 type workload struct {
