@@ -1,0 +1,30 @@
+# provide the exception type and args
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-exceptions-sa
+  experiments:
+    - name: spring-boot-exceptions
+      spec:
+        components:
+          env:
+            # Type of raised exception
+            - name: CM_EXCEPTIONS_TYPE
+              value: 'java.lang.IllegalArgumentException'
+
+             # Argument of the raised exception
+            - name: CM_EXCEPTIONS_ARGUMENTS
+              value: 'java.lang.String:custom illegal argument exception'
+
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'

@@ -1,0 +1,63 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-faults-sa
+  experiments:
+    - name: spring-boot-faults
+      spec:
+        components:
+          env:
+            # set chaos duration (in sec) as desired
+            - name: TOTAL_CHAOS_DURATION
+              value: '30'
+
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'
+
+            # it enables spring-boot latency fault
+            - name: CM_LATENCY_ACTIVE
+              value: 'true'
+
+            # provide the latency (ms)
+            # it is applicable when latency is active
+            - name: LATENCY
+              value: '2000'
+
+            # it enables spring-boot cpu stress fault
+            - name: CM_CPU_ACTIVE
+              value: 'true'
+
+            # it contains fraction of cpu to be stressed(0.95 equals 95%)
+            # it supports value in range [0.1,1.0]
+            # it is applicable when cpu is active
+            - name: CPU_LOAD_FRACTION
+              value: '0.9'
+
+            # it enables spring-boot exceptions fault
+            - name: CM_EXCEPTIONS_ACTIVE
+              value: 'true'
+
+            # Type of raised exception
+            # it is applicable when exceptions is active
+            - name: CM_EXCEPTIONS_TYPE
+              value: 'java.lang.IllegalArgumentException'
+
+              # Argument of raised exception
+              # it is applicable when exceptions is active
+            - name: CM_EXCEPTIONS_ARGUMENTS
+              value: 'java.lang.String:custom illegal argument exception'
+
+            ## percentage of total pods to target
+            - name: PODS_AFFECTED_PERC
+              value: ''
+              

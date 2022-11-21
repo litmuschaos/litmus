@@ -261,6 +261,41 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-app-kill/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-cpu-stress/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-exceptions/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-experiments-tunables/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-faults/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-latency/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://litmuschaos.github.io/litmus/experiments/categories/spring-boot/spring-boot-memory-stress/</loc>
+         <lastmod>2022-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://litmuschaos.github.io/litmus/experiments/categories/vmware/vm-poweroff/</loc>
          <lastmod>2022-11-21</lastmod>
          <changefreq>daily</changefreq>
