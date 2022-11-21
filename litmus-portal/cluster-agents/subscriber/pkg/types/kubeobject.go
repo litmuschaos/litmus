@@ -1,16 +1,18 @@
 package types
 
-import (
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
-)
-
 type KubeObjRequest struct {
 	RequestID      string
-	ClusterID      string         `json:"clusterID"`
-	ObjectType     string         `json:"objectType"`
-	KubeGVRRequest KubeGVRRequest `json:"kubeObjRequest"`
+	ClusterID      string            `json:"clusterID"`
+	ObjectType     string            `json:"objectType"`
+	Workloads      []Workload        `json:"workloads"`
+	KubeGVRRequest []*KubeGVRRequest `json:"kubeObjRequest"`
+}
+
+// Workload consists of workload details
+type Workload struct {
+	Name      string `json:"name"`
+	Kind      string `json:"kind"`
+	Namespace string `json:"namespace"`
 }
 
 type KubeGVRRequest struct {
@@ -27,13 +29,7 @@ type KubeObject struct {
 
 //ObjectData consists of Kubernetes Objects related details
 type ObjectData struct {
-	Name                    string            `json:"name"`
-	UID                     types.UID         `json:"uid"`
-	Namespace               string            `json:"namespace"`
-	APIVersion              string            `json:"apiVersion"`
-	CreationTimestamp       metav1.Time       `json:"creationTimestamp"`
-	Containers              []v1.Container    `json:"containers"`
-	TerminationGracePeriods *int64            `json:"terminationGracePeriods"`
-	Volumes                 []v1.Volume       `json:"volumes"`
-	Labels                  map[string]string `json:"labels"`
+	Name   string            `json:"name"`
+	Kind   string            `json:"kind"`
+	Labels map[string]string `json:"labels"`
 }

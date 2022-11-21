@@ -22,23 +22,23 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 
 #### Applying k8s manifest
 
-> Litmus-2.14.0 (Stable) Cluster Scope manifest
+> Litmus-3.0-beta1 Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/2.14.0/litmus-2.14.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/dev-3.x/mkdocs/docs/3.0-beta1/litmus-3.0-beta1.yaml
 ```
 
 Or
 
-> Litmus-2.14.0 (Stable) Namespaced Scope manifest.
+> Litmus-3.0-beta1 Namespaced Scope manifest.
 
 ```bash
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/2.14.0/litmus-portal-crds-2.14.0.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/dev-3.x/mkdocs/docs/3.0-beta1/litmus-portal-crds-3.0-beta1.yml
 #Install ChaosCenter
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/2.14.0/litmus-namespaced-2.14.0.yaml -n litmus
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/dev-3.x/mkdocs/docs/3.0-beta1/litmus-namespaced-3.0-beta1.yaml -n litmus
 ```
 
 Or
@@ -46,7 +46,7 @@ Or
 > Master (Latest) Cluster scope. Install in litmus namespace by default.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/cluster-k8s-manifest.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/dev-3.x/litmus-portal/manifests/cluster-k8s-manifest.yml
 ```
 
 Or
@@ -57,9 +57,9 @@ Or
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/litmus-portal-crds.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/dev-3.x/litmus-portal/manifests/litmus-portal-crds.yml
 #Install ChaosCenter
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/manifests/namespace-k8s-manifest.yml -n litmus
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/dev-3.x/litmus-portal/manifests/namespace-k8s-manifest.yml -n litmus
 ```
 
 #### Configuration Options for Cluster scope.
