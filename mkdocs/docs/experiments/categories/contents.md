@@ -193,6 +193,36 @@ While Chaos Experiments under the Generic category offer the ability to induce c
     <td>Kills the cassandra pod</td>
     <td><a href="/litmus/experiments/categories/cassandra/cassandra-pod-delete">cassandra-pod-delete</a></td>
   </tr>
+  <tr>
+    <td>Spring Boot App Kill</td>
+    <td>Kill the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-app-kill">spring-boot-app-kill</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot CPU Stress</td>
+    <td>Stress the CPU of the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-cpu-stress">spring-boot-cpu-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Memory Stress</td>
+    <td>Stress the memory of the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-memory-stress">spring-boot-memory-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Latency </td>
+    <td>Inject latency to the spring boot application network</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-latency">spring-boot-latency</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Exception</td>
+    <td>Raise exceptions to the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-exceptions">spring-boot-exceptions</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Faults</td>
+    <td>It injects the multiple spring boot faults simultaneously on the target pods</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-faults">spring-boot-faults</a></td>
+  </tr>
 </table>
 
 <hr/>
