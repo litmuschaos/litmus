@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
-	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	kcorev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -45,7 +45,7 @@ func GetPodsFromWorkloads(workloads []types.Workload, client *kubernetes.Clients
 	return result, nil
 }
 
-func getPodsByAppKind(ns string, wldMap map[string][]string, allPods *corev1.PodList, client *kubernetes.Clientset, dynamicClient dynamic.Interface) ([]string, error) {
+func getPodsByAppKind(ns string, wldMap map[string][]string, allPods *kcorev1.PodList, client *kubernetes.Clientset, dynamicClient dynamic.Interface) ([]string, error) {
 	podsFromWld, err := getPodsFromWorkload(wldMap, allPods, dynamicClient)
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func getPodsByAppKind(ns string, wldMap map[string][]string, allPods *corev1.Pod
 	return append(podsFromWld, podsFromSvc...), nil
 }
 
-func getPodsFromWorkload(wld map[string][]string, allPods *corev1.PodList, dynamicClient dynamic.Interface) ([]string, error) {
+func getPodsFromWorkload(wld map[string][]string, allPods *kcorev1.PodList, dynamicClient dynamic.Interface) ([]string, error) {
 	var pods []string
 	for _, r := range allPods.Items {
 		ownerType, ownerName, err := getPodOwnerTypeAndName(&r, dynamicClient)
@@ -78,7 +78,7 @@ func getPodsFromWorkload(wld map[string][]string, allPods *corev1.PodList, dynam
 func getPodsFromServices(ns string, wld []string, client *kubernetes.Clientset) ([]string, error) {
 	var pods []string
 	for _, svcName := range wld {
-		svc, err := client.CoreV1().Services(ns).Get(context.Background(), svcName, v1.GetOptions{})
+		svc, err := client.kcorev1().Services(ns).Get(context.Background(), svcName, v1.GetOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -94,7 +94,7 @@ func getPodsFromServices(ns string, wld []string, client *kubernetes.Clientset) 
 			svcSelector += fmt.Sprintf(",%s=%s", k, v)
 		}
 
-		res, err := client.CoreV1().Pods(svc.Namespace).List(context.Background(), v1.ListOptions{LabelSelector: svcSelector})
+		res, err := client.kcorev1().Pods(svc.Namespace).List(context.Background(), v1.ListOptions{LabelSelector: svcSelector})
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +106,7 @@ func getPodsFromServices(ns string, wld []string, client *kubernetes.Clientset) 
 	return pods, nil
 }
 
-func getPodOwnerTypeAndName(pod *corev1.Pod, dynamicClient dynamic.Interface) (parentType, parentName string, err error) {
+func getPodOwnerTypeAndName(pod *kcorev1.Pod, dynamicClient dynamic.Interface) (parentType, parentName string, err error) {
 	for _, owner := range pod.GetOwnerReferences() {
 		parentName = owner.Name
 		if owner.Kind == "StatefulSet" || owner.Kind == "DaemonSet" {
@@ -168,8 +168,8 @@ func aggregateWorkloadsByNamespace(workloads []types.Workload) map[string]worklo
 	return result
 }
 
-func getAllPods(namespace string, client *kubernetes.Clientset) (*corev1.PodList, error) {
-	return client.CoreV1().Pods(namespace).List(context.Background(), v1.ListOptions{})
+func getAllPods(namespace string, client *kubernetes.Clientset) (*kcorev1.PodList, error) {
+	return client.kcorev1().Pods(namespace).List(context.Background(), v1.ListOptions{})
 }
 
 type workload struct {
