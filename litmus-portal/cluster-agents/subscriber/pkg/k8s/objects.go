@@ -4,16 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"os"
+	"strings"
+
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workloads"
 	"github.com/sirupsen/logrus"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
-	"os"
-	"strings"
 )
 
 var (
