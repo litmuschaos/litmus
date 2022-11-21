@@ -4,15 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workloads"
 	"os"
 	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
-	"github.com/sirupsen/logrus"
-
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/workloads"
+	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -69,7 +67,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 			}
 			ObjData = append(ObjData, KubeObj)
 		} else {
-			namespace, err := clientSet.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+			namespace, err := clientSet.CoreV1().Namespaces().List(context.TODO(), v1.ListOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -128,7 +126,7 @@ func getPodsFromWorkloads(resources []types.Workload, k8sClient *kubernetes.Clie
 func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, gvrList []schema.GroupVersionResource) ([]types.ObjectData, error) {
 	var kubeObjects []types.ObjectData
 	for _, gvr := range gvrList {
-		list, err := dynamicClient.Resource(gvr).Namespace(namespace).List(context.TODO(), metav1.ListOptions{})
+		list, err := dynamicClient.Resource(gvr).Namespace(namespace).List(context.TODO(), v1.ListOptions{})
 		if err != nil {
 			return kubeObjects, nil
 		}
