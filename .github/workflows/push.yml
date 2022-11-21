@@ -2,7 +2,7 @@ name: push-pipeline
 on:
   push:
     branches:
-      - dev-3.x
+      - master
       - ^v[0-9]*.[0-9]*.x$
     tags:
       - "*"
@@ -48,7 +48,7 @@ jobs:
               img_tag=${GITHUB_REF#refs/*/}
           else
               echo "non tag build"
-              img_tag="dev-3.x"
+              img_tag="ci"
           fi
           # This is a condition where image tag looks like "pull/<pullrequest-name>" during pull request build
           NEW_IMG_TAG=`echo $img_tag | sed "s/\//-/g"`
