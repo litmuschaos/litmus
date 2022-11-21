@@ -17,7 +17,7 @@
         <li> Ensure that Kubernetes Version > 1.16 </li>
         <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> </li>
         <li> Ensure that the <code> spring-boot-cpu-stress </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-cpu-stress/experiment.yaml">here</a></li>
-        <li>Chaos Monkey Spring Boot dependency should be present in application. It can be enabled by two ways:
+        <li>Chaos Monkey Spring Boot dependency should be present in the application. It can be enabled in two ways:
           <ol>
             <li>Add internal dependency inside the spring boot application
                 <ol>
@@ -155,8 +155,8 @@
       </tr>
       <tr>
         <td> CPU_LOAD_FRACTION </td>
-        <td> It contains fraction of cpu to be stressed, 0.95 equals 95%</td>
-        <td> default value is 0.9. It supports value in range [0.1,1.0]</td>
+        <td> It contains fraction of CPU to be stressed, Eg: 0.95 equals 95%</td>
+        <td> Default value is 0.9. It supports a value in range [0.1,1.0]</td>
       </tr>
     </table>
     
@@ -171,17 +171,17 @@
       <tr>
         <td> CM_LEVEL </td>
         <td> It contains number of requests are to be attacked, n value means nth request will be affected </td>
-        <td> Defaults value: 1, it lies in [1,10000] range </td>
+        <td> Default value: 1, it lies in [1,10000] range </td>
       </tr>
       <tr>
         <td> CM_WATCHED_CUSTOM_SERVICES </td>
         <td> It limits watched packages/classes/methods, it contains comma seperated list of fully qualified packages(class and/or method names)</td>
-        <td> ByDefault it is empty list, which means it target all services </td>
+        <td> Default is an empty list, which means it will target all services </td>
       </tr>
       <tr>
         <td> CM_WATCHERS </td>
         <td> It contains comma separated list of watchers from the following watchers list [controller, restController, service, repository, component, webClient] </td>
-        <td> ByDefault it is <code> restController </code></td>
+        <td> Default is <code> restController </code></td>
       </tr>
       <tr>
         <td> TOTAL_CHAOS_DURATION </td>
@@ -276,7 +276,7 @@ spec:
       spec:
         components:
           env:
-            # it contains fraction of used cpu. 0.95 equals 95%.
+            # it contains the fraction of the used CPU. Eg: 0.95 equals 95%.
             # it supports value in range [0.1,1.0]
             - name: CPU_LOAD_FRACTION
               value: '0.9'

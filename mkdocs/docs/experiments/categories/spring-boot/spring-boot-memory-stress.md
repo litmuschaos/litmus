@@ -276,7 +276,7 @@ spec:
       spec:
         components:
           env:
-            # it contains fraction of used cpu. 0.70 equals 70%.
+            # it contains the fraction of used CPU. Eg: 0.70 equals 70%.
             # it supports value in range [0.01,0.95]
             - name: MEMORY_FILL_FRACTION
               value: '0.70'

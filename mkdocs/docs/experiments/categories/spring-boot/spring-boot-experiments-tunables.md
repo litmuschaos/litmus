@@ -8,7 +8,7 @@ Use the following example to tune this:
 
 [embedmd]:# (./common/level.yaml yaml)
 ```yaml
-# it limits the number of requests are to be attacked
+# limits the number of requests to be attacked
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -31,7 +31,7 @@ spec:
             - name: CM_PORT
               value: '8080'
 
-            #it contains number of requests are to be attacked
+            # it contains the number of requests that are to be attacked.
             # n value means nth request will be affected
             - name: CM_LEVEL
               value: '1'

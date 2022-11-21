@@ -17,7 +17,7 @@ spec:
       spec:
         components:
           env:
-            # it contains fraction of used cpu. 0.95 equals 95%.
+            # it contains the fraction of the used CPU. Eg: 0.95 equals 95%.
             # it supports value in range [0.1,1.0]
             - name: CPU_LOAD_FRACTION
               value: '0.9'

@@ -17,7 +17,7 @@
         <li> Ensure that Kubernetes Version > 1.16 </li>
         <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> </li>
         <li> Ensure that the <code> spring-boot-app-kill </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-app-kill/experiment.yaml">here</a></li>
-        <li>Chaos Monkey Spring Boot dependency should be present in application. It can be enabled by two ways:
+        <li>Chaos Monkey Spring Boot dependency should be present in the application. It can be enabled in two ways:
           <ol>
             <li>Add internal dependency inside the spring boot application
                 <ol>
@@ -39,7 +39,7 @@
             </li>
             <li> Add as external dependency
                 <ol>
-                    <li>You can extend your existing application with the chaos-monkey and add it as an external dependency at startup, for this it is necessary to use the PropertiesLauncher of Spring Boot
+                    <li>You can extend your existing application with the chaos-monkey and add it as an external dependency at startup, for this, it is necessary to use the PropertiesLauncher of Spring Boot
                         ```maven
                         <dependency>
                             <groupId>de.codecentric</groupId>
@@ -165,18 +165,18 @@
       </tr>
       <tr>
         <td> CM_LEVEL </td>
-        <td> It contains number of requests are to be attacked, n value means nth request will be affected </td>
-        <td> Defaults value: 1, it lies in [1,10000] range </td>
+        <td> It contains the number of requests to be attacked, n value means the nth request will be affected </td>
+        <td> Default value is 1, it lies in [1,10000] range </td>
       </tr>
       <tr>
         <td> CM_WATCHED_CUSTOM_SERVICES </td>
-        <td> It limits watched packages/classes/methods, it contains comma seperated list of fully qualified packages(class and/or method names)</td>
-        <td> ByDefault it is empty list, which means it target all services </td>
+        <td> It limits watched packages/classes/methods by providing a comma-seperated list of fully qualified packages(class and/or method names)</td>
+        <td> Default is an empty list, which means it will target all services </td>
       </tr>
       <tr>
         <td> CM_WATCHERS </td>
         <td> It contains comma separated list of watchers from the following watchers list [controller, restController, service, repository, component, webClient] </td>
-        <td> ByDefault it is <code> restController </code></td>
+        <td> Default it is <code> restController </code></td>
       </tr>
       <tr>
         <td> SEQUENCE </td>

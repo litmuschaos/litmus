@@ -21,7 +21,7 @@ spec:
             - name: CM_EXCEPTIONS_TYPE
               value: 'java.lang.IllegalArgumentException'
 
-              # Argument of raised exception
+             # Argument of the raised exception
             - name: CM_EXCEPTIONS_ARGUMENTS
               value: 'java.lang.String:custom illegal argument exception'
 

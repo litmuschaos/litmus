@@ -200,22 +200,22 @@ While Chaos Experiments under the Generic category offer the ability to induce c
   </tr>
   <tr>
     <td>Spring Boot CPU Stress</td>
-    <td>stress the cpu the spring boot application</td>
+    <td>Stress the CPU of the spring boot application</td>
     <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-cpu-stress">spring-boot-cpu-stress</a></td>
   </tr>
   <tr>
     <td>Spring Boot Memory Stress</td>
-    <td>stress memory the spring boot application</td>
+    <td>Stress the memory of the spring boot application</td>
     <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-memory-stress">spring-boot-memory-stress</a></td>
   </tr>
   <tr>
     <td>Spring Boot Latency </td>
-    <td>Inject the network latency to the spring boot application</td>
+    <td>Inject latency to the spring boot application network</td>
     <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-latency">spring-boot-latency</a></td>
   </tr>
   <tr>
     <td>Spring Boot Exception</td>
-    <td>Raise the exceptions to the spring boot application</td>
+    <td>Raise exceptions to the spring boot application</td>
     <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-exceptions">spring-boot-exceptions</a></td>
   </tr>
   <tr>
