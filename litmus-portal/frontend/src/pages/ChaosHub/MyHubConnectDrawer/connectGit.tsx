@@ -32,6 +32,7 @@ import {
   GitHub,
   HubStatus,
   MyHubData,
+  UserPassword,
   SSHKey,
   SSHKeys,
 } from '../../../models/graphql/chaoshub';
@@ -81,6 +82,10 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
   const [sshKey, setSshKey] = useState<SSHKey>({
     privateKey: '',
     publicKey: '',
+  });
+  const [usernamePassword, setUsernamePassword] = useState<UserPassword>({
+    username: '',
+    password: '',
   });
 
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
@@ -172,10 +177,12 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
               ? AuthType.TOKEN
               : privateHub === 'ssh'
               ? AuthType.SSH
-              : AuthType.BASIC,
+              : privateHub === 'basic'
+              ? AuthType.BASIC
+              : AuthType.TOKEN,
             token: accessToken,
-            userName: 'user',
-            password: 'user',
+            userName: usernamePassword.username,
+            password: usernamePassword.password,
             sshPrivateKey: sshKey.privateKey,
             sshPublicKey: sshKey.publicKey,
           },
@@ -201,11 +208,12 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
               ? AuthType.TOKEN
               : privateHub === 'ssh'
               ? AuthType.SSH
-              : AuthType.BASIC,
-
+              : privateHub === 'basic'
+              ? AuthType.BASIC
+              : AuthType.TOKEN,
             token: accessToken,
-            userName: 'user',
-            password: 'user',
+            userName: usernamePassword.username,
+            password: usernamePassword.password,
             sshPrivateKey: sshKey.privateKey,
             sshPublicKey: sshKey.publicKey,
           },
@@ -273,6 +281,12 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
       if (hubData.authType?.toLowerCase() === AuthType.TOKEN.toLowerCase()) {
         setPrivateHub('token');
         setAccessToken(hubData.token);
+      } else if (hubData.authType?.toLowerCase() === AuthType.BASIC.toLowerCase()) {
+        setPrivateHub('basic');
+        setUsernamePassword({
+          username: hubData.username,
+          password: hubData.password,
+        });
       } else if (
         hubData.authType?.toLowerCase() === AuthType.SSH.toLowerCase()
       ) {
@@ -362,8 +376,7 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
                         onChange={(e) => {
                           if (e.target.value === 'ssh') {
                             generateSSHKey();
-                          }
-                          if (e.target.value === 'token') {
+                          } else {
                             setSshKey({
                               privateKey: '',
                               publicKey: '',
@@ -476,6 +489,52 @@ const ConnectGit: React.FC<ConnectGitProp> = ({
                                 )}
                               </div>
                             </div>
+                          </>
+                        ) : null}
+                        <FormControlLabel
+                          value="basic"
+                          control={
+                            <Radio
+                              classes={{
+                                root: classes.radio,
+                                checked: classes.checked,
+                              }}
+                            />
+                          }
+                          label={
+                            <Typography>
+                              {t('myhub.connectHubPage.usernamePassword')}
+                            </Typography>
+                          }
+                        />
+                        {privateHub === 'basic' ? (
+                          <>
+                            <InputField
+                              data-cy="basic"
+                              label="Username"
+                              value={usernamePassword.username}
+                              helperText={
+                                validateStartEmptySpacing(usernamePassword.username)
+                                  ? t('myhub.validationEmptySpace')
+                                  : ''
+                              }
+                              variant={
+                                validateStartEmptySpacing(usernamePassword.username)
+                                  ? 'error'
+                                  : 'primary'
+                              }
+                              required
+                              onChange={(e) => setUsernamePassword({username: e.target.value, password: usernamePassword.password})}
+                            />
+                            <InputField
+                              data-cy="basic"
+                              label="Password"
+                              type="password"
+                              value={usernamePassword.password}
+                              variant="primary"
+                              required
+                              onChange={(e) => setUsernamePassword({username: usernamePassword.username, password: e.target.value})}
+                            />
                           </>
                         ) : null}
                       </RadioGroup>

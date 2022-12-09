@@ -7,6 +7,11 @@ export interface SSHKeys {
   generateSSHKey: SSHKey;
 }
 
+export interface UserPassword {
+  username: string;
+  password: string;
+}
+
 export enum HubType {
   git = 'GIT',
   remote = 'REMOTE',
