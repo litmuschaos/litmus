@@ -171,6 +171,9 @@ const AddProbe: React.FC<AddProbeProps> = ({
     ) {
       delete properties.probePollingInterval;
     }
+    if (Number.isNaN(properties.retry) || properties.retry === '') {
+      delete properties.retry;
+    }
     probeData['runProperties'] = properties;
     setProbeData(probeData);
     if (isEdit) {
