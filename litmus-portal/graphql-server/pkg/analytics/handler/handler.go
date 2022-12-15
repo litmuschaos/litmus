@@ -1237,7 +1237,7 @@ func ListWorkflowStats(projectID string, filter model.TimeFrequency, showWorkflo
 		for monthsAgo := now.AddDate(0, -5, 0); monthsAgo.Before(now) || monthsAgo.Equal(now); monthsAgo = monthsAgo.AddDate(0, 1, 0) {
 			// Storing the timestamp of first day of the month
 			date := float64(time.Date(monthsAgo.Year(), monthsAgo.Month(), 1, 0, 0, 0, 0, time.Local).Unix())
-			statsMap[string(int(monthsAgo.Month())%12)] = model.WorkflowStatsResponse{
+			statsMap[monthsAgo.Month().String()] = model.WorkflowStatsResponse{
 				Date:  date * 1000,
 				Value: 0,
 			}
