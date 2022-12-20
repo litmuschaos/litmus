@@ -203,7 +203,7 @@ rules:
 
 - apiGroups: ["apps"]
   resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-  verbs: ["get","list", "delete"]
+  verbs: ["get","list", "delete","deletecollection"]
 
 - apiGroups: ["argoproj.io"]
   resources: ["workflows","workflows/finalizers","workflowtemplates", "workflowtemplates/finalizers","cronworkflows","cronworkflows/finalizers","clusterworkflowtemplates","clusterworkflowtemplates/finalizers","rollouts"]
