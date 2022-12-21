@@ -3,6 +3,7 @@ package cluster
 import (
 	"errors"
 	"fmt"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )

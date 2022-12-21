@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,6 +12,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	"gopkg.in/yaml.v2"
 

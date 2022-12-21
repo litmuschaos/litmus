@@ -3,8 +3,9 @@ package mongodb
 import (
 	"context"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"

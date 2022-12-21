@@ -3,9 +3,10 @@ package projects
 import (
 	"context"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"log"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 

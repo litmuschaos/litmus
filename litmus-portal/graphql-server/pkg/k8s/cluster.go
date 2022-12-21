@@ -5,10 +5,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
