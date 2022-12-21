@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -239,7 +238,7 @@ func SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, username *st
 	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
 
 	if workflowNamespace == "" {
-		workflowNamespace = os.Getenv("AGENT_NAMESPACE")
+		workflowNamespace = utils.Config.AgentNamespace
 	}
 	clusterHandler.SendRequestToSubscriber(clusterOps.SubscriberRequests{
 		K8sManifest:  workflow.WorkflowManifest,

@@ -2,7 +2,8 @@ package mongodb
 
 import (
 	"context"
-	"os"
+	"fmt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -76,13 +77,13 @@ var (
 
 func MongoConnection() (*mongo.Client, error) {
 	var (
-		dbServer   = os.Getenv("DB_SERVER")
-		dbUser     = os.Getenv("DB_USER")
-		dbPassword = os.Getenv("DB_PASSWORD")
+		dbServer   = utils.Config.DbServer
+		dbUser     = utils.Config.DbUser
+		dbPassword = utils.Config.DbPassword
 	)
 
 	if dbServer == "" || dbUser == "" || dbPassword == "" {
-		logrus.Fatal("DB configuration failed")
+		return nil, fmt.Errorf("missing required DB configuration: server=%q, user=%q, password=%q", dbServer, dbUser, dbPassword)
 	}
 
 	credential := options.Credential{
@@ -93,7 +94,7 @@ func MongoConnection() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, err
 	}
 
 	ctx, _ := context.WithTimeout(backgroundContext, ConnectionTimeout)
@@ -101,9 +102,9 @@ func MongoConnection() (*mongo.Client, error) {
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, err
 	} else {
-		logrus.Print("Connected To MongoDB")
+		logrus.Infof("Connected To MongoDB")
 	}
 
 	return client, nil

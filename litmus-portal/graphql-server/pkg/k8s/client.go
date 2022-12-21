@@ -1,8 +1,7 @@
 package k8s
 
 import (
-	"os"
-
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -11,13 +10,13 @@ import (
 )
 
 func GetKubeConfig() (*rest.Config, error) {
-	KubeConfig := os.Getenv("KUBECONFIG")
+	kubeConfig := utils.Config.KubeConfig
 	// Use in-cluster config if kubeconfig path is not specified
-	if KubeConfig == "" {
+	if kubeConfig == "" {
 		return rest.InClusterConfig()
 	}
 
-	return clientcmd.BuildConfigFromFlags("", KubeConfig)
+	return clientcmd.BuildConfigFromFlags("", kubeConfig)
 }
 
 func GetGenericK8sClient() (*kubernetes.Clientset, error) {

@@ -18,7 +18,6 @@ import (
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -95,7 +94,7 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 		return "", err
 	}
 
-	response, err := handlers.GetManifestWithClusterID(clusterID, accessKey)
+	response, err := cluster.GetManifestWithClusterID(clusterID, accessKey)
 	if err != nil {
 		return "", err
 	}

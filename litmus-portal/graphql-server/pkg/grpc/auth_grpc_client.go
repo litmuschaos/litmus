@@ -3,8 +3,6 @@ package grpc
 import (
 	"context"
 	"errors"
-	"os"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
@@ -14,8 +12,8 @@ import (
 // GetAuthGRPCSvcClient returns an RPC client for Authentication service
 func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient,
 	*grpc.ClientConn) {
-	litmusAuthGrpcEndpoint := os.Getenv("LITMUS_AUTH_GRPC_ENDPOINT")
-	litmusAuthGrpcPort := os.Getenv("LITMUS_AUTH_GRPC_PORT")
+	litmusAuthGrpcEndpoint := utils.Config.LitmusAuthGrpcEndpoint
+	litmusAuthGrpcPort := utils.Config.LitmusAuthGrpcPort
 
 	if litmusAuthGrpcEndpoint == "" {
 		litmusAuthGrpcEndpoint = utils.DefaultLitmusAuthEndpoint
@@ -33,7 +31,7 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient,
 }
 
 // ValidatorGRPCRequest sends a request to Authentication server to ensure
-//user permission over the project
+// user permission over the project
 func ValidatorGRPCRequest(client protos.AuthRpcServiceClient,
 	jwt string, projectID string, requiredRoles []string, invitation string) error {
 

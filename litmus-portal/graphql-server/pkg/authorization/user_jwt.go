@@ -3,13 +3,10 @@ package authorization
 import (
 	"errors"
 	"fmt"
-	"log"
-	"os"
-
 	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"log"
 )
-
-var secret = os.Getenv("JWT_SECRET")
 
 // UserValidateJWT validates the cluster jwt
 func UserValidateJWT(token string) (jwt.MapClaims, error) {
@@ -17,7 +14,7 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 		if ok := token.Method.Alg() == jwt.SigningMethodHS512.Alg(); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(secret), nil
+		return []byte(utils.Config.JwtSecret), nil
 	})
 
 	if err != nil {
@@ -40,12 +37,12 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 // GetUsername returns the username from the jwt token
 func GetUsername(token string) (string, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secret), nil
+		return []byte(utils.Config.JwtSecret), nil
 	})
 
 	if err != nil {
 		log.Print("USER JWT ERROR: ", err)
-		return "", errors.New("Invalid Token")
+		return "", errors.New("invalid Token")
 	}
 
 	claims, ok := tkn.Claims.(jwt.MapClaims)
@@ -53,5 +50,5 @@ func GetUsername(token string) (string, error) {
 		return claims["username"].(string), nil
 	}
 
-	return "", errors.New("Invalid Token")
+	return "", errors.New("invalid Token")
 }

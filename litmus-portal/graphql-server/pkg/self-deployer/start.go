@@ -3,11 +3,13 @@ package self_deployer
 import (
 	"encoding/json"
 	"log"
-	"os"
 	"strings"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
+
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -17,12 +19,13 @@ import (
 func StartDeployer(projectID string) {
 	var (
 		isAllManifestInstall  = true
-		deployerNamespace     = os.Getenv("AGENT_NAMESPACE")
-		agentScope            = os.Getenv("AGENT_SCOPE")
-		skipSSL               = os.Getenv("SKIP_SSL_VERIFY")
-		selfAgentNodeSelector = os.Getenv("SELF_AGENT_NODE_SELECTOR")
-		selfAgentTolerations  = os.Getenv("SELF_AGENT_TOLERATIONS")
-		failedManifest        string
+		deployerNamespace     = utils.Config.AgentNamespace
+		agentScope            = utils.Config.AgentScope
+		skipSSL               = utils.Config.SkipSslVerify
+		selfAgentNodeSelector = utils.Config.SelfAgentNodeSelector
+		selfAgentTolerations  = utils.Config.SelfAgentTolerations
+
+		failedManifest string
 	)
 
 	tolerations := []*model.Toleration{}
@@ -66,7 +69,7 @@ func StartDeployer(projectID string) {
 		return
 	}
 
-	response, statusCode, err := handlers.GetManifest(resp.Token)
+	response, statusCode, err := cluster.GetManifest(resp.Token)
 	if err != nil {
 		log.Print("ERROR", err)
 	}

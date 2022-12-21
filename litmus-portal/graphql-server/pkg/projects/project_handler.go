@@ -3,8 +3,8 @@ package projects
 import (
 	"context"
 	"fmt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"log"
-	"os"
 	"strings"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -42,7 +42,7 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 func ProjectInitializer(ctx context.Context, projectID string, role string) error {
 
 	var (
-		selfCluster = os.Getenv("SELF_AGENT")
+		selfCluster = utils.Config.SelfAgent
 		bl_true     = true
 	)
 
@@ -50,7 +50,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 		ProjectID:  projectID,
 		HubName:    "Litmus ChaosHub",
 		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
-		RepoBranch: os.Getenv("HUB_BRANCH_NAME"),
+		RepoBranch: utils.Config.HubBranchName,
 	}
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")

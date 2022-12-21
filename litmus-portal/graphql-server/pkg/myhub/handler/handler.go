@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"fmt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"io"
 	"io/ioutil"
 	"log"
@@ -198,7 +199,7 @@ func IsFileExisting(path string) (bool, error) {
 	return true, nil
 }
 
-//DownloadRemoteHub is used to download a remote hub from the url provided by the user
+// DownloadRemoteHub is used to download a remote hub from the url provided by the user
 func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
 	//create the destination directory where the hub will be downloaded
 	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
@@ -224,7 +225,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
 	}
 
 	//validate the content length (in bytes)
-	maxSize, err := strconv.Atoi(os.Getenv("REMOTE_HUB_MAX_SIZE"))
+	maxSize, err := strconv.Atoi(utils.Config.RemoteHubMaxSize)
 	if err != nil {
 		return err
 	}
@@ -265,7 +266,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
 	return nil
 }
 
-//UnzipRemoteHub is used to unzip the zip file
+// UnzipRemoteHub is used to unzip the zip file
 func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteMyHub) error {
 	extractPath := defaultPath + hubDetails.ProjectID
 	zipReader, err := zip.OpenReader(zipPath)
@@ -280,8 +281,8 @@ func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteMyHub) error {
 	return nil
 }
 
-//CopyZipItems is used to copy the content from the extracted zip file to
-//the ChaosHub directory
+// CopyZipItems is used to copy the content from the extracted zip file to
+// the ChaosHub directory
 func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 	path := filepath.Join(extractPath, chartsPath)
 	if !strings.HasPrefix(path, filepath.Clean(extractPath)+string(os.PathSeparator)) {
@@ -311,7 +312,7 @@ func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 	return nil
 }
 
-//SyncRemoteRepo is used to sync the remote ChaosHub
+// SyncRemoteRepo is used to sync the remote ChaosHub
 func SyncRemoteRepo(hubData model.CloningInput) error {
 	hubPath := defaultPath + hubData.ProjectID + "/" + hubData.HubName
 	err := os.RemoveAll(hubPath)
