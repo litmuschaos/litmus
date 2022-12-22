@@ -35,7 +35,7 @@
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-http-backend": "^1.0.19",
     "js-yaml": "^3.14.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jspdf": "^2.1.1",
     "jspdf-autotable": "^3.5.13",
     "litmus-ui": "1.6.1",
