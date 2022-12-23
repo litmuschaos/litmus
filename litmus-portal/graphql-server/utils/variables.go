@@ -1,12 +1,5 @@
 package utils
 
-var (
-	DefaultLitmusAuthRPCPort  = ":3030"
-	DefaultLitmusAuthEndpoint = "localhost"
-	DefaultHTTPPort           = "8080"
-	DefaultRPCPort            = "8000"
-)
-
 type Configurations struct {
 	Version                     string `required:"true"`
 	AgentDeployments            string `required:"true" split_words:"true"`
@@ -36,15 +29,15 @@ type Configurations struct {
 	ChaosCenterUiEndpoint       string `split_words:"true"`
 	TlsCertB64                  string `split_words:"true"`
 	TlsSecretName               string `split_words:"true"`
-	LitmusAuthGrpcEndpoint      string `split_words:"true"`
-	LitmusAuthGrpcPort          string `split_words:"true"`
-	KubeConfig                  string `split_words:"true"`
+	LitmusAuthGrpcEndpoint      string `split_words:"true" default:"localhost"`
+	LitmusAuthGrpcPort          string `split_words:"true" default:":3030"`
+	KubeConfigFilePath          string `split_words:"true"`
 	RemoteHubMaxSize            string `split_words:"true"`
 	SkipSslVerify               string `split_words:"true"`
 	SelfAgentNodeSelector       string `split_words:"true"`
 	SelfAgentTolerations        string `split_words:"true"`
-	HttpPort                    string `split_words:"true"`
-	RpcPort                     string `split_words:"true"`
+	HttpPort                    string `split_words:"true" default:"8080"`
+	RpcPort                     string `split_words:"true" default:"8000"`
 }
 
 var Config Configurations

@@ -10,7 +10,7 @@ import (
 )
 
 func GetKubeConfig() (*rest.Config, error) {
-	kubeConfig := utils.Config.KubeConfig
+	kubeConfig := utils.Config.KubeConfigFilePath
 	// Use in-cluster config if kubeconfig path is not specified
 	if kubeConfig == "" {
 		return rest.InClusterConfig()

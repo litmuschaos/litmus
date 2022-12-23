@@ -87,7 +87,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	go startGRPCServer(utils.Config.LitmusAuthGrpcPort) // start GRPC server
+	go startGRPCServer(utils.Config.RpcPort) // start GRPC server
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})

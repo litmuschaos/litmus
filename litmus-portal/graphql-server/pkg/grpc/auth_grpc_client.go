@@ -11,19 +11,8 @@ import (
 )
 
 // GetAuthGRPCSvcClient returns an RPC client for Authentication service
-func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient,
-	*grpc.ClientConn) {
-	litmusAuthGrpcEndpoint := utils.Config.LitmusAuthGrpcEndpoint
-	litmusAuthGrpcPort := utils.Config.LitmusAuthGrpcPort
-
-	if litmusAuthGrpcEndpoint == "" {
-		litmusAuthGrpcEndpoint = utils.DefaultLitmusAuthEndpoint
-	}
-	if litmusAuthGrpcPort == "" {
-		litmusAuthGrpcPort = utils.DefaultLitmusAuthRPCPort
-	}
-
-	conn, err := grpc.Dial(litmusAuthGrpcEndpoint+litmusAuthGrpcPort, grpc.WithInsecure(),
+func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *grpc.ClientConn) {
+	conn, err := grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithInsecure(),
 		grpc.WithBlock())
 	if err != nil {
 		logrus.Fatalf("did not connect: %s", err)
