@@ -34,18 +34,18 @@ const InfoSection: React.FC<InfoSectionProps> = ({
           {/* Individual Column for infoStats */}
           <div>
             <Typography className={classes.infoHeader}>
-              Workflow details :
+              Chaos Scenario details :
             </Typography>
             <Typography>
               Name :{' '}
               <span className={classes.infoHint} data-cy="infoWorkflowName">
-                {data.ListWorkflow.workflows[0].workflow_name}
+                {data.listWorkflows.workflows[0].workflowName}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
               <span className={classes.infoHint} data-cy="infoWorkflowId">
-                {data.ListWorkflow.workflows[0].workflow_id}
+                {data.listWorkflows.workflows[0].workflowID}
               </span>
             </Typography>
             {data && (
@@ -57,7 +57,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                 >
                   {
                     YAML.parse(
-                      data?.ListWorkflow.workflows[0].workflow_manifest
+                      data?.listWorkflows.workflows[0].workflowManifest
                     ).metadata.labels.subject
                   }
                 </span>
@@ -72,7 +72,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
                 >
                   {
                     YAML.parse(
-                      data?.ListWorkflow.workflows[0].workflow_manifest
+                      data?.listWorkflows.workflows[0].workflowManifest
                     ).metadata.namespace
                   }
                 </span>
@@ -82,17 +82,19 @@ const InfoSection: React.FC<InfoSectionProps> = ({
 
           {/* Column 2 */}
           <div>
-            <Typography className={classes.infoHeader}>Agent :</Typography>
+            <Typography className={classes.infoHeader}>
+              Chaos Delegate :
+            </Typography>
             <Typography>
               Name :{' '}
               <span className={classes.infoHint} data-cy="infoAgentName">
-                {data.ListWorkflow.workflows[0].cluster_name}
+                {data.listWorkflows.workflows[0].clusterName}
               </span>
             </Typography>
             <Typography>
               Id :{' '}
               <span className={classes.infoHint} data-cy="infoClusterId">
-                {data.ListWorkflow.workflows[0].cluster_id}
+                {data.listWorkflows.workflows[0].clusterID}
               </span>
             </Typography>
           </div>
@@ -105,34 +107,36 @@ const InfoSection: React.FC<InfoSectionProps> = ({
               Last Run :{' '}
               <span className={classes.infoHint}>
                 {timeDifferenceForDate(
-                  data.ListWorkflow.workflows[0].updated_at
+                  data.listWorkflows.workflows[0].updatedAt
                 )}
               </span>
             </Typography>
             <Typography data-cy="infoWorkflowNextRun">
               Next Run :{' '}
-              {data.ListWorkflow.workflows[0].cronSyntax ? (
+              {data.listWorkflows.workflows[0].cronSyntax ? (
                 <span className={classes.infoHint}>
                   {parser
-                    .parseExpression(data.ListWorkflow.workflows[0].cronSyntax)
+                    .parseExpression(data.listWorkflows.workflows[0].cronSyntax)
                     .next()
                     .toString()}
                 </span>
               ) : (
-                <span className={classes.infoHint}>Non cron workflow</span>
+                <span className={classes.infoHint}>
+                  Non Cron Chaos Scenario
+                </span>
               )}
             </Typography>
           </div>
           {/* Column 4 */}
           <div className={classes.regularity} data-cy="infoWorkflowRegularity">
             <Typography className={classes.infoHeader}>Regularity :</Typography>
-            {data.ListWorkflow.workflows[0].cronSyntax === '' ? (
-              <Typography>Non cron workflow</Typography>
+            {data.listWorkflows.workflows[0].cronSyntax === '' ? (
+              <Typography>Non Cron Chaos Scenario</Typography>
             ) : (
-              data.ListWorkflow.workflows[0].cronSyntax !== undefined && (
+              data.listWorkflows.workflows[0].cronSyntax !== undefined && (
                 <Typography>
                   {cronstrue.toString(
-                    data.ListWorkflow.workflows[0].cronSyntax
+                    data.listWorkflows.workflows[0].cronSyntax
                   )}
                 </Typography>
               )
@@ -141,8 +145,8 @@ const InfoSection: React.FC<InfoSectionProps> = ({
         </div>
         {showMore && (
           <WorkflowStats
-            workflowID={data.ListWorkflow.workflows[0].workflow_id}
-            isCron={data.ListWorkflow.workflows[0].cronSyntax !== ''}
+            workflowID={data.listWorkflows.workflows[0].workflowID}
+            isCron={data.listWorkflows.workflows[0].cronSyntax !== ''}
             noOfWorkflowRuns={workflowRunLength ?? 0}
           />
         )}

@@ -44,6 +44,8 @@ spec:
               memory: 250Mi
           command:
             - chaos-operator
+          args:
+            - -leader-elect=true
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE

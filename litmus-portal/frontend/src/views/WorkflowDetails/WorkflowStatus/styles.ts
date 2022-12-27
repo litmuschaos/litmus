@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   statusText: {
-    fontSize: '1.5rem',
+    fontSize: '1rem',
   },
 
   '@global': {

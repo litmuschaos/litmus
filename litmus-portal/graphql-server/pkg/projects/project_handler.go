@@ -46,7 +46,8 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 		bl_true     = true
 	)
 
-	defaultHub := model.CreateMyHub{
+	defaultHub := model.CreateChaosHubRequest{
+		ProjectID:  projectID,
 		HubName:    "Litmus ChaosHub",
 		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 		RepoBranch: os.Getenv("HUB_BRANCH_NAME"),
@@ -54,7 +55,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	//TODO: Remove goroutine after adding hub optimisations
-	go myhub.AddMyHub(context.Background(), defaultHub, projectID)
+	go myhub.AddChaosHub(context.Background(), defaultHub)
 
 	_, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
 		IsDefault:         bl_true,

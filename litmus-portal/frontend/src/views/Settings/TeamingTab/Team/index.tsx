@@ -11,14 +11,18 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core';
-import { EditableText, Search } from 'litmus-ui';
-import React, { useEffect, useState } from 'react';
+import { ButtonOutlined, EditableText, Search } from 'litmus-ui';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import Loader from '../../../../components/Loader';
 import config from '../../../../config';
 import Center from '../../../../containers/layouts/Center';
 // import { GET_PROJECT, UPDATE_PROJECT_NAME } from '../../../../graphql';
 import { Member, Project } from '../../../../models/graphql/user';
+import useActions from '../../../../redux/actions';
+import * as TabActions from '../../../../redux/actions/tabs';
+import { RootState } from '../../../../redux/reducers';
 import { getToken, getUserId } from '../../../../utils/auth';
 import { getProjectID } from '../../../../utils/getSearchParams';
 import Invitation from '../Invitation';
@@ -73,6 +77,8 @@ const TeamingTab: React.FC = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const theme = useTheme();
+  const scrollToRef = useRef<HTMLInputElement>();
+  const tabs = useActions(TabActions);
 
   const projectID = getProjectID();
 
@@ -84,11 +90,18 @@ const TeamingTab: React.FC = () => {
   // for response data
   const [accepted, setAccepted] = useState<Member[]>([]);
   const [notAccepted, setNotAccepted] = useState<Member[]>([]);
-
   const [activeTab, setActiveTab] = useState<number>(0);
 
-  const handleChange = (event: React.ChangeEvent<{}>, actTab: number) => {
+  const invitationTabValue = useSelector(
+    (state: RootState) => state.tabNumber.invitation
+  );
+
+  const handleLocalChange = (event: React.ChangeEvent<{}>, actTab: number) => {
     setActiveTab(actTab);
+  };
+
+  const handleChange = (actTab: number) => {
+    tabs.changeInvitationTabs(actTab);
   };
   const getProjectDetails = () => {
     fetch(`${config.auth.url}/get_project/${projectID}`, {
@@ -161,7 +174,9 @@ const TeamingTab: React.FC = () => {
     ? notAccepted &&
       notAccepted
         .filter((dataRow) =>
-          dataRow.UserName.toLowerCase().includes(filters.search.toLowerCase())
+          dataRow?.UserName?.toLowerCase().includes(
+            filters.search.toLowerCase()
+          )
         )
         .filter((dataRow: Member) => {
           if (filters.role === 'all') return true;
@@ -214,27 +229,30 @@ const TeamingTab: React.FC = () => {
     let projectInvitation = 0;
     let projectOther = 0;
     projects.forEach((project) => {
-      project.Members.forEach((member: Member) => {
-        if (member.UserID === userID && member.Role === 'Owner') {
-          projectOwner++;
-        } else if (
-          member.UserID === userID &&
-          member.Invitation === 'Pending'
-        ) {
-          projectInvitation++;
-        } else if (
-          member.UserID === userID &&
-          member.Role !== 'Owner' &&
-          member.Invitation === 'Accepted'
-        ) {
-          projectOther++;
-        }
-      });
+      const projectMembers = project.Members;
+      if (projectMembers) {
+        projectMembers.forEach((member: Member) => {
+          if (member.UserID === userID && member.Role === 'Owner') {
+            projectOwner++;
+          } else if (
+            member.UserID === userID &&
+            member.Invitation === 'Pending'
+          ) {
+            projectInvitation++;
+          } else if (
+            member.UserID === userID &&
+            member.Role !== 'Owner' &&
+            member.Invitation === 'Accepted'
+          ) {
+            projectOther++;
+          }
+        });
+      }
     });
     setProjectOwnerCount(projectOwner);
     setInvitationCount(projectInvitation);
     setProjectOtherCount(projectOther);
-  }, [projects, deleteMemberOpen, inviteNewOpen, activeTab]);
+  }, [projects, deleteMemberOpen, inviteNewOpen, invitationTabValue]);
 
   const updateProjectName = (value: string) => {
     fetch(`${config.auth.url}/update_projectname`, {
@@ -303,13 +321,25 @@ const TeamingTab: React.FC = () => {
               </div>
             </Paper>
             <Paper className={classes.teamInfo} elevation={0}>
-              <div className={classes.invitationButton}>
-                <div className={classes.invitationButtonFlex}>
-                  {t('settings.teamingTab.invitations')}
-                  <Typography data-cy="invitationsCount">
-                    {invitationsCount}
-                  </Typography>
-                </div>
+              <div className={classes.teamInfoFlex}>
+                <ButtonOutlined
+                  onClick={() => {
+                    if (scrollToRef.current) {
+                      scrollToRef.current.scrollIntoView({
+                        behavior: 'smooth',
+                      });
+                      handleChange(1);
+                    }
+                  }}
+                  className={classes.invitationButton}
+                >
+                  <div className={classes.invitationButtonFlex}>
+                    {t('settings.teamingTab.invitations')}
+                    <Typography data-cy="invitationsCount">
+                      {invitationsCount}
+                    </Typography>
+                  </div>
+                </ButtonOutlined>
               </div>
               <Typography>{t('settings.teamingTab.manageTeam')}</Typography>
             </Paper>
@@ -408,7 +438,7 @@ const TeamingTab: React.FC = () => {
                 </Toolbar>
                 <Tabs
                   value={activeTab}
-                  onChange={handleChange}
+                  onChange={handleLocalChange}
                   TabIndicatorProps={{
                     style: {
                       backgroundColor: theme.palette.primary.main,
@@ -473,7 +503,7 @@ const TeamingTab: React.FC = () => {
             </div>
           </div>
           <div>
-            <Paper className={classes.invitations}>
+            <Paper ref={scrollToRef} className={classes.invitations}>
               <Typography className={classes.inviteHeading}>
                 {t('settings.teamingTab.invitedProject')}
               </Typography>

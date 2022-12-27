@@ -29,13 +29,20 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
     allowPrivilegeEscalation: true
     # Allow core volume types.
     volumes:
+        # To mount script files/templates like ssm-docs in experiment
         - 'configMap'
+        # Used for chaos injection like io chaos
         - 'emptyDir'
         - 'projected'
+        # To authenticate with different cloud providers
         - 'secret'
+        # To derive the experiment pod name in the experimemnt
         - 'downwardAPI'
         # Assume that persistentVolumes set up by the cluster admin are safe to use.
         - 'persistentVolumeClaim'
+        # To mount the socket path directory used to perform container runtime operations
+        - 'hostPath'
+
     allowedHostPaths:
         # substitutes this path with an appropriate socket path
         # ex: '/var/run/docker.sock', '/run/containerd/containerd.sock', '/run/crio/crio.sock'
@@ -43,11 +50,17 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
         # substitutes this path with an appropriate container path
         # ex: '/var/lib/docker/containers', '/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io', '/var/lib/containers/storage/overlay/'
         - pathPrefix: "/var/lib/docker/containers"
+
     allowedCapabilities:
+        # NET_ADMIN & SYS_ADMIN: used in network chaos experiments to perform
+        # network operations (running tc command in network ns of target container). 
         - "NET_ADMIN"
+        # SYS_ADMIN: used in stress chaos experiment to perform cgroup operations.
         - "SYS_ADMIN"
     hostNetwork: false
     hostIPC: false
+        # To run fault injection on a target container using pid namespace.
+        # It is used in stress, network, dns and http experiments. 
     hostPID: true
     seLinux:
         # This policy assumes the nodes are using AppArmor rather than SELinux.

@@ -21,19 +21,18 @@ const Settings = lazy(() => import('../../pages/Settings'));
 const UsageStatistics = lazy(() => import('../../pages/UsageStatistics'));
 const Targets = lazy(() => import('../../pages/Targets'));
 const EditSchedule = lazy(() => import('../../pages/EditSchedule'));
-const SetNewSchedule = lazy(() => import('../../pages/EditSchedule/Schedule'));
 const ConnectTargets = lazy(() => import('../../pages/ConnectTarget'));
 const WorkflowInfoStats = lazy(() => import('../../pages/WorkflowInfoStats'));
 const ObservabilityDashboard = lazy(
   () => import('../../pages/ObservabilityPage')
 );
-const DataSourceConfigurePage = lazy(
-  () => import('../../pages/ConfigureDataSources')
-);
-const ChooseAndConfigureDashboards = lazy(
-  () => import('../../pages/ChooseAndConfigureDashboards')
-);
-const DashboardPage = lazy(() => import('../../pages/MonitoringDashboard'));
+// const DataSourceConfigurePage = lazy(
+//   () => import('../../pages/ConfigureDataSources')
+// );
+// const ChooseAndConfigureDashboards = lazy(
+//   () => import('../../pages/ChooseAndConfigureDashboards')
+// );
+// const DashboardPage = lazy(() => import('../../pages/MonitoringDashboard'));
 const MyHub = lazy(() => import('../../pages/ChaosHub'));
 const ChaosChart = lazy(() => import('../../views/MyHub/MyHubCharts'));
 const MyHubExperiment = lazy(() => import('../../views/MyHub/MyHubExperiment'));
@@ -170,13 +169,13 @@ const Routes: React.FC = () => {
             <Switch>
               <Route exact path="/home" component={HomePage} />
               <Redirect exact path="/" to="/home" />
-              <Route exact path="/workflows" component={Workflows} />
+              <Route exact path="/scenarios" component={Workflows} />
               <Route
                 exact
                 path="/analytics"
                 component={ObservabilityDashboard}
               />
-              <Route
+              {/* <Route
                 exact
                 path="/analytics/datasource/create"
                 component={() => <DataSourceConfigurePage configure={false} />}
@@ -202,26 +201,21 @@ const Routes: React.FC = () => {
                 exact
                 path="/analytics/monitoring-dashboard"
                 component={() => <DashboardPage />}
-              />
-              <Route exact path="/create-workflow" component={CreateWorkflow} />
+              /> */}
+              <Route exact path="/create-scenario" component={CreateWorkflow} />
               <Route
                 exact
-                path="/workflows/:workflowRunId"
+                path="/scenarios/:workflowRunID"
                 component={WorkflowDetails}
               />
               <Route
                 exact
-                path="/workflows/schedule/:scheduleProjectID/:workflowName"
+                path="/scenarios/schedule/:scheduleProjectID/:workflowName"
                 component={EditSchedule}
               />
               <Route
                 exact
-                path="/workflows/schedule/:scheduleProjectID/:workflowName/set"
-                component={SetNewSchedule}
-              />
-              <Route
-                exact
-                path="/analytics/workflowStatistics/:workflowId"
+                path="/analytics/scenarioStatistics/:workflowID"
                 component={WorkflowInfoStats}
               />
               <Route exact path="/community" component={Community} />
@@ -244,7 +238,7 @@ const Routes: React.FC = () => {
                   }}
                 />
               )}
-              {role === UserRole.admin ? (
+              {role === UserRole.ADMIN ? (
                 <Route path="/usage-statistics" component={UsageStatistics} />
               ) : (
                 <Redirect
@@ -257,8 +251,8 @@ const Routes: React.FC = () => {
               <Route exact path="/404" component={ErrorPage} />
               {/* Redirects */}
               <Redirect exact path="/getStarted" to="/home" />
-              <Redirect exact path="/workflows/schedule" to="/workflows" />
-              <Redirect exact path="/workflows/template" to="/workflows" />
+              <Redirect exact path="/scenarios/schedule" to="/scenarios" />
+              <Redirect exact path="/scenarios/template" to="/scenarios" />
               <Redirect exact path="/analytics/overview" to="/analytics" />
               <Redirect
                 exact

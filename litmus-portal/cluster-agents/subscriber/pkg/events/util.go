@@ -2,6 +2,7 @@ package events
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"regexp"
 	"strconv"
@@ -26,7 +27,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	cd := &types.ChaosData{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
-	crd, err := chaosClient.ChaosEngines(cd.Namespace).Get(cd.EngineName, v1.GetOptions{})
+	crd, err := chaosClient.ChaosEngines(cd.Namespace).Get(context.Background(), cd.EngineName, v1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +60,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		cd.ExperimentStatus = string(crd.Status.EngineStatus)
 	}
 	if len(crd.Status.Experiments) == 1 {
-		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
+		expRes, err := chaosClient.ChaosResults(cd.Namespace).Get(context.Background(), crd.Name+"-"+crd.Status.Experiments[0].Name, v1.GetOptions{})
 		if err != nil {
 			return cd, err
 		}
@@ -72,7 +73,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	return cd, nil
 }
 
-// util function, checks if event is a chaos-exp event, if so -  extract the chaos data
+//CheckChaosData util function, checks if event is a chaos-exp event, if so -  extract the chaos data
 func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
@@ -115,7 +116,7 @@ func getNameFromLog(log string) string {
 	return name[1]
 }
 
-// converts unix timestamp to string
+//StrConvTime converts unix timestamp to string
 func StrConvTime(time int64) string {
 	if time < 0 {
 		return ""
@@ -147,20 +148,30 @@ func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 	return nil, nil
 }
 
-// generate graphql mutation payload for events event
+//GenerateWorkflowPayload generate graphql mutation payload for events event
 func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
-	clusterID := `{cluster_id: \"` + cid + `\", version: \"` + version + `\", access_key: \"` + accessKey + `\"}`
+	clusterID := `{clusterID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
 
 	for id, event := range wfEvent.Nodes {
 		event.Message = strings.Replace(event.Message, `"`, ``, -1)
 		wfEvent.Nodes[id] = event
 	}
 
+	wfEvent.ExecutedBy = URLDecodeBase64(wfEvent.ExecutedBy)
+
 	processed, err := graphql.MarshalGQLData(wfEvent)
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ workflow_id: \"` + wfEvent.WorkflowID + `\", workflow_run_id: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflow_name:\"` + wfEvent.Name + `\", cluster_id: ` + clusterID + `, executed_by:\"` + wfEvent.ExecutedBy + `\", execution_data:\"` + processed[1:len(processed)-1] + `\"}`
-	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(workflowData:` + mutation + ` )}"}`)
+	mutation := `{ workflowID: \"` + wfEvent.WorkflowID + `\", workflowRunID: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflowName:\"` + wfEvent.Name + `\", clusterID: ` + clusterID + `, executedBy:\"` + wfEvent.ExecutedBy + `\", executionData:\"` + processed[1:len(processed)-1] + `\"}`
+	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(request:` + mutation + ` )}"}`)
 	return payload, nil
+}
+
+func URLDecodeBase64(encoded string) string {
+	decoded, err := base64.RawURLEncoding.DecodeString(encoded)
+	if err != nil {
+		return encoded
+	}
+	return string(decoded)
 }

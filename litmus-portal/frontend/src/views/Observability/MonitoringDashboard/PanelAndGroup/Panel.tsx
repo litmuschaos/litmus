@@ -20,10 +20,10 @@ import {
 import useStyles from './styles';
 
 const DashboardPanel: React.FC<GraphPanelProps> = ({
-  panel_id,
-  panel_name,
-  y_axis_left,
-  panel_options,
+  panelID,
+  panelName,
+  yAxisLeft,
+  panelOptions,
   unit,
   className,
   centralBrushPosition,
@@ -50,7 +50,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
       }`}
     >
       <div className={classes.wrapperParentIconsTitle}>
-        <Typography className={classes.title}>{panel_name}</Typography>
+        <Typography className={classes.title}>{panelName}</Typography>
         <div className={classes.wrapperIcons}>
           {viewEventMetric ? (
             <ToolTip
@@ -84,7 +84,7 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
             onClick={() => {
               dashboard.selectDashboard({
                 selectedDashboardID: selectedDashboard.selectedDashboardID,
-                activePanelID: panel_id,
+                activePanelID: panelID,
               });
               history.push({
                 pathname: '/analytics/dashboard/configure',
@@ -124,21 +124,21 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           width="95%"
         >
           <div className={classes.popOutModal}>
-            <Typography className={classes.title}>{panel_name}</Typography>
+            <Typography className={classes.title}>{panelName}</Typography>
             <LineAreaGraph
               legendTableHeight={150}
               openSeries={metricDataForPanel?.seriesData}
               closedSeries={metricDataForPanel?.closedAreaData}
               eventSeries={chaosData}
-              showGrid={panel_options.grids}
-              showPoints={panel_options.points}
+              showGrid={panelOptions.grIDs}
+              showPoints={panelOptions.points}
               showLegendTable
               showEventTable
               showTips
               showEventMarkers
               marginLeftEventTable={10}
               unit={unit}
-              yLabel={y_axis_left}
+              yLabel={yAxisLeft}
               yLabelOffset={55}
               margin={{ left: 75, right: 20, top: 20, bottom: 40 }}
             />
@@ -154,15 +154,15 @@ const DashboardPanel: React.FC<GraphPanelProps> = ({
           openSeries={metricDataForPanel?.seriesData}
           closedSeries={metricDataForPanel?.closedAreaData}
           eventSeries={chaosData}
-          showGrid={panel_options.grids}
-          showPoints={panel_options.points}
+          showGrid={panelOptions.grIDs}
+          showPoints={panelOptions.points}
           showEventTable={viewEventMetric}
           showLegendTable
           showTips
           showMultiToolTip
           showEventMarkers
           unit={unit}
-          yLabel={y_axis_left}
+          yLabel={yAxisLeft}
           yLabelOffset={55}
           margin={{ left: 75, right: 20, top: 20, bottom: 30 }}
         />

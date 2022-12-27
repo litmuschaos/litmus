@@ -1,0 +1,30 @@
+## scale up and down to maintain the available instance counts
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: gcp-vm-instance-stop-sa
+  experiments:
+  - name: gcp-vm-instance-stop
+    spec:
+      components:
+        env:
+        # tells if instances are part of managed instance group
+        # supports: enable, disable. default: disable
+        - name: MANAGED_INSTANCE_GROUP
+          value: 'enable'
+        # comma separated list of vm instance names
+        - name: VM_INSTANCE_NAMES
+          value: 'instance-01,instance-02'
+        # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
+        # it should be provided in same order of VM_INSTANCE_NAMES
+        - name: ZONES
+          value: 'zone-01,zone-02'
+        # gcp project id to which vm instance belongs
+        - name: GCP_PROJECT_ID
+          value: 'project-id'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -1,0 +1,26 @@
+## provide the toxicity
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-modify-header-sa
+  experiments:
+  - name: pod-http-modify-header
+    spec:
+      components:
+        env:
+        # toxicity is the probability of the request to be affected
+        # provide the percentage value in the range of 0-100
+        # 0 means no request will be affected and 100 means all request will be affected
+        - name: TOXICITY
+          value: "100"
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"

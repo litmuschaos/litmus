@@ -2,7 +2,6 @@ import { Typography } from '@material-ui/core';
 import { ButtonOutlined } from 'litmus-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import TimePopOver from '../../../components/TimePopOver';
 import { ExecutionData } from '../../../models/graphql/workflowData';
 import WorkflowStatusText from '../WorkflowStatus/statusText';
 import useStyles from './styles';
@@ -11,18 +10,18 @@ interface WorkflowInfoProps {
   setIsInfoToggled?: React.Dispatch<React.SetStateAction<boolean>>;
   tab: number;
   data: ExecutionData;
-  workflow_phase: string;
-  resiliency_score?: number;
-  cluster_name: string;
+  workflowPhase: string;
+  resiliencyScore?: number;
+  clusterName: string;
 }
 
 const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
   setIsInfoToggled,
   tab,
   data,
-  workflow_phase,
-  resiliency_score,
-  cluster_name,
+  workflowPhase,
+  resiliencyScore,
+  clusterName,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -61,9 +60,9 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           </Typography>
           {/* Static data, will be changed with API response */}
           <Typography className={classes.resiliencyScore}>
-            {resiliency_score === undefined || resiliency_score === null
+            {resiliencyScore === undefined || resiliencyScore === null
               ? 'NA'
-              : `${resiliency_score}%`}
+              : `${resiliencyScore}%`}
           </Typography>
         </div>
 
@@ -72,34 +71,28 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           <Typography className={classes.subSectionTitle}>
             {t('workflowDetailsView.workflowInfo.status')}
           </Typography>
-          <WorkflowStatusText phase={workflow_phase} />
+          <WorkflowStatusText phase={workflowPhase} />
         </div>
 
         {/* 3. Run Time Sub Section */}
         <div className={classes.subSection}>
           <Typography className={classes.subSectionTitle}>
-            {t('workflowDetailsView.workflowInfo.runTime.runTimeHeader')}
+            {t('workflowDetailsView.workflowInfo.runTime.duration')}
           </Typography>
-          <div className={classes.section}>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.runTime.startTime')}
-              </Typography>
-              <TimePopOver unixTime={data.startedAt} />
-            </div>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.runTime.endTime')}
-              </Typography>
-              <Typography>
-                {data.finishedAt !== '' ? (
-                  <TimePopOver unixTime={data.finishedAt} />
-                ) : (
-                  'Not yet finished'
-                )}
-              </Typography>
-            </div>
-          </div>
+          <Typography style={{ fontSize: '1rem' }}>
+            {data.finishedAt !== ''
+              ? (
+                  (parseInt(data.finishedAt, 10) -
+                    parseInt(data.startedAt, 10)) /
+                  60
+                ).toFixed(1)
+              : (
+                  (new Date().getTime() / 1000 - parseInt(data.startedAt, 10)) /
+                  60
+                ).toFixed(1)}
+            &nbsp;
+            {t('workflowDetailsView.tableView.minutes')}
+          </Typography>
         </div>
 
         {/* 4. Target Sub Section */}
@@ -107,22 +100,22 @@ const WorkflowInfo: React.FC<WorkflowInfoProps> = ({
           <Typography className={classes.subSectionTitle}>
             {t('workflowDetailsView.workflowInfo.targets.targetsHeader')}
           </Typography>
-          <div className={classes.section}>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.targets.cluster')}
-              </Typography>
-              <div>{cluster_name}</div>
-            </div>
-            <div className={classes.subCategorySection}>
-              <Typography className={classes.subCategorySectionTitle}>
-                {t('workflowDetailsView.workflowInfo.targets.namespace')}
-              </Typography>
-              <Typography data-cy="workflowNamespace">
-                {data.namespace}
-              </Typography>
-            </div>
+          <div>
+            <Typography className={classes.subCategorySectionText}>
+              {clusterName}
+            </Typography>
           </div>
+        </div>
+        <div>
+          <Typography className={classes.subSectionTitle}>
+            {t('workflowDetailsView.workflowInfo.targets.namespace')}
+          </Typography>
+          <Typography
+            data-cy="workflowNamespace"
+            className={classes.subCategorySectionText}
+          >
+            {data.namespace}
+          </Typography>
         </div>
       </div>
     </div>

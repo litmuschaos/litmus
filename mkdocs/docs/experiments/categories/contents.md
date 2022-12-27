@@ -96,6 +96,31 @@ Chaos actions that apply to generic Kubernetes resources are classified into thi
     <td>Injects Network loss into Application Pod</td>
    <td><a href="/litmus/experiments/categories/pods/pod-network-loss">pod-network-loss</a></td>
   </tr>
+  <tr>
+    <td>Pod HTTP Latency</td>
+    <td>Injects HTTP latency into Application Pod</td>
+   <td><a href="/litmus/experiments/categories/pods/pod-http-latency">pod-http-latency</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Reset Peer</td>
+    <td>Injects HTTP reset peer into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-reset-peer">pod-http-reset-peer</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Status Code</td>
+    <td>Injects HTTP status code chaos into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-status-code">pod-http-status-code</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Modify Body</td>
+    <td>Injects HTTP modify body into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-modify-body">pod-http-modify-body</a></td>
+  </tr>
+  <tr>
+    <td>Pod HTTP Modify Header</td>
+    <td>Injects HTTP Modify Header into Application Pod</td>
+    <td><a href="/litmus/experiments/categories/pods/pod-http-modify-header">pod-http-modify-header</a></td>
+  </tr>
 </table>
 
 #### Node Chaos
@@ -167,6 +192,36 @@ While Chaos Experiments under the Generic category offer the ability to induce c
     <td>Cassandra Pod Delete</td>
     <td>Kills the cassandra pod</td>
     <td><a href="/litmus/experiments/categories/cassandra/cassandra-pod-delete">cassandra-pod-delete</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot App Kill</td>
+    <td>Kill the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-app-kill">spring-boot-app-kill</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot CPU Stress</td>
+    <td>Stress the CPU of the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-cpu-stress">spring-boot-cpu-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Memory Stress</td>
+    <td>Stress the memory of the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-memory-stress">spring-boot-memory-stress</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Latency </td>
+    <td>Inject latency to the spring boot application network</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-latency">spring-boot-latency</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Exception</td>
+    <td>Raise exceptions to the spring boot application</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-exceptions">spring-boot-exceptions</a></td>
+  </tr>
+  <tr>
+    <td>Spring Boot Faults</td>
+    <td>It injects the multiple spring boot faults simultaneously on the target pods</td>
+    <td><a href="/litmus/experiments/categories/spring-boot/spring-boot-faults">spring-boot-faults</a></td>
   </tr>
 </table>
 

@@ -1,0 +1,23 @@
+# stress the cpu of the targeted nodes by load percentage
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-cpu-hog-sa
+  experiments:
+  - name: node-cpu-hog
+    spec:
+      components:
+        env:
+        # percentage of cpu to be stressed
+        - name: CPU_LOAD
+          value: "100"
+        # node cpu core should be provided as 0 for cpu load
+        # to work otherwise it will take cpu core as priority
+        - name: NODE_CPU_CORE
+          value: '0'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

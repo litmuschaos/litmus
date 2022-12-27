@@ -117,7 +117,7 @@ const TableData: React.FC<TableDataProps> = ({
         </div>
       </TableCell>
       <TableCell className={classes.lastTC} key={row.username}>
-        {row.username !== UserRole.admin && (
+        {row.username !== UserRole.ADMIN && (
           <>
             <IconButton
               data-cy="editUser"

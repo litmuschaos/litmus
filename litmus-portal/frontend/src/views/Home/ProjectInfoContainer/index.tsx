@@ -58,7 +58,7 @@ const ProjectInfoContainer: React.FC = () => {
     let projectOther = 0;
     projects.forEach((project) => {
       project.Members.forEach((member: Member) => {
-        if (member.UserID === userID && member.Role === Role.owner) {
+        if (member.UserID === userID && member.Role === Role.OWNER) {
           projectOwner++;
         } else if (
           member.UserID === userID &&
@@ -67,7 +67,7 @@ const ProjectInfoContainer: React.FC = () => {
           projectInvitation++;
         } else if (
           member.UserID === userID &&
-          member.Role !== Role.owner &&
+          member.Role !== Role.OWNER &&
           member.Invitation === InvitationStatus.ACCEPTED
         ) {
           projectOther++;
@@ -113,7 +113,7 @@ const ProjectInfoContainer: React.FC = () => {
             </div>
           </div>
         </div>
-        {projectRole === Role.owner && (
+        {projectRole === Role.OWNER && (
           <ButtonOutlined
             onClick={() => {
               tabs.changeSettingsTabs(1);

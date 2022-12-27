@@ -9,7 +9,7 @@ type PromDSDetails struct {
 }
 
 type PromQuery struct {
-	Queryid    string
+	QueryID    string
 	Query      string
 	Legend     *string
 	Resolution *string

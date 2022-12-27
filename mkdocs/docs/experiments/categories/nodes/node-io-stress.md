@@ -265,7 +265,29 @@ spec:
 The CPU usage can be limit to `CPU` cpu while performing io stress. It can be tuned via `CPU` ENV.
 
 Use the following example to tune this:
- [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/cpu.yaml yaml)
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/limit-cpu-utilization.yaml yaml)
+```yaml
+# limit the cpu uses to the provided value while performing io stress
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  chaosServiceAccount: node-io-stress-sa
+  experiments:
+  - name: node-io-stress
+    spec:
+      components:
+        env:
+        # number of cpu cores to be stressed
+        - name: CPU
+          value: '1' 
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
+```
 
 ### Workers For Stress
 

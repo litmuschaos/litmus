@@ -13,7 +13,7 @@ const LandingHome: React.FC = () => {
       {/* Agent Deployment Container */}
       <UnconfiguredAgent />
       {/* Project Level info container */}
-      {projectRole === Role.owner && <ProjectInfoContainer />}
+      {projectRole === Role.OWNER && <ProjectInfoContainer />}
     </div>
   );
 };

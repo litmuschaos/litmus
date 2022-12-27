@@ -11,6 +11,7 @@ type MyHub struct {
 	HubName       string  `bson:"hub_name"`
 	IsPrivate     bool    `bson:"IsPrivate"`
 	AuthType      string  `bson:"AuthType"`
+	HubType       string  `bson:"hub_type"`
 	Token         *string `bson:"Token"`
 	UserName      *string `bson:"UserName"`
 	Password      *string `bson:"Password"`
@@ -23,14 +24,15 @@ type MyHub struct {
 }
 
 // GetOutputMyHub ...
-func (myhub *MyHub) GetOutputMyHub() *model.MyHub {
+func (myhub *MyHub) GetOutputMyHub() *model.ChaosHub {
 
-	return &model.MyHub{
+	return &model.ChaosHub{
 		ID:            myhub.ID,
 		ProjectID:     myhub.ProjectID,
 		RepoURL:       myhub.RepoURL,
 		RepoBranch:    myhub.RepoBranch,
 		HubName:       myhub.HubName,
+		HubType:       model.HubType(myhub.HubType),
 		IsPrivate:     myhub.IsPrivate,
 		UserName:      myhub.UserName,
 		Password:      myhub.Password,

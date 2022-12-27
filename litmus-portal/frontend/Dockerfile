@@ -1,6 +1,6 @@
 # Docker Image which is used as foundation to create
 # a custom Docker Image with this Dockerfile
-FROM node:12.18.0 as react-build
+FROM node:12.10.0 as react-build
 
 # Add Maintainer Info
 LABEL maintainer="LitmusChaos"
@@ -30,7 +30,7 @@ RUN npm ci
 COPY . ./
 
 # Finally runs the application
-RUN npm run build
+RUN NODE_OPTIONS=--max_old_space_size=4096 npm run build
 
 # Stage 2: the production environment
 FROM nginxinc/nginx-unprivileged:1.21-alpine

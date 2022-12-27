@@ -339,7 +339,7 @@ spec:
         env:
         # path need to be stressed/filled
         - name: VOLUME_MOUNT_PATH
-          value: '10'
+          value: '/some-dir-in-container'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
 ```

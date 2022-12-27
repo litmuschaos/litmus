@@ -1,18 +1,3 @@
-export interface MemberInvitation {
-  member: {
-    project_id: string;
-    user_id: string;
-  };
-}
-
-export interface MemberInviteNew {
-  member: {
-    project_id: string;
-    user_id: string;
-    role: string;
-  };
-}
-
 export interface UserInvite {
   _id: string;
   name: string;
@@ -24,8 +9,8 @@ export interface UserInvite {
 
 // Invitation status for users
 export enum InvitationStatus {
-  accepted = 'Accepted',
-  pending = 'Pending',
-  declined = 'Declined',
-  exited = 'Exited',
+  ACCEPTED = 'ACCEPTED',
+  PENDING = 'PENDING',
+  DECLINED = 'DECLINED',
+  EXITED = 'EXITED',
 }

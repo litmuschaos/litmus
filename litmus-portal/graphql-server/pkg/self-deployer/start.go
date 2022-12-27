@@ -43,7 +43,7 @@ func StartDeployer(projectID string) {
 		tolerations = nil
 	}
 
-	clusterInput := model.ClusterInput{
+	clusterInput := model.RegisterClusterRequest{
 		ProjectID:      projectID,
 		ClusterName:    "Self-Agent",
 		ClusterType:    "internal",
@@ -59,7 +59,7 @@ func StartDeployer(projectID string) {
 		clusterInput.SkipSsl = &skip
 	}
 
-	resp, err := clusterHandler.ClusterRegister(clusterInput)
+	resp, err := clusterHandler.RegisterCluster(clusterInput)
 	if err != nil {
 		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
 		// if cluster registration fails skip actual manifest apply

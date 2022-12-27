@@ -15,14 +15,14 @@ import Loader from '../../components/Loader';
 import { parseYamlValidations } from '../../components/YamlEditor/Validations';
 import Wrapper from '../../containers/layouts/Wrapper';
 import { UPDATE_SCHEDULE } from '../../graphql/mutations';
-import { WORKFLOW_LIST_DETAILS } from '../../graphql/queries';
+import { GET_WORKFLOW_DETAILS } from '../../graphql/queries';
 import {
-  CreateWorkFlowInput,
+  CreateWorkFlowRequest,
   UpdateWorkflowResponse,
   WeightMap,
 } from '../../models/graphql/createWorkflowData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
 } from '../../models/graphql/workflowListData';
 import { experimentMap, WorkflowData } from '../../models/redux/workflow';
@@ -34,6 +34,7 @@ import { history } from '../../redux/configureStore';
 import { RootState } from '../../redux/reducers';
 import { getProjectID, getProjectRole } from '../../utils/getSearchParams';
 import { fetchWorkflowNameFromManifest } from '../../utils/yamlUtils';
+import ScheduleWorkflow from './Schedule';
 import { useStyles } from './styles';
 
 const YamlEditor = lazy(() => import('../../components/YamlEditor/Editor'));
@@ -72,7 +73,7 @@ const EditSchedule: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
-
+  const [editPage, setEditPage] = useState(false);
   const template = useActions(TemplateSelectionActions);
   const workflowData: WorkflowData = useSelector(
     (state: RootState) => state.workflowData
@@ -83,14 +84,14 @@ const EditSchedule: React.FC = () => {
   const projectID = getProjectID();
   const userRole = getProjectRole();
 
-  const { data, loading } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
-    WORKFLOW_LIST_DETAILS,
+  const { data, loading } = useQuery<ScheduledWorkflows, GetWorkflowsRequest>(
+    GET_WORKFLOW_DETAILS,
     {
       variables: {
-        workflowInput: {
-          project_id: projectID,
+        request: {
+          projectID,
           filter: {
-            workflow_name: paramData.workflowName,
+            workflowName: paramData.workflowName,
           },
         },
       },
@@ -102,14 +103,13 @@ const EditSchedule: React.FC = () => {
     (state: RootState) => state.workflowManifest.manifest
   );
 
-  const wfDetails = data && data.ListWorkflow.workflows[0];
-  const doc = new YAML.Document();
+  const wfDetails = data && data.listWorkflows.workflows[0];
   const w: Weights[] = [];
-  const { cronSyntax, clusterid, clustername } = workflowData;
+  const { cronSyntax, clusterID, clusterName } = workflowData;
 
   const [createChaosWorkFlow, { error: workflowError }] = useMutation<
     UpdateWorkflowResponse,
-    CreateWorkFlowInput
+    CreateWorkFlowRequest
   >(UPDATE_SCHEDULE, {
     onCompleted: () => {
       setFinishModalOpen(true);
@@ -126,7 +126,7 @@ const EditSchedule: React.FC = () => {
 
       weights.forEach((data) => {
         weightData.push({
-          experiment_name: data.experimentName,
+          experimentName: data.experimentName,
           weightage: data.weight,
         });
       });
@@ -137,61 +137,59 @@ const EditSchedule: React.FC = () => {
       const yamlJson = JSON.stringify(yml, null, 2); // Converted to Stringified JSON
 
       const chaosWorkFlowInputs = {
-        workflow_id: wfDetails?.workflow_id,
-        workflow_manifest: yamlJson,
+        workflowID: wfDetails?.workflowID,
+        workflowManifest: yamlJson,
         cronSyntax,
-        workflow_name: fetchWorkflowNameFromManifest(manifest),
-        workflow_description: workflow.description,
+        workflowName: fetchWorkflowNameFromManifest(manifest),
+        workflowDescription: workflow.description,
         isCustomWorkflow: false,
         weightages: weightData,
-        project_id: projectID,
-        cluster_id: clusterid,
+        projectID,
+        clusterID,
       };
 
       createChaosWorkFlow({
-        variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
+        variables: { request: chaosWorkFlowInputs },
       });
     }
   };
 
   useEffect(() => {
-    localforage.getItem('editSchedule').then((isCronEdited) => {
-      if (wfDetails !== undefined) {
-        for (let i = 0; i < wfDetails?.weightages.length; i++) {
-          w.push({
-            experimentName: wfDetails?.weightages[i].experiment_name,
-            weight: wfDetails?.weightages[i].weightage,
-          });
-        }
-        doc.contents = JSON.parse(wfDetails?.workflow_manifest);
-        workflowAction.setWorkflowManifest({
-          manifest: isCronEdited === null ? doc.toString() : manifest,
-        });
-        setWorkflow({
-          name: wfDetails?.workflow_name,
-          description: wfDetails?.workflow_description,
-        });
-        localforage.setItem('weights', w);
-        workflowAction.setWorkflowDetails({
-          workflow_id: wfDetails?.workflow_id,
-          clusterid: wfDetails?.cluster_id,
-          cronSyntax:
-            isCronEdited === null ? wfDetails?.cronSyntax : cronSyntax,
-          scheduleType: {
-            scheduleOnce:
-              wfDetails?.cronSyntax === '' ? 'now' : 'recurringSchedule',
-            recurringSchedule: '',
-          },
-          scheduleInput: {
-            hour_interval: 0,
-            day: 1,
-            weekday: 'Monday',
-            time: new Date(),
-            date: new Date(),
-          },
+    if (wfDetails !== undefined) {
+      for (let i = 0; i < wfDetails?.weightages.length; i++) {
+        w.push({
+          experimentName: wfDetails?.weightages[i].experimentName,
+          weight: wfDetails?.weightages[i].weightage,
         });
       }
-    });
+      const parsedManifest = JSON.parse(wfDetails?.workflowManifest);
+      setWorkflow({
+        name: wfDetails?.workflowName,
+        description: wfDetails?.workflowDescription,
+      });
+      localforage.setItem('weights', w);
+      workflowAction.setWorkflowManifest({
+        manifest: YAML.stringify(parsedManifest),
+      });
+      workflowAction.setWorkflowDetails({
+        workflow_id: wfDetails?.workflowID,
+        clusterID: wfDetails?.clusterID,
+        clusterName: wfDetails.clusterName,
+        cronSyntax: wfDetails.cronSyntax,
+        scheduleType: {
+          scheduleOnce:
+            wfDetails?.cronSyntax === '' ? 'now' : 'recurringSchedule',
+          recurringSchedule: '',
+        },
+        scheduleInput: {
+          hour_interval: 0,
+          day: 1,
+          weekday: 'Monday',
+          time: new Date(),
+          date: new Date(),
+        },
+      });
+    }
 
     template.selectTemplate({ selectTemplateID: 0, isDisable: false });
     setWeights(w);
@@ -233,7 +231,7 @@ const EditSchedule: React.FC = () => {
 
   const handleFinishModal = () => {
     history.push({
-      pathname: `/workflows`,
+      pathname: `/scenarios`,
       search: `?projectID=${projectID}&projectRole=${userRole}`,
     });
     setFinishModalOpen(false);
@@ -247,6 +245,8 @@ const EditSchedule: React.FC = () => {
     <Wrapper>
       {loading || !manifest ? (
         <Loader />
+      ) : editPage ? (
+        <ScheduleWorkflow handleNext={() => setEditPage(false)} />
       ) : (
         <>
           <BackButton />
@@ -313,7 +313,7 @@ const EditSchedule: React.FC = () => {
                         </Typography>
                       </div>
                       <Typography className={classes.schCol2}>
-                        {clustername}
+                        {clusterName}
                       </Typography>
                     </div>
 
@@ -348,14 +348,7 @@ const EditSchedule: React.FC = () => {
 
                         <ButtonOutlined
                           className={classes.editButton}
-                          onClick={() =>
-                            history.push({
-                              pathname: `/workflows/schedule/${projectID}/${fetchWorkflowNameFromManifest(
-                                manifest
-                              )}/set`,
-                              search: `?projectID=${projectID}&projectRole=${userRole}`,
-                            })
-                          }
+                          onClick={() => setEditPage(true)}
                         >
                           <EditIcon
                             className={classes.editIcon}
@@ -434,7 +427,7 @@ const EditSchedule: React.FC = () => {
             <ButtonOutlined
               onClick={() => {
                 history.push({
-                  pathname: `/workflows/`,
+                  pathname: `/scenarios/`,
                   search: `?projectID=${projectID}&projectRole=${userRole}`,
                 });
               }}
@@ -504,7 +497,7 @@ const EditSchedule: React.FC = () => {
                       handleFinishModal();
                       tabs.changeWorkflowsTabs(0);
                       history.push({
-                        pathname: '/workflows',
+                        pathname: '/scenarios',
                         search: `?projectID=${projectID}&projectRole=${userRole}`,
                       });
                     }}

@@ -16,8 +16,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplayIcon from '@material-ui/icons/Replay';
 import { Alert } from '@material-ui/lab';
-import parser from 'cron-parser';
-import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, Icon, Modal } from 'litmus-ui';
 import moment from 'moment';
 import React from 'react';
@@ -32,6 +30,10 @@ import { history } from '../../../redux/configureStore';
 import { ReactComponent as CrossMarkIcon } from '../../../svg/crossmark.svg';
 import timeDifferenceForDate from '../../../utils/datesModifier';
 import { getProjectID, getProjectRole } from '../../../utils/getSearchParams';
+import {
+  validateCronParser,
+  validateCronSyntax,
+} from '../../../utils/validate';
 import ExperimentPoints from './ExperimentPoints';
 import SaveTemplateModal from './SaveTemplateModal';
 import useStyles from './styles';
@@ -134,14 +136,14 @@ const TableData: React.FC<TableDataProps> = ({
 
   const editSchedule = () => {
     history.push({
-      pathname: `/workflows/schedule/${data.project_id}/${data.workflow_name}`,
+      pathname: `/scenarios/schedule/${data.projectID}/${data.workflowName}`,
       search: `?projectID=${projectID}&projectRole=${projectRole}`,
     });
   };
 
   const [reRunChaosWorkFlow] = useMutation(RERUN_CHAOS_WORKFLOW, {
     onCompleted: () => {
-      tabs.changeWorkflowsTabs(0);
+      tabs.changeWorkflowsTabs(1);
     },
     onError: (error) => {
       setReRunMessage(error.message);
@@ -153,7 +155,7 @@ const TableData: React.FC<TableDataProps> = ({
     reRunChaosWorkFlow({
       variables: {
         projectID: getProjectID(),
-        data: data.workflow_id,
+        workflowID: data.workflowID,
       },
     });
   };
@@ -201,12 +203,12 @@ const TableData: React.FC<TableDataProps> = ({
         <Typography>
           <span
             className={`${classes.boldText} ${
-              YAML.parse(data.workflow_manifest).spec.suspend === true
+              YAML.parse(data.workflowManifest).spec.suspend === true
                 ? classes.dark
                 : ''
             }`}
           >
-            {data.workflow_name}
+            {data.workflowName}
           </span>
         </Typography>
       </TableCell>
@@ -214,18 +216,18 @@ const TableData: React.FC<TableDataProps> = ({
         <Typography className={classes.clusterData}>
           <span
             className={
-              YAML.parse(data.workflow_manifest).spec.suspend === true
+              YAML.parse(data.workflowManifest).spec.suspend === true
                 ? classes.dark
                 : ''
             }
           >
-            {data.cluster_name}
+            {data.clusterName}
           </span>
         </Typography>
       </TableCell>
       <TableCell>
         <Typography className={classes.clusterData}>
-          <span>{data.last_updated_by || '-'}</span>
+          <span>{data.lastUpdatedBy || '-'}</span>
         </Typography>
       </TableCell>
       <TableCell>
@@ -235,7 +237,7 @@ const TableData: React.FC<TableDataProps> = ({
         >
           <span
             className={
-              YAML.parse(data.workflow_manifest).spec.suspend === true
+              YAML.parse(data.workflowManifest).spec.suspend === true
                 ? classes.dark
                 : ''
             }
@@ -265,9 +267,9 @@ const TableData: React.FC<TableDataProps> = ({
           <div className={classes.weightDiv}>
             {data.weightages.map((expData) => {
               return (
-                <div key={expData.experiment_name} style={{ marginBottom: 8 }}>
+                <div key={expData.experimentName} style={{ marginBottom: 8 }}>
                   <ExperimentPoints
-                    expName={expData.experiment_name}
+                    expName={expData.experimentName}
                     weight={expData.weightage}
                   />
                 </div>
@@ -283,7 +285,7 @@ const TableData: React.FC<TableDataProps> = ({
         >
           <span
             className={
-              YAML.parse(data.workflow_manifest).spec.suspend === true
+              YAML.parse(data.workflowManifest).spec.suspend === true
                 ? classes.dark
                 : ''
             }
@@ -320,7 +322,7 @@ const TableData: React.FC<TableDataProps> = ({
                 {t('chaosWorkflows.browseSchedules.startingDate')} :
               </span>
               <span className={classes.scheduleDetailsValue}>
-                {formatDate(data.created_at)}
+                {formatDate(data.createdAt)}
               </span>
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
@@ -328,7 +330,7 @@ const TableData: React.FC<TableDataProps> = ({
                 {t('chaosWorkflows.browseSchedules.lastUpdated')} :
               </span>
               <span className={classes.scheduleDetailsValue}>
-                {timeDifferenceForDate(data.updated_at)}
+                {timeDifferenceForDate(data.updatedAt)}
               </span>
             </Typography>
             <Typography className={classes.scheduleDetailsFlex}>
@@ -338,7 +340,7 @@ const TableData: React.FC<TableDataProps> = ({
               <span className={classes.scheduleDetailsValue}>
                 {data.cronSyntax === ''
                   ? `${t('chaosWorkflows.browseSchedules.regularityOnce')}`
-                  : cronstrue.toString(data.cronSyntax)}
+                  : validateCronSyntax(data.cronSyntax as string)}
               </span>
             </Typography>
           </div>
@@ -347,20 +349,20 @@ const TableData: React.FC<TableDataProps> = ({
       <TableCell>
         <span
           className={
-            YAML.parse(data.workflow_manifest).spec.suspend === true
+            YAML.parse(data.workflowManifest).spec.suspend === true
               ? classes.dark
               : ''
           }
         >
-          {YAML.parse(data.workflow_manifest).spec.suspend === true ? (
+          {YAML.parse(data.workflowManifest).spec.suspend === true ? (
             <Typography>
               {t('chaosWorkflows.browseSchedules.scheduleIsDisabled')}
             </Typography>
           ) : data.cronSyntax !== '' ? (
             <Typography>
-              {moment(
-                parser.parseExpression(data.cronSyntax).next().toString()
-              ).format('MMMM Do YYYY, h:mm:ss a')}
+              {moment(validateCronParser(data.cronSyntax)).format(
+                'MMMM Do YYYY, h:mm:ss a'
+              )}
             </Typography>
           ) : (
             <Typography>
@@ -373,8 +375,8 @@ const TableData: React.FC<TableDataProps> = ({
       <TableCell>
         <IconButton
           onClick={() => {
-            tabs.changeWorkflowsTabs(0);
-            setWorkflowName(data.workflow_name);
+            tabs.changeWorkflowsTabs(1);
+            setWorkflowName(data.workflowName);
           }}
           data-cy="showSchedules"
         >
@@ -450,7 +452,7 @@ const TableData: React.FC<TableDataProps> = ({
           </Snackbar>
           {projectRole !== 'Viewer' &&
             data.cronSyntax !== '' &&
-            YAML.parse(data.workflow_manifest).spec.suspend !== true && (
+            YAML.parse(data.workflowManifest).spec.suspend !== true && (
               <MenuItem
                 value="Disable"
                 onClick={() => {
@@ -474,7 +476,7 @@ const TableData: React.FC<TableDataProps> = ({
             )}
 
           {projectRole !== 'Viewer' &&
-            YAML.parse(data.workflow_manifest).spec.suspend === true && (
+            YAML.parse(data.workflowManifest).spec.suspend === true && (
               <MenuItem
                 value="Enable"
                 onClick={() => {
@@ -499,7 +501,7 @@ const TableData: React.FC<TableDataProps> = ({
           <MenuItem
             value="Download"
             onClick={() =>
-              downloadYAML(data.workflow_manifest, data.workflow_name)
+              downloadYAML(data.workflowManifest, data.workflowName)
             }
           >
             <div className={classes.expDiv}>
@@ -515,7 +517,7 @@ const TableData: React.FC<TableDataProps> = ({
           <MenuItem
             value="SaveTemplate"
             data-cy="saveTemplate"
-            onClick={() => handleSaveWorkflowTemplate(data.workflow_manifest)}
+            onClick={() => handleSaveWorkflowTemplate(data.workflowManifest)}
           >
             <div className={classes.expDiv}>
               <InsertDriveFileOutlined className={classes.downloadBtn} />
@@ -570,7 +572,7 @@ const TableData: React.FC<TableDataProps> = ({
                 variant="error"
                 className={classes.w7}
                 onClick={() => {
-                  deleteRow(data.workflow_id);
+                  deleteRow(data.workflowID);
                   setIsModalOpen(false);
                 }}
               >

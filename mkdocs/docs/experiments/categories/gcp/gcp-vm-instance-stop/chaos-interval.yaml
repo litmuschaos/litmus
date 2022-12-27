@@ -20,7 +20,7 @@ spec:
           VALUE: '60'
         - name: VM_INSTANCE_NAMES
           value: 'instance-01,instance-02'
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         - name: GCP_PROJECT_ID
           value: 'project-id'

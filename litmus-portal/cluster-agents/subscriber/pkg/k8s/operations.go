@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
@@ -19,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
@@ -137,11 +139,12 @@ func IsClusterConfirmed() (bool, string, error) {
 		return false, "", errors.New(AgentConfigName + " configmap not found")
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
 		getSecret, err := clientset.CoreV1().Secrets(AgentNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
-		if err != nil {
+
+		if k8s_errors.IsNotFound(err) {
 			return false, "", errors.New(AgentSecretName + " secret not found")
 		}
 
-		if k8s_errors.IsNotFound(err) {
+		if err != nil {
 			return false, "", err
 		}
 
@@ -208,7 +211,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	if requestType == "create" {
 		response, err := dr.Create(ctx, obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
-			// This doesnt ever happen even if it does already exist
+			// This doesn't ever happen even if it does already exist
 			logrus.Info("Already exists")
 			return nil, nil
 		}
@@ -222,7 +225,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	} else if requestType == "update" {
 		getObj, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -241,9 +244,18 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		logrus.Info("successfully updated for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "delete" {
-		err := dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
+		var err error
+		if obj.GetName() != "" {
+			err = dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
+			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
+		} else if obj.GetLabels() != nil {
+			objLabels := obj.GetLabels()
+			delete(objLabels, "executed_by")
+			err = dr.DeleteCollection(ctx, metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: labels.FormatLabels(objLabels)})
+			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource labels: ", objLabels, ", and namespace: ", obj.GetNamespace())
+		}
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -251,13 +263,11 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		if err != nil {
 			return nil, err
 		}
-
-		logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
 		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -287,7 +297,7 @@ func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]str
 	obj.SetLabels(newLabels)
 }
 
-// This function handles cluster operations
+// ClusterOperations handles cluster operations
 func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
@@ -312,7 +322,7 @@ func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, 
 		return nil, err
 	}
 
-	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Username})
+	addCustomLabels(obj, map[string]string{"executed_by": base64.RawURLEncoding.EncodeToString([]byte(clusterAction.Username))})
 
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
@@ -333,7 +343,7 @@ func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, 
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
-	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
+	payload := `{"query":"mutation{ confirmClusterRegistration(request: {clusterID: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", accessKey: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey clusterID}}"}`
 	resp, err := graphql.SendRequest(clusterData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err

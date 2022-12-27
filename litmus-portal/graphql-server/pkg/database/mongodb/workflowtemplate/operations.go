@@ -10,7 +10,7 @@ import (
 )
 
 // CreateWorkflowTemplate add the template details in the database
-func CreateWorkflowTemplate(ctx context.Context, template *ManifestTemplate) error {
+func CreateWorkflowTemplate(ctx context.Context, template *WorkflowTemplate) error {
 	err := mongodb.Operator.Create(ctx, mongodb.WorkflowTemplateCollection, template)
 	if err != nil {
 		log.Print("Error while creating template: ", err)
@@ -19,29 +19,29 @@ func CreateWorkflowTemplate(ctx context.Context, template *ManifestTemplate) err
 }
 
 // GetTemplatesByProjectID is used to query the list of templates present in the project
-func GetTemplatesByProjectID(ctx context.Context, projectID string) ([]ManifestTemplate, error) {
+func GetTemplatesByProjectID(ctx context.Context, projectID string) ([]WorkflowTemplate, error) {
 	query := bson.D{{"project_id", projectID}, {"is_removed", false}}
 	results, err := mongodb.Operator.List(ctx, mongodb.WorkflowTemplateCollection, query)
 	if err != nil {
 		log.Print("Error getting template: ", err)
 	}
-	var templates []ManifestTemplate
+	var templates []WorkflowTemplate
 	err = results.All(ctx, &templates)
 
 	if err != nil {
 		log.Println(err)
-		return []ManifestTemplate{}, err
+		return []WorkflowTemplate{}, err
 	}
 	return templates, nil
 }
 
 // GetTemplateByTemplateID is used to query a selected template using template id
-func GetTemplateByTemplateID(ctx context.Context, templateID string) (ManifestTemplate, error) {
-	var template ManifestTemplate
+func GetTemplateByTemplateID(ctx context.Context, templateID string) (WorkflowTemplate, error) {
+	var template WorkflowTemplate
 	result, err := mongodb.Operator.Get(ctx, mongodb.WorkflowTemplateCollection, bson.D{{"template_id", templateID}})
 	err = result.Decode(&template)
 	if err != nil {
-		return ManifestTemplate{}, err
+		return WorkflowTemplate{}, err
 	}
 	return template, err
 }

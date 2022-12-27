@@ -51,8 +51,8 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
   >(GET_WORKFLOW_RUNS_STATS, {
     variables: {
       workflowRunStatsRequest: {
-        project_id: projectID,
-        workflow_ids: [workflowID],
+        projectID,
+        workflowIDs: [workflowID],
       },
     },
     fetchPolicy: 'cache-and-network',
@@ -68,22 +68,22 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
   const graphData: RadialChartMetric[] = [
     {
       value: isSingleRun
-        ? data?.getWorkflowRunStats.experiments_passed ?? 0
-        : data?.getWorkflowRunStats.succeeded_workflow_runs ?? 0,
+        ? data?.getWorkflowRunStats.experimentsPassed ?? 0
+        : data?.getWorkflowRunStats.succeededWorkflowRuns ?? 0,
       label: isSingleRun ? 'Passed' : 'Succeeded',
       baseColor: theme.palette.status.experiment.completed,
     },
     {
       value: isSingleRun
-        ? data?.getWorkflowRunStats.experiments_failed ?? 0
-        : data?.getWorkflowRunStats.failed_workflow_runs ?? 0,
+        ? data?.getWorkflowRunStats.experimentsFailed ?? 0
+        : data?.getWorkflowRunStats.failedWorkflowRuns ?? 0,
       label: 'Failed',
       baseColor: theme.palette.status.experiment.failed,
     },
     {
       value: isSingleRun
-        ? data?.getWorkflowRunStats.experiments_awaited ?? 0
-        : data?.getWorkflowRunStats.running_workflow_runs ?? 0,
+        ? data?.getWorkflowRunStats.experimentsAwaited ?? 0
+        : data?.getWorkflowRunStats.runningWorkflowRuns ?? 0,
       label: isSingleRun ? 'Awaited' : 'Running',
       baseColor: theme.palette.status.workflow.running,
     },
@@ -92,12 +92,12 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
   if (isSingleRun) {
     graphData.push(
       {
-        value: data?.getWorkflowRunStats.experiments_stopped ?? 0,
+        value: data?.getWorkflowRunStats.experimentsStopped ?? 0,
         label: 'Stopped',
         baseColor: theme.palette.status.experiment.error,
       },
       {
-        value: data?.getWorkflowRunStats.experiments_na ?? 0,
+        value: data?.getWorkflowRunStats.experimentsNa ?? 0,
         label: 'NA',
         baseColor: theme.palette.status.experiment.omitted,
       }
@@ -109,10 +109,10 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
   };
 
   const progressGraphData = {
-    value: data?.getWorkflowRunStats.average_resiliency_score ?? 0,
+    value: data?.getWorkflowRunStats.averageResiliencyScore ?? 0,
     label: 'Avg Resiliency Score',
     baseColor: getValueColor(
-      data?.getWorkflowRunStats.average_resiliency_score ?? 0,
+      data?.getWorkflowRunStats.averageResiliencyScore ?? 0,
       resilienceScoreColourMap
     ),
   };
@@ -127,7 +127,9 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
         <div className={classes.topDiv}>
           <Paper className={classes.containerBlock}>
             <Typography className={classes.cardText}>
-              {isSingleRun ? 'Experiment Statistics' : 'Workflow Statistics'}
+              {isSingleRun
+                ? 'Experiment Statistics'
+                : 'Chaos Scenario Statistics'}
             </Typography>
             <div className={classes.radialChart} data-cy="statsRadialChart">
               <RadialChart
@@ -136,7 +138,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                 heading={
                   isSingleRun
                     ? 'Experiments'
-                    : data?.getWorkflowRunStats.total_workflow_runs !== 1
+                    : data?.getWorkflowRunStats.totalWorkflowRuns !== 1
                     ? 'Runs'
                     : 'Run'
                 }
@@ -166,7 +168,7 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
             <Typography className={classes.cardBottomText}>
               {isSingleRun
                 ? 'Based on experiment results'
-                : 'Based on workflow results'}
+                : 'Based on Chaos Scenario results'}
             </Typography>
           </Paper>
           <Paper className={classes.containerBlock}>
@@ -184,8 +186,8 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                   className={classes.dropDown}
                   data-cy="statsDropdown"
                 >
-                  <MenuItem value={0}>Workflow Runs</MenuItem>
-                  <MenuItem value={1}>Experiments</MenuItem>
+                  <MenuItem value={0}>Chaos Scenario Runs</MenuItem>
+                  <MenuItem value={1}>Chaos Experiments</MenuItem>
                 </Select>
               )}
             </div>
@@ -194,21 +196,20 @@ const WorkflowStats: React.FC<WorkflowStatsProps> = ({
                 passPercentage={
                   showWorkflowStats
                     ? data?.getWorkflowRunStats
-                        .workflow_run_succeeded_percentage ?? 0
-                    : data?.getWorkflowRunStats.passed_percentage ?? 0
+                        .workflowRunSucceededPercentage ?? 0
+                    : data?.getWorkflowRunStats.passedPercentage ?? 0
                 }
                 failPercentage={
                   showWorkflowStats
-                    ? data?.getWorkflowRunStats
-                        .workflow_run_failed_percentage ?? 0
-                    : data?.getWorkflowRunStats.failed_percentage ?? 0
+                    ? data?.getWorkflowRunStats.workflowRunFailedPercentage ?? 0
+                    : data?.getWorkflowRunStats.failedPercentage ?? 0
                 }
               />
             </div>
             <Typography className={classes.cardBottomText1}>
               {showWorkflowStats
-                ? 'Statistics taken from all workflow results'
-                : 'Statistics taken from all experiments results'}
+                ? 'Statistics taken from all Chaos Scenario results'
+                : 'Statistics taken from all Chaos Experiments results'}
             </Typography>
           </Paper>
         </div>

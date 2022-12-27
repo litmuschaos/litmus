@@ -32,10 +32,10 @@ export interface Nodes {
 }
 
 export interface ExecutionData {
-  resiliency_score?: number;
-  experiments_passed?: number;
-  total_experiments?: number;
-  event_type: string;
+  resiliencyScore?: number;
+  experimentsPassed?: number;
+  totalExperiments?: number;
+  eventType: string;
   uid: string;
   namespace: string;
   name: string;
@@ -47,47 +47,47 @@ export interface ExecutionData {
 }
 
 export interface WeightageMap {
-  experiment_name: string;
+  experimentName: string;
   weightage: number;
 }
 
 export interface WorkflowRun {
-  workflow_run_id: string;
-  workflow_id: string;
-  cluster_name: string;
+  workflowRunID: string;
+  workflowID: string;
+  clusterName: string;
   weightages: WeightageMap[];
-  last_updated: string;
-  project_id: string;
-  cluster_id: string;
-  workflow_name: string;
-  cluster_type: String;
+  lastUpdated: string;
+  projectID: string;
+  clusterID: string;
+  workflowName: string;
+  clusterType: String;
   phase: string;
-  resiliency_score: number;
-  experiments_passed: number;
-  experiments_failed: number;
-  experiments_awaited: number;
-  experiments_stopped: number;
-  experiments_na: number;
-  total_experiments: number;
-  execution_data: string;
-  executed_by: string;
+  resiliencyScore: number;
+  experimentsPassed: number;
+  experimentsFailed: number;
+  experimentsAwaited: number;
+  experimentsStopped: number;
+  experimentsNa: number;
+  totalExperiments: number;
+  executionData: string;
+  executedBy: string;
   isRemoved: boolean;
 }
 
-interface GetWorkflowRunsOutput {
-  total_no_of_workflow_runs: number;
-  workflow_runs: WorkflowRun[];
+interface GetWorkflowRunsResponse {
+  totalNoOfWorkflowRuns: number;
+  workflowRuns: WorkflowRun[];
 }
 
 export interface Workflow {
-  getWorkflowRuns: GetWorkflowRunsOutput;
+  listWorkflowRuns: GetWorkflowRunsResponse;
 }
 
 export interface WorkflowSubscription {
-  workflowEventListener: WorkflowRun;
+  getWorkflowEvents: WorkflowRun;
 }
 
-export interface WorkflowSubscriptionInput {
+export interface WorkflowSubscriptionRequest {
   projectID: string;
 }
 
@@ -98,15 +98,15 @@ export interface Pagination {
 }
 
 // Sort
-export interface SortInput {
-  field: 'Name' | 'Time';
+export interface SortRequest {
+  field: 'NAME' | 'TIME';
   descending?: boolean;
 }
 
 // Filter
 interface DateRange {
-  start_date: string;
-  end_date?: string;
+  startDate: string;
+  endDate?: string;
 }
 
 export type WorkflowStatus =
@@ -117,34 +117,34 @@ export type WorkflowStatus =
   | 'Terminated'
   | undefined;
 
-export interface WorkflowRunFilterInput {
-  workflow_name?: string;
-  cluster_name?: string;
-  workflow_status?: WorkflowStatus;
-  date_range?: DateRange;
+export interface WorkflowRunFilterRequest {
+  workflowName?: string;
+  clusterName?: string;
+  workflowStatus?: WorkflowStatus;
+  dateRange?: DateRange;
   isRemoved?: boolean | null;
 }
 
-export interface WorkflowDataVars {
-  workflowRunsInput: {
-    project_id: string;
-    workflow_run_ids?: string[];
-    workflow_ids?: string[];
+export interface WorkflowDataRequest {
+  request: {
+    projectID: string;
+    workflowRunIDs?: string[];
+    workflowIDs?: string[];
     pagination?: Pagination;
-    sort?: SortInput;
-    filter?: WorkflowRunFilterInput;
+    sort?: SortRequest;
+    filter?: WorkflowRunFilterRequest;
   };
 }
 
-export interface HeatmapDataVars {
-  project_id: string;
-  workflow_id: string;
+export interface HeatmapDataRequest {
+  projectID: string;
+  workflowID: string;
   year: number;
 }
 
 export interface WorkflowRunDetails {
-  no_of_runs: number;
-  date_stamp: number;
+  noOfRuns: number;
+  dateStamp: number;
 }
 export interface HeatMapData {
   value: number;
@@ -152,32 +152,32 @@ export interface HeatMapData {
 }
 
 export interface HeatmapDataResponse {
-  getHeatmapData: WeekData[];
+  listHeatmapData: WeekData[];
 }
 
 export interface WorkflowRunStatsResponse {
   getWorkflowRunStats: {
-    total_workflow_runs: number;
-    succeeded_workflow_runs: number;
-    failed_workflow_runs: number;
-    running_workflow_runs: number;
-    workflow_run_succeeded_percentage: number;
-    workflow_run_failed_percentage: number;
-    average_resiliency_score: number;
-    passed_percentage: number;
-    failed_percentage: number;
-    total_experiments: number;
-    experiments_passed: number;
-    experiments_failed: number;
-    experiments_awaited: number;
-    experiments_stopped: number;
-    experiments_na: number;
+    totalWorkflowRuns: number;
+    succeededWorkflowRuns: number;
+    failedWorkflowRuns: number;
+    runningWorkflowRuns: number;
+    workflowRunSucceededPercentage: number;
+    workflowRunFailedPercentage: number;
+    averageResiliencyScore: number;
+    passedPercentage: number;
+    failedPercentage: number;
+    totalExperiments: number;
+    experimentsPassed: number;
+    experimentsFailed: number;
+    experimentsAwaited: number;
+    experimentsStopped: number;
+    experimentsNa: number;
   };
 }
 
 export interface WorkflowRunStatsRequest {
   workflowRunStatsRequest: {
-    project_id: string;
-    workflow_ids?: string[];
+    projectID: string;
+    workflowIDs?: string[];
   };
 }

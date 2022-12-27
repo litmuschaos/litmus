@@ -1,73 +1,73 @@
 import { gql } from '@apollo/client';
 
 export const WORKFLOW_EVENTS_WITH_EXEC_DATA = gql`
-  subscription workflowEvents($projectID: String!) {
-    workflowEventListener(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      cluster_name
-      last_updated
-      cluster_id
+  subscription getWorkflowEvents($projectID: String!) {
+    getWorkflowEvents(projectID: $projectID) {
+      workflowID
+      workflowName
+      workflowRunID
+      clusterName
+      lastUpdated
+      clusterID
       phase
-      execution_data
-      resiliency_score
+      executionData
+      resiliencyScore
     }
   }
 `;
 
 export const WORKFLOW_EVENTS = gql`
-  subscription workflowEvents($projectID: String!) {
-    workflowEventListener(project_id: $projectID) {
-      workflow_id
-      workflow_name
-      workflow_run_id
-      cluster_name
-      last_updated
+  subscription getWorkflowEvents($projectID: String!) {
+    getWorkflowEvents(projectID: $projectID) {
+      workflowID
+      workflowName
+      workflowRunID
+      clusterName
+      lastUpdated
       phase
-      resiliency_score
-      experiments_passed
-      total_experiments
+      resiliencyScore
+      experimentsPassed
+      totalExperiments
     }
   }
 `;
 
 export const WORKFLOW_LOGS = gql`
-  subscription podLog($podDetails: PodLogRequest!) {
-    getPodLog(podDetails: $podDetails) {
+  subscription podLog($request: PodLogRequest!) {
+    getPodLog(request: $request) {
       log
     }
   }
 `;
 
 export const KUBE_OBJ = gql`
-  subscription getKubeObject($data: KubeObjectRequest!) {
-    getKubeObject(kubeObjectRequest: $data) {
-      cluster_id
-      kube_obj
+  subscription getKubeObject($request: KubeObjectRequest!) {
+    getKubeObject(request: $request) {
+      clusterID
+      kubeObj
     }
   }
 `;
 
 export const VIEW_DASHBOARD = gql`
   subscription viewDashboard(
-    $dbID: String
-    $prometheusQueries: [promQueryInput!]!
-    $queryMap: [queryMapForPanelGroup!]!
-    $dataVarMap: dataVars!
+    $dashboardID: String
+    $promQueries: [PromQueryInput!]!
+    $dashboardQueryMap: [QueryMapForPanelGroup!]!
+    $dataVariables: DataVars!
   ) {
     viewDashboard(
-      dashboardID: $dbID
-      promQueries: $prometheusQueries
-      dashboardQueryMap: $queryMap
-      dataVariables: $dataVarMap
+      dashboardID: $dashboardID
+      promQueries: $promQueries
+      dashboardQueryMap: $dashboardQueryMap
+      dataVariables: $dataVariables
     ) {
       dashboardMetricsResponse {
         panelGroupID
         panelGroupMetricsResponse {
           panelID
-          PanelMetricsResponse {
-            queryid
+          panelMetricsResponse {
+            queryID
             legends
             tsvs {
               date
@@ -77,7 +77,7 @@ export const VIEW_DASHBOARD = gql`
         }
       }
       annotationsResponse {
-        queryid
+        queryID
         legends
         tsvs {
           date

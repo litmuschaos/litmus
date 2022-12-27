@@ -1,11 +1,16 @@
 package handler
 
 import (
-	"context"
+	"archive/zip"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -13,83 +18,13 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-// Chart ...
-type Chart struct {
-	APIVersion  string             `yaml:"apiVersion"`
-	Kind        string             `yaml:"kind"`
-	Metadata    Metadata           `yaml:"metadata"`
-	Spec        Spec               `yaml:"spec"`
-	PackageInfo PackageInformation `yaml:"packageInfo"`
-	Experiments []Chart            `yaml:"experiments"`
-}
-
-// Maintainer ...
-type Maintainer struct {
-	Name  string
-	Email string
-}
-
-// Link ...
-type Link struct {
-	Name string
-	URL  string
-}
-
-// Metadata ...
-type Metadata struct {
-	Name        string     `yaml:"name"`
-	Version     string     `yaml:"version"`
-	Annotations Annotation `yaml:"annotations"`
-}
-
-// Annotation ...
-type Annotation struct {
-	Categories       string `yaml:"categories"`
-	Vendor           string `yaml:"vendor"`
-	CreatedAt        string `yaml:"createdAt"`
-	Repository       string `yaml:"repository"`
-	Support          string `yaml:"support"`
-	ChartDescription string `yaml:"chartDescription"`
-}
-
-// Spec ...
-type Spec struct {
-	DisplayName         string       `yaml:"displayName"`
-	CategoryDescription string       `yaml:"categoryDescription"`
-	Keywords            []string     `yaml:"keywords"`
-	Maturity            string       `yaml:"maturity"`
-	Maintainers         []Maintainer `yaml:"maintainers"`
-	MinKubeVersion      string       `yaml:"minKubeVersion"`
-	Provider            struct {
-		Name string `yaml:"name"`
-	} `yaml:"provider"`
-	Links           []Link   `yaml:"links"`
-	Experiments     []string `yaml:"experiments"`
-	ChaosExpCRDLink string   `yaml:"chaosexpcrdlink"`
-	Platforms       []string `yaml:"platforms"`
-	ChaosType       string   `yaml:"chaosType"`
-}
-
-// PackageInformation ...
-type PackageInformation struct {
-	PackageName string `yaml:"packageName"`
-	Experiments []struct {
-		Name string `yaml:"name"`
-		CSV  string `yaml:"CSV"`
-		Desc string `yaml:"desc"`
-	} `yaml:"experiments"`
-}
-
-// Charts ...
-type Charts []Chart
-
 // default path for storing local clones
 const (
 	defaultPath = "/tmp/version/"
 )
 
 // GetChartsPath is used to construct path for given chart.
-func GetChartsPath(ctx context.Context, chartsInput model.CloningInput) string {
+func GetChartsPath(chartsInput model.CloningInput) string {
 	ProjectID := chartsInput.ProjectID
 	HubName := chartsInput.HubName
 	ChartsPath := defaultPath + ProjectID + "/" + HubName + "/charts/"
@@ -97,13 +32,13 @@ func GetChartsPath(ctx context.Context, chartsInput model.CloningInput) string {
 }
 
 // GetCSVData returns the ChartServiceYAML details according to the given filetype
-func GetCSVData(experimentInput model.ExperimentInput) string {
+func GetCSVData(request model.ExperimentRequest) string {
 	var ExperimentPath string
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
-	chartName := experimentInput.ChartName
-	if strings.ToLower(experimentInput.ChartName) == "predefined" {
+	ProjectID := request.ProjectID
+	HubName := request.HubName
+	experimentName := request.ExperimentName
+	chartName := request.ChartName
+	if strings.ToLower(request.ChartName) == "predefined" {
 		ExperimentPath = defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
 	} else {
 		ExperimentPath = defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + experimentName + ".chartserviceversion.yaml"
@@ -112,28 +47,28 @@ func GetCSVData(experimentInput model.ExperimentInput) string {
 }
 
 // GetExperimentYAMLPath is used to construct path for given experiment/engine.
-func GetExperimentYAMLPath(ctx context.Context, experimentInput model.ExperimentInput) string {
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
-	chartName := experimentInput.ChartName
-	fileType := experimentInput.FileType
-	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + strings.ToLower(fileType.String()) + ".yaml"
+func GetExperimentYAMLPath(request model.ExperimentRequest) string {
+	ProjectID := request.ProjectID
+	HubName := request.HubName
+	experimentName := request.ExperimentName
+	chartName := request.ChartName
+	fileType := request.FileType
+	ExperimentYAMLPath := defaultPath + ProjectID + "/" + HubName + "/charts/" + chartName + "/" + experimentName + "/" + strings.ToLower(*fileType) + ".yaml"
 	return ExperimentYAMLPath
 }
 
 // GetPredefinedExperimentManifest is used to construct path for given chartsversion.yaml.
-func GetPredefinedExperimentManifest(ctx context.Context, experimentInput model.ExperimentInput) string {
-	ProjectID := experimentInput.ProjectID
-	HubName := experimentInput.HubName
-	experimentName := experimentInput.ExperimentName
+func GetPredefinedExperimentManifest(request model.ExperimentRequest) string {
+	ProjectID := request.ProjectID
+	HubName := request.HubName
+	experimentName := request.ExperimentName
 	ExperimentPath := defaultPath + ProjectID + "/" + HubName + "/workflows/" + experimentName + "/workflow.yaml"
 	return ExperimentPath
 }
 
 // GetChartsData is used to get details of charts like experiments.
 func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
-	var AllChartsDetails Charts
+	var AllChartsDetails []ChaosChart
 	Charts, err := ioutil.ReadDir(ChartsPath)
 	if err != nil {
 		fmt.Println("File reading error", err)
@@ -145,30 +80,44 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 		AllChartsDetails = append(AllChartsDetails, ChartDetails)
 	}
 
-	e, _ := json.Marshal(AllChartsDetails)
-	var data1 []*model.Chart
-	json.Unmarshal([]byte(e), &data1)
-	return data1, nil
+	e, err := json.Marshal(AllChartsDetails)
+	if err != nil {
+		return nil, err
+	}
+
+	var unmarshalledData []*model.Chart
+	err = json.Unmarshal(e, &unmarshalledData)
+	if err != nil {
+		return nil, err
+	}
+
+	return unmarshalledData, nil
 }
 
 // GetExperimentData is used for getting details of selected Experiment path
 func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
-	data, _ := ReadExperimentFile(experimentFilePath)
-	e, _ := json.Marshal(data)
-	var data1 *model.Chart
-	json.Unmarshal([]byte(e), &data1)
-	return data1, nil
+	data, err := ReadExperimentFile(experimentFilePath)
+	if err != nil {
+		return nil, err
+	}
+	e, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	var chartData *model.Chart
+	json.Unmarshal(e, &chartData)
+	return chartData, nil
 }
 
-// ReadExperimentFile is used for reading a experiment file from given path
-func ReadExperimentFile(path string) (Chart, error) {
-	var experiment Chart
+// ReadExperimentFile is used for reading experiment file from given path
+func ReadExperimentFile(path string) (ChaosChart, error) {
+	var experiment ChaosChart
 	experimentFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
 
-	if yaml.Unmarshal([]byte(experimentFile), &experiment) != nil {
+	if yaml.Unmarshal(experimentFile, &experiment) != nil {
 		return experiment, err
 	}
 	return experiment, nil
@@ -202,6 +151,43 @@ func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, 
 	return expNames, nil
 }
 
+// ListPredefinedWorkflowDetails reads the workflow directory for all the predefined experiments
+// and returns the csv, workflow manifest and workflow name
+func ListPredefinedWorkflowDetails(hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
+	experimentsPath := defaultPath + projectID + "/" + hubName + "/workflows"
+	var predefinedWorkflows []*model.PredefinedWorkflowList
+	files, err := ioutil.ReadDir(experimentsPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range files {
+		csvManifest := ""
+		workflowManifest := ""
+		isExist, err := IsFileExisting(experimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+		if err != nil {
+			return nil, err
+		}
+		if isExist {
+			csvManifest, err = ReadExperimentYAMLFile(experimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+			if err != nil {
+				csvManifest = "na"
+			}
+			workflowManifest, err = ReadExperimentYAMLFile(experimentsPath + "/" + file.Name() + "/" + "workflow.yaml")
+			if err != nil {
+				workflowManifest = "na"
+			}
+			preDefinedWorkflow := &model.PredefinedWorkflowList{
+				WorkflowName:     file.Name(),
+				WorkflowManifest: workflowManifest,
+				WorkflowCsv:      csvManifest,
+			}
+			predefinedWorkflows = append(predefinedWorkflows, preDefinedWorkflow)
+		}
+	}
+	return predefinedWorkflows, nil
+}
+
 func IsFileExisting(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -210,4 +196,138 @@ func IsFileExisting(path string) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+//DownloadRemoteHub is used to download a remote hub from the url provided by the user
+func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
+	//create the destination directory where the hub will be downloaded
+	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
+	destDir, err := os.Create(hubpath)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer destDir.Close()
+
+	//download the zip file from the provided url
+	download, err := http.Get(hubDetails.RepoURL)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	defer download.Body.Close()
+
+	if download.StatusCode != http.StatusOK {
+		err = fmt.Errorf("err: ", download.Status)
+		return err
+	}
+
+	//validate the content length (in bytes)
+	maxSize, err := strconv.Atoi(os.Getenv("REMOTE_HUB_MAX_SIZE"))
+	if err != nil {
+		return err
+	}
+	contentLength := download.Header.Get("content-length")
+	length, err := strconv.Atoi(contentLength)
+	if length > maxSize {
+		_ = os.Remove(hubpath)
+		err = fmt.Errorf("err: File size exceeded the threshold %d", length)
+		return err
+	}
+
+	//validate the content-type
+	contentType := download.Header.Get("content-type")
+	if contentType != "application/zip" {
+		_ = os.Remove(hubpath)
+		err = fmt.Errorf("err: Invalid file type %s", contentType)
+		return err
+	}
+
+	//copy the downloaded content to the created zip file
+	_, err = io.Copy(destDir, download.Body)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	//unzip the ChaosHub to the default hub directory
+	err = UnzipRemoteHub(hubpath, hubDetails)
+	if err != nil {
+		return err
+	}
+
+	//remove the redundant zip file
+	err = os.Remove(hubpath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//UnzipRemoteHub is used to unzip the zip file
+func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteMyHub) error {
+	extractPath := defaultPath + hubDetails.ProjectID
+	zipReader, err := zip.OpenReader(zipPath)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer zipReader.Close()
+	for _, file := range zipReader.File {
+		CopyZipItems(file, extractPath, file.Name)
+	}
+	return nil
+}
+
+//CopyZipItems is used to copy the content from the extracted zip file to
+//the ChaosHub directory
+func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
+	path := filepath.Join(extractPath, chartsPath)
+	if !strings.HasPrefix(path, filepath.Clean(extractPath)+string(os.PathSeparator)) {
+		return fmt.Errorf("illegal file path: %s", path)
+	}
+	err := os.MkdirAll(filepath.Dir(path), os.ModeDir|os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileReader, err := file.Open()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if !file.FileInfo().IsDir() {
+		fileCopy, err := os.Create(path)
+		if err != nil {
+			fmt.Println(err)
+		}
+		_, err = io.Copy(fileCopy, fileReader)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fileCopy.Close()
+	}
+	fileReader.Close()
+
+	return nil
+}
+
+//SyncRemoteRepo is used to sync the remote ChaosHub
+func SyncRemoteRepo(hubData model.CloningInput) error {
+	hubPath := defaultPath + hubData.ProjectID + "/" + hubData.HubName
+	err := os.RemoveAll(hubPath)
+	if err != nil {
+		return err
+	}
+	updateHub := model.CreateRemoteMyHub{
+		HubName:   hubData.HubName,
+		RepoURL:   hubData.RepoURL,
+		ProjectID: hubData.ProjectID,
+	}
+	log.Println("Downloading remote hub")
+	err = DownloadRemoteHub(updateHub)
+	if err != nil {
+		return err
+	}
+	log.Println("Remote hub ", hubData.HubName, "downloaded ")
+	return nil
 }

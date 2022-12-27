@@ -15,7 +15,7 @@ import (
 )
 
 func ClusterConnect(clusterData map[string]string) {
-	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t project_id,\n     action{\n      k8s_manifest,\n      external_data,\n      request_type\n     username\n     namespace\n     }\n  }\n}\n"}`
+	query := `{"query":"subscription {\n    clusterConnect(clusterInfo: {clusterID: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", accessKey: \"` + clusterData["ACCESS_KEY"] + `\"}) {\n   \t projectID,\n     action{\n      k8sManifest,\n      externalData,\n      requestType\n     username\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(clusterData["SERVER_ADDR"])
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to parse URL")
@@ -72,7 +72,6 @@ func ClusterConnect(clusterData map[string]string) {
 		if err != nil {
 			logrus.WithError(err).Fatal("Failed to read message")
 		}
-
 		var r types.RawData
 		err = json.Unmarshal(message, &r)
 		if err != nil {
@@ -90,7 +89,6 @@ func ClusterConnect(clusterData map[string]string) {
 			logrus.Error("Error response from the server : ", string(message))
 			continue
 		}
-
 		err = RequestProcessor(clusterData, r)
 		if err != nil {
 			logrus.WithError(err).Error("Error on processing request")
@@ -103,7 +101,6 @@ func RequestProcessor(clusterData map[string]string, r types.RawData) error {
 		KubeObjRequest := types.KubeObjRequest{
 			RequestID: r.Payload.Data.ClusterConnect.ProjectID,
 		}
-
 		err := json.Unmarshal([]byte(r.Payload.Data.ClusterConnect.Action.ExternalData), &KubeObjRequest)
 		if err != nil {
 			return errors.New("failed to json unmarshal: " + err.Error())

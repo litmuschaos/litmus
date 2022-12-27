@@ -1,0 +1,27 @@
+# limits the number of requests to be attacked
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-app-kill-sa
+  experiments:
+    - name: spring-boot-app-kill
+      spec:
+        components:
+          env:
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'
+
+            # it contains the number of requests that are to be attacked.
+            # n value means nth request will be affected
+            - name: CM_LEVEL
+              value: '1'
