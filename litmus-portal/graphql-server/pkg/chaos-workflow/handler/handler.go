@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"regexp"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 
@@ -38,12 +39,14 @@ import (
 
 func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
     // Extract the workflow name from the request
-    workflowName := request.WorkflowName
+        workflowName := request.WorkflowName
 
     // Validate the workflow name
-    if !isValidScenarioName(workflowName) {
-        return nil, fmt.Errorf("invalid scenario name: %s", workflowName)
-    }
+        if !isValidScenarioName(workflowName) {
+            return nil, fmt.Errorf("invalid scenario name: %s", workflowName)
+        }
+
+
 
     request, wfType, err := ops.ProcessWorkflow(request)
     if err != nil {
@@ -82,22 +85,11 @@ func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 }
 
 func isValidScenarioName(name string) bool {
-    // Check the length of the scenario name
-    if len(name) > 54 {
-        return false
-    }
+    // Compile the regular expression to use for scenario name validation
+    validNameRegex := regexp.MustCompile(`(^[a-z0-9-]{0,54}$)`)
 
-    // Check for invalid characters in the scenario name
-    // You can specify the list of invalid characters here
-    invalidChars := []string{"!", "@", "#", "$", "%", "^", "&", "*"}
-    for _, char := range invalidChars {
-        if strings.Contains(name, char) {
-            return false
-        }
-    }
-
-    // If the scenario name passes all the checks, it is considered valid
-    return true
+    // Check if the scenario name matches the regular expression
+    return validNameRegex.MatchString(name)
 }
 
 
