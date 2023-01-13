@@ -2,12 +2,15 @@ package handler
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 
@@ -699,6 +702,11 @@ func ListWorkflows(request model.ListWorkflowsRequest) (*model.ListWorkflowsResp
 
 // ChaosWorkflowRun Updates or Inserts a new Workflow Run into the DB
 func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (string, error) {
+	var (
+		executionData types.ExecutionData
+		exeData       []byte
+	)
+
 	cluster, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
 		log.Println("ERROR", err)
@@ -706,11 +714,20 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 	}
 
 	// Parse and store execution data
-	var executionData types.ExecutionData
-	err = json.Unmarshal([]byte(request.ExecutionData), &executionData)
-	if err != nil {
-		log.Println("Can not parse Execution Data of workflow run with id: ", request.WorkflowRunID)
-		return "", err
+	if request.ExecutionData != "" {
+		exeData, err = base64.StdEncoding.DecodeString(request.ExecutionData)
+		if err != nil {
+			logrus.Warn("Failed to decode execution data: ", err)
+
+			//Required for backward compatibility of subscribers
+			//which are not sending execution data in base64 encoded format
+			exeData = []byte(request.ExecutionData)
+		}
+		err = json.Unmarshal(exeData, &executionData)
+		if err != nil {
+			logrus.Error("Failed to unmarshal execution data: ", err)
+			return "", err
+		}
 	}
 
 	var workflowRunMetrics types.WorkflowRunMetrics
@@ -735,7 +752,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 		ExperimentsStopped: &workflowRunMetrics.ExperimentsStopped,
 		ExperimentsNA:      &workflowRunMetrics.ExperimentsNA,
 		TotalExperiments:   &workflowRunMetrics.TotalExperiments,
-		ExecutionData:      request.ExecutionData,
+		ExecutionData:      string(exeData),
 		Completed:          request.Completed,
 		IsRemoved:          &isRemoved,
 		ExecutedBy:         request.ExecutedBy,
