@@ -1,5 +1,11 @@
 import { WeekData } from 'litmus-ui';
 
+export interface FailureOutput {
+  // ErrorCode defines error code of the experiment
+  errorCode?: string;
+  // FailedStep defines step where the experiments failed
+  failedStep?: string;
+}
 export interface ChaosData {
   engineName: string;
   engineContext: string;
@@ -8,7 +14,7 @@ export interface ChaosData {
   experimentPod: string;
   experimentStatus: string;
   experimentVerdict: string;
-  failStep: string;
+  failureOutput?: FailureOutput;
   lastUpdatedAt: string;
   namespace: string;
   probeSuccessPercentage: string;

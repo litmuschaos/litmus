@@ -1,3 +1,5 @@
+import { FailureOutput } from './workflowData';
+
 export interface WeightageMap {
   experimentName: string;
   weightage: number;
@@ -10,7 +12,7 @@ export interface ChaosData {
   experimentPod: string;
   experimentStatus: string;
   experimentVerdict: string;
-  failStep: string;
+  failureOutput?: FailureOutput;
   lastUpdatedAt: string;
   namespace: string;
   probeSuccessPercentage: string;
