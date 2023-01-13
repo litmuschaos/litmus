@@ -68,7 +68,9 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		expRes.Annotations = nil
 		cd.ChaosResult = expRes
 		cd.ProbeSuccessPercentage = expRes.Status.ExperimentStatus.ProbeSuccessPercentage
-		cd.FailStep = expRes.Status.ExperimentStatus.FailStep
+		if expRes.Status.ExperimentStatus.FailureOutput != nil {
+			cd.FailStep = expRes.Status.ExperimentStatus.FailureOutput.FailedStep
+		}
 	}
 	return cd, nil
 }
