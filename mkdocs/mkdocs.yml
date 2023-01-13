@@ -117,6 +117,13 @@ nav:
             - Kafka Broker Pod Failure: experiments/categories/kafka/kafka-broker-pod-failure.md
         - Cassandra:
             - Cassandra Pod Delete: experiments/categories/cassandra/cassandra-pod-delete.md
+        - Spring Boot:
+            - Spring Boot App Kill: experiments/categories/spring-boot/spring-boot-app-kill.md
+            - Spring Boot CPU Stress: experiments/categories/spring-boot/spring-boot-cpu-stress.md
+            - Spring Boot Memory Stress: experiments/categories/spring-boot/spring-boot-memory-stress.md
+            - Spring Boot Exceptions: experiments/categories/spring-boot/spring-boot-exceptions.md
+            - Spring Boot Latency: experiments/categories/spring-boot/spring-boot-latency.md
+            - Spring Boot Faults: experiments/categories/spring-boot/spring-boot-faults.md
       - Cloud Infrastructure:
         - AWS: 
             - EC2:

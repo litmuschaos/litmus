@@ -28,12 +28,12 @@ func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[st
 	// Switch case to fill the map according to filter
 	switch filter {
 	case model.TimeFrequencyMonthly:
-		key := int(lastUpdatedTime.Month())
-		month := statsMap[string(key)]
+		key := lastUpdatedTime.Month()
+		month := statsMap[key.String()]
 
 		// Incrementing the value for each month
 		month.Value++
-		statsMap[string(key)] = month
+		statsMap[key.String()] = month
 
 	case model.TimeFrequencyDaily:
 		key := fmt.Sprintf("%d-%d", lastUpdatedTime.Month(), lastUpdatedTime.Day())

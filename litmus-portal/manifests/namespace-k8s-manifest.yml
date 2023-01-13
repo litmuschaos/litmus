@@ -146,7 +146,7 @@ rules:
 
   - apiGroups: [apps]
     resources: [deployments, daemonsets, replicasets, statefulsets]
-    verbs: [get, list, delete]
+    verbs: [get, list, delete, deletecollection]
 
   - apiGroups: [argoproj.io]
     resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, rollouts]
@@ -555,7 +555,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.14.0
+          image: litmuschaos/curl:3.0.0-beta2
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -628,21 +628,21 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.14.0"
+              value: "litmuschaos/chaos-operator:3.0.0-beta2"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.14.0"
+              value: "litmuschaos/chaos-runner:3.0.0-beta2"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.14.0"
+              value: "litmuschaos/chaos-exporter:3.0.0-beta2"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.14.x"
+              value: "master"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "2.14.0"
+              value: "3.0.0-beta2"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INGRESS
@@ -699,7 +699,7 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.14.0
+          image: litmuschaos/curl:3.0.0-beta2
           command: ["/bin/sh", "-c"]
           args:
             [

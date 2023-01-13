@@ -194,7 +194,9 @@ func DeleteClusters(ctx context.Context, projectID string, clusterIds []*string,
 				"apiVersion": "apps/v1",
 				"kind": "Deployment",
 				"metadata": {
-					"name": "subscriber",
+					"labels": {
+                       "app": "subscriber",
+                    },
 					"namespace": ` + *cluster.AgentNamespace + `
 				}
 			}`,
