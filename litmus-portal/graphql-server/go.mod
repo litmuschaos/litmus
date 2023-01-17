@@ -14,7 +14,7 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/litmuschaos/chaos-operator v0.0.0-20221010164339-e91b0109a875
+	github.com/litmuschaos/chaos-operator v0.0.0-20230109130222-de7c74a937a9
 	github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1

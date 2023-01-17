@@ -3,6 +3,7 @@ package events
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"regexp"
 	"strconv"
@@ -12,7 +13,6 @@ import (
 	v1alpha13 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	v1alpha12 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 	"github.com/sirupsen/logrus"
@@ -68,7 +68,9 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		expRes.Annotations = nil
 		cd.ChaosResult = expRes
 		cd.ProbeSuccessPercentage = expRes.Status.ExperimentStatus.ProbeSuccessPercentage
-		cd.FailStep = expRes.Status.ExperimentStatus.FailStep
+		if expRes.Status.ExperimentStatus.FailureOutput != nil {
+			cd.FailStep = expRes.Status.ExperimentStatus.FailureOutput.FailedStep
+		}
 	}
 	return cd, nil
 }
@@ -159,11 +161,13 @@ func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent 
 
 	wfEvent.ExecutedBy = URLDecodeBase64(wfEvent.ExecutedBy)
 
-	processed, err := graphql.MarshalGQLData(wfEvent)
+	data, err := json.Marshal(wfEvent)
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ workflowID: \"` + wfEvent.WorkflowID + `\", workflowRunID: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflowName:\"` + wfEvent.Name + `\", clusterID: ` + clusterID + `, executedBy:\"` + wfEvent.ExecutedBy + `\", executionData:\"` + processed[1:len(processed)-1] + `\"}`
+
+	executionData := base64.StdEncoding.EncodeToString(data)
+	mutation := `{ workflowID: \"` + wfEvent.WorkflowID + `\", workflowRunID: \"` + wfEvent.UID + `\", completed: ` + completed + `, workflowName:\"` + wfEvent.Name + `\", clusterID: ` + clusterID + `, executedBy:\"` + wfEvent.ExecutedBy + `\", executionData:\"` + executionData + `\"}`
 	var payload = []byte(`{"query":"mutation { chaosWorkflowRun(request:` + mutation + ` )}"}`)
 	return payload, nil
 }

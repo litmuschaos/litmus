@@ -7,7 +7,7 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gorilla/websocket v1.5.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/litmuschaos/chaos-operator v0.0.0-20221010164339-e91b0109a875
+	github.com/litmuschaos/chaos-operator v0.0.0-20230109130222-de7c74a937a9
 	github.com/sirupsen/logrus v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.23.3
