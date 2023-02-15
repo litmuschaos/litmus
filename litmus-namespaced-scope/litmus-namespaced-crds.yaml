@@ -2222,16 +2222,17 @@ spec:
                                         type: string
                               runProperties:
                                 type: object
-                                minProperties: 2
+                                minProperties: 3
                                 required:
                                   - probeTimeout
                                   - interval
+                                  - attempt
                                 properties:
                                   probeTimeout:
                                     type: integer
                                   interval:
                                     type: integer
-                                  retry:
+                                  attempt:
                                     type: integer
                                   probePollingInterval:
                                     type: integer
