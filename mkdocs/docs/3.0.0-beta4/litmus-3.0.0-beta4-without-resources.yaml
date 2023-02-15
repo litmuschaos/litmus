@@ -618,7 +618,7 @@ spec:
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:3.0.0-beta4"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:3.0.0-beta3"
+              value: "litmuschaos/litmusportal-event-tracker:3.0.0-beta4"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
