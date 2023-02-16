@@ -257,7 +257,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 
 		check := conditionChecker(etp, newDataInterface, oldDataInterface)
 
-		if check == true {
+		if check {
 			etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
 				TimeStamp:    time.Now().Format(time.RFC850),
 				Resource:     resourceType,
