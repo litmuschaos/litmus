@@ -57,7 +57,7 @@ func DexLogin() gin.HandlerFunc {
 func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		incomingState := c.Query("state")
-		validated, err := utils.ValidateOAuthJWT(incomingState)
+		validated, _ := utils.ValidateOAuthJWT(incomingState)
 		if !validated {
 			c.Redirect(http.StatusTemporaryRedirect, "/")
 		}

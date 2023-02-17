@@ -30,10 +30,10 @@ func Status(service services.ApplicationService) gin.HandlerFunc {
 		_, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
-			c.JSON(500, entities.APIStatus{"down"})
+      c.JSON(500, entities.APIStatus{Status: "down"})
 			return
 		}
-		c.JSON(200, entities.APIStatus{"up"})
+    c.JSON(200, entities.APIStatus{Status: "up"})
 	}
 }
 

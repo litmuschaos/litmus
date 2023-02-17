@@ -68,7 +68,7 @@ func (r repository) GetUser(uid string) (*entities.User, error) {
 	if findOneErr != nil {
 		return nil, findOneErr
 	}
-	return &(*result.SanitizedUser()), nil
+	return result.SanitizedUser(), nil
 }
 
 // GetUsers fetches all the users from the database
@@ -90,8 +90,8 @@ func (r repository) GetUsers() (*[]entities.User, error) {
 func (r repository) FindUsersByUID(uid []string) (*[]entities.User, error) {
 	cursor, err := r.Collection.Find(context.Background(),
 		bson.D{
-			{"_id", bson.D{
-				{"$in", uid},
+      {Key: "_id", Value: bson.D{
+        {Key: "$in", Value: uid},
 			}},
 		})
 
@@ -150,8 +150,8 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 		}
 	}
 
-	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
-	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"_id": result.ID}, bson.M{"$set": bson.M{
+	newHashedPassword, _ := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
+  _, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": result.ID}, bson.M{"$set": bson.M{
 		"password": string(newHashedPassword),
 	}})
 	if err != nil {

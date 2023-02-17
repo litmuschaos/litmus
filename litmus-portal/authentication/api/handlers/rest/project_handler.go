@@ -256,7 +256,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		// Checking for duplicate project name
-		filter := bson.D{{"name", userRequest.ProjectName}}
+    filter := bson.D{{Key: "name", Value: userRequest.ProjectName}}
 		projects, err := service.GetProjects(filter)
 		if err != nil {
 			return
@@ -599,7 +599,7 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		uid := c.MustGet("uid").(string)
 
 		// Checking for duplicate project name
-		filter := bson.D{{"name", userRequest.ProjectName}, {"members.user_id", uid}, {"members.role", entities.RoleOwner}}
+    filter := bson.D{{Key: "name", Value: userRequest.ProjectName}, {Key: "members.user_id", Value: uid}, {Key: "members.role", Value: entities.RoleOwner}}
 		projects, err := service.GetProjects(filter)
 		if err != nil {
 			return

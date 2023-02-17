@@ -24,14 +24,14 @@ func RbacValidator(uid string, projectID string,
 
 	// Check for project permission validity
 	filter := bson.D{
-		{"_id", projectID},
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", uid},
-				{"role", bson.D{
-					{"$in", requiredRoles},
+    {Key: "_id", Value: projectID},
+    {Key: "members", Value: bson.D{
+      {Key: "$elemMatch", Value: bson.D{
+        {Key: "user_id", Value: uid},
+        {Key: "role", Value: bson.D{
+          {Key: "$in", Value: requiredRoles},
 				}},
-				{"invitation", invitation},
+        {Key: "invitation", Value: invitation},
 			}},
 		}},
 	}

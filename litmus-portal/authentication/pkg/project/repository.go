@@ -39,7 +39,7 @@ type repository struct {
 func (r repository) GetProjectByProjectID(projectID string) (*entities.Project, error) {
 	var project = new(entities.Project)
 
-	findOneErr := r.Collection.FindOne(context.TODO(), bson.D{{"_id", projectID}}).Decode(&project)
+  findOneErr := r.Collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: projectID}}).Decode(&project)
 	if findOneErr != nil {
 		return nil, findOneErr
 	}
@@ -66,30 +66,31 @@ func (r repository) GetProjects(query bson.D) ([]*entities.Project, error) {
 // GetProjectsByUserID returns a project based on the userID
 func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entities.Project, error) {
 	var projects []*entities.Project
-	query := bson.D{}
+	// query := bson.D{}
+  var query bson.D
 
-	if isOwner == true {
+	if isOwner {
 		query = bson.D{
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"role", bson.D{
-						{"$eq", entities.RoleOwner},
+      {Key: "members", Value: bson.D{
+        {Key: "$elemMatch", Value: bson.D{
+          {Key: "user_id", Value: userID},
+          {Key: "role", Value: bson.D{
+            {Key: "$eq", Value: entities.RoleOwner},
 					}},
 				}},
 			}}}
 	} else {
 		query = bson.D{
-			{"removed_at", ""},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"$and", bson.A{
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.DeclinedInvitation},
+      {Key: "removed_at", Value: ""},
+      {Key: "members", Value: bson.D{
+        {Key: "$elemMatch", Value: bson.D{
+          {Key: "user_id", Value: userID},
+          {Key: "$and", Value: bson.A{
+            bson.D{{Key: "invitation", Value: bson.D{
+              {Key: "$ne", Value: entities.DeclinedInvitation},
 						}}},
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.ExitedProject},
+            bson.D{{Key: "invitation", Value: bson.D{
+              {Key: "$ne", Value: entities.ExitedProject},
 						}}},
 					}},
 				}},
@@ -111,7 +112,7 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 // GetProjectStats returns stats related to projects in the DB
 func (r repository) GetProjectStats() ([]*entities.ProjectStats, error) {
 	pipeline := mongo.Pipeline{
-		bson.D{{"$project", bson.M{
+    bson.D{{Key: "$project", Value: bson.M{
 			"name": 1,
 			"memberStat": bson.M{
 				"owner": bson.M{
@@ -170,9 +171,9 @@ func (r repository) CreateProject(project *entities.Project) error {
 
 // AddMember adds a new member into the project whose projectID is passed
 func (r repository) AddMember(projectID string, member *entities.Member) error {
-	query := bson.D{{"_id", projectID}}
-	update := bson.D{{"$push", bson.D{
-		{"members", member},
+  query := bson.D{{Key: "_id", Value: projectID}}
+  update := bson.D{{Key: "$push", Value: bson.D{
+    {Key: "members", Value: member},
 	}}}
 
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
@@ -188,11 +189,11 @@ func (r repository) AddMember(projectID string, member *entities.Member) error {
 
 // RemoveInvitation removes member or cancels the invitation
 func (r repository) RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error {
-	query := bson.D{{"_id", projectID}}
+  query := bson.D{{Key: "_id", Value: projectID}}
 	update := bson.D{
-		{"$pull", bson.D{
-			{"members", bson.D{
-				{"user_id", userID},
+    {Key: "$pull", Value: bson.D{
+      {Key: "members", Value: bson.D{
+        {Key: "user_id", Value: userID},
 			}},
 		}},
 	}
@@ -216,34 +217,34 @@ func (r repository) RemoveInvitation(projectID string, userID string, invitation
 func (r repository) UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.user_id", userID}},
+      bson.D{{Key: "elem.user_id", Value: userID}},
 		},
 	})
-	query := bson.D{{"_id", projectID}}
+  query := bson.D{{Key: "_id", Value: projectID}}
 	var update bson.D
 
 	switch invitation {
 	case entities.PendingInvitation:
 		update = bson.D{
-			{"$set", bson.D{
-				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].role", role},
+      {Key: "$set", Value: bson.D{
+        {Key: "members.$[elem].invitation", Value: invitation},
+        {Key: "members.$[elem].role", Value: role},
 			}}}
 	case entities.DeclinedInvitation:
 		update = bson.D{
-			{"$set", bson.D{
-				{"members.$[elem].invitation", invitation},
+      {Key: "$set", Value: bson.D{
+        {Key: "members.$[elem].invitation", Value: invitation},
 			}}}
 	case entities.AcceptedInvitation:
 		update = bson.D{
-			{"$set", bson.D{
-				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", strconv.FormatInt(time.Now().Unix(), 10)},
+      {Key: "$set", Value: bson.D{
+        {Key: "members.$[elem].invitation", Value: invitation},
+        {Key: "members.$[elem].joined_at", Value: strconv.FormatInt(time.Now().Unix(), 10)},
 			}}}
 	case entities.ExitedProject:
 		update = bson.D{
-			{"$set", bson.D{
-				{"members.$[elem].invitation", invitation},
+      {Key: "$set", Value: bson.D{
+        {Key: "members.$[elem].invitation", Value: invitation},
 			}}}
 	}
 
@@ -260,8 +261,8 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 
 // UpdateProjectName :Updates Name of the project
 func (r repository) UpdateProjectName(projectID string, projectName string) error {
-	query := bson.D{{"_id", projectID}}
-	update := bson.D{{"$set", bson.M{"name": projectName}}}
+  query := bson.D{{Key: "_id", Value: projectID}}
+  update := bson.D{{Key: "$set", Value: bson.M{"name": projectName}}}
 
 	_, err := r.Collection.UpdateOne(context.TODO(), query, update)
 	if err != nil {
@@ -285,14 +286,14 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 func (r repository) UpdateProjectState(userID string, deactivateTime string) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
-			bson.D{{"elem.user_id", userID}},
+      bson.D{{Key: "elem.user_id", Value: userID}},
 		},
 	})
 
 	filter := bson.D{{}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"members.$[elem].deactivated_at", deactivateTime},
+    {Key: "$set", Value: bson.D{
+      {Key: "members.$[elem].deactivated_at", Value: deactivateTime},
 		}},
 	}
 
@@ -303,18 +304,18 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 	}
 
 	filter = bson.D{
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", userID},
-				{"role", bson.D{
-					{"$eq", entities.RoleOwner},
+    {Key: "members", Value: bson.D{
+      {Key: "$elemMatch", Value: bson.D{
+        {Key: "user_id", Value: userID},
+        {Key: "role", Value: bson.D{
+          {Key: "$eq", Value: entities.RoleOwner},
 				}},
 			}},
 		}}}
 
 	update = bson.D{
-		{"$set", bson.D{
-			{"removed_at", deactivateTime},
+    {Key: "$set", Value: bson.D{
+      {Key: "removed_at", Value: deactivateTime},
 		}},
 	}
 
@@ -330,18 +331,18 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 // GetOwnerProjectIDs takes a userID to retrieve the project IDs in which user is the owner
 func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error) {
 	filter := bson.D{
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", userID},
-				{"role", bson.D{
-					{"$eq", entities.RoleOwner},
+    {Key: "members", Value: bson.D{
+      {Key: "$elemMatch", Value: bson.D{
+        {Key: "user_id", Value: userID},
+        {Key: "role", Value: bson.D{
+          {Key: "$eq", Value: entities.RoleOwner},
 				}},
 			}},
 		}}}
 
 	pipeline := mongo.Pipeline{
-		bson.D{{"$match", filter}},
-		bson.D{{"$project", bson.M{
+    bson.D{{Key: "$match", Value: filter}},
+    bson.D{{Key: "$project", Value: bson.M{
 			"_id": 1,
 		}}},
 	}
@@ -368,14 +369,14 @@ func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]st
 // GetProjectRole returns the role of a user in the project
 func (r repository) GetProjectRole(projectID string, userID string) (*entities.MemberRole, error) {
 	filter := bson.D{
-		{"_id", projectID},
+    {Key: "_id", Value: projectID},
 	}
 	projection := bson.D{
-		{"_id", 0},
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"user_id", userID},
-				{"invitation", entities.AcceptedInvitation},
+    {Key: "_id", Value: 0},
+    {Key: "members", Value: bson.D{
+      {Key: "$elemMatch", Value: bson.D{
+        {Key: "user_id", Value: userID},
+        {Key: "invitation", Value: entities.AcceptedInvitation},
 			}},
 		}},
 	}

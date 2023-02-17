@@ -30,7 +30,7 @@ func ValidateOAuthJWT(tokenString string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+	if !token.Valid {
 		return false, err
 	}
 	return true, nil
