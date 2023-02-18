@@ -2,7 +2,13 @@ package mongodb
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -79,10 +85,18 @@ func MongoConnection() (*mongo.Client, error) {
 		dbServer   = os.Getenv("DB_SERVER")
 		dbUser     = os.Getenv("DB_USER")
 		dbPassword = os.Getenv("DB_PASSWORD")
+		useTls     = os.Getenv("USE_TLS")
+		keyFile    = os.Getenv("KEY_FILE")
 	)
 
 	if dbServer == "" || dbUser == "" || dbPassword == "" {
 		logrus.Fatal("DB configuration failed")
+	}
+
+	tlsConfig, tlsEnabled, err := buildTlsConfig(useTls, keyFile)
+
+	if err != nil {
+		logrus.Fatalf("DB configuration failed %s", err.Error())
 	}
 
 	credential := options.Credential{
@@ -91,6 +105,10 @@ func MongoConnection() (*mongo.Client, error) {
 	}
 
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
+	if tlsEnabled {
+		clientOptions.SetTLSConfig(tlsConfig)
+	}
+
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
 		logrus.Fatal(err)
@@ -174,4 +192,32 @@ func (m *MongoClient) initAllCollection() {
 	if err != nil {
 		logrus.Fatal("Error Creating Index for Server Config Collection : ", err)
 	}
+}
+
+func buildTlsConfig(useTls string, keyFile string) (*tls.Config, bool, error) {
+	if useTls == "" {
+		return nil, false, nil
+	}
+
+	tlsEnabled, err := strconv.ParseBool(useTls)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if !tlsEnabled {
+		return nil, false, nil
+	}
+
+	pem, err := ioutil.ReadFile(keyFile)
+	if err != nil {
+		return nil, false, err
+	}
+	roots := x509.NewCertPool()
+	if ok := roots.AppendCertsFromPEM(pem); !ok {
+		return nil, false, errors.New(fmt.Sprintf("get certs from %s fail!\n", keyFile))
+	}
+	return &tls.Config{
+		RootCAs:            roots,
+		InsecureSkipVerify: true,
+	}, true, nil
 }
