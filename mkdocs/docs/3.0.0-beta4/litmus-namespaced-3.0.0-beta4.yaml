@@ -392,6 +392,21 @@ metadata:
   name: litmus-server-account
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-auth-server-account
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-frontend-account
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-mongo-account
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: litmus-portal-admin-secret
@@ -523,6 +538,7 @@ spec:
         - name: nginx-config
           configMap:
             name: litmusportal-frontend-nginx-configuration
+      serviceAccountName: litmus-frontend-account
 ---
 apiVersion: v1
 kind: Service
@@ -556,6 +572,9 @@ spec:
       initContainers:
         - name: wait-for-mongodb
           image: litmuschaos/curl:3.0.0-beta4
+          securityContext:
+            runAsUser: 100
+            runAsGroup: 101
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -697,9 +716,13 @@ spec:
         component: litmusportal-auth-server
     spec:
       automountServiceAccountToken: false
+      serviceAccountName: litmus-auth-server-account
       initContainers:
         - name: wait-for-mongodb
           image: litmuschaos/curl:3.0.0-beta4
+          securityContext:
+            runAsUser: 100
+            runAsGroup: 101
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -810,6 +833,7 @@ spec:
                 secretKeyRef:
                   name: litmus-portal-admin-secret
                   key: DB_PASSWORD
+      serviceAccountName: litmus-mongo-account
           resources:
             requests:
               memory: "250Mi"
