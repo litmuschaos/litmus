@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
@@ -14,7 +13,7 @@ type WorkflowHelperImageVersion struct {
 }
 
 func WorkflowHelperImageVersionHandler(w http.ResponseWriter, r *http.Request) {
-	versionDetails := os.Getenv("WORKFLOW_HELPER_IMAGE_VERSION")
+	versionDetails := utils.Config.WorkflowHelperImageVersion
 	version := WorkflowHelperImageVersion{Version: versionDetails}
 	versionByte, err := json.Marshal(version)
 	if err != nil {

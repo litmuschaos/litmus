@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
 	"runtime"
 	"strings"
 	"time"
@@ -39,46 +38,18 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Config struct {
-	Port                        string
-	Version                     string `required:"true"`
-	AgentDeployments            string `required:"true" split_words:"true"`
-	DbServer                    string `required:"true" split_words:"true"`
-	JwtSecret                   string `required:"true" split_words:"true"`
-	SelfAgent                   string `required:"true" split_words:"true"`
-	AgentScope                  string `required:"true" split_words:"true"`
-	AgentNamespace              string `required:"true" split_words:"true"`
-	LitmusPortalNamespace       string `required:"true" split_words:"true"`
-	DbUser                      string `required:"true" split_words:"true"`
-	DbPassword                  string `required:"true" split_words:"true"`
-	ChaosCenterScope            string `required:"true" split_words:"true"`
-	SubscriberImage             string `required:"true" split_words:"true"`
-	EventTrackerImage           string `required:"true" split_words:"true"`
-	ArgoWorkflowControllerImage string `required:"true" split_words:"true"`
-	ArgoWorkflowExecutorImage   string `required:"true" split_words:"true"`
-	LitmusChaosOperatorImage    string `required:"true" split_words:"true"`
-	LitmusChaosRunnerImage      string `required:"true" split_words:"true"`
-	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
-	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
-	HubBranchName               string `required:"true" split_words:"true"`
-	WorkflowHelperImageVersion  string `required:"true" split_words:"true"`
-}
-
-const defaultPort = "8080"
-
 func init() {
 	logrus.Printf("Go Version: %s", runtime.Version())
 	logrus.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
-	var c Config
-
-	err := envconfig.Process("", &c)
+	err := envconfig.Process("", &utils.Config)
 	if err != nil {
 		logrus.Fatal(err)
 	}
+
 	// confirm version env is valid
-	if !strings.Contains(strings.ToLower(c.Version), cluster.CIVersion) {
-		splitCPVersion := strings.Split(c.Version, ".")
+	if !strings.Contains(strings.ToLower(utils.Config.Version), cluster.CIVersion) {
+		splitCPVersion := strings.Split(utils.Config.Version, ".")
 		if len(splitCPVersion) != 3 {
 			logrus.Fatal("version doesn't follow semver semantic")
 		}
@@ -86,7 +57,7 @@ func init() {
 }
 
 func validateVersion() error {
-	currentVersion := os.Getenv("VERSION")
+	currentVersion := utils.Config.Version
 	dbVersion, err := config.GetConfig(context.Background(), "version")
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
@@ -105,16 +76,6 @@ func validateVersion() error {
 }
 
 func main() {
-	httpPort := os.Getenv("HTTP_PORT")
-	if httpPort == "" {
-		httpPort = utils.DefaultHTTPPort
-	}
-
-	rpcPort := os.Getenv("RPC_PORT")
-	if rpcPort == "" {
-		rpcPort = utils.DefaultRPCPort
-	}
-
 	client, err := mongodb.MongoConnection()
 	if err != nil {
 		logrus.Fatal(err)
@@ -126,7 +87,7 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	go startGRPCServer(rpcPort) // start GRPC server
+	go startGRPCServer(utils.Config.RpcPort) // start GRPC server
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
 	srv.AddTransport(transport.POST{})
@@ -168,8 +129,8 @@ func main() {
 	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
-	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", httpPort)
-	logrus.Fatal(http.ListenAndServe(":"+httpPort, router))
+	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
+	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls

@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 
@@ -30,7 +29,7 @@ import (
 
 // RegisterCluster creates an entry for a new cluster in DB and generates the url used to apply manifest
 func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
-	endpoint, err := handlers.GetEndpoint(request.ClusterType)
+	endpoint, err := cluster.GetEndpoint(request.ClusterType)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +103,7 @@ func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClust
 
 // ConfirmClusterRegistration takes the cluster_id and access_key from the subscriber and validates it, if validated generates and sends new access_key
 func ConfirmClusterRegistration(request model.ClusterIdentity, r store.StateData) (*model.ConfirmClusterRegistrationResponse, error) {
-	currentVersion := os.Getenv("VERSION")
+	currentVersion := utils.Config.Version
 	if currentVersion != request.Version {
 		return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v got %v)", currentVersion, request.Version)
 	}
@@ -275,7 +274,7 @@ func SendClusterEvent(eventType, eventName, description string, cluster model.Cl
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r store.StateData) {
-	if os.Getenv("AGENT_SCOPE") == "cluster" {
+	if utils.Config.AgentScope == "cluster" {
 		/*
 			namespace = Obtain from WorkflowManifest or
 			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model

@@ -6,9 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -23,7 +24,7 @@ import (
 var (
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
-	AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
+	AgentNamespace  = utils.Config.AgentNamespace
 )
 
 // This function handles cluster operations
@@ -77,10 +78,10 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 }
 
 /*
-	This function returns the endpoint of the server by which external agents can communicate.
-	The order of generating the endpoint is based on different network type:
-	- Ingress
-	- LoadBalancer > NodePort > ClusterIP
+This function returns the endpoint of the server by which external agents can communicate.
+The order of generating the endpoint is based on different network type:
+- Ingress
+- LoadBalancer > NodePort > ClusterIP
 */
 func GetServerEndpoint(portalScope, agentType string) (string, error) {
 	var (
@@ -91,12 +92,13 @@ func GetServerEndpoint(portalScope, agentType string) (string, error) {
 		IPAddress         string
 		Scheme            string
 		FinalUrl          string
-		ServerServiceName = os.Getenv("SERVER_SERVICE_NAME")
-		NodeName          = os.Getenv("NODE_NAME")
-		LitmusPortalNS    = os.Getenv("LITMUS_PORTAL_NAMESPACE")
-		Ingress           = os.Getenv("INGRESS")
-		IngressName       = os.Getenv("INGRESS_NAME")
+		ServerServiceName = utils.Config.ServerServiceName
+		NodeName          = utils.Config.NodeName
+		LitmusPortalNS    = utils.Config.LitmusPortalNamespace
+		Ingress           = utils.Config.Ingress
+		IngressName       = utils.Config.IngressName
 	)
+
 	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
@@ -254,7 +256,7 @@ func GetTLSCert(secretName string) (string, error) {
 		return "", err
 	}
 
-	secret, err := clientset.CoreV1().Secrets(os.Getenv("LITMUS_PORTAL_NAMESPACE")).Get(context.Background(), secretName, metaV1.GetOptions{})
+	secret, err := clientset.CoreV1().Secrets(utils.Config.LitmusPortalNamespace).Get(context.Background(), secretName, metaV1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
