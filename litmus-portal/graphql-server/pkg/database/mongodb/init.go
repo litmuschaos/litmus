@@ -84,7 +84,7 @@ func MongoConnection() (*mongo.Client, error) {
 	)
 
 	if dbServer == "" || dbUser == "" || dbPassword == "" {
-		return nil, fmt.Errorf("missing required DB configuration: server=%q, user=%q, password=%q", dbServer, dbUser, dbPassword)
+		return nil, fmt.Errorf("missing required DB configuration")
 	}
 
 	credential := options.Credential{
