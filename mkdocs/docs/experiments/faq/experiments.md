@@ -233,7 +233,7 @@ But we can target the pods by following ways:
 
 ### What type of chaos experiments are supported by Litmus?
 
-Litmus broadly defines Kubernetes chaos experiments into two categories: application or pod-level chaos experiments and platform or infra-level chaos experiments. The former includes pod-delete, container-kill, pod-cpu-hog, pod-network-loss etc., while the latter includes node-drain, disk-loss, node-cpu-hog etc., The infra chaos experiments typically have a higher blast radius and impacts more than one application deployed on the Kubernetes cluster. Litmus also categorizes experiments on the basis of the applications, with the experiments consisting of app-specific health checks. For example, OpenEBS, Kafka, CoreDNS.
+Litmus broadly defines Kubernetes chaos experiments into two categories: application or pod-level chaos experiments and platform or infra-level chaos experiments. The former includes pod-delete, container-kill, pod-cpu-hog, pod-network-loss etc., while the latter includes node-drain, disk-loss, node-cpu-hog etc., The infra chaos experiments typically have a higher blast radius and impact more than one application deployed on the Kubernetes cluster. Litmus also categorizes experiments on the basis of the applications, with the experiments consisting of app-specific health checks.
 For a full list of supported chaos experiments, visit: https://hub.litmuschaos.io
 
 ### What are the permissions required to run Litmus Chaos Experiments?

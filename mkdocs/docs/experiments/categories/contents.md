@@ -6,7 +6,7 @@ Provided below are tables with links to the individual experiment docs for easy 
 
 ## Kubernetes Experiments
 
-It contains chaos experiments which apply on the resources, which are running on the kubernetes cluster. It contains <code>Generic</code>, <code>Kafka</code>, <code>Cassandra</code> experiments.
+It contains chaos experiments which apply on the resources, which are running on the kubernetes cluster. It contains <code>Generic</code> experiments.
 
 Following Kubernetes Chaos experiments are available:
 
@@ -182,16 +182,6 @@ While Chaos Experiments under the Generic category offer the ability to induce c
     <th>Experiment Name</th>
     <th>Description</th>
     <th>User Guide</th>
-  </tr>
-  <tr>
-    <td>Kafka Broker Pod Failure</td>
-    <td>Kills the kafka broker pod</td>
-    <td><a href="/litmus/experiments/categories/kafka/kafka-broker-pod-failure">kafka-broker-pod-failure</a></td>
-  </tr>
-  <tr>
-    <td>Cassandra Pod Delete</td>
-    <td>Kills the cassandra pod</td>
-    <td><a href="/litmus/experiments/categories/cassandra/cassandra-pod-delete">cassandra-pod-delete</a></td>
   </tr>
   <tr>
     <td>Spring Boot App Kill</td>

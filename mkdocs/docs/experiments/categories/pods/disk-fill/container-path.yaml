@@ -1,4 +1,4 @@
-# path inside node/vm where containers are present 
+# path inside node/vm where containers are present
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -16,8 +16,11 @@ spec:
     spec:
       components:
         env:
-        # storage location of the containers
-        - name: CONTAINER_PATH
-          value: '/var/lib/docker/containers'
+        # provide the name of container runtime, it supports docker, containerd, crio
+        - name: CONTAINER_RUNTIME
+          value: 'containerd'
+        # provide the socket file path
+        - name: SOCKET_PATH
+          value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
           VALUE: '60'
