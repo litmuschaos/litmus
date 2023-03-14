@@ -237,9 +237,9 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 		}
 
 		nodeSelector := struct {
-			NodeSelector map[string]string `yaml:"nodeSelector"`
+			nodeSelector map[string]string `yaml:"nodeSelector"`
 		}{
-			NodeSelector: selectorList,
+			nodeSelector: selectorList,
 		}
 
 		byt, err := yaml.Marshal(nodeSelector)
@@ -253,9 +253,9 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 	var tolerations string
 	if cluster.Tolerations != nil {
 		byt, err := yaml.Marshal(struct {
-			Tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations"`
+			tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations"`
 		}{
-			Tolerations: cluster.Tolerations,
+			tolerations: cluster.Tolerations,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal the tolerations %v", err)
