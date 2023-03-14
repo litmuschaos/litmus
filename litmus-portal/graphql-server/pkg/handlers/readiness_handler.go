@@ -56,7 +56,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 		var status = ReadinessAPIStatus{Collections: col_flag, DataBase: db_flag}
 		statusByte, err := json.Marshal(status)
 		if err != nil {
-			logrus.Error(status)
+			logrus.Error(err)
 			utils.WriteHeaders(&w, http.StatusBadRequest)
 		}
 
