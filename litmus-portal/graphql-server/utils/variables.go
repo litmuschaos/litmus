@@ -1,7 +1,7 @@
 package utils
 
 type Configurations struct {
-	Version                     string `required:"true" split_words:"true"`
+	Version                     string `required:"true"`
 	AgentDeployments            string `required:"true" split_words:"true"`
 	DbServer                    string `required:"true" split_words:"true"`
 	JwtSecret                   string `required:"true" split_words:"true"`
