@@ -28,7 +28,6 @@ func contains(s []string, str string) bool {
 }
 
 func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler {
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var (
 			db_flag  = "up"
@@ -56,12 +55,11 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 		var status = ReadinessAPIStatus{Collections: col_flag, DataBase: db_flag}
 		statusByte, err := json.Marshal(status)
 		if err != nil {
-			logrus.Error(status)
-			utils.WriteHeaders(&w, 400)
+			logrus.Error(err)
+			utils.WriteHeaders(&w, http.StatusBadRequest)
 		}
 
-		utils.WriteHeaders(&w, 200)
+		utils.WriteHeaders(&w, http.StatusOK)
 		w.Write(statusByte)
 	})
-
 }

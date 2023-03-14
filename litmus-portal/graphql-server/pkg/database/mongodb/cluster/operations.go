@@ -2,6 +2,7 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
@@ -32,9 +33,13 @@ func GetCluster(clusterID string) (Cluster, error) {
 
 	var cluster Cluster
 	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
+	if err != nil {
+		return Cluster{}, fmt.Errorf("error in getting cluster data: %v", err)
+	}
+
 	err = result.Decode(&cluster)
 	if err != nil {
-		return Cluster{}, err
+		return Cluster{}, fmt.Errorf("error in decoding cluster data: %v", err)
 	}
 
 	return cluster, nil
@@ -49,9 +54,13 @@ func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (C
 
 	var cluster Cluster
 	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
+	if err != nil {
+		return Cluster{}, fmt.Errorf("error in getting cluster data: %v", err)
+	}
+
 	err = result.Decode(&cluster)
 	if err != nil {
-		return Cluster{}, err
+		return Cluster{}, fmt.Errorf("error in decoding cluster data: %v", err)
 	}
 
 	return cluster, nil

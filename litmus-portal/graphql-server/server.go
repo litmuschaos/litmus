@@ -39,8 +39,8 @@ import (
 )
 
 func init() {
-	logrus.Printf("Go Version: %s", runtime.Version())
-	logrus.Printf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	logrus.Infof("Go Version: %s", runtime.Version())
+	logrus.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
 	err := envconfig.Process("", &utils.Config)
 	if err != nil {
@@ -54,6 +54,8 @@ func init() {
 			logrus.Fatal("version doesn't follow semver semantic")
 		}
 	}
+
+	logrus.Infof("Version: %s", utils.Config.Version)
 }
 
 func validateVersion() error {

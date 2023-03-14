@@ -16,10 +16,10 @@ func StatusHandler(w http.ResponseWriter, r *http.Request) {
 	var status = APIStatus{Status: "up"}
 	statusByte, err := json.Marshal(status)
 	if err != nil {
-		logrus.Error(status)
-		utils.WriteHeaders(&w, 400)
+		logrus.Error(err)
+		utils.WriteHeaders(&w, http.StatusBadRequest)
 	}
 
-	utils.WriteHeaders(&w, 200)
+	utils.WriteHeaders(&w, http.StatusOK)
 	w.Write(statusByte)
 }
