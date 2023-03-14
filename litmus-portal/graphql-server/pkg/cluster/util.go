@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"strings"
 
@@ -68,7 +69,7 @@ func VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, er
 	}
 
 	if !(cluster.AccessKey == identity.AccessKey && cluster.IsRegistered) {
-		return nil, errors.New("ERROR:  CLUSTER ID MISMATCH")
+		return nil, errors.New("ERROR:  CLUSTER_ID MISMATCH")
 	}
 	return &cluster, nil
 }
@@ -76,23 +77,23 @@ func VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, er
 func GetManifest(token string) ([]byte, int, error) {
 	clusterID, err := ClusterValidateJWT(token)
 	if err != nil {
-		return nil, 404, err
+		return nil, http.StatusNotFound, err
 	}
 
 	reqCluster, err := dbOperationsCluster.GetCluster(clusterID)
 	if err != nil {
-		return nil, 500, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	subscriberConfiguration.GQLServerURI, err = GetEndpoint(reqCluster.ClusterType)
 	if err != nil {
-		return nil, 500, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	if scope == clusterScope && tlsSecretName != "" {
 		subscriberConfiguration.TLSCert, err = k8s.GetTLSCert(tlsSecretName)
 		if err != nil {
-			return nil, 500, err
+			return nil, http.StatusInternalServerError, err
 		}
 	}
 
@@ -107,15 +108,15 @@ func GetManifest(token string) ([]byte, int, error) {
 		} else if reqCluster.AgentScope == "namespace" {
 			respData, err = manifestParser(reqCluster, "manifests/namespace", subscriberConfiguration)
 		} else {
-			logrus.Print("ERROR- AGENT_SCOPE env is empty!")
+			logrus.Error("AGENT_SCOPE env is empty!")
 		}
 		if err != nil {
-			return nil, 500, err
+			return nil, http.StatusInternalServerError, err
 		}
 
-		return respData, 200, nil
+		return respData, http.StatusOK, nil
 	} else {
-		return []byte("Cluster is already registered"), 409, nil
+		return []byte("Cluster is already registered"), http.StatusConflict, nil
 	}
 }
 

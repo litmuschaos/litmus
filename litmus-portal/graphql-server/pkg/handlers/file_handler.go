@@ -19,8 +19,9 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	response, statusCode, err := cluster.GetManifest(token)
 	if err != nil {
-		logrus.Print("error: ", err)
+		logrus.WithError(err).Error("error while generating manifest file")
 		utils.WriteHeaders(&w, statusCode)
+		w.Write([]byte(err.Error()))
 	}
 
 	utils.WriteHeaders(&w, statusCode)
