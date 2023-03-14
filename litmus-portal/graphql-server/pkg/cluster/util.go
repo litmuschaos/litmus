@@ -25,7 +25,7 @@ const (
 	namespaceScope string = "namespace"
 )
 
-type SubscriberConfigurations struct {
+type subscriberConfigurations struct {
 	ServerEndpoint string
 	TLSCert        string
 }
@@ -66,7 +66,7 @@ func GetManifest(token string) ([]byte, int, error) {
 		return nil, http.StatusInternalServerError, err
 	}
 
-	var config SubscriberConfigurations
+	var config subscriberConfigurations
 	config.ServerEndpoint, err = GetEndpoint(reqCluster.ClusterType)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
@@ -131,7 +131,7 @@ func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error
 		return nil, fmt.Errorf("ACCESS_KEY is invalid")
 	}
 
-	var config SubscriberConfigurations
+	var config subscriberConfigurations
 	config.ServerEndpoint, err = GetEndpoint(reqCluster.ClusterType)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve the server endpoint %v", err)
@@ -166,7 +166,7 @@ func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error
 }
 
 // ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
-func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *SubscriberConfigurations) ([]byte, error) {
+func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *subscriberConfigurations) ([]byte, error) {
 	var (
 		generatedYAML             []string
 		defaultState              = false
