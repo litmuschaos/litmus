@@ -281,7 +281,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 		newContent = strings.Replace(newContent, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
 		newContent = strings.Replace(newContent, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
 		newContent = strings.Replace(newContent, "#{AGENT-SCOPE}", cluster.AgentScope, -1)
-		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-CONTROLLER}", utils.Config.WorkflowHelperImageVersion, -1)
+		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-CONTROLLER}", utils.Config.ArgoWorkflowControllerImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-OPERATOR}", utils.Config.LitmusChaosOperatorImage, -1)
 		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-EXECUTOR}", utils.Config.ArgoWorkflowExecutorImage, -1)
 		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-RUNNER}", utils.Config.LitmusChaosRunnerImage, -1)
