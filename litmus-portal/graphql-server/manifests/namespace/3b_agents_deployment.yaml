@@ -6,7 +6,7 @@ metadata:
   namespace: #{AGENT_NAMESPACE}
 data:
   SERVER_ADDR: #{SERVER_ADDR}
-  AGENT_SCOPE: #{AGENT-SCOPE}
+  AGENT_SCOPE: #{AGENT_SCOPE}
   VERSION: #{VERSION}
   START_TIME: #{START_TIME}
   SKIP_SSL_VERIFY: "#{SKIP_SSL_VERIFY}"
@@ -42,14 +42,10 @@ spec:
     spec:
       #{TOLERATIONS}
       #{NODE_SELECTOR}
-      serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
+      serviceAccountName: #{SUBSCRIBER_SERVICE_ACCOUNT}
       containers:
         - name: subscriber
           image: #{SUBSCRIBER_IMAGE}
-          resources:
-            limits:
-              cpu: 200m
-              memory: 500Mi
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000

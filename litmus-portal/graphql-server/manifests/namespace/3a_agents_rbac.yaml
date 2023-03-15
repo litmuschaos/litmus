@@ -51,7 +51,7 @@ metadata:
   namespace: #{AGENT_NAMESPACE}
 subjects:
   - kind: ServiceAccount
-    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
+    name: #{SUBSCRIBER_SERVICE_ACCOUNT}
     namespace: #{AGENT_NAMESPACE}
 roleRef:
   kind: Role
