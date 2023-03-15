@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: subscriber-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: subscriber-role
 rules:
@@ -48,11 +48,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: subscriber-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 subjects:
   - kind: ServiceAccount
-    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
-    namespace: #{AGENT-NAMESPACE}
+    name: #{SUBSCRIBER_SERVICE_ACCOUNT}
+    namespace: #{AGENT_NAMESPACE}
 roleRef:
   kind: Role
   name: subscriber-role
@@ -62,7 +62,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 ---
@@ -70,7 +70,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 rules:
@@ -175,7 +175,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 roleRef:
@@ -185,19 +185,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-admin
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-chaos
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: chaos-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 rules:
   # for managing the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
@@ -224,7 +224,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: chaos-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -232,19 +232,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-chaos
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: event-tracker-sa
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: event-tracker-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 rules:
   - apiGroups:
       - eventtracker.litmuschaos.io
@@ -292,7 +292,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: event-tracker-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -300,4 +300,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: event-tracker-sa
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}

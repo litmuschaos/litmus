@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
   name: chaos-operator-ce
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -30,18 +30,14 @@ spec:
         name: chaos-operator
     spec:
       serviceAccountName: litmus-namespace-scope
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - name: chaos-operator
-          image: #{LITMUS-CHAOS-OPERATOR}
+          image: #{LITMUS_CHAOS_OPERATOR}
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
-          resources:
-            limits:
-              cpu: 150m
-              memory: 250Mi
           command:
             - chaos-operator
           args:
@@ -49,7 +45,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: #{LITMUS-CHAOS-RUNNER}
+              value: #{LITMUS_CHAOS_RUNNER}
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -81,7 +77,7 @@ metadata:
     app: chaos-exporter
     release: prometheus-stack
   name: chaos-exporter
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -93,10 +89,10 @@ spec:
         app: chaos-exporter
         release: prometheus-stack
     spec:
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
-        - image: #{LITMUS-CHAOS-EXPORTER}
+        - image: #{LITMUS_CHAOS_EXPORTER}
           imagePullPolicy: Always
           name: chaos-exporter
           securityContext:
@@ -109,7 +105,7 @@ spec:
             - name: TSDB_SCRAPE_INTERVAL
               value: '10'
             - name: WATCH_NAMESPACE
-              value: #{AGENT-NAMESPACE}
+              value: #{AGENT_NAMESPACE}
           resources:
             requests:
               memory: "300Mi"
@@ -127,7 +123,7 @@ metadata:
   labels:
     app: chaos-exporter
   name: chaos-exporter
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   ports:
     - port: 8080

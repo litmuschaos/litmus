@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-cluster-scope
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
@@ -101,4 +101,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-cluster-scope
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}
