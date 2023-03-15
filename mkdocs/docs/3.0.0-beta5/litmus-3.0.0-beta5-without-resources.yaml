@@ -7,36 +7,36 @@ kind: ClusterRole
 metadata:
   name: argo-cr-for-litmusportal-server
 rules:
-  - apiGroups: [""]
-    resources: [pods, pods/exec]
-    verbs: [create, get, list, watch, update, patch, delete]
-  - apiGroups: [""]
-    resources: [configmaps]
-    verbs: [get, watch, list]
-  - apiGroups: [""]
-    resources: [persistentvolumeclaims]
-    verbs: [create, delete]
-  - apiGroups: [argoproj.io]
-    resources: [workflows, workflows/finalizers]
-    verbs: [get, list, watch, update, patch, delete, create]
-  - apiGroups: [argoproj.io]
-    resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, workflowtasksets]
-    verbs: [get, list, watch]
-  - apiGroups: [argoproj.io]
-    resources: [workflowtaskresults]
-    verbs: [list, watch, deletecollection]
-  - apiGroups: [""]
-    resources: [serviceaccounts]
-    verbs: [get, list]
-  - apiGroups: [argoproj.io]
-    resources: [cronworkflows, cronworkflows/finalizers]
-    verbs: [get, list, watch, update, patch, delete]
-  - apiGroups: [""]
-    resources: [events]
-    verbs: [create, patch]
-  - apiGroups: [policy]
-    resources: [poddisruptionbudgets]
-    verbs: [create, get, delete]
+- apiGroups: [""]
+  resources: [pods, pods/exec]
+  verbs: [create, get, list, watch, update, patch, delete]
+- apiGroups: [""]
+  resources: [configmaps]
+  verbs: [get, watch, list]
+- apiGroups: [""]
+  resources: [persistentvolumeclaims]
+  verbs: [create, delete]
+- apiGroups: [argoproj.io]
+  resources: [workflows, workflows/finalizers]
+  verbs: [get, list, watch, update, patch, delete, create]
+- apiGroups: [argoproj.io]
+  resources: [workflowtemplates, workflowtemplates/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, workflowtasksets]
+  verbs: [get, list, watch]
+- apiGroups: [argoproj.io]
+  resources: [workflowtaskresults]
+  verbs: [list, watch, deletecollection]
+- apiGroups: [""]
+  resources: [serviceaccounts]
+  verbs: [get, list]
+- apiGroups: [argoproj.io]
+  resources: [cronworkflows, cronworkflows/finalizers]
+  verbs: [get, list, watch, update, patch, delete]
+- apiGroups: [""]
+  resources: [events]
+  verbs: [create, patch]
+- apiGroups: [policy]
+  resources: [poddisruptionbudgets]
+  verbs: [create, get, delete]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -60,7 +60,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: ci
+    app.kubernetes.io/version: 3.0.0-beta5
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -105,7 +105,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: ci
+    app.kubernetes.io/version: 3.0.0-beta5
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -135,96 +135,96 @@ rules:
   ## .. by creating the chaos-runner
 
   # for creating and monitoring the chaos-runner pods
-  - apiGroups: [""]
-    resources: [pods,events]
-    verbs: [create, delete, get, list, patch, update, deletecollection]
+- apiGroups: [""]
+  resources: [pods,events]
+  verbs: [create, delete, get, list, patch, update, deletecollection]
 
-    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-  - apiGroups: [""]
-    resources: [secrets, configmaps]
-    verbs: [get, list]
+  # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
+- apiGroups: [""]
+  resources: [secrets, configmaps]
+  verbs: [get, list]
 
-    # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
-  - apiGroups: [""]
-    resources: [pods/log]
-    verbs: [get, list, watch]
+  # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
+- apiGroups: [""]
+  resources: [pods/log]
+  verbs: [get, list, watch]
 
-    # for configuring and monitor the experiment job by chaos-runner pod
-  - apiGroups: [batch]
-    resources: [jobs]
-    verbs: [create, list, get, delete, deletecollection]
+  # for configuring and monitor the experiment job by chaos-runner pod
+- apiGroups: [batch]
+  resources: [jobs]
+  verbs: [create, list, get, delete, deletecollection]
 
-    # ********************************************************************
-    # Permissions needed for creation and discovery of chaos experiments
-    # ********************************************************************
+  # ********************************************************************
+  # Permissions needed for creation and discovery of chaos experiments
+  # ********************************************************************
 
-    # The helper pods are created by experiment to perform the actual chaos injection ...
-    # ... for a period of chaos duration
+  # The helper pods are created by experiment to perform the actual chaos injection ...
+  # ... for a period of chaos duration
 
-    # for creating and deleting the helper or target app pod and events by experiment
-  - apiGroups: [""]
-    resources: [pods]
-    verbs: [create, delete, deletecollection]
+  # for creating and deleting the helper or target app pod and events by experiment
+- apiGroups: [""]
+  resources: [pods]
+  verbs: [create, delete, deletecollection]
 
-    # for creating and monitoring the events for chaos operations
-  - apiGroups: [""]
-    resources: [events]
-    verbs: [create, delete, get, list, patch, update, deletecollection]
+  # for creating and monitoring the events for chaos operations
+- apiGroups: [""]
+  resources: [events]
+  verbs: [create, delete, get, list, patch, update, deletecollection]
 
-    # for monitoring the helper and target app pod
-  - apiGroups: [""]
-    resources: [pods]
-    verbs: [get, list, patch, update]
+  # for monitoring the helper and target app pod
+- apiGroups: [""]
+  resources: [pods]
+  verbs: [get, list, patch, update]
 
-    # for creating and managing to execute comands inside target container
-  - apiGroups: [""]
-    resources: [pods/exec, pods/eviction, replicationcontrollers]
-    verbs: [get,list,create]
+  # for creating and managing to execute comands inside target container
+- apiGroups: [""]
+  resources: [pods/exec, pods/eviction, replicationcontrollers]
+  verbs: [get,list,create]
 
-    # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
-  - apiGroups: [""]
-    resources: [pods/log]
-    verbs: [get, list, watch]
+  # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
+- apiGroups: [""]
+  resources: [pods/log]
+  verbs: [get, list, watch]
 
-    # for creating and monitoring liveness services or monitoring target app services during chaos injection
-  - apiGroups: [""]
-    resources: [services]
-    verbs: [create, delete, get, list, delete, deletecollection]
+  # for creating and monitoring liveness services or monitoring target app services during chaos injection
+- apiGroups: [""]
+  resources: [services]
+  verbs: [create, delete, get, list, delete, deletecollection]
 
-    # for checking the app parent resources as deployments or sts and are eligible chaos candidates
-  - apiGroups: [apps]
-    resources: [deployments, statefulsets]
-    verbs: [list, get, patch, update, create, delete]
+  # for checking the app parent resources as deployments or sts and are eligible chaos candidates
+- apiGroups: [apps]
+  resources: [deployments, statefulsets]
+  verbs: [list, get, patch, update, create, delete]
 
-    # for checking the app parent resources as replicasets and are eligible chaos candidates
-  - apiGroups: [apps]
-    resources: [replicasets]
-    verbs: [list, get]
+  # for checking the app parent resources as replicasets and are eligible chaos candidates
+- apiGroups: [apps]
+  resources: [replicasets]
+  verbs: [list, get]
 
-    # for checking the app parent resources as deamonsets and are eligible chaos candidates
-  - apiGroups: [apps]
-    resources: [daemonsets]
-    verbs: [list, get, delete]
+  # for checking the app parent resources as deamonsets and are eligible chaos candidates
+- apiGroups: [apps]
+  resources: [daemonsets]
+  verbs: [list, get, delete]
 
-    # for checking (openshift) app parent resources if they are eligible chaos candidates
-  - apiGroups: [apps.openshift.io]
-    resources: [deploymentconfigs]
-    verbs: [list, get]
+  # for checking (openshift) app parent resources if they are eligible chaos candidates
+- apiGroups: [apps.openshift.io]
+  resources: [deploymentconfigs]
+  verbs: [list, get]
 
-    # for checking (argo) app parent resources if they are eligible chaos candidates
-  - apiGroups: [argoproj.io]
-    resources: [rollouts]
-    verbs: [list, get]
+  # for checking (argo) app parent resources if they are eligible chaos candidates
+- apiGroups: [argoproj.io]
+  resources: [rollouts]
+  verbs: [list, get]
 
-    # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
-  - apiGroups: [litmuschaos.io]
-    resources: [chaosengines, chaosexperiments, chaosresults]
-    verbs: [create, list, get, patch, update, delete]
+  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+- apiGroups: [litmuschaos.io]
+  resources: [chaosengines, chaosexperiments, chaosresults]
+  verbs: [create, list, get, patch, update, delete]
 
-    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
-  - apiGroups: [""]
-    resources: [nodes]
-    verbs: [patch, get, list, update]
+  # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
+- apiGroups: [""]
+  resources: [nodes]
+  verbs: [patch, get, list, update]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -287,27 +287,27 @@ metadata:
   labels:
     name: subscriber-cr-for-litmusportal-server
 rules:
-  - apiGroups: [""]
-    resources: [configmaps, secrets]
-    verbs: [get, create, delete, update]
-  - apiGroups: [""]
-    resources: [pods/log]
-    verbs: [get, list, watch]
-  - apiGroups: [""]
-    resources: [pods, namespaces, nodes, services]
-    verbs: [get, list, watch]
-  - apiGroups: [litmuschaos.io]
-    resources: [chaosengines, chaosschedules, chaosresults]
-    verbs: [get, list, create, delete, update, watch]
-  - apiGroups: [apps.openshift.io]
-    resources: [deploymentconfigs]
-    verbs: [get, list]
-  - apiGroups: [apps]
-    resources: [deployments, daemonsets, replicasets, statefulsets]
-    verbs: [get, list, delete, deletecollection]
-  - apiGroups: [argoproj.io]
-    resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
-    verbs: [get, list, create, delete, update, watch]
+- apiGroups: [""]
+  resources: [configmaps, secrets]
+  verbs: [get, create, delete, update]
+- apiGroups: [""]
+  resources: [pods/log]
+  verbs: [get, list, watch]
+- apiGroups: [""]
+  resources: [pods, namespaces, nodes, services]
+  verbs: [get, list, watch]
+- apiGroups: [litmuschaos.io]
+  resources: [chaosengines, chaosschedules, chaosresults]
+  verbs: [get, list, create, delete, update, watch]
+- apiGroups: [apps.openshift.io]
+  resources: [deploymentconfigs]
+  verbs: [get, list]
+- apiGroups: [apps]
+  resources: [deployments, daemonsets, replicasets, statefulsets]
+  verbs: [get, list, delete, deletecollection]
+- apiGroups: [argoproj.io]
+  resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, clusterworkflowtemplates, clusterworkflowtemplates/finalizers, rollouts]
+  verbs: [get, list, create, delete, update, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -328,15 +328,15 @@ kind: ClusterRole
 metadata:
   name: event-tracker-cr-for-litmusportal-server
 rules:
-  - apiGroups: [eventtracker.litmuschaos.io]
-    resources: [eventtrackerpolicies]
-    verbs: [create, delete, get, list, patch, update, watch]
-  - apiGroups: [eventtracker.litmuschaos.io]
-    resources: [eventtrackerpolicies/status]
-    verbs: [get, patch, update]
-  - apiGroups: ["", extensions, apps]
-    resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
-    verbs: [get, list, watch]
+- apiGroups: [eventtracker.litmuschaos.io]
+  resources: [eventtrackerpolicies]
+  verbs: [create, delete, get, list, patch, update, watch]
+- apiGroups: [eventtracker.litmuschaos.io]
+  resources: [eventtrackerpolicies/status]
+  verbs: [get, patch, update]
+- apiGroups: ["", extensions, apps]
+  resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
+  verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -424,7 +424,7 @@ data:
   DB_SERVER: "mongodb://mongo-service:27017"
   AGENT_SCOPE: cluster
   AGENT_NAMESPACE: litmus
-  VERSION: "ci"
+  VERSION: "3.0.0-beta5"
   SKIP_SSL_VERIFY: "false"
   # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
@@ -524,7 +524,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:3.0.0-beta5
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000
@@ -532,19 +532,10 @@ spec:
             runAsNonRoot: true
           ports:
             - containerPort: 8080
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "125m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/conf.d/default.conf
-              subPath: default.conf
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: default.conf
       volumes:
         - name: nginx-config
           configMap:
@@ -583,21 +574,12 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:3.0.0-beta3
+          image: litmuschaos/curl:3.0.0-beta4
           command: ["/bin/sh", "-c"]
           args:
             [
               "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "25m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
       volumes:
         - name: gitops-storage
           emptyDir: {}
@@ -605,7 +587,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:3.0.0-beta5
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -634,9 +616,9 @@ spec:
             - name: CHAOS_CENTER_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:3.0.0-beta5"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:3.0.0-beta5"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
@@ -668,7 +650,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "master"
+              value: "v3.0.0-beta3"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
@@ -681,15 +663,6 @@ spec:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
       serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
@@ -729,24 +702,15 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:3.0.0-beta3
+          image: litmuschaos/curl:3.0.0-beta4
           command: ["/bin/sh", "-c"]
           args:
             [
               "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
             ]
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "25m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "225Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:3.0.0-beta5
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -768,15 +732,6 @@ spec:
               value: "litmusportal-server-service.litmus.svc.cluster.local"
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           ports:
             - containerPort: 3000
             - containerPort: 3030
@@ -822,9 +777,9 @@ spec:
         - name: mongo
           image: litmuschaos/mongo:4.2.8
           securityContext:
-          #            runAsUser: 2000
+#            runAsUser: 2000
             allowPrivilegeEscalation: false
-          #            runAsNonRoot: true
+#            runAsNonRoot: true
           args: ["--ipv6"]
           ports:
             - containerPort: 27017
@@ -832,15 +787,6 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
-          resources:
-            requests:
-              memory: "550Mi"
-              cpu: "225m"
-              ephemeral-storage: "1Gi"
-            limits:
-              memory: "1Gi"
-              cpu: "750m"
-              ephemeral-storage: "3Gi"
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
