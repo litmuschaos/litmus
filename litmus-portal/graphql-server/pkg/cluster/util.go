@@ -237,7 +237,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 		}
 
 		nodeSelector := struct {
-			NodeSelector map[string]string `yaml:"nodeSelector"`
+			NodeSelector map[string]string `yaml:"nodeSelector" json:"nodeSelector"`
 		}{
 			NodeSelector: selectorList,
 		}
@@ -253,7 +253,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 	var tolerations string
 	if cluster.Tolerations != nil {
 		byt, err := yaml.Marshal(struct {
-			Tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations"`
+			Tolerations []*dbSchemaCluster.Toleration `yaml:"tolerations" json:"tolerations"`
 		}{
 			Tolerations: cluster.Tolerations,
 		})
@@ -276,18 +276,18 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 		newContent = strings.Replace(newContent, "#{CLUSTER_ID}", cluster.ClusterID, -1)
 		newContent = strings.Replace(newContent, "#{ACCESS_KEY}", cluster.AccessKey, -1)
 		newContent = strings.Replace(newContent, "#{SERVER_ADDR}", config.ServerEndpoint, -1)
-		newContent = strings.Replace(newContent, "#{SUBSCRIBER-IMAGE}", utils.Config.SubscriberImage, -1)
-		newContent = strings.Replace(newContent, "#{EVENT-TRACKER-IMAGE}", utils.Config.EventTrackerImage, -1)
-		newContent = strings.Replace(newContent, "#{AGENT-NAMESPACE}", AgentNamespace, -1)
-		newContent = strings.Replace(newContent, "#{SUBSCRIBER-SERVICE-ACCOUNT}", ServiceAccountName, -1)
-		newContent = strings.Replace(newContent, "#{AGENT-SCOPE}", cluster.AgentScope, -1)
-		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-CONTROLLER}", utils.Config.ArgoWorkflowControllerImage, -1)
-		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-OPERATOR}", utils.Config.LitmusChaosOperatorImage, -1)
-		newContent = strings.Replace(newContent, "#{ARGO-WORKFLOW-EXECUTOR}", utils.Config.ArgoWorkflowExecutorImage, -1)
-		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-RUNNER}", utils.Config.LitmusChaosRunnerImage, -1)
-		newContent = strings.Replace(newContent, "#{LITMUS-CHAOS-EXPORTER}", utils.Config.LitmusChaosExporterImage, -1)
-		newContent = strings.Replace(newContent, "#{ARGO-CONTAINER-RUNTIME-EXECUTOR}", utils.Config.ContainerRuntimeExecutor, -1)
-		newContent = strings.Replace(newContent, "#{AGENT-DEPLOYMENTS}", utils.Config.AgentDeployments, -1)
+		newContent = strings.Replace(newContent, "#{SUBSCRIBER_IMAGE}", utils.Config.SubscriberImage, -1)
+		newContent = strings.Replace(newContent, "#{EVENT_TRACKER_IMAGE}", utils.Config.EventTrackerImage, -1)
+		newContent = strings.Replace(newContent, "#{AGENT_NAMESPACE}", AgentNamespace, -1)
+		newContent = strings.Replace(newContent, "#{SUBSCRIBER_SERVICE_ACCOUNT}", ServiceAccountName, -1)
+		newContent = strings.Replace(newContent, "#{AGENT_SCOPE}", cluster.AgentScope, -1)
+		newContent = strings.Replace(newContent, "#{ARGO_WORKFLOW_CONTROLLER}", utils.Config.ArgoWorkflowControllerImage, -1)
+		newContent = strings.Replace(newContent, "#{LITMUS_CHAOS_OPERATOR}", utils.Config.LitmusChaosOperatorImage, -1)
+		newContent = strings.Replace(newContent, "#{ARGO_WORKFLOW_EXECUTOR}", utils.Config.ArgoWorkflowExecutorImage, -1)
+		newContent = strings.Replace(newContent, "#{LITMUS_CHAOS_RUNNER}", utils.Config.LitmusChaosRunnerImage, -1)
+		newContent = strings.Replace(newContent, "#{LITMUS_CHAOS_EXPORTER}", utils.Config.LitmusChaosExporterImage, -1)
+		newContent = strings.Replace(newContent, "#{ARGO_CONTAINER_RUNTIME_EXECUTOR}", utils.Config.ContainerRuntimeExecutor, -1)
+		newContent = strings.Replace(newContent, "#{AGENT_DEPLOYMENTS}", utils.Config.AgentDeployments, -1)
 		newContent = strings.Replace(newContent, "#{VERSION}", utils.Config.Version, -1)
 		newContent = strings.Replace(newContent, "#{SKIP_SSL_VERIFY}", skipSSL, -1)
 		newContent = strings.Replace(newContent, "#{CUSTOM_TLS_CERT}", config.TLSCert, -1)

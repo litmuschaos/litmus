@@ -3,9 +3,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 data:
-  containerRuntimeExecutor: #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
+  containerRuntimeExecutor: #{ARGO_CONTAINER_RUNTIME_EXECUTOR}
   executor: |
     imagePullPolicy: IfNotPresent
   instanceID: #{CLUSTER_ID}
@@ -14,7 +14,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: workflow-controller-metrics
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   ports:
     - name: metrics
@@ -28,7 +28,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: workflow-controller
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   selector:
     matchLabels:
@@ -45,12 +45,12 @@ spec:
             - --configmap
             - workflow-controller-configmap
             - --executor-image
-            -  #{ARGO-WORKFLOW-EXECUTOR}
+            -  #{ARGO_WORKFLOW_EXECUTOR}
             - --container-runtime-executor
-            -  #{ARGO-CONTAINER-RUNTIME-EXECUTOR}
+            -  #{ARGO_CONTAINER_RUNTIME_EXECUTOR}
           command:
             - workflow-controller
-          image: #{ARGO-WORKFLOW-CONTROLLER}
+          image: #{ARGO_WORKFLOW_CONTROLLER}
           name: workflow-controller
           securityContext:
             runAsUser: 2000
