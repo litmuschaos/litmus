@@ -41,8 +41,8 @@ spec:
         app: subscriber
     spec:
       serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - name: subscriber
           image: #{SUBSCRIBER-IMAGE}
@@ -88,8 +88,8 @@ spec:
         app: event-tracker
     spec:
       serviceAccountName: event-tracker-sa
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - image: #{EVENT-TRACKER-IMAGE}
           imagePullPolicy: Always

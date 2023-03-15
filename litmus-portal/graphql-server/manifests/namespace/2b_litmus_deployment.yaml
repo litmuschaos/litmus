@@ -30,8 +30,8 @@ spec:
         name: chaos-operator
     spec:
       serviceAccountName: litmus-namespace-scope
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - name: chaos-operator
           image: #{LITMUS-CHAOS-OPERATOR}
@@ -93,8 +93,8 @@ spec:
         app: chaos-exporter
         release: prometheus-stack
     spec:
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - image: #{LITMUS-CHAOS-EXPORTER}
           imagePullPolicy: Always

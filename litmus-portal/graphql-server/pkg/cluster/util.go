@@ -272,7 +272,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 
 		var newContent = string(fileContent)
 
-		newContent = strings.Replace(newContent, "#{tolerations}", tolerations, -1)
+		newContent = strings.Replace(newContent, "#{TOLERATIONS}", tolerations, -1)
 		newContent = strings.Replace(newContent, "#{CLUSTER_ID}", cluster.ClusterID, -1)
 		newContent = strings.Replace(newContent, "#{ACCESS_KEY}", cluster.AccessKey, -1)
 		newContent = strings.Replace(newContent, "#{SERVER_ADDR}", config.ServerEndpoint, -1)
@@ -300,7 +300,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 		}
 
 		if cluster.NodeSelector != nil {
-			newContent = strings.Replace(newContent, "#{nodeselector}", nodeselector, -1)
+			newContent = strings.Replace(newContent, "#{NODE_SELECTOR}", nodeselector, -1)
 		}
 		generatedYAML = append(generatedYAML, newContent)
 	}

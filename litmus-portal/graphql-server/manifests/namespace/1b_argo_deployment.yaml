@@ -42,8 +42,8 @@ spec:
       labels:
         app: workflow-controller
     spec:
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - args:
             - --configmap
