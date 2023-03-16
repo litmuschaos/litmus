@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"net/http"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
@@ -27,8 +28,9 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// ReadinessHandler returns readiness information
+func ReadinessHandler(mclient *mongo.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			db_flag  = "up"
 			col_flag = "up"
@@ -56,10 +58,10 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 		statusByte, err := json.Marshal(status)
 		if err != nil {
 			logrus.Error(err)
-			utils.WriteHeaders(&w, http.StatusBadRequest)
+			utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
 		}
 
-		utils.WriteHeaders(&w, http.StatusOK)
-		w.Write(statusByte)
-	})
+		utils.WriteHeaders(&c.Writer, http.StatusOK)
+		c.Writer.Write(statusByte)
+	}
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"net"
 	"net/http"
 	"runtime"
@@ -22,8 +24,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
-	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 
@@ -34,7 +34,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
-	"github.com/rs/cors"
 	"google.golang.org/grpc"
 )
 
@@ -106,25 +105,26 @@ func main() {
 	// to be removed in production
 	srv.Use(extension.Introspection{})
 
-	router := mux.NewRouter()
+	gin.SetMode(gin.ReleaseMode)
+	gin.EnableJsonDecoderDisallowUnknownFields()
+	router := gin.Default()
 
-	router.Use(cors.New(cors.Options{
-		AllowedHeaders:   []string{"*"},
-		AllowedOrigins:   []string{"*"},
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,
-	}).Handler)
+	}))
 
 	//router.Use(handlers.LoggingMiddleware())
 
 	// routers
-	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	router.Handle("/query", authorization.Middleware(srv))
-	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
-	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
-
-	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
-	router.HandleFunc("/status", handlers.StatusHandler)
-	router.HandleFunc("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
+	router.GET("/", handlers.PlaygroundHandler())
+	router.Any("/query", authorization.Middleware(srv))
+	router.GET("/readiness", handlers.ReadinessHandler(client))
+	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil))
+	router.Any("/file/:key", handlers.FileHandler)
+	router.GET("/status", handlers.StatusHandler)
+	router.GET("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
@@ -132,7 +132,10 @@ func main() {
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
-	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	err = router.Run(":" + utils.Config.HttpPort)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
