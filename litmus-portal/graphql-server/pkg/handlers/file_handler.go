@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	"github.com/sirupsen/logrus"
 	"strings"
 
+	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // FileHandler dynamically generates the manifest file and sends it as a response

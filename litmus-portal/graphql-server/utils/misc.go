@@ -3,10 +3,11 @@ package utils
 import (
 	"bytes"
 	"encoding/base64"
-	"github.com/gin-gonic/gin"
 	"math/rand"
 	"strings"
 	"unicode"
+
+	"github.com/gin-gonic/gin"
 )
 
 // WriteHeaders adds important headers to API responses

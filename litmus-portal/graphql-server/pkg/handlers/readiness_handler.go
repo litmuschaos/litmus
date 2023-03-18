@@ -3,14 +3,13 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ReadinessAPIStatus struct {
@@ -32,29 +31,29 @@ func contains(s []string, str string) bool {
 func ReadinessHandler(mclient *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
-			db_flag  = "up"
-			col_flag = "up"
+			dbFlag  = "up"
+			colFlag = "up"
 		)
 
 		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mclient)
 		if err != nil {
-			db_flag = "down"
+			dbFlag = "down"
 		}
 
 		if !contains(dbs, "litmus") {
-			db_flag = "down"
+			dbFlag = "down"
 		}
 
 		cols, err := mongodb.Operator.ListCollection(context.Background(), mclient)
 		if err != nil {
-			col_flag = "down"
+			colFlag = "down"
 		}
 
 		if !contains(cols, "gitops-collection") || !contains(cols, "server-config-collection") || !contains(cols, "workflow-collection") {
-			col_flag = "down"
+			colFlag = "down"
 		}
 
-		var status = ReadinessAPIStatus{Collections: col_flag, DataBase: db_flag}
+		var status = ReadinessAPIStatus{Collections: colFlag, DataBase: dbFlag}
 		statusByte, err := json.Marshal(status)
 		if err != nil {
 			logrus.Error(err)

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
 )

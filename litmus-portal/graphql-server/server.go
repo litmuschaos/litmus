@@ -3,37 +3,32 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"net"
 	"net/http"
 	"runtime"
 	"strings"
 	"time"
 
-	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-
-	"github.com/kelseyhightower/envconfig"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
-
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
-
+	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
+	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
