@@ -32,8 +32,8 @@ func (g *GetCollectionStruct) getCollection(collectionType int) (*mongo.Collecti
 		return mongoClient.(*MongoClient).WorkflowTemplateCollection, nil
 	case GitOpsCollection:
 		return mongoClient.(*MongoClient).GitOpsCollection, nil
-	case MyHubCollection:
-		return mongoClient.(*MongoClient).MyHubCollection, nil
+	case ChaosHubCollection:
+		return mongoClient.(*MongoClient).ChaosHubCollection, nil
 	case DataSourceCollection:
 		return mongoClient.(*MongoClient).DataSourceCollection, nil
 	case PanelCollection:

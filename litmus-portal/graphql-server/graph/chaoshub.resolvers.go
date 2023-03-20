@@ -8,41 +8,41 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
-	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
+	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 )
 
 func (r *mutationResolver) AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.AddMyHub],
+		authorization.MutationRbacRules[authorization.AddChaosHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.AddChaosHub(ctx, request)
+	return chaoshub.AddChaosHub(ctx, request)
 }
 
-func (r *mutationResolver) AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteMyHub) (*model.ChaosHub, error) {
+func (r *mutationResolver) AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteChaosHub) (*model.ChaosHub, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.SaveMyHub],
+		authorization.MutationRbacRules[authorization.SaveChaosHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.AddRemoteMyHub(ctx, request)
+	return chaoshub.AddRemoteChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.SaveMyHub],
+		authorization.MutationRbacRules[authorization.SaveChaosHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
 
-	return myhub.SaveChaosHub(ctx, request)
+	return chaoshub.SaveChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) (string, error) {
@@ -52,11 +52,11 @@ func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectI
 	if err != nil {
 		return "", err
 	}
-	return myhub.SyncHub(ctx, id, projectID)
+	return chaoshub.SyncHub(ctx, id, projectID)
 }
 
 func (r *mutationResolver) GenerateSSHKey(ctx context.Context) (*model.SSHKey, error) {
-	publicKey, privateKey, err := myHubOps.GenerateKeys()
+	publicKey, privateKey, err := chaosHubOps.GenerateKeys()
 	if err != nil {
 		return nil, err
 	}
@@ -69,22 +69,22 @@ func (r *mutationResolver) GenerateSSHKey(ctx context.Context) (*model.SSHKey, e
 
 func (r *mutationResolver) UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error) {
 	err := authorization.ValidateRole(ctx, request.ProjectID,
-		authorization.MutationRbacRules[authorization.UpdateMyHub],
+		authorization.MutationRbacRules[authorization.UpdateChaosHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
 	}
-	return myhub.UpdateChaosHub(ctx, request)
+	return chaoshub.UpdateChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.DeleteMyHub],
+		authorization.MutationRbacRules[authorization.DeleteChaosHub],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
 	}
-	return myhub.DeleteChaosHub(ctx, hubID, projectID)
+	return chaoshub.DeleteChaosHub(ctx, hubID, projectID)
 }
 
 func (r *queryResolver) ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
@@ -95,7 +95,7 @@ func (r *queryResolver) ListCharts(ctx context.Context, hubName string, projectI
 		return nil, err
 	}
 
-	return myhub.ListCharts(ctx, hubName, projectID)
+	return chaoshub.ListCharts(ctx, hubName, projectID)
 }
 
 func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error) {
@@ -106,7 +106,7 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.Expe
 		return nil, err
 	}
 
-	return myhub.GetHubExperiment(ctx, request)
+	return chaoshub.GetHubExperiment(ctx, request)
 }
 
 func (r *queryResolver) ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
@@ -117,7 +117,7 @@ func (r *queryResolver) ListHubStatus(ctx context.Context, projectID string) ([]
 		return nil, err
 	}
 
-	return myhub.ListHubStatus(ctx, projectID)
+	return chaoshub.ListHubStatus(ctx, projectID)
 }
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, request model.ExperimentRequest) (string, error) {
@@ -128,7 +128,7 @@ func (r *queryResolver) GetYAMLData(ctx context.Context, request model.Experimen
 		return "", err
 	}
 
-	return myhub.GetYAMLData(request)
+	return chaoshub.GetYAMLData(request)
 }
 
 func (r *queryResolver) GetExperimentDetails(ctx context.Context, request model.ExperimentRequest) (*model.ExperimentDetails, error) {
@@ -138,7 +138,7 @@ func (r *queryResolver) GetExperimentDetails(ctx context.Context, request model.
 	if err != nil {
 		return nil, err
 	}
-	return myhub.GetExperimentManifestDetails(ctx, request)
+	return chaoshub.GetExperimentManifestDetails(ctx, request)
 }
 
 func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
@@ -149,7 +149,7 @@ func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName str
 		return nil, err
 	}
 
-	return myhub.ListPredefinedWorkflows(hubName, projectID)
+	return chaoshub.ListPredefinedWorkflows(hubName, projectID)
 }
 
 func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
@@ -159,5 +159,5 @@ func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request
 	if err != nil {
 		return "", err
 	}
-	return myhub.GetPredefinedExperimentYAMLData(request)
+	return chaoshub.GetPredefinedExperimentYAMLData(request)
 }

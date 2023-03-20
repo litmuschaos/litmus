@@ -1,4 +1,4 @@
-package myhubOps
+package chaoshubops
 
 import (
 	"fmt"
@@ -18,8 +18,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-// MyHubConfig is the config used for all git operations
-type MyHubConfig struct {
+// ChaosHubConfig is the config used for all git operations
+type ChaosHubConfig struct {
 	ProjectID     string
 	RepositoryURL string
 	RemoteName    string
@@ -40,14 +40,14 @@ const (
 )
 
 // GetClonePath is used to construct path for Repository.
-func GetClonePath(c MyHubConfig) string {
+func GetClonePath(c ChaosHubConfig) string {
 	RepoPath := defaultPath + c.ProjectID + "/" + c.HubName
 	return RepoPath
 }
 
 // GitConfigConstruct is used for constructing the gitconfig
-func GitConfigConstruct(repoData model.CloningInput) MyHubConfig {
-	gitConfig := MyHubConfig{
+func GitConfigConstruct(repoData model.CloningInput) ChaosHubConfig {
+	gitConfig := ChaosHubConfig{
 		ProjectID:     repoData.ProjectID,
 		HubName:       repoData.HubName,
 		RepositoryURL: repoData.RepoURL,
@@ -86,7 +86,7 @@ func GitClone(repoData model.CloningInput) error {
 }
 
 // getChaosChartVersion is responsible for plain cloning the repository
-func (c MyHubConfig) getChaosChartRepo() (string, error) {
+func (c ChaosHubConfig) getChaosChartRepo() (string, error) {
 	ClonePath := GetClonePath(c)
 	os.RemoveAll(ClonePath)
 	_, err := git.PlainClone(ClonePath, false, &git.CloneOptions{
@@ -108,7 +108,7 @@ func (c MyHubConfig) getChaosChartRepo() (string, error) {
 }
 
 // getPrivateChaosChartVersion is responsible for plain cloning the private repository
-func (c MyHubConfig) getPrivateChaosChartRepo() (string, error) {
+func (c ChaosHubConfig) getPrivateChaosChartRepo() (string, error) {
 	ClonePath := GetClonePath(c)
 	os.RemoveAll(ClonePath)
 
@@ -150,7 +150,7 @@ func GitSyncHandlerForProjects(repoData model.CloningInput) error {
 }
 
 // chaosChartSyncHandler is responsible for all the handler functions
-func (c MyHubConfig) chaosChartSyncHandler() error {
+func (c ChaosHubConfig) chaosChartSyncHandler() error {
 	repositoryExists, err := c.isRepositoryExists()
 	if err != nil {
 		return fmt.Errorf("Error while checking repo exists, err: %s", err)
@@ -175,7 +175,7 @@ func (c MyHubConfig) chaosChartSyncHandler() error {
 }
 
 // isRepositoryExists checks for the existence of this past existence of this repository
-func (c MyHubConfig) isRepositoryExists() (bool, error) {
+func (c ChaosHubConfig) isRepositoryExists() (bool, error) {
 	RepoPath := GetClonePath(c)
 	_, err := os.Stat(RepoPath)
 	if err != nil {
@@ -187,7 +187,7 @@ func (c MyHubConfig) isRepositoryExists() (bool, error) {
 	return true, nil
 }
 
-func (c MyHubConfig) setterRepositoryWorktreeReference() (*git.Repository, *git.Worktree, *plumbing.Reference, error) {
+func (c ChaosHubConfig) setterRepositoryWorktreeReference() (*git.Repository, *git.Worktree, *plumbing.Reference, error) {
 	RepoPath := GetClonePath(c)
 	repository, err := git.PlainOpen(RepoPath)
 	if err != nil {
@@ -205,7 +205,7 @@ func (c MyHubConfig) setterRepositoryWorktreeReference() (*git.Repository, *git.
 }
 
 // GitPull updates the repository in provided Path
-func (c MyHubConfig) GitPull() error {
+func (c ChaosHubConfig) GitPull() error {
 	_, workTree, plumbingRef, err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
@@ -234,7 +234,7 @@ func (c MyHubConfig) GitPull() error {
 }
 
 // gitPullPrivateRepo updates the repository of private hubs
-func (c MyHubConfig) gitPullPrivateRepo() error {
+func (c ChaosHubConfig) gitPullPrivateRepo() error {
 	_, workTree, _, err := c.setterRepositoryWorktreeReference()
 	if err != nil {
 		return err
@@ -253,7 +253,7 @@ func (c MyHubConfig) gitPullPrivateRepo() error {
 }
 
 // generateAuthMethod creates AuthMethod for private repos
-func (c MyHubConfig) generateAuthMethod() (transport.AuthMethod, error) {
+func (c ChaosHubConfig) generateAuthMethod() (transport.AuthMethod, error) {
 	var auth transport.AuthMethod
 	if c.AuthType == model.AuthTypeToken {
 		auth = &http.BasicAuth{

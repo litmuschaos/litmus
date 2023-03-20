@@ -1,10 +1,10 @@
-package myhub
+package chaoshub
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
-// MyHub ...
-type MyHub struct {
-	ID            string  `bson:"myhub_id"`
+// ChaosHub ...
+type ChaosHub struct {
+	ID            string  `bson:"chaoshub_id"`
 	ProjectID     string  `bson:"project_id"`
 	RepoURL       string  `bson:"repo_url"`
 	RepoBranch    string  `bson:"repo_branch"`
@@ -23,25 +23,25 @@ type MyHub struct {
 	LastSyncedAt  string  `bson:"last_synced_at"`
 }
 
-// GetOutputMyHub ...
-func (myhub *MyHub) GetOutputMyHub() *model.ChaosHub {
+// GetOutputChaosHub ...
+func (c *ChaosHub) GetOutputChaosHub() *model.ChaosHub {
 
 	return &model.ChaosHub{
-		ID:            myhub.ID,
-		ProjectID:     myhub.ProjectID,
-		RepoURL:       myhub.RepoURL,
-		RepoBranch:    myhub.RepoBranch,
-		HubName:       myhub.HubName,
-		HubType:       model.HubType(myhub.HubType),
-		IsPrivate:     myhub.IsPrivate,
-		UserName:      myhub.UserName,
-		Password:      myhub.Password,
-		AuthType:      model.AuthType(myhub.AuthType),
-		Token:         myhub.Token,
-		IsRemoved:     myhub.IsRemoved,
-		SSHPrivateKey: myhub.SSHPrivateKey,
-		CreatedAt:     myhub.CreatedAt,
-		UpdatedAt:     myhub.UpdatedAt,
-		LastSyncedAt:  myhub.LastSyncedAt,
+		ID:            c.ID,
+		ProjectID:     c.ProjectID,
+		RepoURL:       c.RepoURL,
+		RepoBranch:    c.RepoBranch,
+		HubName:       c.HubName,
+		HubType:       model.HubType(c.HubType),
+		IsPrivate:     c.IsPrivate,
+		UserName:      c.UserName,
+		Password:      c.Password,
+		AuthType:      model.AuthType(c.AuthType),
+		Token:         c.Token,
+		IsRemoved:     c.IsRemoved,
+		SSHPrivateKey: c.SSHPrivateKey,
+		CreatedAt:     c.CreatedAt,
+		UpdatedAt:     c.UpdatedAt,
+		LastSyncedAt:  c.LastSyncedAt,
 	}
 }
