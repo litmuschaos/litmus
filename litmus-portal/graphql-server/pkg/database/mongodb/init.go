@@ -21,7 +21,7 @@ const (
 	WorkflowCollection
 	WorkflowTemplateCollection
 	GitOpsCollection
-	MyHubCollection
+	ChaosHubCollection
 	DataSourceCollection
 	PanelCollection
 	DashboardCollection
@@ -45,7 +45,7 @@ type MongoClient struct {
 	WorkflowCollection         *mongo.Collection
 	WorkflowTemplateCollection *mongo.Collection
 	GitOpsCollection           *mongo.Collection
-	MyHubCollection            *mongo.Collection
+	ChaosHubCollection         *mongo.Collection
 	DataSourceCollection       *mongo.Collection
 	PanelCollection            *mongo.Collection
 	DashboardCollection        *mongo.Collection
@@ -63,7 +63,7 @@ var (
 		WorkflowCollection:         "workflow-collection",
 		WorkflowTemplateCollection: "workflow-template",
 		GitOpsCollection:           "gitops-collection",
-		MyHubCollection:            "myhub",
+		ChaosHubCollection:         "chaoshub",
 		DataSourceCollection:       "datasource-collection",
 		PanelCollection:            "panel-collection",
 		DashboardCollection:        "dashboard-collection",
@@ -159,7 +159,7 @@ func (m *MongoClient) initAllCollection() {
 		logrus.Fatal("Error Creating Index for GitOps Collection : ", err)
 	}
 
-	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])
+	m.ChaosHubCollection = m.Database.Collection(collections[ChaosHubCollection])
 	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
 	m.PanelCollection = m.Database.Collection(collections[PanelCollection])
 	m.DashboardCollection = m.Database.Collection(collections[DashboardCollection])

@@ -20,12 +20,12 @@ const (
 	RemoveInvitation             RoleQuery = "RemoveInvitation"
 	LeaveProject                 RoleQuery = "LeaveProject"
 	UpdateProjectName            RoleQuery = "UpdateProjectName"
-	AddMyHub                     RoleQuery = "AddMyHub"
+	AddChaosHub                  RoleQuery = "AddChaosHub"
 	SyncHub                      RoleQuery = "SyncHub"
 	UpdateChaosWorkflow          RoleQuery = "UpdateChaosWorkflow"
 	DeleteClusters               RoleQuery = "DeleteClusters"
-	UpdateMyHub                  RoleQuery = "UpdateMyHub"
-	DeleteMyHub                  RoleQuery = "DeleteMyHub"
+	UpdateChaosHub               RoleQuery = "UpdateChaosHub"
+	DeleteChaosHub               RoleQuery = "DeleteChaosHub"
 	EnableGitOps                 RoleQuery = "EnableGitOps"
 	DisableGitOps                RoleQuery = "DisableGitOps"
 	UpdateGitOps                 RoleQuery = "UpdateGitOps"
@@ -48,7 +48,7 @@ const (
 	ListHubStatus                RoleQuery = "ListHubStatus"
 	ListPortalDashboardData      RoleQuery = "ListPortalDashboardData"
 	ListWorkflow                 RoleQuery = "ListWorkflow"
-	SaveMyHub                    RoleQuery = "SaveMyHub"
+	SaveChaosHub                 RoleQuery = "SaveChaosHub"
 	CreateWorkflowTemplate       RoleQuery = "CreateWorkflowTemplate"
 	DeleteWorkflowTemplate       RoleQuery = "DeleteWorkflowTemplate"
 	CreateImageRegistry          RoleQuery = "CreateImageRegistry"
@@ -85,12 +85,12 @@ var MutationRbacRules = map[RoleQuery][]string{
 	RemoveInvitation:       {MemberRoleOwnerString},
 	LeaveProject:           {MemberRoleViewerString, MemberRoleEditorString},
 	UpdateProjectName:      {MemberRoleOwnerString},
-	AddMyHub:               {MemberRoleOwnerString, MemberRoleEditorString},
+	AddChaosHub:            {MemberRoleOwnerString, MemberRoleEditorString},
 	SyncHub:                {MemberRoleOwnerString, MemberRoleEditorString},
 	UpdateChaosWorkflow:    {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteClusters:         {MemberRoleOwnerString, MemberRoleEditorString},
-	UpdateMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
-	DeleteMyHub:            {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateChaosHub:         {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteChaosHub:         {MemberRoleOwnerString, MemberRoleEditorString},
 	EnableGitOps:           {MemberRoleOwnerString},
 	DisableGitOps:          {MemberRoleOwnerString},
 	UpdateGitOps:           {MemberRoleOwnerString},
@@ -115,7 +115,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	ListHubStatus:                {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListPortalDashboardData:      {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	SaveMyHub:                    {MemberRoleOwnerString, MemberRoleEditorString},
+	SaveChaosHub:                 {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateImageRegistry:          {MemberRoleOwnerString},

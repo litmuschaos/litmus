@@ -1,4 +1,4 @@
-package myhub
+package chaoshub
 
 import (
 	"context"
@@ -18,10 +18,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	dbOperationsMyHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/myhub"
-	dbSchemaMyHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/myhub"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/handler"
-	myHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub/ops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/handler"
+	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
+	dbOperationsChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 )
 
 const (
@@ -29,10 +29,10 @@ const (
 	defaultPath  = "/tmp/version/"
 )
 
-// AddChaosHub is used for Adding a new MyHub
+// AddChaosHub is used for Adding a new ChaosHub
 func AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*model.ChaosHub, error) {
 
-	IsExist, err := IsMyHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
+	IsExist, err := IsChaosHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*mo
 
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchemaMyHub.MyHub{
+	newHub := &dbSchemaChaosHub.ChaosHub{
 		ID:            uuid.String(),
 		ProjectID:     chaosHub.ProjectID,
 		RepoURL:       chaosHub.RepoURL,
@@ -76,23 +76,23 @@ func AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*mo
 	}
 
 	// Adding the new hub into database with the given username.
-	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
+	err = dbOperationsChaosHub.CreateChaosHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
 	}
 
-	// Cloning the repository at a path from myhub link structure.
-	err = myHubOps.GitClone(cloneHub)
+	// Cloning the repository at a path from chaoshub link structure.
+	err = chaosHubOps.GitClone(cloneHub)
 	if err != nil {
 		log.Print("Error", err)
 	}
 
-	return newHub.GetOutputMyHub(), nil
+	return newHub.GetOutputChaosHub(), nil
 }
 
-func AddRemoteMyHub(ctx context.Context, chaosHub model.CreateRemoteMyHub) (*model.ChaosHub, error) {
-	IsExist, err := IsMyHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
+func AddRemoteChaosHub(ctx context.Context, chaosHub model.CreateRemoteChaosHub) (*model.ChaosHub, error) {
+	IsExist, err := IsChaosHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func AddRemoteMyHub(ctx context.Context, chaosHub model.CreateRemoteMyHub) (*mod
 
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchemaMyHub.MyHub{
+	newHub := &dbSchemaChaosHub.ChaosHub{
 		ID:           uuid.String(),
 		ProjectID:    chaosHub.ProjectID,
 		RepoURL:      chaosHub.RepoURL,
@@ -118,7 +118,7 @@ func AddRemoteMyHub(ctx context.Context, chaosHub model.CreateRemoteMyHub) (*mod
 	}
 
 	// Adding the new hub into database with the given name.
-	err = dbSchemaMyHub.CreateMyHub(ctx, newHub)
+	err = dbSchemaChaosHub.CreateChaosHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -131,13 +131,13 @@ func AddRemoteMyHub(ctx context.Context, chaosHub model.CreateRemoteMyHub) (*mod
 		return nil, err
 	}
 
-	return newHub.GetOutputMyHub(), nil
+	return newHub.GetOutputChaosHub(), nil
 }
 
-// SaveChaosHub is used for Adding a new MyHub
+// SaveChaosHub is used for Adding a new ChaosHub
 func SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*model.ChaosHub, error) {
 
-	IsExist, err := IsMyHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
+	IsExist, err := IsChaosHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*m
 
 	// Initialize a UID for new Hub.
 	uuid := uuid.New()
-	newHub := &dbSchemaMyHub.MyHub{
+	newHub := &dbSchemaChaosHub.ChaosHub{
 		ID:            uuid.String(),
 		ProjectID:     chaosHub.ProjectID,
 		RepoURL:       chaosHub.RepoURL,
@@ -167,19 +167,19 @@ func SaveChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*m
 	}
 
 	// Adding the new hub into database with the given username without cloning.
-	err = dbOperationsMyHub.CreateMyHub(ctx, newHub)
+	err = dbOperationsChaosHub.CreateChaosHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
 	}
 
-	return newHub.GetOutputMyHub(), nil
+	return newHub.GetOutputChaosHub(), nil
 }
 
 // ListHubStatus returns the array of hubdetails with their current status.
 func ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
 
-	allHubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
+	allHubs, err := dbOperationsChaosHub.GetChaosHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -228,15 +228,15 @@ func ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStat
 
 }
 
-// IsMyHubAvailable is used for checking if hub already exist or not
-func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bool, error) {
-	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
+// IsChaosHubAvailable is used for checking if hub already exist or not
+func IsChaosHubAvailable(ctx context.Context, hubName string, projectID string) (bool, error) {
+	chaosHubs, err := dbOperationsChaosHub.GetChaosHubByProjectID(ctx, projectID)
 	if err != nil {
 		return true, err
 	}
 
-	for _, n := range myhubs {
-		if n.HubName == hubname {
+	for _, n := range chaosHubs {
+		if n.HubName == hubName {
 			return true, nil
 		}
 	}
@@ -247,11 +247,11 @@ func IsMyHubAvailable(ctx context.Context, hubname string, projectID string) (bo
 func ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 
 	chartsInput := model.CloningInput{}
-	myhubs, err := dbOperationsMyHub.GetMyHubByProjectID(ctx, projectID)
+	chaosHubs, err := dbOperationsChaosHub.GetChaosHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
-	for _, n := range myhubs {
+	for _, n := range chaosHubs {
 		if n.HubName == hubName {
 			chartsInput = model.CloningInput{
 				HubName:    hubName,
@@ -289,41 +289,41 @@ func GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*mo
 
 // SyncHub is used for syncing the hub again if some not present or some error happens.
 func SyncHub(ctx context.Context, hubID string, projectID string) (string, error) {
-	myhub, err := dbOperationsMyHub.GetHubByID(ctx, hubID, projectID)
+	chaosHub, err := dbOperationsChaosHub.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		return "", err
 	}
 
 	syncHubInput := model.CloningInput{
-		HubName:       myhub.HubName,
-		ProjectID:     myhub.ProjectID,
-		RepoURL:       myhub.RepoURL,
-		RepoBranch:    myhub.RepoBranch,
-		IsPrivate:     myhub.IsPrivate,
-		UserName:      myhub.UserName,
-		Password:      myhub.Password,
-		AuthType:      model.AuthType(myhub.AuthType),
-		Token:         myhub.Token,
-		SSHPrivateKey: myhub.SSHPrivateKey,
+		HubName:       chaosHub.HubName,
+		ProjectID:     chaosHub.ProjectID,
+		RepoURL:       chaosHub.RepoURL,
+		RepoBranch:    chaosHub.RepoBranch,
+		IsPrivate:     chaosHub.IsPrivate,
+		UserName:      chaosHub.UserName,
+		Password:      chaosHub.Password,
+		AuthType:      model.AuthType(chaosHub.AuthType),
+		Token:         chaosHub.Token,
+		SSHPrivateKey: chaosHub.SSHPrivateKey,
 	}
 
 	time := strconv.FormatInt(time.Now().Unix(), 10)
-	query := bson.D{{"myhub_id", hubID}, {"IsRemoved", false}}
+	query := bson.D{{"chaoshub_id", hubID}, {"IsRemoved", false}}
 	update := bson.D{{"$set", bson.D{{"last_synced_at", time}}}}
 
-	if myhub.HubType == string(model.HubTypeRemote) {
+	if chaosHub.HubType == string(model.HubTypeRemote) {
 		err = handler.SyncRemoteRepo(syncHubInput)
 		if err != nil {
 			return "", err
 		}
 	} else {
-		err = myHubOps.GitSyncHandlerForProjects(syncHubInput)
+		err = chaosHubOps.GitSyncHandlerForProjects(syncHubInput)
 		if err != nil {
 			return "", err
 		}
 	}
 	// Updating the last_synced_at time using hubID
-	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
+	err = dbOperationsChaosHub.UpdateChaosHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err
@@ -399,17 +399,17 @@ func GetExperimentManifestDetails(ctx context.Context, request model.ExperimentR
 // GetAllHubs ...
 func GetAllHubs(ctx context.Context) ([]*model.ChaosHub, error) {
 
-	myhubs, err := dbOperationsMyHub.GetHubs(ctx)
+	chaosHubs, err := dbOperationsChaosHub.GetHubs(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var outputMyHubs []*model.ChaosHub
-	for _, myhub := range myhubs {
-		outputMyHubs = append(outputMyHubs, myhub.GetOutputMyHub())
+	var outputChaosHubs []*model.ChaosHub
+	for _, chaosHub := range chaosHubs {
+		outputChaosHubs = append(outputChaosHubs, chaosHub.GetOutputChaosHub())
 	}
 
-	return outputMyHubs, nil
+	return outputChaosHubs, nil
 }
 
 func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (*model.ChaosHub, error) {
@@ -427,14 +427,14 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 		SSHPrivateKey: chaosHub.SSHPrivateKey,
 	}
 
-	prevMyHub, err := dbOperationsMyHub.GetHubByID(ctx, chaosHub.ID, chaosHub.ProjectID)
+	prevChaosHub, err := dbOperationsChaosHub.GetHubByID(ctx, chaosHub.ID, chaosHub.ProjectID)
 	if err != nil {
 		return nil, err
 	}
-	clonePath := defaultPath + prevMyHub.ProjectID + "/" + prevMyHub.HubName
-	if prevMyHub.HubType == string(model.HubTypeRemote) {
-		if prevMyHub.HubName != chaosHub.HubName || prevMyHub.RepoURL != chaosHub.RepoURL {
-			remoteHub := model.CreateRemoteMyHub{
+	clonePath := defaultPath + prevChaosHub.ProjectID + "/" + prevChaosHub.HubName
+	if prevChaosHub.HubType == string(model.HubTypeRemote) {
+		if prevChaosHub.HubName != chaosHub.HubName || prevChaosHub.RepoURL != chaosHub.RepoURL {
+			remoteHub := model.CreateRemoteChaosHub{
 				HubName:   chaosHub.HubName,
 				RepoURL:   chaosHub.RepoURL,
 				ProjectID: chaosHub.ProjectID,
@@ -449,18 +449,18 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 			}
 		}
 	} else {
-		// Syncing/Cloning the repository at a path from myhub link structure.
-		if prevMyHub.HubName != chaosHub.HubName || prevMyHub.RepoURL != chaosHub.RepoURL || prevMyHub.RepoBranch != chaosHub.RepoBranch || prevMyHub.IsPrivate != chaosHub.IsPrivate || prevMyHub.AuthType != chaosHub.AuthType.String() {
+		// Syncing/Cloning the repository at a path from chaoshub link structure.
+		if prevChaosHub.HubName != chaosHub.HubName || prevChaosHub.RepoURL != chaosHub.RepoURL || prevChaosHub.RepoBranch != chaosHub.RepoBranch || prevChaosHub.IsPrivate != chaosHub.IsPrivate || prevChaosHub.AuthType != chaosHub.AuthType.String() {
 			err = os.RemoveAll(clonePath)
 			if err != nil {
 				return nil, err
 			}
-			err = myHubOps.GitClone(cloneHub)
+			err = chaosHubOps.GitClone(cloneHub)
 			if err != nil {
 				return nil, err
 			}
 		} else {
-			err := myHubOps.GitSyncHandlerForProjects(cloneHub)
+			err := chaosHubOps.GitSyncHandlerForProjects(cloneHub)
 			if err != nil {
 				return nil, err
 			}
@@ -469,42 +469,42 @@ func UpdateChaosHub(ctx context.Context, chaosHub model.UpdateChaosHubRequest) (
 
 	time := strconv.FormatInt(time.Now().Unix(), 10)
 
-	query := bson.D{{"myhub_id", chaosHub.ID}, {"IsRemoved", false}}
+	query := bson.D{{"chaoshub_id", chaosHub.ID}, {"IsRemoved", false}}
 	update := bson.D{{"$set", bson.D{{"repo_url", chaosHub.RepoURL}, {"repo_branch", chaosHub.RepoBranch},
 		{"hub_name", chaosHub.HubName}, {"IsPrivate", chaosHub.IsPrivate}, {"AuthType", chaosHub.AuthType},
 		{"Token", chaosHub.Token}, {"UserName", chaosHub.UserName}, {"Password", chaosHub.Password},
 		{"SSHPrivateKey", chaosHub.SSHPrivateKey}, {"SSHPublicKey", chaosHub.SSHPublicKey}, {"updated_at", time}}}}
 
 	// Updating the new hub into database with the given username.
-	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
+	err = dbOperationsChaosHub.UpdateChaosHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
 	}
 
-	var newMyhub model.ChaosHub
-	copier.Copy(&newMyhub, &chaosHub)
+	var newChaosHub model.ChaosHub
+	copier.Copy(&newChaosHub, &chaosHub)
 
-	newMyhub.UpdatedAt = time
+	newChaosHub.UpdatedAt = time
 
-	return &newMyhub, nil
+	return &newChaosHub, nil
 }
 
 func DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
-	myHub, err := dbOperationsMyHub.GetHubByID(ctx, hubID, projectID)
+	chaosHub, err := dbOperationsChaosHub.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err
 	}
-	query := bson.D{{"myhub_id", hubID}, {"project_id", projectID}}
+	query := bson.D{{"chaoshub_id", hubID}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err = dbOperationsMyHub.UpdateMyHub(ctx, query, update)
+	err = dbOperationsChaosHub.UpdateChaosHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err
 	}
-	clonePath := defaultPath + projectID + "/" + myHub.HubName
+	clonePath := defaultPath + projectID + "/" + chaosHub.HubName
 	err = os.RemoveAll(clonePath)
 	if err != nil {
 		log.Print("ERROR", err)
@@ -546,24 +546,24 @@ var GetIconHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 func RecurringHubSync() {
 	for {
 		// Started Syncing of hubs
-		myhubs, _ := GetAllHubs(nil)
+		chaosHubs, _ := GetAllHubs(nil)
 
-		for _, myhub := range myhubs {
-			if !myhub.IsRemoved {
+		for _, chaosHub := range chaosHubs {
+			if !chaosHub.IsRemoved {
 				chartsInput := model.CloningInput{
-					HubName:       myhub.HubName,
-					ProjectID:     myhub.ProjectID,
-					RepoURL:       myhub.RepoURL,
-					RepoBranch:    myhub.RepoBranch,
-					IsPrivate:     myhub.IsPrivate,
-					AuthType:      myhub.AuthType,
-					Token:         myhub.Token,
-					UserName:      myhub.UserName,
-					Password:      myhub.Password,
-					SSHPrivateKey: myhub.SSHPrivateKey,
+					HubName:       chaosHub.HubName,
+					ProjectID:     chaosHub.ProjectID,
+					RepoURL:       chaosHub.RepoURL,
+					RepoBranch:    chaosHub.RepoBranch,
+					IsPrivate:     chaosHub.IsPrivate,
+					AuthType:      chaosHub.AuthType,
+					Token:         chaosHub.Token,
+					UserName:      chaosHub.UserName,
+					Password:      chaosHub.Password,
+					SSHPrivateKey: chaosHub.SSHPrivateKey,
 				}
-				if myhub.HubType != model.HubTypeRemote {
-					myHubOps.GitSyncHandlerForProjects(chartsInput)
+				if chaosHub.HubType != model.HubTypeRemote {
+					chaosHubOps.GitSyncHandlerForProjects(chartsInput)
 				} else {
 					handler.SyncRemoteRepo(chartsInput)
 				}

@@ -30,9 +30,9 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
@@ -120,7 +120,7 @@ func main() {
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
 	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
-	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil)).Methods("GET")
+	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil)).Methods("GET")
 
 	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
 	router.HandleFunc("/status", handlers.StatusHandler)
@@ -128,7 +128,7 @@ func main() {
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
+	go chaoshub.RecurringHubSync()            // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
