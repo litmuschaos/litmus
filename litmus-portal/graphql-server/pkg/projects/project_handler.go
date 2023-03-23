@@ -11,8 +11,8 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 )
@@ -56,7 +56,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
 	//TODO: Remove goroutine after adding hub optimisations
-	go myhub.AddChaosHub(context.Background(), defaultHub)
+	go chaoshub.AddChaosHub(context.Background(), defaultHub)
 
 	_, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
 		IsDefault:         bl_true,

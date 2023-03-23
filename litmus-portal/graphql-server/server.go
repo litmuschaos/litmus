@@ -19,12 +19,12 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
@@ -116,14 +116,14 @@ func main() {
 	router.GET("/", handlers.PlaygroundHandler())
 	router.Any("/query", authorization.Middleware(srv))
 	router.GET("/readiness", handlers.ReadinessHandler(client))
-	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(myhub.GetIconHandler, nil))
+	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil))
 	router.Any("/file/:key", handlers.FileHandler)
 	router.GET("/status", handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go myhub.RecurringHubSync()               // go routine for syncing hubs for all users
+	go chaoshub.RecurringHubSync()            // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)

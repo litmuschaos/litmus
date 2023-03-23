@@ -312,7 +312,7 @@ type CreateDBInput struct {
 	RefreshRate               string                 `json:"refreshRate"`
 }
 
-type CreateRemoteMyHub struct {
+type CreateRemoteChaosHub struct {
 	// Name of the chaos hub
 	HubName string `json:"hubName"`
 	// URL of the git repository

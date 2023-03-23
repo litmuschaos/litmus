@@ -201,7 +201,7 @@ func IsFileExisting(path string) (bool, error) {
 }
 
 // DownloadRemoteHub is used to download a remote hub from the url provided by the user
-func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
+func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
 	//create the destination directory where the hub will be downloaded
 	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
 	destDir, err := os.Create(hubpath)
@@ -268,7 +268,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteMyHub) error {
 }
 
 // UnzipRemoteHub is used to unzip the zip file
-func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteMyHub) error {
+func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteChaosHub) error {
 	extractPath := defaultPath + hubDetails.ProjectID
 	zipReader, err := zip.OpenReader(zipPath)
 	if err != nil {
@@ -320,7 +320,7 @@ func SyncRemoteRepo(hubData model.CloningInput) error {
 	if err != nil {
 		return err
 	}
-	updateHub := model.CreateRemoteMyHub{
+	updateHub := model.CreateRemoteChaosHub{
 		HubName:   hubData.HubName,
 		RepoURL:   hubData.RepoURL,
 		ProjectID: hubData.ProjectID,

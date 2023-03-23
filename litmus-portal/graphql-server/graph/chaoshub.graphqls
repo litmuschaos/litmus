@@ -356,7 +356,7 @@ input CloningInput {
   sshPrivateKey: String
 }
 
-input CreateRemoteMyHub {
+input CreateRemoteChaosHub {
   """
   Name of the chaos hub
   """
@@ -498,7 +498,7 @@ extend type Mutation {
   """
   Add a ChaosHub (remote hub download)
   """
-  addRemoteChaosHub(request: CreateRemoteMyHub!): ChaosHub! @authorized
+  addRemoteChaosHub(request: CreateRemoteChaosHub!): ChaosHub! @authorized
 
   """
   Save a ChaosHub configuration without cloning it

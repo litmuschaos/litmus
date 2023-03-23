@@ -342,7 +342,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddChaosHub                func(childComplexity int, request model.CreateChaosHubRequest) int
-		AddRemoteChaosHub          func(childComplexity int, request model.CreateRemoteMyHub) int
+		AddRemoteChaosHub          func(childComplexity int, request model.CreateRemoteChaosHub) int
 		ChaosWorkflowRun           func(childComplexity int, request model.WorkflowRunRequest) int
 		ConfirmClusterRegistration func(childComplexity int, request model.ClusterIdentity) int
 		CreateChaosWorkFlow        func(childComplexity int, request model.ChaosWorkFlowRequest) int
@@ -672,6 +672,13 @@ type MutationResolver interface {
 	UpdatePanel(ctx context.Context, panelInput []*model.Panel) (string, error)
 	DeleteDashboard(ctx context.Context, projectID string, dbID *string) (bool, error)
 	DeleteDataSource(ctx context.Context, projectID string, input model.DeleteDSInput) (bool, error)
+	AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
+	AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteChaosHub) (*model.ChaosHub, error)
+	SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
+	SyncChaosHub(ctx context.Context, id string, projectID string) (string, error)
+	GenerateSSHKey(ctx context.Context) (*model.SSHKey, error)
+	UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error)
+	DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error)
 	RegisterCluster(ctx context.Context, request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error)
 	ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error)
 	NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error)
@@ -685,13 +692,6 @@ type MutationResolver interface {
 	CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
-	AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
-	AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteMyHub) (*model.ChaosHub, error)
-	SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error)
-	SyncChaosHub(ctx context.Context, id string, projectID string) (string, error)
-	GenerateSSHKey(ctx context.Context) (*model.SSHKey, error)
-	UpdateChaosHub(ctx context.Context, request model.UpdateChaosHubRequest) (*model.ChaosHub, error)
-	DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error)
 	CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error)
 	DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error)
 }
@@ -707,13 +707,6 @@ type QueryResolver interface {
 	GetPromSeriesList(ctx context.Context, request *model.DsDetails) (*model.PromSeriesListResponse, error)
 	ListDashboard(ctx context.Context, projectID string, clusterID *string, dbID *string) ([]*model.ListDashboardResponse, error)
 	ListPortalDashboardData(ctx context.Context, projectID string, hubName string) ([]*model.PortalDashboardDataResponse, error)
-	GetServerVersion(ctx context.Context) (*model.ServerVersionResponse, error)
-	ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
-	GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error)
-	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
-	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
-	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
-	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
 	ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error)
 	GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error)
 	ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error)
@@ -721,6 +714,13 @@ type QueryResolver interface {
 	GetExperimentDetails(ctx context.Context, request model.ExperimentRequest) (*model.ExperimentDetails, error)
 	ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]*model.PredefinedWorkflowList, error)
 	GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error)
+	GetServerVersion(ctx context.Context) (*model.ServerVersionResponse, error)
+	ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error)
+	GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error)
+	GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error)
+	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
+	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
+	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
 	GetUsageData(ctx context.Context, request model.UsageDataRequest) (*model.UsageDataResponse, error)
 	ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error)
 	GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error)
@@ -2108,7 +2108,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddRemoteChaosHub(childComplexity, args["request"].(model.CreateRemoteMyHub)), true
+		return e.complexity.Mutation.AddRemoteChaosHub(childComplexity, args["request"].(model.CreateRemoteChaosHub)), true
 
 	case "Mutation.chaosWorkflowRun":
 		if e.complexity.Mutation.ChaosWorkflowRun == nil {
@@ -4485,6 +4485,533 @@ extend type Subscription {
   ): DashboardPromResponse! @authorized
 }
 `, BuiltIn: false},
+	&ast.Source{Name: "graph/chaoshub.graphqls", Input: `enum AuthType {
+  BASIC
+  NONE
+  SSH
+  TOKEN
+}
+
+enum FileType {
+  EXPERIMENT
+  ENGINE
+  WORKFLOW
+  CSV
+}
+
+enum HubType {
+  GIT
+  REMOTE
+}
+
+type ChaosHub {
+  """
+  ID of the chaos hub
+  """
+  id: ID!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  ID of the project in which the chaos hub is present
+  """
+  projectID: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Bool value indicating if the chaos hub is removed
+  """
+  isRemoved: Boolean!
+  """
+  Timestamp when the chaos hub was created
+  """
+  createdAt: String!
+  """
+  Timestamp when the chaos hub was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp when the chaos hub was last synced
+  """
+  lastSyncedAt: String!
+}
+
+#type Charts {
+#	charts: [Chart!]!
+#}
+
+type Chart {
+  apiVersion: String!
+  kind: String!
+  metadata: Metadata!
+  spec: Spec!
+  packageInfo: PackageInformation!
+}
+
+"""
+Defines the details of the maintainer
+"""
+type Maintainer {
+  """
+  Name of the maintainer
+  """
+  name: String!
+  """
+  Email of the maintainer
+  """
+  email: String!
+}
+
+type Link {
+  name: String!
+  url: String!
+}
+
+type Metadata {
+  name: String!
+  version: String!
+  annotations: Annotation!
+}
+
+type Annotation {
+  categories: String!
+  vendor: String!
+  createdAt: String!
+  repository: String!
+  support: String!
+  chartDescription: String!
+}
+
+type Spec {
+  displayName: String!
+  categoryDescription: String!
+  keywords: [String!]!
+  maturity: String!
+  maintainers: [Maintainer!]!
+  minKubeVersion: String!
+  provider: Provider!
+  links: [Link!]!
+  experiments: [String!]!
+  chaosExpCRDLink: String!
+  platforms: [String!]!
+  chaosType: String
+}
+
+type Provider {
+	name: String!
+}
+
+type PackageInformation {
+  packageName: String!
+  experiments: [Experiments!]!
+}
+
+type Experiments {
+  name: String!
+  CSV: String!
+  desc: String!
+}
+
+type ChaosHubStatus {
+  """
+  ID of the hub
+  """
+  id: ID!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is available or not.
+  """
+  isAvailable: Boolean!
+  """
+  Total number of experiments in the hub
+  """
+  totalExp: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  Type of ChaosHub
+  """
+  hubType: HubType!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isRemoved: Boolean!
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Timestamp when the chaos hub was last synced
+  """
+  lastSyncedAt: String!
+}
+
+"""
+Defines the details required for creating a chaos hub
+"""
+input CreateChaosHubRequest {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
+}
+
+input ExperimentRequest {
+  """
+  ID of the project
+  """
+  projectID: String!
+  """
+  Name of the chart being used
+  """
+  chartName: String!
+  """
+  Name of the experiment
+  """
+  experimentName: String!
+  """
+  Name of the hub
+  """
+  hubName: String!
+  """
+  Type of thr file for workflow: chaosEngine/ experimentInput
+  """
+  fileType: String
+}
+
+input CloningInput {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  ID of the project
+  """
+  projectID: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  # Auth Types-
+  #  token: Token based authentication
+  #  basic: Username/Password based authentication
+  #  ssh: SSH based authentication
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  sshPrivateKey: String
+}
+
+input CreateRemoteChaosHub {
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  ProjectID of the ChaosHub
+  """
+  projectID: String!
+}
+
+
+input UpdateChaosHubRequest {
+  """
+  ID of the chaos hub
+  """
+  id: String!
+  """
+  Name of the chaos hub
+  """
+  hubName: String!
+  """
+  URL of the git repository
+  """
+  repoURL: String!
+  """
+  Branch of the git repository
+  """
+  repoBranch: String!
+  """
+  Bool value indicating whether the hub is private or not.
+  """
+  isPrivate: Boolean!
+  """
+  Type of authentication used: 	BASIC, SSH,	TOKEN
+  """
+  authType: AuthType!
+  """
+  Token for authentication of private chaos hub
+  """
+  token: String
+  """
+  Git username
+  """
+  userName: String
+  """
+  Git password
+  """
+  password: String
+  """
+  Private SSH key for authenticating into private chaos hub
+  """
+  sshPrivateKey: String
+  """
+  Public SSH key for authenticating into private chaos hub
+  """
+  sshPublicKey: String
+  """
+  Project ID associated with this chaos hub
+  """
+  projectID: String!
+}
+
+type ExperimentDetails{
+  """
+  Engine Manifest
+  """
+  engineDetails: String!
+
+  """
+  Experiment Manifest
+  """
+  experimentDetails: String!
+}
+
+type PredefinedWorkflowList {
+  """
+  Name of the workflow
+  """
+  workflowName: String!
+  """
+  Workflow CSV
+  """
+  workflowCSV: String!
+  """
+  Workflow Manifest
+  """
+  workflowManifest: String!
+}
+
+extend type Query {
+  # CHAOS-HUB OPERATIONS
+  """
+  List the Charts details of a ChaosHub
+  """
+  listCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
+
+  """
+  Get the Experiment list from a ChaosHub
+  """
+  getHubExperiment(request: ExperimentRequest!): Chart! @authorized
+
+  """
+  List the status of all the connected ChaosHub
+  """
+  listHubStatus(projectID: String!): [ChaosHubStatus]! @authorized
+
+  """
+  Get the YAML manifest of ChaosEngine/ChaosExperiment
+  """
+  getYAMLData(request: ExperimentRequest!): String! @authorized
+
+  """
+  Get Engine and Experiment YAML
+  """
+  getExperimentDetails(request: ExperimentRequest!): ExperimentDetails! @authorized
+
+  """
+  List the PredefinedWorkflows present in the hub
+  """
+  listPredefinedWorkflows(hubName: String!, projectID: String!): [PredefinedWorkflowList!]! @authorized
+
+  """
+  Get the predefined workflow YAML
+  """
+  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
+}
+
+extend type Mutation {
+  # CHAOS-HUB OPERATIONS
+  """
+  Add a ChaosHub (includes the git clone operation)
+  """
+  addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Add a ChaosHub (remote hub download)
+  """
+  addRemoteChaosHub(request: CreateRemoteChaosHub!): ChaosHub! @authorized
+
+  """
+  Save a ChaosHub configuration without cloning it
+  """
+  saveChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Sync changes from the Git repository of a ChaosHub
+  """
+  syncChaosHub(id: ID!, projectID: String!): String! @authorized
+
+  """
+  Generates Private and Public key for SSH authentication
+  """
+  generateSSHKey: SSHKey! @authorized
+
+  """
+  Update the configuration of a ChaosHub
+  """
+  updateChaosHub(request: UpdateChaosHubRequest!): ChaosHub! @authorized
+
+  """
+  Delete the ChaosHub
+  """
+  deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
+}`, BuiltIn: false},
 	&ast.Source{Name: "graph/cluster.graphqls", Input: `"""
 Defines the details for a cluster
 """
@@ -5137,533 +5664,6 @@ input Workload {
     namespace: String!
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/myhub.graphqls", Input: `enum AuthType {
-  BASIC
-  NONE
-  SSH
-  TOKEN
-}
-
-enum FileType {
-  EXPERIMENT
-  ENGINE
-  WORKFLOW
-  CSV
-}
-
-enum HubType {
-  GIT
-  REMOTE
-}
-
-type ChaosHub {
-  """
-  ID of the chaos hub
-  """
-  id: ID!
-  """
-  URL of the git repository
-  """
-  repoURL: String!
-  """
-  Branch of the git repository
-  """
-  repoBranch: String!
-  """
-  ID of the project in which the chaos hub is present
-  """
-  projectID: String!
-  """
-  Name of the chaos hub
-  """
-  hubName: String!
-  """
-  Type of ChaosHub
-  """
-  hubType: HubType!
-  """
-  Bool value indicating whether the hub is private or not.
-  """
-  isPrivate: Boolean!
-  # Auth Types-
-  #  token: Token based authentication
-  #  basic: Username/Password based authentication
-  #  ssh: SSH based authentication
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType!
-  """
-  Token for authentication of private chaos hub
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  """
-  Private SSH key for authenticating into private chaos hub
-  """
-  sshPrivateKey: String
-  """
-  Bool value indicating if the chaos hub is removed
-  """
-  isRemoved: Boolean!
-  """
-  Timestamp when the chaos hub was created
-  """
-  createdAt: String!
-  """
-  Timestamp when the chaos hub was last updated
-  """
-  updatedAt: String!
-  """
-  Timestamp when the chaos hub was last synced
-  """
-  lastSyncedAt: String!
-}
-
-#type Charts {
-#	charts: [Chart!]!
-#}
-
-type Chart {
-  apiVersion: String!
-  kind: String!
-  metadata: Metadata!
-  spec: Spec!
-  packageInfo: PackageInformation!
-}
-
-"""
-Defines the details of the maintainer
-"""
-type Maintainer {
-  """
-  Name of the maintainer
-  """
-  name: String!
-  """
-  Email of the maintainer
-  """
-  email: String!
-}
-
-type Link {
-  name: String!
-  url: String!
-}
-
-type Metadata {
-  name: String!
-  version: String!
-  annotations: Annotation!
-}
-
-type Annotation {
-  categories: String!
-  vendor: String!
-  createdAt: String!
-  repository: String!
-  support: String!
-  chartDescription: String!
-}
-
-type Spec {
-  displayName: String!
-  categoryDescription: String!
-  keywords: [String!]!
-  maturity: String!
-  maintainers: [Maintainer!]!
-  minKubeVersion: String!
-  provider: Provider!
-  links: [Link!]!
-  experiments: [String!]!
-  chaosExpCRDLink: String!
-  platforms: [String!]!
-  chaosType: String
-}
-
-type Provider {
-	name: String!
-}
-
-type PackageInformation {
-  packageName: String!
-  experiments: [Experiments!]!
-}
-
-type Experiments {
-  name: String!
-  CSV: String!
-  desc: String!
-}
-
-type ChaosHubStatus {
-  """
-  ID of the hub
-  """
-  id: ID!
-  """
-  URL of the git repository
-  """
-  repoURL: String!
-  """
-  Branch of the git repository
-  """
-  repoBranch: String!
-  """
-  Bool value indicating whether the hub is available or not.
-  """
-  isAvailable: Boolean!
-  """
-  Total number of experiments in the hub
-  """
-  totalExp: String!
-  """
-  Name of the chaos hub
-  """
-  hubName: String!
-  """
-  Type of ChaosHub
-  """
-  hubType: HubType!
-  """
-  Bool value indicating whether the hub is private or not.
-  """
-  isPrivate: Boolean!
-  # Auth Types-
-  #  token: Token based authentication
-  #  basic: Username/Password based authentication
-  #  ssh: SSH based authentication
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType!
-  """
-  Token for authentication of private chaos hub
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  """
-  Bool value indicating whether the hub is private or not.
-  """
-  isRemoved: Boolean!
-  """
-  Private SSH key for authenticating into private chaos hub
-  """
-  sshPrivateKey: String
-  """
-  Public SSH key for authenticating into private chaos hub
-  """
-  sshPublicKey: String
-  """
-  Timestamp when the chaos hub was last synced
-  """
-  lastSyncedAt: String!
-}
-
-"""
-Defines the details required for creating a chaos hub
-"""
-input CreateChaosHubRequest {
-  """
-  Name of the chaos hub
-  """
-  hubName: String!
-  """
-  URL of the git repository
-  """
-  repoURL: String!
-  """
-  Branch of the git repository
-  """
-  repoBranch: String!
-  """
-  Bool value indicating whether the hub is private or not.
-  """
-  isPrivate: Boolean!
-  # Auth Types-
-  #  token: Token based authentication
-  #  basic: Username/Password based authentication
-  #  ssh: SSH based authentication
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType!
-  """
-  Token for authentication of private chaos hub
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  """
-  Private SSH key for authenticating into private chaos hub
-  """
-  sshPrivateKey: String
-  """
-  Public SSH key for authenticating into private chaos hub
-  """
-  sshPublicKey: String
-  """
-  Project ID associated with this chaos hub
-  """
-  projectID: String!
-}
-
-input ExperimentRequest {
-  """
-  ID of the project
-  """
-  projectID: String!
-  """
-  Name of the chart being used
-  """
-  chartName: String!
-  """
-  Name of the experiment
-  """
-  experimentName: String!
-  """
-  Name of the hub
-  """
-  hubName: String!
-  """
-  Type of thr file for workflow: chaosEngine/ experimentInput
-  """
-  fileType: String
-}
-
-input CloningInput {
-  """
-  Name of the chaos hub
-  """
-  hubName: String!
-  """
-  ID of the project
-  """
-  projectID: String!
-  """
-  Branch of the git repository
-  """
-  repoBranch: String!
-  """
-  URL of the git repository
-  """
-  repoURL: String!
-  """
-  Bool value indicating whether the hub is private or not.
-  """
-  isPrivate: Boolean!
-  # Auth Types-
-  #  token: Token based authentication
-  #  basic: Username/Password based authentication
-  #  ssh: SSH based authentication
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType!
-  """
-  Token for authentication of private chaos hub
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  sshPrivateKey: String
-}
-
-input CreateRemoteMyHub {
-  """
-  Name of the chaos hub
-  """
-  hubName: String!
-  """
-  URL of the git repository
-  """
-  repoURL: String!
-  """
-  ProjectID of the ChaosHub
-  """
-  projectID: String!
-}
-
-
-input UpdateChaosHubRequest {
-  """
-  ID of the chaos hub
-  """
-  id: String!
-  """
-  Name of the chaos hub
-  """
-  hubName: String!
-  """
-  URL of the git repository
-  """
-  repoURL: String!
-  """
-  Branch of the git repository
-  """
-  repoBranch: String!
-  """
-  Bool value indicating whether the hub is private or not.
-  """
-  isPrivate: Boolean!
-  """
-  Type of authentication used: 	BASIC, SSH,	TOKEN
-  """
-  authType: AuthType!
-  """
-  Token for authentication of private chaos hub
-  """
-  token: String
-  """
-  Git username
-  """
-  userName: String
-  """
-  Git password
-  """
-  password: String
-  """
-  Private SSH key for authenticating into private chaos hub
-  """
-  sshPrivateKey: String
-  """
-  Public SSH key for authenticating into private chaos hub
-  """
-  sshPublicKey: String
-  """
-  Project ID associated with this chaos hub
-  """
-  projectID: String!
-}
-
-type ExperimentDetails{
-  """
-  Engine Manifest
-  """
-  engineDetails: String!
-
-  """
-  Experiment Manifest
-  """
-  experimentDetails: String!
-}
-
-type PredefinedWorkflowList {
-  """
-  Name of the workflow
-  """
-  workflowName: String!
-  """
-  Workflow CSV
-  """
-  workflowCSV: String!
-  """
-  Workflow Manifest
-  """
-  workflowManifest: String!
-}
-
-extend type Query {
-  # CHAOS-HUB OPERATIONS
-  """
-  List the Charts details of a ChaosHub
-  """
-  listCharts(hubName: String!, projectID: String!): [Chart!]! @authorized
-
-  """
-  Get the Experiment list from a ChaosHub
-  """
-  getHubExperiment(request: ExperimentRequest!): Chart! @authorized
-
-  """
-  List the status of all the connected ChaosHub
-  """
-  listHubStatus(projectID: String!): [ChaosHubStatus]! @authorized
-
-  """
-  Get the YAML manifest of ChaosEngine/ChaosExperiment
-  """
-  getYAMLData(request: ExperimentRequest!): String! @authorized
-
-  """
-  Get Engine and Experiment YAML
-  """
-  getExperimentDetails(request: ExperimentRequest!): ExperimentDetails! @authorized
-
-  """
-  List the PredefinedWorkflows present in the hub
-  """
-  listPredefinedWorkflows(hubName: String!, projectID: String!): [PredefinedWorkflowList!]! @authorized
-
-  """
-  Get the predefined workflow YAML
-  """
-  getPredefinedExperimentYAML(request: ExperimentRequest!): String! @authorized
-}
-
-extend type Mutation {
-  # CHAOS-HUB OPERATIONS
-  """
-  Add a ChaosHub (includes the git clone operation)
-  """
-  addChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
-
-  """
-  Add a ChaosHub (remote hub download)
-  """
-  addRemoteChaosHub(request: CreateRemoteMyHub!): ChaosHub! @authorized
-
-  """
-  Save a ChaosHub configuration without cloning it
-  """
-  saveChaosHub(request: CreateChaosHubRequest!): ChaosHub! @authorized
-
-  """
-  Sync changes from the Git repository of a ChaosHub
-  """
-  syncChaosHub(id: ID!, projectID: String!): String! @authorized
-
-  """
-  Generates Private and Public key for SSH authentication
-  """
-  generateSSHKey: SSHKey! @authorized
-
-  """
-  Update the configuration of a ChaosHub
-  """
-  updateChaosHub(request: UpdateChaosHubRequest!): ChaosHub! @authorized
-
-  """
-  Delete the ChaosHub
-  """
-  deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
-}`, BuiltIn: false},
 	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
   Accepted
   Pending
@@ -6592,9 +6592,9 @@ func (ec *executionContext) field_Mutation_addChaosHub_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_addRemoteChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateRemoteMyHub
+	var arg0 model.CreateRemoteChaosHub
 	if tmp, ok := rawArgs["request"]; ok {
-		arg0, err = ec.unmarshalNCreateRemoteMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateRemoteMyHub(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateRemoteChaosHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateRemoteChaosHub(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -14987,6 +14987,426 @@ func (ec *executionContext) _Mutation_deleteDataSource(ctx context.Context, fiel
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AddChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ChaosHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosHub)
+	fc.Result = res
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addRemoteChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addRemoteChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AddRemoteChaosHub(rctx, args["request"].(model.CreateRemoteChaosHub))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ChaosHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosHub)
+	fc.Result = res
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_saveChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_saveChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SaveChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ChaosHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosHub)
+	fc.Result = res
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_syncChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_syncChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().SyncChaosHub(rctx, args["id"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_generateSSHKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().GenerateSSHKey(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.SSHKey); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.SSHKey`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SSHKey)
+	fc.Result = res
+	return ec.marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateChaosHub(rctx, args["request"].(model.UpdateChaosHubRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ChaosHub); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ChaosHub)
+	fc.Result = res
+	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteChaosHub_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteChaosHub(rctx, args["projectID"].(string), args["hubID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_registerCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15678,426 +16098,6 @@ func (ec *executionContext) _Mutation_deleteImageRegistry(ctx context.Context, f
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_addChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addChaosHub_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AddChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.ChaosHub); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ChaosHub)
-	fc.Result = res
-	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_addRemoteChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_addRemoteChaosHub_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AddRemoteChaosHub(rctx, args["request"].(model.CreateRemoteMyHub))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.ChaosHub); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ChaosHub)
-	fc.Result = res
-	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_saveChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_saveChaosHub_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SaveChaosHub(rctx, args["request"].(model.CreateChaosHubRequest))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.ChaosHub); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ChaosHub)
-	fc.Result = res
-	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_syncChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_syncChaosHub_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().SyncChaosHub(rctx, args["id"].(string), args["projectID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_generateSSHKey(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().GenerateSSHKey(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.SSHKey); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.SSHKey`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.SSHKey)
-	fc.Result = res
-	return ec.marshalNSSHKey2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐSSHKey(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_updateChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateChaosHub_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateChaosHub(rctx, args["request"].(model.UpdateChaosHubRequest))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.ChaosHub); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ChaosHub`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ChaosHub)
-	fc.Result = res
-	return ec.marshalNChaosHub2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐChaosHub(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_deleteChaosHub(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Mutation",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteChaosHub_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteChaosHub(rctx, args["projectID"].(string), args["hubID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createWorkflowTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18283,403 +18283,6 @@ func (ec *executionContext) _Query_listPortalDashboardData(ctx context.Context, 
 	return ec.marshalNPortalDashboardDataResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐPortalDashboardDataResponseᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getServerVersion(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetServerVersion(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ServerVersionResponse)
-	fc.Result = res
-	return ec.marshalNServerVersionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐServerVersionResponse(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_listClusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_listClusters_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListClusters(rctx, args["projectID"].(string), args["clusterType"].(*string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*model.Cluster); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Cluster)
-	fc.Result = res
-	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getAgentDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getAgentDetails_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetAgentDetails(rctx, args["clusterID"].(string), args["projectID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.Cluster); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Cluster)
-	fc.Result = res
-	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getManifest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getManifest_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetManifest(rctx, args["projectID"].(string), args["clusterID"].(string), args["accessKey"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(string); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getGitOpsDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getGitOpsDetails_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetGitOpsDetails(rctx, args["projectID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.GitConfigResponse); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.GitConfigResponse`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.GitConfigResponse)
-	fc.Result = res
-	return ec.marshalNGitConfigResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfigResponse(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_listImageRegistry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_listImageRegistry_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().ListImageRegistry(rctx, args["projectID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*model.ImageRegistryResponse); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ImageRegistryResponse`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.ImageRegistryResponse)
-	fc.Result = res
-	return ec.marshalOImageRegistryResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryResponseᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getImageRegistry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "Query",
-		Field:    field,
-		Args:     nil,
-		IsMethod: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getImageRegistry_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetImageRegistry(rctx, args["imageRegistryID"].(string), args["projectID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.Authorized == nil {
-				return nil, errors.New("directive authorized is not implemented")
-			}
-			return ec.directives.Authorized(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, err
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.ImageRegistryResponse); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ImageRegistryResponse`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.ImageRegistryResponse)
-	fc.Result = res
-	return ec.marshalNImageRegistryResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryResponse(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_listCharts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19105,6 +18708,403 @@ func (ec *executionContext) _Query_getPredefinedExperimentYAML(ctx context.Conte
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getServerVersion(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetServerVersion(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ServerVersionResponse)
+	fc.Result = res
+	return ec.marshalNServerVersionResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐServerVersionResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listClusters(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listClusters_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ListClusters(rctx, args["projectID"].(string), args["clusterType"].(*string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Cluster); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Cluster)
+	fc.Result = res
+	return ec.marshalNCluster2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐClusterᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getAgentDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getAgentDetails_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetAgentDetails(rctx, args["clusterID"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Cluster); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.Cluster`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Cluster)
+	fc.Result = res
+	return ec.marshalNCluster2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCluster(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getManifest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getManifest_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetManifest(rctx, args["projectID"].(string), args["clusterID"].(string), args["accessKey"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getGitOpsDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getGitOpsDetails_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetGitOpsDetails(rctx, args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GitConfigResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.GitConfigResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GitConfigResponse)
+	fc.Result = res
+	return ec.marshalNGitConfigResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐGitConfigResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listImageRegistry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listImageRegistry_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ListImageRegistry(rctx, args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.ImageRegistryResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ImageRegistryResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ImageRegistryResponse)
+	fc.Result = res
+	return ec.marshalOImageRegistryResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryResponseᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getImageRegistry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getImageRegistry_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetImageRegistry(rctx, args["imageRegistryID"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ImageRegistryResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model.ImageRegistryResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ImageRegistryResponse)
+	fc.Result = res
+	return ec.marshalNImageRegistryResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐImageRegistryResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getUsageData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -24575,8 +24575,8 @@ func (ec *executionContext) unmarshalInputCreateDBInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateRemoteMyHub(ctx context.Context, obj interface{}) (model.CreateRemoteMyHub, error) {
-	var it model.CreateRemoteMyHub
+func (ec *executionContext) unmarshalInputCreateRemoteChaosHub(ctx context.Context, obj interface{}) (model.CreateRemoteChaosHub, error) {
+	var it model.CreateRemoteChaosHub
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -27931,6 +27931,41 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addChaosHub":
+			out.Values[i] = ec._Mutation_addChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addRemoteChaosHub":
+			out.Values[i] = ec._Mutation_addRemoteChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "saveChaosHub":
+			out.Values[i] = ec._Mutation_saveChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "syncChaosHub":
+			out.Values[i] = ec._Mutation_syncChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "generateSSHKey":
+			out.Values[i] = ec._Mutation_generateSSHKey(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateChaosHub":
+			out.Values[i] = ec._Mutation_updateChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteChaosHub":
+			out.Values[i] = ec._Mutation_deleteChaosHub(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "registerCluster":
 			out.Values[i] = ec._Mutation_registerCluster(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -27993,41 +28028,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteImageRegistry":
 			out.Values[i] = ec._Mutation_deleteImageRegistry(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "addChaosHub":
-			out.Values[i] = ec._Mutation_addChaosHub(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "addRemoteChaosHub":
-			out.Values[i] = ec._Mutation_addRemoteChaosHub(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "saveChaosHub":
-			out.Values[i] = ec._Mutation_saveChaosHub(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "syncChaosHub":
-			out.Values[i] = ec._Mutation_syncChaosHub(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "generateSSHKey":
-			out.Values[i] = ec._Mutation_generateSSHKey(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "updateChaosHub":
-			out.Values[i] = ec._Mutation_updateChaosHub(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "deleteChaosHub":
-			out.Values[i] = ec._Mutation_deleteChaosHub(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -28672,101 +28672,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getServerVersion":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getServerVersion(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "listClusters":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_listClusters(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "getAgentDetails":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getAgentDetails(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "getManifest":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getManifest(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "getGitOpsDetails":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getGitOpsDetails(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "listImageRegistry":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_listImageRegistry(ctx, field)
-				return res
-			})
-		case "getImageRegistry":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getImageRegistry(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "listCharts":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -28860,6 +28765,101 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getPredefinedExperimentYAML(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getServerVersion":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getServerVersion(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "listClusters":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listClusters(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getAgentDetails":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getAgentDetails(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getManifest":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getManifest(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getGitOpsDetails":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGitOpsDetails(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "listImageRegistry":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listImageRegistry(ctx, field)
+				return res
+			})
+		case "getImageRegistry":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getImageRegistry(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -30325,8 +30325,8 @@ func (ec *executionContext) unmarshalNCreateChaosHubRequest2githubᚗcomᚋlitmu
 	return ec.unmarshalInputCreateChaosHubRequest(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNCreateRemoteMyHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateRemoteMyHub(ctx context.Context, v interface{}) (model.CreateRemoteMyHub, error) {
-	return ec.unmarshalInputCreateRemoteMyHub(ctx, v)
+func (ec *executionContext) unmarshalNCreateRemoteChaosHub2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐCreateRemoteChaosHub(ctx context.Context, v interface{}) (model.CreateRemoteChaosHub, error) {
+	return ec.unmarshalInputCreateRemoteChaosHub(ctx, v)
 }
 
 func (ec *executionContext) unmarshalNDSInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋlitmusᚑportalᚋgraphqlᚑserverᚋgraphᚋmodelᚐDSInput(ctx context.Context, v interface{}) (model.DSInput, error) {
