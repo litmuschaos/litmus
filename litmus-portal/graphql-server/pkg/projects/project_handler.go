@@ -55,8 +55,9 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 	}
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
+
 	//TODO: Remove goroutine after adding hub optimisations
-	go chaoshub.AddChaosHub(context.Background(), defaultHub)
+	go chaoshub.NewService().AddChaosHub(context.Background(), defaultHub)
 
 	_, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
 		IsDefault:         bl_true,

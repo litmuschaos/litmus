@@ -128,7 +128,6 @@ func main() {
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go chaoshub.RecurringHubSync()            // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false) // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
