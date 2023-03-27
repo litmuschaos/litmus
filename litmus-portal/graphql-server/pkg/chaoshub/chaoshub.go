@@ -521,25 +521,22 @@ var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
 		iconName           = c.Param("IconName")
 		img                *os.File
 		err                error
-		responseStatusCode int
+		responseStatusCode = 200
 	)
 
 	if strings.ToLower(chartName) == "predefined" {
 		img, err = os.Open("/tmp/version/" + projectID + "/" + hubName + "/workflows/icons/" + iconName)
-		responseStatusCode = 200
-		if err != nil {
-			responseStatusCode = 500
-			fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
-		}
 	} else {
 		img, err = os.Open("/tmp/version/" + projectID + "/" + hubName + "/charts/" + chartName + "/icons/" + iconName)
-		responseStatusCode = 200
-		if err != nil {
-			responseStatusCode = 500
-			fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
-		}
 	}
+
+	if err != nil {
+		responseStatusCode = 500
+		fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
+	}
+
 	defer img.Close()
+	
 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 	c.Writer.WriteHeader(responseStatusCode)
 	c.Writer.Header().Set("Content-Type", "image/png") // <-- set the content-type header
