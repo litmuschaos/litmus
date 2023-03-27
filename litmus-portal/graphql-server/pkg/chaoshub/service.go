@@ -51,9 +51,9 @@ type chaosHubService struct {
 	chaosHubOperator *dbSchemaChaosHub.Operator
 }
 
-func NewService(dbOperator mongodb.MongoOperator) Service {
+func NewService(mongoClient *mongodb.MongoClient) Service {
 	return &chaosHubService{
-		chaosHubOperator: dbSchemaChaosHub.NewChaosHubOperator(dbOperator),
+		chaosHubOperator: dbSchemaChaosHub.NewChaosHubOperator(mongoClient),
 	}
 }
 

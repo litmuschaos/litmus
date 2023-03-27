@@ -83,15 +83,18 @@ func main() {
 		logrus.Fatal(err)
 	}
 
-	mongodb.Client = mongodb.Client.Initialize(client)
+	mongoClient := mongodb.Initialize(client)
+
+	// TODO: remove this when all packages shift to interface pattern
+	mongodb.Operator = &mongodb.MongoOperations{MongoClient: mongoClient}
 
 	if err := validateVersion(); err != nil {
 		logrus.Fatal(err)
 	}
 
-	go startGRPCServer(utils.Config.RpcPort) // start GRPC server
+	go startGRPCServer(utils.Config.RpcPort, mongoClient) // start GRPC server
 
-	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig()))
+	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongoClient)))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
@@ -128,15 +131,15 @@ func main() {
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go chaoshub.NewService(&mongodb.MongoOperations{}).RecurringHubSync() // go routine for syncing hubs for all users
-	go gitOpsHandler.GitOpsSyncHandler(false)                             // routine to sync git repos for gitOps
+	go chaoshub.NewService(mongoClient).RecurringHubSync() // go routine for syncing hubs for all users
+	go gitOpsHandler.GitOpsSyncHandler(false)              // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
 	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
-func startGRPCServer(port string) {
+func startGRPCServer(port string, mongoClient *mongodb.MongoClient) {
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		logrus.Fatal("failed to listen: %w", err)
@@ -145,7 +148,7 @@ func startGRPCServer(port string) {
 	grpcServer := grpc.NewServer()
 
 	// Register services
-	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{})
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{DB: mongoClient})
 
 	logrus.Printf("GRPC server listening on %v", lis.Addr())
 	logrus.Fatal(grpcServer.Serve(lis))

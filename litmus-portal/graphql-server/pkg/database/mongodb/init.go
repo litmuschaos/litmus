@@ -32,7 +32,6 @@ const (
 // MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
 // and a initAllCollection method to initialize all DB Collections
 type MongoInterface interface {
-	Initialize(client *mongo.Client) *MongoClient
 	initAllCollection()
 }
 
@@ -112,10 +111,16 @@ func MongoConnection() (*mongo.Client, error) {
 }
 
 // Initialize initializes database connection
-func (m *MongoClient) Initialize(client *mongo.Client) *MongoClient {
-	m.Database = client.Database(dbName)
-	m.initAllCollection()
-	return m
+func Initialize(client *mongo.Client) *MongoClient {
+	mongodbClient := &MongoClient{
+		Database: client.Database(dbName),
+	}
+	mongodbClient.initAllCollection()
+
+	// TODO: will be removed after the migration
+	Client = mongodbClient
+
+	return mongodbClient
 }
 
 // initAllCollection initializes all the database collections

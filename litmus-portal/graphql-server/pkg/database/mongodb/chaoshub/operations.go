@@ -13,8 +13,10 @@ type Operator struct {
 	operator mongodb.MongoOperator
 }
 
-func NewChaosHubOperator(dbOperator mongodb.MongoOperator) *Operator {
-	return &Operator{operator: dbOperator}
+func NewChaosHubOperator(mongoClient *mongodb.MongoClient) *Operator {
+	return &Operator{
+		operator: mongodb.NewMongoOperations(mongoClient),
+	}
 }
 
 // CreateChaosHub creates a private chaosHub for the user in the database
