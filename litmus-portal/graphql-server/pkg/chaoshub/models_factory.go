@@ -1,7 +1,9 @@
-package model
+package chaoshub
 
-func NewCloningInputFrom(chaosHub CreateChaosHubRequest) CloningInput {
-	return CloningInput{
+import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+
+func NewCloningInputFrom(chaosHub model.CreateChaosHubRequest) model.CloningInput {
+	return model.CloningInput{
 		ProjectID:     chaosHub.ProjectID,
 		RepoBranch:    chaosHub.RepoBranch,
 		RepoURL:       chaosHub.RepoURL,

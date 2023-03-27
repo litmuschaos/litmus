@@ -18,6 +18,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/handler"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -47,18 +48,13 @@ type Service interface {
 }
 
 type chaosHubService struct {
-	ChaosHubOperation dbSchemaChaosHub.Operator
+	chaosHubOperator *dbSchemaChaosHub.Operator
 }
 
-func NewService() Service {
-	chaosHubService := &chaosHubService{
-		ChaosHubOperation: dbSchemaChaosHub.NewOperator(),
+func NewService(dbOperator mongodb.MongoOperator) Service {
+	return &chaosHubService{
+		chaosHubOperator: dbSchemaChaosHub.NewChaosHubOperator(dbOperator),
 	}
-
-	// go routine for syncing hubs for all users
-	go chaosHubService.RecurringHubSync()
-
-	return chaosHubService
 }
 
 // AddChaosHub is used for Adding a new ChaosHub
@@ -69,7 +65,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 		return nil, errors.New("HubName Already exists")
 	}
 
-	cloneHub := model.NewCloningInputFrom(chaosHub)
+	cloneHub := NewCloningInputFrom(chaosHub)
 	newHub := &dbSchemaChaosHub.ChaosHub{
 		ID:            uuid.New().String(),
 		ProjectID:     chaosHub.ProjectID,
@@ -91,7 +87,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 	}
 
 	// Adding the new hub into database with the given username.
-	if err := c.ChaosHubOperation.CreateChaosHub(ctx, newHub); err != nil {
+	if err := c.chaosHubOperator.CreateChaosHub(ctx, newHub); err != nil {
 		log.Print("ERROR", err)
 		return nil, err
 	}
@@ -129,7 +125,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	}
 
 	// Adding the new hub into database with the given name.
-	err = c.ChaosHubOperation.CreateChaosHub(ctx, newHub)
+	err = c.chaosHubOperator.CreateChaosHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -178,7 +174,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 	}
 
 	// Adding the new hub into database with the given username without cloning.
-	err = c.ChaosHubOperation.CreateChaosHub(ctx, newHub)
+	err = c.chaosHubOperator.CreateChaosHub(ctx, newHub)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -189,7 +185,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 
 // SyncHub is used for syncing the hub again if some not present or some error happens.
 func (c *chaosHubService) SyncHub(ctx context.Context, hubID string, projectID string) (string, error) {
-	chaosHub, err := c.ChaosHubOperation.GetHubByID(ctx, hubID, projectID)
+	chaosHub, err := c.chaosHubOperator.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		return "", err
 	}
@@ -223,7 +219,7 @@ func (c *chaosHubService) SyncHub(ctx context.Context, hubID string, projectID s
 		}
 	}
 	// Updating the last_synced_at time using hubID
-	err = c.ChaosHubOperation.UpdateChaosHub(ctx, query, update)
+	err = c.chaosHubOperator.UpdateChaosHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return "", err
@@ -246,7 +242,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 		SSHPrivateKey: chaosHub.SSHPrivateKey,
 	}
 
-	prevChaosHub, err := c.ChaosHubOperation.GetHubByID(ctx, chaosHub.ID, chaosHub.ProjectID)
+	prevChaosHub, err := c.chaosHubOperator.GetHubByID(ctx, chaosHub.ID, chaosHub.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -295,7 +291,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 		{"SSHPrivateKey", chaosHub.SSHPrivateKey}, {"SSHPublicKey", chaosHub.SSHPublicKey}, {"updated_at", time}}}}
 
 	// Updating the new hub into database with the given username.
-	err = c.ChaosHubOperation.UpdateChaosHub(ctx, query, update)
+	err = c.chaosHubOperator.UpdateChaosHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return nil, err
@@ -310,7 +306,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 }
 
 func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
-	chaosHub, err := c.ChaosHubOperation.GetHubByID(ctx, hubID, projectID)
+	chaosHub, err := c.chaosHubOperator.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err
@@ -318,7 +314,7 @@ func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, proj
 	query := bson.D{{"chaoshub_id", hubID}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{{"IsRemoved", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err = c.ChaosHubOperation.UpdateChaosHub(ctx, query, update)
+	err = c.chaosHubOperator.UpdateChaosHub(ctx, query, update)
 	if err != nil {
 		log.Print("ERROR", err)
 		return false, err
@@ -337,7 +333,7 @@ func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, proj
 func (c *chaosHubService) ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
 
 	chartsInput := model.CloningInput{}
-	chaosHubs, err := c.ChaosHubOperation.GetChaosHubByProjectID(ctx, projectID)
+	chaosHubs, err := c.chaosHubOperator.GetChaosHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +376,7 @@ func (c *chaosHubService) GetHubExperiment(ctx context.Context, request model.Ex
 // ListHubStatus returns the array of hubdetails with their current status.
 func (c *chaosHubService) ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
 
-	allHubs, err := c.ChaosHubOperation.GetChaosHubByProjectID(ctx, projectID)
+	allHubs, err := c.chaosHubOperator.GetChaosHubByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -503,7 +499,7 @@ func (c *chaosHubService) GetPredefinedExperimentYAMLData(request model.Experime
 
 // IsChaosHubAvailable is used for checking if hub already exist or not
 func (c *chaosHubService) IsChaosHubAvailable(ctx context.Context, hubName string, projectID string) (bool, error) {
-	chaosHubs, err := c.ChaosHubOperation.GetChaosHubByProjectID(ctx, projectID)
+	chaosHubs, err := c.chaosHubOperator.GetChaosHubByProjectID(ctx, projectID)
 	if err != nil {
 		return true, err
 	}
@@ -519,7 +515,7 @@ func (c *chaosHubService) IsChaosHubAvailable(ctx context.Context, hubName strin
 // GetAllHubs ...
 func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, error) {
 
-	chaosHubs, err := c.ChaosHubOperation.GetHubs(ctx)
+	chaosHubs, err := c.chaosHubOperator.GetHubs(ctx)
 	if err != nil {
 		return nil, err
 	}
