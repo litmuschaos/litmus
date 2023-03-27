@@ -13,9 +13,9 @@ type Operator struct {
 	operator mongodb.MongoOperator
 }
 
-func NewChaosHubOperator(mongoClient *mongodb.MongoClient) *Operator {
+func NewChaosHubOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 	return &Operator{
-		operator: mongodb.NewMongoOperations(mongoClient),
+		operator: mongodbOperator,
 	}
 }
 

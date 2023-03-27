@@ -20,9 +20,9 @@ type Resolver struct {
 	chaosHubService chaoshub.Service
 }
 
-func NewConfig(mongoClient *mongodb.MongoClient) generated.Config {
+func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	config := generated.Config{Resolvers: &Resolver{
-		chaosHubService: chaoshub.NewService(mongoClient),
+		chaosHubService: chaoshub.NewService(mongodbOperator),
 	}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)

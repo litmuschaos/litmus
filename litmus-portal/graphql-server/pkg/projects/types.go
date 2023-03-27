@@ -8,5 +8,5 @@ import (
 // ProjectServer is used to implement project.ProjectServer
 type ProjectServer struct {
 	pb.UnimplementedProjectServer
-	DB *mongodb.MongoClient
+	Operator mongodb.MongoOperator
 }

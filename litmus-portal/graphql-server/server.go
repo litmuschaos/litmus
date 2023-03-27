@@ -85,16 +85,17 @@ func main() {
 
 	mongoClient := mongodb.Initialize(client)
 
+	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
 	// TODO: remove this when all packages shift to interface pattern
-	mongodb.Operator = &mongodb.MongoOperations{MongoClient: mongoClient}
+	mongodb.Operator = mongodbOperator
 
 	if err := validateVersion(); err != nil {
 		logrus.Fatal(err)
 	}
 
-	go startGRPCServer(utils.Config.RpcPort, mongoClient) // start GRPC server
+	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC server
 
-	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongoClient)))
+	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
@@ -131,15 +132,15 @@ func main() {
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go chaoshub.NewService(mongoClient).RecurringHubSync() // go routine for syncing hubs for all users
-	go gitOpsHandler.GitOpsSyncHandler(false)              // routine to sync git repos for gitOps
+	go chaoshub.NewService(mongodbOperator).RecurringHubSync() // go routine for syncing hubs for all users
+	go gitOpsHandler.GitOpsSyncHandler(false)                  // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
 	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
-func startGRPCServer(port string, mongoClient *mongodb.MongoClient) {
+func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		logrus.Fatal("failed to listen: %w", err)
@@ -148,7 +149,7 @@ func startGRPCServer(port string, mongoClient *mongodb.MongoClient) {
 	grpcServer := grpc.NewServer()
 
 	// Register services
-	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{DB: mongoClient})
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
 
 	logrus.Printf("GRPC server listening on %v", lis.Addr())
 	logrus.Fatal(grpcServer.Serve(lis))
