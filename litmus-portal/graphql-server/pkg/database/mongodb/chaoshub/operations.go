@@ -9,9 +9,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+func NewChaosHubOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // CreateChaosHub creates a private chaosHub for the user in the database
-func CreateChaosHub(ctx context.Context, chaosHub *ChaosHub) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ChaosHubCollection, chaosHub)
+func (c *Operator) CreateChaosHub(ctx context.Context, chaosHub *ChaosHub) error {
+	err := c.operator.Create(ctx, mongodb.ChaosHubCollection, chaosHub)
 	if err != nil {
 		log.Print("Error creating ChaosHub: ", err)
 		return err
@@ -20,12 +30,12 @@ func CreateChaosHub(ctx context.Context, chaosHub *ChaosHub) error {
 }
 
 // GetChaosHubByProjectID returns a private Hub based on the projectID
-func GetChaosHubByProjectID(ctx context.Context, projectID string) ([]ChaosHub, error) {
+func (c *Operator) GetChaosHubByProjectID(ctx context.Context, projectID string) ([]ChaosHub, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"IsRemoved", false},
 	}
-	results, err := mongodb.Operator.List(ctx, mongodb.ChaosHubCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ChaosHubCollection, query)
 	if err != nil {
 		log.Print("ERROR GETTING HUBS : ", err)
 		return []ChaosHub{}, err
@@ -40,9 +50,9 @@ func GetChaosHubByProjectID(ctx context.Context, projectID string) ([]ChaosHub, 
 }
 
 // GetHubs lists all the chaosHubs that are present
-func GetHubs(ctx context.Context) ([]ChaosHub, error) {
+func (c *Operator) GetHubs(ctx context.Context) ([]ChaosHub, error) {
 	query := bson.D{{}}
-	results, err := mongodb.Operator.List(ctx, mongodb.ChaosHubCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ChaosHubCollection, query)
 	if err != nil {
 		log.Print("Error getting chaosHubs: ", err)
 		return []ChaosHub{}, err
@@ -57,9 +67,9 @@ func GetHubs(ctx context.Context) ([]ChaosHub, error) {
 }
 
 // GetHubByID returns a single chaosHub based on the hubID
-func GetHubByID(ctx context.Context, hubID string, projectID string) (ChaosHub, error) {
+func (c *Operator) GetHubByID(ctx context.Context, hubID string, projectID string) (ChaosHub, error) {
 	var chaosHub ChaosHub
-	result, err := mongodb.Operator.Get(ctx, mongodb.ChaosHubCollection, bson.D{{"chaoshub_id", hubID}, {
+	result, err := c.operator.Get(ctx, mongodb.ChaosHubCollection, bson.D{{"chaoshub_id", hubID}, {
 		"project_id", projectID,
 	}})
 	err = result.Decode(&chaosHub)
@@ -71,8 +81,8 @@ func GetHubByID(ctx context.Context, hubID string, projectID string) (ChaosHub, 
 }
 
 // UpdateChaosHub updates the chaosHub
-func UpdateChaosHub(ctx context.Context, query bson.D, update bson.D) error {
-	updateResult, err := mongodb.Operator.Update(ctx, mongodb.ChaosHubCollection, query, update)
+func (c *Operator) UpdateChaosHub(ctx context.Context, query bson.D, update bson.D) error {
+	updateResult, err := c.operator.Update(ctx, mongodb.ChaosHubCollection, query, update)
 	if err != nil {
 		return err
 	}

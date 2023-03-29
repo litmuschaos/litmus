@@ -8,19 +8,17 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 )
 
 func (r *mutationResolver) AddChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
-	err := authorization.ValidateRole(ctx, request.ProjectID,
+	if err := authorization.ValidateRole(ctx, request.ProjectID,
 		authorization.MutationRbacRules[authorization.AddChaosHub],
-		model.InvitationAccepted.String())
-	if err != nil {
+		model.InvitationAccepted.String()); err != nil {
 		return nil, err
 	}
 
-	return chaoshub.AddChaosHub(ctx, request)
+	return r.chaosHubService.AddChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) AddRemoteChaosHub(ctx context.Context, request model.CreateRemoteChaosHub) (*model.ChaosHub, error) {
@@ -31,7 +29,7 @@ func (r *mutationResolver) AddRemoteChaosHub(ctx context.Context, request model.
 		return nil, err
 	}
 
-	return chaoshub.AddRemoteChaosHub(ctx, request)
+	return r.chaosHubService.AddRemoteChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
@@ -42,7 +40,7 @@ func (r *mutationResolver) SaveChaosHub(ctx context.Context, request model.Creat
 		return nil, err
 	}
 
-	return chaoshub.SaveChaosHub(ctx, request)
+	return r.chaosHubService.SaveChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) (string, error) {
@@ -52,7 +50,7 @@ func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectI
 	if err != nil {
 		return "", err
 	}
-	return chaoshub.SyncHub(ctx, id, projectID)
+	return r.chaosHubService.SyncHub(ctx, id, projectID)
 }
 
 func (r *mutationResolver) GenerateSSHKey(ctx context.Context) (*model.SSHKey, error) {
@@ -74,7 +72,7 @@ func (r *mutationResolver) UpdateChaosHub(ctx context.Context, request model.Upd
 	if err != nil {
 		return nil, err
 	}
-	return chaoshub.UpdateChaosHub(ctx, request)
+	return r.chaosHubService.UpdateChaosHub(ctx, request)
 }
 
 func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string, hubID string) (bool, error) {
@@ -84,7 +82,7 @@ func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string,
 	if err != nil {
 		return false, err
 	}
-	return chaoshub.DeleteChaosHub(ctx, hubID, projectID)
+	return r.chaosHubService.DeleteChaosHub(ctx, hubID, projectID)
 }
 
 func (r *queryResolver) ListCharts(ctx context.Context, hubName string, projectID string) ([]*model.Chart, error) {
@@ -95,7 +93,7 @@ func (r *queryResolver) ListCharts(ctx context.Context, hubName string, projectI
 		return nil, err
 	}
 
-	return chaoshub.ListCharts(ctx, hubName, projectID)
+	return r.chaosHubService.ListCharts(ctx, hubName, projectID)
 }
 
 func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.ExperimentRequest) (*model.Chart, error) {
@@ -106,7 +104,7 @@ func (r *queryResolver) GetHubExperiment(ctx context.Context, request model.Expe
 		return nil, err
 	}
 
-	return chaoshub.GetHubExperiment(ctx, request)
+	return r.chaosHubService.GetHubExperiment(ctx, request)
 }
 
 func (r *queryResolver) ListHubStatus(ctx context.Context, projectID string) ([]*model.ChaosHubStatus, error) {
@@ -117,7 +115,7 @@ func (r *queryResolver) ListHubStatus(ctx context.Context, projectID string) ([]
 		return nil, err
 	}
 
-	return chaoshub.ListHubStatus(ctx, projectID)
+	return r.chaosHubService.ListHubStatus(ctx, projectID)
 }
 
 func (r *queryResolver) GetYAMLData(ctx context.Context, request model.ExperimentRequest) (string, error) {
@@ -128,7 +126,7 @@ func (r *queryResolver) GetYAMLData(ctx context.Context, request model.Experimen
 		return "", err
 	}
 
-	return chaoshub.GetYAMLData(request)
+	return r.chaosHubService.GetYAMLData(request)
 }
 
 func (r *queryResolver) GetExperimentDetails(ctx context.Context, request model.ExperimentRequest) (*model.ExperimentDetails, error) {
@@ -138,7 +136,7 @@ func (r *queryResolver) GetExperimentDetails(ctx context.Context, request model.
 	if err != nil {
 		return nil, err
 	}
-	return chaoshub.GetExperimentManifestDetails(ctx, request)
+	return r.chaosHubService.GetExperimentManifestDetails(ctx, request)
 }
 
 func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName string, projectID string) ([]*model.PredefinedWorkflowList, error) {
@@ -149,7 +147,7 @@ func (r *queryResolver) ListPredefinedWorkflows(ctx context.Context, hubName str
 		return nil, err
 	}
 
-	return chaoshub.ListPredefinedWorkflows(hubName, projectID)
+	return r.chaosHubService.ListPredefinedWorkflows(hubName, projectID)
 }
 
 func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request model.ExperimentRequest) (string, error) {
@@ -159,5 +157,5 @@ func (r *queryResolver) GetPredefinedExperimentYaml(ctx context.Context, request
 	if err != nil {
 		return "", err
 	}
-	return chaoshub.GetPredefinedExperimentYAMLData(request)
+	return r.chaosHubService.GetPredefinedExperimentYAMLData(request)
 }

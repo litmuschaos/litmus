@@ -7,7 +7,7 @@ import (
 )
 
 type GetCollectionInterface interface {
-	getCollection(collectionType int) (*mongo.Collection, error)
+	getCollection(mongoClient MongoInterface, collectionType int) (*mongo.Collection, error)
 }
 
 type GetCollectionStruct struct{}
@@ -17,8 +17,7 @@ var (
 )
 
 // getCollection function returns the appropriate DB collection based on the collection value passed
-func (g *GetCollectionStruct) getCollection(collectionType int) (*mongo.Collection, error) {
-	mongoClient := Client
+func (g *GetCollectionStruct) getCollection(mongoClient MongoInterface, collectionType int) (*mongo.Collection, error) {
 	switch collectionType {
 	case ClusterCollection:
 		return mongoClient.(*MongoClient).ClusterCollection, nil
