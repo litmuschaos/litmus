@@ -3438,12 +3438,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   <tr>
     <td> CONTAINER_RUNTIME  </td>
     <td> container runtime interface for the cluster</td>
-    <td> Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+    <td> Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
   </tr>
   <tr>
     <td> SOCKET_PATH </td>
     <td> Path of the containerd/crio/docker socket file </td>
-    <td> Defaults to <code>/var/run/docker.sock</code> </td>
+    <td> Defaults to <code>/run/containerd/containerd.sock</code> </td>
   </tr>
   <tr>
     <td> TOTAL_CHAOS_DURATION </td>
@@ -3661,7 +3661,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
 <ul>
 <li><code>CONTAINER_RUNTIME</code>: It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes. The default value is <code>docker</code>.</li>
-<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>). For other runtimes provide the appropriate path.</li>
+<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/run/containerd/containerd.sock</code>). For other runtimes provide the appropriate path.</li>
 </ul>
 <p>Use the following example to tune this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## provide the container runtime and socket file path</span>
@@ -3685,10 +3685,10 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="c1"># runtime for the container</span>
 <span class="w">        </span><span class="c1"># supports docker, containerd, crio</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_RUNTIME</span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;docker&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;containerd&#39;</span>
 <span class="w">        </span><span class="c1"># path of the socket file</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOCKET_PATH</span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/var/run/docker.sock&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/run/containerd/containerd.sock&#39;</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
 <span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>

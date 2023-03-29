@@ -3414,12 +3414,12 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
   <tr>
     <td> CONTAINER_RUNTIME  </td>
     <td> container runtime interface for the cluster</td>
-    <td> Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+    <td> Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
   </tr>
   <tr>
     <td> SOCKET_PATH </td>
     <td> Path of the containerd/crio/docker socket file </td>
-    <td> Defaults to <code>/var/run/docker.sock</code> </td>
+    <td> Defaults to <code>/run/containerd/containerd.sock</code> </td>
   </tr>      <br />
   <tr>
     <td> PODS_AFFECTED_PERC </td>
@@ -3499,7 +3499,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <p>It defines the <code>CONTAINER_RUNTIME</code> and <code>SOCKET_PATH</code> ENV to set the container runtime and socket file path.</p>
 <ul>
 <li><code>CONTAINER_RUNTIME</code>: It supports <code>docker</code>, <code>containerd</code>, and <code>crio</code> runtimes. The default value is <code>docker</code>.</li>
-<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/var/run/docker.sock</code>). For other runtimes provide the appropriate path.</li>
+<li><code>SOCKET_PATH</code>: It contains path of docker socket file by default(<code>/run/containerd/containerd.sock</code>). For other runtimes provide the appropriate path.</li>
 </ul>
 <h3 id="pumba-chaos-library">Pumba Chaos Library<a class="headerlink" href="#pumba-chaos-library" title="Permanent link">&para;</a></h3>
 <p>It specifies the Pumba chaos library for the chaos injection. It can be tuned via <code>LIB</code> ENV. The defaults chaos library is <code>litmus</code>.

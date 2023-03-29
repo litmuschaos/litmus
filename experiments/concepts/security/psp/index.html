@@ -3117,11 +3117,11 @@ opting for the default <a href="https://kubernetes.io/docs/concepts/policy/pod-s
 
 <span class="nt">allowedHostPaths</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># substitutes this path with an appropriate socket path</span>
-<span class="w">    </span><span class="c1"># ex: &#39;/var/run/docker.sock&#39;, &#39;/run/containerd/containerd.sock&#39;, &#39;/run/crio/crio.sock&#39;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pathPrefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/run/docker.sock&quot;</span>
+<span class="w">    </span><span class="c1"># ex: &#39;/run/containerd/containerd.sock&#39;, &#39;/run/containerd/containerd.sock&#39;, &#39;/run/crio/crio.sock&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pathPrefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/run/containerd/containerd.sock&quot;</span>
 <span class="w">    </span><span class="c1"># substitutes this path with an appropriate container path</span>
 <span class="w">    </span><span class="c1"># ex: &#39;/var/lib/docker/containers&#39;, &#39;/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io&#39;, &#39;/var/lib/containers/storage/overlay/&#39;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pathPrefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/lib/docker/containers&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">pathPrefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io&quot;</span>
 
 <span class="nt">allowedCapabilities</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># NET_ADMIN &amp; SYS_ADMIN: used in network chaos experiments to perform</span>
