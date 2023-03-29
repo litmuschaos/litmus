@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -536,7 +537,7 @@ var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
 		iconName           = c.Param("IconName")
 		img                *os.File
 		err                error
-		responseStatusCode = 200
+		responseStatusCode = http.StatusOK
 	)
 
 	if strings.ToLower(chartName) == "predefined" {
@@ -546,7 +547,7 @@ var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
 	}
 
 	if err != nil {
-		responseStatusCode = 500
+		responseStatusCode = http.StatusInternalServerError
 		fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
 	}
 
