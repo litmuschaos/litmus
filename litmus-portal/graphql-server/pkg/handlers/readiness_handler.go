@@ -37,6 +37,7 @@ func ReadinessHandler(mclient *mongo.Client) gin.HandlerFunc {
 
 		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mclient)
 		if err != nil {
+			logrus.Error(err)
 			dbFlag = "down"
 		}
 
@@ -46,6 +47,7 @@ func ReadinessHandler(mclient *mongo.Client) gin.HandlerFunc {
 
 		cols, err := mongodb.Operator.ListCollection(context.Background(), mclient)
 		if err != nil {
+			logrus.Error(err)
 			colFlag = "down"
 		}
 
