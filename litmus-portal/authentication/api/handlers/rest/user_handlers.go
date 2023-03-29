@@ -47,7 +47,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		userRequest.ID = uID
 
 		// Generating password hash
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.Config.PasswordEncryptionCost)
 		if err != nil {
 			log.Error("auth error: Error generating password")
 		}
@@ -96,7 +96,7 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 
 		// Checking if password is updated
 		if userRequest.Password != "" {
-			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.Config.PasswordEncryptionCost)
 			if err != nil {
 				return
 			}
@@ -180,7 +180,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		expiryTime := time.Duration(utils.JWTExpiryDuration) * 60
+		expiryTime := time.Duration(utils.Config.JwtExpiryDuration) * 60
 		c.JSON(200, gin.H{
 			"access_token": token,
 			"expires_in":   expiryTime,
@@ -200,7 +200,7 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 		}
 		username := c.MustGet("username").(string)
 		userPasswordRequest.Username = username
-		if utils.StrictPasswordPolicy {
+		if utils.Config.StrictPassword {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
@@ -236,7 +236,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 		var adminUser entities.User
 		adminUser.UserName = c.MustGet("username").(string)
 		adminUser.ID = uid
-		if utils.StrictPasswordPolicy {
+		if utils.Config.StrictPassword {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))

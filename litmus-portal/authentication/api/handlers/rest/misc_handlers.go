@@ -3,6 +3,7 @@ package rest
 import (
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -30,10 +31,10 @@ func Status(service services.ApplicationService) gin.HandlerFunc {
 		_, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
-			c.JSON(500, entities.APIStatus{"down"})
+			c.JSON(http.StatusInternalServerError, entities.APIStatus{"down"})
 			return
 		}
-		c.JSON(200, entities.APIStatus{"up"})
+		c.JSON(http.StatusOK, entities.APIStatus{"up"})
 	}
 }
 
@@ -51,7 +52,7 @@ func Readiness(service services.ApplicationService) gin.HandlerFunc {
 
 		if err != nil {
 			log.Error(err)
-			c.JSON(500, ReadinessAPIStatus{"down", "unknown"})
+			c.JSON(http.StatusInternalServerError, ReadinessAPIStatus{"down", "unknown"})
 			return
 		}
 
@@ -62,10 +63,10 @@ func Readiness(service services.ApplicationService) gin.HandlerFunc {
 
 		if err != nil {
 			log.Error(err)
-			c.JSON(500, ReadinessAPIStatus{db_flag, "down"})
+			c.JSON(http.StatusInternalServerError, ReadinessAPIStatus{db_flag, "down"})
 			return
 		}
 
-		c.JSON(200, ReadinessAPIStatus{db_flag, col_flag})
+		c.JSON(http.StatusOK, ReadinessAPIStatus{db_flag, col_flag})
 	}
 }

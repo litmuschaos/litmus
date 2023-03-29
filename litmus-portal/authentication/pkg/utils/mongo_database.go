@@ -15,10 +15,10 @@ import (
 func MongoConnection() (*mongo.Client, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	mongoCredentials := options.Credential{
-		Username: DBUser,
-		Password: DBPassword,
+		Username: Config.DbUser,
+		Password: Config.DbPassword,
 	}
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(DBUrl).SetAuth(mongoCredentials))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(Config.DbServer).SetAuth(mongoCredentials))
 	if err != nil {
 		return nil, err
 	}

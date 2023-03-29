@@ -27,20 +27,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Config struct {
-	JwtSecret     string `required:"true" split_words:"true"`
-	AdminUsername string `required:"true" split_words:"true"`
-	AdminPassword string `required:"true" split_words:"true"`
-	DbServer      string `required:"true" split_words:"true"`
-	DbUser        string `required:"true" split_words:"true"`
-	DbPassword    string `required:"true" split_words:"true"`
-}
-
 func init() {
 	printVersion()
 
-	var c Config
-
+	var c utils.Configurations
 	err := envconfig.Process("", &c)
 	if err != nil {
 		log.Fatal(err)
@@ -59,29 +49,29 @@ func main() {
 		log.Fatal("database connection error $s", err)
 	}
 
-	db := client.Database(utils.DBName)
+	db := client.Database(utils.Config.DbName)
 
 	// Creating User Collection
-	err = utils.CreateCollection(utils.UserCollection, db)
+	err = utils.CreateCollection(utils.Config.UserCollection, db)
 	if err != nil {
 		log.Fatalf("failed to create collection  %s", err)
 	}
 
-	err = utils.CreateIndex(utils.UserCollection, utils.UsernameField, db)
+	err = utils.CreateIndex(utils.Config.UserCollection, utils.Config.UsernameField, db)
 	if err != nil {
 		log.Fatalf("failed to create index  %s", err)
 	}
 
 	// Creating Project Collection
-	err = utils.CreateCollection(utils.ProjectCollection, db)
+	err = utils.CreateCollection(utils.Config.ProjectCollection, db)
 	if err != nil {
 		log.Fatalf("failed to create collection  %s", err)
 	}
 
-	userCollection := db.Collection(utils.UserCollection)
+	userCollection := db.Collection(utils.Config.UserCollection)
 	userRepo := user.NewRepo(userCollection)
 
-	projectCollection := db.Collection(utils.ProjectCollection)
+	projectCollection := db.Collection(utils.Config.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
 	miscRepo := misc.NewRepo(db, client)
@@ -95,7 +85,7 @@ func main() {
 }
 
 func validatedAdminSetup(service services.ApplicationService) {
-	configs := map[string]string{"ADMIN_PASSWORD": utils.AdminPassword, "ADMIN_USERNAME": utils.AdminName, "DB_USER": utils.DBUser, "DB_SERVER": utils.DBUrl, "DB_NAME": utils.DBName, "DB_PASSWORD": utils.DBPassword, "JWT_SECRET": utils.JwtSecret}
+	configs := map[string]string{"ADMIN_PASSWORD": utils.Config.AdminPassword, "ADMIN_USERNAME": utils.Config.AdminUserName, "DB_USER": utils.Config.DbUser, "DB_SERVER": utils.Config.DbServer, "DB_NAME": utils.Config.DbName, "DB_PASSWORD": utils.Config.DbPassword, "JWT_SECRET": utils.Config.JwtSecret}
 	for configName, configValue := range configs {
 		if configValue == "" {
 			log.Fatalf("Config %s has not been set", configName)
@@ -106,7 +96,7 @@ func validatedAdminSetup(service services.ApplicationService) {
 	uID := uuid.Must(uuid.NewRandom()).String()
 
 	// Generating password hash
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(utils.AdminPassword), utils.PasswordEncryptionCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(utils.Config.AdminPassword), utils.Config.PasswordEncryptionCost)
 	if err != nil {
 		log.Println("Error generating password for admin")
 	}
@@ -116,7 +106,7 @@ func validatedAdminSetup(service services.ApplicationService) {
 
 	adminUser := entities.User{
 		ID:        uID,
-		UserName:  utils.AdminName,
+		UserName:  utils.Config.AdminUserName,
 		Password:  password,
 		Role:      entities.RoleAdmin,
 		CreatedAt: &createdAt,
@@ -147,15 +137,15 @@ func runRestServer(applicationService services.ApplicationService) {
 		AllowCredentials: true,
 	}))
 	// Enable dex routes only if passed via environment variables
-	if utils.DexEnabled {
+	if utils.Config.DexEnabled {
 		routes.DexRouter(app, applicationService)
 	}
 	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
 
-	log.Infof("Listening and serving HTTP on %s", utils.Port)
-	err := app.Run(utils.Port)
+	log.Infof("Listening and serving HTTP on %s", utils.Config.Port)
+	err := app.Run(utils.Config.Port)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
 	}
@@ -163,7 +153,7 @@ func runRestServer(applicationService services.ApplicationService) {
 
 func runGrpcServer(applicationService services.ApplicationService) {
 	// Starting gRPC server
-	lis, err := net.Listen("tcp", utils.GrpcPort)
+	lis, err := net.Listen("tcp", utils.Config.GrpcPort)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication server due"+
 			" to %s", err)
@@ -171,7 +161,7 @@ func runGrpcServer(applicationService services.ApplicationService) {
 	grpcApplicationServer := grpcHandler.ServerGrpc{ApplicationService: applicationService}
 	grpcServer := grpc.NewServer()
 	grpcPresenter.RegisterAuthRpcServiceServer(grpcServer, &grpcApplicationServer)
-	log.Infof("Listening and serving gRPC on %s", utils.GrpcPort)
+	log.Infof("Listening and serving gRPC on %s", utils.Config.GrpcPort)
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication server due"+
