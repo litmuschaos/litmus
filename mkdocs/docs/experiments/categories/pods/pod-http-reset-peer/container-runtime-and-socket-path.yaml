@@ -19,10 +19,10 @@ spec:
         # runtime for the container
         # supports docker, containerd, crio
         - name: CONTAINER_RUNTIME
-          value: 'docker'
+          value: 'containerd'
         # path of the socket file
         - name: SOCKET_PATH
-          value: '/var/run/docker.sock'
+          value: '/run/containerd/containerd.sock'
         # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
