@@ -21,17 +21,25 @@ type MongoOperator interface {
 	Delete(ctx context.Context, collectionType int, query bson.D, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	CountDocuments(ctx context.Context, collectionType int, query bson.D, opts ...*options.CountOptions) (int64, error)
 	Aggregate(ctx context.Context, collectionType int, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error)
-	GetCollection(collectionType int) (*mongo.Collection, error)
 	ListCollection(ctx context.Context, mclient *mongo.Client) ([]string, error)
 	ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error)
 }
 
-type MongoOperations struct{}
+type MongoOperations struct {
+	MongoClient *MongoClient
+}
 
 var (
+	// TODO: remove this when all packages shift to interface pattern
 	// Operator contains all the CRUD operations of the mongo database
-	Operator MongoOperator = &MongoOperations{}
+	Operator MongoOperator
 )
+
+func NewMongoOperations(mongoClient *MongoClient) *MongoOperations {
+	return &MongoOperations{
+		MongoClient: mongoClient,
+	}
+}
 
 // Create puts a document in the database
 func (m *MongoOperations) Create(ctx context.Context, collectionType int, document interface{}) error {
@@ -117,12 +125,12 @@ func (m *MongoOperations) UpdateMany(ctx context.Context, collectionType int, qu
 // Replace changes a document with a new one in the database based on a query
 func (m *MongoOperations) Replace(ctx context.Context, collectionType int, query bson.D, replacement interface{}) (*mongo.UpdateResult, error) {
 	var result *mongo.UpdateResult
+	// If the given item is not present then insert.
+	opts := options.Replace().SetUpsert(true)
 	collection, err := m.GetCollection(collectionType)
 	if err != nil {
 		return result, err
 	}
-	// If the given item is not present then insert.
-	opts := options.Replace().SetUpsert(true)
 	result, err = collection.ReplaceOne(ctx, query, replacement, opts)
 	if err != nil {
 		return result, err
@@ -172,7 +180,7 @@ func (m *MongoOperations) Aggregate(ctx context.Context, collectionType int, pip
 
 // GetCollection fetches the correct collection based on the collection type
 func (m *MongoOperations) GetCollection(collectionType int) (*mongo.Collection, error) {
-	return GetCollectionClient.getCollection(collectionType)
+	return GetCollectionClient.getCollection(m.MongoClient, collectionType)
 }
 
 func (m *MongoOperations) ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error) {

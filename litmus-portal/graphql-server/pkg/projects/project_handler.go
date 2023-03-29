@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -31,7 +32,7 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 	}
 
 	// ProjectInitializer initializes the project by creating instances for required stateful services
-	err := ProjectInitializer(ctx, req.ProjectID, req.Role)
+	err := ProjectInitializer(ctx, req.ProjectID, req.Role, s.Operator)
 	if err != nil {
 		return res, fmt.Errorf("failed to initialize project, %w", err)
 	} else {
@@ -40,7 +41,7 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 }
 
 // ProjectInitializer creates a default hub and default image registry for a new project
-func ProjectInitializer(ctx context.Context, projectID string, role string) error {
+func ProjectInitializer(ctx context.Context, projectID string, role string, operator mongodb.MongoOperator) error {
 
 	var (
 		selfCluster = utils.Config.SelfAgent
@@ -55,8 +56,9 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 	}
 
 	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
+
 	//TODO: Remove goroutine after adding hub optimisations
-	go chaoshub.AddChaosHub(context.Background(), defaultHub)
+	go chaoshub.NewService(operator).AddChaosHub(context.Background(), defaultHub)
 
 	_, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
 		IsDefault:         bl_true,

@@ -1,6 +1,8 @@
 package chaoshub
 
-import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+import (
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+)
 
 // ChaosHub ...
 type ChaosHub struct {
@@ -25,7 +27,6 @@ type ChaosHub struct {
 
 // GetOutputChaosHub ...
 func (c *ChaosHub) GetOutputChaosHub() *model.ChaosHub {
-
 	return &model.ChaosHub{
 		ID:            c.ID,
 		ProjectID:     c.ProjectID,
