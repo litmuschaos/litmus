@@ -65,6 +65,8 @@ runAsUser:
   type: RunAsAny
 seLinuxContext:
   type: MustRunAs
+seccompProfiles:
+  - runtime/default
 supplementalGroups:
   type: RunAsAny
 users:
