@@ -536,7 +536,7 @@ var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
 	}
 
 	defer img.Close()
-	
+
 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 	c.Writer.WriteHeader(responseStatusCode)
 	c.Writer.Header().Set("Content-Type", "image/png") // <-- set the content-type header

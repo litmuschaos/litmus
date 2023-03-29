@@ -289,7 +289,7 @@ func ProcessCompletedWorkflowRun(execData types.ExecutionData, wfID string) (typ
 			if value.ChaosExp == nil {
 				continue
 			}
-			for expName, _ := range weightMap {
+			for expName := range weightMap {
 				if strings.Contains(value.ChaosExp.EngineName, expName) {
 					experimentName = expName
 				}
