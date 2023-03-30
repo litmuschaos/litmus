@@ -9,8 +9,7 @@ import (
 	"strings"
 	"time"
 
-	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -130,10 +129,11 @@ func main() {
 	router.HandleFunc("/status", handlers.StatusHandler)
 	router.HandleFunc("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
 
-	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
+	gitOpsService := gitops.NewService(mongodbOperator)
+	gitOpsService.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
 	go chaoshub.NewService(mongodbOperator).RecurringHubSync() // go routine for syncing hubs for all users
-	go gitOpsHandler.GitOpsSyncHandler(false)                  // routine to sync git repos for gitOps
+	go gitOpsService.GitOpsSyncHandler(false)                  // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
 	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))

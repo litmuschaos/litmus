@@ -8,7 +8,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -29,13 +28,10 @@ type Resolver struct {
 
 func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	config := generated.Config{Resolvers: &Resolver{
-		chaosHubService: chaoshub.NewService(mongodbOperator),
-		chaosWorkflowHandler: handler.NewChaosWorkflowHandler(
-			chaosWorkflow.NewService(mongodbOperator),
-			cluster.NewService(mongodbOperator),
-		),
-		clusterService: cluster.NewService(mongodbOperator),
-		gitOpsService:  gitops.NewService(mongodbOperator),
+		chaosHubService:      chaoshub.NewService(mongodbOperator),
+		chaosWorkflowHandler: handler.NewChaosWorkflowHandler(mongodbOperator),
+		clusterService:       cluster.NewService(mongodbOperator),
+		gitOpsService:        gitops.NewService(mongodbOperator),
 	}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)

@@ -15,7 +15,6 @@ import (
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	scheduleTypes "github.com/litmuschaos/chaos-scheduler/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	clusterOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
@@ -23,7 +22,6 @@ import (
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	workflowDBOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -32,13 +30,14 @@ import (
 type Service interface {
 	ProcessWorkflow(workflow *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowRequest, *dbSchemaWorkflow.ChaosWorkflowType, error)
 	ProcessWorkflowCreation(input *model.ChaosWorkFlowRequest, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error
-	SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, username *string, externalData *string, reqType string, r *store.StateData)
 	ProcessWorkflowUpdate(workflow *model.ChaosWorkFlowRequest, username string, wfType *dbSchemaWorkflow.ChaosWorkflowType, r *store.StateData) error
 	ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error
 	ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error
 	ProcessCompletedWorkflowRun(execData ExecutionData, wfID string) (WorkflowRunMetrics, error)
 	SendWorkflowEvent(wfRun model.WorkflowRun, r *store.StateData)
 	ProcessWorkflowRunSync(workflowID string, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, r *store.StateData) error
+	GetWorkflow(query bson.D) (dbOperationsWorkflow.ChaosWorkFlowRequest, error)
+	GetWorkflows(query bson.D) ([]dbOperationsWorkflow.ChaosWorkFlowRequest, error)
 }
 
 // chaosWorkflowService is the implementation of the chaos workflow service
@@ -166,13 +165,13 @@ func (c *chaosWorkflowService) ProcessWorkflowCreation(input *model.ChaosWorkFlo
 		LastUpdatedBy:       username,
 	}
 
-	err = dbOperationsWorkflow.InsertChaosWorkflow(newChaosWorkflow)
+	err = c.chaosWorkflowOperator.InsertChaosWorkflow(newChaosWorkflow)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		c.SendWorkflowToSubscriber(input, &username, nil, "create", r)
+		SendWorkflowToSubscriber(input, &username, nil, "create", r)
 	}
 
 	return nil
@@ -188,13 +187,13 @@ func (c *chaosWorkflowService) ProcessWorkflowUpdate(workflow *model.ChaosWorkFl
 	query := bson.D{{"workflow_id", workflow.WorkflowID}, {"project_id", workflow.ProjectID}}
 	update := bson.D{{"$set", bson.D{{"workflow_manifest", workflow.WorkflowManifest}, {"type", *wfType}, {"cronSyntax", workflow.CronSyntax}, {"workflow_name", workflow.WorkflowName}, {"workflow_description", workflow.WorkflowDescription}, {"isCustomWorkflow", workflow.IsCustomWorkflow}, {"weightages", Weightages}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}, {"last_updated_by", username}}}}
 
-	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+	err := c.chaosWorkflowOperator.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		c.SendWorkflowToSubscriber(workflow, &username, nil, "update", r)
+		SendWorkflowToSubscriber(workflow, &username, nil, "update", r)
 	}
 	return nil
 }
@@ -203,13 +202,13 @@ func (c *chaosWorkflowService) ProcessWorkflowUpdate(workflow *model.ChaosWorkFl
 func (c *chaosWorkflowService) ProcessWorkflowDelete(query bson.D, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error {
 
 	update := bson.D{{"$set", bson.D{{"isRemoved", true}, {"last_updated_by", username}}}}
-	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+	err := c.chaosWorkflowOperator.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		c.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID:        workflow.ProjectID,
 			ClusterID:        workflow.ClusterID,
 			WorkflowManifest: workflow.WorkflowManifest,
@@ -222,13 +221,13 @@ func (c *chaosWorkflowService) ProcessWorkflowDelete(query bson.D, workflow work
 func (c *chaosWorkflowService) ProcessWorkflowRunDelete(query bson.D, workflowRunID *string, workflow workflowDBOps.ChaosWorkFlowRequest, username string, r *store.StateData) error {
 	update := bson.D{{"$set", bson.D{{"workflow_runs", workflow.WorkflowRuns}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-	err := dbOperationsWorkflow.UpdateChaosWorkflow(query, update)
+	err := c.chaosWorkflowOperator.UpdateChaosWorkflow(query, update)
 	if err != nil {
 		return err
 	}
 
 	if r != nil {
-		c.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID: workflow.ProjectID,
 			ClusterID: workflow.ClusterID,
 		}, &username, workflowRunID, "workflow_delete", r)
@@ -248,59 +247,12 @@ func (c *chaosWorkflowService) ProcessWorkflowRunSync(workflowID string, workflo
 
 	str := string(strB)
 	if r != nil {
-		c.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
+		SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 			ProjectID: workflow.ProjectID,
 			ClusterID: workflow.ClusterID,
 		}, nil, &str, "workflow_sync", r)
 	}
 	return nil
-}
-
-// SendWorkflowToSubscriber sends the workflow to the subscriber to be handled
-func (c *chaosWorkflowService) SendWorkflowToSubscriber(workflow *model.ChaosWorkFlowRequest, username *string, externalData *string, reqType string, r *store.StateData) {
-	workflowNamespace := gjson.Get(workflow.WorkflowManifest, "metadata.namespace").String()
-
-	if workflowNamespace == "" {
-		workflowNamespace = utils.Config.AgentNamespace
-	}
-	sendRequestToSubscriber(clusterOps.SubscriberRequests{
-		K8sManifest:  workflow.WorkflowManifest,
-		RequestType:  reqType,
-		ProjectID:    workflow.ProjectID,
-		ClusterID:    workflow.ClusterID,
-		Namespace:    workflowNamespace,
-		ExternalData: externalData,
-		Username:     username,
-	}, *r)
-}
-
-// sendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
-func sendRequestToSubscriber(subscriberRequest clusterOps.SubscriberRequests, r store.StateData) {
-	if utils.Config.AgentScope == "cluster" {
-		/*
-			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
-			for CreateChaosWorkflow mutation to be passed to this function.
-		*/
-	}
-	newAction := &model.ClusterActionResponse{
-		ProjectID: subscriberRequest.ProjectID,
-		Action: &model.ActionPayload{
-			K8sManifest:  subscriberRequest.K8sManifest,
-			Namespace:    subscriberRequest.Namespace,
-			RequestType:  subscriberRequest.RequestType,
-			ExternalData: subscriberRequest.ExternalData,
-			Username:     subscriberRequest.Username,
-		},
-	}
-
-	r.Mutex.Lock()
-
-	if observer, ok := r.ConnectedCluster[subscriberRequest.ClusterID]; ok {
-		observer <- newAction
-	}
-
-	r.Mutex.Unlock()
 }
 
 // SendWorkflowEvent sends workflow events from the clusters to the appropriate users listening for the events
@@ -319,7 +271,7 @@ func (c *chaosWorkflowService) ProcessCompletedWorkflowRun(execData ExecutionDat
 	var weightSum, totalTestResult = 0, 0
 	var result WorkflowRunMetrics
 
-	chaosWorkflows, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}})
+	chaosWorkflows, err := c.chaosWorkflowOperator.GetWorkflows(bson.D{{"workflow_id", wfID}})
 	if err != nil {
 		return result, fmt.Errorf("failed to get workflow from db on complete, error: %w", err)
 	}
@@ -687,4 +639,13 @@ func processChaosScheduleManifest(workflow *model.ChaosWorkFlowRequest, weights 
 
 	workflow.WorkflowManifest = string(out)
 	return nil
+}
+
+func (c *chaosWorkflowService) GetWorkflow(query bson.D) (dbOperationsWorkflow.ChaosWorkFlowRequest, error) {
+	return c.chaosWorkflowOperator.GetWorkflow(query)
+}
+
+// GetWorkflows returns the list of workflows
+func (c *chaosWorkflowService) GetWorkflows(query bson.D) ([]dbOperationsWorkflow.ChaosWorkFlowRequest, error) {
+	return c.chaosWorkflowOperator.GetWorkflows(query)
 }

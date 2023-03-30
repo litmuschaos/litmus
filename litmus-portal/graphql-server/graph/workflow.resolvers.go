@@ -9,7 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	dataStore "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +20,7 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request mode
 	if err != nil {
 		return nil, err
 	}
-	return r.chaosWorkflowHandler.CreateChaosWorkflow(ctx, &request, data_store.Store)
+	return r.chaosWorkflowHandler.CreateChaosWorkflow(ctx, &request, dataStore.Store)
 }
 
 func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error) {
@@ -49,7 +49,7 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *mod
 	if err != nil {
 		return nil, err
 	}
-	return r.chaosWorkflowHandler.UpdateChaosWorkflow(ctx, request, data_store.Store)
+	return r.chaosWorkflowHandler.UpdateChaosWorkflow(ctx, request, dataStore.Store)
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -60,7 +60,7 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID st
 		return false, err
 	}
 
-	return r.chaosWorkflowHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return r.chaosWorkflowHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, dataStore.Store)
 }
 
 func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -71,11 +71,11 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID
 		return false, err
 	}
 
-	return r.chaosWorkflowHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return r.chaosWorkflowHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, dataStore.Store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunRequest) (string, error) {
-	return r.chaosWorkflowHandler.ChaosWorkflowRun(request, *data_store.Store)
+	return r.chaosWorkflowHandler.ChaosWorkflowRun(request, *dataStore.Store)
 }
 
 func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
@@ -86,7 +86,7 @@ func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string
 		return false, err
 	}
 
-	return r.chaosWorkflowHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return r.chaosWorkflowHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, dataStore.Store)
 }
 
 func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error) {
@@ -114,9 +114,9 @@ func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.List
 func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
 	logrus.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
-	data_store.Store.Mutex.Lock()
-	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
-	data_store.Store.Mutex.Unlock()
+	dataStore.Store.Mutex.Lock()
+	dataStore.Store.WorkflowEventPublish[projectID] = append(dataStore.Store.WorkflowEventPublish[projectID], workflowEvent)
+	dataStore.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
 		logrus.Print("CLOSED WORKFLOW LISTENER: ", projectID)

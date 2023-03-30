@@ -234,7 +234,7 @@ func (c *clusterService) DeleteClusters(ctx context.Context, projectID string, c
 		username, _ := authorization.GetUsername(tkn)
 
 		for _, request := range requests {
-			sendRequestToSubscriber(SubscriberRequests{
+			SendRequestToSubscriber(SubscriberRequests{
 				K8sManifest: request,
 				RequestType: "delete",
 				ProjectID:   cluster.ProjectID,
@@ -361,35 +361,6 @@ func (c *clusterService) SendClusterEvent(eventType, eventName, description stri
 			observer <- &newEvent
 		}
 	}
-	r.Mutex.Unlock()
-}
-
-// sendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
-func sendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.AgentScope == "cluster" {
-		/*
-			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
-			for CreateChaosWorkflow mutation to be passed to this function.
-		*/
-	}
-	newAction := &model.ClusterActionResponse{
-		ProjectID: subscriberRequest.ProjectID,
-		Action: &model.ActionPayload{
-			K8sManifest:  subscriberRequest.K8sManifest,
-			Namespace:    subscriberRequest.Namespace,
-			RequestType:  subscriberRequest.RequestType,
-			ExternalData: subscriberRequest.ExternalData,
-			Username:     subscriberRequest.Username,
-		},
-	}
-
-	r.Mutex.Lock()
-
-	if observer, ok := r.ConnectedCluster[subscriberRequest.ClusterID]; ok {
-		observer <- newAction
-	}
-
 	r.Mutex.Unlock()
 }
 

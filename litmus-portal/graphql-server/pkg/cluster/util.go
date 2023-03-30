@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/ghodss/yaml"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
@@ -181,4 +183,33 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 	}
 
 	return []byte(strings.Join(generatedYAML, "\n")), nil
+}
+
+// SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
+func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
+	if utils.Config.AgentScope == "cluster" {
+		/*
+			namespace = Obtain from WorkflowManifest or
+			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
+			for CreateChaosWorkflow mutation to be passed to this function.
+		*/
+	}
+	newAction := &model.ClusterActionResponse{
+		ProjectID: subscriberRequest.ProjectID,
+		Action: &model.ActionPayload{
+			K8sManifest:  subscriberRequest.K8sManifest,
+			Namespace:    subscriberRequest.Namespace,
+			RequestType:  subscriberRequest.RequestType,
+			ExternalData: subscriberRequest.ExternalData,
+			Username:     subscriberRequest.Username,
+		},
+	}
+
+	r.Mutex.Lock()
+
+	if observer, ok := r.ConnectedCluster[subscriberRequest.ClusterID]; ok {
+		observer <- newAction
+	}
+
+	r.Mutex.Unlock()
 }

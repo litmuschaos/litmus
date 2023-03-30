@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	"github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
@@ -35,20 +37,23 @@ import (
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	dbSchemaWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
-	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 )
 
 // ChaosWorkflowHandler is the handler for chaos workflow
 type ChaosWorkflowHandler struct {
-	chaosWorkflowService chaosWorkflow.Service
-	clusterService       cluster.Service
+	chaosWorkflowService  chaosWorkflow.Service
+	clusterService        cluster.Service
+	gitOpsService         gitops.Service
+	chaosWorkflowOperator *dbOperationsWorkflow.Operator
 }
 
 // NewChaosWorkflowHandler returns a new instance of ChaosWorkflowHandler
-func NewChaosWorkflowHandler(chaosWorkflowService chaosWorkflow.Service, clusterService cluster.Service) *ChaosWorkflowHandler {
+func NewChaosWorkflowHandler(mongodbOperator mongodb.MongoOperator) *ChaosWorkflowHandler {
 	return &ChaosWorkflowHandler{
-		chaosWorkflowService: chaosWorkflowService,
-		clusterService:       clusterService,
+		chaosWorkflowService:  chaosWorkflow.NewService(mongodbOperator),
+		clusterService:        cluster.NewService(mongodbOperator),
+		gitOpsService:         gitops.NewService(mongodbOperator),
+		chaosWorkflowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
 	}
 }
 
@@ -61,7 +66,7 @@ func (c *ChaosWorkflowHandler) CreateChaosWorkflow(ctx context.Context, request 
 	}
 
 	// GitOps Update
-	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
+	err = c.gitOpsService.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -96,7 +101,7 @@ func (c *ChaosWorkflowHandler) DeleteChaosWorkflow(ctx context.Context, projectI
 		{"workflow_id", workflowID},
 		{"project_id", projectID},
 	}
-	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	workflow, err := c.chaosWorkflowOperator.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
@@ -132,7 +137,7 @@ func (c *ChaosWorkflowHandler) DeleteChaosWorkflow(ctx context.Context, projectI
 		}
 
 		// gitOps delete
-		err = gitOpsHandler.DeleteWorkflowFromGit(ctx, &wf)
+		err = c.gitOpsService.DeleteWorkflowFromGit(ctx, &wf)
 		if err != nil {
 			log.Print("Error performing git push: ", err)
 			return false, err
@@ -155,7 +160,7 @@ func (c *ChaosWorkflowHandler) TerminateChaosWorkflow(ctx context.Context, proje
 		{"workflow_id", workflowID},
 		{"project_id", projectID},
 	}
-	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	workflow, err := c.chaosWorkflowOperator.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
@@ -203,7 +208,7 @@ func (c *ChaosWorkflowHandler) UpdateChaosWorkflow(ctx context.Context, request 
 	}
 
 	// GitOps Update
-	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
+	err = c.gitOpsService.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
 		log.Print("Error performing git push: ", err)
 		return nil, err
@@ -458,7 +463,7 @@ func (c *ChaosWorkflowHandler) ListWorkflowRuns(request model.ListWorkflowRunsRe
 	pipeline = append(pipeline, facetStage)
 
 	// Call aggregation on pipeline
-	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	workflowsCursor, err := c.chaosWorkflowOperator.GetAggregateWorkflows(pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -658,7 +663,7 @@ func (c *ChaosWorkflowHandler) ListWorkflows(request model.ListWorkflowsRequest)
 	pipeline = append(pipeline, facetStage)
 
 	// Call aggregation on pipeline
-	workflowsCursor, err := dbOperationsWorkflow.GetAggregateWorkflows(pipeline)
+	workflowsCursor, err := c.chaosWorkflowOperator.GetAggregateWorkflows(pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -756,7 +761,7 @@ func (c *ChaosWorkflowHandler) ChaosWorkflowRun(request model.WorkflowRunRequest
 
 	count := 0
 	isRemoved := false
-	count, err = dbOperationsWorkflow.UpdateWorkflowRun(request.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
+	count, err = c.chaosWorkflowOperator.UpdateWorkflowRun(request.WorkflowID, dbSchemaWorkflow.ChaosWorkflowRun{
 		WorkflowRunID:      request.WorkflowRunID,
 		LastUpdated:        strconv.FormatInt(time.Now().Unix(), 10),
 		Phase:              executionData.Phase,
@@ -864,7 +869,7 @@ func (c *ChaosWorkflowHandler) ReRunChaosWorkFlow(projectID string, workflowID s
 		{"isRemoved", false},
 	}
 
-	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
+	workflows, err := c.chaosWorkflowOperator.GetWorkflows(query)
 	if err != nil {
 		log.Print("Could not get workflow :", err)
 		return "could not get workflow", err
@@ -892,7 +897,7 @@ func (c *ChaosWorkflowHandler) ReRunChaosWorkFlow(projectID string, workflowID s
 		return "", errors.New("Failed to updated workflow name " + err.Error())
 	}
 
-	c.chaosWorkflowService.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
+	chaosWorkflow.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
 		WorkflowManifest: workflows[0].WorkflowManifest,
 		ProjectID:        workflows[0].ProjectID,
 		ClusterID:        workflows[0].ClusterID,
@@ -1042,7 +1047,7 @@ func (c *ChaosWorkflowHandler) SyncWorkflowRun(ctx context.Context, projectID st
 		{"workflow_id", workflowID},
 		{"project_id", projectID},
 	}
-	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
+	workflow, err := c.chaosWorkflowOperator.GetWorkflow(query)
 	if err != nil {
 		return false, err
 	}
