@@ -9,6 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 )
 
@@ -18,11 +19,13 @@ import (
 
 type Resolver struct {
 	chaosHubService chaoshub.Service
+	clusterService  cluster.Service
 }
 
 func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	config := generated.Config{Resolvers: &Resolver{
 		chaosHubService: chaoshub.NewService(mongodbOperator),
+		clusterService:  cluster.NewService(mongodbOperator),
 	}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)

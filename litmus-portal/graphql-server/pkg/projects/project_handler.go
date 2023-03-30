@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
@@ -72,7 +73,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 
 	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
 		log.Print("Starting self deployer")
-		go selfDeployer.StartDeployer(projectID)
+		go selfDeployer.StartDeployer(cluster.NewService(operator), projectID)
 	}
 
 	return err

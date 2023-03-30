@@ -126,7 +126,7 @@ func main() {
 	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil)).Methods("GET")
 
-	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
+	router.Handle("/file/{key}{path:.yaml}", handlers.FileHandler(mongodbOperator))
 	router.HandleFunc("/status", handlers.StatusHandler)
 	router.HandleFunc("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
 

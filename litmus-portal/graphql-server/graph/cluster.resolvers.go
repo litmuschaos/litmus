@@ -14,10 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -30,15 +27,15 @@ func (r *mutationResolver) RegisterCluster(ctx context.Context, request model.Re
 		return nil, err
 	}
 
-	return clusterHandler.RegisterCluster(request)
+	return r.clusterService.RegisterCluster(request)
 }
 
 func (r *mutationResolver) ConfirmClusterRegistration(ctx context.Context, request model.ClusterIdentity) (*model.ConfirmClusterRegistrationResponse, error) {
-	return clusterHandler.ConfirmClusterRegistration(request, *data_store.Store)
+	return r.clusterService.ConfirmClusterRegistration(request, *data_store.Store)
 }
 
 func (r *mutationResolver) NewClusterEvent(ctx context.Context, request model.NewClusterEventRequest) (string, error) {
-	return clusterHandler.NewClusterEvent(request, *data_store.Store)
+	return r.clusterService.NewClusterEvent(request, *data_store.Store)
 }
 
 func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string, clusterIDs []*string) (string, error) {
@@ -49,7 +46,7 @@ func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string,
 		return "", err
 	}
 
-	return clusterHandler.DeleteClusters(ctx, projectID, clusterIDs, *data_store.Store)
+	return r.clusterService.DeleteClusters(ctx, projectID, clusterIDs, *data_store.Store)
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, request model.PodLog) (string, error) {
@@ -72,7 +69,7 @@ func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clus
 		return nil, err
 	}
 
-	return clusterHandler.ListClusters(projectID, clusterType)
+	return r.clusterService.ListClusters(projectID, clusterType)
 }
 
 func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (*model.Cluster, error) {
@@ -83,7 +80,7 @@ func (r *queryResolver) GetAgentDetails(ctx context.Context, clusterID string, p
 		return nil, err
 	}
 
-	return clusterHandler.GetAgentDetails(ctx, clusterID, projectID)
+	return r.clusterService.GetAgentDetails(ctx, clusterID, projectID)
 }
 
 func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clusterID string, accessKey string) (string, error) {
@@ -94,7 +91,7 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 		return "", err
 	}
 
-	response, err := cluster.GetManifestWithClusterID(clusterID, accessKey)
+	response, err := r.clusterService.GetManifestWithClusterID(clusterID, accessKey)
 	if err != nil {
 		return "", err
 	}
@@ -120,7 +117,7 @@ func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID s
 func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterActionResponse, error) {
 	logrus.Print("NEW CLUSTER CONNECT: ", clusterInfo.ClusterID)
 	clusterAction := make(chan *model.ClusterActionResponse, 1)
-	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
+	verifiedCluster, err := r.clusterService.VerifyCluster(clusterInfo)
 	if err != nil {
 		logrus.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
 		return clusterAction, err
@@ -139,15 +136,16 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 		newVerifiedCluster := model.Cluster{}
 		copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
-		clusterHandler.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *data_store.Store)
+		r.clusterService.SendClusterEvent("cluster-status", "Cluster Offline", "Cluster Disconnect", newVerifiedCluster, *data_store.Store)
 
 		data_store.Store.Mutex.Lock()
 		delete(data_store.Store.ConnectedCluster, clusterInfo.ClusterID)
 		data_store.Store.Mutex.Unlock()
+
 		query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}}}}
 
-		err = dbOperationsCluster.UpdateCluster(query, update)
+		err = r.clusterService.UpdateCluster(query, update)
 		if err != nil {
 			logrus.Print("Error", err)
 		}
@@ -156,7 +154,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	query := bson.D{{"cluster_id", clusterInfo.ClusterID}}
 	update := bson.D{{"$set", bson.D{{"is_active", true}, {"updated_at", strconv.FormatInt(time.Now().Unix(), 10)}, {"version", clusterInfo.Version}}}}
 
-	err = dbOperationsCluster.UpdateCluster(query, update)
+	err = r.clusterService.UpdateCluster(query, update)
 	if err != nil {
 		return clusterAction, err
 	}
@@ -165,7 +163,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 	copier.Copy(&newVerifiedCluster, &verifiedCluster)
 
 	verifiedCluster.IsActive = true
-	clusterHandler.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *data_store.Store)
+	r.clusterService.SendClusterEvent("cluster-status", "Cluster Live", "Cluster is Live and Connected", newVerifiedCluster, *data_store.Store)
 	return clusterAction, nil
 }
 

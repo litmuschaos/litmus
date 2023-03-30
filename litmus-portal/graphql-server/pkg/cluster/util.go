@@ -3,19 +3,13 @@ package cluster
 import (
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"strings"
 
 	"github.com/ghodss/yaml"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
-
-	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
 const (
@@ -28,79 +22,6 @@ const (
 type subscriberConfigurations struct {
 	ServerEndpoint string
 	TLSCert        string
-}
-
-// VerifyCluster utils function used to verify cluster identity
-func VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, error) {
-	currentVersion := utils.Config.Version
-	if strings.Contains(strings.ToLower(currentVersion), CIVersion) {
-		if currentVersion != identity.Version {
-			return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v got %v)", currentVersion, identity.Version)
-		}
-	} else {
-		splitCPVersion := strings.Split(currentVersion, ".")
-		splitSubVersion := strings.Split(identity.Version, ".")
-		if len(splitSubVersion) != 3 || splitSubVersion[0] != splitCPVersion[0] || splitSubVersion[1] != splitCPVersion[1] {
-			return nil, fmt.Errorf("ERROR: CLUSTER VERSION MISMATCH (need %v.%v.x got %v)", splitCPVersion[0], splitCPVersion[1], identity.Version)
-		}
-	}
-	cluster, err := dbOperationsCluster.GetCluster(identity.ClusterID)
-	if err != nil {
-		return nil, err
-	}
-
-	if !(cluster.AccessKey == identity.AccessKey && cluster.IsRegistered) {
-		return nil, fmt.Errorf("ERROR:  CLUSTER_ID MISMATCH")
-	}
-	return &cluster, nil
-}
-
-func GetManifest(token string) ([]byte, int, error) {
-	clusterID, err := ClusterValidateJWT(token)
-	if err != nil {
-		return nil, http.StatusNotFound, err
-	}
-
-	reqCluster, err := dbOperationsCluster.GetCluster(clusterID)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	var config subscriberConfigurations
-	config.ServerEndpoint, err = GetEndpoint(reqCluster.ClusterType)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-	}
-
-	if scope == namespaceScope {
-		config.TLSCert = utils.Config.TlsCertB64
-	}
-
-	if !reqCluster.IsRegistered {
-		var respData []byte
-		if reqCluster.AgentScope == "cluster" {
-			respData, err = manifestParser(reqCluster, "manifests/cluster", &config)
-		} else if reqCluster.AgentScope == "namespace" {
-			respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
-		} else {
-			logrus.Error("AGENT_SCOPE env is empty!")
-		}
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-
-		return respData, http.StatusOK, nil
-	} else {
-		return []byte("Cluster is already registered"), http.StatusConflict, nil
-	}
 }
 
 func GetEndpoint(agentType string) (string, error) {
@@ -117,52 +38,6 @@ func GetEndpoint(agentType string) (string, error) {
 	}
 
 	return agentEndpoint, err
-}
-
-// GetManifestWithClusterID returns manifest for a given cluster
-func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error) {
-	reqCluster, err := dbOperationsCluster.GetCluster(clusterID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve the cluster %v", err)
-	}
-
-	// Checking if cluster with given clusterID and accesskey is present
-	if reqCluster.AccessKey != accessKey {
-		return nil, fmt.Errorf("ACCESS_KEY is invalid")
-	}
-
-	var config subscriberConfigurations
-	config.ServerEndpoint, err = GetEndpoint(reqCluster.ClusterType)
-	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve the server endpoint %v", err)
-	}
-
-	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve the tls cert %v", err)
-		}
-	}
-
-	if scope == namespaceScope {
-		config.TLSCert = utils.Config.TlsCertB64
-	}
-
-	var respData []byte
-	if reqCluster.AgentScope == clusterScope {
-		respData, err = manifestParser(reqCluster, "manifests/cluster", &config)
-	} else if reqCluster.AgentScope == namespaceScope {
-		respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
-	} else {
-		logrus.Error("AGENT_SCOPE env is empty")
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse the manifest %v", err)
-	}
-
-	return respData, nil
 }
 
 // ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
