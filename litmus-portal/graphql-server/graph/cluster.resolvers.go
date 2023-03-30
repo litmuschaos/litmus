@@ -13,7 +13,6 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -50,15 +49,15 @@ func (r *mutationResolver) DeleteClusters(ctx context.Context, projectID string,
 }
 
 func (r *mutationResolver) PodLog(ctx context.Context, request model.PodLog) (string, error) {
-	return wfHandler.PodLog(request, *data_store.Store)
+	return r.chaosWorkflowHandler.PodLog(request, *data_store.Store)
 }
 
 func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObjectData) (string, error) {
-	return wfHandler.KubeObj(request, *data_store.Store)
+	return r.chaosWorkflowHandler.KubeObj(request, *data_store.Store)
 }
 
 func (r *queryResolver) GetServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	return wfHandler.QueryServerVersion(ctx)
+	return r.chaosWorkflowHandler.QueryServerVersion(ctx)
 }
 
 func (r *queryResolver) ListClusters(ctx context.Context, projectID string, clusterType *string) ([]*model.Cluster, error) {
@@ -179,7 +178,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodL
 		logrus.Print("CLOSED LOG LISTENER: ", request.ClusterID, request.PodName)
 		delete(data_store.Store.WorkflowLog, reqID.String())
 	}()
-	go wfHandler.GetLogs(reqID.String(), request, *data_store.Store)
+	go r.chaosWorkflowHandler.GetLogs(reqID.String(), request, *data_store.Store)
 	return workflowLog, nil
 }
 
@@ -195,6 +194,6 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 		logrus.Println("Closed KubeObj Listener")
 		delete(data_store.Store.KubeObjectData, reqID.String())
 	}()
-	go wfHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)
+	go r.chaosWorkflowHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)
 	return kubeObjData, nil
 }

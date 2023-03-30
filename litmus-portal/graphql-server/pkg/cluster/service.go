@@ -37,6 +37,7 @@ type Service interface {
 	SendClusterEvent(eventType, eventName, description string, cluster model.Cluster, r store.StateData)
 	VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, error)
 	GetManifest(token string) ([]byte, int, error)
+	GetCluster(clusterID string) (dbSchemaCluster.Cluster, error)
 }
 
 type clusterService struct {
@@ -464,4 +465,8 @@ func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
 	} else {
 		return []byte("Cluster is already registered"), http.StatusConflict, nil
 	}
+}
+
+func (c *clusterService) GetCluster(clusterID string) (dbSchemaCluster.Cluster, error) {
+	return c.clusterOperator.GetCluster(clusterID)
 }

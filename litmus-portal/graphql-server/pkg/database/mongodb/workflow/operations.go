@@ -15,6 +15,18 @@ var (
 	backgroundContext = context.Background()
 )
 
+// Operator is the model for cluster collection
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewChaosWorkflowOperator returns a new instance of Operator
+func NewChaosWorkflowOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // UpdateWorkflowRun takes workflowID and wfRun parameters to update the workflow run details in the database
 func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
