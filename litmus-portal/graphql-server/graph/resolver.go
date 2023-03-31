@@ -7,12 +7,14 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/service"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 )
 
 // This file will not be regenerated automatically.
@@ -24,6 +26,8 @@ type Resolver struct {
 	chaosWorkflowHandler *handler.ChaosWorkflowHandler
 	clusterService       cluster.Service
 	gitOpsService        gitops.Service
+	analyticsService     service.Service
+	usageService         usage.Service
 }
 
 func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
@@ -32,6 +36,8 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 		chaosWorkflowHandler: handler.NewChaosWorkflowHandler(mongodbOperator),
 		clusterService:       cluster.NewService(mongodbOperator),
 		gitOpsService:        gitops.NewService(mongodbOperator),
+		analyticsService:     service.NewService(mongodbOperator),
+		usageService:         usage.NewService(mongodbOperator),
 	}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)

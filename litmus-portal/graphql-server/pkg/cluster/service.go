@@ -41,13 +41,15 @@ type Service interface {
 }
 
 type clusterService struct {
-	clusterOperator *dbSchemaCluster.Operator
+	clusterOperator       *dbSchemaCluster.Operator
+	chaosWorkflowOperator *dbOperationsWorkflow.Operator
 }
 
 // NewService returns a new instance of Service
 func NewService(mongodbOperator mongodb.MongoOperator) Service {
 	return &clusterService{
-		clusterOperator: dbSchemaCluster.NewClusterOperator(mongodbOperator),
+		clusterOperator:       dbSchemaCluster.NewClusterOperator(mongodbOperator),
+		chaosWorkflowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
 	}
 }
 
@@ -259,7 +261,7 @@ func (c *clusterService) ListClusters(projectID string, clusterType *string) ([]
 	for _, cluster := range clusters {
 		var totalNoOfSchedules int
 		lastWorkflowTimestamp := "0"
-		workflows, err := dbOperationsWorkflow.GetWorkflowsByClusterID(cluster.ClusterID)
+		workflows, err := c.chaosWorkflowOperator.GetWorkflowsByClusterID(cluster.ClusterID)
 		if err != nil {
 			return nil, err
 		}

@@ -9,14 +9,29 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type Service interface {
+	GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error)
+}
+
+type usageService struct {
+	clusterOperator *dbOperationsProject.Operator
+}
+
+func NewService(mongodbOperator mongodb.MongoOperator) Service {
+	return &usageService{
+		clusterOperator: dbOperationsProject.NewClusterOperator(mongodbOperator),
+	}
+}
+
 // GetUsageData returns the portal's usage overview
-func GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error) {
-	data, err := usageHelper(ctx, query)
+func (u *usageService) GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error) {
+	data, err := u.usageHelper(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -43,8 +58,7 @@ func GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.Usa
 	}, nil
 }
 
-func usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateData, error) {
-
+func (u *usageService) usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateData, error) {
 	pagination := bson.A{}
 	project := bson.A{}
 	startTime, err := strconv.Atoi(query.DateRange.StartDate)
@@ -251,7 +265,7 @@ func usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateDa
 							"expRuns":   "$expRuns",
 						}, "_id": 0}}}}}},
 	}
-	cursor, err := dbOperationsProject.GetAggregateProjects(ctx, pipeline, nil)
+	cursor, err := u.clusterOperator.GetAggregateProjects(ctx, pipeline, nil)
 	if err != nil {
 		return AggregateData{}, err
 	}
