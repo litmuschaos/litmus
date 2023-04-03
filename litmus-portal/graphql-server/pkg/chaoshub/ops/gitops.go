@@ -70,13 +70,13 @@ func GitClone(repoData model.CloningInput) error {
 	if repoData.IsPrivate {
 		_, err := gitConfig.getPrivateChaosChartRepo()
 		if err != nil {
-			fmt.Print("Error in cloning")
+			log.Error("Error in cloning")
 			return err
 		}
 	} else {
 		_, err := gitConfig.getChaosChartRepo()
 		if err != nil {
-			fmt.Print("Error in cloning")
+			log.Error("Error in cloning")
 			return err
 		}
 
@@ -215,7 +215,7 @@ func (c ChaosHubConfig) GitPull() error {
 	if !c.IsPrivate {
 		err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
 		if err == git.NoErrAlreadyUpToDate {
-			log.Print("Already up-to-date")
+			log.Info("Already up-to-date")
 			return nil
 		} else if err != nil {
 			return err
@@ -225,7 +225,7 @@ func (c ChaosHubConfig) GitPull() error {
 	}
 	err = c.gitPullPrivateRepo()
 	if err == git.NoErrAlreadyUpToDate {
-		log.Print("Already up-to-date")
+		log.Info("Already up-to-date")
 		return nil
 	} else if err != nil {
 		return err

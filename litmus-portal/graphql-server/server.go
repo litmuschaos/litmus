@@ -25,7 +25,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -39,23 +39,23 @@ import (
 )
 
 func init() {
-	logrus.Infof("Go Version: %s", runtime.Version())
-	logrus.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	log.Infof("Go Version: %s", runtime.Version())
+	log.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
 	err := envconfig.Process("", &utils.Config)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	// confirm version env is valid
 	if !strings.Contains(strings.ToLower(utils.Config.Version), cluster.CIVersion) {
 		splitCPVersion := strings.Split(utils.Config.Version, ".")
 		if len(splitCPVersion) != 3 {
-			logrus.Fatal("version doesn't follow semver semantic")
+			log.Fatal("version doesn't follow semver semantic")
 		}
 	}
 
-	logrus.Infof("Version: %s", utils.Config.Version)
+	log.Infof("Version: %s", utils.Config.Version)
 }
 
 func validateVersion() error {
@@ -80,7 +80,7 @@ func validateVersion() error {
 func main() {
 	client, err := mongodb.MongoConnection()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	mongoClient := mongodb.Initialize(client)
@@ -90,7 +90,7 @@ func main() {
 	mongodb.Operator = mongodbOperator
 
 	if err := validateVersion(); err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC server
@@ -135,15 +135,15 @@ func main() {
 	go chaoshub.NewService(mongodbOperator).RecurringHubSync() // go routine for syncing hubs for all users
 	go gitOpsHandler.GitOpsSyncHandler(false)                  // routine to sync git repos for gitOps
 
-	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
-	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	log.Infof("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
+	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
 func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		logrus.Fatal("failed to listen: %w", err)
+		log.Fatal("failed to listen: %w", err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -151,6 +151,6 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	// Register services
 	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
 
-	logrus.Printf("GRPC server listening on %v", lis.Addr())
-	logrus.Fatal(grpcServer.Serve(lis))
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
 }

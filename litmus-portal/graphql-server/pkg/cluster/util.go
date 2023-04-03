@@ -10,7 +10,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
@@ -91,7 +91,7 @@ func GetManifest(token string) ([]byte, int, error) {
 		} else if reqCluster.AgentScope == "namespace" {
 			respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
 		} else {
-			logrus.Error("AGENT_SCOPE env is empty!")
+			log.Error("AGENT_SCOPE env is empty!")
 		}
 		if err != nil {
 			return nil, http.StatusInternalServerError, err
@@ -155,7 +155,7 @@ func GetManifestWithClusterID(clusterID string, accessKey string) ([]byte, error
 	} else if reqCluster.AgentScope == namespaceScope {
 		respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
 	} else {
-		logrus.Error("AGENT_SCOPE env is empty")
+		log.Error("AGENT_SCOPE env is empty")
 	}
 
 	if err != nil {

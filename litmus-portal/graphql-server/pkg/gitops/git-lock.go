@@ -1,10 +1,11 @@
 package gitops
 
 import (
-	"log"
 	"regexp"
 	"strings"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // GitMutexLock structure for the Git MutexLock
@@ -25,7 +26,7 @@ func (g *GitMutexLock) Lock(repo string, branch *string) {
 	g.mapMutex.Unlock()
 
 	temp.Lock()
-	log.Print("Acquired LOCK : ", key)
+	log.Info("Acquired LOCK : ", key)
 }
 
 // Unlock releases the lock on particular project or repo
@@ -38,7 +39,7 @@ func (g *GitMutexLock) Unlock(repo string, branch *string) {
 	temp := g.gitMutex[key]
 	g.mapMutex.Unlock()
 	temp.Unlock()
-	log.Print("Release LOCK : ", key)
+	log.Info("Release LOCK : ", key)
 }
 
 // NewGitLock returns a instance of GitMutexLock

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
@@ -19,7 +19,7 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 
 	response, statusCode, err := cluster.GetManifest(token)
 	if err != nil {
-		logrus.WithError(err).Error("error while generating manifest file")
+		log.WithError(err).Error("error while generating manifest file")
 		utils.WriteHeaders(&w, statusCode)
 		w.Write([]byte(err.Error()))
 	}

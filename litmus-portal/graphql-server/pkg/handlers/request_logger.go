@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type responseWriter struct {
@@ -44,7 +44,7 @@ func LoggingMiddleware() func(http.Handler) http.Handler {
 			escapedURL := strings.Replace(r.URL.EscapedPath(), "\n", "", -1)
 			escapedURL = strings.Replace(escapedURL, "\r", "", -1)
 
-			logrus.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
+			log.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
 		}
 
 		return http.HandlerFunc(fn)

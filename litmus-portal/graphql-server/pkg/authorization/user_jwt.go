@@ -3,10 +3,10 @@ package authorization
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 // UserValidateJWT validates the cluster jwt
@@ -19,7 +19,7 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		log.Print("USER JWT ERROR: ", err)
+		log.Error("USER JWT ERROR: ", err)
 		return nil, errors.New("Invalid Token")
 	}
 
@@ -42,7 +42,7 @@ func GetUsername(token string) (string, error) {
 	})
 
 	if err != nil {
-		log.Print("USER JWT ERROR: ", err)
+		log.Error("USER JWT ERROR: ", err)
 		return "", errors.New("invalid Token")
 	}
 

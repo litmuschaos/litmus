@@ -9,7 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
@@ -22,7 +22,7 @@ func (r *mutationResolver) CreateImageRegistry(ctx context.Context, projectID st
 
 	ciResponse, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, imageRegistryInfo)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
 	return ciResponse, err
 }
@@ -37,7 +37,7 @@ func (r *mutationResolver) UpdateImageRegistry(ctx context.Context, imageRegistr
 
 	uiRegistry, err := imageRegistryOps.UpdateImageRegistry(ctx, imageRegistryID, projectID, imageRegistryInfo)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
 
 	return uiRegistry, err
@@ -53,7 +53,7 @@ func (r *mutationResolver) DeleteImageRegistry(ctx context.Context, imageRegistr
 
 	diRegistry, err := imageRegistryOps.DeleteImageRegistry(ctx, imageRegistryID, projectID)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
 
 	return diRegistry, err
@@ -69,7 +69,7 @@ func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string)
 
 	imageRegistries, err := imageRegistryOps.ListImageRegistries(ctx, projectID)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
 
 	return imageRegistries, err
@@ -85,7 +85,7 @@ func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID st
 
 	imageRegistry, err := imageRegistryOps.GetImageRegistry(ctx, imageRegistryID, projectID)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 	}
 
 	return imageRegistry, err

@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type ReadinessAPIStatus struct {
@@ -55,7 +55,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 		var status = ReadinessAPIStatus{Collections: col_flag, DataBase: db_flag}
 		statusByte, err := json.Marshal(status)
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			utils.WriteHeaders(&w, http.StatusBadRequest)
 		}
 
