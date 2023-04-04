@@ -27,14 +27,14 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler {
+func ReadinessHandler(handler http.Handler, mclient *mongo.Client, mongodbOperator mongodb.MongoOperator) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var (
 			db_flag  = "up"
 			col_flag = "up"
 		)
 
-		dbs, err := mongodb.Operator.ListDataBase(context.Background(), mclient)
+		dbs, err := mongodbOperator.ListDataBase(context.Background(), mclient)
 		if err != nil {
 			db_flag = "down"
 		}
@@ -43,7 +43,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client) http.Handler 
 			db_flag = "down"
 		}
 
-		cols, err := mongodb.Operator.ListCollection(context.Background(), mclient)
+		cols, err := mongodbOperator.ListCollection(context.Background(), mclient)
 		if err != nil {
 			col_flag = "down"
 		}

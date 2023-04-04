@@ -41,19 +41,23 @@ import (
 
 // ChaosWorkflowHandler is the handler for chaos workflow
 type ChaosWorkflowHandler struct {
-	chaosWorkflowService  chaosWorkflow.Service
-	clusterService        cluster.Service
-	gitOpsService         gitops.Service
-	chaosWorkflowOperator *dbOperationsWorkflow.Operator
+	chaosWorkflowService          chaosWorkflow.Service
+	clusterService                cluster.Service
+	gitOpsService                 gitops.Service
+	chaosWorkflowOperator         *dbOperationsWorkflow.Operator
+	chaosWorkflowTemplateOperator *dbOperationsWorkflowTemplate.Operator
+	mongodbOperator               mongodb.MongoOperator
 }
 
 // NewChaosWorkflowHandler returns a new instance of ChaosWorkflowHandler
 func NewChaosWorkflowHandler(mongodbOperator mongodb.MongoOperator) *ChaosWorkflowHandler {
 	return &ChaosWorkflowHandler{
-		chaosWorkflowService:  chaosWorkflow.NewService(mongodbOperator),
-		clusterService:        cluster.NewService(mongodbOperator),
-		gitOpsService:         gitops.NewService(mongodbOperator),
-		chaosWorkflowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
+		chaosWorkflowService:          chaosWorkflow.NewService(mongodbOperator),
+		clusterService:                cluster.NewService(mongodbOperator),
+		gitOpsService:                 gitops.NewService(mongodbOperator),
+		chaosWorkflowOperator:         dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
+		chaosWorkflowTemplateOperator: dbOperationsWorkflowTemplate.NewWorkflowTemplateOperator(mongodbOperator),
+		mongodbOperator:               mongodbOperator,
 	}
 }
 
@@ -953,7 +957,7 @@ func (c *ChaosWorkflowHandler) GetKubeObjData(reqID string, kubeObject model.Kub
 
 // CreateWorkflowTemplate is used to save the workflow manifest as a template
 func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error) {
-	IsExist, err := isTemplateAvailable(ctx, request.TemplateName, request.ProjectID)
+	IsExist, err := c.isTemplateAvailable(ctx, request.TemplateName, request.ProjectID)
 	if err != nil {
 		return nil, err
 	}
@@ -983,7 +987,7 @@ func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, reque
 		IsCustomWorkflow:    request.IsCustomWorkflow,
 	}
 
-	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)
+	err = c.chaosWorkflowTemplateOperator.CreateWorkflowTemplate(ctx, template)
 	if err != nil {
 		log.Print("Error", err)
 	}
@@ -992,7 +996,7 @@ func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, reque
 
 // ListWorkflowManifests is used to list all the workflow templates available in the project
 func (c *ChaosWorkflowHandler) ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
-	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
+	templates, err := c.chaosWorkflowTemplateOperator.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -1006,7 +1010,7 @@ func (c *ChaosWorkflowHandler) ListWorkflowManifests(ctx context.Context, projec
 
 // GetWorkflowManifestByID is used to fetch the workflow template with template id
 func (c *ChaosWorkflowHandler) GetWorkflowManifestByID(ctx context.Context, templateID string) (*model.WorkflowTemplate, error) {
-	template, err := dbSchemaWorkflowTemplate.GetTemplateByTemplateID(ctx, templateID)
+	template, err := c.chaosWorkflowTemplateOperator.GetTemplateByTemplateID(ctx, templateID)
 	if err != nil {
 		return nil, err
 	}
@@ -1020,7 +1024,7 @@ func (c *ChaosWorkflowHandler) DeleteWorkflowTemplate(ctx context.Context, proje
 		{"template_id", templateID},
 	}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
-	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
+	err := c.chaosWorkflowTemplateOperator.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
 		log.Print("Err", err)
 		return false, err
@@ -1029,8 +1033,8 @@ func (c *ChaosWorkflowHandler) DeleteWorkflowTemplate(ctx context.Context, proje
 }
 
 // isTemplateAvailable is used to check if a template name already exists in the database
-func isTemplateAvailable(ctx context.Context, templateName string, projectID string) (bool, error) {
-	templates, err := dbOperationsWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
+func (c *ChaosWorkflowHandler) isTemplateAvailable(ctx context.Context, templateName string, projectID string) (bool, error) {
+	templates, err := c.chaosWorkflowTemplateOperator.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {
 		return true, err
 	}
@@ -1071,7 +1075,7 @@ func (c *ChaosWorkflowHandler) SyncWorkflowRun(ctx context.Context, projectID st
 
 // QueryServerVersion is used to fetch the version of the server
 func (c *ChaosWorkflowHandler) QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error) {
-	dbVersion, err := config.GetConfig(ctx, "version")
+	dbVersion, err := config.GetConfig(ctx, "version", c.mongodbOperator)
 	if err != nil {
 		return nil, err
 	}

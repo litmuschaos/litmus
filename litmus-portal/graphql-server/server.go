@@ -57,14 +57,18 @@ func init() {
 	logrus.Infof("Version: %s", utils.Config.Version)
 }
 
-func validateVersion() error {
+func validateVersion(mongodbOperator mongodb.MongoOperator) error {
 	currentVersion := utils.Config.Version
-	dbVersion, err := config.GetConfig(context.Background(), "version")
+	dbVersion, err := config.GetConfig(context.Background(), "version", mongodbOperator)
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
 	}
 	if dbVersion == nil {
-		err := config.CreateConfig(context.Background(), &config.ServerConfig{Key: "version", Value: currentVersion})
+		err := config.CreateConfig(
+			context.Background(),
+			&config.ServerConfig{Key: "version", Value: currentVersion},
+			mongodbOperator,
+		)
 		if err != nil {
 			return fmt.Errorf("failed to insert current version in db, error = %w", err)
 		}
@@ -85,10 +89,8 @@ func main() {
 	mongoClient := mongodb.Initialize(client)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	// TODO: remove this when all packages shift to interface pattern
-	mongodb.Operator = mongodbOperator
 
-	if err := validateVersion(); err != nil {
+	if err := validateVersion(mongodbOperator); err != nil {
 		logrus.Fatal(err)
 	}
 
@@ -122,7 +124,7 @@ func main() {
 	// routers
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	router.Handle("/query", authorization.Middleware(srv))
-	router.Handle("/readiness", handlers.ReadinessHandler(srv, client))
+	router.Handle("/readiness", handlers.ReadinessHandler(srv, client, mongodbOperator))
 	router.Handle("/icon/{ProjectID}/{HubName}/{ChartName}/{IconName}", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil)).Methods("GET")
 
 	router.Handle("/file/{key}{path:.yaml}", handlers.FileHandler(mongodbOperator))

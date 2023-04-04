@@ -1,9 +1,12 @@
-package ops
+package image_registry
 
 import (
 	"context"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbOperationsImageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/image_registry"
 
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -11,7 +14,28 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
+// Service is the interface for the image registry service
+type Service interface {
+	CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
+	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
+	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
+	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
+	ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
+}
+
+// imageRegistryService is the implementation of Service interface
+type imageRegistryService struct {
+	imageRegistryOperator *dbOperationsImageRegistry.Operator
+}
+
+// NewService returns a new instance of Service
+func NewService(mongodbOperator mongodb.MongoOperator) Service {
+	return &imageRegistryService{
+		imageRegistryOperator: dbOperationsImageRegistry.NewImageRegistryOperator(mongodbOperator),
+	}
+}
+
+func (i *imageRegistryService) CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 	var (
 		currentTime = strconv.FormatInt(time.Now().Unix(), 10)
 		id          = uuid.New().String()
@@ -32,7 +56,7 @@ func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInf
 		UpdatedAt:         currentTime,
 	}
 
-	err := image_registry.InsertImageRegistry(ctx, imageRegistry)
+	err := i.imageRegistryOperator.InsertImageRegistry(ctx, imageRegistry)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +79,7 @@ func CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInf
 	}, nil
 }
 
-func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
+func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 
 	var (
 		currentTime = strconv.FormatInt(time.Now().Unix(), 10)
@@ -74,7 +98,7 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 		{"updated_at", currentTime},
 	}}}
 
-	err := image_registry.UpdateImageRegistry(ctx, query, update)
+	err := i.imageRegistryOperator.UpdateImageRegistry(ctx, query, update)
 	if err != nil {
 		return nil, err
 	}
@@ -96,11 +120,11 @@ func UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 	}, nil
 }
 
-func DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
+func (i *imageRegistryService) DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error) {
 	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 
-	err := image_registry.UpdateImageRegistry(ctx, query, update)
+	err := i.imageRegistryOperator.UpdateImageRegistry(ctx, query, update)
 	if err != nil {
 		return "", err
 	}
@@ -108,9 +132,9 @@ func DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID 
 	return "image registry deleted", nil
 }
 
-func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
+func (i *imageRegistryService) GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
 	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
-	imageRegistry, err := image_registry.GetImageRegistry(ctx, query)
+	imageRegistry, err := i.imageRegistryOperator.GetImageRegistry(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -133,9 +157,9 @@ func GetImageRegistry(ctx context.Context, imageRegistryID string, projectID str
 	}, nil
 }
 
-func ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
+func (i *imageRegistryService) ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error) {
 	query := bson.D{{"project_id", projectID}}
-	imageRegistries, err := image_registry.ListImageRegistries(ctx, query)
+	imageRegistries, err := i.imageRegistryOperator.ListImageRegistries(ctx, query)
 	if err != nil {
 		return nil, err
 	}

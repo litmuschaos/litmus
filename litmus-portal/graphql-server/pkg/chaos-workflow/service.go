@@ -46,6 +46,7 @@ type chaosWorkflowService struct {
 	clusterOperator       *dbOperationsCluster.Operator
 }
 
+// NewService returns a new instance of the chaos workflow service
 func NewService(mongodbOperator mongodb.MongoOperator) Service {
 	return &chaosWorkflowService{
 		chaosWorkflowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),

@@ -8,13 +8,13 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	iamgeRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
-	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 )
@@ -61,7 +61,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 	//TODO: Remove goroutine after adding hub optimisations
 	go chaoshub.NewService(operator).AddChaosHub(context.Background(), defaultHub)
 
-	_, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
+	_, err := iamgeRegistry.NewService(operator).CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
 		IsDefault:         bl_true,
 		ImageRegistryName: "docker.io",
 		ImageRepoName:     "litmuschaos",

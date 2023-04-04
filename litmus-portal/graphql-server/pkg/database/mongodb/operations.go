@@ -29,12 +29,6 @@ type MongoOperations struct {
 	MongoClient *MongoClient
 }
 
-var (
-	// TODO: remove this when all packages shift to interface pattern
-	// Operator contains all the CRUD operations of the mongo database
-	Operator MongoOperator
-)
-
 func NewMongoOperations(mongoClient *MongoClient) *MongoOperations {
 	return &MongoOperations{
 		MongoClient: mongoClient,

@@ -14,6 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
+	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 )
 
@@ -28,6 +29,7 @@ type Resolver struct {
 	gitOpsService        gitops.Service
 	analyticsService     service.Service
 	usageService         usage.Service
+	imageRegistryService imageRegistry.Service
 }
 
 func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
@@ -38,6 +40,7 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 		gitOpsService:        gitops.NewService(mongodbOperator),
 		analyticsService:     service.NewService(mongodbOperator),
 		usageService:         usage.NewService(mongodbOperator),
+		imageRegistryService: imageRegistry.NewService(mongodbOperator),
 	}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)
