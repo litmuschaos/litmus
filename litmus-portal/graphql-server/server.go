@@ -9,8 +9,9 @@ import (
 	"strings"
 	"time"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -146,7 +147,12 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 		log.Fatal("failed to listen: %w", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	log.ErrorKey = "grpc.error"
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_logrus.UnaryServerInterceptor(log.NewEntry(log.StandardLogger())),
+		)),
+	)
 
 	// Register services
 	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
