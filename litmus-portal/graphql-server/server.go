@@ -24,7 +24,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/graphql_server"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
@@ -114,16 +114,16 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	//router.Use(handlers.LoggingMiddleware())
+	//router.Use(graphql_server.LoggingMiddleware())
 
 	// routers
-	router.GET("/", handlers.PlaygroundHandler())
+	router.GET("/", graphql_server.PlaygroundHandler())
 	router.Any("/query", authorization.Middleware(srv))
-	router.GET("/readiness", handlers.ReadinessHandler(client))
+	router.GET("/readiness", graphql_server.ReadinessHandler(client))
 	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil))
-	router.Any("/file/:key", handlers.FileHandler)
-	router.GET("/status", handlers.StatusHandler)
-	router.GET("/workflow_helper_image_version", handlers.WorkflowHelperImageVersionHandler)
+	router.Any("/file/:key", graphql_server.FileHandler)
+	router.GET("/status", graphql_server.StatusHandler)
+	router.GET("/workflow_helper_image_version", graphql_server.WorkflowHelperImageVersionHandler)
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 

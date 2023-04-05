@@ -1,4 +1,4 @@
-package handlers
+package graphql_server
 
 import (
 	"context"
