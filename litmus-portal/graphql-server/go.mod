@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/99designs/gqlgen v0.11.3
-	github.com/argoproj/argo-workflows/v3 v3.3.1
+	github.com/argoproj/argo-workflows/v3 v3.3.5
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
