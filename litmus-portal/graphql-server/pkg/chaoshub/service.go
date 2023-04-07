@@ -530,7 +530,7 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 
 // GetIconHandler ...
 var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
-	replacer := strings.NewReplacer("\\.", "", "/", "")
+	replacer := strings.NewReplacer("../", "", "./", "", "/", "", "..", "")
 	var (
 		projectID          = replacer.Replace(c.Param("ProjectID"))
 		hubName            = replacer.Replace(c.Param("HubName"))
