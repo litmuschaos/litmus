@@ -1,4 +1,4 @@
-package graphql_server
+package rest_handlers
 
 import (
 	"encoding/json"

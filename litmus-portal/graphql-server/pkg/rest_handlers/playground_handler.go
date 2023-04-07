@@ -1,4 +1,4 @@
-package graphql_server
+package rest_handlers
 
 import (
 	"github.com/99designs/gqlgen/graphql/playground"
