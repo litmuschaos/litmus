@@ -530,11 +530,12 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 
 // GetIconHandler ...
 var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
+	replacer := strings.NewReplacer("\\.", "", "/", "")
 	var (
-		projectID          = c.Param("ProjectID")
-		hubName            = c.Param("HubName")
-		chartName          = c.Param("ChartName")
-		iconName           = c.Param("IconName")
+		projectID          = replacer.Replace(c.Param("ProjectID"))
+		hubName            = replacer.Replace(c.Param("HubName"))
+		chartName          = replacer.Replace(c.Param("ChartName"))
+		iconName           = replacer.Replace(c.Param("IconName"))
 		img                *os.File
 		err                error
 		responseStatusCode = http.StatusOK

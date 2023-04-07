@@ -2,10 +2,6 @@ package rest_handlers
 
 import (
 	"net/http"
-	"strings"
-	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 type responseWriter struct {
@@ -34,19 +30,20 @@ func (rw *responseWriter) WriteHeader(code int) {
 	return
 }
 
-func LoggingMiddleware() func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-			wrapped := wrapResponseWriter(w)
-			next.ServeHTTP(wrapped, r)
-
-			escapedURL := strings.Replace(r.URL.EscapedPath(), "\n", "", -1)
-			escapedURL = strings.Replace(escapedURL, "\r", "", -1)
-
-			logrus.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
-		}
-
-		return http.HandlerFunc(fn)
-	}
-}
+// not used now
+//func LoggingMiddleware() func(http.Handler) http.Handler {
+//	return func(next http.Handler) http.Handler {
+//		fn := func(w http.ResponseWriter, r *http.Request) {
+//			start := time.Now()
+//			wrapped := wrapResponseWriter(w)
+//			next.ServeHTTP(wrapped, r)
+//
+//			escapedURL := strings.Replace(r.URL.EscapedPath(), "\n", "", -1)
+//			escapedURL = strings.Replace(escapedURL, "\r", "", -1)
+//
+//			logrus.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
+//		}
+//
+//		return http.HandlerFunc(fn)
+//	}
+//}

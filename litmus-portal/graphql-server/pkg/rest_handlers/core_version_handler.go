@@ -1,3 +1,4 @@
+// Package rest_handlers provides rest handlers
 package rest_handlers
 
 import (
