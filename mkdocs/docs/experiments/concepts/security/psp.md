@@ -45,11 +45,11 @@ opting for the default ["restricted"](https://kubernetes.io/docs/concepts/policy
 
     allowedHostPaths:
         # substitutes this path with an appropriate socket path
-        # ex: '/var/run/docker.sock', '/run/containerd/containerd.sock', '/run/crio/crio.sock'
-        - pathPrefix: "/var/run/docker.sock"
+        # ex: '/run/containerd/containerd.sock', '/run/containerd/containerd.sock', '/run/crio/crio.sock'
+        - pathPrefix: "/run/containerd/containerd.sock"
         # substitutes this path with an appropriate container path
         # ex: '/var/lib/docker/containers', '/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io', '/var/lib/containers/storage/overlay/'
-        - pathPrefix: "/var/lib/docker/containers"
+        - pathPrefix: "/var/lib/containerd/io.containerd.runtime.v1.linux/k8s.io"
 
     allowedCapabilities:
         # NET_ADMIN & SYS_ADMIN: used in network chaos experiments to perform
