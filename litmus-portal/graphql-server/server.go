@@ -114,15 +114,14 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	gin.EnableJsonDecoderDisallowUnknownFields()
-	router := gin.Default()
-
+	router := gin.New()
+	router.Use(rest_handlers.LoggingMiddleware())
+	router.Use(gin.Recovery())
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,
 	}))
-
-	//router.Use(rest_handlers.LoggingMiddleware())
 
 	// routers
 	router.GET("/", rest_handlers.PlaygroundHandler())

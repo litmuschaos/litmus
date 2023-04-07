@@ -1,49 +1,47 @@
 package rest_handlers
 
 import (
-	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
-type responseWriter struct {
-	http.ResponseWriter
-	status      int
-	wroteHeader bool
-}
+// LoggingMiddleware is a middleware that logs the request as it goes in and the response as it goes out.
+func LoggingMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		// Starting time request
+		startTime := time.Now()
 
-func wrapResponseWriter(w http.ResponseWriter) *responseWriter {
-	return &responseWriter{ResponseWriter: w}
-}
+		// Processing request
+		ctx.Next()
 
-func (rw *responseWriter) Status() int {
-	return rw.status
-}
+		// End Time request
+		endTime := time.Now()
 
-func (rw *responseWriter) WriteHeader(code int) {
-	if rw.wroteHeader {
-		return
+		// execution time
+		latencyTime := endTime.Sub(startTime)
+
+		// Request method
+		reqMethod := ctx.Request.Method
+
+		// Request route
+		reqUri := ctx.Request.RequestURI
+
+		// status code
+		statusCode := ctx.Writer.Status()
+
+		// Request IP
+		clientIP := ctx.ClientIP()
+
+		log.WithFields(log.Fields{
+			"METHOD":    reqMethod,
+			"URI":       reqUri,
+			"STATUS":    statusCode,
+			"LATENCY":   latencyTime,
+			"CLIENT_IP": clientIP,
+		}).Info("HTTP REQUEST")
+
+		ctx.Next()
 	}
-
-	rw.status = code
-	rw.ResponseWriter.WriteHeader(code)
-	rw.wroteHeader = true
-
-	return
 }
-
-// not used now
-//func LoggingMiddleware() func(http.Handler) http.Handler {
-//	return func(next http.Handler) http.Handler {
-//		fn := func(w http.ResponseWriter, r *http.Request) {
-//			start := time.Now()
-//			wrapped := wrapResponseWriter(w)
-//			next.ServeHTTP(wrapped, r)
-//
-//			escapedURL := strings.Replace(r.URL.EscapedPath(), "\n", "", -1)
-//			escapedURL = strings.Replace(escapedURL, "\r", "", -1)
-//
-//			logrus.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
-//		}
-//
-//		return http.HandlerFunc(fn)
-//	}
-//}
