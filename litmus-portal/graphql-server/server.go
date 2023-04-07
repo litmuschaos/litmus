@@ -40,10 +40,16 @@ import (
 )
 
 func init() {
+	err := envconfig.Process("", &utils.Config)
+
+	// Default log format is text
+	if utils.Config.LitmusChaosServerLogFormat == "json" {
+		log.SetFormatter(&log.JSONFormatter{})
+	}
+
 	log.Infof("Go Version: %s", runtime.Version())
 	log.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
-	err := envconfig.Process("", &utils.Config)
 	if err != nil {
 		log.Fatal(err)
 	}
