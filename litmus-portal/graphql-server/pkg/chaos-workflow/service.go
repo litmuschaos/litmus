@@ -294,7 +294,7 @@ func (c *chaosWorkflowService) ProcessCompletedWorkflowRun(execData ExecutionDat
 			if value.ChaosExp == nil {
 				continue
 			}
-			for expName, _ := range weightMap {
+			for expName := range weightMap {
 				if strings.Contains(value.ChaosExp.EngineName, expName) {
 					experimentName = expName
 				}
