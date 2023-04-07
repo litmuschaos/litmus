@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -15,50 +16,51 @@ const (
 	CookieName = "litmus-cc-token"
 )
 
-func Middleware(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// Middleware verifies jwt and checks if user has enough privilege to access route (no roles' info needed)
+func Middleware(handler http.Handler) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		jwt := ""
-		auth, err := r.Cookie(CookieName)
+		auth, err := c.Request.Cookie(CookieName)
 		if err == nil {
 			jwt = auth.Value
-		} else if r.Header.Get("Authorization") != "" {
-			jwt = r.Header.Get("Authorization")
+		} else if c.Request.Header.Get("Authorization") != "" {
+			jwt = c.Request.Header.Get("Authorization")
 		}
 
-		ctx := context.WithValue(r.Context(), AuthKey, jwt)
-		r = r.WithContext(ctx)
-		handler.ServeHTTP(w, r)
-	})
+		ctx := context.WithValue(c.Request.Context(), AuthKey, jwt)
+		c.Request = c.Request.WithContext(ctx)
+		handler.ServeHTTP(c.Writer, c.Request)
+	}
 }
 
 // RestMiddlewareWithRole verifies jwt and checks if user has enough privilege to access route
-func RestMiddlewareWithRole(handler http.Handler, roles []string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func RestMiddlewareWithRole(handler gin.HandlerFunc, roles []string) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		jwt := ""
-		auth, err := r.Cookie(CookieName)
+		auth, err := c.Request.Cookie(CookieName)
 		if err == nil {
 			jwt = auth.Value
-		} else if r.Header.Get("Authorization") != "" {
-			jwt = r.Header.Get("Authorization")
+		} else if c.Request.Header.Get("Authorization") != "" {
+			jwt = c.Request.Header.Get("Authorization")
 		}
 		user, err := UserValidateJWT(jwt)
 		if err != nil {
 			log.WithError(err).Error("Invalid Auth Cookie")
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Error verifying JWT token: " + err.Error()))
+			c.Writer.WriteHeader(http.StatusUnauthorized)
+			c.Writer.Write([]byte("Error verifying JWT token: " + err.Error()))
 			return
 		}
 		if len(roles) == 0 {
-			handler.ServeHTTP(w, r)
+			handler(c)
 			return
 		}
 		for _, role := range roles {
 			if role == user["role"] {
-				handler.ServeHTTP(w, r)
+				handler(c)
 				return
 			}
 		}
-		w.WriteHeader(http.StatusUnauthorized)
+		c.Writer.WriteHeader(http.StatusUnauthorized)
 		return
-	})
+	}
 }

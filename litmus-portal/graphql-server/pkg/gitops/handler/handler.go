@@ -1,4 +1,4 @@
-// GQL handlers and other external functions to facilitate gitops
+// GQL graphql_server and other external functions to facilitate gitops
 package handler
 
 import (

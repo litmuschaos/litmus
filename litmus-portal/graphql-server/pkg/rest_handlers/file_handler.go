@@ -1,29 +1,24 @@
-package handlers
+package rest_handlers
 
 import (
-	"net/http"
+	"strings"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 // FileHandler dynamically generates the manifest file and sends it as a response
-func FileHandler(w http.ResponseWriter, r *http.Request) {
-	var (
-		vars  = mux.Vars(r)
-		token = vars["key"]
-	)
-
+func FileHandler(c *gin.Context) {
+	token := strings.TrimSuffix(c.Param("key"), ".yaml")
 	response, statusCode, err := cluster.GetManifest(token)
 	if err != nil {
 		log.WithError(err).Error("error while generating manifest file")
-		utils.WriteHeaders(&w, statusCode)
-		w.Write([]byte(err.Error()))
+		utils.WriteHeaders(&c.Writer, statusCode)
+		c.Writer.Write([]byte(err.Error()))
 	}
 
-	utils.WriteHeaders(&w, statusCode)
-	w.Write(response)
+	utils.WriteHeaders(&c.Writer, statusCode)
+	c.Writer.Write(response)
 }
