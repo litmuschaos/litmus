@@ -4005,7 +4005,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	&ast.Source{Name: "graph/analytics.graphqls", Input: `input DSInput {
+	{Name: "graph/analytics.graphqls", Input: `input DSInput {
   dsID: String
   dsName: String!
   dsType: String!
@@ -4485,7 +4485,7 @@ extend type Subscription {
   ): DashboardPromResponse! @authorized
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/chaoshub.graphqls", Input: `enum AuthType {
+	{Name: "graph/chaoshub.graphqls", Input: `enum AuthType {
   BASIC
   NONE
   SSH
@@ -5012,7 +5012,7 @@ extend type Mutation {
   """
   deleteChaosHub(projectID: String!, hubID: String!): Boolean! @authorized
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/cluster.graphqls", Input: `"""
+	{Name: "graph/cluster.graphqls", Input: `"""
 Defines the details for a cluster
 """
 type Cluster {
@@ -5340,7 +5340,7 @@ extend type Subscription {
     getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
     @authorized
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/gitops.graphqls", Input: `
+	{Name: "graph/gitops.graphqls", Input: `
 """
 Defines the SSHKey details
 """
@@ -5466,7 +5466,7 @@ extend type Mutation {
     """
     updateGitOps(config: GitConfig!): Boolean! @authorized
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/image_registry.graphqls", Input: `"""
+	{Name: "graph/image_registry.graphqls", Input: `"""
 Defines details for image registry
 """
 type ImageRegistry {
@@ -5603,7 +5603,7 @@ extend type Mutation {
   deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
   @authorized
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/k8s.graphqls", Input: `
+	{Name: "graph/k8s.graphqls", Input: `
 """
 Response received for querying Kubernetes Object
 """
@@ -5664,7 +5664,7 @@ input Workload {
     namespace: String!
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/project.graphqls", Input: `enum Invitation {
+	{Name: "graph/project.graphqls", Input: `enum Invitation {
   Accepted
   Pending
 }
@@ -5675,7 +5675,7 @@ enum MemberRole {
   Viewer
 }
 `, BuiltIn: false},
-	&ast.Source{Name: "graph/usage.graphqls", Input: `"""
+	{Name: "graph/usage.graphqls", Input: `"""
 Defines details of workflow statistics
 """
 type WorkflowStat {
@@ -5826,7 +5826,7 @@ extend type Query {
   """
   getUsageData(request: UsageDataRequest!): UsageDataResponse! @authorized
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/workflow.graphqls", Input: `directive @authorized on FIELD_DEFINITION
+	{Name: "graph/workflow.graphqls", Input: `directive @authorized on FIELD_DEFINITION
 
 """
 Defines the details of the weightages of each chaos experiment in the workflow
@@ -6470,7 +6470,7 @@ type Subscription {
   """
   getWorkflowEvents(projectID: String!): WorkflowRun! @authorized
 }`, BuiltIn: false},
-	&ast.Source{Name: "graph/workflow_template.graphqls", Input: `"""
+	{Name: "graph/workflow_template.graphqls", Input: `"""
 Details for a workflow template
 """
 type WorkflowTemplate {

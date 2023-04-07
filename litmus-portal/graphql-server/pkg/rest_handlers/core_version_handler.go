@@ -1,9 +1,11 @@
-package handlers
+// Package rest_handlers provides rest handlers
+package rest_handlers
 
 import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -12,16 +14,17 @@ type WorkflowHelperImageVersion struct {
 	Version string `json:"version"`
 }
 
-func WorkflowHelperImageVersionHandler(w http.ResponseWriter, r *http.Request) {
+// WorkflowHelperImageVersionHandler is used to provide workflow helper's image version
+func WorkflowHelperImageVersionHandler(c *gin.Context) {
 	versionDetails := utils.Config.WorkflowHelperImageVersion
 	version := WorkflowHelperImageVersion{Version: versionDetails}
 	versionByte, err := json.Marshal(version)
 	if err != nil {
 		logrus.Error(err)
-		utils.WriteHeaders(&w, http.StatusBadRequest)
+		utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
 		return
 	}
 
-	utils.WriteHeaders(&w, http.StatusOK)
-	w.Write(versionByte)
+	utils.WriteHeaders(&c.Writer, http.StatusOK)
+	c.Writer.Write(versionByte)
 }
