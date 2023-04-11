@@ -53,8 +53,6 @@ type MongoClient struct {
 }
 
 var (
-	Client MongoInterface = &MongoClient{}
-
 	collections = map[int]string{
 		ClusterCollection:          "cluster-collection",
 		UserCollection:             "user",
@@ -116,9 +114,6 @@ func Initialize(client *mongo.Client) *MongoClient {
 		Database: client.Database(dbName),
 	}
 	mongodbClient.initAllCollection()
-
-	// TODO: will be removed after the migration
-	Client = mongodbClient
 
 	return mongodbClient
 }
