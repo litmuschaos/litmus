@@ -1,6 +1,7 @@
 package rest_handlers
 
 import (
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,37 +11,19 @@ import (
 // LoggingMiddleware is a middleware that logs the request as it goes in and the response as it goes out.
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// Starting time request
-		startTime := time.Now()
+		startTime := time.Now() // Starting time request
+		ctx.Next()              // Processing request
+		endTime := time.Now()   // End Time request
 
-		// Processing request
-		ctx.Next()
-
-		// End Time request
-		endTime := time.Now()
-
-		// execution time
-		latencyTime := endTime.Sub(startTime)
-
-		// Request method
-		reqMethod := ctx.Request.Method
-
-		// Request route
-		reqUri := ctx.Request.RequestURI
-
-		// status code
-		statusCode := ctx.Writer.Status()
-
-		// Request IP
-		clientIP := ctx.ClientIP()
+		replacer := strings.NewReplacer("\n", "", "\r", "")
 
 		log.WithFields(log.Fields{
-			"METHOD":    reqMethod,
-			"URI":       reqUri,
-			"STATUS":    statusCode,
-			"LATENCY":   latencyTime,
-			"CLIENT_IP": clientIP,
-		}).Info("HTTP REQUEST")
+			"method":   replacer.Replace(ctx.Request.Method),     // request method
+			"uri":      replacer.Replace(ctx.Request.RequestURI), // request uri
+			"status":   ctx.Writer.Status(),                      //status code
+			"latency":  endTime.Sub(startTime),                   // execution time
+			"clientIP": replacer.Replace(ctx.ClientIP()),         // request ip
+		}).Info("http request")
 
 		ctx.Next()
 	}

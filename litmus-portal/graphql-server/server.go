@@ -41,6 +41,7 @@ func init() {
 	if utils.Config.LitmusChaosServerLogFormat == "json" {
 		log.SetFormatter(&log.JSONFormatter{})
 	}
+	log.SetReportCaller(true)
 
 	log.Infof("Go Version: %s", runtime.Version())
 	log.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
