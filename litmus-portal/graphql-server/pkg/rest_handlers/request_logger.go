@@ -15,14 +15,16 @@ func LoggingMiddleware() gin.HandlerFunc {
 		ctx.Next()              // Processing request
 		endTime := time.Now()   // End Time request
 
-		replacer := strings.NewReplacer("\n", "", "\r", "")
+		clientIP := ctx.ClientIP()
+		escapedClientIP := strings.Replace(clientIP, "\n", "", -1)
+		escapedClientIP = strings.Replace(escapedClientIP, "\r", "", -1)
 
 		log.WithFields(log.Fields{
-			"method":   replacer.Replace(ctx.Request.Method),     // request method
-			"uri":      replacer.Replace(ctx.Request.RequestURI), // request uri
-			"status":   ctx.Writer.Status(),                      //status code
-			"latency":  endTime.Sub(startTime),                   // execution time
-			"clientIP": replacer.Replace(ctx.ClientIP()),         // request ip
+			"method":   ctx.Request.Method,     // request method
+			"uri":      ctx.Request.RequestURI, // request uri
+			"status":   ctx.Writer.Status(),    //status code
+			"latency":  endTime.Sub(startTime), // execution time
+			"clientIP": escapedClientIP,        // request ip
 		}).Info("http request")
 
 		ctx.Next()
