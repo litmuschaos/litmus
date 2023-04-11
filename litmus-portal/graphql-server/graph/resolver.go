@@ -10,6 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 )
 
 // This file will not be regenerated automatically.
@@ -21,8 +22,14 @@ type Resolver struct {
 }
 
 func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
+	// operator
+	chaosHubOperator := dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)
+
+	// service
+	chaosHubService := chaoshub.NewService(chaosHubOperator)
+
 	config := generated.Config{Resolvers: &Resolver{
-		chaosHubService: chaoshub.NewService(mongodbOperator),
+		chaosHubService: chaosHubService,
 	}}
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)

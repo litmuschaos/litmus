@@ -22,6 +22,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
@@ -120,15 +121,15 @@ func main() {
 	router.GET("/", rest_handlers.PlaygroundHandler())
 	router.Any("/query", authorization.Middleware(srv))
 	router.GET("/readiness", rest_handlers.ReadinessHandler(client))
-	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil))
+	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(rest_handlers.GetIconHandler, nil))
 	router.Any("/file/:key", rest_handlers.FileHandler)
 	router.GET("/status", rest_handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", rest_handlers.WorkflowHelperImageVersionHandler)
 
 	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go chaoshub.NewService(mongodbOperator).RecurringHubSync() // go routine for syncing hubs for all users
-	go gitOpsHandler.GitOpsSyncHandler(false)                  // routine to sync git repos for gitOps
+	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync() // go routine for syncing hubs for all users
+	go gitOpsHandler.GitOpsSyncHandler(false)                                                        // routine to sync git repos for gitOps
 
 	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
 	err = router.Run(":" + utils.Config.HttpPort)

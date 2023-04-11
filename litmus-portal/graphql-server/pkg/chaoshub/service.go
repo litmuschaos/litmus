@@ -4,21 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/handler"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -51,9 +47,9 @@ type chaosHubService struct {
 	chaosHubOperator *dbSchemaChaosHub.Operator
 }
 
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
 	return &chaosHubService{
-		chaosHubOperator: dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator),
+		chaosHubOperator: chaosHubOperator,
 	}
 }
 
@@ -527,38 +523,6 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 
 	return outputChaosHubs, nil
 }
-
-// GetIconHandler ...
-var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
-	replacer := strings.NewReplacer("../", "", "./", "", "/", "", "..", "")
-	var (
-		projectID          = replacer.Replace(c.Param("ProjectID"))
-		hubName            = replacer.Replace(c.Param("HubName"))
-		chartName          = replacer.Replace(c.Param("ChartName"))
-		iconName           = replacer.Replace(c.Param("IconName"))
-		img                *os.File
-		err                error
-		responseStatusCode = http.StatusOK
-	)
-
-	if strings.ToLower(chartName) == "predefined" {
-		img, err = os.Open("/tmp/version/" + projectID + "/" + hubName + "/workflows/icons/" + iconName)
-	} else {
-		img, err = os.Open("/tmp/version/" + projectID + "/" + hubName + "/charts/" + chartName + "/icons/" + iconName)
-	}
-
-	if err != nil {
-		responseStatusCode = http.StatusInternalServerError
-		fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
-	}
-
-	defer img.Close()
-
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	c.Writer.WriteHeader(responseStatusCode)
-	c.Writer.Header().Set("Content-Type", "image/png") // <-- set the content-type header
-	io.Copy(c.Writer, img)
-})
 
 // RecurringHubSync is used for syncing
 func (c *chaosHubService) RecurringHubSync() {

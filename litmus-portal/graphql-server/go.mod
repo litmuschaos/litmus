@@ -22,11 +22,12 @@ require (
 	github.com/prometheus/client_golang v1.12.1
 	github.com/prometheus/common v0.32.1
 	github.com/sirupsen/logrus v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/tidwall/gjson v1.14.0
 	github.com/tidwall/sjson v1.2.4
 	github.com/vektah/gqlparser/v2 v2.1.0
-	go.mongodb.org/mongo-driver v1.8.2
-	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
+	go.mongodb.org/mongo-driver v1.11.4
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.4.0
