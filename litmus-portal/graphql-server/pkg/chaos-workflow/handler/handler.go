@@ -50,13 +50,20 @@ type ChaosWorkflowHandler struct {
 }
 
 // NewChaosWorkflowHandler returns a new instance of ChaosWorkflowHandler
-func NewChaosWorkflowHandler(mongodbOperator mongodb.MongoOperator) *ChaosWorkflowHandler {
+func NewChaosWorkflowHandler(
+	chaosWorkflowService chaosWorkflow.Service,
+	clusterService cluster.Service,
+	gitOpsService gitops.Service,
+	chaosWorkflowOperator *dbOperationsWorkflow.Operator,
+	chaosWorkflowTemplateOperator *dbOperationsWorkflowTemplate.Operator,
+	mongodbOperator mongodb.MongoOperator,
+) *ChaosWorkflowHandler {
 	return &ChaosWorkflowHandler{
-		chaosWorkflowService:          chaosWorkflow.NewService(mongodbOperator),
-		clusterService:                cluster.NewService(mongodbOperator),
-		gitOpsService:                 gitops.NewService(mongodbOperator),
-		chaosWorkflowOperator:         dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
-		chaosWorkflowTemplateOperator: dbOperationsWorkflowTemplate.NewWorkflowTemplateOperator(mongodbOperator),
+		chaosWorkflowService:          chaosWorkflowService,
+		clusterService:                clusterService,
+		gitOpsService:                 gitOpsService,
+		chaosWorkflowOperator:         chaosWorkflowOperator,
+		chaosWorkflowTemplateOperator: chaosWorkflowTemplateOperator,
 		mongodbOperator:               mongodbOperator,
 	}
 }

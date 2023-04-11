@@ -9,7 +9,6 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbOperationsProject "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,9 +22,10 @@ type usageService struct {
 	clusterOperator *dbOperationsProject.Operator
 }
 
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+// NewService returns a new instance of usage service
+func NewService(clusterOperator *dbOperationsProject.Operator) Service {
 	return &usageService{
-		clusterOperator: dbOperationsProject.NewClusterOperator(mongodbOperator),
+		clusterOperator: clusterOperator,
 	}
 }
 

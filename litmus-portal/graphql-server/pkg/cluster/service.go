@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/pkg/errors"
@@ -46,10 +45,10 @@ type clusterService struct {
 }
 
 // NewService returns a new instance of Service
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+func NewService(clusterOperator *dbSchemaCluster.Operator, chaosWorkflowOperator *dbOperationsWorkflow.Operator) Service {
 	return &clusterService{
-		clusterOperator:       dbSchemaCluster.NewClusterOperator(mongodbOperator),
-		chaosWorkflowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
+		clusterOperator:       clusterOperator,
+		chaosWorkflowOperator: chaosWorkflowOperator,
 	}
 }
 

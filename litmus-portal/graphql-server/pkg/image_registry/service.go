@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbOperationsImageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/image_registry"
 
 	"github.com/google/uuid"
@@ -28,10 +27,10 @@ type imageRegistryService struct {
 	imageRegistryOperator *dbOperationsImageRegistry.Operator
 }
 
-// NewService returns a new instance of Service
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+// NewService returns a new instance of imageRegistryService
+func NewService(imageRegistryOperator *dbOperationsImageRegistry.Operator) Service {
 	return &imageRegistryService{
-		imageRegistryOperator: dbOperationsImageRegistry.NewImageRegistryOperator(mongodbOperator),
+		imageRegistryOperator: imageRegistryOperator,
 	}
 }
 

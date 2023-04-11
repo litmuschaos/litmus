@@ -16,7 +16,6 @@ import (
 	scheduleTypes "github.com/litmuschaos/chaos-scheduler/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
@@ -47,10 +46,10 @@ type chaosWorkflowService struct {
 }
 
 // NewService returns a new instance of the chaos workflow service
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+func NewService(chaosWorkflowOperator *dbOperationsWorkflow.Operator, clusterOperator *dbOperationsCluster.Operator) Service {
 	return &chaosWorkflowService{
-		chaosWorkflowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
-		clusterOperator:       dbOperationsCluster.NewClusterOperator(mongodbOperator),
+		chaosWorkflowOperator: chaosWorkflowOperator,
+		clusterOperator:       clusterOperator,
 	}
 }
 

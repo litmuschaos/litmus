@@ -20,9 +20,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/ops/prometheus"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
-	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/sirupsen/logrus"
@@ -66,11 +64,11 @@ type analyticsService struct {
 }
 
 // NewService returns a new instance of the analytics service
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+func NewService(analyticsOperator *dbSchemaAnalytics.Operator, chaosWorkFlowOperator *dbSchemaWorkflow.Operator, clusterService cluster.Service) Service {
 	return &analyticsService{
-		analyticsOperator:     dbSchemaAnalytics.NewAnalyticsOperator(mongodbOperator),
-		clusterService:        cluster.NewService(mongodbOperator),
-		chaosWorkFlowOperator: dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
+		analyticsOperator:     analyticsOperator,
+		chaosWorkFlowOperator: chaosWorkFlowOperator,
+		clusterService:        clusterService,
 	}
 }
 

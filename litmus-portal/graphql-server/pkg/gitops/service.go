@@ -16,9 +16,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	chaosWorkflowOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
 	dbSchemaGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
 	"github.com/sirupsen/logrus"
@@ -54,10 +52,11 @@ type gitOpsService struct {
 	chaosWorkflowService chaosWorkflowOps.Service
 }
 
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+// NewService returns a new instance of a gitOpsService
+func NewService(gitOpsOperator *dbSchemaGitOps.Operator, chaosWorkflowService chaosWorkflowOps.Service) Service {
 	return &gitOpsService{
-		gitOpsOperator:       dbOperationsGitOps.NewGitOpsOperator(mongodbOperator),
-		chaosWorkflowService: chaosWorkflowOps.NewService(mongodbOperator),
+		gitOpsOperator:       gitOpsOperator,
+		chaosWorkflowService: chaosWorkflowService,
 	}
 }
 

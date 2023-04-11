@@ -18,7 +18,6 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/handler"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -51,9 +50,10 @@ type chaosHubService struct {
 	chaosHubOperator *dbSchemaChaosHub.Operator
 }
 
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+// NewService returns a new instance of Service
+func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
 	return &chaosHubService{
-		chaosHubOperator: dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator),
+		chaosHubOperator: chaosHubOperator,
 	}
 }
 
