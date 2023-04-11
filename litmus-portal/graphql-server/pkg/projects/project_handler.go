@@ -55,7 +55,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 		RepoBranch: utils.Config.HubBranchName,
 	}
 
-	log.Info("Cloning https://github.com/litmuschaos/chaos-charts")
+	log.Info("cloning https://github.com/litmuschaos/chaos-charts")
 
 	//TODO: Remove goroutine after adding hub optimisations
 	go chaoshub.NewService(operator).AddChaosHub(context.Background(), defaultHub)
@@ -71,7 +71,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 	})
 
 	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
-		log.Info("Starting self deployer")
+		log.Info("starting self deployer")
 		go selfDeployer.StartDeployer(projectID)
 	}
 

@@ -43,8 +43,8 @@ func init() {
 	}
 	log.SetReportCaller(true)
 
-	log.Infof("Go Version: %s", runtime.Version())
-	log.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	log.Infof("go version: %s", runtime.Version())
+	log.Infof("go os/arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
 	if err != nil {
 		log.Fatal(err)

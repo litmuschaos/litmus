@@ -13,7 +13,7 @@ import (
 func CreateWorkflowTemplate(ctx context.Context, template *WorkflowTemplate) error {
 	err := mongodb.Operator.Create(ctx, mongodb.WorkflowTemplateCollection, template)
 	if err != nil {
-		log.Error("Error while creating template: ", err)
+		log.Error("error while creating template: ", err)
 	}
 	return nil
 }
@@ -23,7 +23,7 @@ func GetTemplatesByProjectID(ctx context.Context, projectID string) ([]WorkflowT
 	query := bson.D{{"project_id", projectID}, {"is_removed", false}}
 	results, err := mongodb.Operator.List(ctx, mongodb.WorkflowTemplateCollection, query)
 	if err != nil {
-		log.Error("Error getting template: ", err)
+		log.Error("error getting template: ", err)
 	}
 	var templates []WorkflowTemplate
 	err = results.All(ctx, &templates)

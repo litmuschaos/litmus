@@ -64,7 +64,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 	response, err := dr.Create(ctx, obj, metaV1.CreateOptions{})
 	if k8serrors.IsAlreadyExists(err) {
 		// This doesnt ever happen even if it does already exist
-		log.Info("Already exists")
+		log.Info("already exists")
 		return nil, nil
 	}
 
@@ -72,7 +72,7 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 		return nil, err
 	}
 
-	log.Info("Resource successfully created")
+	log.Info("resource successfully created")
 
 	return response, nil
 }
@@ -226,7 +226,7 @@ func GetServerEndpoint(portalScope, agentType string) (string, error) {
 				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
 		case "clusterip":
-			log.Info("External agents can't be connected to the server if the service type is set to ClusterIP\n")
+			log.Info("external agents can't be connected to the server if the service type is set to ClusterIP\n")
 			if svc.Spec.ClusterIP == "" {
 				return "", errors.New("ClusterIP is not present")
 			}
@@ -238,7 +238,7 @@ func GetServerEndpoint(portalScope, agentType string) (string, error) {
 		return "", errors.New("Ingress value is not correct")
 	}
 
-	log.Info("Server endpoint: ", FinalUrl)
+	log.Info("server endpoint: ", FinalUrl)
 
 	return FinalUrl, nil
 }

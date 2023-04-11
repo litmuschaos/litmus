@@ -62,21 +62,21 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 	var existingAnnotations []*model.AnnotationsPromResponse
 	err := copier.Copy(&existingAnnotations, &annotations)
 	if err != nil {
-		log.Errorf("Error parsing existing annotations  %v\n", err)
+		log.Errorf("error parsing existing annotations  %v\n", err)
 	}
 
 	for annotationIndex, annotation := range existingAnnotations {
 		var existingAnnotation model.AnnotationsPromResponse
 		err := copier.Copy(&existingAnnotation, &annotation)
 		if err != nil {
-			log.Errorf("Error parsing existing annotation  %v\n", err)
+			log.Errorf("error parsing existing annotation  %v\n", err)
 		}
 
 		if strings.Contains(existingAnnotation.QueryID, "chaos-event") {
 			var newAnnotation model.AnnotationsPromResponse
 			err := copier.Copy(&newAnnotation, &verdictResponse)
 			if err != nil {
-				log.Errorf("Error parsing new annotation  %v\n", err)
+				log.Errorf("error parsing new annotation  %v\n", err)
 			}
 
 			duplicateEventIndices := make(map[int]int)
@@ -172,7 +172,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 				if strings.Contains(errorStr, "already exists") {
 					cacheError = utils.UpdateCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
 					if cacheError != nil {
-						log.Errorf("Error while caching: %v\n", cacheError)
+						log.Errorf("error while caching: %v\n", cacheError)
 					}
 				}
 			}
@@ -209,7 +209,7 @@ func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, new
 	var promResponse model.PrometheusDataResponse
 	err := copier.Copy(&promResponse, &newPromResponse)
 	if err != nil {
-		log.Errorf("Error parsing annotations  %v\n", err)
+		log.Errorf("error parsing annotations  %v\n", err)
 	}
 	dashboardResponse := &model.DashboardPromResponse{
 		DashboardMetricsResponse: dashboardMetrics,

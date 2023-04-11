@@ -750,7 +750,7 @@ func GetPrometheusData(promInput *model.PrometheusDataRequest) (*model.Prometheu
 						if strings.Contains(errorStr, "already exists") {
 							cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 							if cacheError != nil {
-								log.Errorf("Error while caching: %v\n", cacheError)
+								log.Errorf("error while caching: %v\n", cacheError)
 							}
 						}
 					}
@@ -763,7 +763,7 @@ func GetPrometheusData(promInput *model.PrometheusDataRequest) (*model.Prometheu
 							if strings.Contains(errorStr, "already exists") {
 								cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 								if cacheError != nil {
-									log.Errorf("Error while caching: %v\n", cacheError)
+									log.Errorf("error while caching: %v\n", cacheError)
 								}
 							}
 						}
@@ -827,7 +827,7 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 
 			newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 			if err != nil {
-				log.Errorf("Error during data source query of the dashboard view: %v\n", viewID)
+				log.Errorf("error during data source query of the dashboard view: %v\n", viewID)
 			} else {
 				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
 				viewChan <- dashboardResponse
@@ -848,7 +848,7 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 
 				newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 				if err != nil {
-					log.Errorf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+					log.Errorf("error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 					break
 				} else {
 					dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
@@ -878,14 +878,14 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 
 			newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 			if err != nil {
-				log.Errorf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+				log.Errorf("error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 			} else {
 				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
 				viewChan <- dashboardResponse
 			}
 
 		case "invalid":
-			log.Errorf("Wrong parameters for the dashboard view: %v\n", viewID)
+			log.Errorf("wrong parameters for the dashboard view: %v\n", viewID)
 		}
 
 		ops.UpdateViewedAt(dashboardID, viewID)
@@ -919,7 +919,7 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 			if strings.Contains(errorStr, "already exists") {
 				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
-					log.Errorf("Error while caching: %v\n", cacheError)
+					log.Errorf("error while caching: %v\n", cacheError)
 				}
 			}
 		}
@@ -953,7 +953,7 @@ func GetPromSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesL
 			if strings.Contains(errorStr, "already exists") {
 				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
-					log.Errorf("Error while caching: %v\n", cacheError)
+					log.Errorf("error while caching: %v\n", cacheError)
 				}
 			}
 		}
@@ -1629,7 +1629,7 @@ func ListHeatmapData(workflow_id string, project_id string, year int) ([]*model.
 	for _, workflowRun := range WorkflowRuns {
 		i, err := strconv.ParseInt(workflowRun.LastUpdated, 10, 64)
 		if err != nil {
-			log.Error("error", err)
+			log.Error(err)
 		}
 		lastUpdated := time.Unix(i, 0)
 		date := float64(lastUpdated.Unix())

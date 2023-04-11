@@ -41,14 +41,14 @@ import (
 func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	request, wfType, err := ops.ProcessWorkflow(request)
 	if err != nil {
-		log.Error("Error processing workflow: ", err)
+		log.Error("error processing workflow: ", err)
 		return nil, err
 	}
 
 	// GitOps Update
 	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
-		log.Error("Error performing git push: ", err)
+		log.Error("error performing git push: ", err)
 		return nil, err
 	}
 
@@ -56,13 +56,13 @@ func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Error("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return nil, err
 	}
 
 	err = ops.ProcessWorkflowCreation(request, username, wfType, r)
 	if err != nil {
-		log.Error("Error executing workflow: ", err)
+		log.Error("error executing workflow: ", err)
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *stri
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Error("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return false, err
 	}
 
@@ -118,7 +118,7 @@ func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *stri
 		// gitOps delete
 		err = gitOpsHandler.DeleteWorkflowFromGit(ctx, &wf)
 		if err != nil {
-			log.Error("Error performing git push: ", err)
+			log.Error("error performing git push: ", err)
 			return false, err
 		}
 
@@ -148,7 +148,7 @@ func TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *s
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Error("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return false, err
 	}
 
@@ -174,7 +174,7 @@ func TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *s
 func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	request, wfType, err := ops.ProcessWorkflow(request)
 	if err != nil {
-		log.Error("Error processing workflow update: ", err)
+		log.Error("error processing workflow update: ", err)
 		return nil, err
 	}
 
@@ -182,20 +182,20 @@ func UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowReques
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Error("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return nil, err
 	}
 
 	// GitOps Update
 	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
-		log.Error("Error performing git push: ", err)
+		log.Error("error performing git push: ", err)
 		return nil, err
 	}
 
 	err = ops.ProcessWorkflowUpdate(request, username, wfType, r)
 	if err != nil {
-		log.Error("Error executing workflow update: ", err)
+		log.Error("error executing workflow update: ", err)
 		return nil, err
 	}
 
@@ -708,7 +708,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 
 	cluster, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
-		log.Error("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -724,7 +724,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 		}
 		err = json.Unmarshal(exeData, &executionData)
 		if err != nil {
-			log.Error("Failed to unmarshal execution data: ", err)
+			log.Error("failed to unmarshal execution data: ", err)
 			return "", err
 		}
 	}
@@ -758,7 +758,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 	})
 
 	if err != nil {
-		log.Error("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -794,7 +794,7 @@ func ChaosWorkflowRun(request model.WorkflowRunRequest, r store.StateData) (stri
 func PodLog(request model.PodLog, r store.StateData) (string, error) {
 	_, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
-		log.Error("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 	if reqChan, ok := r.WorkflowLog[request.RequestID]; ok {
@@ -815,7 +815,7 @@ func PodLog(request model.PodLog, r store.StateData) (string, error) {
 func GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	data, err := json.Marshal(pod)
 	if err != nil {
-		log.Error("ERROR WHILE MARSHALLING POD DETAILS")
+		log.Error("error while marshalling pod details")
 	}
 	reqType := "logs"
 	externalData := string(data)
@@ -850,7 +850,7 @@ func ReRunChaosWorkFlow(projectID string, workflowID string, username string) (s
 
 	workflows, err := dbOperationsWorkflow.GetWorkflows(query)
 	if err != nil {
-		log.Error("Could not get workflow :", err)
+		log.Error("could not get workflow :", err)
 		return "could not get workflow", err
 	}
 	if len(workflows) == 0 {
@@ -866,14 +866,14 @@ func ReRunChaosWorkFlow(projectID string, workflowID string, username string) (s
 		return "", errors.New(err.Error())
 	}
 	if cluster.IsActive != true {
-		log.Error("Agent not active to re-run the workflow")
-		return "", errors.New("Agent not active to re-run the selected workflow.")
+		log.Error("agent not active to re-run the workflow")
+		return "", errors.New("agent not active to re-run the selected workflow")
 	}
 
 	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))
 	if err != nil {
-		log.Error("Failed to updated workflow name [re-run] :", err)
-		return "", errors.New("Failed to updated workflow name " + err.Error())
+		log.Error("failed to updated workflow name [re-run] :", err)
+		return "", errors.New("failed to updated workflow name " + err.Error())
 	}
 
 	ops.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
@@ -889,7 +889,7 @@ func ReRunChaosWorkFlow(projectID string, workflowID string, username string) (s
 func KubeObj(request model.KubeObjectData, r store.StateData) (string, error) {
 	_, err := cluster.VerifyCluster(*request.ClusterID)
 	if err != nil {
-		log.Error("Error", err)
+		log.Error(err)
 		return "", err
 	}
 	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
@@ -908,7 +908,7 @@ func GetKubeObjData(reqID string, kubeObject model.KubeObjectRequest, r store.St
 	reqType := kubeObject.ObjectType
 	data, err := json.Marshal(kubeObject)
 	if err != nil {
-		log.Error("ERROR WHILE MARSHALLING POD DETAILS")
+		log.Error("error while marshalling pod details")
 	}
 	externalData := string(data)
 	payload := model.ClusterActionResponse{
@@ -964,7 +964,7 @@ func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (
 
 	err = dbOperationsWorkflowTemplate.CreateWorkflowTemplate(ctx, template)
 	if err != nil {
-		log.Error("Error", err)
+		log.Error(err)
 	}
 	return template.GetWorkflowTemplateOutput(), nil
 }
@@ -1001,7 +1001,7 @@ func DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID st
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 	err := dbOperationsWorkflowTemplate.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
-		log.Error("Err", err)
+		log.Error(err)
 		return false, err
 	}
 	return true, err

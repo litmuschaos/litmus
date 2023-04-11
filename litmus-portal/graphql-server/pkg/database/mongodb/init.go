@@ -104,7 +104,7 @@ func MongoConnection() (*mongo.Client, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		log.Infof("Connected To MongoDB")
+		log.Infof("connected To MongoDB")
 	}
 
 	return client, nil
@@ -147,7 +147,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		log.Fatal("Error Creating Index for Workflow Collection: ", err)
+		log.Fatal("error Creating Index for Workflow Collection: ", err)
 	}
 
 	m.WorkflowTemplateCollection = m.Database.Collection(collections[WorkflowTemplateCollection])
@@ -161,7 +161,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		log.Fatal("Error Creating Index for GitOps Collection : ", err)
+		log.Fatal("error Creating Index for GitOps Collection : ", err)
 	}
 
 	m.ChaosHubCollection = m.Database.Collection(collections[ChaosHubCollection])
@@ -179,6 +179,6 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		log.Fatal("Error Creating Index for Server Config Collection : ", err)
+		log.Fatal("error Creating Index for Server Config Collection : ", err)
 	}
 }

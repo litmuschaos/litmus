@@ -23,7 +23,7 @@ func NewChaosHubOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 func (c *Operator) CreateChaosHub(ctx context.Context, chaosHub *ChaosHub) error {
 	err := c.operator.Create(ctx, mongodb.ChaosHubCollection, chaosHub)
 	if err != nil {
-		log.Error("Error creating ChaosHub: ", err)
+		log.Error("error creating ChaosHub: ", err)
 		return err
 	}
 	return nil
@@ -37,13 +37,13 @@ func (c *Operator) GetChaosHubByProjectID(ctx context.Context, projectID string)
 	}
 	results, err := c.operator.List(ctx, mongodb.ChaosHubCollection, query)
 	if err != nil {
-		log.Error("ERROR GETTING HUBS : ", err)
+		log.Error("error getting hubs : ", err)
 		return []ChaosHub{}, err
 	}
 	var chaosHubs []ChaosHub
 	err = results.All(ctx, &chaosHubs)
 	if err != nil {
-		log.Error("Error deserializing chaosHubs in chaosHub object : ", err)
+		log.Error("error deserializing chaosHubs in chaosHub object : ", err)
 		return []ChaosHub{}, err
 	}
 	return chaosHubs, nil
@@ -54,13 +54,13 @@ func (c *Operator) GetHubs(ctx context.Context) ([]ChaosHub, error) {
 	query := bson.D{{}}
 	results, err := c.operator.List(ctx, mongodb.ChaosHubCollection, query)
 	if err != nil {
-		log.Error("Error getting chaosHubs: ", err)
+		log.Error("error getting chaosHubs: ", err)
 		return []ChaosHub{}, err
 	}
 	var chaosHubs []ChaosHub
 	err = results.All(ctx, &chaosHubs)
 	if err != nil {
-		log.Error("Error deserializing chaosHubs in the chaosHub object: ", err)
+		log.Error("error deserializing chaosHubs in the chaosHub object: ", err)
 		return []ChaosHub{}, err
 	}
 	return chaosHubs, nil

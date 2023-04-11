@@ -69,7 +69,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 	data, ok := value.(md.Matrix)
 	if !ok {
-		log.Errorf("Unsupported result format: %s", value.Type().String())
+		log.Errorf("unsupported result format: %s", value.Type().String())
 	}
 
 	chaosEventLabels := map[string]string{
@@ -132,7 +132,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 					timeStamp = 0
 				}
 				if err != nil {
-					log.Errorf("Error parsing chaos injection time: %v\n", err)
+					log.Errorf("error parsing chaos injection time: %v\n", err)
 				} else {
 					for key, value := range keyValueMap {
 						if nameVal, ok := checkMap[key]; ok {

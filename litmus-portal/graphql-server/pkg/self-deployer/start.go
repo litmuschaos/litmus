@@ -38,7 +38,7 @@ func StartDeployer(projectID string) {
 	if selfAgentTolerations != "" {
 		err := json.Unmarshal([]byte(selfAgentTolerations), &tolerations)
 		if err != nil {
-			log.Error("SELF CLUSTER REG FAILED[TOLERATION-PARSING] : ", err)
+			log.Error("self cluster reg failed[toleration-parsing: ", err)
 			// if toleration parsing fails skip actual manifest apply
 			return
 		}
@@ -64,14 +64,14 @@ func StartDeployer(projectID string) {
 
 	resp, err := clusterHandler.RegisterCluster(clusterInput)
 	if err != nil {
-		log.Error("SELF CLUSTER REG FAILED[DB-REG] : ", err)
+		log.Error("self cluster reg failed[db-reg]: ", err)
 		// if cluster registration fails skip actual manifest apply
 		return
 	}
 
 	response, statusCode, err := cluster.GetManifest(resp.Token)
 	if err != nil {
-		log.Error("ERROR", err)
+		log.Error(err)
 	}
 
 	if statusCode == 200 {
@@ -90,8 +90,8 @@ func StartDeployer(projectID string) {
 	}
 
 	if isAllManifestInstall == true {
-		log.Info("ALL MANIFESTS HAS BEEN INSTALLED:")
+		log.Info("all manifests has been installed")
 	} else {
-		log.Error("SOME MANIFESTS HAS NOT BEEN INSTALLED:", failedManifest)
+		log.Error("some manifests has not been installed: ", failedManifest)
 	}
 }
