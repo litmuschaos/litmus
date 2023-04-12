@@ -20,7 +20,7 @@ spec:
         release: prometheus-stack
     spec:
       containers:
-        - image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.0.0-beta
+        - image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.0.0-beta
           securityContext:
             runAsUser: 65534
           livenessProbe:
