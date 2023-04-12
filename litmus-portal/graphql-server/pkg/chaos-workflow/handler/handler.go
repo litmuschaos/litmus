@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"regexp"
 
 	"github.com/sirupsen/logrus"
 
@@ -40,41 +41,60 @@ import (
 )
 
 func CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
-	request, wfType, err := ops.ProcessWorkflow(request)
-	if err != nil {
-		log.Print("Error processing workflow: ", err)
-		return nil, err
-	}
+    // Extract the workflow name from the request
+        workflowName := request.WorkflowName
 
-	// GitOps Update
-	err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
-	if err != nil {
-		log.Print("Error performing git push: ", err)
-		return nil, err
-	}
+    // Validate the workflow name
+        if !isValidScenarioName(workflowName) {
+            return nil, fmt.Errorf("invalid scenario name: %s", workflowName)
+        }
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
 
-	if err != nil {
-		log.Print("Error getting username: ", err)
-		return nil, err
-	}
 
-	err = ops.ProcessWorkflowCreation(request, username, wfType, r)
-	if err != nil {
-		log.Print("Error executing workflow: ", err)
-		return nil, err
-	}
+    request, wfType, err := ops.ProcessWorkflow(request)
+    if err != nil {
+        log.Print("Error processing workflow: ", err)
+        return nil, err
+    }
 
-	return &model.ChaosWorkFlowResponse{
-		WorkflowID:          *request.WorkflowID,
-		CronSyntax:          request.CronSyntax,
-		WorkflowName:        request.WorkflowName,
-		WorkflowDescription: request.WorkflowDescription,
-		IsCustomWorkflow:    request.IsCustomWorkflow,
-	}, nil
+    // GitOps Update
+    err = gitOpsHandler.UpsertWorkflowToGit(ctx, request)
+    if err != nil {
+        log.Print("Error performing git push: ", err)
+        return nil, err
+    }
+
+    tkn := ctx.Value(authorization.AuthKey).(string)
+    username, err := authorization.GetUsername(tkn)
+
+    if err != nil {
+        log.Print("Error getting username: ", err)
+        return nil, err
+    }
+
+    err = ops.ProcessWorkflowCreation(request, username, wfType, r)
+    if err != nil {
+        log.Print("Error executing workflow: ", err)
+        return nil, err
+    }
+
+    return &model.ChaosWorkFlowResponse{
+        WorkflowID:          *request.WorkflowID,
+        CronSyntax:          request.CronSyntax,
+        WorkflowName:        request.WorkflowName,
+        WorkflowDescription: request.WorkflowDescription,
+        IsCustomWorkflow:    request.IsCustomWorkflow,
+    }, nil
 }
+
+func isValidScenarioName(name string) bool {
+    // Compile the regular expression to use for scenario name validation
+    validNameRegex := regexp.MustCompile(`(^[a-z0-9-]{0,54}$)`)
+
+    // Check if the scenario name matches the regular expression
+    return validNameRegex.MatchString(name)
+}
+
 
 func DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string, r *store.StateData) (bool, error) {
 	query := bson.D{
