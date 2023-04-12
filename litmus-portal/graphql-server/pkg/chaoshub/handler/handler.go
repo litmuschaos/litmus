@@ -73,7 +73,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	var AllChartsDetails []ChaosChart
 	Charts, err := ioutil.ReadDir(ChartsPath)
 	if err != nil {
-		log.Error("File reading error", err)
+		log.Error("file reading error", err)
 		return nil, err
 	}
 	for _, Chart := range Charts {
@@ -322,11 +322,11 @@ func SyncRemoteRepo(hubData model.CloningInput) error {
 		RepoURL:   hubData.RepoURL,
 		ProjectID: hubData.ProjectID,
 	}
-	log.Info("Downloading remote hub")
+	log.Info("downloading remote hub")
 	err = DownloadRemoteHub(updateHub)
 	if err != nil {
 		return err
 	}
-	log.Info("Remote hub ", hubData.HubName, "downloaded ")
+	log.Info("remote hub ", hubData.HubName, "downloaded ")
 	return nil
 }

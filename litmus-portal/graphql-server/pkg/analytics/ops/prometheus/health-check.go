@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -23,12 +22,10 @@ func TSDBHealthCheck(url, datasourceType string) string {
 		dbHealth = "Active"
 
 		if datasourceType == "Prometheus" {
-			prometheusHealth, prometheusHealthMsg := prometheusHealthCheck(url)
-			log.Infof(prometheusHealthMsg)
+			prometheusHealth, _ := prometheusHealthCheck(url)
 
 			if prometheusHealth == "ACTIVE" {
-				prometheusReadiness, prometheusReadinessMsg := prometheusReadinessCheck(url)
-				log.Infof(prometheusReadinessMsg)
+				prometheusReadiness, _ := prometheusReadinessCheck(url)
 
 				if prometheusReadiness != "ACTIVE" {
 					dbHealth = "Not Ready"

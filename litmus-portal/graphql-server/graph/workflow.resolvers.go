@@ -36,7 +36,7 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Error("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return "", err
 	}
 
@@ -113,14 +113,14 @@ func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.List
 }
 
 func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
-	log.Info("NEW WORKFLOW EVENT LISTENER: ", projectID)
+	log.Info("new workflow event listener: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
 	data_store.Store.Mutex.Lock()
 	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		log.Info("CLOSED WORKFLOW LISTENER: ", projectID)
+		log.Info("closed workflow listener: ", projectID)
 	}()
 	return workflowEvent, nil
 }
