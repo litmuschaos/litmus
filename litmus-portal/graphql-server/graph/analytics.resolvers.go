@@ -166,13 +166,13 @@ func (r *queryResolver) ListPortalDashboardData(ctx context.Context, projectID s
 func (r *subscriptionResolver) ViewDashboard(ctx context.Context, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
 	dashboardData := make(chan *model.DashboardPromResponse)
 	viewID := uuid.New()
-	log.Infof("Dashboard view %v created\n", viewID.String())
+	log.Infof("dashboard view %v created\n", viewID.String())
 	data_store.Store.Mutex.Lock()
 	data_store.Store.DashboardData[viewID.String()] = dashboardData
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		log.Infof("Closed dashboard view %v\n", viewID.String())
+		log.Infof("closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
 			analyticsOps.UpdateViewedAt(dashboardID, viewID.String())
 
