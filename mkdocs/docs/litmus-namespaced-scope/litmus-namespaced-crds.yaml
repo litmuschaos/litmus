@@ -41,8 +41,7 @@ spec:
                 #  - pattern: '^delete$'
                 #  - pattern: '^retain$'
               defaultHealthCheck:
-                type: string
-                pattern: ^(true|false)$
+                type: boolean
               appinfo:
                 type: object
                 properties:
@@ -2228,17 +2227,17 @@ spec:
                                   - interval
                                 properties:
                                   probeTimeout:
-                                    type: integer
+                                    type: string
                                   interval:
-                                    type: integer
+                                    type: string
                                   retry:
                                     type: integer
                                   attempt:
                                     type: integer
                                   probePollingInterval:
-                                    type: integer
-                                  initialDelaySeconds:
-                                    type: integer
+                                    type: string
+                                  initialDelay:
+                                    type: string
                                   stopOnFailure:
                                     type: boolean
                               mode:
