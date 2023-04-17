@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
+	chaoshubops "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
@@ -28,6 +30,15 @@ var (
 // init is the entry point for testing
 func init() {
 	gin.SetMode(gin.TestMode)
+}
+
+// clearCloneRepository removes the cloned repository
+func clearCloneRepository(projectID, hubName string) {
+	tempPath := chaoshubops.GetClonePath(chaoshubops.GitConfigConstruct(model.CloningInput{ProjectID: projectID, HubName: hubName}))
+	err := os.RemoveAll(tempPath)
+	if err != nil {
+		panic(fmt.Sprintf("failed to remove temp path: %v", err))
+	}
 }
 
 // TestChaosHubService_AddChaosHub tests the AddChaosHub function
@@ -52,6 +63,7 @@ func TestChaosHubService_AddChaosHub(t *testing.T) {
 		mongoOperator.On("List", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(cursor, nil).Once()
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 		target, err := mockService.AddChaosHub(context.Background(), newHub)
+		defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 		assert.NoError(t, err)
 		assert.Equal(t, newHub.HubName, target.HubName)
@@ -92,6 +104,7 @@ func TestChaosHubService_AddRemoteChaosHub(t *testing.T) {
 		mongoOperator.On("List", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(cursor, nil).Once()
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 		_, err := mockService.AddRemoteChaosHub(context.Background(), newHub)
+		defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 		assert.Error(t, err)
 	})
@@ -104,6 +117,7 @@ func TestChaosHubService_AddRemoteChaosHub(t *testing.T) {
 		mongoOperator.On("List", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(cursor, nil).Once()
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 		target, err := mockService.AddRemoteChaosHub(context.Background(), newHub)
+		defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 		assert.NoError(t, err)
 		assert.Equal(t, newHub.HubName, target.HubName)
@@ -132,6 +146,7 @@ func TestChaosHubService_SaveChaosHub(t *testing.T) {
 		mongoOperator.On("List", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(cursor, nil).Once()
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 		target, err := mockService.SaveChaosHub(context.Background(), newHub)
+		defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 		assert.NoError(t, err)
 		assert.Equal(t, newHub.HubName, target.HubName)
@@ -180,6 +195,7 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 		mongoOperator.On("Get", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(singleResult, nil).Once()
 		mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 		target, err := mockService.UpdateChaosHub(context.Background(), updatedHub)
+		defer clearCloneRepository(updatedHub.ProjectID, updatedHub.HubName)
 
 		assert.NoError(t, err)
 		assert.Equal(t, updatedHub.HubName, target.HubName)
@@ -194,6 +210,7 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 		mongoOperator.On("Get", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(singleResult, nil).Once()
 		mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 		target, err := mockService.UpdateChaosHub(context.Background(), updatedHub)
+		defer clearCloneRepository(updatedHub.ProjectID, updatedHub.HubName)
 
 		assert.NoError(t, err)
 		assert.Equal(t, updatedHub.HubName, target.HubName)
@@ -259,6 +276,7 @@ func TestChaosHubService_GetData(t *testing.T) {
 	mongoOperator.On("List", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(cursor, nil).Once()
 	mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 	target, err := mockService.AddChaosHub(context.Background(), newHub)
+	defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 	assert.NoError(t, err)
 
@@ -471,6 +489,13 @@ func TestChaosHubService_IsChaosHubAvailable(t *testing.T) {
 
 // TestChaosHubService_SyncHub tests the SyncHub function
 func TestChaosHubService_SyncHub(t *testing.T) {
+	newHub := model.ChaosHub{
+		ProjectID: "1",
+		HubName:   "hub1",
+		ID:        "1",
+		HubType:   "REMOTE",
+		RepoURL:   "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip",
+	}
 	t.Run("cannot find same project_id hub", func(t *testing.T) {
 		mongoOperator.On("Get", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(&mongo.SingleResult{}, errors.New("")).Once()
 		_, err := mockService.SyncHub(context.Background(), "1", "1")
@@ -480,21 +505,23 @@ func TestChaosHubService_SyncHub(t *testing.T) {
 
 	t.Run("success : hub type is remote", func(t *testing.T) {
 		utils.Config.RemoteHubMaxSize = "1000000000"
-		findResult := bson.D{{"project_id", "1"}, {"hub_name", "hub1"}, {"hub_id", "1"}, {"hub_type", "REMOTE"}, {"repo_url", "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip"}}
+		findResult := bson.D{{"project_id", newHub.ProjectID}, {"hub_name", newHub.HubName}, {"hub_id", newHub.ID}, {"hub_type", newHub.HubType}, {"repo_url", newHub.RepoURL}}
 		singleResult := mongo.NewSingleResultFromDocument(findResult, nil, nil)
 		mongoOperator.On("Get", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(singleResult, nil).Once()
 		mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
-		_, err := mockService.SyncHub(context.Background(), "1", "1")
+		_, err := mockService.SyncHub(context.Background(), newHub.ID, newHub.ProjectID)
+		defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 		assert.NoError(t, err)
 	})
 
 	t.Run("success : hub type is not remote", func(t *testing.T) {
-		findResult := bson.D{{"project_id", "1"}, {"hub_name", "hub1"}, {"hub_id", "1"}, {"repo_url", "https://github.com/litmuschaos/chaos-charts"}, {"repo_branch", "master"}, {"is_private", false}}
+		findResult := bson.D{{"project_id", newHub.ProjectID}, {"hub_name", newHub.HubName}, {"hub_id", newHub.ID}, {"repo_url", "https://github.com/litmuschaos/chaos-charts"}, {"repo_branch", "master"}, {"is_private", false}}
 		singleResult := mongo.NewSingleResultFromDocument(findResult, nil, nil)
 		mongoOperator.On("Get", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(singleResult, nil).Once()
 		mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
-		_, err := mockService.SyncHub(context.Background(), "1", "1")
+		_, err := mockService.SyncHub(context.Background(), newHub.ID, newHub.ProjectID)
+		defer clearCloneRepository(newHub.ProjectID, newHub.HubName)
 
 		assert.NoError(t, err)
 	})
