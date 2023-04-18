@@ -38,7 +38,7 @@ func StartDeployer(projectID string) {
 	if selfAgentTolerations != "" {
 		err := json.Unmarshal([]byte(selfAgentTolerations), &tolerations)
 		if err != nil {
-			log.Error("self cluster reg failed[toleration-parsing: ", err)
+			log.Error("self cluster reg failed[toleration-parsing]: ", err)
 			// if toleration parsing fails skip actual manifest apply
 			return
 		}
