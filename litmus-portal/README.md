@@ -22,23 +22,23 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 
 #### Applying k8s manifest
 
-> Litmus-3.0.0-beta5 Cluster Scope manifest
+> Litmus-3.0.0-beta6 Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta5/litmus-3.0.0-beta5.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta6/litmus-3.0.0-beta6.yaml
 ```
 
 Or
 
-> Litmus-3.0.0-beta5 Namespaced Scope manifest.
+> Litmus-3.0.0-beta6 Namespaced Scope manifest.
 
 ```bash
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta5/litmus-portal-crds-3.0.0-beta5.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta6/litmus-portal-crds-3.0.0-beta6.yml
 #Install ChaosCenter
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta5/litmus-namespaced-3.0.0-beta5.yaml -n litmus
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta6/litmus-namespaced-3.0.0-beta6.yaml -n litmus
 ```
 
 Or
