@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 type contextKey string
@@ -45,7 +45,7 @@ func RestMiddlewareWithRole(handler gin.HandlerFunc, roles []string) gin.Handler
 		}
 		user, err := UserValidateJWT(jwt)
 		if err != nil {
-			logrus.WithError(err).Error("Invalid Auth Cookie")
+			log.WithError(err).Error("invalid Auth Cookie")
 			c.Writer.WriteHeader(http.StatusUnauthorized)
 			c.Writer.Write([]byte("Error verifying JWT token: " + err.Error()))
 			return

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/google/uuid"
@@ -162,7 +162,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardRespon
 	if err != nil {
 		return nil, fmt.Errorf("error on inserting panel data", err)
 	}
-	log.Print("sucessfully inserted prom query into promquery-collection")
+	log.Info("sucessfully inserted prom query into promquery-collection")
 
 	newDashboard.PanelGroups = newPanelGroups
 
@@ -170,7 +170,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardRespon
 	if err != nil {
 		return nil, fmt.Errorf("error on inserting panel data", err)
 	}
-	log.Print("sucessfully inserted dashboard into dashboard-collection")
+	log.Info("sucessfully inserted dashboard into dashboard-collection")
 
 	var newDBResponse = model.ListDashboardResponse{}
 	_ = copier.Copy(&newDBResponse, &newDashboard)
@@ -405,7 +405,7 @@ func UpdateDashBoard(projectID string, dashboard model.UpdateDBInput, chaosQuery
 			if err != nil {
 				return "error creating new panels", fmt.Errorf("error while inserting panel data", err)
 			}
-			log.Print("successfully inserted prom query into promquery-collection")
+			log.Info("successfully inserted prom query into promquery-collection")
 		}
 
 		if len(panelsToUpdate) > 0 {
@@ -750,7 +750,7 @@ func GetPrometheusData(promInput *model.PrometheusDataRequest) (*model.Prometheu
 						if strings.Contains(errorStr, "already exists") {
 							cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 							if cacheError != nil {
-								log.Printf("Error while caching: %v\n", cacheError)
+								log.Errorf("error while caching: %v\n", cacheError)
 							}
 						}
 					}
@@ -763,7 +763,7 @@ func GetPrometheusData(promInput *model.PrometheusDataRequest) (*model.Prometheu
 							if strings.Contains(errorStr, "already exists") {
 								cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 								if cacheError != nil {
-									log.Printf("Error while caching: %v\n", cacheError)
+									log.Errorf("error while caching: %v\n", cacheError)
 								}
 							}
 						}
@@ -827,7 +827,7 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 
 			newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 			if err != nil {
-				log.Printf("Error during data source query of the dashboard view: %v\n", viewID)
+				log.Errorf("error during data source query of the dashboard view: %v\n", viewID)
 			} else {
 				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
 				viewChan <- dashboardResponse
@@ -848,7 +848,7 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 
 				newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 				if err != nil {
-					log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+					log.Errorf("error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 					break
 				} else {
 					dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
@@ -878,14 +878,14 @@ func DashboardViewer(viewID string, dashboardID *string, promQueries []*model.Pr
 
 			newPromResponse, queryResponseMap, err := GetPrometheusData(newPromInput)
 			if err != nil {
-				log.Printf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+				log.Errorf("error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 			} else {
 				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
 				viewChan <- dashboardResponse
 			}
 
 		case "invalid":
-			log.Printf("Wrong parameters for the dashboard view: %v\n", viewID)
+			log.Errorf("wrong parameters for the dashboard view: %v\n", viewID)
 		}
 
 		ops.UpdateViewedAt(dashboardID, viewID)
@@ -919,7 +919,7 @@ func GetLabelNamesAndValues(promSeriesInput *model.PromSeriesInput) (*model.Prom
 			if strings.Contains(errorStr, "already exists") {
 				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
-					log.Printf("Error while caching: %v\n", cacheError)
+					log.Errorf("error while caching: %v\n", cacheError)
 				}
 			}
 		}
@@ -953,7 +953,7 @@ func GetPromSeriesList(promSeriesListInput *model.DsDetails) (*model.PromSeriesL
 			if strings.Contains(errorStr, "already exists") {
 				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
-					log.Printf("Error while caching: %v\n", cacheError)
+					log.Errorf("error while caching: %v\n", cacheError)
 				}
 			}
 		}
@@ -1615,7 +1615,7 @@ func ListHeatmapData(workflow_id string, project_id string, year int) ([]*model.
 	// Result array
 	result := make([]*model.HeatmapDataResponse, 0, noOfDays)
 	if err = workflowsCursor.All(context.Background(), &chaosWorkflows); err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return result, nil
 	}
 
@@ -1629,7 +1629,7 @@ func ListHeatmapData(workflow_id string, project_id string, year int) ([]*model.
 	for _, workflowRun := range WorkflowRuns {
 		i, err := strconv.ParseInt(workflowRun.LastUpdated, 10, 64)
 		if err != nil {
-			fmt.Println("error", err)
+			log.Error(err)
 		}
 		lastUpdated := time.Unix(i, 0)
 		date := float64(lastUpdated.Unix())

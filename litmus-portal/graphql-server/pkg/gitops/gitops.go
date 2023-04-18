@@ -218,9 +218,9 @@ func (c GitConfig) UnsafeGitPull() error {
 	if err != nil {
 		return err
 	}
-	log.WithFields(log.Fields{"CleanStatus": cleanStatus}).Info("Executed GitGetStatus()... ")
+	log.WithFields(log.Fields{"cleanStatus": cleanStatus}).Info("executed GitGetStatus()... ")
 	if !cleanStatus {
-		log.Print("Resetting Repo...: " + c.ProjectID)
+		log.Info("resetting Repo...: " + c.ProjectID)
 		return c.handlerForDirtyStatus()
 	}
 	return c.GitPull()
@@ -304,7 +304,7 @@ func (c GitConfig) GitCheckout() error {
 	}
 	_, err = r.Storer.Reference(plumbing.NewBranchReferenceName(c.Branch))
 	create := true
-	log.Print(err)
+	log.Error(err)
 	if err == nil {
 		create = false
 	}
@@ -400,7 +400,7 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
-		return "", nil, errors.New("Failed to get commit Iterator :" + err.Error())
+		return "", nil, errors.New("failed to get commit Iterator :" + err.Error())
 	}
 
 	commit, err := commitIter.Next()
@@ -447,12 +447,12 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
-		return "", errors.New("Failed to get latest commit hash :" + err.Error())
+		return "", errors.New("failed to get latest commit hash :" + err.Error())
 	}
 	commit, err := commitIter.Next()
 
 	if err != nil {
-		return "", errors.New("Failed to get latest commit hash:" + err.Error())
+		return "", errors.New("failed to get latest commit hash:" + err.Error())
 	}
 	return commit.Hash.String(), nil
 }
@@ -474,24 +474,24 @@ func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	repositoryExists, err := PathExists(config.LocalPath)
 	if err != nil {
-		return fmt.Errorf("Error while checking repo exists, err: %s", err)
+		return fmt.Errorf("error while checking repo exists, err: %s", err)
 	}
 	if !repositoryExists {
 		err = config.setupGitRepo(GitUserFromContext(ctx))
 	} else {
 		err = config.GitPull()
 		if err != nil {
-			return errors.New("Error syncing DB : " + err.Error())
+			return errors.New("error syncing DB : " + err.Error())
 		}
 	}
 	latestCommit, files, err := config.GetChanges()
 	if err != nil {
-		return errors.New("Error Getting File Changes : " + err.Error())
+		return errors.New("error Getting File Changes : " + err.Error())
 	}
 	if latestCommit == config.LatestCommit {
 		return nil
 	}
-	log.Print(latestCommit, " ", config.LatestCommit, "File Changes: ", files)
+	log.Info(latestCommit, " ", config.LatestCommit, "File Changes: ", files)
 	newWorkflows := false
 	for file := range files {
 		if !strings.HasSuffix(file, ".yaml") {
@@ -500,12 +500,12 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 		// check if file was deleted or not
 		exists, err := PathExists(config.LocalPath + "/" + file)
 		if err != nil {
-			return errors.New("Error checking file in local repo : " + file + " | " + err.Error())
+			return errors.New("error checking file in local repo : " + file + " | " + err.Error())
 		}
 		if !exists {
 			err = deleteWorkflow(file, config)
 			if err != nil {
-				log.Print("Error while deleting workflow db entry : " + file + " | " + err.Error())
+				log.Error("error while deleting workflow db entry : " + file + " | " + err.Error())
 				continue
 			}
 			continue
@@ -513,12 +513,12 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 		// read changes [new additions/updates]
 		data, err := ioutil.ReadFile(config.LocalPath + "/" + file)
 		if err != nil {
-			log.Print("Error reading data from git file : " + file + " | " + err.Error())
+			log.Error("error reading data from git file : " + file + " | " + err.Error())
 			continue
 		}
 		data, err = yaml.YAMLToJSON(data)
 		if err != nil {
-			log.Print("Error unmarshalling data from git file : " + file + " | " + err.Error())
+			log.Error("error unmarshalling data from git file : " + file + " | " + err.Error())
 			continue
 		}
 		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
@@ -527,12 +527,12 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 			continue
 		}
 
-		log.Print("WFID in changed File :", wfID)
+		log.Info("WFID in changed File :", wfID)
 		if wfID == "" {
-			log.Print("New Workflow pushed to git : " + file)
+			log.Info("new Workflow pushed to git : " + file)
 			flag, err := createWorkflow(string(data), file, config)
 			if err != nil {
-				log.Print("Error while creating new workflow db entry : " + file + " | " + err.Error())
+				log.Error("error while creating new workflow db entry : " + file + " | " + err.Error())
 				continue
 			}
 			if flag {
@@ -541,7 +541,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 		} else {
 			err = updateWorkflow(string(data), wfID, file, config)
 			if err != nil {
-				log.Print("Error while creating new workflow db entry : " + file + " | " + err.Error())
+				log.Error("error while creating new workflow db entry : " + file + " | " + err.Error())
 				continue
 			}
 		}
@@ -551,11 +551,11 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	if newWorkflows {
 		latestCommit, err = config.GitCommit(GitUserFromContext(ctx), "Updated New Workflows", nil)
 		if err != nil {
-			return errors.New("Cannot commit workflows to git : " + err.Error())
+			return errors.New("cannot commit workflows to git : " + err.Error())
 		}
 		err = config.GitPush()
 		if err != nil {
-			return errors.New("Cannot push workflows to git : " + err.Error())
+			return errors.New("cannot push workflows to git : " + err.Error())
 		}
 	}
 
@@ -571,7 +571,7 @@ func SyncDBToGit(ctx context.Context, config GitConfig) error {
 	}
 
 	if err != nil {
-		return errors.New("Failed to update git config : " + err.Error())
+		return errors.New("failed to update git config : " + err.Error())
 	}
 	return nil
 }
@@ -582,7 +582,7 @@ func createWorkflow(data, file string, config GitConfig) (bool, error) {
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 	wfName := gjson.Get(data, "metadata.name").String()
 	clusterID := gjson.Get(data, "metadata.labels.cluster_id").String()
-	log.Print("Workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
+	log.Info("workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
 	if wfName == "" || clusterID == "" {
 		return false, nil
 	}
@@ -613,12 +613,12 @@ func createWorkflow(data, file string, config GitConfig) (bool, error) {
 
 	yamlData, err := yaml.JSONToYAML([]byte(input.WorkflowManifest))
 	if err != nil {
-		return false, errors.New("Cannot convert manifest to yaml : " + err.Error())
+		return false, errors.New("cannot convert manifest to yaml : " + err.Error())
 	}
 
 	err = ioutil.WriteFile(workflowPath, yamlData, 0644)
 	if err != nil {
-		return false, errors.New("Cannot write workflow to git : " + err.Error())
+		return false, errors.New("cannot write workflow to git : " + err.Error())
 	}
 
 	return true, nil
@@ -630,9 +630,9 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 	wfName := gjson.Get(data, "metadata.name").String()
 	clusterID := gjson.Get(data, "metadata.labels.cluster_id").String()
-	log.Print("Workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
+	log.Info("workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
 	if wfName == "" || clusterID == "" {
-		log.Print("Cannot Update workflow missing workflow name or cluster id")
+		log.Error("cannot update workflow, missing workflow name or cluster id")
 		return nil
 	}
 
@@ -642,11 +642,11 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 
 	workflow, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
 	if len(workflow) == 0 {
-		return errors.New("No such workflow found : " + wfID)
+		return errors.New("no such workflow found : " + wfID)
 	}
 
 	if clusterID != workflow[0].ClusterID {
-		log.Print("Cannot change cluster id for existing workflow")
+		log.Error("cannot change cluster id for existing workflow")
 		return nil
 	}
 

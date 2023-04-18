@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -92,7 +91,7 @@ func RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClust
 		return &model.RegisterClusterResponse{}, err
 	}
 
-	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", request.ProjectID)
+	log.Info("new Agent Registered with ID: ", clusterID, " project_id: ", request.ProjectID)
 
 	return &model.RegisterClusterResponse{
 		ClusterID:   newCluster.ClusterID,
@@ -130,7 +129,7 @@ func ConfirmClusterRegistration(request model.ClusterIdentity, r store.StateData
 		newCluster := model.Cluster{}
 		copier.Copy(&newCluster, &cluster)
 
-		log.Print("Cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
+		log.Info("cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
 		SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", newCluster, r)
 
 		return &model.ConfirmClusterRegistrationResponse{IsClusterConfirmed: true, NewAccessKey: &newKey, ClusterID: &cluster.ClusterID}, err
@@ -146,7 +145,7 @@ func NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (s
 	}
 
 	if cluster.AccessKey == request.AccessKey && cluster.IsRegistered {
-		log.Print("CLUSTER EVENT : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
+		log.Info("cluster event : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
 
 		newCluster := model.Cluster{}
 		copier.Copy(&newCluster, &cluster)
@@ -155,7 +154,7 @@ func NewClusterEvent(request model.NewClusterEventRequest, r store.StateData) (s
 		return "Event Published", nil
 	}
 
-	return "", errors.New("ERROR WITH CLUSTER EVENT")
+	return "", errors.New("error with cluster event")
 }
 
 // DeleteClusters takes clusterIDs and r parameters, deletes the clusters from the database and sends a request to the subscriber for clean-up
