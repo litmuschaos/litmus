@@ -632,7 +632,7 @@ func updateWorkflow(data, wfID, file string, config GitConfig) error {
 	clusterID := gjson.Get(data, "metadata.labels.cluster_id").String()
 	log.Info("workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
 	if wfName == "" || clusterID == "" {
-		log.Error("cannot Update workflow missing workflow name or cluster id")
+		log.Error("cannot update workflow, missing workflow name or cluster id")
 		return nil
 	}
 
