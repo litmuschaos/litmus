@@ -25,7 +25,6 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			utils.WriteHeaders(&c.Writer, statusCode)
 			c.Writer.Write([]byte(err.Error()))
 		}
-
 		utils.WriteHeaders(&c.Writer, statusCode)
 		c.Writer.Write(response)
 	}

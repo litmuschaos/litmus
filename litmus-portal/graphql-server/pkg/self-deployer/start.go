@@ -2,10 +2,10 @@ package self_deployer
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
@@ -36,7 +36,7 @@ func StartDeployer(clusterService cluster.Service, projectID string) {
 	if selfAgentTolerations != "" {
 		err := json.Unmarshal([]byte(selfAgentTolerations), &tolerations)
 		if err != nil {
-			log.Print("SELF CLUSTER REG FAILED[TOLERATION-PARSING] : ", err)
+			log.Error("self cluster reg failed[toleration-parsing]: ", err)
 			// if toleration parsing fails skip actual manifest apply
 			return
 		}
@@ -62,14 +62,14 @@ func StartDeployer(clusterService cluster.Service, projectID string) {
 
 	resp, err := clusterService.RegisterCluster(clusterInput)
 	if err != nil {
-		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
+		log.Error("self cluster reg failed[db-reg]: ", err)
 		// if cluster registration fails skip actual manifest apply
 		return
 	}
 
 	response, statusCode, err := clusterService.GetManifest(resp.Token)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 	}
 
 	if statusCode == 200 {
@@ -78,7 +78,7 @@ func StartDeployer(clusterService cluster.Service, projectID string) {
 			if len(strings.TrimSpace(manifest)) > 0 {
 				_, err = k8s.ClusterResource(manifest, deployerNamespace)
 				if err != nil {
-					log.Print(err)
+					log.Error(err)
 					failedManifest = failedManifest + manifest
 					isAllManifestInstall = false
 				}
@@ -88,8 +88,8 @@ func StartDeployer(clusterService cluster.Service, projectID string) {
 	}
 
 	if isAllManifestInstall == true {
-		log.Print("ALL MANIFESTS HAS BEEN INSTALLED:")
+		log.Info("all manifests has been installed")
 	} else {
-		log.Print("SOME MANIFESTS HAS NOT BEEN INSTALLED:", failedManifest)
+		log.Error("some manifests has not been installed: ", failedManifest)
 	}
 }

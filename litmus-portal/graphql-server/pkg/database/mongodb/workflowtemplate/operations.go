@@ -3,9 +3,9 @@ package workflowtemplate
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -25,7 +25,7 @@ func NewWorkflowTemplateOperator(mongodbOperator mongodb.MongoOperator) *Operato
 func (w *Operator) CreateWorkflowTemplate(ctx context.Context, template *WorkflowTemplate) error {
 	err := w.operator.Create(ctx, mongodb.WorkflowTemplateCollection, template)
 	if err != nil {
-		log.Print("Error while creating template: ", err)
+		log.Error("error while creating template: ", err)
 	}
 	return nil
 }
@@ -35,13 +35,13 @@ func (w *Operator) GetTemplatesByProjectID(ctx context.Context, projectID string
 	query := bson.D{{"project_id", projectID}, {"is_removed", false}}
 	results, err := w.operator.List(ctx, mongodb.WorkflowTemplateCollection, query)
 	if err != nil {
-		log.Print("Error getting template: ", err)
+		log.Error("error getting template: ", err)
 	}
 	var templates []WorkflowTemplate
 	err = results.All(ctx, &templates)
 
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return []WorkflowTemplate{}, err
 	}
 	return templates, nil

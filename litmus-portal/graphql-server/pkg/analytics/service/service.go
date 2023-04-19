@@ -23,7 +23,7 @@ import (
 	dbSchemaAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -193,17 +193,18 @@ func (a *analyticsService) CreateDashboard(dashboard *model.CreateDBInput) (*mod
 	}
 	err := a.analyticsOperator.InsertPanel(newPanels)
 	if err != nil {
-		return nil, fmt.Errorf("error on inserting panel data", err)
+		return nil, fmt.Errorf("error on inserting panel data: %v\n", err)
 	}
-	logrus.Info("sucessfully inserted prom query into promquery-collection")
+	log.Info("successfully inserted prom query into promquery-collection")
 
 	newDashboard.PanelGroups = newPanelGroups
 
 	err = a.analyticsOperator.InsertDashBoard(newDashboard)
 	if err != nil {
-		return nil, fmt.Errorf("error on inserting panel data", err)
+		return nil, fmt.Errorf("error on inserting panel data: %v\n", err)
 	}
-	logrus.Info("sucessfully inserted dashboard into dashboard-collection")
+
+	log.Info("successfully inserted dashboard into dashboard-collection")
 
 	var newDBResponse = model.ListDashboardResponse{}
 	_ = copier.Copy(&newDBResponse, &newDashboard)
@@ -436,9 +437,9 @@ func (a *analyticsService) UpdateDashBoard(projectID string, dashboard model.Upd
 		if len(panelsToCreate) > 0 {
 			err = a.analyticsOperator.InsertPanel(panelsToCreate)
 			if err != nil {
-				return "error creating new panels", fmt.Errorf("error while inserting panel data", err)
+				return "error creating new panels", fmt.Errorf("error while inserting panel data: %v\n", err)
 			}
-			logrus.Info("successfully inserted prom query into promquery-collection")
+			log.Info("successfully inserted prom query into promquery-collection")
 		}
 
 		if len(panelsToUpdate) > 0 {
@@ -809,7 +810,7 @@ func (a *analyticsService) ListHeatmapData(workflowId string, projectId string, 
 	day := 0
 	week := 1
 
-	// Bucketing the daywise data into weeks and appending it to resulting array
+	// Bucketing the day wise data into weeks and appending it to resulting array
 	for i := 0; i < 53; i += 1 {
 		var x []*model.WorkflowRunsData
 		for j := 0; j < 7; j += 1 {
@@ -1359,7 +1360,7 @@ func (a *analyticsService) GetPrometheusData(promInput *model.PrometheusDataRequ
 						if strings.Contains(errorStr, "already exists") {
 							cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 							if cacheError != nil {
-								logrus.Errorf("Error while caching: %v\n", cacheError)
+								log.Errorf("error while caching: %v\n", cacheError)
 							}
 						}
 					}
@@ -1372,7 +1373,7 @@ func (a *analyticsService) GetPrometheusData(promInput *model.PrometheusDataRequ
 							if strings.Contains(errorStr, "already exists") {
 								cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 								if cacheError != nil {
-									logrus.Errorf("Error while caching: %v\n", cacheError)
+									log.Errorf("error while caching: %v\n", cacheError)
 								}
 							}
 						}
@@ -1422,7 +1423,7 @@ func (a *analyticsService) GetLabelNamesAndValues(promSeriesInput *model.PromSer
 			if strings.Contains(errorStr, "already exists") {
 				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
-					logrus.Errorf("Error while caching: %v\n", cacheError)
+					log.Errorf("error while caching: %v\n", cacheError)
 				}
 			}
 		}
@@ -1457,7 +1458,7 @@ func (a *analyticsService) GetPromSeriesList(promSeriesListInput *model.DsDetail
 			if strings.Contains(errorStr, "already exists") {
 				cacheError = utils.UpdateCache(AnalyticsCache, cacheKey, response)
 				if cacheError != nil {
-					logrus.Errorf("Error while caching: %v\n", cacheError)
+					log.Errorf("error while caching: %v\n", cacheError)
 				}
 			}
 		}
@@ -1668,7 +1669,7 @@ func (a *analyticsService) DashboardViewer(viewID string, dashboardID *string, p
 
 			newPromResponse, queryResponseMap, err := a.GetPrometheusData(newPromInput)
 			if err != nil {
-				logrus.Errorf("Error during data source query of the dashboard view: %v\n", viewID)
+				log.Errorf("error during data source query of the dashboard view: %v\n", viewID)
 			} else {
 				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
 				viewChan <- dashboardResponse
@@ -1689,7 +1690,7 @@ func (a *analyticsService) DashboardViewer(viewID string, dashboardID *string, p
 
 				newPromResponse, queryResponseMap, err := a.GetPrometheusData(newPromInput)
 				if err != nil {
-					logrus.Errorf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+					log.Errorf("error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 					break
 				} else {
 					dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
@@ -1719,14 +1720,14 @@ func (a *analyticsService) DashboardViewer(viewID string, dashboardID *string, p
 
 			newPromResponse, queryResponseMap, err := a.GetPrometheusData(newPromInput)
 			if err != nil {
-				logrus.Errorf("Error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
+				log.Errorf("error during data source query of the dashboard view: %v at: %v \n", viewID, currentTime)
 			} else {
 				dashboardResponse := ops.MapMetricsToDashboard(dashboardQueryMap, newPromResponse, queryResponseMap)
 				viewChan <- dashboardResponse
 			}
 
 		case "invalid":
-			logrus.Errorf("Wrong parameters for the dashboard view: %v\n", viewID)
+			log.Errorf("wrong parameters for the dashboard view: %v\n", viewID)
 		}
 
 		a.UpdateViewedAt(dashboardID, viewID)
@@ -1738,7 +1739,7 @@ func (a *analyticsService) DashboardViewer(viewID string, dashboardID *string, p
 	}
 }
 
-// UpdateViewedAt updates the viewed_at field of a dashboard based on dashboard id and it's view id
+// UpdateViewedAt updates the viewed_at field of a dashboard based on dashboard id, and it's view id
 func (a *analyticsService) UpdateViewedAt(dashboardID *string, viewID string) {
 	if dashboardID != nil && *dashboardID != "" {
 		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
@@ -1749,9 +1750,9 @@ func (a *analyticsService) UpdateViewedAt(dashboardID *string, viewID string) {
 		update := bson.D{{"$set", bson.D{{"viewed_at", timestamp}}}}
 		err := a.analyticsOperator.UpdateDashboard(query, update)
 		if err != nil {
-			logrus.Errorf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
+			log.Errorf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
 		}
-		logrus.Infof("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
+		log.Infof("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
 	}
-	logrus.Infof("dashboard is not saved for the view: %v\n", viewID)
+	log.Infof("dashboard is not saved for the view: %v\n", viewID)
 }

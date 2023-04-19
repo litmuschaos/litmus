@@ -10,7 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	dataStore "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
@@ -35,7 +35,7 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		logrus.Print("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return "", err
 	}
 
@@ -112,14 +112,14 @@ func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.List
 }
 
 func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
-	logrus.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
+	log.Info("new workflow event listener: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
 	dataStore.Store.Mutex.Lock()
 	dataStore.Store.WorkflowEventPublish[projectID] = append(dataStore.Store.WorkflowEventPublish[projectID], workflowEvent)
 	dataStore.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		logrus.Print("CLOSED WORKFLOW LISTENER: ", projectID)
+		log.Info("closed workflow listener: ", projectID)
 	}()
 	return workflowEvent, nil
 }

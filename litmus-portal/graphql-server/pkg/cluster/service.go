@@ -3,7 +3,6 @@ package cluster
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,17 +10,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Service interface {
@@ -117,7 +115,7 @@ func (c *clusterService) RegisterCluster(request model.RegisterClusterRequest) (
 		return &model.RegisterClusterResponse{}, err
 	}
 
-	logrus.Print("New Agent Registered with ID: ", clusterID, " PROJECT_ID: ", request.ProjectID)
+	log.Info("new Agent Registered with ID: ", clusterID, " project_id: ", request.ProjectID)
 
 	return &model.RegisterClusterResponse{
 		ClusterID:   newCluster.ClusterID,
@@ -160,7 +158,7 @@ func (c *clusterService) ConfirmClusterRegistration(request model.ClusterIdentit
 		newCluster := model.Cluster{}
 		copier.Copy(&newCluster, &cluster)
 
-		log.Print("Cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
+		log.Info("cluster Confirmed having ID: ", cluster.ClusterID, ", PID: ", cluster.ProjectID)
 		c.SendClusterEvent("cluster-registration", "New Cluster", "New Cluster registration", newCluster, r)
 
 		return &model.ConfirmClusterRegistrationResponse{IsClusterConfirmed: true, NewAccessKey: &newKey, ClusterID: &cluster.ClusterID}, err
@@ -176,7 +174,7 @@ func (c *clusterService) NewClusterEvent(request model.NewClusterEventRequest, r
 	}
 
 	if cluster.AccessKey == request.AccessKey && cluster.IsRegistered {
-		log.Print("CLUSTER EVENT : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
+		log.Info("cluster event : ID-", cluster.ClusterID, " PID-", cluster.ProjectID)
 
 		newCluster := model.Cluster{}
 		copier.Copy(&newCluster, &cluster)
@@ -185,7 +183,7 @@ func (c *clusterService) NewClusterEvent(request model.NewClusterEventRequest, r
 		return "Event Published", nil
 	}
 
-	return "", errors.New("ERROR WITH CLUSTER EVENT")
+	return "", errors.New("error with cluster event")
 }
 
 // DeleteClusters takes clusterIDs and r parameters, deletes the clusters from the database and sends a request to the subscriber for clean-up
@@ -337,7 +335,7 @@ func (c *clusterService) GetManifestWithClusterID(clusterID string, accessKey st
 	} else if reqCluster.AgentScope == namespaceScope {
 		respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
 	} else {
-		logrus.Error("AGENT_SCOPE env is empty")
+		log.Error("env AGENT_SCOPE is empty")
 	}
 
 	if err != nil {
@@ -427,7 +425,7 @@ func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
 		} else if reqCluster.AgentScope == "namespace" {
 			respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
 		} else {
-			logrus.Error("AGENT_SCOPE env is empty!")
+			log.Error("env AGENT_SCOPE is empty")
 		}
 		if err != nil {
 			return nil, http.StatusInternalServerError, err

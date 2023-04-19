@@ -3,7 +3,6 @@ package projects
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
@@ -14,6 +13,7 @@ import (
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
@@ -60,7 +60,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 		RepoBranch: utils.Config.HubBranchName,
 	}
 
-	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
+	log.Info("cloning https://github.com/litmuschaos/chaos-charts")
 
 	//TODO: Remove goroutine after adding hub optimisations
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(operator)).AddChaosHub(context.Background(), defaultHub)
@@ -78,7 +78,7 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 	})
 
 	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
-		log.Print("Starting self deployer")
+		log.Info("starting self deployer")
 		go selfDeployer.StartDeployer(cluster.NewService(
 			dbSchemaCluster.NewClusterOperator(operator),
 			dbOperationsWorkflow.NewChaosWorkflowOperator(operator),

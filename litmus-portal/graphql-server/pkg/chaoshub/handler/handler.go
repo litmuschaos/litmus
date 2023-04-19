@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -14,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 
 	"gopkg.in/yaml.v2"
 
@@ -73,7 +73,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	var AllChartsDetails []ChaosChart
 	Charts, err := ioutil.ReadDir(ChartsPath)
 	if err != nil {
-		fmt.Println("File reading error", err)
+		log.Error("file reading error", err)
 		return nil, err
 	}
 	for _, Chart := range Charts {
@@ -206,7 +206,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
 	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
 	destDir, err := os.Create(hubpath)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return err
 	}
 	defer destDir.Close()
@@ -214,15 +214,14 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
 	//download the zip file from the provided url
 	download, err := http.Get(hubDetails.RepoURL)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return err
 	}
 
 	defer download.Body.Close()
 
 	if download.StatusCode != http.StatusOK {
-		err = fmt.Errorf("err: ", download.Status)
-		return err
+		return fmt.Errorf("err: ", download.Status)
 	}
 
 	//validate the content length (in bytes)
@@ -234,22 +233,20 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
 	length, err := strconv.Atoi(contentLength)
 	if length > maxSize {
 		_ = os.Remove(hubpath)
-		err = fmt.Errorf("err: File size exceeded the threshold %d", length)
-		return err
+		return fmt.Errorf("err: File size exceeded the threshold %d", length)
 	}
 
 	//validate the content-type
 	contentType := download.Header.Get("content-type")
 	if contentType != "application/zip" {
 		_ = os.Remove(hubpath)
-		err = fmt.Errorf("err: Invalid file type %s", contentType)
-		return err
+		return fmt.Errorf("err: Invalid file type %s", contentType)
 	}
 
 	//copy the downloaded content to the created zip file
 	_, err = io.Copy(destDir, download.Body)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return err
 	}
 
@@ -272,7 +269,7 @@ func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteChaosHub) error
 	extractPath := defaultPath + hubDetails.ProjectID
 	zipReader, err := zip.OpenReader(zipPath)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 		return err
 	}
 	defer zipReader.Close()
@@ -291,20 +288,20 @@ func CopyZipItems(file *zip.File, extractPath string, chartsPath string) error {
 	}
 	err := os.MkdirAll(filepath.Dir(path), os.ModeDir|os.ModePerm)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 	fileReader, err := file.Open()
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 	if !file.FileInfo().IsDir() {
 		fileCopy, err := os.Create(path)
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 		}
 		_, err = io.Copy(fileCopy, fileReader)
 		if err != nil {
-			fmt.Println(err)
+			log.Error(err)
 		}
 		fileCopy.Close()
 	}
@@ -325,11 +322,11 @@ func SyncRemoteRepo(hubData model.CloningInput) error {
 		RepoURL:   hubData.RepoURL,
 		ProjectID: hubData.ProjectID,
 	}
-	log.Println("Downloading remote hub")
+	log.Info("downloading remote hub")
 	err = DownloadRemoteHub(updateHub)
 	if err != nil {
 		return err
 	}
-	log.Println("Remote hub ", hubData.HubName, "downloaded ")
+	log.Info("remote hub ", hubData.HubName, "downloaded ")
 	return nil
 }

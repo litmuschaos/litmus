@@ -10,7 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) CreateDataSource(ctx context.Context, datasource *model.DSInput) (*model.DSResponse, error) {
@@ -164,13 +164,13 @@ func (r *queryResolver) ListPortalDashboardData(ctx context.Context, projectID s
 func (r *subscriptionResolver) ViewDashboard(ctx context.Context, dashboardID *string, promQueries []*model.PromQueryInput, dashboardQueryMap []*model.QueryMapForPanelGroup, dataVariables model.DataVars) (<-chan *model.DashboardPromResponse, error) {
 	dashboardData := make(chan *model.DashboardPromResponse)
 	viewID := uuid.New()
-	logrus.Printf("Dashboard view %v created\n", viewID.String())
+	log.Infof("dashboard view %v created\n", viewID.String())
 	data_store.Store.Mutex.Lock()
 	data_store.Store.DashboardData[viewID.String()] = dashboardData
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		logrus.Printf("Closed dashboard view %v\n", viewID.String())
+		log.Infof("closed dashboard view %v\n", viewID.String())
 		if _, ok := data_store.Store.DashboardData[viewID.String()]; ok {
 			r.analyticsService.UpdateViewedAt(dashboardID, viewID.String())
 

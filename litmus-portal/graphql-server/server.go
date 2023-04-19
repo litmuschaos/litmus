@@ -15,6 +15,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
@@ -33,28 +35,35 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
 func init() {
-	logrus.Infof("Go Version: %s", runtime.Version())
-	logrus.Infof("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH)
-
 	err := envconfig.Process("", &utils.Config)
+
+	// Default log format is text
+	if utils.Config.LitmusChaosServerLogFormat == "json" {
+		log.SetFormatter(&log.JSONFormatter{})
+	}
+	log.SetReportCaller(true)
+
+	log.Infof("go version: %s", runtime.Version())
+	log.Infof("go os/arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	// confirm version env is valid
 	if !strings.Contains(strings.ToLower(utils.Config.Version), cluster.CIVersion) {
 		splitCPVersion := strings.Split(utils.Config.Version, ".")
 		if len(splitCPVersion) != 3 {
-			logrus.Fatal("version doesn't follow semver semantic")
+			log.Fatal("version doesn't follow semver semantic")
 		}
 	}
 
-	logrus.Infof("Version: %s", utils.Config.Version)
+	log.Infof("Version: %s", utils.Config.Version)
 }
 
 func validateVersion(mongodbOperator mongodb.MongoOperator) error {
@@ -83,7 +92,7 @@ func validateVersion(mongodbOperator mongodb.MongoOperator) error {
 func main() {
 	client, err := mongodb.MongoConnection()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	mongoClient := mongodb.Initialize(client)
@@ -91,7 +100,7 @@ func main() {
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
 
 	if err := validateVersion(mongodbOperator); err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC server
@@ -113,15 +122,14 @@ func main() {
 
 	gin.SetMode(gin.ReleaseMode)
 	gin.EnableJsonDecoderDisallowUnknownFields()
-	router := gin.Default()
-
+	router := gin.New()
+	router.Use(rest_handlers.LoggingMiddleware())
+	router.Use(gin.Recovery())
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,
 	}))
-
-	//router.Use(rest_handlers.LoggingMiddleware())
 
 	// routers
 	router.GET("/", rest_handlers.PlaygroundHandler())
@@ -144,10 +152,10 @@ func main() {
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync() // go routine for syncing hubs for all users
 	go gitOpsService.GitOpsSyncHandler(false)                                                        // routine to sync git repos for gitOps
 
-	logrus.Printf("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
+	log.Infof("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
 	err = router.Run(":" + utils.Config.HttpPort)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 }
 
@@ -155,14 +163,19 @@ func main() {
 func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		logrus.Fatal("failed to listen: %w", err)
+		log.Fatal("failed to listen: %w", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	log.ErrorKey = "grpc.error"
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_logrus.UnaryServerInterceptor(log.NewEntry(log.StandardLogger())),
+		)),
+	)
 
 	// Register services
 	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
 
-	logrus.Printf("GRPC server listening on %v", lis.Addr())
-	logrus.Fatal(grpcServer.Serve(lis))
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
 }

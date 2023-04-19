@@ -21,11 +21,13 @@ const (
 	namespaceScope string = "namespace"
 )
 
+// subscriberConfigurations contains the configurations required for the subscriber
 type subscriberConfigurations struct {
 	ServerEndpoint string
 	TLSCert        string
 }
 
+// GetEndpoint returns the endpoint for the subscriber
 func GetEndpoint(agentType string) (string, error) {
 	// returns endpoint from env, if provided by user
 	if utils.Config.ChaosCenterUiEndpoint != "" {

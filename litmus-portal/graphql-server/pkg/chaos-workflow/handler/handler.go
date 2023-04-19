@@ -5,38 +5,32 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
-	"github.com/sirupsen/logrus"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
-	grpc2 "google.golang.org/grpc"
-
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
-
-	"github.com/jinzhu/copier"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbSchemaWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	dbSchemaWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
+	log "github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	grpc2 "google.golang.org/grpc"
 )
 
 // ChaosWorkflowHandler is the handler for chaos workflow
@@ -72,14 +66,14 @@ func NewChaosWorkflowHandler(
 func (c *ChaosWorkflowHandler) CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	request, wfType, err := c.chaosWorkflowService.ProcessWorkflow(request)
 	if err != nil {
-		log.Print("Error processing workflow: ", err)
+		log.Error("error processing workflow: ", err)
 		return nil, err
 	}
 
 	// GitOps Update
 	err = c.gitOpsService.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
-		log.Print("Error performing git push: ", err)
+		log.Error("error performing git push: ", err)
 		return nil, err
 	}
 
@@ -87,13 +81,13 @@ func (c *ChaosWorkflowHandler) CreateChaosWorkflow(ctx context.Context, request 
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return nil, err
 	}
 
 	err = c.chaosWorkflowService.ProcessWorkflowCreation(request, username, wfType, r)
 	if err != nil {
-		log.Print("Error executing workflow: ", err)
+		log.Error("error executing workflow: ", err)
 		return nil, err
 	}
 
@@ -121,15 +115,15 @@ func (c *ChaosWorkflowHandler) DeleteChaosWorkflow(ctx context.Context, projectI
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return false, err
 	}
 
 	if *workflowID != "" && *workflowRunID != "" {
 		for _, workflowRun := range workflow.WorkflowRuns {
 			if workflowRun.WorkflowRunID == *workflowRunID {
-				bool_true := true
-				workflowRun.IsRemoved = &bool_true
+				boolTrue := true
+				workflowRun.IsRemoved = &boolTrue
 			}
 		}
 
@@ -150,7 +144,7 @@ func (c *ChaosWorkflowHandler) DeleteChaosWorkflow(ctx context.Context, projectI
 		// gitOps delete
 		err = c.gitOpsService.DeleteWorkflowFromGit(ctx, &wf)
 		if err != nil {
-			log.Print("Error performing git push: ", err)
+			log.Error("error performing git push: ", err)
 			return false, err
 		}
 
@@ -180,15 +174,15 @@ func (c *ChaosWorkflowHandler) TerminateChaosWorkflow(ctx context.Context, proje
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return false, err
 	}
 
 	if *workflowID != "" && *workflowRunID != "" {
-		for _, workflow_run := range workflow.WorkflowRuns {
-			if workflow_run.WorkflowRunID == *workflowRunID {
-				workflow_run.Completed = true
-				workflow_run.Phase = "Terminated"
+		for _, workflowRun := range workflow.WorkflowRuns {
+			if workflowRun.WorkflowRunID == *workflowRunID {
+				workflowRun.Completed = true
+				workflowRun.Phase = "Terminated"
 			}
 		}
 
@@ -206,7 +200,7 @@ func (c *ChaosWorkflowHandler) TerminateChaosWorkflow(ctx context.Context, proje
 func (c *ChaosWorkflowHandler) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
 	request, wfType, err := c.chaosWorkflowService.ProcessWorkflow(request)
 	if err != nil {
-		log.Print("Error processing workflow update: ", err)
+		log.Error("error processing workflow update: ", err)
 		return nil, err
 	}
 
@@ -214,20 +208,20 @@ func (c *ChaosWorkflowHandler) UpdateChaosWorkflow(ctx context.Context, request 
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		log.Print("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return nil, err
 	}
 
 	// GitOps Update
 	err = c.gitOpsService.UpsertWorkflowToGit(ctx, request)
 	if err != nil {
-		log.Print("Error performing git push: ", err)
+		log.Error("error performing git push: ", err)
 		return nil, err
 	}
 
 	err = c.chaosWorkflowService.ProcessWorkflowUpdate(request, username, wfType, r)
 	if err != nil {
-		log.Print("Error executing workflow update: ", err)
+		log.Error("error executing workflow update: ", err)
 		return nil, err
 	}
 
@@ -740,7 +734,7 @@ func (c *ChaosWorkflowHandler) ChaosWorkflowRun(request model.WorkflowRunRequest
 
 	cluster, err := c.clusterService.VerifyCluster(*request.ClusterID)
 	if err != nil {
-		log.Println("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -748,7 +742,7 @@ func (c *ChaosWorkflowHandler) ChaosWorkflowRun(request model.WorkflowRunRequest
 	if request.ExecutionData != "" {
 		exeData, err = base64.StdEncoding.DecodeString(request.ExecutionData)
 		if err != nil {
-			logrus.Warn("Failed to decode execution data: ", err)
+			log.Warn("Failed to decode execution data: ", err)
 
 			//Required for backward compatibility of subscribers
 			//which are not sending execution data in base64 encoded format
@@ -756,7 +750,7 @@ func (c *ChaosWorkflowHandler) ChaosWorkflowRun(request model.WorkflowRunRequest
 		}
 		err = json.Unmarshal(exeData, &executionData)
 		if err != nil {
-			logrus.Error("Failed to unmarshal execution data: ", err)
+			log.Error("failed to unmarshal execution data: ", err)
 			return "", err
 		}
 	}
@@ -790,7 +784,7 @@ func (c *ChaosWorkflowHandler) ChaosWorkflowRun(request model.WorkflowRunRequest
 	})
 
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -826,7 +820,7 @@ func (c *ChaosWorkflowHandler) ChaosWorkflowRun(request model.WorkflowRunRequest
 func (c *ChaosWorkflowHandler) PodLog(request model.PodLog, r store.StateData) (string, error) {
 	_, err := c.clusterService.VerifyCluster(*request.ClusterID)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 	if reqChan, ok := r.WorkflowLog[request.RequestID]; ok {
@@ -847,7 +841,7 @@ func (c *ChaosWorkflowHandler) PodLog(request model.PodLog, r store.StateData) (
 func (c *ChaosWorkflowHandler) GetLogs(reqID string, pod model.PodLogRequest, r store.StateData) {
 	data, err := json.Marshal(pod)
 	if err != nil {
-		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
+		log.Error("error while marshalling pod details")
 	}
 	reqType := "logs"
 	externalData := string(data)
@@ -882,7 +876,7 @@ func (c *ChaosWorkflowHandler) ReRunChaosWorkFlow(projectID string, workflowID s
 
 	workflows, err := c.chaosWorkflowOperator.GetWorkflows(query)
 	if err != nil {
-		log.Print("Could not get workflow :", err)
+		log.Error("could not get workflow :", err)
 		return "could not get workflow", err
 	}
 	if len(workflows) == 0 {
@@ -898,14 +892,14 @@ func (c *ChaosWorkflowHandler) ReRunChaosWorkFlow(projectID string, workflowID s
 		return "", errors.New(err.Error())
 	}
 	if cluster.IsActive != true {
-		log.Print("Agent not active to re-run the workflow")
-		return "", errors.New("Agent not active to re-run the selected workflow.")
+		log.Error("agent not active to re-run the workflow")
+		return "", errors.New("agent not active to re-run the selected workflow")
 	}
 
 	workflows[0].WorkflowManifest, err = sjson.Set(workflows[0].WorkflowManifest, "metadata.name", workflows[0].WorkflowName+"-"+strconv.FormatInt(time.Now().Unix(), 10))
 	if err != nil {
-		log.Print("Failed to updated workflow name [re-run] :", err)
-		return "", errors.New("Failed to updated workflow name " + err.Error())
+		log.Error("failed to updated workflow name [re-run] :", err)
+		return "", errors.New("failed to updated workflow name " + err.Error())
 	}
 
 	chaosWorkflow.SendWorkflowToSubscriber(&model.ChaosWorkFlowRequest{
@@ -921,7 +915,7 @@ func (c *ChaosWorkflowHandler) ReRunChaosWorkFlow(projectID string, workflowID s
 func (c *ChaosWorkflowHandler) KubeObj(request model.KubeObjectData, r store.StateData) (string, error) {
 	_, err := c.clusterService.VerifyCluster(*request.ClusterID)
 	if err != nil {
-		log.Print("Error", err)
+		log.Error(err)
 		return "", err
 	}
 	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
@@ -940,7 +934,7 @@ func (c *ChaosWorkflowHandler) GetKubeObjData(reqID string, kubeObject model.Kub
 	reqType := kubeObject.ObjectType
 	data, err := json.Marshal(kubeObject)
 	if err != nil {
-		log.Print("ERROR WHILE MARSHALLING POD DETAILS")
+		log.Error("error while marshalling pod details")
 	}
 	externalData := string(data)
 	payload := model.ClusterActionResponse{
@@ -969,7 +963,7 @@ func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, reque
 		return nil, err
 	}
 	if IsExist == true {
-		return nil, errors.New("Template already exists")
+		return nil, errors.New("template already exists")
 	}
 
 	var conn *grpc2.ClientConn
@@ -996,7 +990,7 @@ func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, reque
 
 	err = c.chaosWorkflowTemplateOperator.CreateWorkflowTemplate(ctx, template)
 	if err != nil {
-		log.Print("Error", err)
+		log.Error(err)
 	}
 	return template.GetWorkflowTemplateOutput(), nil
 }
@@ -1033,7 +1027,7 @@ func (c *ChaosWorkflowHandler) DeleteWorkflowTemplate(ctx context.Context, proje
 	update := bson.D{{"$set", bson.D{{"is_removed", true}}}}
 	err := c.chaosWorkflowTemplateOperator.UpdateTemplateManifest(ctx, query, update)
 	if err != nil {
-		log.Print("Err", err)
+		log.Error(err)
 		return false, err
 	}
 	return true, err

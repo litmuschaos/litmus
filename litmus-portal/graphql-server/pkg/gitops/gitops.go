@@ -200,7 +200,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 		return nil, nil
 
 	default:
-		return nil, errors.New("No Matching Auth Type Found")
+		return nil, errors.New("no Matching Auth Type Found")
 	}
 }
 
@@ -210,9 +210,9 @@ func (c GitConfig) UnsafeGitPull() error {
 	if err != nil {
 		return err
 	}
-	log.WithFields(log.Fields{"CleanStatus": cleanStatus}).Info("Executed GitGetStatus()... ")
+	log.WithFields(log.Fields{"cleanStatus": cleanStatus}).Info("executed GitGetStatus()... ")
 	if !cleanStatus {
-		log.Print("Resetting Repo...: " + c.ProjectID)
+		log.Info("resetting Repo...: " + c.ProjectID)
 		return c.handlerForDirtyStatus()
 	}
 	return c.GitPull()
@@ -296,7 +296,7 @@ func (c GitConfig) GitCheckout() error {
 	}
 	_, err = r.Storer.Reference(plumbing.NewBranchReferenceName(c.Branch))
 	create := true
-	log.Print(err)
+	log.Error(err)
 	if err == nil {
 		create = false
 	}
@@ -392,7 +392,7 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
-		return "", nil, errors.New("Failed to get commit Iterator :" + err.Error())
+		return "", nil, errors.New("failed to get commit Iterator :" + err.Error())
 	}
 
 	commit, err := commitIter.Next()
@@ -439,12 +439,12 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
-		return "", errors.New("Failed to get latest commit hash :" + err.Error())
+		return "", errors.New("failed to get latest commit hash :" + err.Error())
 	}
 	commit, err := commitIter.Next()
 
 	if err != nil {
-		return "", errors.New("Failed to get latest commit hash:" + err.Error())
+		return "", errors.New("failed to get latest commit hash:" + err.Error())
 	}
 	return commit.Hash.String(), nil
 }

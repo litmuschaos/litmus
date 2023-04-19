@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -35,7 +35,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client, mongodbOperat
 
 		dbs, err := mongodbOperator.ListDataBase(context.Background(), mclient)
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			dbFlag = "down"
 		}
 
@@ -45,7 +45,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client, mongodbOperat
 
 		cols, err := mongodbOperator.ListCollection(context.Background(), mclient)
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			colFlag = "down"
 		}
 
@@ -56,7 +56,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client, mongodbOperat
 		var status = ReadinessAPIStatus{Collections: colFlag, DataBase: dbFlag}
 		statusByte, err := json.Marshal(status)
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
 		}
 
