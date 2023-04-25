@@ -339,7 +339,7 @@ func ListWorkflowRuns(request model.ListWorkflowRunsRequest) (*model.ListWorkflo
 
 		// Filtering based on date range
 		if request.Filter.DateRange != nil {
-			endDate := string(time.Now().Unix())
+			endDate := strconv.FormatInt(time.Now().Unix(), 10)
 			if request.Filter.DateRange.EndDate != nil {
 				endDate = *request.Filter.DateRange.EndDate
 			}
@@ -969,7 +969,7 @@ func CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (
 	return template.GetWorkflowTemplateOutput(), nil
 }
 
-// ListWorkflowTemplate is used to list all the workflow templates available in the project
+// ListWorkflowManifests is used to list all the workflow templates available in the project
 func ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
 	templates, err := dbSchemaWorkflowTemplate.GetTemplatesByProjectID(ctx, projectID)
 	if err != nil {

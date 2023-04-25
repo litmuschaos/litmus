@@ -230,7 +230,7 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 			name: "cannot find same project_id hub",
 			hub: model.UpdateChaosHubRequest{
 				ProjectID: "1",
-				HubName:   "updated name",
+				HubName:   "updated_name",
 			},
 			isError: true,
 		},
@@ -238,17 +238,17 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 			name: "success : updated hub type is remote",
 			hub: model.UpdateChaosHubRequest{
 				ProjectID: "1",
-				HubName:   "updated name",
+				HubName:   "updated_name",
 				RepoURL:   "https://github.com/litmuschaos/chaos-charts/archive/refs/heads/master.zip",
 			},
 			got:     bson.D{{"project_id", "1"}, {"hub_name", "hub1"}, {"hub_type", "REMOTE"}},
 			isError: false,
 		},
 		{
-			name: "success : updated hub type is not remote",
+			name: "success : updated_name type is not remote",
 			hub: model.UpdateChaosHubRequest{
 				ProjectID:  "1",
-				HubName:    "updated name",
+				HubName:    "updated_name",
 				RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 				RepoBranch: "master",
 				IsPrivate:  false,
@@ -260,12 +260,12 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 			name: "success : updated hub type is not remote, not changed data",
 			hub: model.UpdateChaosHubRequest{
 				ProjectID:  "1",
-				HubName:    "updated name",
+				HubName:    "updated_name",
 				RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 				RepoBranch: "master",
 				IsPrivate:  false,
 			},
-			got:     bson.D{{"project_id", "1"}, {"hub_name", "updated name"}, {"repo_url", "https://github.com/litmuschaos/chaos-charts"}, {"repo_branch", "master"}, {"is_private", false}},
+			got:     bson.D{{"project_id", "1"}, {"hub_name", "updated_name"}, {"repo_url", "https://github.com/litmuschaos/chaos-charts"}, {"repo_branch", "master"}, {"is_private", false}},
 			isError: false,
 		},
 	}

@@ -160,7 +160,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardRespon
 	}
 	err := dbOperationsAnalytics.InsertPanel(newPanels)
 	if err != nil {
-		return nil, fmt.Errorf("error on inserting panel data", err)
+		return nil, fmt.Errorf("error on inserting panel data: " + err.Error())
 	}
 	log.Info("sucessfully inserted prom query into promquery-collection")
 
@@ -168,7 +168,7 @@ func CreateDashboard(dashboard *model.CreateDBInput) (*model.ListDashboardRespon
 
 	err = dbOperationsAnalytics.InsertDashBoard(newDashboard)
 	if err != nil {
-		return nil, fmt.Errorf("error on inserting panel data", err)
+		return nil, fmt.Errorf("error on inserting panel data: " + err.Error())
 	}
 	log.Info("sucessfully inserted dashboard into dashboard-collection")
 
@@ -403,7 +403,7 @@ func UpdateDashBoard(projectID string, dashboard model.UpdateDBInput, chaosQuery
 		if len(panelsToCreate) > 0 {
 			err = dbOperationsAnalytics.InsertPanel(panelsToCreate)
 			if err != nil {
-				return "error creating new panels", fmt.Errorf("error while inserting panel data", err)
+				return "error creating new panels", fmt.Errorf("error while inserting panel data: " + err.Error())
 			}
 			log.Info("successfully inserted prom query into promquery-collection")
 		}

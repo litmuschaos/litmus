@@ -221,7 +221,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
 	defer download.Body.Close()
 
 	if download.StatusCode != http.StatusOK {
-		return fmt.Errorf("err: ", download.Status)
+		return fmt.Errorf("err: " + download.Status)
 	}
 
 	//validate the content length (in bytes)
