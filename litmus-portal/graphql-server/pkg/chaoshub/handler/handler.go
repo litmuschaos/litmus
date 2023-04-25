@@ -118,8 +118,7 @@ func ReadExperimentFile(path string) (ChaosChart, error) {
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
-
-	if yaml.Unmarshal(experimentFile, &experiment) != nil {
+	if err = yaml.Unmarshal(experimentFile, &experiment); err != nil {
 		return experiment, err
 	}
 	return experiment, nil
@@ -136,22 +135,22 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 	return s, nil
 }
 
-// GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
-func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, error) {
-	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
-	var expNames []string
-	files, err := ioutil.ReadDir(ExperimentsPath)
-	if err != nil {
-		return nil, err
-	}
-	for _, file := range files {
-		isExist, _ := IsFileExisting(ExperimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
-		if isExist {
-			expNames = append(expNames, file.Name())
-		}
-	}
-	return expNames, nil
-}
+//// GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
+//func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, error) {
+//	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
+//	var expNames []string
+//	files, err := ioutil.ReadDir(ExperimentsPath)
+//	if err != nil {
+//		return nil, err
+//	}
+//	for _, file := range files {
+//		isExist, _ := IsFileExisting(ExperimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
+//		if isExist {
+//			expNames = append(expNames, file.Name())
+//		}
+//	}
+//	return expNames, nil
+//}
 
 // ListPredefinedWorkflowDetails reads the workflow directory for all the predefined experiments
 // and returns the csv, workflow manifest and workflow name

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
-	chaoshubops "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
+	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
@@ -33,8 +33,8 @@ func init() {
 }
 
 // clearCloneRepository removes the cloned repository
-func clearCloneRepository(projectID, hubName string) {
-	tempPath := chaoshubops.GetClonePath(chaoshubops.GitConfigConstruct(model.CloningInput{ProjectID: projectID}))
+func clearCloneRepository(projectID string) {
+	tempPath := chaosHubOps.GetClonePath(chaosHubOps.GitConfigConstruct(model.CloningInput{ProjectID: projectID}))
 	err := os.RemoveAll(tempPath)
 	if err != nil {
 		panic(fmt.Sprintf("failed to remove temp path: %v", err))
@@ -70,7 +70,7 @@ func TestChaosHubService_AddChaosHub(t *testing.T) {
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 
 		// when
-		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 		target, err := mockService.AddChaosHub(context.Background(), newHub)
 
 		// then
@@ -124,7 +124,7 @@ func TestChaosHubService_AddRemoteChaosHub(t *testing.T) {
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 
 		// when
-		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 		_, err := mockService.AddRemoteChaosHub(context.Background(), newHub)
 
 		// then
@@ -141,7 +141,7 @@ func TestChaosHubService_AddRemoteChaosHub(t *testing.T) {
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 
 		// when
-		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 		target, err := mockService.AddRemoteChaosHub(context.Background(), newHub)
 
 		// then
@@ -179,7 +179,7 @@ func TestChaosHubService_SaveChaosHub(t *testing.T) {
 		mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 
 		// when
-		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 		target, err := mockService.SaveChaosHub(context.Background(), newHub)
 
 		// then
@@ -289,7 +289,7 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 				mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 
 				// when
-				t.Cleanup(func() { clearCloneRepository(tc.hub.ProjectID, tc.hub.HubName) })
+				t.Cleanup(func() { clearCloneRepository(tc.hub.ProjectID) })
 				target, err := mockService.UpdateChaosHub(context.Background(), tc.hub)
 
 				// then
@@ -354,7 +354,7 @@ func TestChaosHubService_GetData(t *testing.T) {
 	mongoOperator.On("Create", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(nil).Once()
 
 	// when
-	t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+	t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 	target, err := mockService.AddChaosHub(context.Background(), newHub)
 
 	// then
@@ -662,7 +662,7 @@ func TestChaosHubService_SyncHub(t *testing.T) {
 		mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 
 		// when
-		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 		_, err := mockService.SyncHub(context.Background(), newHub.ID, newHub.ProjectID)
 
 		// then
@@ -677,7 +677,7 @@ func TestChaosHubService_SyncHub(t *testing.T) {
 		mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 
 		// when
-		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID, newHub.HubName) })
+		t.Cleanup(func() { clearCloneRepository(newHub.ProjectID) })
 		_, err := mockService.SyncHub(context.Background(), newHub.ID, newHub.ProjectID)
 
 		// then
