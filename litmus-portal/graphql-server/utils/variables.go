@@ -19,6 +19,7 @@ type Configurations struct {
 	LitmusChaosOperatorImage    string `required:"true" split_words:"true"`
 	LitmusChaosRunnerImage      string `required:"true" split_words:"true"`
 	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
+	LitmusChaosServerLogFormat  string `split_words:"true" default:"text"`
 	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
 	HubBranchName               string `required:"true" split_words:"true"`
 	WorkflowHelperImageVersion  string `required:"true" split_words:"true"`

@@ -18,7 +18,7 @@ import (
 	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
 	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbOperationsCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -103,7 +103,7 @@ func (r *queryResolver) GetManifest(ctx context.Context, projectID string, clust
 }
 
 func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID string) (<-chan *model.ClusterEventResponse, error) {
-	logrus.Print("NEW EVENT ", projectID)
+	log.Info("new cluster event ", projectID)
 	clusterEvent := make(chan *model.ClusterEventResponse, 1)
 
 	data_store.Store.Mutex.Lock()
@@ -118,17 +118,17 @@ func (r *subscriptionResolver) GetClusterEvents(ctx context.Context, projectID s
 }
 
 func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo model.ClusterIdentity) (<-chan *model.ClusterActionResponse, error) {
-	logrus.Print("NEW CLUSTER CONNECT: ", clusterInfo.ClusterID)
+	log.Info("new cluster connect: ", clusterInfo.ClusterID)
 	clusterAction := make(chan *model.ClusterActionResponse, 1)
 	verifiedCluster, err := cluster.VerifyCluster(clusterInfo)
 	if err != nil {
-		logrus.Print("VALIDATION FAILED: ", clusterInfo.ClusterID)
+		log.Error("validation failed: ", clusterInfo.ClusterID)
 		return clusterAction, err
 	}
 	data_store.Store.Mutex.Lock()
 	if _, ok := data_store.Store.ConnectedCluster[clusterInfo.ClusterID]; ok {
 		data_store.Store.Mutex.Unlock()
-		return clusterAction, errors.New("CLUSTER ALREADY CONNECTED")
+		return clusterAction, errors.New("cluster already connected")
 	}
 	data_store.Store.ConnectedCluster[clusterInfo.ClusterID] = clusterAction
 	data_store.Store.Mutex.Unlock()
@@ -149,7 +149,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 
 		err = dbOperationsCluster.UpdateCluster(query, update)
 		if err != nil {
-			logrus.Print("Error", err)
+			log.Error(err)
 		}
 	}()
 
@@ -170,7 +170,7 @@ func (r *subscriptionResolver) ClusterConnect(ctx context.Context, clusterInfo m
 }
 
 func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodLogRequest) (<-chan *model.PodLogResponse, error) {
-	logrus.Print("NEW LOG REQUEST: ", request.ClusterID, request.PodName)
+	log.Info("new log request: ", request.ClusterID, request.PodName)
 	workflowLog := make(chan *model.PodLogResponse, 1)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
@@ -178,7 +178,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodL
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		logrus.Print("CLOSED LOG LISTENER: ", request.ClusterID, request.PodName)
+		log.Info("closed log listener: ", request.ClusterID, request.PodName)
 		delete(data_store.Store.WorkflowLog, reqID.String())
 	}()
 	go wfHandler.GetLogs(reqID.String(), request, *data_store.Store)
@@ -186,7 +186,7 @@ func (r *subscriptionResolver) GetPodLog(ctx context.Context, request model.PodL
 }
 
 func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.KubeObjectRequest) (<-chan *model.KubeObjectResponse, error) {
-	logrus.Print("NEW KUBEOBJECT REQUEST", request.ClusterID)
+	log.Info("new KubeObj request", request.ClusterID)
 	kubeObjData := make(chan *model.KubeObjectResponse)
 	reqID := uuid.New()
 	data_store.Store.Mutex.Lock()
@@ -194,7 +194,7 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 	data_store.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		logrus.Println("Closed KubeObj Listener")
+		log.Info("closed KubeObj Listener")
 		delete(data_store.Store.KubeObjectData, reqID.String())
 	}()
 	go wfHandler.GetKubeObjData(reqID.String(), request, *data_store.Store)

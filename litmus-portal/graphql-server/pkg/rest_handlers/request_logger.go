@@ -1,49 +1,32 @@
 package rest_handlers
 
 import (
-	"net/http"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
-type responseWriter struct {
-	http.ResponseWriter
-	status      int
-	wroteHeader bool
-}
+// LoggingMiddleware is a middleware that logs the request as it goes in and the response as it goes out.
+func LoggingMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		startTime := time.Now() // Starting time request
+		ctx.Next()              // Processing request
+		endTime := time.Now()   // End Time request
 
-func wrapResponseWriter(w http.ResponseWriter) *responseWriter {
-	return &responseWriter{ResponseWriter: w}
-}
+		clientIP := ctx.ClientIP()
+		escapedClientIP := strings.Replace(clientIP, "\n", "", -1)
+		escapedClientIP = strings.Replace(escapedClientIP, "\r", "", -1)
 
-func (rw *responseWriter) Status() int {
-	return rw.status
-}
+		log.WithFields(log.Fields{
+			"method":   ctx.Request.Method,     // request method
+			"uri":      ctx.Request.RequestURI, // request uri
+			"status":   ctx.Writer.Status(),    //status code
+			"latency":  endTime.Sub(startTime), // execution time
+			"clientIP": escapedClientIP,        // request ip
+		}).Info("http request")
 
-func (rw *responseWriter) WriteHeader(code int) {
-	if rw.wroteHeader {
-		return
+		ctx.Next()
 	}
-
-	rw.status = code
-	rw.ResponseWriter.WriteHeader(code)
-	rw.wroteHeader = true
-
-	return
 }
-
-// not used now
-//func LoggingMiddleware() func(http.Handler) http.Handler {
-//	return func(next http.Handler) http.Handler {
-//		fn := func(w http.ResponseWriter, r *http.Request) {
-//			start := time.Now()
-//			wrapped := wrapResponseWriter(w)
-//			next.ServeHTTP(wrapped, r)
-//
-//			escapedURL := strings.Replace(r.URL.EscapedPath(), "\n", "", -1)
-//			escapedURL = strings.Replace(escapedURL, "\r", "", -1)
-//
-//			logrus.Infof("status: %v, method: %v, path: %v, duration: %v", wrapped.status, r.Method, r.URL.EscapedPath(), time.Since(start))
-//		}
-//
-//		return http.HandlerFunc(fn)
-//	}
-//}
