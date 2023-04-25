@@ -62,6 +62,7 @@ jobs:
         run: |
           cd litmus-portal
           make backend-services-checks
+          make unit-tests
 
   frontend-checks:
     runs-on: ubuntu-latest
