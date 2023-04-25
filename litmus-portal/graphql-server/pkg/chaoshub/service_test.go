@@ -34,7 +34,7 @@ func init() {
 
 // clearCloneRepository removes the cloned repository
 func clearCloneRepository(projectID, hubName string) {
-	tempPath := chaoshubops.GetClonePath(chaoshubops.GitConfigConstruct(model.CloningInput{ProjectID: projectID, HubName: hubName}))
+	tempPath := chaoshubops.GetClonePath(chaoshubops.GitConfigConstruct(model.CloningInput{ProjectID: projectID}))
 	err := os.RemoveAll(tempPath)
 	if err != nil {
 		panic(fmt.Sprintf("failed to remove temp path: %v", err))
@@ -283,6 +283,7 @@ func TestChaosHubService_UpdateChaosHub(t *testing.T) {
 				// then
 				assert.Error(t, err)
 			} else {
+				// given
 				singleResult := mongo.NewSingleResultFromDocument(tc.got, nil, nil)
 				mongoOperator.On("Get", mock.Anything, mongodb.ChaosHubCollection, mock.Anything).Return(singleResult, nil).Once()
 				mongoOperator.On("Update", mock.Anything, mongodb.ChaosHubCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()

@@ -202,8 +202,13 @@ func IsFileExisting(path string) (bool, error) {
 
 // DownloadRemoteHub is used to download a remote hub from the url provided by the user
 func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
+	dirPath := defaultPath + hubDetails.ProjectID
+	err := os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		return err
+	}
 	//create the destination directory where the hub will be downloaded
-	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
+	hubpath := dirPath + "/" + hubDetails.HubName + ".zip"
 	destDir, err := os.Create(hubpath)
 	if err != nil {
 		log.Error(err)
