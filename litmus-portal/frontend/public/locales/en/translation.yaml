@@ -762,6 +762,9 @@ settings:
           viewerRole:
             label: Viewer
             body: Can view the project
+          ownerRole:
+            label: Owner
+            body: Can own the project
       acceptedInvitation:
         viewProject: View Project
         role: Role

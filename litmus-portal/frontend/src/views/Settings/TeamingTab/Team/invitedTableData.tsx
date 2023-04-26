@@ -141,6 +141,32 @@ const InvitedTableData: React.FC<TableDataProps> = ({
           >
             <MenuItem
               onClick={() => {
+                setRole(Role.OWNER);
+                setAnchorEl(null);
+              }}
+              className={classes.menuOpt}
+            >
+              <div className={classes.menuDiv}>
+                <div>
+                  <Typography className={classes.menuHeader}>
+                    <strong>
+                      {t(
+                        'settings.teamingTab.invitation.sentInvitation.menuItem.ownerRole.label'
+                      )}
+                    </strong>
+                  </Typography>
+                </div>
+                <div>
+                  <Typography className={classes.menuDesc}>
+                    {t(
+                      'settings.teamingTab.invitation.sentInvitation.menuItem.ownerRole.body'
+                    )}
+                  </Typography>
+                </div>
+              </div>
+            </MenuItem>            
+            <MenuItem
+              onClick={() => {
                 setRole(Role.EDITOR);
                 setAnchorEl(null);
               }}
