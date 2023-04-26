@@ -14,9 +14,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type Service interface {
+	GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error)
+}
+
+type usageService struct {
+	clusterOperator *dbOperationsProject.Operator
+}
+
+// NewService returns a new instance of usage service
+func NewService(clusterOperator *dbOperationsProject.Operator) Service {
+	return &usageService{
+		clusterOperator: clusterOperator,
+	}
+}
+
 // GetUsageData returns the portal's usage overview
-func GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error) {
-	data, err := usageHelper(ctx, query)
+func (u *usageService) GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.UsageDataResponse, error) {
+	data, err := u.usageHelper(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -43,8 +58,7 @@ func GetUsageData(ctx context.Context, query model.UsageDataRequest) (*model.Usa
 	}, nil
 }
 
-func usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateData, error) {
-
+func (u *usageService) usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateData, error) {
 	pagination := bson.A{}
 	project := bson.A{}
 	startTime, err := strconv.Atoi(query.DateRange.StartDate)
@@ -251,7 +265,7 @@ func usageHelper(ctx context.Context, query model.UsageDataRequest) (AggregateDa
 							"expRuns":   "$expRuns",
 						}, "_id": 0}}}}}},
 	}
-	cursor, err := dbOperationsProject.GetAggregateProjects(ctx, pipeline, nil)
+	cursor, err := u.clusterOperator.GetAggregateProjects(ctx, pipeline, nil)
 	if err != nil {
 		return AggregateData{}, err
 	}

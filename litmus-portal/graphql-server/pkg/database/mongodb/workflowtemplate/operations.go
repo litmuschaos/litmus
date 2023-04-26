@@ -9,9 +9,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// Operator is the model for cluster collection
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewWorkflowTemplateOperator returns a new instance of Operator
+func NewWorkflowTemplateOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // CreateWorkflowTemplate add the template details in the database
-func CreateWorkflowTemplate(ctx context.Context, template *WorkflowTemplate) error {
-	err := mongodb.Operator.Create(ctx, mongodb.WorkflowTemplateCollection, template)
+func (w *Operator) CreateWorkflowTemplate(ctx context.Context, template *WorkflowTemplate) error {
+	err := w.operator.Create(ctx, mongodb.WorkflowTemplateCollection, template)
 	if err != nil {
 		log.Error("error while creating template: ", err)
 	}
@@ -19,9 +31,9 @@ func CreateWorkflowTemplate(ctx context.Context, template *WorkflowTemplate) err
 }
 
 // GetTemplatesByProjectID is used to query the list of templates present in the project
-func GetTemplatesByProjectID(ctx context.Context, projectID string) ([]WorkflowTemplate, error) {
+func (w *Operator) GetTemplatesByProjectID(ctx context.Context, projectID string) ([]WorkflowTemplate, error) {
 	query := bson.D{{"project_id", projectID}, {"is_removed", false}}
-	results, err := mongodb.Operator.List(ctx, mongodb.WorkflowTemplateCollection, query)
+	results, err := w.operator.List(ctx, mongodb.WorkflowTemplateCollection, query)
 	if err != nil {
 		log.Error("error getting template: ", err)
 	}
@@ -36,9 +48,9 @@ func GetTemplatesByProjectID(ctx context.Context, projectID string) ([]WorkflowT
 }
 
 // GetTemplateByTemplateID is used to query a selected template using template id
-func GetTemplateByTemplateID(ctx context.Context, templateID string) (WorkflowTemplate, error) {
+func (w *Operator) GetTemplateByTemplateID(ctx context.Context, templateID string) (WorkflowTemplate, error) {
 	var template WorkflowTemplate
-	result, err := mongodb.Operator.Get(ctx, mongodb.WorkflowTemplateCollection, bson.D{{"template_id", templateID}})
+	result, err := w.operator.Get(ctx, mongodb.WorkflowTemplateCollection, bson.D{{"template_id", templateID}})
 	err = result.Decode(&template)
 	if err != nil {
 		return WorkflowTemplate{}, err
@@ -47,8 +59,8 @@ func GetTemplateByTemplateID(ctx context.Context, templateID string) (WorkflowTe
 }
 
 // UpdateTemplateManifest is used to update the template details
-func UpdateTemplateManifest(ctx context.Context, query bson.D, update bson.D) error {
-	updateResult, err := mongodb.Operator.Update(ctx, mongodb.WorkflowTemplateCollection, query, update)
+func (w *Operator) UpdateTemplateManifest(ctx context.Context, query bson.D, update bson.D) error {
+	updateResult, err := w.operator.Update(ctx, mongodb.WorkflowTemplateCollection, query, update)
 	if err != nil {
 		return err
 	}

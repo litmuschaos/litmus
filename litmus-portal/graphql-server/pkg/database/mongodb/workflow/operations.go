@@ -15,11 +15,23 @@ var (
 	backgroundContext = context.Background()
 )
 
+// Operator is the model for cluster collection
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewChaosWorkflowOperator returns a new instance of Operator
+func NewChaosWorkflowOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // UpdateWorkflowRun takes workflowID and wfRun parameters to update the workflow run details in the database
-func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
+func (c *Operator) UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	count, err := mongodb.Operator.CountDocuments(ctx, mongodb.WorkflowCollection, bson.D{
+	count, err := c.operator.CountDocuments(ctx, mongodb.WorkflowCollection, bson.D{
 		{"workflow_id", workflowID},
 		{"workflow_runs.workflow_run_id", wfRun.WorkflowRunID},
 	})
@@ -35,7 +47,7 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 				{"workflow_runs", wfRun},
 			}}}
 
-		result, err := mongodb.Operator.Update(ctx, mongodb.WorkflowCollection, query, update)
+		result, err := c.operator.Update(ctx, mongodb.WorkflowCollection, query, update)
 		if err != nil {
 			return 0, err
 		}
@@ -67,7 +79,7 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 				{"workflow_runs.$.isRemoved", wfRun.IsRemoved},
 			}}}
 
-		result, err := mongodb.Operator.Update(ctx, mongodb.WorkflowCollection, query, update)
+		result, err := c.operator.Update(ctx, mongodb.WorkflowCollection, query, update)
 		if err != nil {
 			return 0, err
 		}
@@ -78,10 +90,10 @@ func UpdateWorkflowRun(workflowID string, wfRun ChaosWorkflowRun) (int, error) {
 }
 
 // GetWorkflows takes a query parameter to retrieve the workflow details from the database
-func GetWorkflows(query bson.D) ([]ChaosWorkFlowRequest, error) {
+func (c *Operator) GetWorkflows(query bson.D) ([]ChaosWorkFlowRequest, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	results, err := mongodb.Operator.List(ctx, mongodb.WorkflowCollection, query)
+	results, err := c.operator.List(ctx, mongodb.WorkflowCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -96,12 +108,12 @@ func GetWorkflows(query bson.D) ([]ChaosWorkFlowRequest, error) {
 }
 
 // GetWorkflow takes a query parameter to retrieve the workflow details from the database
-func GetWorkflow(query bson.D) (ChaosWorkFlowRequest, error) {
+func (c *Operator) GetWorkflow(query bson.D) (ChaosWorkFlowRequest, error) {
 
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
 	var workflow ChaosWorkFlowRequest
-	results, err := mongodb.Operator.Get(ctx, mongodb.WorkflowCollection, query)
+	results, err := c.operator.Get(ctx, mongodb.WorkflowCollection, query)
 	if err != nil {
 		return ChaosWorkFlowRequest{}, err
 	}
@@ -115,10 +127,10 @@ func GetWorkflow(query bson.D) (ChaosWorkFlowRequest, error) {
 }
 
 // GetAggregateWorkflows takes a mongo pipeline to retrieve the workflow details from the database
-func GetAggregateWorkflows(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+func (c *Operator) GetAggregateWorkflows(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.WorkflowCollection, pipeline)
+	results, err := c.operator.Aggregate(ctx, mongodb.WorkflowCollection, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -127,11 +139,11 @@ func GetAggregateWorkflows(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 }
 
 // GetWorkflowsByClusterID takes a clusterID parameter to retrieve the workflow details from the database
-func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowRequest, error) {
+func (c *Operator) GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowRequest, error) {
 	query := bson.D{{"cluster_id", clusterID}}
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	results, err := mongodb.Operator.List(ctx, mongodb.WorkflowCollection, query)
+	results, err := c.operator.List(ctx, mongodb.WorkflowCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -145,9 +157,9 @@ func GetWorkflowsByClusterID(clusterID string) ([]ChaosWorkFlowRequest, error) {
 }
 
 // InsertChaosWorkflow takes details of a workflow and inserts into the database collection
-func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowRequest) error {
+func (c *Operator) InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowRequest) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	err := mongodb.Operator.Create(ctx, mongodb.WorkflowCollection, chaosWorkflow)
+	err := c.operator.Create(ctx, mongodb.WorkflowCollection, chaosWorkflow)
 	if err != nil {
 		return err
 	}
@@ -156,10 +168,10 @@ func InsertChaosWorkflow(chaosWorkflow ChaosWorkFlowRequest) error {
 }
 
 // UpdateChaosWorkflow takes query and update parameters to update the workflow details in the database
-func UpdateChaosWorkflow(query bson.D, update bson.D) error {
+func (c *Operator) UpdateChaosWorkflow(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := mongodb.Operator.Update(ctx, mongodb.WorkflowCollection, query, update)
+	_, err := c.operator.Update(ctx, mongodb.WorkflowCollection, query, update)
 	if err != nil {
 		return err
 	}

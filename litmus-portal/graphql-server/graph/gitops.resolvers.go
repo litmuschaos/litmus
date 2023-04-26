@@ -8,11 +8,16 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	"github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) GitopsNotifier(ctx context.Context, clusterInfo model.ClusterIdentity, workflowID string) (string, error) {
-	return gitOpsHandler.GitOpsNotificationHandler(ctx, clusterInfo, workflowID)
+	cluster, err := r.clusterService.VerifyCluster(clusterInfo)
+	if err != nil {
+		logrus.Error("Validation failed : ", clusterInfo.ClusterID)
+		return "Validation failed", err
+	}
+	return r.gitOpsService.GitOpsNotificationHandler(ctx, cluster, workflowID)
 }
 
 func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
@@ -22,7 +27,7 @@ func (r *mutationResolver) EnableGitOps(ctx context.Context, config model.GitCon
 	if err != nil {
 		return false, err
 	}
-	return gitOpsHandler.EnableGitOpsHandler(ctx, config)
+	return r.gitOpsService.EnableGitOpsHandler(ctx, config)
 }
 
 func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) (bool, error) {
@@ -32,7 +37,7 @@ func (r *mutationResolver) DisableGitOps(ctx context.Context, projectID string) 
 	if err != nil {
 		return false, err
 	}
-	return gitOpsHandler.DisableGitOpsHandler(ctx, projectID)
+	return r.gitOpsService.DisableGitOpsHandler(ctx, projectID)
 }
 
 func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitConfig) (bool, error) {
@@ -42,7 +47,7 @@ func (r *mutationResolver) UpdateGitOps(ctx context.Context, config model.GitCon
 	if err != nil {
 		return false, err
 	}
-	return gitOpsHandler.UpdateGitOpsDetailsHandler(ctx, config)
+	return r.gitOpsService.UpdateGitOpsDetailsHandler(ctx, config)
 }
 
 func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
@@ -53,5 +58,5 @@ func (r *queryResolver) GetGitOpsDetails(ctx context.Context, projectID string) 
 		return nil, err
 	}
 
-	return gitOpsHandler.GetGitOpsDetails(ctx, projectID)
+	return r.gitOpsService.GetGitOpsDetails(ctx, projectID)
 }

@@ -21,11 +21,16 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
+	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
-	gitOpsHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops/handler"
+	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
@@ -61,14 +66,18 @@ func init() {
 	log.Infof("Version: %s", utils.Config.Version)
 }
 
-func validateVersion() error {
+func validateVersion(mongodbOperator mongodb.MongoOperator) error {
 	currentVersion := utils.Config.Version
-	dbVersion, err := config.GetConfig(context.Background(), "version")
+	dbVersion, err := config.GetConfig(context.Background(), "version", mongodbOperator)
 	if err != nil {
 		return fmt.Errorf("failed to get version from db, error = %w", err)
 	}
 	if dbVersion == nil {
-		err := config.CreateConfig(context.Background(), &config.ServerConfig{Key: "version", Value: currentVersion})
+		err := config.CreateConfig(
+			context.Background(),
+			&config.ServerConfig{Key: "version", Value: currentVersion},
+			mongodbOperator,
+		)
 		if err != nil {
 			return fmt.Errorf("failed to insert current version in db, error = %w", err)
 		}
@@ -89,10 +98,8 @@ func main() {
 	mongoClient := mongodb.Initialize(client)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	// TODO: remove this when all packages shift to interface pattern
-	mongodb.Operator = mongodbOperator
 
-	if err := validateVersion(); err != nil {
+	if err := validateVersion(mongodbOperator); err != nil {
 		log.Fatal(err)
 	}
 
@@ -127,16 +134,23 @@ func main() {
 	// routers
 	router.GET("/", rest_handlers.PlaygroundHandler())
 	router.Any("/query", authorization.Middleware(srv))
-	router.GET("/readiness", rest_handlers.ReadinessHandler(client))
+	router.GET("/readiness", rest_handlers.ReadinessHandler(srv, client, mongodbOperator))
 	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil))
-	router.Any("/file/:key", rest_handlers.FileHandler)
+	router.Any("/file/:key", rest_handlers.FileHandler(mongodbOperator))
 	router.GET("/status", rest_handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", rest_handlers.WorkflowHelperImageVersionHandler)
 
-	gitOpsHandler.GitOpsSyncHandler(true) // sync all previous existing repos before start
+	gitOpsService := gitops.NewService(
+		dbOperationsGitOps.NewGitOpsOperator(mongodbOperator),
+		chaosWorkflow.NewService(
+			dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
+			dbSchemaCluster.NewClusterOperator(mongodbOperator),
+		),
+	)
+	gitOpsService.GitOpsSyncHandler(true) // sync all previous existing repos before start
 
-	go chaoshub.NewService(mongodbOperator).RecurringHubSync() // go routine for syncing hubs for all users
-	go gitOpsHandler.GitOpsSyncHandler(false)                  // routine to sync git repos for gitOps
+	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync() // go routine for syncing hubs for all users
+	go gitOpsService.GitOpsSyncHandler(false)                                                        // routine to sync git repos for gitOps
 
 	log.Infof("connect to http://localhost:%s/ for GraphQL playground", utils.Config.HttpPort)
 	err = router.Run(":" + utils.Config.HttpPort)

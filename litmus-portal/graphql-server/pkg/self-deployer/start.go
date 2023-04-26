@@ -8,15 +8,13 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
-func StartDeployer(projectID string) {
+func StartDeployer(clusterService cluster.Service, projectID string) {
 	var (
 		isAllManifestInstall  = true
 		deployerNamespace     = utils.Config.AgentNamespace
@@ -62,14 +60,14 @@ func StartDeployer(projectID string) {
 		clusterInput.SkipSsl = &skip
 	}
 
-	resp, err := clusterHandler.RegisterCluster(clusterInput)
+	resp, err := clusterService.RegisterCluster(clusterInput)
 	if err != nil {
 		log.Error("self cluster reg failed[db-reg]: ", err)
 		// if cluster registration fails skip actual manifest apply
 		return
 	}
 
-	response, statusCode, err := cluster.GetManifest(resp.Token)
+	response, statusCode, err := clusterService.GetManifest(resp.Token)
 	if err != nil {
 		log.Error(err)
 	}
