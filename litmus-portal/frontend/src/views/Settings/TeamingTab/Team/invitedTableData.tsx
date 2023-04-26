@@ -164,7 +164,7 @@ const InvitedTableData: React.FC<TableDataProps> = ({
                   </Typography>
                 </div>
               </div>
-            </MenuItem>            
+            </MenuItem>
             <MenuItem
               onClick={() => {
                 setRole(Role.EDITOR);
