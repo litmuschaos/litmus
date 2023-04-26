@@ -8,12 +8,10 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/ghodss/yaml"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -22,17 +20,11 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/golang-jwt/jwt"
 	log "github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
-	"go.mongodb.org/mongo-driver/bson"
 	ssh2 "golang.org/x/crypto/ssh"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/ops"
-	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
 	dbSchemaGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
-	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 )
 
 // GitConfig structure for the GitOps settings
@@ -208,7 +200,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 		return nil, nil
 
 	default:
-		return nil, errors.New("No Matching Auth Type Found")
+		return nil, errors.New("no Matching Auth Type Found")
 	}
 }
 
@@ -468,218 +460,4 @@ func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 		return "", err
 	}
 	return commitHash, err
-}
-
-// SyncDBToGit syncs the DB with the GitRepo for the project
-func SyncDBToGit(ctx context.Context, config GitConfig) error {
-	repositoryExists, err := PathExists(config.LocalPath)
-	if err != nil {
-		return fmt.Errorf("error while checking repo exists, err: %s", err)
-	}
-	if !repositoryExists {
-		err = config.setupGitRepo(GitUserFromContext(ctx))
-	} else {
-		err = config.GitPull()
-		if err != nil {
-			return errors.New("error syncing DB : " + err.Error())
-		}
-	}
-	latestCommit, files, err := config.GetChanges()
-	if err != nil {
-		return errors.New("error Getting File Changes : " + err.Error())
-	}
-	if latestCommit == config.LatestCommit {
-		return nil
-	}
-	log.Info(latestCommit, " ", config.LatestCommit, "File Changes: ", files)
-	newWorkflows := false
-	for file := range files {
-		if !strings.HasSuffix(file, ".yaml") {
-			continue
-		}
-		// check if file was deleted or not
-		exists, err := PathExists(config.LocalPath + "/" + file)
-		if err != nil {
-			return errors.New("error checking file in local repo : " + file + " | " + err.Error())
-		}
-		if !exists {
-			err = deleteWorkflow(file, config)
-			if err != nil {
-				log.Error("error while deleting workflow db entry : " + file + " | " + err.Error())
-				continue
-			}
-			continue
-		}
-		// read changes [new additions/updates]
-		data, err := ioutil.ReadFile(config.LocalPath + "/" + file)
-		if err != nil {
-			log.Error("error reading data from git file : " + file + " | " + err.Error())
-			continue
-		}
-		data, err = yaml.YAMLToJSON(data)
-		if err != nil {
-			log.Error("error unmarshalling data from git file : " + file + " | " + err.Error())
-			continue
-		}
-		wfID := gjson.Get(string(data), "metadata.labels.workflow_id").String()
-		kind := strings.ToLower(gjson.Get(string(data), "kind").String())
-		if kind != "cronworkflow" && kind != "workflow" && kind != "chaosengine" {
-			continue
-		}
-
-		log.Info("WFID in changed File :", wfID)
-		if wfID == "" {
-			log.Info("new Workflow pushed to git : " + file)
-			flag, err := createWorkflow(string(data), file, config)
-			if err != nil {
-				log.Error("error while creating new workflow db entry : " + file + " | " + err.Error())
-				continue
-			}
-			if flag {
-				newWorkflows = true
-			}
-		} else {
-			err = updateWorkflow(string(data), wfID, file, config)
-			if err != nil {
-				log.Error("error while creating new workflow db entry : " + file + " | " + err.Error())
-				continue
-			}
-		}
-
-	}
-	// push workflows with workflow_id added
-	if newWorkflows {
-		latestCommit, err = config.GitCommit(GitUserFromContext(ctx), "Updated New Workflows", nil)
-		if err != nil {
-			return errors.New("cannot commit workflows to git : " + err.Error())
-		}
-		err = config.GitPush()
-		if err != nil {
-			return errors.New("cannot push workflows to git : " + err.Error())
-		}
-	}
-
-	query := bson.D{{"project_id", config.ProjectID}}
-	update := bson.D{{"$set", bson.D{{"latest_commit", latestCommit}}}}
-
-	if ctx == nil {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
-		err = dbOperationsGitOps.UpdateGitConfig(ctx, query, update)
-	} else {
-		err = dbOperationsGitOps.UpdateGitConfig(ctx, query, update)
-	}
-
-	if err != nil {
-		return errors.New("failed to update git config : " + err.Error())
-	}
-	return nil
-}
-
-// createWorkflow helps in creating a new workflow during the SyncDBToGit operation
-func createWorkflow(data, file string, config GitConfig) (bool, error) {
-	_, fileName := filepath.Split(file)
-	fileName = strings.Replace(fileName, ".yaml", "", -1)
-	wfName := gjson.Get(data, "metadata.name").String()
-	clusterID := gjson.Get(data, "metadata.labels.cluster_id").String()
-	log.Info("workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
-	if wfName == "" || clusterID == "" {
-		return false, nil
-	}
-	if fileName != wfName {
-		return false, errors.New("file name doesn't match workflow name")
-	}
-	workflow := model.ChaosWorkFlowRequest{
-		WorkflowID:          nil,
-		WorkflowManifest:    data,
-		CronSyntax:          "",
-		WorkflowName:        wfName,
-		WorkflowDescription: "",
-		Weightages:          nil,
-		IsCustomWorkflow:    true,
-		ProjectID:           config.ProjectID,
-		ClusterID:           clusterID,
-	}
-	input, wfType, err := ops.ProcessWorkflow(&workflow)
-	if err != nil {
-		return false, err
-	}
-	err = ops.ProcessWorkflowCreation(input, "git-ops", wfType, store.Store)
-	if err != nil {
-		return false, err
-	}
-
-	workflowPath := config.LocalPath + "/" + file
-
-	yamlData, err := yaml.JSONToYAML([]byte(input.WorkflowManifest))
-	if err != nil {
-		return false, errors.New("cannot convert manifest to yaml : " + err.Error())
-	}
-
-	err = ioutil.WriteFile(workflowPath, yamlData, 0644)
-	if err != nil {
-		return false, errors.New("cannot write workflow to git : " + err.Error())
-	}
-
-	return true, nil
-}
-
-// updateWorkflow helps in updating a existing workflow during the SyncDBToGit operation
-func updateWorkflow(data, wfID, file string, config GitConfig) error {
-	_, fileName := filepath.Split(file)
-	fileName = strings.Replace(fileName, ".yaml", "", -1)
-	wfName := gjson.Get(data, "metadata.name").String()
-	clusterID := gjson.Get(data, "metadata.labels.cluster_id").String()
-	log.Info("workflow Details | wf_name: ", wfName, " cluster_id: ", clusterID)
-	if wfName == "" || clusterID == "" {
-		log.Error("cannot update workflow, missing workflow name or cluster id")
-		return nil
-	}
-
-	if fileName != wfName {
-		return errors.New("file name doesn't match workflow name")
-	}
-
-	workflow, err := dbOperationsWorkflow.GetWorkflows(bson.D{{"workflow_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
-	if len(workflow) == 0 {
-		return errors.New("no such workflow found : " + wfID)
-	}
-
-	if clusterID != workflow[0].ClusterID {
-		log.Error("cannot change cluster id for existing workflow")
-		return nil
-	}
-
-	workflowData := model.ChaosWorkFlowRequest{
-		WorkflowID:          &workflow[0].WorkflowID,
-		WorkflowManifest:    data,
-		CronSyntax:          workflow[0].CronSyntax,
-		WorkflowName:        wfName,
-		WorkflowDescription: workflow[0].WorkflowDescription,
-		Weightages:          nil,
-		IsCustomWorkflow:    workflow[0].IsCustomWorkflow,
-		ProjectID:           config.ProjectID,
-		ClusterID:           workflow[0].ClusterID,
-	}
-
-	input, wfType, err := ops.ProcessWorkflow(&workflowData)
-	if err != nil {
-		return err
-	}
-	return ops.ProcessWorkflowUpdate(input, "git-ops", wfType, store.Store)
-
-}
-
-// deleteWorkflow helps in deleting a workflow from DB during the SyncDBToGit operation
-func deleteWorkflow(file string, config GitConfig) error {
-	_, fileName := filepath.Split(file)
-	fileName = strings.Replace(fileName, ".yaml", "", -1)
-
-	query := bson.D{{"workflow_name", fileName}, {"project_id", config.ProjectID}}
-	workflow, err := dbOperationsWorkflow.GetWorkflow(query)
-	if err != nil {
-		return err
-	}
-
-	return ops.ProcessWorkflowDelete(query, workflow, "git-ops", store.Store)
 }

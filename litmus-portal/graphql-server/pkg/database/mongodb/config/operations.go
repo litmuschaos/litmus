@@ -9,8 +9,8 @@ import (
 )
 
 // CreateConfig creates a new server config with unique key
-func CreateConfig(ctx context.Context, config *ServerConfig) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ServerConfigCollection, config)
+func CreateConfig(ctx context.Context, config *ServerConfig, mongodbOperator mongodb.MongoOperator) error {
+	err := mongodbOperator.Create(ctx, mongodb.ServerConfigCollection, config)
 	if err != nil {
 		return err
 	}
@@ -18,11 +18,11 @@ func CreateConfig(ctx context.Context, config *ServerConfig) error {
 }
 
 // GetConfig returns the requested server config
-func GetConfig(ctx context.Context, key string) (*ServerConfig, error) {
+func GetConfig(ctx context.Context, key string, mongodbOperator mongodb.MongoOperator) (*ServerConfig, error) {
 	query := bson.D{
 		{"key", key},
 	}
-	results, err := mongodb.Operator.Get(ctx, mongodb.ServerConfigCollection, query)
+	results, err := mongodbOperator.Get(ctx, mongodb.ServerConfigCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -38,14 +38,14 @@ func GetConfig(ctx context.Context, key string) (*ServerConfig, error) {
 }
 
 // UpdateConfig updates the required server config
-func UpdateConfig(ctx context.Context, key string, value interface{}) error {
+func UpdateConfig(ctx context.Context, key string, value interface{}, mongodbOperator mongodb.MongoOperator) error {
 	query := bson.D{
 		{"key", key},
 	}
 	update := bson.D{{"$set", bson.D{{
 		"value", value}},
 	}}
-	_, err := mongodb.Operator.Update(ctx, mongodb.ServerConfigCollection, query, update)
+	_, err := mongodbOperator.Update(ctx, mongodb.ServerConfigCollection, query, update)
 	if err != nil {
 		return err
 	}

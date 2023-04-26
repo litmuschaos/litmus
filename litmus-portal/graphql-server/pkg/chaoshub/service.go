@@ -47,6 +47,7 @@ type chaosHubService struct {
 	chaosHubOperator *dbSchemaChaosHub.Operator
 }
 
+// NewService returns a new instance of Service
 func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
 	return &chaosHubService{
 		chaosHubOperator: chaosHubOperator,
