@@ -2,6 +2,7 @@ package chaoshubops_test
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -9,12 +10,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
-// init is the entry point for testing
-func init() {
+// TestMain is the entry point for testing
+func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
+	log.SetOutput(ioutil.Discard)
+	os.Exit(m.Run())
 }
 
 // clearCloneRepository removes the cloned repository

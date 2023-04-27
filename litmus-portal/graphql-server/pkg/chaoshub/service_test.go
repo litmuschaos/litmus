@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -15,6 +16,7 @@ import (
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -27,9 +29,11 @@ var (
 	mockService   = chaoshub.NewService(mockOperator)
 )
 
-// init is the entry point for testing
-func init() {
+// TestMain is the entry point for testing
+func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
+	log.SetOutput(ioutil.Discard)
+	os.Exit(m.Run())
 }
 
 // clearCloneRepository removes the cloned repository

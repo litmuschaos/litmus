@@ -1,16 +1,26 @@
 package handler_test
 
 import (
+	"io/ioutil"
 	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/handler"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
+
+// TestMain is the entry point for testing
+func TestMain(m *testing.M) {
+	gin.SetMode(gin.TestMode)
+	log.SetOutput(ioutil.Discard)
+	os.Exit(m.Run())
+}
 
 // TestGetChartsPath is used to test the GetChartsPath function
 func TestGetChartsPath(t *testing.T) {
