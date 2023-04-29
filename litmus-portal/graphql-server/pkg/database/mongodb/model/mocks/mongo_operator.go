@@ -1,3 +1,4 @@
+// Package mocks contains all the mocks for the mongo_operator.go file
 package mocks
 
 import (

@@ -14,7 +14,7 @@ import (
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
+	mongodbMocks "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	mongoOperator = new(mocks.MongoOperator)
+	mongoOperator = new(mongodbMocks.MongoOperator)
 	mockOperator  = dbSchemaChaosHub.NewChaosHubOperator(mongoOperator)
 	mockService   = chaoshub.NewService(mockOperator)
 )
