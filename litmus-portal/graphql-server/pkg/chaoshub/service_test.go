@@ -517,7 +517,7 @@ func TestChaosHubService_GetData(t *testing.T) {
 
 	t.Run("failure : GetPredefinedExperimentYAMLData, nil file type", func(t *testing.T) {
 		// given
-		var fileType *string = nil
+		var fileType *string
 		request := model.ExperimentRequest{
 			ProjectID:      target.ProjectID,
 			HubName:        target.HubName,
