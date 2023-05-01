@@ -365,7 +365,7 @@ func (c *ChaosWorkflowHandler) ListWorkflowRuns(request model.ListWorkflowRunsRe
 
 		// Filtering based on date range
 		if request.Filter.DateRange != nil {
-			endDate := string(time.Now().Unix())
+			endDate := strconv.FormatInt(time.Now().Unix(), 10)
 			if request.Filter.DateRange.EndDate != nil {
 				endDate = *request.Filter.DateRange.EndDate
 			}
