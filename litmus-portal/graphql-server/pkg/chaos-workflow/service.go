@@ -110,7 +110,7 @@ func (c *chaosWorkflowService) ProcessWorkflow(workflow *model.ChaosWorkFlowRequ
 	case "chaosengine":
 		{
 			wfType = dbSchemaWorkflow.ChaosEngine
-			err = processChaosengineManifest(workflow, weights)
+			err = processChaosEngineManifest(workflow, weights)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -529,7 +529,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights m
 	return nil
 }
 
-func processChaosengineManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
+func processChaosEngineManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest chaosTypes.ChaosEngine
