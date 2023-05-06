@@ -5,9 +5,11 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
@@ -255,7 +257,11 @@ func TestGitPull(t *testing.T) {
 				assert.NoError(t, err)
 				_, err = worktree.Add("README.md")
 				assert.NoError(t, err)
-				_, err = worktree.Commit("init repo", &git.CommitOptions{})
+				_, err = worktree.Commit("init repo", &git.CommitOptions{Author: &object.Signature{
+					Name:  "litmus",
+					Email: "litmus@litmuschaos.io",
+					When:  time.Now(),
+				}})
 				assert.NoError(t, err)
 			},
 			isError: true,
