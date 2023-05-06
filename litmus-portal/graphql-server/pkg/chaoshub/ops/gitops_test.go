@@ -7,11 +7,16 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-git/go-git/v5"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+)
+
+var (
+	defaultPath = "/tmp/version/"
 )
 
 // TestMain is the entry point for testing
@@ -63,6 +68,7 @@ func TestGitConfigConstruct(t *testing.T) {
 // TestGitClone is used to test the GitClone function
 func TestGitClone(t *testing.T) {
 	// given
+	authToken, username, password, privateKey := uuid.NewString(), uuid.NewString(), uuid.NewString(), uuid.NewString()
 	testcases := []struct {
 		name     string
 		repoData model.CloningInput
@@ -87,6 +93,49 @@ func TestGitClone(t *testing.T) {
 				RepoURL:    "invalid url",
 				RepoBranch: "master",
 				IsPrivate:  false,
+			},
+			isError: true,
+		},
+		{
+			name: "failure: cannot clone private repository, auth type is token",
+			repoData: model.CloningInput{
+				ProjectID: uuid.New().String(),
+				HubName:   "hub2",
+				// TODO: repository url will be replaced with litmus official repository url
+				RepoURL:    "https://github.com/namkyu1999/litmus-dummy.git",
+				RepoBranch: "main",
+				IsPrivate:  true,
+				AuthType:   model.AuthTypeToken,
+				Token:      &authToken,
+			},
+			isError: true,
+		},
+		{
+			name: "failure: cannot clone private repository, auth type is basic",
+			repoData: model.CloningInput{
+				ProjectID: uuid.New().String(),
+				HubName:   "hub2",
+				// TODO: repository url will be replaced with litmus official repository url
+				RepoURL:    "https://github.com/namkyu1999/litmus-dummy.git",
+				RepoBranch: "main",
+				IsPrivate:  true,
+				AuthType:   model.AuthTypeBasic,
+				UserName:   &username,
+				Password:   &password,
+			},
+			isError: true,
+		},
+		{
+			name: "failure: cannot clone private repository, auth type is ssh",
+			repoData: model.CloningInput{
+				ProjectID: uuid.New().String(),
+				HubName:   "hub2",
+				// TODO: repository url will be replaced with litmus official repository url
+				RepoURL:       "https://github.com/namkyu1999/litmus-dummy.git",
+				RepoBranch:    "main",
+				IsPrivate:     true,
+				AuthType:      model.AuthTypeSSH,
+				SSHPrivateKey: &privateKey,
 			},
 			isError: true,
 		},
@@ -157,9 +206,11 @@ func TestGitSyncHandlerForProjects(t *testing.T) {
 // TestGitPull is used to test the GitPull function
 func TestGitPull(t *testing.T) {
 	// given
+	authToken := uuid.NewString()
 	testcases := []struct {
 		name     string
 		repoData model.CloningInput
+		given    func(repoData model.CloningInput)
 		isError  bool
 	}{
 		{
@@ -182,6 +233,43 @@ func TestGitPull(t *testing.T) {
 			},
 			isError: true,
 		},
+		{
+			name: "failure: cannot pull private repository, invalid token",
+			repoData: model.CloningInput{
+				ProjectID: uuid.New().String(),
+				HubName:   "hub2",
+				// TODO: repository url will be replaced with litmus official repository url
+				RepoURL:    "https://github.com/namkyu1999/litmus-dummy.git",
+				RepoBranch: "main",
+				IsPrivate:  true,
+				AuthType:   model.AuthTypeToken,
+				Token:      &authToken,
+			},
+			given: func(repoData model.CloningInput) {
+				projectPath := defaultPath + repoData.ProjectID + "/" + repoData.HubName
+				repository, err := git.PlainInit(projectPath, false)
+				if err != nil {
+					t.FailNow()
+				}
+				worktree, err := repository.Worktree()
+				if err != nil {
+					t.FailNow()
+				}
+				_, err = os.Create(projectPath + "/README.md")
+				if err != nil {
+					t.FailNow()
+				}
+				_, err = worktree.Add("README.md")
+				if err != nil {
+					t.FailNow()
+				}
+				_, err = worktree.Commit("hello", &git.CommitOptions{})
+				if err != nil {
+					t.FailNow()
+				}
+			},
+			isError: true,
+		},
 	}
 
 	for _, tc := range testcases {
@@ -191,11 +279,15 @@ func TestGitPull(t *testing.T) {
 			config := chaosHubOps.GitConfigConstruct(tc.repoData)
 			// then
 			if tc.isError {
+				if tc.repoData.IsPrivate {
+					tc.given(tc.repoData)
+				}
 				err := config.GitPull()
 				assert.Error(t, err)
 			} else {
-				chaosHubOps.GitClone(tc.repoData)
-				err := config.GitPull()
+				err := chaosHubOps.GitClone(tc.repoData)
+				assert.NoError(t, err)
+				err = config.GitPull()
 				assert.NoError(t, err)
 			}
 		})
