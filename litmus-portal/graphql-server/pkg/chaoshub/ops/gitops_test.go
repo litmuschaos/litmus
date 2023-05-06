@@ -248,25 +248,15 @@ func TestGitPull(t *testing.T) {
 			given: func(repoData model.CloningInput) {
 				projectPath := defaultPath + repoData.ProjectID + "/" + repoData.HubName
 				repository, err := git.PlainInit(projectPath, false)
-				if err != nil {
-					t.FailNow()
-				}
+				assert.NoError(t, err)
 				worktree, err := repository.Worktree()
-				if err != nil {
-					t.FailNow()
-				}
+				assert.NoError(t, err)
 				_, err = os.Create(projectPath + "/README.md")
-				if err != nil {
-					t.FailNow()
-				}
+				assert.NoError(t, err)
 				_, err = worktree.Add("README.md")
-				if err != nil {
-					t.FailNow()
-				}
-				_, err = worktree.Commit("hello", &git.CommitOptions{})
-				if err != nil {
-					t.FailNow()
-				}
+				assert.NoError(t, err)
+				_, err = worktree.Commit("init repo", &git.CommitOptions{})
+				assert.NoError(t, err)
 			},
 			isError: true,
 		},
