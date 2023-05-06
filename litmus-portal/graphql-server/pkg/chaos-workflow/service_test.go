@@ -15,7 +15,7 @@ import (
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	mocks "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	workflowDBOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	log "github.com/sirupsen/logrus"
