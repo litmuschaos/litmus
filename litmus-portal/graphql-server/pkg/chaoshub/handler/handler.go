@@ -124,7 +124,7 @@ func ReadExperimentFile(path string) (ChaosChart, error) {
 	return experiment, nil
 }
 
-// ReadExperimentYAMLFile is used for reading a experiment/engine file from given path
+// ReadExperimentYAMLFile is used for reading experiment/engine file from given path
 func ReadExperimentYAMLFile(path string) (string, error) {
 	var s string
 	YAMLData, err := ioutil.ReadFile(path)
@@ -134,23 +134,6 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 	s = string(YAMLData)
 	return s, nil
 }
-
-//// GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
-//func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, error) {
-//	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
-//	var expNames []string
-//	files, err := ioutil.ReadDir(ExperimentsPath)
-//	if err != nil {
-//		return nil, err
-//	}
-//	for _, file := range files {
-//		isExist, _ := IsFileExisting(ExperimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
-//		if isExist {
-//			expNames = append(expNames, file.Name())
-//		}
-//	}
-//	return expNames, nil
-//}
 
 // ListPredefinedWorkflowDetails reads the workflow directory for all the predefined experiments
 // and returns the csv, workflow manifest and workflow name
