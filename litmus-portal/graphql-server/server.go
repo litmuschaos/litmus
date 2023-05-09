@@ -135,7 +135,7 @@ func main() {
 	router.GET("/", rest_handlers.PlaygroundHandler())
 	router.Any("/query", authorization.Middleware(srv))
 	router.GET("/readiness", rest_handlers.ReadinessHandler(srv, client, mongodbOperator))
-	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(chaoshub.GetIconHandler, nil))
+	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(rest_handlers.GetIconHandler, nil))
 	router.Any("/file/:key", rest_handlers.FileHandler(mongodbOperator))
 	router.GET("/status", rest_handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", rest_handlers.WorkflowHelperImageVersionHandler)
