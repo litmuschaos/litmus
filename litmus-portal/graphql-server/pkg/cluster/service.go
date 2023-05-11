@@ -20,6 +20,7 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 type Service interface {
@@ -35,24 +36,28 @@ type Service interface {
 	VerifyCluster(identity model.ClusterIdentity) (*dbSchemaCluster.Cluster, error)
 	GetManifest(token string) ([]byte, int, error)
 	GetCluster(clusterID string) (dbSchemaCluster.Cluster, error)
+	GetEndpoint(agentType utils.AgentType) (string, error)
+	GetClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error)
 }
 
 type clusterService struct {
 	clusterOperator       *dbSchemaCluster.Operator
 	chaosWorkflowOperator *dbOperationsWorkflow.Operator
+	kubeCluster           *k8s.KubeClients
 }
 
 // NewService returns a new instance of Service
-func NewService(clusterOperator *dbSchemaCluster.Operator, chaosWorkflowOperator *dbOperationsWorkflow.Operator) Service {
+func NewService(clusterOperator *dbSchemaCluster.Operator, chaosWorkflowOperator *dbOperationsWorkflow.Operator, kubeCluster *k8s.KubeClients) Service {
 	return &clusterService{
 		clusterOperator:       clusterOperator,
 		chaosWorkflowOperator: chaosWorkflowOperator,
+		kubeCluster:           kubeCluster,
 	}
 }
 
 // RegisterCluster creates an entry for a new cluster in DB and generates the url used to apply manifest
 func (c *clusterService) RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
-	endpoint, err := GetEndpoint(request.ClusterType)
+	endpoint, err := c.GetEndpoint(utils.AgentType(request.ClusterType))
 	if err != nil {
 		return nil, err
 	}
@@ -312,27 +317,27 @@ func (c *clusterService) GetManifestWithClusterID(clusterID string, accessKey st
 	}
 
 	var config subscriberConfigurations
-	config.ServerEndpoint, err = GetEndpoint(reqCluster.ClusterType)
+	config.ServerEndpoint, err = c.GetEndpoint(utils.AgentType(reqCluster.ClusterType))
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve the server endpoint %v", err)
 	}
 
 	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
+	if scope == string(utils.AgentScopeCluster) && utils.Config.TlsSecretName != "" {
+		config.TLSCert, err = c.kubeCluster.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve the tls cert %v", err)
 		}
 	}
 
-	if scope == namespaceScope {
+	if scope == string(utils.AgentScopeNamespace) {
 		config.TLSCert = utils.Config.TlsCertB64
 	}
 
 	var respData []byte
-	if reqCluster.AgentScope == clusterScope {
+	if reqCluster.AgentScope == string(utils.AgentScopeCluster) {
 		respData, err = manifestParser(reqCluster, "manifests/cluster", &config)
-	} else if reqCluster.AgentScope == namespaceScope {
+	} else if reqCluster.AgentScope == string(utils.AgentScopeNamespace) {
 		respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
 	} else {
 		log.Error("env AGENT_SCOPE is empty")
@@ -401,20 +406,20 @@ func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
 	}
 
 	var config subscriberConfigurations
-	config.ServerEndpoint, err = GetEndpoint(reqCluster.ClusterType)
+	config.ServerEndpoint, err = c.GetEndpoint(utils.AgentType(reqCluster.ClusterType))
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
 	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
+	if scope == string(utils.AgentScopeCluster) && utils.Config.TlsSecretName != "" {
+		config.TLSCert, err = c.kubeCluster.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, http.StatusInternalServerError, err
 		}
 	}
 
-	if scope == namespaceScope {
+	if scope == string(utils.AgentScopeNamespace) {
 		config.TLSCert = utils.Config.TlsCertB64
 	}
 
@@ -437,6 +442,29 @@ func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
 	}
 }
 
+// GetCluster returns cluster details for a given clusterID
 func (c *clusterService) GetCluster(clusterID string) (dbSchemaCluster.Cluster, error) {
 	return c.clusterOperator.GetCluster(clusterID)
+}
+
+// GetEndpoint returns the endpoint for the subscriber
+func (c *clusterService) GetEndpoint(agentType utils.AgentType) (string, error) {
+	// returns endpoint from env, if provided by user
+	if utils.Config.ChaosCenterUiEndpoint != "" {
+		return utils.Config.ChaosCenterUiEndpoint + "/ws/query", nil
+	}
+
+	// generating endpoint based on ChaosCenter Scope & AgentType (Self or External)
+	agentEndpoint, err := c.kubeCluster.GetServerEndpoint(utils.AgentScope(utils.Config.ChaosCenterScope), agentType)
+
+	if agentEndpoint == "" || err != nil {
+		return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
+	}
+
+	return agentEndpoint, err
+}
+
+// GetClusterResource returns the cluster resource for a given manifest
+func (c *clusterService) GetClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
+	return c.kubeCluster.ClusterResource(manifest, namespace)
 }

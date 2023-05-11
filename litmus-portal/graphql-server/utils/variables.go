@@ -42,3 +42,16 @@ type Configurations struct {
 }
 
 var Config Configurations
+
+// AgentScope is the scope of the agent
+type AgentScope string
+
+// AgentType is the type of the agent
+type AgentType string
+
+const (
+	AgentScopeCluster   AgentScope = "cluster"
+	AgentScopeNamespace AgentScope = "namespace"
+	AgentTypeInternal   AgentType  = "internal"
+	AgentTypeExternal   AgentType  = "external"
+)

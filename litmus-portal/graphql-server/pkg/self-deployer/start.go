@@ -7,10 +7,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
@@ -76,7 +74,7 @@ func StartDeployer(clusterService cluster.Service, projectID string) {
 		manifests := strings.Split(string(response), "---")
 		for _, manifest := range manifests {
 			if len(strings.TrimSpace(manifest)) > 0 {
-				_, err = k8s.ClusterResource(manifest, deployerNamespace)
+				_, err = clusterService.GetClusterResource(manifest, deployerNamespace)
 				if err != nil {
 					log.Error(err)
 					failedManifest = failedManifest + manifest

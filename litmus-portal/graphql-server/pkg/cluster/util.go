@@ -10,38 +10,18 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
 const (
 	// CIVersion specifies the version tag used for ci builds
-	CIVersion             = "ci"
-	clusterScope   string = "cluster"
-	namespaceScope string = "namespace"
+	CIVersion = "ci"
 )
 
 // subscriberConfigurations contains the configurations required for the subscriber
 type subscriberConfigurations struct {
 	ServerEndpoint string
 	TLSCert        string
-}
-
-// GetEndpoint returns the endpoint for the subscriber
-func GetEndpoint(agentType string) (string, error) {
-	// returns endpoint from env, if provided by user
-	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return utils.Config.ChaosCenterUiEndpoint + "/ws/query", nil
-	}
-
-	// generating endpoint based on ChaosCenter Scope & AgentType (Self or External)
-	agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
-
-	if agentEndpoint == "" || err != nil {
-		return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
-	}
-
-	return agentEndpoint, err
 }
 
 // ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
@@ -189,7 +169,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.AgentScope == "cluster" {
+	if utils.Config.AgentScope == string(AgentScopeCluster) {
 		/*
 			namespace = Obtain from WorkflowManifest or
 			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
