@@ -169,7 +169,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.AgentScope == string(AgentScopeCluster) {
+	if utils.Config.AgentScope == string(utils.AgentScopeCluster) {
 		/*
 			namespace = Obtain from WorkflowManifest or
 			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model

@@ -165,7 +165,7 @@ func (c GitConfig) GitClone() (*git.Repository, error) {
 	return git.PlainClone(c.LocalPath, false, &git.CloneOptions{
 		Auth:          auth,
 		URL:           c.RepositoryURL,
-		Progress:      os.Stdout,
+		Progress:      nil,
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 		SingleBranch:  true,
 	})
@@ -323,7 +323,7 @@ func (c GitConfig) GitPush() error {
 	err = r.Push(&git.PushOptions{
 		RemoteName: c.RemoteName,
 		Auth:       auth,
-		Progress:   os.Stdout,
+		Progress:   nil,
 	})
 	if err == git.NoErrAlreadyUpToDate {
 		return nil

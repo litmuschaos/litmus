@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
@@ -13,15 +15,11 @@ import (
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	log "github.com/sirupsen/logrus"
-
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // InitializeProject implements project.ProjectServer
