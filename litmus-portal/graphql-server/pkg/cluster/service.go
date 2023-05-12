@@ -43,15 +43,15 @@ type Service interface {
 type clusterService struct {
 	clusterOperator       *dbSchemaCluster.Operator
 	chaosWorkflowOperator *dbOperationsWorkflow.Operator
-	kubeCluster           *k8s.KubeClients
+	kubeClients           *k8s.KubeClients
 }
 
 // NewService returns a new instance of Service
-func NewService(clusterOperator *dbSchemaCluster.Operator, chaosWorkflowOperator *dbOperationsWorkflow.Operator, kubeCluster *k8s.KubeClients) Service {
+func NewService(clusterOperator *dbSchemaCluster.Operator, chaosWorkflowOperator *dbOperationsWorkflow.Operator, kubeClients *k8s.KubeClients) Service {
 	return &clusterService{
 		clusterOperator:       clusterOperator,
 		chaosWorkflowOperator: chaosWorkflowOperator,
-		kubeCluster:           kubeCluster,
+		kubeClients:           kubeClients,
 	}
 }
 
@@ -67,7 +67,7 @@ func (c *clusterService) RegisterCluster(request model.RegisterClusterRequest) (
 	}
 
 	clusterID := uuid.New().String()
-	token, err := ClusterCreateJWT(clusterID)
+	token, err := CreateJWT(clusterID)
 	if err != nil {
 		return &model.RegisterClusterResponse{}, err
 	}
@@ -209,7 +209,7 @@ func (c *clusterService) DeleteClusters(ctx context.Context, projectID string, c
 	}
 	clusters, err := c.clusterOperator.ListClusters(ctx, query)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	for _, cluster := range clusters {
@@ -258,7 +258,7 @@ func (c *clusterService) ListClusters(projectID string, clusterType *string) ([]
 	if err != nil {
 		return nil, err
 	}
-	newClusters := []*model.Cluster{}
+	var newClusters []*model.Cluster
 
 	for _, cluster := range clusters {
 		var totalNoOfSchedules int
@@ -324,7 +324,7 @@ func (c *clusterService) GetManifestWithClusterID(clusterID string, accessKey st
 
 	var scope = utils.Config.ChaosCenterScope
 	if scope == string(utils.AgentScopeCluster) && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = c.kubeCluster.GetTLSCert(utils.Config.TlsSecretName)
+		config.TLSCert, err = c.kubeClients.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve the tls cert %v", err)
 		}
@@ -340,7 +340,7 @@ func (c *clusterService) GetManifestWithClusterID(clusterID string, accessKey st
 	} else if reqCluster.AgentScope == string(utils.AgentScopeNamespace) {
 		respData, err = manifestParser(reqCluster, "manifests/namespace", &config)
 	} else {
-		log.Error("env AGENT_SCOPE is empty")
+		return nil, fmt.Errorf("env AGENT_SCOPE is empty")
 	}
 
 	if err != nil {
@@ -395,7 +395,7 @@ func (c *clusterService) VerifyCluster(identity model.ClusterIdentity) (*dbSchem
 
 // GetManifest returns manifest for a given cluster
 func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
-	clusterID, err := ClusterValidateJWT(token)
+	clusterID, err := ValidateJWT(token)
 	if err != nil {
 		return nil, http.StatusNotFound, err
 	}
@@ -413,7 +413,7 @@ func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
 
 	var scope = utils.Config.ChaosCenterScope
 	if scope == string(utils.AgentScopeCluster) && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = c.kubeCluster.GetTLSCert(utils.Config.TlsSecretName)
+		config.TLSCert, err = c.kubeClients.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, http.StatusInternalServerError, err
 		}
@@ -455,7 +455,7 @@ func (c *clusterService) GetEndpoint(agentType utils.AgentType) (string, error) 
 	}
 
 	// generating endpoint based on ChaosCenter Scope & AgentType (Self or External)
-	agentEndpoint, err := c.kubeCluster.GetServerEndpoint(utils.AgentScope(utils.Config.ChaosCenterScope), agentType)
+	agentEndpoint, err := c.kubeClients.GetServerEndpoint(utils.AgentScope(utils.Config.ChaosCenterScope), agentType)
 
 	if agentEndpoint == "" || err != nil {
 		return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
@@ -466,5 +466,5 @@ func (c *clusterService) GetEndpoint(agentType utils.AgentType) (string, error) 
 
 // GetClusterResource returns the cluster resource for a given manifest
 func (c *clusterService) GetClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
-	return c.kubeCluster.ClusterResource(manifest, namespace)
+	return c.kubeClients.ClusterResource(manifest, namespace)
 }
