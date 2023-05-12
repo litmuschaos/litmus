@@ -50,8 +50,12 @@ type AgentScope string
 type AgentType string
 
 const (
-	AgentScopeCluster   AgentScope = "cluster"
+	// AgentScopeCluster is the cluster scope
+	AgentScopeCluster AgentScope = "cluster"
+	// AgentScopeNamespace is the namespace scope
 	AgentScopeNamespace AgentScope = "namespace"
-	AgentTypeInternal   AgentType  = "internal"
-	AgentTypeExternal   AgentType  = "external"
+	// AgentTypeInternal is the internal agent
+	AgentTypeInternal AgentType = "internal"
+	// AgentTypeExternal is the external agent
+	AgentTypeExternal AgentType = "external"
 )
