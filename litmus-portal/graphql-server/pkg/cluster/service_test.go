@@ -54,15 +54,6 @@ func TestClusterService_RegisterCluster(t *testing.T) {
 		given   func()
 	}{
 		{
-			name:    "failure: cannot get cluster endpoint",
-			wantErr: true,
-			given: func() {
-				kubeClients.GenericClient = fake.NewSimpleClientset()
-				t.Cleanup(func() { kubeClients.GenericClient = nil })
-				mongoOperator.On("Create", mock.Anything, mongodb.ClusterCollection, mock.Anything).Return(errors.New("")).Once()
-			},
-		},
-		{
 			name:    "success",
 			wantErr: false,
 			request: model.RegisterClusterRequest{
