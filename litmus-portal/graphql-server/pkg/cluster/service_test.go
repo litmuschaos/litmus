@@ -59,6 +59,7 @@ func TestClusterService_RegisterCluster(t *testing.T) {
 			given: func() {
 				kubeClients.GenericClient = fake.NewSimpleClientset()
 				t.Cleanup(func() { kubeClients.GenericClient = nil })
+				mongoOperator.On("Create", mock.Anything, mongodb.ClusterCollection, mock.Anything).Return(errors.New("")).Once()
 			},
 		},
 		{
