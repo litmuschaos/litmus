@@ -118,14 +118,13 @@ func ReadExperimentFile(path string) (ChaosChart, error) {
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
-
-	if yaml.Unmarshal(experimentFile, &experiment) != nil {
+	if err = yaml.Unmarshal(experimentFile, &experiment); err != nil {
 		return experiment, err
 	}
 	return experiment, nil
 }
 
-// ReadExperimentYAMLFile is used for reading a experiment/engine file from given path
+// ReadExperimentYAMLFile is used for reading experiment/engine file from given path
 func ReadExperimentYAMLFile(path string) (string, error) {
 	var s string
 	YAMLData, err := ioutil.ReadFile(path)
@@ -134,23 +133,6 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 	}
 	s = string(YAMLData)
 	return s, nil
-}
-
-// GetPredefinedExperimentFileList reads the workflow directory for all the predefined experiments
-func GetPredefinedWorkflowFileList(hubname string, projectID string) ([]string, error) {
-	ExperimentsPath := defaultPath + projectID + "/" + hubname + "/workflows"
-	var expNames []string
-	files, err := ioutil.ReadDir(ExperimentsPath)
-	if err != nil {
-		return nil, err
-	}
-	for _, file := range files {
-		isExist, _ := IsFileExisting(ExperimentsPath + "/" + file.Name() + "/" + file.Name() + ".chartserviceversion.yaml")
-		if isExist {
-			expNames = append(expNames, file.Name())
-		}
-	}
-	return expNames, nil
 }
 
 // ListPredefinedWorkflowDetails reads the workflow directory for all the predefined experiments
@@ -202,8 +184,13 @@ func IsFileExisting(path string) (bool, error) {
 
 // DownloadRemoteHub is used to download a remote hub from the url provided by the user
 func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
+	dirPath := defaultPath + hubDetails.ProjectID
+	err := os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		return err
+	}
 	//create the destination directory where the hub will be downloaded
-	hubpath := defaultPath + hubDetails.ProjectID + "/" + hubDetails.HubName + ".zip"
+	hubpath := dirPath + "/" + hubDetails.HubName + ".zip"
 	destDir, err := os.Create(hubpath)
 	if err != nil {
 		log.Error(err)
@@ -221,7 +208,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub) error {
 	defer download.Body.Close()
 
 	if download.StatusCode != http.StatusOK {
-		return fmt.Errorf("err: ", download.Status)
+		return fmt.Errorf("err: " + download.Status)
 	}
 
 	//validate the content length (in bytes)
