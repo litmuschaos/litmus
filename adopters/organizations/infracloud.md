@@ -1,4 +1,4 @@
-## Infracloud Technologies
+# Infracloud Technologies
 
 InfraCloud Technologies is a Kubernetes focused B2B Open Source Cloud Native Computing company which has been building products, services, and solutions to modernize applications and infrastructure.
 
