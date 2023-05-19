@@ -67,7 +67,7 @@ func (c *clusterService) RegisterCluster(request model.RegisterClusterRequest) (
 	}
 
 	clusterID := uuid.New().String()
-	token, err := CreateJWT(clusterID)
+	token, err := CreateClusterJWT(clusterID)
 	if err != nil {
 		return &model.RegisterClusterResponse{}, err
 	}
@@ -395,7 +395,7 @@ func (c *clusterService) VerifyCluster(identity model.ClusterIdentity) (*dbSchem
 
 // GetManifest returns manifest for a given cluster
 func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
-	clusterID, err := ValidateJWT(token)
+	clusterID, err := ValidateClusterJWT(token)
 	if err != nil {
 		return nil, http.StatusNotFound, err
 	}

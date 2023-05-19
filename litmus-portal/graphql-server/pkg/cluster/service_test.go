@@ -682,7 +682,7 @@ func TestClusterService_VerifyCluster(t *testing.T) {
 func TestClusterService_GetManifest(t *testing.T) {
 	// given
 	clusterID := uuid.NewString()
-	accessKey, _ := cluster.CreateJWT(uuid.NewString())
+	accessKey, _ := cluster.CreateClusterJWT(uuid.NewString())
 	testcases := []struct {
 		name    string
 		wantErr bool

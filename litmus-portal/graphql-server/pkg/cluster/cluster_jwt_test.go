@@ -9,16 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateJwt(t *testing.T) {
+// TestCreateClusterJWT tests the CreateClusterJWT function
+func TestCreateClusterJWT(t *testing.T) {
 	// given
 	utils.Config.JwtSecret = uuid.NewString()
 	// when
-	_, err := cluster.CreateJWT(uuid.NewString())
+	_, err := cluster.CreateClusterJWT(uuid.NewString())
 	// then
 	assert.NoError(t, err)
 }
 
-func TestValidateJWT(t *testing.T) {
+// TestValidateClusterJWT tests the ValidateClusterJWT function
+func TestValidateClusterJWT(t *testing.T) {
 	// given
 	testcases := []struct {
 		name      string
@@ -30,7 +32,7 @@ func TestValidateJWT(t *testing.T) {
 			wantError: false,
 			given: func() string {
 				utils.Config.JwtSecret = uuid.NewString()
-				token, _ := cluster.CreateJWT(uuid.NewString())
+				token, _ := cluster.CreateClusterJWT(uuid.NewString())
 				return token
 			},
 		},
@@ -46,7 +48,7 @@ func TestValidateJWT(t *testing.T) {
 			wantError: true,
 			given: func() string {
 				utils.Config.JwtSecret = uuid.NewString()
-				token, _ := cluster.CreateJWT(uuid.NewString())
+				token, _ := cluster.CreateClusterJWT(uuid.NewString())
 				utils.Config.JwtSecret = uuid.NewString()
 				return token
 			},
@@ -57,7 +59,7 @@ func TestValidateJWT(t *testing.T) {
 			// given
 			token := tc.given()
 			// when
-			_, err := cluster.ValidateJWT(token)
+			_, err := cluster.ValidateClusterJWT(token)
 			// then
 			if tc.wantError {
 				assert.Error(t, err)
