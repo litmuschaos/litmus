@@ -59,6 +59,7 @@ func ReadinessHandler(mongoClient *mongo.Client, mongodbOperator mongodb.MongoOp
 		if err != nil {
 			log.Error(err)
 			utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
+			return
 		}
 
 		utils.WriteHeaders(&c.Writer, http.StatusOK)

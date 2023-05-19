@@ -18,8 +18,8 @@ func StatusHandler(c *gin.Context) {
 	statusByte, err := json.Marshal(status)
 	if err != nil {
 		utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
-	} else {
-		utils.WriteHeaders(&c.Writer, http.StatusOK)
-		c.Writer.Write(statusByte)
+		return
 	}
+	utils.WriteHeaders(&c.Writer, http.StatusOK)
+	c.Writer.Write(statusByte)
 }

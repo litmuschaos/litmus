@@ -20,8 +20,8 @@ func WorkflowHelperImageVersionHandler(c *gin.Context) {
 	versionByte, err := json.Marshal(version)
 	if err != nil {
 		utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
-	} else {
-		utils.WriteHeaders(&c.Writer, http.StatusOK)
-		c.Writer.Write(versionByte)
+		return
 	}
+	utils.WriteHeaders(&c.Writer, http.StatusOK)
+	c.Writer.Write(versionByte)
 }

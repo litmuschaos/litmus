@@ -24,6 +24,7 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			log.WithError(err).Error("error while generating manifest file")
 			utils.WriteHeaders(&c.Writer, statusCode)
 			c.Writer.Write([]byte(err.Error()))
+			return
 		}
 		utils.WriteHeaders(&c.Writer, statusCode)
 		c.Writer.Write(response)
