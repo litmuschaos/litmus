@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	log "github.com/sirupsen/logrus"
 )
 
 type WorkflowHelperImageVersion struct {
@@ -20,11 +19,9 @@ func WorkflowHelperImageVersionHandler(c *gin.Context) {
 	version := WorkflowHelperImageVersion{Version: versionDetails}
 	versionByte, err := json.Marshal(version)
 	if err != nil {
-		log.Error(err)
 		utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
-		return
+	} else {
+		utils.WriteHeaders(&c.Writer, http.StatusOK)
+		c.Writer.Write(versionByte)
 	}
-
-	utils.WriteHeaders(&c.Writer, http.StatusOK)
-	c.Writer.Write(versionByte)
 }

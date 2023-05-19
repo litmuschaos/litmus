@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	log "github.com/sirupsen/logrus"
 )
 
 type APIStatus struct {
@@ -18,10 +17,9 @@ func StatusHandler(c *gin.Context) {
 	var status = APIStatus{Status: "up"}
 	statusByte, err := json.Marshal(status)
 	if err != nil {
-		log.Error(err)
-		utils.WriteHeaders(&c.Writer, http.StatusBadRequest)
+		utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
+	} else {
+		utils.WriteHeaders(&c.Writer, http.StatusOK)
+		c.Writer.Write(statusByte)
 	}
-
-	utils.WriteHeaders(&c.Writer, http.StatusOK)
-	c.Writer.Write(statusByte)
 }

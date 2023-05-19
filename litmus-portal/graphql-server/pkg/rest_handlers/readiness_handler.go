@@ -26,14 +26,15 @@ func contains(s []string, str string) bool {
 	return false
 }
 
-func ReadinessHandler(handler http.Handler, mclient *mongo.Client, mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
+// ReadinessHandler returns current status of this application
+func ReadinessHandler(mongoClient *mongo.Client, mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			dbFlag  = "up"
 			colFlag = "up"
 		)
 
-		dbs, err := mongodbOperator.ListDataBase(context.Background(), mclient)
+		dbs, err := mongodbOperator.ListDataBase(context.Background(), mongoClient)
 		if err != nil {
 			log.Error(err)
 			dbFlag = "down"
@@ -43,7 +44,7 @@ func ReadinessHandler(handler http.Handler, mclient *mongo.Client, mongodbOperat
 			dbFlag = "down"
 		}
 
-		cols, err := mongodbOperator.ListCollection(context.Background(), mclient)
+		cols, err := mongodbOperator.ListCollection(context.Background(), mongoClient)
 		if err != nil {
 			log.Error(err)
 			colFlag = "down"
