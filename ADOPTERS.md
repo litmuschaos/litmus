@@ -42,6 +42,8 @@ devops/reliability pipelines (such as for customer portals/websites etc.,) withi
 |[VMWare](https://www.vmware.com/)|Chaos Engineering in CD|[Our Story](adopters/organizations/vmware.md)|
 |[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Chaos Project](https://github.com/zebrium/zebrium-kubernetes-demo)|[Our Story](adopters/organizations/zebrium.md)|
 |[Container Solutions](https://www.container-solutions.com/)|Building Chaos Engineering for E-Commerce Customers|[Our Story](adopters/organizations/containersolutions.md)|
+|[Infracloud Technologies](https://www.infracloud.io/)|Developing Resiliency Framework at Infracloud|[Our Story](adopters/organizations/infracloud.md)|
+
 
 ### Cloud-Native Solutions & Service Providers
 
@@ -72,5 +74,6 @@ existing functions.
 |[Red Hat](https://www.redhat.com/en)|[Chaos Engineering with Kraken](https://github.com/cloud-bulldozer/kraken)|[Our Story](adopters/organizations/redhat_kraken.md)|
 |[Iter8](https://iter8.tools)|[SLO validation with chaos injection](https://iter8.tools/0.7/tutorials/deployments/slo-validation-chaos/)|To Be Added|
 |[CNF Test Suite](https://github.com/cncf/cnf-testsuite)|To validate the resilience of Cloud Native Network Functions (CNFs)|[Our Story](adopters/organizations/cnftestsuite.md)|
+|[APACHE APISIX](https://apisix.apache.org/)|Practicing Chaos Engineering using Litmus in the Apache APISIX Ingress.|[Our Story](adopters/organizations/apisix.md)|
 
 

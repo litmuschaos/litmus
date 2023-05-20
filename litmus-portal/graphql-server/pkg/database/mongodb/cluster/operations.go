@@ -15,10 +15,22 @@ var (
 	backgroundContext = context.Background()
 )
 
+// Operator is the model for cluster collection
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewClusterOperator returns a new instance of Operator
+func NewClusterOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // InsertCluster takes details of a cluster and inserts into the database collection
-func InsertCluster(cluster Cluster) error {
+func (c *Operator) InsertCluster(cluster Cluster) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
-	err := mongodb.Operator.Create(ctx, mongodb.ClusterCollection, cluster)
+	err := c.operator.Create(ctx, mongodb.ClusterCollection, cluster)
 	if err != nil {
 		return err
 	}
@@ -27,12 +39,12 @@ func InsertCluster(cluster Cluster) error {
 }
 
 // GetCluster takes a clusterID to retrieve the cluster details from the database
-func GetCluster(clusterID string) (Cluster, error) {
+func (c *Operator) GetCluster(clusterID string) (Cluster, error) {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	query := bson.D{{"cluster_id", clusterID}}
 
 	var cluster Cluster
-	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
+	result, err := c.operator.Get(ctx, mongodb.ClusterCollection, query)
 	if err != nil {
 		return Cluster{}, fmt.Errorf("error in getting cluster data: %v", err)
 	}
@@ -46,14 +58,14 @@ func GetCluster(clusterID string) (Cluster, error) {
 }
 
 // GetAgentDetails takes a agentName and projectID to retrieve the cluster details from the database
-func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (Cluster, error) {
+func (c *Operator) GetAgentDetails(ctx context.Context, clusterID string, projectID string) (Cluster, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"cluster_id", clusterID},
 	}
 
 	var cluster Cluster
-	result, err := mongodb.Operator.Get(ctx, mongodb.ClusterCollection, query)
+	result, err := c.operator.Get(ctx, mongodb.ClusterCollection, query)
 	if err != nil {
 		return Cluster{}, fmt.Errorf("error in getting cluster data: %v", err)
 	}
@@ -67,10 +79,10 @@ func GetAgentDetails(ctx context.Context, clusterID string, projectID string) (C
 }
 
 // UpdateCluster takes query and update parameters to update the cluster details in the database
-func UpdateCluster(query bson.D, update bson.D) error {
+func (c *Operator) UpdateCluster(query bson.D, update bson.D) error {
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 
-	_, err := mongodb.Operator.Update(ctx, mongodb.ClusterCollection, query, update)
+	_, err := c.operator.Update(ctx, mongodb.ClusterCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -79,7 +91,7 @@ func UpdateCluster(query bson.D, update bson.D) error {
 }
 
 // GetClusterWithProjectID takes projectID and clusterType parameters to retrieve the cluster details from the database
-func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster, error) {
+func (c *Operator) GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster, error) {
 
 	var query bson.D
 	if clusterType == nil {
@@ -98,7 +110,7 @@ func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster,
 	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
 	var clusters []*Cluster
 
-	results, err := mongodb.Operator.List(ctx, mongodb.ClusterCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ClusterCollection, query)
 	if err != nil {
 		return []*Cluster{}, err
 	}
@@ -112,9 +124,9 @@ func GetClusterWithProjectID(projectID string, clusterType *string) ([]*Cluster,
 }
 
 // ListClusters returns all the clusters matching the query
-func ListClusters(ctx context.Context, query bson.D) ([]*Cluster, error) {
+func (c *Operator) ListClusters(ctx context.Context, query bson.D) ([]*Cluster, error) {
 	var clusters []*Cluster
-	results, err := mongodb.Operator.List(ctx, mongodb.ClusterCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ClusterCollection, query)
 	if err != nil {
 		return []*Cluster{}, err
 	}
@@ -126,8 +138,8 @@ func ListClusters(ctx context.Context, query bson.D) ([]*Cluster, error) {
 }
 
 // GetAggregateProjects takes a mongo pipeline to retrieve the project details from the database
-func GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ClusterCollection, pipeline, opts)
+func (c *Operator) GetAggregateProjects(ctx context.Context, pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
+	results, err := c.operator.Aggregate(ctx, mongodb.ClusterCollection, pipeline, opts)
 	if err != nil {
 		return nil, err
 	}

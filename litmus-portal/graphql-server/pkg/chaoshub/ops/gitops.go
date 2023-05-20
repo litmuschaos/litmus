@@ -70,14 +70,12 @@ func GitClone(repoData model.CloningInput) error {
 	if repoData.IsPrivate {
 		_, err := gitConfig.getPrivateChaosChartRepo()
 		if err != nil {
-			fmt.Print("Error in cloning")
-			return err
+			return fmt.Errorf("error in cloning: %v", err)
 		}
 	} else {
 		_, err := gitConfig.getChaosChartRepo()
 		if err != nil {
-			fmt.Print("Error in cloning")
-			return err
+			return fmt.Errorf("error in cloning: %v", err)
 		}
 
 	}
@@ -91,14 +89,14 @@ func (c ChaosHubConfig) getChaosChartRepo() (string, error) {
 	os.RemoveAll(ClonePath)
 	_, err := git.PlainClone(ClonePath, false, &git.CloneOptions{
 		URL:           c.RepositoryURL,
-		Progress:      os.Stdout,
+		Progress:      nil,
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 		SingleBranch:  true,
 	})
 	if err != nil {
 		_, err = git.PlainClone(ClonePath, false, &git.CloneOptions{
 			URL:           c.RepositoryURL,
-			Progress:      os.Stdout,
+			Progress:      nil,
 			ReferenceName: plumbing.NewTagReferenceName(c.Branch),
 			SingleBranch:  true,
 		})
@@ -120,7 +118,7 @@ func (c ChaosHubConfig) getPrivateChaosChartRepo() (string, error) {
 	_, err = git.PlainClone(ClonePath, false, &git.CloneOptions{
 		Auth:          auth,
 		URL:           c.RepositoryURL,
-		Progress:      os.Stdout,
+		Progress:      nil,
 		SingleBranch:  true,
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 	})
@@ -128,7 +126,7 @@ func (c ChaosHubConfig) getPrivateChaosChartRepo() (string, error) {
 		_, err = git.PlainClone(ClonePath, false, &git.CloneOptions{
 			Auth:          auth,
 			URL:           c.RepositoryURL,
-			Progress:      os.Stdout,
+			Progress:      nil,
 			SingleBranch:  true,
 			ReferenceName: plumbing.NewTagReferenceName(c.Branch),
 		})
@@ -155,7 +153,7 @@ func (c ChaosHubConfig) chaosChartSyncHandler() error {
 	if err != nil {
 		return fmt.Errorf("Error while checking repo exists, err: %s", err)
 	}
-	log.WithFields(log.Fields{"repositoryExists": repositoryExists}).Info("Executed isRepositoryExists()... ")
+	log.WithFields(log.Fields{"repositoryExists": repositoryExists}).Info("executed isRepositoryExists()... ")
 
 	if !repositoryExists {
 		return GitClone(model.CloningInput{
@@ -215,7 +213,7 @@ func (c ChaosHubConfig) GitPull() error {
 	if !c.IsPrivate {
 		err = workTree.Pull(&git.PullOptions{RemoteName: c.RemoteName, ReferenceName: referenceName})
 		if err == git.NoErrAlreadyUpToDate {
-			log.Print("Already up-to-date")
+			log.Info("already up-to-date")
 			return nil
 		} else if err != nil {
 			return err
@@ -225,7 +223,7 @@ func (c ChaosHubConfig) GitPull() error {
 	}
 	err = c.gitPullPrivateRepo()
 	if err == git.NoErrAlreadyUpToDate {
-		log.Print("Already up-to-date")
+		log.Info("already up-to-date")
 		return nil
 	} else if err != nil {
 		return err

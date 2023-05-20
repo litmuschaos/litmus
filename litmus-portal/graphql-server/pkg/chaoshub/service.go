@@ -4,22 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/handler"
 	chaosHubOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -51,9 +47,10 @@ type chaosHubService struct {
 	chaosHubOperator *dbSchemaChaosHub.Operator
 }
 
-func NewService(mongodbOperator mongodb.MongoOperator) Service {
+// NewService returns a new instance of Service
+func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
 	return &chaosHubService{
-		chaosHubOperator: dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator),
+		chaosHubOperator: chaosHubOperator,
 	}
 }
 
@@ -88,13 +85,13 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 
 	// Adding the new hub into database with the given username.
 	if err := c.chaosHubOperator.CreateChaosHub(ctx, newHub); err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return nil, err
 	}
 
 	// Cloning the repository at a path from chaoshub link structure.
 	if err := chaosHubOps.GitClone(cloneHub); err != nil {
-		log.Print("Error", err)
+		log.Error(err)
 	}
 
 	return newHub.GetOutputChaosHub(), nil
@@ -127,14 +124,14 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	// Adding the new hub into database with the given name.
 	err = c.chaosHubOperator.CreateChaosHub(ctx, newHub)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return nil, err
 	}
 
 	err = handler.DownloadRemoteHub(chaosHub)
 	if err != nil {
 		err = fmt.Errorf("Hub configurations saved successfully. Failed to connect the remote repo: " + err.Error())
-		log.Print("Error", err)
+		log.Error(err)
 		return nil, err
 	}
 
@@ -176,7 +173,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 	// Adding the new hub into database with the given username without cloning.
 	err = c.chaosHubOperator.CreateChaosHub(ctx, newHub)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return nil, err
 	}
 
@@ -221,7 +218,7 @@ func (c *chaosHubService) SyncHub(ctx context.Context, hubID string, projectID s
 	// Updating the last_synced_at time using hubID
 	err = c.chaosHubOperator.UpdateChaosHub(ctx, query, update)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return "", err
 	}
 	return "Successfully synced ChaosHub", nil
@@ -293,7 +290,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 	// Updating the new hub into database with the given username.
 	err = c.chaosHubOperator.UpdateChaosHub(ctx, query, update)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return nil, err
 	}
 
@@ -308,7 +305,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, projectID string) (bool, error) {
 	chaosHub, err := c.chaosHubOperator.GetHubByID(ctx, hubID, projectID)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return false, err
 	}
 	query := bson.D{{"chaoshub_id", hubID}, {"project_id", projectID}}
@@ -316,13 +313,13 @@ func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, proj
 
 	err = c.chaosHubOperator.UpdateChaosHub(ctx, query, update)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return false, err
 	}
 	clonePath := defaultPath + projectID + "/" + chaosHub.HubName
 	err = os.RemoveAll(clonePath)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 		return false, err
 	}
 
@@ -527,38 +524,6 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 
 	return outputChaosHubs, nil
 }
-
-// GetIconHandler ...
-var GetIconHandler = gin.HandlerFunc(func(c *gin.Context) {
-	replacer := strings.NewReplacer("../", "", "./", "", "/", "", "..", "")
-	var (
-		projectID          = replacer.Replace(c.Param("ProjectID"))
-		hubName            = replacer.Replace(c.Param("HubName"))
-		chartName          = replacer.Replace(c.Param("ChartName"))
-		iconName           = replacer.Replace(c.Param("IconName"))
-		img                *os.File
-		err                error
-		responseStatusCode = http.StatusOK
-	)
-
-	if strings.ToLower(chartName) == "predefined" {
-		img, err = os.Open("/tmp/version/" + projectID + "/" + hubName + "/workflows/icons/" + iconName)
-	} else {
-		img, err = os.Open("/tmp/version/" + projectID + "/" + hubName + "/charts/" + chartName + "/icons/" + iconName)
-	}
-
-	if err != nil {
-		responseStatusCode = http.StatusInternalServerError
-		fmt.Fprint(c.Writer, "icon cannot be fetched, err : "+err.Error())
-	}
-
-	defer img.Close()
-
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-	c.Writer.WriteHeader(responseStatusCode)
-	c.Writer.Header().Set("Content-Type", "image/png") // <-- set the content-type header
-	io.Copy(c.Writer, img)
-})
 
 // RecurringHubSync is used for syncing
 func (c *chaosHubService) RecurringHubSync() {

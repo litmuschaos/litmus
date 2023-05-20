@@ -3,17 +3,15 @@ package ops
 import (
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	dbOperationsAnalytics "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/analytics"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/patrickmn/go-cache"
-	"go.mongodb.org/mongo-driver/bson"
+	log "github.com/sirupsen/logrus"
 )
 
 func CreateDateMap(updatedAt string, filter model.TimeFrequency, statsMap map[string]model.WorkflowStatsResponse) error {
@@ -62,21 +60,21 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 	var existingAnnotations []*model.AnnotationsPromResponse
 	err := copier.Copy(&existingAnnotations, &annotations)
 	if err != nil {
-		log.Printf("Error parsing existing annotations  %v\n", err)
+		log.Errorf("error parsing existing annotations  %v\n", err)
 	}
 
 	for annotationIndex, annotation := range existingAnnotations {
 		var existingAnnotation model.AnnotationsPromResponse
 		err := copier.Copy(&existingAnnotation, &annotation)
 		if err != nil {
-			log.Printf("Error parsing existing annotation  %v\n", err)
+			log.Errorf("error parsing existing annotation  %v\n", err)
 		}
 
 		if strings.Contains(existingAnnotation.QueryID, "chaos-event") {
 			var newAnnotation model.AnnotationsPromResponse
 			err := copier.Copy(&newAnnotation, &verdictResponse)
 			if err != nil {
-				log.Printf("Error parsing new annotation  %v\n", err)
+				log.Errorf("error parsing new annotation  %v\n", err)
 			}
 
 			duplicateEventIndices := make(map[int]int)
@@ -172,7 +170,7 @@ func PatchChaosEventWithVerdict(annotations []*model.AnnotationsPromResponse, ve
 				if strings.Contains(errorStr, "already exists") {
 					cacheError = utils.UpdateCache(AnalyticsCache, eventCacheKey, annotations[annotationIndex])
 					if cacheError != nil {
-						log.Printf("Error while caching: %v\n", cacheError)
+						log.Errorf("error while caching: %v\n", cacheError)
 					}
 				}
 			}
@@ -209,7 +207,7 @@ func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, new
 	var promResponse model.PrometheusDataResponse
 	err := copier.Copy(&promResponse, &newPromResponse)
 	if err != nil {
-		log.Printf("Error parsing annotations  %v\n", err)
+		log.Errorf("error parsing annotations  %v\n", err)
 	}
 	dashboardResponse := &model.DashboardPromResponse{
 		DashboardMetricsResponse: dashboardMetrics,
@@ -217,22 +215,4 @@ func MapMetricsToDashboard(dashboardQueryMap []*model.QueryMapForPanelGroup, new
 	}
 
 	return dashboardResponse
-}
-
-// UpdateViewedAt updates the viewed_at field of a dashboard based on dashboard id and it's view id
-func UpdateViewedAt(dashboardID *string, viewID string) {
-	if dashboardID != nil && *dashboardID != "" {
-		timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-		query := bson.D{
-			{"db_id", dashboardID},
-			{"is_removed", false},
-		}
-		update := bson.D{{"$set", bson.D{{"viewed_at", timestamp}}}}
-		err := dbOperationsAnalytics.UpdateDashboard(query, update)
-		if err != nil {
-			log.Printf("error updating viewed_at field of the dashboard: %v\n", *dashboardID)
-		}
-		log.Printf("successfully updated viewed_at field of the dashboard: %v\n", *dashboardID)
-	}
-	log.Printf("dashboard is not saved for the view: %v\n", viewID)
 }

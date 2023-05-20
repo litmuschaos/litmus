@@ -12,10 +12,6 @@ type GetCollectionInterface interface {
 
 type GetCollectionStruct struct{}
 
-var (
-	GetCollectionClient GetCollectionInterface = &GetCollectionStruct{}
-)
-
 // getCollection function returns the appropriate DB collection based on the collection value passed
 func (g *GetCollectionStruct) getCollection(mongoClient MongoInterface, collectionType int) (*mongo.Collection, error) {
 	switch collectionType {

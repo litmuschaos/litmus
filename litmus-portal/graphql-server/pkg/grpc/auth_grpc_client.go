@@ -6,7 +6,7 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
@@ -15,7 +15,7 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 	conn, err := grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithInsecure(),
 		grpc.WithBlock())
 	if err != nil {
-		logrus.Fatalf("did not connect: %s", err)
+		log.Fatalf("did not connect: %s", err)
 	}
 	return protos.NewAuthRpcServiceClient(conn), conn
 }

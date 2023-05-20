@@ -6,7 +6,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 )
 
-// Application state, contains channels and mutexes used for subscriptions
+// StateData has an application state, contains channels and mutexes used for subscriptions
 type StateData struct {
 	ClusterEventPublish  map[string][]chan *model.ClusterEventResponse
 	ConnectedCluster     map[string]chan *model.ClusterActionResponse

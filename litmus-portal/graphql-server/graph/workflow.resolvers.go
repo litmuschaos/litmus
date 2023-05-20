@@ -9,9 +9,8 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
-	data_store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
-	"github.com/sirupsen/logrus"
+	dataStore "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
+	log "github.com/sirupsen/logrus"
 )
 
 func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
@@ -21,7 +20,7 @@ func (r *mutationResolver) CreateChaosWorkFlow(ctx context.Context, request mode
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.CreateChaosWorkflow(ctx, &request, data_store.Store)
+	return r.chaosWorkflowHandler.CreateChaosWorkflow(ctx, &request, dataStore.Store)
 }
 
 func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID string, workflowID string) (string, error) {
@@ -36,11 +35,11 @@ func (r *mutationResolver) ReRunChaosWorkFlow(ctx context.Context, projectID str
 	username, err := authorization.GetUsername(tkn)
 
 	if err != nil {
-		logrus.Print("Error getting username: ", err)
+		log.Error("error getting username: ", err)
 		return "", err
 	}
 
-	return wfHandler.ReRunChaosWorkFlow(projectID, workflowID, username)
+	return r.chaosWorkflowHandler.ReRunChaosWorkFlow(projectID, workflowID, username)
 }
 
 func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest) (*model.ChaosWorkFlowResponse, error) {
@@ -50,7 +49,7 @@ func (r *mutationResolver) UpdateChaosWorkflow(ctx context.Context, request *mod
 	if err != nil {
 		return nil, err
 	}
-	return wfHandler.UpdateChaosWorkflow(ctx, request, data_store.Store)
+	return r.chaosWorkflowHandler.UpdateChaosWorkflow(ctx, request, dataStore.Store)
 }
 
 func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -61,7 +60,7 @@ func (r *mutationResolver) DeleteChaosWorkflow(ctx context.Context, projectID st
 		return false, err
 	}
 
-	return wfHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return r.chaosWorkflowHandler.DeleteChaosWorkflow(ctx, projectID, workflowID, workflowRunID, dataStore.Store)
 }
 
 func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID string, workflowID *string, workflowRunID *string) (bool, error) {
@@ -72,11 +71,11 @@ func (r *mutationResolver) TerminateChaosWorkflow(ctx context.Context, projectID
 		return false, err
 	}
 
-	return wfHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return r.chaosWorkflowHandler.TerminateChaosWorkflow(ctx, projectID, workflowID, workflowRunID, dataStore.Store)
 }
 
 func (r *mutationResolver) ChaosWorkflowRun(ctx context.Context, request model.WorkflowRunRequest) (string, error) {
-	return wfHandler.ChaosWorkflowRun(request, *data_store.Store)
+	return r.chaosWorkflowHandler.ChaosWorkflowRun(request, *dataStore.Store)
 }
 
 func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string, workflowID string, workflowRunID string) (bool, error) {
@@ -87,7 +86,7 @@ func (r *mutationResolver) SyncWorkflowRun(ctx context.Context, projectID string
 		return false, err
 	}
 
-	return wfHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, data_store.Store)
+	return r.chaosWorkflowHandler.SyncWorkflowRun(ctx, projectID, workflowID, workflowRunID, dataStore.Store)
 }
 
 func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWorkflowsRequest) (*model.ListWorkflowsResponse, error) {
@@ -98,7 +97,7 @@ func (r *queryResolver) ListWorkflows(ctx context.Context, request model.ListWor
 		return nil, err
 	}
 
-	return wfHandler.ListWorkflows(request)
+	return r.chaosWorkflowHandler.ListWorkflows(request)
 }
 
 func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.ListWorkflowRunsRequest) (*model.ListWorkflowRunsResponse, error) {
@@ -109,18 +108,18 @@ func (r *queryResolver) ListWorkflowRuns(ctx context.Context, request model.List
 		return nil, err
 	}
 
-	return wfHandler.ListWorkflowRuns(request)
+	return r.chaosWorkflowHandler.ListWorkflowRuns(request)
 }
 
 func (r *subscriptionResolver) GetWorkflowEvents(ctx context.Context, projectID string) (<-chan *model.WorkflowRun, error) {
-	logrus.Print("NEW WORKFLOW EVENT LISTENER: ", projectID)
+	log.Info("new workflow event listener: ", projectID)
 	workflowEvent := make(chan *model.WorkflowRun, 1)
-	data_store.Store.Mutex.Lock()
-	data_store.Store.WorkflowEventPublish[projectID] = append(data_store.Store.WorkflowEventPublish[projectID], workflowEvent)
-	data_store.Store.Mutex.Unlock()
+	dataStore.Store.Mutex.Lock()
+	dataStore.Store.WorkflowEventPublish[projectID] = append(dataStore.Store.WorkflowEventPublish[projectID], workflowEvent)
+	dataStore.Store.Mutex.Unlock()
 	go func() {
 		<-ctx.Done()
-		logrus.Print("CLOSED WORKFLOW LISTENER: ", projectID)
+		log.Info("closed workflow listener: ", projectID)
 	}()
 	return workflowEvent, nil
 }

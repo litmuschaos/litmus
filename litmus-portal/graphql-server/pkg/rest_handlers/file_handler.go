@@ -5,20 +5,27 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // FileHandler dynamically generates the manifest file and sends it as a response
-func FileHandler(c *gin.Context) {
-	token := strings.TrimSuffix(c.Param("key"), ".yaml")
-	response, statusCode, err := cluster.GetManifest(token)
-	if err != nil {
-		logrus.WithError(err).Error("error while generating manifest file")
+func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := strings.TrimSuffix(c.Param("key"), ".yaml")
+		response, statusCode, err := cluster.NewService(
+			dbSchemaCluster.NewClusterOperator(mongodbOperator),
+			dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
+		).GetManifest(token)
+		if err != nil {
+			log.WithError(err).Error("error while generating manifest file")
+			utils.WriteHeaders(&c.Writer, statusCode)
+			c.Writer.Write([]byte(err.Error()))
+		}
 		utils.WriteHeaders(&c.Writer, statusCode)
-		c.Writer.Write([]byte(err.Error()))
+		c.Writer.Write(response)
 	}
-
-	utils.WriteHeaders(&c.Writer, statusCode)
-	c.Writer.Write(response)
 }

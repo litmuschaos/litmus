@@ -3,7 +3,6 @@ package authorization
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
@@ -19,12 +18,11 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		log.Print("USER JWT ERROR: ", err)
-		return nil, errors.New("Invalid Token")
+		return nil, fmt.Errorf("user jwt error: %v", err)
 	}
 
 	if !tkn.Valid {
-		return nil, errors.New("Invalid Token")
+		return nil, errors.New("invalid Token")
 	}
 
 	claims, ok := tkn.Claims.(jwt.MapClaims)
@@ -32,7 +30,7 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 		return claims, nil
 	}
 
-	return nil, errors.New("Invalid Token")
+	return nil, errors.New("invalid Token")
 }
 
 // GetUsername returns the username from the jwt token
@@ -42,8 +40,7 @@ func GetUsername(token string) (string, error) {
 	})
 
 	if err != nil {
-		log.Print("USER JWT ERROR: ", err)
-		return "", errors.New("invalid Token")
+		return "", fmt.Errorf("user jwt error: %v", err)
 	}
 
 	claims, ok := tkn.Claims.(jwt.MapClaims)

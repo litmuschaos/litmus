@@ -7,8 +7,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func InsertImageRegistry(ctx context.Context, imageRegistry ImageRegistry) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ImageRegistryCollection, imageRegistry)
+// Operator is used to perform operations on the database
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewImageRegistryOperator returns a new instance of Operator
+func NewImageRegistryOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
+func (i *Operator) InsertImageRegistry(ctx context.Context, imageRegistry ImageRegistry) error {
+	err := i.operator.Create(ctx, mongodb.ImageRegistryCollection, imageRegistry)
 	if err != nil {
 		return err
 	}
@@ -16,8 +28,8 @@ func InsertImageRegistry(ctx context.Context, imageRegistry ImageRegistry) error
 	return nil
 }
 
-func UpdateImageRegistry(ctx context.Context, query bson.D, update bson.D) error {
-	_, err := mongodb.Operator.Update(ctx, mongodb.ImageRegistryCollection, query, update)
+func (i *Operator) UpdateImageRegistry(ctx context.Context, query bson.D, update bson.D) error {
+	_, err := i.operator.Update(ctx, mongodb.ImageRegistryCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -25,9 +37,9 @@ func UpdateImageRegistry(ctx context.Context, query bson.D, update bson.D) error
 	return nil
 }
 
-func ListImageRegistries(ctx context.Context, query bson.D) ([]ImageRegistry, error) {
+func (i *Operator) ListImageRegistries(ctx context.Context, query bson.D) ([]ImageRegistry, error) {
 
-	results, err := mongodb.Operator.List(ctx, mongodb.ImageRegistryCollection, query)
+	results, err := i.operator.List(ctx, mongodb.ImageRegistryCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -41,8 +53,8 @@ func ListImageRegistries(ctx context.Context, query bson.D) ([]ImageRegistry, er
 	return imageRegistries, nil
 }
 
-func GetImageRegistry(ctx context.Context, query bson.D) (ImageRegistry, error) {
-	result, err := mongodb.Operator.Get(ctx, mongodb.ImageRegistryCollection, query)
+func (i *Operator) GetImageRegistry(ctx context.Context, query bson.D) (ImageRegistry, error) {
+	result, err := i.operator.Get(ctx, mongodb.ImageRegistryCollection, query)
 	if err != nil {
 		return ImageRegistry{}, err
 	}

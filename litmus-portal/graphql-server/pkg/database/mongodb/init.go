@@ -7,7 +7,7 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -53,8 +53,6 @@ type MongoClient struct {
 }
 
 var (
-	Client MongoInterface = &MongoClient{}
-
 	collections = map[int]string{
 		ClusterCollection:          "cluster-collection",
 		UserCollection:             "user",
@@ -104,7 +102,7 @@ func MongoConnection() (*mongo.Client, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		logrus.Infof("Connected To MongoDB")
+		log.Infof("connected To MongoDB")
 	}
 
 	return client, nil
@@ -116,9 +114,6 @@ func Initialize(client *mongo.Client) *MongoClient {
 		Database: client.Database(dbName),
 	}
 	mongodbClient.initAllCollection()
-
-	// TODO: will be removed after the migration
-	Client = mongodbClient
 
 	return mongodbClient
 }
@@ -147,7 +142,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.Fatal("Error Creating Index for Workflow Collection: ", err)
+		log.Fatal("error Creating Index for Workflow Collection: ", err)
 	}
 
 	m.WorkflowTemplateCollection = m.Database.Collection(collections[WorkflowTemplateCollection])
@@ -161,7 +156,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.Fatal("Error Creating Index for GitOps Collection : ", err)
+		log.Fatal("error Creating Index for GitOps Collection : ", err)
 	}
 
 	m.ChaosHubCollection = m.Database.Collection(collections[ChaosHubCollection])
@@ -179,6 +174,6 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.Fatal("Error Creating Index for Server Config Collection : ", err)
+		log.Fatal("error Creating Index for Server Config Collection : ", err)
 	}
 }

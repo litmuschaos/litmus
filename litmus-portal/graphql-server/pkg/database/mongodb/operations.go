@@ -26,18 +26,14 @@ type MongoOperator interface {
 }
 
 type MongoOperations struct {
-	MongoClient *MongoClient
+	MongoClient         *MongoClient
+	getCollectionClient GetCollectionInterface
 }
-
-var (
-	// TODO: remove this when all packages shift to interface pattern
-	// Operator contains all the CRUD operations of the mongo database
-	Operator MongoOperator
-)
 
 func NewMongoOperations(mongoClient *MongoClient) *MongoOperations {
 	return &MongoOperations{
-		MongoClient: mongoClient,
+		MongoClient:         mongoClient,
+		getCollectionClient: &GetCollectionStruct{},
 	}
 }
 
@@ -180,7 +176,7 @@ func (m *MongoOperations) Aggregate(ctx context.Context, collectionType int, pip
 
 // GetCollection fetches the correct collection based on the collection type
 func (m *MongoOperations) GetCollection(collectionType int) (*mongo.Collection, error) {
-	return GetCollectionClient.getCollection(m.MongoClient, collectionType)
+	return m.getCollectionClient.getCollection(m.MongoClient, collectionType)
 }
 
 func (m *MongoOperations) ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error) {
