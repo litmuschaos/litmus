@@ -1,3 +1,0 @@
-*.go linguist-language=Go
-*.sh linguist-language=Shell
-*.js linguist-language=JavaScript
