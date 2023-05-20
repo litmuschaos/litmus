@@ -159,14 +159,19 @@ func IsClusterConfirmed() (bool, string, error) {
 }
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
-func ClusterRegister(clusterData map[string]string) (bool, error) {
+func ClusterRegister(accessKey string) (bool, error) {
 	clientset, err:= GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
 
-	configMapPatch:= map[string]interface{}{
-		"data": clusterData,
+	is_cluster_confirmed, _, err := IsClusterConfirmed()
+	if err != nil {
+		return false, err
+	}
+
+	configMapPatch:= map[string]bool {
+		"data": is_cluster_confirmed,
 	}
 	configMapPatchOutput, err:= json.Marshal(configMapPatch)
 	if err != nil {
@@ -178,10 +183,10 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		return false, err
 	}
 
-	logrus.Info(AgentConfigName+" has been updated")
+	logrus.Info("%s has been patched",AgentConfigName)
 
-	secretPatch:= map[string]interface{}{
-		"stringData":clusterData,
+	secretPatch:= map[string]string{
+		"stringData": accessKey,
 	}
 	secretPatchOutput, err:= json.Marshal(secretPatch)
 	if err != nil {
@@ -192,7 +197,7 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		return false,err
 	}
 
-	logrus.Info(AgentSecretName+" has been updated")
+	logrus.Infof("%s has been patched", AgentSecretName)
 
 	return true, nil
 	
