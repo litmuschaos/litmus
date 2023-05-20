@@ -437,6 +437,7 @@ func (c *clusterService) GetManifest(token string) ([]byte, int, error) {
 	}
 }
 
+// GetCluster returns cluster details for a given clusterID
 func (c *clusterService) GetCluster(clusterID string) (dbSchemaCluster.Cluster, error) {
 	return c.clusterOperator.GetCluster(clusterID)
 }
