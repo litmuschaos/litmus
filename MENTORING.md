@@ -1,0 +1,21 @@
+# MENTORING
+
+This document serves as a comprehensive record of mentees, mentors, issues, and blogs associated with prominent open source programs such as LFX Mentorship, Google Summer of Code, Google Season of Docs, and Outreachy. Its primary objective is to provide an organized overview of mentoring activities and effectively track the progress made within the project.
+
+## Mentoring Details
+
+| Program                     | Timeline                            | Mentee                                       | Mentor(s)                                                    | Issue Title                                                                                         | Blog(s)                                                                                                                                                                                                              |
+|-----------------------------|-------------------------------------|----------------------------------------------|--------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Google Summer of Code (GSoC) | May 17th - August 31st, 2021        | Hemanth Krishna (@DarthBenro008)             | Raj Babu Das (@imrajdas), Karthik S (@ksatchit)              | https://github.com/litmuschaos/litmus/issues/2483 | [Blog](https://darthbenro008.medium.com/google-summer-of-code-2021-with-cloud-native-compute-foundation-my-experience-with-litmuschaos-18f1ec3e5bfa),  [CNCF blog](https://www.cncf.io/blog/2021/08/19/__trashed-2/) |
+| LFX Mentorship              | September 1st - November 31st, 2021 | Dhananjay Purohit (@DhananjayPurohit)        | Vedant Shrotria (@jonsy13), Raj Babu Das (@imrajdas)         | https://github.com/litmuschaos/litmus/issues/3114 | [Blog](https://dhananjaypurohit.medium.com/getting-started-my-journey-with-lfx-mentorship-and-litmuschaos-3514eacf6df2)                                                                                              |
+| LFX Mentorship              | September 1st - November 31st, 2021 | Aman Dwivedi (@Aman-Codes)                   | Udit Gaurav (@uditgaurav), Soumya Ghosh Dastidar (@gdsoumya) | https://github.com/litmuschaos/litmus/issues/3112 | [Blog](https://aman-codes.medium.com/kick-start-of-my-lfx-mentorship-with-litmus-chaos-eeb089a10951),  [CNCF blog](https://www.cncf.io/blog/2022/08/11/my-experience-contributing-to-litmuschaos-as-a-student)       |
+| LFX Mentorship              | March 1st - May 31st, 2022          | Prayag Savsani (@PrayagS) | Saranya Jena (@Saranya-jena), Sarthak Jain (@SarthakJain26)  | https://github.com/litmuschaos/litmus/issues/3440 | --                                                                                                                                                                                                                   |
+| LFX Mentorship              | March 1st - May 31st, 2023          | NamKyu Park (@namkyu1999) | Amit Kumar Das (@amityt)  Sayan Mondal (@S-ayanide)  | https://github.com/litmuschaos/litmus/issues/3892 | [Blog](https://dev.to/namkyu1999/my-lfx-mentorship-journey-the-best-starting-point-for-contributing-to-open-source-4f35)                                                                                                                                                                                                             |
+
+> Refer to the [CNCF Mentoring](https://github.com/cncf/mentoring) repository for more details.
+
+ 
+## Acknowledgments
+We express our sincere appreciation to the mentors, organizations, and programs involved in this project for their invaluable support and contributions. Their dedication plays a pivotal role in the success of the mentoring initiatives.
+
+--x--
