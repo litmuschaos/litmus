@@ -1,4 +1,4 @@
-# MENTORING
+# LITMUSCHAOS MENTORING
 
 This document serves as a comprehensive record of mentees, mentors, issues, and blogs associated with prominent open source programs such as LFX Mentorship, Google Summer of Code, Google Season of Docs, and Outreachy. Its primary objective is to provide an organized overview of mentoring activities and effectively track the progress made within the project.
 
