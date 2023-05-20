@@ -14,7 +14,6 @@ This document serves as a comprehensive record of mentees, mentors, issues, and 
 
 > Refer to the [CNCF Mentoring](https://github.com/cncf/mentoring) repository for more details.
 
- 
 We sincerely thank all the mentors, mentees, organizations, and programs involved in this project for their invaluable support and contributions. Their dedication and commitment play a vital role in the success of our mentoring initiatives.
 
 --x--
