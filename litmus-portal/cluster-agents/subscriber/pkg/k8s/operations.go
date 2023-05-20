@@ -165,13 +165,13 @@ func ClusterRegister(accessKey string) (bool, error) {
 		return false, err
 	}
 
-	is_cluster_confirmed, _, err := IsClusterConfirmed()
+	isClusterConfirmed, _, err := IsClusterConfirmed()
 	if err != nil {
 		return false, err
 	}
 
 	configMapPatch:= map[string]bool {
-		"data": is_cluster_confirmed,
+		"data": isClusterConfirmed,
 	}
 	configMapPatchOutput, err:= json.Marshal(configMapPatch)
 	if err != nil {
