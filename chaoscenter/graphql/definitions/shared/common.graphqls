@@ -1,0 +1,20 @@
+
+interface ResourceDetails {
+    name: String!
+    description: String
+    tags:[String!]
+}
+
+interface Audit {
+    updatedAt: String
+    createdAt: String
+    updatedBy: UserDetails
+    createdBy: UserDetails
+}
+
+type UserDetails {
+    userID: String!
+    username: String!
+    email: String!
+}
+
