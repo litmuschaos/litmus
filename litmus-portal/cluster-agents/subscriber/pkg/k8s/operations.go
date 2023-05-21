@@ -159,40 +159,40 @@ func IsClusterConfirmed() (bool, string, error) {
 }
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
-func ClusterRegister(accessKey string) (bool, error) {
+func ClusterRegister(accessKey string,isClusterConfirmed string) (bool, error) {
 	clientset, err:= GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
 
-	isClusterConfirmed, _, err := IsClusterConfirmed()
+	updatedConfigMap := corev1.ConfigMap{
+		  Data: map[string]string{
+			"IS_CLUSTER_CONFIRMED": isClusterConfirmed,
+		  },
+	}
+	configMapPatch, err:= json.Marshal(updatedConfigMap)
 	if err != nil {
 		return false, err
 	}
 
-	configMapPatch:= map[string]bool {
-		"data": isClusterConfirmed,
-	}
-	configMapPatchOutput, err:= json.Marshal(configMapPatch)
-	if err != nil {
-		return false, err
-	}
-
-	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Patch(context.TODO(),AgentConfigName,types.MergePatchType,configMapPatchOutput,metav1.PatchOptions{},)
+	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Patch(context.TODO(),AgentConfigName,types.MergePatchType,configMapPatch,metav1.PatchOptions{},)
 	if err != nil {
 		return false, err
 	}
 
 	logrus.Info("%s has been patched",AgentConfigName)
 
-	secretPatch:= map[string]string{
-		"stringData": accessKey,
+	updatedSecret:= corev1.Secret{
+		StringData: map[string]string{
+			"ACCESS_KEY": accessKey,
+		},
+
 	}
-	secretPatchOutput, err:= json.Marshal(secretPatch)
+	secretPatch, err:= json.Marshal(updatedSecret)
 	if err != nil {
 		return false, err
 	}
-	_, err = clientset.CoreV1().Secrets(AgentNamespace).Patch(context.TODO(),AgentSecretName,types.MergePatchType,secretPatchOutput,metav1.PatchOptions{},)
+	_, err = clientset.CoreV1().Secrets(AgentNamespace).Patch(context.TODO(),AgentSecretName,types.MergePatchType,secretPatch,metav1.PatchOptions{},)
 	if err !=nil {
 		return false,err
 	}
