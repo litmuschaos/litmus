@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
+	atype "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
@@ -295,7 +295,7 @@ func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]str
 }
 
 // ClusterOperations handles cluster operations
-func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, error) {
+func ClusterOperations(clusterAction atype.Action) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(clusterAction.K8SManifest))
