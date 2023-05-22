@@ -13,6 +13,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	authMocks "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authentication/model/mocks"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
@@ -40,6 +41,7 @@ var (
 	gitOpsService                 = new(gitOpsMocks.GitOpsService)
 	chaosWorkflowOperator         = dbOperationsWorkflow.NewChaosWorkflowOperator(mongoOperator)
 	chaosWorkflowTemplateOperator = dbOperationsWorkflowTemplate.NewWorkflowTemplateOperator(mongoOperator)
+	authService                   = new(authMocks.AuthenticationService)
 	chaosWorkflowHandler          = handler.NewChaosWorkflowHandler(
 		chaosWorkflowService,
 		clusterService,
@@ -47,6 +49,7 @@ var (
 		chaosWorkflowOperator,
 		chaosWorkflowTemplateOperator,
 		mongoOperator,
+		authService,
 	)
 )
 

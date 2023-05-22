@@ -1,6 +1,7 @@
 package rest_handlers
 
 import (
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,10 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 		token := strings.TrimSuffix(c.Param("key"), ".yaml")
 		kubeCluster, err := k8s.NewKubeCluster()
 		if err != nil {
-			log.Fatalf("error while getting kube config: %v", err)
+			log.WithError(err).Error("error while getting kube config")
+			utils.WriteHeaders(&c.Writer, http.StatusInternalServerError)
+			c.Writer.Write([]byte(err.Error()))
+			return
 		}
 		response, statusCode, err := cluster.NewService(
 			dbSchemaCluster.NewClusterOperator(mongodbOperator),
