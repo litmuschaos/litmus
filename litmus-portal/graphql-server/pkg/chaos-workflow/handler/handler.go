@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authentication"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	types "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
@@ -24,13 +25,11 @@ import (
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	dbSchemaWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	grpc2 "google.golang.org/grpc"
 )
 
 // ChaosWorkflowHandler is the handler for chaos workflow
@@ -41,6 +40,7 @@ type ChaosWorkflowHandler struct {
 	chaosWorkflowOperator         *dbOperationsWorkflow.Operator
 	chaosWorkflowTemplateOperator *dbOperationsWorkflowTemplate.Operator
 	mongodbOperator               mongodb.MongoOperator
+	authService                   authentication.Service
 }
 
 // NewChaosWorkflowHandler returns a new instance of ChaosWorkflowHandler
@@ -51,11 +51,13 @@ func NewChaosWorkflowHandler(
 	chaosWorkflowOperator *dbOperationsWorkflow.Operator,
 	chaosWorkflowTemplateOperator *dbOperationsWorkflowTemplate.Operator,
 	mongodbOperator mongodb.MongoOperator,
+	authService authentication.Service,
 ) *ChaosWorkflowHandler {
 	return &ChaosWorkflowHandler{
 		chaosWorkflowService:          chaosWorkflowService,
 		clusterService:                clusterService,
 		gitOpsService:                 gitOpsService,
+		authService:                   authService,
 		chaosWorkflowOperator:         chaosWorkflowOperator,
 		chaosWorkflowTemplateOperator: chaosWorkflowTemplateOperator,
 		mongodbOperator:               mongodbOperator,
@@ -966,11 +968,7 @@ func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, reque
 		return nil, errors.New("template already exists")
 	}
 
-	var conn *grpc2.ClientConn
-	client, conn := grpc.GetAuthGRPCSvcClient(conn)
-	defer conn.Close()
-
-	projectData, err := grpc.GetProjectById(client, request.ProjectID)
+	projectData, err := c.authService.GetProjectById(request.ProjectID)
 	if err != nil {
 		return nil, err
 	}

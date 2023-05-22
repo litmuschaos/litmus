@@ -20,6 +20,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authentication"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
@@ -30,7 +31,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/config"
 	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
+	gitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
@@ -140,12 +141,13 @@ func main() {
 	router.GET("/status", rest_handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", rest_handlers.WorkflowHelperImageVersionHandler)
 
-	gitOpsService := gitops.NewService(
+	gitOpsService := gitOps.NewService(
 		dbOperationsGitOps.NewGitOpsOperator(mongodbOperator),
 		chaosWorkflow.NewService(
 			dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
 			dbSchemaCluster.NewClusterOperator(mongodbOperator),
 		),
+		authentication.NewService(),
 	)
 	gitOpsService.GitOpsSyncHandler(true) // sync all previous existing repos before start
 

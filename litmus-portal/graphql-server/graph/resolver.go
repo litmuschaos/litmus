@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/generated"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics/service"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authentication"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
 	chaosWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
@@ -21,7 +22,7 @@ import (
 	dbOperationsImageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/image_registry"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
+	gitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 )
@@ -34,7 +35,7 @@ type Resolver struct {
 	chaosHubService      chaoshub.Service
 	chaosWorkflowHandler *handler.ChaosWorkflowHandler
 	clusterService       cluster.Service
-	gitOpsService        gitops.Service
+	gitOpsService        gitOps.Service
 	analyticsService     service.Service
 	usageService         usage.Service
 	imageRegistryService imageRegistry.Service
@@ -57,12 +58,19 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	analyticsService := service.NewService(analyticsOperator, chaosWorkflowOperator, clusterService)
 	usageService := usage.NewService(clusterOperator)
 	chaosWorkflowService := chaosWorkflow.NewService(chaosWorkflowOperator, clusterOperator)
-	gitOpsService := gitops.NewService(gitOpsOperator, chaosWorkflowService)
+	authService := authentication.NewService()
+	gitOpsService := gitOps.NewService(gitOpsOperator, chaosWorkflowService, authService)
 	imageRegistryService := imageRegistry.NewService(imageRegistryOperator)
 
 	// handler
 	chaosWorkflowHandler := handler.NewChaosWorkflowHandler(
-		chaosWorkflowService, clusterService, gitOpsService, chaosWorkflowOperator, chaosWorkflowTemplateOperator, mongodbOperator,
+		chaosWorkflowService,
+		clusterService,
+		gitOpsService,
+		chaosWorkflowOperator,
+		chaosWorkflowTemplateOperator,
+		mongodbOperator,
+		authService,
 	)
 
 	config := generated.Config{

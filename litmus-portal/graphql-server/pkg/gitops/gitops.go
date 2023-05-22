@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -19,7 +18,6 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/golang-jwt/jwt"
-	log "github.com/sirupsen/logrus"
 	ssh2 "golang.org/x/crypto/ssh"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
@@ -204,35 +202,6 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 	}
 }
 
-// UnsafeGitPull executes git pull after a hard reset when uncommited changes are present in repo. Not safe.
-func (c GitConfig) UnsafeGitPull() error {
-	cleanStatus, err := c.GitGetStatus()
-	if err != nil {
-		return err
-	}
-	log.WithFields(log.Fields{"cleanStatus": cleanStatus}).Info("executed GitGetStatus()... ")
-	if !cleanStatus {
-		log.Info("resetting Repo...: " + c.ProjectID)
-		return c.handlerForDirtyStatus()
-	}
-	return c.GitPull()
-}
-
-// GitGetStatus executes "git get status --porcelain" for the provided Repository Path,
-// returns true if the repository is clean
-// and false if the repository is dirty
-func (c GitConfig) GitGetStatus() (bool, error) {
-	_, workTree, err := c.getRepositoryWorktreeReference()
-	if err != nil {
-		return true, err
-	}
-	status, err := workTree.Status()
-	if err != nil {
-		return false, err
-	}
-	return status.IsClean(), nil
-}
-
 // getRepositoryWorktreeReference returns the git.Repository and git.Worktree instanes for the repo
 func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Worktree, error) {
 	repo, err := git.PlainOpen(c.LocalPath)
@@ -244,26 +213,6 @@ func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Workt
 		return nil, nil, err
 	}
 	return repo, workTree, nil
-}
-
-// handlerForDirtyStatus calls relative functions if the GitGetStatus gives a clean status as a result
-func (c GitConfig) handlerForDirtyStatus() error {
-	if err := c.GitHardReset(); err != nil {
-		return err
-	}
-	return c.GitPull()
-}
-
-// GitHardReset executes "git reset --hard HEAD" in provided Repository Path
-func (c GitConfig) GitHardReset() error {
-	_, workTree, err := c.getRepositoryWorktreeReference()
-	if err != nil {
-		return err
-	}
-	if workTree.Reset(&git.ResetOptions{Mode: git.HardReset}) != nil {
-		return fmt.Errorf("error in executing Reset: %s", err)
-	}
-	return nil
 }
 
 // GitPull updates the repository in provided Path
@@ -286,24 +235,6 @@ func (c GitConfig) GitPull() error {
 		return err
 	}
 	return nil
-}
-
-// GitCheckout changes the current active branch to specified branch in GitConfig
-func (c GitConfig) GitCheckout() error {
-	r, w, err := c.getRepositoryWorktreeReference()
-	if err != nil {
-		return err
-	}
-	_, err = r.Storer.Reference(plumbing.NewBranchReferenceName(c.Branch))
-	create := true
-	log.Error(err)
-	if err == nil {
-		create = false
-	}
-	return w.Checkout(&git.CheckoutOptions{
-		Branch: plumbing.NewBranchReferenceName(c.Branch),
-		Create: create,
-	})
 }
 
 // GitPush pushes the current changes to remote set in GitConfig, always needs auth credentials

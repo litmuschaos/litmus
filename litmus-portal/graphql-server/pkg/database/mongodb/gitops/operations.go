@@ -69,7 +69,7 @@ func (g *Operator) ReplaceGitConfig(ctx context.Context, query bson.D, update *G
 	}
 
 	if updateResult.MatchedCount == 0 {
-		return errors.New("No matching git config found")
+		return errors.New("no matching git config found")
 	}
 
 	return nil
@@ -83,7 +83,7 @@ func (g *Operator) UpdateGitConfig(ctx context.Context, query bson.D, update bso
 	}
 
 	if updateResult.MatchedCount == 0 {
-		return errors.New("No matching git config found")
+		return errors.New("no matching git config found")
 	}
 
 	return nil

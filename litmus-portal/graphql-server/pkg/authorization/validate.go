@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/grpc"
-	grpc2 "google.golang.org/grpc"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authentication"
 )
 
 // ValidateRole Validates the role of a user in a given project
@@ -13,14 +12,9 @@ func ValidateRole(ctx context.Context, projectID string,
 	requiredRoles []string, invitation string) error {
 	jwt := ctx.Value(AuthKey).(string)
 
-	var conn *grpc2.ClientConn
+	authService := authentication.NewService()
 
-	client, conn := grpc.GetAuthGRPCSvcClient(conn)
-	defer conn.Close()
-
-	err := grpc.ValidatorGRPCRequest(client, jwt, projectID,
-		requiredRoles,
-		invitation)
+	err := authService.ValidatorGRPCRequest(jwt, projectID, requiredRoles, invitation)
 	if err != nil {
 		return errors.New("permission_denied")
 	}

@@ -1,4 +1,5 @@
-package grpc
+// Package authentication contains the service methods to validate user permissions
+package authentication
 
 import (
 	"context"
@@ -10,8 +11,22 @@ import (
 	"google.golang.org/grpc"
 )
 
-// GetAuthGRPCSvcClient returns an RPC client for Authentication service
-func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *grpc.ClientConn) {
+// Service defines the authentication service methods
+type Service interface {
+	ValidatorGRPCRequest(jwt string, projectID string, requiredRoles []string, invitation string) error
+	GetProjectById(projectId string) (*protos.GetProjectByIdResponse, error)
+}
+
+// authenticationService implements the Service interface
+type authenticationService struct{}
+
+// NewService returns a new instance of authentication service
+func NewService() Service {
+	return &authenticationService{}
+}
+
+// getGRPCAuthClient returns an GRPC client for Authentication service
+func (a *authenticationService) getGRPCAuthClient() (protos.AuthRpcServiceClient, *grpc.ClientConn) {
 	conn, err := grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithInsecure(),
 		grpc.WithBlock())
 	if err != nil {
@@ -22,8 +37,9 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 
 // ValidatorGRPCRequest sends a request to Authentication server to ensure
 // user permission over the project
-func ValidatorGRPCRequest(client protos.AuthRpcServiceClient,
-	jwt string, projectID string, requiredRoles []string, invitation string) error {
+func (a *authenticationService) ValidatorGRPCRequest(jwt string, projectID string, requiredRoles []string, invitation string) error {
+	client, conn := a.getGRPCAuthClient()
+	defer conn.Close()
 
 	resp, err := client.ValidateRequest(context.Background(),
 		&protos.ValidationRequest{
@@ -42,8 +58,10 @@ func ValidatorGRPCRequest(client protos.AuthRpcServiceClient,
 }
 
 // GetProjectById returns the project details based on its uid
-func GetProjectById(client protos.AuthRpcServiceClient,
-	projectId string) (*protos.GetProjectByIdResponse, error) {
+func (a *authenticationService) GetProjectById(projectId string) (*protos.GetProjectByIdResponse, error) {
+	client, conn := a.getGRPCAuthClient()
+	defer conn.Close()
+
 	resp, err := client.GetProjectById(context.Background(), &protos.GetProjectByIdRequest{ProjectID: projectId})
 	if err != nil {
 		return nil, err
