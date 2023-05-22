@@ -10,60 +10,74 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	log "github.com/sirupsen/logrus"
-
-	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	v1 "k8s.io/api/core/v1"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/restmapper"
 )
 
-var (
-	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
-	dr              dynamic.ResourceInterface
-	AgentNamespace  = utils.Config.AgentNamespace
-)
+// KubeClients is a struct for kubernetes cluster
+type KubeClients struct {
+	GenericClient kubernetes.Interface
+	DynamicClient dynamic.Interface
+	RESTMapper    meta.RESTMapper
+}
 
-// This function handles cluster operations
-func ClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
-	// Getting dynamic and discovery client
-	ctx := context.TODO()
-	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
+// NewKubeCluster returns a new KubeClients instance
+func NewKubeCluster() (*KubeClients, error) {
+	config, err := GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	// Create a mapper using dynamic client
-	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
+	genericClient, dynamicClient, discoveryClient, err := GetK8sClients(config)
+	if err != nil {
+		return nil, err
+	}
 
-	// Decode YAML manifest into unstructured.Unstructured
-	obj := &unstructured.Unstructured{}
+	RESTMapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
+	return &KubeClients{
+		GenericClient: genericClient,
+		DynamicClient: dynamicClient,
+		RESTMapper:    RESTMapper,
+	}, nil
+}
+
+// ClusterResource handles cluster operations
+func (k *KubeClients) ClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
+	var (
+		decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
+		dr              dynamic.ResourceInterface
+		ctx             = context.TODO()
+		obj             = &unstructured.Unstructured{} // Decode YAML manifest into unstructured.Unstructured
+	)
 	_, gvk, err := decUnstructured.Decode([]byte(manifest), nil, obj)
 	if err != nil {
 		return nil, err
 	}
-
 	// Find GVR
-	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
+	mapping, err := k.RESTMapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
 		return nil, err
 	}
-
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
+		dr = k.DynamicClient.Resource(mapping.Resource).Namespace(namespace)
 	} else {
 		// for cluster-wide resources
-		dr = dynamicClient.Resource(mapping.Resource)
+		dr = k.DynamicClient.Resource(mapping.Resource)
 	}
 
 	response, err := dr.Create(ctx, obj, metaV1.CreateOptions{})
-	if k8serrors.IsAlreadyExists(err) {
-		// This doesnt ever happen even if it does already exist
+	if k8sErrors.IsAlreadyExists(err) {
+		// This doesn't ever happen even if it does already exist
 		log.Info("already exists")
 		return nil, nil
 	}
@@ -78,54 +92,50 @@ func ClusterResource(manifest string, namespace string) (*unstructured.Unstructu
 }
 
 /*
-This function returns the endpoint of the server by which external agents can communicate.
+GetServerEndpoint returns the endpoint of the server by which external agents can communicate.
 The order of generating the endpoint is based on different network type:
 - Ingress
 - LoadBalancer > NodePort > ClusterIP
 */
-func GetServerEndpoint(portalScope, agentType string) (string, error) {
+func (k *KubeClients) GetServerEndpoint(portalScope utils.AgentScope, agentType utils.AgentType) (string, error) {
 	var (
-		NodePort          int32
-		Port              int32
-		InternalIP        string
-		IngressPath       string
-		IPAddress         string
-		Scheme            string
-		FinalUrl          string
-		ServerServiceName = utils.Config.ServerServiceName
-		NodeName          = utils.Config.NodeName
-		LitmusPortalNS    = utils.Config.LitmusPortalNamespace
-		Ingress           = utils.Config.Ingress
-		IngressName       = utils.Config.IngressName
+		nodePort          int32
+		port              int32
+		internalIP        string
+		ingressPath       string
+		ipAddress         string
+		scheme            string
+		finalURL          string
+		serverServiceName = utils.Config.ServerServiceName
+		nodeName          = utils.Config.NodeName
+		litmusPortalNS    = utils.Config.LitmusPortalNamespace
+		ingress           = utils.Config.Ingress
+		ingressName       = utils.Config.IngressName
 	)
 
 	ctx := context.TODO()
-	clientset, err := GetGenericK8sClient()
+
+	svc, err := k.GenericClient.CoreV1().Services(litmusPortalNS).Get(ctx, serverServiceName, metaV1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
 
-	svc, err := clientset.CoreV1().Services(LitmusPortalNS).Get(ctx, ServerServiceName, metaV1.GetOptions{})
-	if err != nil {
-		return "", err
-	}
-
-	for _, port := range svc.Spec.Ports {
-		if port.Name == "graphql-server" {
-			NodePort = port.NodePort
-			Port = port.Port
+	for _, p := range svc.Spec.Ports {
+		if p.Name == "graphql-server" {
+			nodePort = p.NodePort
+			port = p.Port
 		}
 	}
 
 	// If current agent is self-agent, then servicename FQDN will be used irrespective of service type.
-	if agentType == "internal" {
-		FinalUrl = "http://" + ServerServiceName + "." + LitmusPortalNS + ":" + strconv.Itoa(int(Port)) + "/query"
-		return FinalUrl, nil
+	if agentType == utils.AgentTypeInternal {
+		finalURL = "http://" + serverServiceName + "." + litmusPortalNS + ":" + strconv.Itoa(int(port)) + "/query"
+		return finalURL, nil
 	}
 
 	// Ingress endpoint will be generated for external agents only.
-	if Ingress == "true" {
-		getIng, err := clientset.NetworkingV1().Ingresses(LitmusPortalNS).Get(ctx, IngressName, metaV1.GetOptions{})
+	if ingress == "true" {
+		getIng, err := k.GenericClient.NetworkingV1().Ingresses(litmusPortalNS).Get(ctx, ingressName, metaV1.GetOptions{})
 		if err != nil {
 			return "", err
 		}
@@ -136,22 +146,22 @@ func GetServerEndpoint(portalScope, agentType string) (string, error) {
 			2. IPAddress
 		*/
 		if len(getIng.Spec.Rules) > 0 && getIng.Spec.Rules[0].Host != "" {
-			IPAddress = getIng.Spec.Rules[0].Host
+			ipAddress = getIng.Spec.Rules[0].Host
 		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].IP != "" {
-			IPAddress = getIng.Status.LoadBalancer.Ingress[0].IP
+			ipAddress = getIng.Status.LoadBalancer.Ingress[0].IP
 		} else if len(getIng.Status.LoadBalancer.Ingress) > 0 && getIng.Status.LoadBalancer.Ingress[0].Hostname != "" {
-			IPAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
+			ipAddress = getIng.Status.LoadBalancer.Ingress[0].Hostname
 		} else {
 			return "", errors.New("IP Address or HostName not generated")
 		}
 
-		if IPAddress == "" {
-			return "", errors.New("IP Address or Hostname is not available in the ingress of " + IngressName)
+		if ipAddress == "" {
+			return "", errors.New("IP Address or Hostname is not available in the ingress of " + ingressName)
 		}
 
 		for _, rule := range getIng.Spec.Rules {
 			for _, path := range rule.HTTP.Paths {
-				if path.Backend.Service.Name == ServerServiceName {
+				if path.Backend.Service.Name == serverServiceName {
 					f := func(c rune) bool {
 						return c == '/'
 					}
@@ -167,96 +177,84 @@ func GetServerEndpoint(portalScope, agentType string) (string, error) {
 						path_arr = append(path_arr, "query")
 					}
 
-					IngressPath = strings.Join(path_arr[:], "/")
+					ingressPath = strings.Join(path_arr[:], "/")
 				}
 			}
 		}
 
 		if len(getIng.Spec.TLS) > 0 {
-			Scheme = "https"
+			scheme = "https"
 		} else {
-			Scheme = "http"
+			scheme = "http"
 		}
 
-		FinalUrl = Scheme + "://" + wrapIPV6(IPAddress) + "/" + IngressPath
+		finalURL = scheme + "://" + wrapIPV6(ipAddress) + "/" + ingressPath
 
-	} else if Ingress == "false" || Ingress == "" {
+	} else if ingress == "false" || ingress == "" {
 
 		exp := strings.ToLower(string(svc.Spec.Type))
 		switch exp {
-		case "loadbalancer":
+		case strings.ToLower(string(v1.ServiceTypeLoadBalancer)):
 			if len(svc.Status.LoadBalancer.Ingress) > 0 {
 				if svc.Status.LoadBalancer.Ingress[0].Hostname != "" {
-					IPAddress = svc.Status.LoadBalancer.Ingress[0].Hostname
+					ipAddress = svc.Status.LoadBalancer.Ingress[0].Hostname
 				} else if svc.Status.LoadBalancer.Ingress[0].IP != "" {
-					IPAddress = svc.Status.LoadBalancer.Ingress[0].IP
+					ipAddress = svc.Status.LoadBalancer.Ingress[0].IP
 				} else {
 					return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 				}
 			} else {
 				return "", errors.New("LoadBalancerIP/Hostname not present for loadbalancer service type")
 			}
-			FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(Port)) + "/query"
-		case "nodeport":
-
+			finalURL = "http://" + wrapIPV6(ipAddress) + ":" + strconv.Itoa(int(port)) + "/query"
+		case strings.ToLower(string(v1.ServiceTypeNodePort)):
 			// Cannot fetch Node Ip Address when ChaosCenter is installed in Namespaced scope
-			if portalScope == "namespace" {
+			if portalScope == utils.AgentScopeNamespace {
 				return "", errors.New("Cannot get NodeIP in namespaced mode")
 			}
 
-			nodeIP, err := clientset.CoreV1().Nodes().Get(ctx, NodeName, metaV1.GetOptions{})
+			nodeIP, err := k.GenericClient.CoreV1().Nodes().Get(ctx, nodeName, metaV1.GetOptions{})
 			if err != nil {
 				return "", err
 			}
 
 			for _, addr := range nodeIP.Status.Addresses {
 				if strings.ToLower(string(addr.Type)) == "externalip" && addr.Address != "" {
-					IPAddress = addr.Address
+					ipAddress = addr.Address
 				} else if strings.ToLower(string(addr.Type)) == "internalip" && addr.Address != "" {
-					InternalIP = addr.Address
+					internalIP = addr.Address
 				}
 			}
 
 			// Whichever one of External IP and Internal IP is present, that will be selected for Server Endpoint
-			if IPAddress != "" {
-				FinalUrl = "http://" + wrapIPV6(IPAddress) + ":" + strconv.Itoa(int(NodePort)) + "/query"
-			} else if InternalIP != "" {
-				FinalUrl = "http://" + wrapIPV6(InternalIP) + ":" + strconv.Itoa(int(NodePort)) + "/query"
+			if ipAddress != "" {
+				finalURL = "http://" + wrapIPV6(ipAddress) + ":" + strconv.Itoa(int(nodePort)) + "/query"
+			} else if internalIP != "" {
+				finalURL = "http://" + wrapIPV6(internalIP) + ":" + strconv.Itoa(int(nodePort)) + "/query"
 			} else {
-				return "", errors.New("Both ExternalIP and InternalIP aren't present for NodePort service type")
+				return "", errors.New("both ExternalIP and InternalIP aren't present for NodePort service type")
 			}
-		case "clusterip":
+		case strings.ToLower(string(v1.ServiceTypeClusterIP)):
 			log.Info("external agents can't be connected to the server if the service type is set to ClusterIP\n")
 			if svc.Spec.ClusterIP == "" {
 				return "", errors.New("ClusterIP is not present")
 			}
-			FinalUrl = "http://" + wrapIPV6(svc.Spec.ClusterIP) + ":" + strconv.Itoa(int(Port)) + "/query"
+			finalURL = "http://" + wrapIPV6(svc.Spec.ClusterIP) + ":" + strconv.Itoa(int(port)) + "/query"
 		default:
-			return "", errors.New("No service type found")
+			return "", errors.New("no service type found")
 		}
 	} else {
-		return "", errors.New("Ingress value is not correct")
+		return "", errors.New("ingress value is not correct")
 	}
 
-	log.Info("server endpoint: ", FinalUrl)
+	log.Info("server endpoint: ", finalURL)
 
-	return FinalUrl, nil
+	return finalURL, nil
 }
 
-func wrapIPV6(addr string) string {
-	if strings.Count(addr, ":") > 0 {
-		return "[" + addr + "]"
-	}
-	return addr
-}
-
-func GetTLSCert(secretName string) (string, error) {
-	clientset, err := GetGenericK8sClient()
-	if err != nil {
-		return "", err
-	}
-
-	secret, err := clientset.CoreV1().Secrets(utils.Config.LitmusPortalNamespace).Get(context.Background(), secretName, metaV1.GetOptions{})
+// GetTLSCert returns the TLS certificate of the provided secret
+func (k *KubeClients) GetTLSCert(secretName string) (string, error) {
+	secret, err := k.GenericClient.CoreV1().Secrets(utils.Config.LitmusPortalNamespace).Get(context.Background(), secretName, metaV1.GetOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -265,4 +263,12 @@ func GetTLSCert(secretName string) (string, error) {
 		return base64.StdEncoding.EncodeToString(cert), nil
 	}
 	return "", fmt.Errorf("could not find tls.crt value in provided TLS Secret %v", secretName)
+}
+
+// wrapIPV6 wraps ipv6 address in square brackets
+func wrapIPV6(addr string) string {
+	if strings.Count(addr, ":") > 0 {
+		return "[" + addr + "]"
+	}
+	return addr
 }

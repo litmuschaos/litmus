@@ -22,23 +22,23 @@ ChaosCenter provides console and UI experience for managing, monitoring, and eve
 
 #### Applying k8s manifest
 
-> Litmus-3.0.0-beta6 Cluster Scope manifest
+> Litmus-3.0.0-beta7 Cluster Scope manifest
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta6/litmus-3.0.0-beta6.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta7/litmus-3.0.0-beta7.yaml
 ```
 
 Or
 
-> Litmus-3.0.0-beta6 Namespaced Scope manifest.
+> Litmus-3.0.0-beta7 Namespaced Scope manifest.
 
 ```bash
 #Create a namespace eg: litmus
 kubectl create ns litmus
 #Install CRDs, if SELF_AGENT env is set to TRUE
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta6/litmus-portal-crds-3.0.0-beta6.yml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta7/litmus-portal-crds-3.0.0-beta7.yml
 #Install ChaosCenter
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta6/litmus-namespaced-3.0.0-beta6.yaml -n litmus
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta7/litmus-namespaced-3.0.0-beta7.yaml -n litmus
 ```
 
 Or
@@ -99,7 +99,7 @@ View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 ### **Local Development Guide for ChaosCenter**
 Local Development Guide for ChaosCenter can be found <b>[here](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide)</b>
 
-### **Upgrade from 2.13.0 to 2.14.0**
+### **Upgrade from 3.0.0-beta6 to 3.0.0-beta7**
 
 You can upgrade using the steps from [section here](https://docs.litmuschaos.io/docs/user-guides/upgrade)
 
