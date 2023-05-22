@@ -23,7 +23,9 @@ import (
 	dbOperationsWorkflowTemplate "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflowtemplate"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
 	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
+	log "github.com/sirupsen/logrus"
 )
 
 // This file will not be regenerated automatically.
@@ -51,8 +53,12 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	analyticsOperator := dbSchemaAnalytics.NewAnalyticsOperator(mongodbOperator)
 	imageRegistryOperator := dbOperationsImageRegistry.NewImageRegistryOperator(mongodbOperator)
 
+	kubeCluster, err := k8s.NewKubeCluster()
+	if err != nil {
+		log.Fatalf("Error in getting k8s cluster, err: %v", err)
+	}
 	// service
-	clusterService := cluster.NewService(clusterOperator, chaosWorkflowOperator)
+	clusterService := cluster.NewService(clusterOperator, chaosWorkflowOperator, kubeCluster)
 	chaosHubService := chaoshub.NewService(chaosHubOperator)
 	analyticsService := service.NewService(analyticsOperator, chaosWorkflowOperator, clusterService)
 	usageService := usage.NewService(clusterOperator)

@@ -14,6 +14,7 @@ import (
 	dbOperationsImageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/image_registry"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
@@ -77,9 +78,14 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 
 	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
 		log.Info("starting self deployer")
+		kubeCluster, err := k8s.NewKubeCluster()
+		if err != nil {
+			log.Fatalf("error in getting kube client, err: %v", err)
+		}
 		go selfDeployer.StartDeployer(cluster.NewService(
 			dbSchemaCluster.NewClusterOperator(operator),
 			dbOperationsWorkflow.NewChaosWorkflowOperator(operator),
+			kubeCluster,
 		), projectID)
 	}
 
