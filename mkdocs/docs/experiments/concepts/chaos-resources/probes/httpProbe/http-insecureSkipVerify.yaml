@@ -20,7 +20,7 @@ spec:
           url: "<url>"
           # skip certificate checks for the httpProbe
           # supports: true, false. default: false
-          insecureSkipVerify: "true"
+          insecureSkipVerify: true
           method:
             get: 
               criteria: == 
