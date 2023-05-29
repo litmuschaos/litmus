@@ -12,7 +12,6 @@ const (
 	NonCronExperiment ChaosExperimentType = "experiment"
 	CronExperiment    ChaosExperimentType = "cronexperiment"
 	ChaosEngine       ChaosExperimentType = "chaosengine"
-	Gameday           ChaosExperimentType = "gameday"
 )
 
 type ExperimentRunDetail struct {
