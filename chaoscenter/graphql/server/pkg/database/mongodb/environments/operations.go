@@ -14,7 +14,7 @@ var (
 	backgroundContext = context.Background()
 )
 
-// InsertEnvironment takes details of a nvironment and inserts into the database collection
+// InsertEnvironment takes details of a environment and inserts into the database collection
 func InsertEnvironment(ctx context.Context, environment Environment) error {
 	err := mongodb.Operator.Create(ctx, mongodb.EnvironmentCollection, environment)
 	if err != nil {
@@ -42,8 +42,6 @@ func GetEnvironment(query bson.D) (Environment, error) {
 // GetEnvironmentDetails takes a environmentName and projectID to retrieve the environment details from the database
 func GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error) {
 	query := bson.D{
-		//{"account_id", identifiers.AccountIdentifier},
-		//{"org_id", identifiers.OrgIdentifier},
 		{"project_id", projectID},
 		{"environment_id", environmentID},
 	}
@@ -72,7 +70,6 @@ func UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
 func GetEnvironmentWithProjectID(projectID string) ([]*Environment, error) {
 	var query bson.D
 	query = bson.D{
-
 		{"project_id", projectID},
 		{"is_removed", false},
 	}
