@@ -70,7 +70,7 @@ func UpdateInfra(ctx context.Context, query bson.D, update bson.D) error {
 	return nil
 }
 
-// GetInfraWithProjectID takes Harness Identifiers parameters to retrieve the chaos_infra details
+// GetInfraWithProjectID takes projectID to retrieve the chaos_infra details
 func GetInfraWithProjectID(projectID string) ([]*ChaosInfra, error) {
 	var query bson.D
 	query = bson.D{
