@@ -943,7 +943,7 @@ createWorkflow:
     imageNotChanged: You have not changed the image.
     continue: Do you want to continue?
     continueBtn: Continue
-    validate: Chaos Scenario name can only contain - and alphanumeric characters
+    validate: Chaos Scenario name can only contain lowercase alphanumeric characters.
     pleaseAddExp: Please add experiments to see the data
     revertSchedule: Revert Schedule
     retainLogs: To retain Chaos Experiment logs, turn this off.
