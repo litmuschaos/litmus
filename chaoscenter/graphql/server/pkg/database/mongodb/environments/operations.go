@@ -14,7 +14,7 @@ var (
 	backgroundContext = context.Background()
 )
 
-// InsertEnvironment takes details of a chaos_environment and inserts into the database collection
+// InsertEnvironment takes details of a nvironment and inserts into the database collection
 func InsertEnvironment(ctx context.Context, environment Environment) error {
 	err := mongodb.Operator.Create(ctx, mongodb.EnvironmentCollection, environment)
 	if err != nil {
@@ -24,7 +24,7 @@ func InsertEnvironment(ctx context.Context, environment Environment) error {
 	return nil
 }
 
-// GetEnvironment takes a environmentID to retrieve the chaos_environment details from the database
+// GetEnvironment takes a environmentID to retrieve the environment details from the database
 func GetEnvironment(query bson.D) (Environment, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
@@ -39,7 +39,7 @@ func GetEnvironment(query bson.D) (Environment, error) {
 	return environment, nil
 }
 
-// GetEnvironmentDetails takes a environmentName and projectID to retrieve the chaos_environment details from the database
+// GetEnvironmentDetails takes a environmentName and projectID to retrieve the environment details from the database
 func GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error) {
 	query := bson.D{
 		//{"account_id", identifiers.AccountIdentifier},
@@ -58,7 +58,7 @@ func GetEnvironmentDetails(ctx context.Context, environmentID string, projectID 
 	return environment, nil
 }
 
-// UpdateEnvironment takes query and update parameters to update the chaos_environment details in the database
+// UpdateEnvironment takes query and update parameters to update the environment details in the database
 func UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
 	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.EnvironmentCollection, query, update)
 	if err != nil {
@@ -68,7 +68,7 @@ func UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
 	return nil
 }
 
-// GetEnvironmentWithProjectID takes Harness Identifiers parameters to retrieve the chaos_environment details
+// GetEnvironmentWithProjectID takes projectID to retrieve the environment details
 func GetEnvironmentWithProjectID(projectID string) ([]*Environment, error) {
 	var query bson.D
 	query = bson.D{
