@@ -40,3 +40,18 @@ func ListImageRegistries(ctx context.Context, query bson.D) ([]ImageRegistry, er
 
 	return imageRegistries, nil
 }
+
+func GetImageRegistry(ctx context.Context, query bson.D) (ImageRegistry, error) {
+	result, err := mongodb.Operator.Get(ctx, mongodb.ImageRegistryCollection, query)
+	if err != nil {
+		return ImageRegistry{}, err
+	}
+
+	var imageRegistry ImageRegistry
+	err = result.Decode(&imageRegistry)
+	if err != nil {
+		return ImageRegistry{}, err
+	}
+
+	return imageRegistry, nil
+}
