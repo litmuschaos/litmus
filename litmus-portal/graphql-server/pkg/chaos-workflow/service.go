@@ -424,67 +424,9 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[s
 
 	workflowManifest.Labels = updateManifestLabels(workflowManifest.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 
-	newWeights, err = processManifest(workflowManifest.Spec.Templates, workflowManifest.Labels, weights)
+	newWeights, err = generateWeightsFromManifest(workflowManifest.Spec.Templates, workflowManifest.Labels, weights)
 	if err != nil {
 		return err
-	}
-
-	for i, template := range workflowManifest.Spec.Templates {
-		artifact := template.Inputs.Artifacts
-		if len(artifact) > 0 {
-			if artifact[0].Raw == nil {
-				continue
-			}
-			var data = artifact[0].Raw.Data
-			if len(data) > 0 {
-				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
-				// And it is not able the unmarshal the yamlstring to chaos engine struct
-				data = strings.ReplaceAll(data, "{{", "")
-				data = strings.ReplaceAll(data, "}}", "")
-
-				var meta chaosTypes.ChaosEngine
-				err := yaml.Unmarshal([]byte(data), &meta)
-				if err != nil {
-					return errors.New("failed to unmarshal chaosengine")
-				}
-
-				if strings.ToLower(meta.Kind) == "chaosengine" {
-					var exprname string
-					if len(meta.Spec.Experiments) > 0 {
-						exprname = meta.GenerateName
-						if len(exprname) == 0 {
-							return errors.New("empty chaos experiment name")
-						}
-					} else {
-						return errors.New("no experiments specified in chaosengine - " + meta.Name)
-					}
-
-					if val, ok := weights[exprname]; ok {
-						workflowManifest.Spec.Templates[i].Metadata.Labels = map[string]string{
-							"weight": strconv.Itoa(val),
-						}
-					} else if val, ok := workflowManifest.Spec.Templates[i].Metadata.Labels["weight"]; ok {
-						intVal, err := strconv.Atoi(val)
-						if err != nil {
-							return errors.New("failed to convert")
-						}
-						newWeights = append(newWeights, &model.WeightagesInput{
-							ExperimentName: exprname,
-							Weightage:      intVal,
-						})
-					} else {
-						newWeights = append(newWeights, &model.WeightagesInput{
-							ExperimentName: exprname,
-							Weightage:      10,
-						})
-
-						workflowManifest.Spec.Templates[i].Metadata.Labels = map[string]string{
-							"weight": "10",
-						}
-					}
-				}
-			}
-		}
 	}
 
 	workflow.Weightages = append(workflow.Weightages, newWeights...)
@@ -522,61 +464,9 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights m
 		cronWorkflowManifest.Spec.WorkflowMetadata.Labels = updateManifestLabels(cronWorkflowManifest.Spec.WorkflowMetadata.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 	}
 
-	for i, template := range cronWorkflowManifest.Spec.WorkflowSpec.Templates {
-
-		artifact := template.Inputs.Artifacts
-		if len(artifact) > 0 {
-			if artifact[0].Raw == nil {
-				continue
-			}
-			var data = artifact[0].Raw.Data
-			if len(data) > 0 {
-				// This replacement is required because chaos engine yaml have a syntax template. example:{{ workflow.parameters.adminModeNamespace }}
-				// And it is not able the unmarshal the yamlstring to chaos engine struct
-				data = strings.ReplaceAll(data, "{{", "")
-				data = strings.ReplaceAll(data, "}}", "")
-
-				var meta chaosTypes.ChaosEngine
-				err = yaml.Unmarshal([]byte(data), &meta)
-				if err != nil {
-					return errors.New("failed to unmarshal chaosengine")
-				}
-
-				if strings.ToLower(meta.Kind) == "chaosengine" {
-					var exprname string
-					if len(meta.Spec.Experiments) > 0 {
-						exprname = meta.GenerateName
-						if len(exprname) == 0 {
-							return errors.New("empty chaos experiment name")
-						}
-					} else {
-						return errors.New("no experiments specified in chaosengine - " + meta.Name)
-					}
-					if val, ok := weights[exprname]; ok {
-						cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels = map[string]string{
-							"weight": strconv.Itoa(val),
-						}
-					} else if val, ok := cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels["weight"]; ok {
-						intVal, err := strconv.Atoi(val)
-						if err != nil {
-							return errors.New("failed to convert")
-						}
-						newWeights = append(newWeights, &model.WeightagesInput{
-							ExperimentName: exprname,
-							Weightage:      intVal,
-						})
-					} else {
-						newWeights = append(newWeights, &model.WeightagesInput{
-							ExperimentName: exprname,
-							Weightage:      10,
-						})
-						cronWorkflowManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels = map[string]string{
-							"weight": "10",
-						}
-					}
-				}
-			}
-		}
+	newWeights, err = generateWeightsFromManifest(cronWorkflowManifest.Spec.WorkflowSpec.Templates, cronWorkflowManifest.Spec.WorkflowMetadata.Labels, weights)
+	if err != nil {
+		return err
 	}
 
 	workflow.Weightages = append(workflow.Weightages, newWeights...)
