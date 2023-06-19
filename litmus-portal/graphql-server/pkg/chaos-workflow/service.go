@@ -328,6 +328,29 @@ func (c *chaosWorkflowService) ProcessCompletedWorkflowRun(execData ExecutionDat
 	return result, nil
 }
 
+func updateManifestLabels(labels map[string]string, workflowID string, clusterID string, requiresType bool) map[string]string {
+	if labels == nil {
+		labels = map[string]string{
+			"workflow_id": workflowID,
+			"cluster_id":  clusterID,
+		}
+		if requiresType {
+			labels["type"] = "standalone_workflow"
+		} else {
+			labels["workflows.argoproj.io/controller-instanceid"] = clusterID
+		}
+	} else {
+		labels["workflow_id"] = workflowID
+		labels["cluster_id"] = clusterID
+		if requiresType {
+			labels["type"] = "standalone_workflow"
+		} else {
+			labels["workflows.argoproj.io/controller-instanceid"] = clusterID
+		}
+	}
+	return labels
+}
+
 func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
 	var (
 		newWeights       []*model.WeightagesInput
