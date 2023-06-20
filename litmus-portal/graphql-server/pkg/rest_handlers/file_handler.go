@@ -14,17 +14,14 @@ import (
 )
 
 // FileHandler dynamically generates the manifest file and sends it as a response
-func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
+func FileHandler(mongodbOperator mongodb.MongoOperator, kubeClients *k8s.KubeClients) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := strings.TrimSuffix(c.Param("key"), ".yaml")
-		kubeCluster, err := k8s.NewKubeCluster()
-		if err != nil {
-			log.Fatalf("error while getting kube config: %v", err)
-		}
+
 		response, statusCode, err := cluster.NewService(
 			dbSchemaCluster.NewClusterOperator(mongodbOperator),
 			dbOperationsWorkflow.NewChaosWorkflowOperator(mongodbOperator),
-			kubeCluster,
+			kubeClients,
 		).GetManifest(token)
 		if err != nil {
 			log.WithError(err).Error("error while generating manifest file")

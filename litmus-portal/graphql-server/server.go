@@ -31,6 +31,7 @@ import (
 	dbOperationsGitOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/gitops"
 	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/gitops"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/projects"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
@@ -105,7 +106,12 @@ func main() {
 
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC server
 
-	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
+	kubeClients, err := k8s.NewKubeCluster()
+	if err != nil {
+		log.Fatalf("Error in getting k8s cluster, err: %v", err)
+	}
+
+	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator, kubeClients)))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.Websocket{
@@ -136,7 +142,7 @@ func main() {
 	router.Any("/query", authorization.Middleware(srv))
 	router.GET("/readiness", rest_handlers.ReadinessHandler(client, mongodbOperator))
 	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(rest_handlers.GetIconHandler, nil))
-	router.Any("/file/:key", rest_handlers.FileHandler(mongodbOperator))
+	router.Any("/file/:key", rest_handlers.FileHandler(mongodbOperator, kubeClients))
 	router.GET("/status", rest_handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", rest_handlers.WorkflowHelperImageVersionHandler)
 
