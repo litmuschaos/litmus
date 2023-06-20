@@ -4,6 +4,7 @@ package mocks
 import (
 	"context"
 
+	"github.com/litmus/litmus-portal/graphql-server/utils"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	store "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/data-store"
 	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
@@ -20,6 +21,18 @@ type ClusterService struct {
 func (c *ClusterService) RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
 	args := c.Called(request)
 	return args.Get(0).(*model.RegisterClusterResponse), args.Error(1)
+}
+
+// GetEndpoint mocks the GetEndpoint of ClusterService
+func (c *ClusterService) GetEndpoint(agentType utils.AgentType) (string, error) {
+	args := c.Called(agentType)
+	return args.String(0), args.Error(1)
+}
+
+// GetClusterResource mocks the GetClusterResource of ClusterService
+func (c *ClusterService) GetClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
+	args := c.Called(manifest, namespace)
+	return args.Get(0).(*unstructured.Unstructured), args.Error(1)
 }
 
 // UpdateCluster mocks the UpdateCluster of ClusterService

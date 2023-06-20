@@ -107,13 +107,13 @@ OR
 
 ```bash
 cd ${DIRECTORY}
-docker buildx build -f Dockerfile --progress plane --push --no-cache --platform ${PLATFORMS} -t ${REPONAME}/$(IMAGE_NAME):$(IMG_TAG} .
+docker buildx build -f Dockerfile --progress plain --push --no-cache --platform ${PLATFORMS} -t ${REPONAME}/$(IMAGE_NAME):$(IMG_TAG} .
 ```
 
 For frontend image:
 
 ```bash
 cd ${DIRECTORY}
-docker buildx build . -f Dockerfile --progress plane --push --no-cache --platform ${PLATFORMS} -t ${REPONAME}/${IMAGE_NAME}:${IMG_TAG} \
+docker buildx build . -f Dockerfile --progress plain --push --no-cache --platform ${PLATFORMS} -t ${REPONAME}/${IMAGE_NAME}:${IMG_TAG} \
 --build-arg REACT_APP_KB_CHAOS_VERSION=${IMG_TAG} --build-arg REACT_APP_BUILD_TIME="${timestamp}" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x"
 ```
