@@ -10,17 +10,12 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 // ClusterService is a mock type for model.ClusterService
 type ClusterService struct {
 	mock.Mock
-}
-
-// RegisterCluster mocks the RegisterCluster of ClusterService
-func (c *ClusterService) RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
-	args := c.Called(request)
-	return args.Get(0).(*model.RegisterClusterResponse), args.Error(1)
 }
 
 // GetEndpoint mocks the GetEndpoint of ClusterService
@@ -33,6 +28,12 @@ func (c *ClusterService) GetEndpoint(agentType utils.AgentType) (string, error) 
 func (c *ClusterService) GetClusterResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
 	args := c.Called(manifest, namespace)
 	return args.Get(0).(*unstructured.Unstructured), args.Error(1)
+}
+
+// RegisterCluster mocks the RegisterCluster of ClusterService
+func (c *ClusterService) RegisterCluster(request model.RegisterClusterRequest) (*model.RegisterClusterResponse, error) {
+	args := c.Called(request)
+	return args.Get(0).(*model.RegisterClusterResponse), args.Error(1)
 }
 
 // UpdateCluster mocks the UpdateCluster of ClusterService
