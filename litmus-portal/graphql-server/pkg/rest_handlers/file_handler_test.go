@@ -36,7 +36,7 @@ func TestFileHandler(t *testing.T) {
 			given: func() {
 				w = httptest.NewRecorder()
 				clusterID := uuid.NewString()
-				accessKey, _ := cluster.ClusterCreateJWT(clusterID)
+				accessKey, _ := cluster.CreateClusterJWT(clusterID)
 				ctx, _ = gin.CreateTestContext(w)
 				ctx.Params = []gin.Param{
 					{
