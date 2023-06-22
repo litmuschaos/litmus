@@ -73,21 +73,3 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 
 	return config
 }
-
-//// Validate if the required auth params are provided or not and accordingly provide
-//// error messages to client.
-//func validateRequiredAuthParams(authScheme hcesdk.AuthScheme, token, accountIdentifier string) error {
-//	if authScheme == hcesdk.XAPIKeyAuthScheme {
-//		if len(token) == 0 {
-//			return fmt.Errorf("token is required, x-api-key: <your-api-key-token>")
-//		}
-//		if len(accountIdentifier) == 0 {
-//			return fmt.Errorf("accountIdentifier is required as query parameter, <url?accountIdentifier=<your-account-id>>")
-//		}
-//	} else {
-//		if len(token) == 0 {
-//			return fmt.Errorf("token is required, authorization: <your-jwt-token>")
-//		}
-//	}
-//	return nil
-//}

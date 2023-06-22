@@ -42,8 +42,6 @@ func GetEnvironment(query bson.D) (Environment, error) {
 // GetEnvironmentDetails takes a environmentName and projectID to retrieve the chaos_environment details from the database
 func GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error) {
 	query := bson.D{
-		//{"account_id", identifiers.AccountIdentifier},
-		//{"org_id", identifiers.OrgIdentifier},
 		{"project_id", projectID},
 		{"environment_id", environmentID},
 	}

@@ -71,7 +71,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	}
 
 	if infra.ProjectID != projectID {
-		return nil, nil, errors.New("AccountID/OrgID/ProjectID doesn't match with the chaos_infra identifiers")
+		return nil, nil, errors.New("ProjectID doesn't match with the chaos_infra identifiers")
 	}
 
 	wfType := dbChaosExperiment.NonCronExperiment

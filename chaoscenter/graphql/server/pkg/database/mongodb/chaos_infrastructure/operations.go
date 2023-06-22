@@ -56,8 +56,6 @@ func (c *Operator) GetInfra(infraID string) (ChaosInfra, error) {
 // GetInfraDetails takes a infraName and projectID to retrieve the chaos_infra details from the database
 func (c *Operator) GetInfraDetails(ctx context.Context, infraID string, projectID string) (ChaosInfra, error) {
 	query := bson.D{
-		//{"account_id", identifiers.AccountIdentifier},
-		//{"org_id", identifiers.OrgIdentifier},
 		{"project_id", projectID},
 		{"infra_id", infraID},
 	}
