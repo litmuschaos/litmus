@@ -1,6 +1,6 @@
 package project
 
-import "github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
+import "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 
 // Project contains the required fields to be stored in the database for a project
 type Project struct {

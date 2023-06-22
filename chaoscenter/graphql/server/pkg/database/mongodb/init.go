@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/harness/hce-saas/graphql/server/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,7 +21,6 @@ const (
 	ChaosHubCollection
 	ImageRegistryCollection
 	ServerConfigCollection
-	ExperimentTemplateCollection
 	GitOpsCollection
 	UserCollection
 	ProjectCollection
@@ -45,7 +44,6 @@ type MongoClient struct {
 	ChaosServerConfigCollection   *mongo.Collection
 	ImageRegistryCollection       *mongo.Collection
 	ServerConfigCollection        *mongo.Collection
-	WorkflowTemplateCollection    *mongo.Collection
 	GitOpsCollection              *mongo.Collection
 	UserCollection                *mongo.Collection
 	ProjectCollection             *mongo.Collection
@@ -62,7 +60,6 @@ var (
 		ChaosHubCollection:            "chaosHubs",
 		ImageRegistryCollection:       "image-registry-collection",
 		ServerConfigCollection:        "server-config-collection",
-		ExperimentTemplateCollection:  "experiment-template",
 		GitOpsCollection:              "gitops-collection",
 		UserCollection:                "user",
 		ProjectCollection:             "project",
@@ -214,7 +211,6 @@ func (m *MongoClient) initAllCollection() {
 		logrus.WithError(err).Fatal("failed to create indexes for chaosHubs collection")
 	}
 
-	m.WorkflowTemplateCollection = m.Database.Collection(Collections[ExperimentTemplateCollection])
 	m.GitOpsCollection = m.Database.Collection(Collections[GitOpsCollection])
 	_, err = m.GitOpsCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
 		{

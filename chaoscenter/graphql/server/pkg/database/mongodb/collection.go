@@ -34,8 +34,6 @@ func (g *GetCollectionStruct) getCollection(collectionType int) (*mongo.Collecti
 		return mongoClient.(*MongoClient).UserCollection, nil
 	case ProjectCollection:
 		return mongoClient.(*MongoClient).ProjectCollection, nil
-	case ExperimentTemplateCollection:
-		return mongoClient.(*MongoClient).WorkflowTemplateCollection, nil
 	case GitOpsCollection:
 		return mongoClient.(*MongoClient).GitOpsCollection, nil
 	case EnvironmentCollection:
