@@ -1,8 +1,8 @@
 package projects
 
 import (
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
-	pb "github.com/harness/hce-saas/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 )
 
 // ProjectServer is used to implement project.ProjectServer
