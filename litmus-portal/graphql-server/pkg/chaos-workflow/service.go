@@ -351,7 +351,7 @@ func updateManifestLabels(labels map[string]string, workflowID string, clusterID
 	return labels
 }
 
-func generateFaultWeights(templates []v1alpha1.Template, labels map[string]string, weights map[string]int) ([]*model.WeightagesInput, error) {
+func generateFaultWeights(templates []v1alpha1.Template, labels map[string]string, weights map[string]int) ([]v1alpha1.Template, []*model.WeightagesInput, error) {
 	var newWeights []*model.WeightagesInput
 
 	for i, template := range templates {
@@ -367,7 +367,7 @@ func generateFaultWeights(templates []v1alpha1.Template, labels map[string]strin
 				var meta chaosTypes.ChaosEngine
 				err := yaml.Unmarshal([]byte(data), &meta)
 				if err != nil {
-					return nil, errors.New("failed to unmarshal chaosengine")
+					return nil, nil, errors.New("failed to unmarshal chaosengine")
 				}
 
 				if strings.ToLower(meta.Kind) == "chaosengine" {
@@ -375,10 +375,10 @@ func generateFaultWeights(templates []v1alpha1.Template, labels map[string]strin
 					if len(meta.Spec.Experiments) > 0 {
 						exprname = meta.GenerateName
 						if len(exprname) == 0 {
-							return nil, errors.New("empty chaos experiment name")
+							return nil, nil, errors.New("empty chaos experiment name")
 						}
 					} else {
-						return nil, errors.New("no experiments specified in chaosengine - " + meta.Name)
+						return nil, nil, errors.New("no experiments specified in chaosengine - " + meta.Name)
 					}
 
 					if val, ok := weights[exprname]; ok {
@@ -388,7 +388,7 @@ func generateFaultWeights(templates []v1alpha1.Template, labels map[string]strin
 					} else if val, ok := templates[i].Metadata.Labels["weight"]; ok {
 						intVal, err := strconv.Atoi(val)
 						if err != nil {
-							return nil, errors.New("failed to convert")
+							return nil, nil, errors.New("failed to convert")
 						}
 						newWeights = append(newWeights, &model.WeightagesInput{
 							ExperimentName: exprname,
@@ -409,7 +409,7 @@ func generateFaultWeights(templates []v1alpha1.Template, labels map[string]strin
 		}
 	}
 
-	return newWeights, nil
+	return templates, newWeights, nil
 }
 
 func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[string]int) error {
@@ -424,7 +424,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[s
 
 	workflowManifest.Labels = updateManifestLabels(workflowManifest.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 
-	newWeights, err = generateFaultWeights(workflowManifest.Spec.Templates, workflowManifest.Labels, weights)
+	workflowManifest.Spec.Templates, newWeights, err = generateFaultWeights(workflowManifest.Spec.Templates, workflowManifest.Labels, weights)
 	if err != nil {
 		return err
 	}
@@ -464,7 +464,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights m
 		cronWorkflowManifest.Spec.WorkflowMetadata.Labels = updateManifestLabels(cronWorkflowManifest.Spec.WorkflowMetadata.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 	}
 
-	newWeights, err = generateFaultWeights(cronWorkflowManifest.Spec.WorkflowSpec.Templates, cronWorkflowManifest.Spec.WorkflowMetadata.Labels, weights)
+	cronWorkflowManifest.Spec.WorkflowSpec.Templates, newWeights, err = generateFaultWeights(cronWorkflowManifest.Spec.WorkflowSpec.Templates, cronWorkflowManifest.Spec.WorkflowMetadata.Labels, weights)
 	if err != nil {
 		return err
 	}
