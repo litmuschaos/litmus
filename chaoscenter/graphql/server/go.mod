@@ -1,4 +1,4 @@
-module github.com/harness/hce-saas/graphql/server
+module github.com/litmuschaos/litmus/chaoscenter/graphql/server
 
 go 1.16
 
@@ -6,12 +6,11 @@ require (
 	github.com/99designs/gqlgen v0.11.3
 	github.com/argoproj/argo-workflows/v3 v3.3.1
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -19,7 +18,6 @@ require (
 	github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71
 	github.com/litmuschaos/litmus/litmus-portal/graphql-server v0.0.0-20230515065622-4cecb9fe5d0d
 	github.com/pkg/errors v0.9.1
-	github.com/rs/cors v1.8.2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.8.2
 	github.com/tidwall/gjson v1.14.0
