@@ -3,7 +3,7 @@ package authorization
 import (
 	"errors"
 	"fmt"
-	"github.com/harness/hce-saas/graphql/server/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"log"
 
 	"github.com/golang-jwt/jwt"
@@ -11,12 +11,10 @@ import (
 
 // UserValidateJWT validates the cluster jwt
 func UserValidateJWT(token string) (jwt.MapClaims, error) {
-	fmt.Println(token)
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if ok := token.Method.Alg() == jwt.SigningMethodHS512.Alg(); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		fmt.Println(utils.Config.JwtSecret)
 		return []byte(utils.Config.JwtSecret), nil
 	})
 
