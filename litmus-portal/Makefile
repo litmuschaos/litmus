@@ -120,7 +120,7 @@ docker.buildx:
 
 buildx.push.image:
 	@cd $(DIRECTORY) && \
-	docker buildx build -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) .
+	docker buildx build -f Dockerfile --progress plain --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(IMAGE_NAME):$(IMG_TAG) .
 
 .PHONY: push-portal-component
 push-portal-component: docker.buildx buildx.push.image
@@ -134,7 +134,7 @@ buildx.push.frontend:
         docker build . -f Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg TARGETARCH=amd64;\
         docker push $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG);\
 	else \
-	    docker buildx build . -f Dockerfile --progress plane --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg PUBLIC_URL="$(PUBLIC_URL)" \
+	    docker buildx build . -f Dockerfile --progress plain --push --no-cache --platform $(PLATFORMS) -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg PUBLIC_URL="$(PUBLIC_URL)" \
 		--build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x";\
     fi
 

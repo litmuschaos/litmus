@@ -10,6 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/model/mocks"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/rest_handlers"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 	"github.com/stretchr/testify/assert"
@@ -24,6 +25,7 @@ func TestFileHandler(t *testing.T) {
 		w             *httptest.ResponseRecorder
 		ctx           *gin.Context
 		mongoOperator = new(mocks.MongoOperator)
+		kubeClients   = new(k8s.KubeClients)
 	)
 	testcases := []struct {
 		name       string
@@ -36,7 +38,7 @@ func TestFileHandler(t *testing.T) {
 			given: func() {
 				w = httptest.NewRecorder()
 				clusterID := uuid.NewString()
-				accessKey, _ := cluster.ClusterCreateJWT(clusterID)
+				accessKey, _ := cluster.CreateClusterJWT(clusterID)
 				ctx, _ = gin.CreateTestContext(w)
 				ctx.Params = []gin.Param{
 					{
@@ -105,10 +107,11 @@ metadata:
 	}
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
+			// given
 			tc.given()
-			// when
-			rest_handlers.FileHandler(mongoOperator)(ctx)
 
+			// when
+			rest_handlers.FileHandler(mongoOperator, kubeClients)(ctx)
 			// then
 			assert.Equal(t, w.Code, tc.statusCode)
 		})
