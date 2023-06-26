@@ -60,7 +60,7 @@ type infraService struct {
 	infraOperator *dbChaosInfra.Operator
 }
 
-// NewService returns a new instance of Service
+// NewChaosInfrastructureService returns a new instance of Service
 func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator) Service {
 	return &infraService{
 		infraOperator: infraOperator,
@@ -372,7 +372,7 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 		lastRun := strconv.FormatInt(infra.ExperimentDetails[0].LastRunTimestamp, 10)
 		if len(infra.ExperimentDetails) > 0 {
 			infraResponse.NoOfExperimentRuns = &infra.ExperimentDetails[0].TotalRuns
-			infraResponse.LastWorkflowTimestamp = &lastRun
+			infraResponse.LastExperimentTimestamp = &lastRun
 			infraResponse.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
 		}
 
@@ -676,7 +676,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 		if len(infra.ExperimentRunDetails) > 0 {
 			newInfra.NoOfExperimentRuns = &infra.ExperimentRunDetails[0].TotalRuns
 			lastRun := strconv.FormatInt(infra.ExperimentRunDetails[0].LastRunTimestamp, 10)
-			newInfra.LastWorkflowTimestamp = &lastRun
+			newInfra.LastExperimentTimestamp = &lastRun
 		}
 		if len(infra.ExperimentDetails) > 0 {
 			newInfra.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
@@ -764,43 +764,6 @@ func (in *infraService) GetInfraDetails(ctx context.Context, infraID string, pro
 	return &newInfra, nil
 }
 
-//func GetKubeObject(ctx context.Context, kubeObjectRequest model.KubeObjectRequest, kubeObjData chan *string) {
-//	for {
-//		select {
-//		case <-time.After(500 * time.Millisecond):
-//			r := genericredis.GR.ReadHash(utils.Config.ChaosK8sTaskResponseRedisHash, kubeObjectRequest.RequestID)
-//			if r != "" {
-//				logrus.WithFields(logrus.Fields{"requestId": kubeObjectRequest.RequestID, "infrastructureId": kubeObjectRequest.InfraID}).Info("successfully read the kube object data from redis")
-//				kubeObjData <- &r
-//				close(kubeObjData)
-//				return
-//			}
-//		case <-ctx.Done():
-//			close(kubeObjData)
-//			return
-//		}
-//
-//	}
-//}
-
-//func GetPodLog(ctx context.Context, podDetails model.PodLogRequest, podLogChan chan *string) {
-//	for {
-//		select {
-//		case <-time.After(500 * time.Millisecond):
-//			r := genericredis.GR.ReadHash(utils.Config.ChaosK8sTaskResponseRedisHash, podDetails.RequestID)
-//			if r != "" {
-//				logrus.WithFields(logrus.Fields{"requestId": podDetails.RequestID, "infrastructureId": podDetails.InfraID}).Info("successfully read the pod details data from redis")
-//				podLogChan <- &r
-//				close(podLogChan)
-//				return
-//			}
-//		case <-ctx.Done():
-//			close(podLogChan)
-//			return
-//		}
-//	}
-//}
-
 func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*model.GetInfraStatsResponse, error) {
 
 	var pipeline mongo.Pipeline
@@ -816,11 +779,11 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	groupByInfraStatusStage := bson.D{
 		{
 			"$group", bson.D{
-			{"_id", "$is_active"},
-			{"count", bson.D{
-				{"$sum", 1},
-			}},
-		},
+				{"_id", "$is_active"},
+				{"count", bson.D{
+					{"$sum", 1},
+				}},
+			},
 		},
 	}
 
@@ -828,11 +791,11 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	groupByInfraConfirmedStage := bson.D{
 		{
 			"$group", bson.D{
-			{"_id", "$is_infra_confirmed"},
-			{"count", bson.D{
-				{"$sum", 1},
-			}},
-		},
+				{"_id", "$is_infra_confirmed"},
+				{"count", bson.D{
+					{"$sum", 1},
+				}},
+			},
 		},
 	}
 
@@ -888,41 +851,6 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	}, nil
 
 }
-
-//func GetHeartBeat(ctx context.Context, taskResponse protos.TaskResponse, heartBeatChan chan *string) {
-//	for {
-//		select {
-//		case <-time.After(500 * time.Millisecond):
-//			r := genericredis.GR.ReadHash(utils.Config.ChaosK8sTaskResponseRedisHash, taskResponse.TaskId)
-//			if r != "" {
-//				logrus.WithFields(logrus.Fields{"taskId": taskResponse.TaskId, "infraId": taskResponse.InfraID}).Info("successfully read the heart beat data from redis")
-//				heartBeatChan <- &r
-//				close(heartBeatChan)
-//				return
-//			}
-//		case <-ctx.Done():
-//			close(heartBeatChan)
-//			return
-//		}
-//	}
-//}
-
-// GetInfraStatus validates the infra status based on the heartbeat and current status
-//func GetInfraStatus(heartbeat string, status bool) bool {
-//	//If heartbeat is not available or status is false
-//	//return the status else check the status based on
-//	//the existing heartbeat from the current time
-//	if heartbeat == "" || !status {
-//		return status
-//	}
-//
-//	convertedTime, err := strconv.Atoi(heartbeat)
-//	if err != nil {
-//		logrus.Errorf("failed to parse heartbeat timestamp: %v ", err)
-//		return status
-//	}
-//	return time.Since(time.Unix(int64(convertedTime), 0)) < 15*time.Minute
-//}
 
 // GetVersionDetails returns the compatible infra versions and the latest infra version supported for the current control plane version
 func (in *infraService) GetVersionDetails() (*model.InfraVersionDetails, error) {

@@ -297,33 +297,33 @@ type ComplexityRoot struct {
 	}
 
 	Infra struct {
-		CreatedAt             func(childComplexity int) int
-		CreatedBy             func(childComplexity int) int
-		Description           func(childComplexity int) int
-		EnvironmentID         func(childComplexity int) int
-		InfraID               func(childComplexity int) int
-		InfraNamespace        func(childComplexity int) int
-		InfraNsExists         func(childComplexity int) int
-		InfraSaExists         func(childComplexity int) int
-		InfraScope            func(childComplexity int) int
-		InfraType             func(childComplexity int) int
-		IsActive              func(childComplexity int) int
-		IsInfraConfirmed      func(childComplexity int) int
-		IsRemoved             func(childComplexity int) int
-		LastWorkflowTimestamp func(childComplexity int) int
-		Name                  func(childComplexity int) int
-		NoOfExperimentRuns    func(childComplexity int) int
-		NoOfExperiments       func(childComplexity int) int
-		PlatformName          func(childComplexity int) int
-		ProjectID             func(childComplexity int) int
-		ServiceAccount        func(childComplexity int) int
-		StartTime             func(childComplexity int) int
-		Tags                  func(childComplexity int) int
-		Token                 func(childComplexity int) int
-		UpdateStatus          func(childComplexity int) int
-		UpdatedAt             func(childComplexity int) int
-		UpdatedBy             func(childComplexity int) int
-		Version               func(childComplexity int) int
+		CreatedAt               func(childComplexity int) int
+		CreatedBy               func(childComplexity int) int
+		Description             func(childComplexity int) int
+		EnvironmentID           func(childComplexity int) int
+		InfraID                 func(childComplexity int) int
+		InfraNamespace          func(childComplexity int) int
+		InfraNsExists           func(childComplexity int) int
+		InfraSaExists           func(childComplexity int) int
+		InfraScope              func(childComplexity int) int
+		InfraType               func(childComplexity int) int
+		IsActive                func(childComplexity int) int
+		IsInfraConfirmed        func(childComplexity int) int
+		IsRemoved               func(childComplexity int) int
+		LastExperimentTimestamp func(childComplexity int) int
+		Name                    func(childComplexity int) int
+		NoOfExperimentRuns      func(childComplexity int) int
+		NoOfExperiments         func(childComplexity int) int
+		PlatformName            func(childComplexity int) int
+		ProjectID               func(childComplexity int) int
+		ServiceAccount          func(childComplexity int) int
+		StartTime               func(childComplexity int) int
+		Tags                    func(childComplexity int) int
+		Token                   func(childComplexity int) int
+		UpdateStatus            func(childComplexity int) int
+		UpdatedAt               func(childComplexity int) int
+		UpdatedBy               func(childComplexity int) int
+		Version                 func(childComplexity int) int
 	}
 
 	InfraActionResponse struct {
@@ -1978,12 +1978,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Infra.IsRemoved(childComplexity), true
 
-	case "Infra.lastWorkflowTimestamp":
-		if e.complexity.Infra.LastWorkflowTimestamp == nil {
+	case "Infra.lastExperimentTimestamp":
+		if e.complexity.Infra.LastExperimentTimestamp == nil {
 			break
 		}
 
-		return e.complexity.Infra.LastWorkflowTimestamp(childComplexity), true
+		return e.complexity.Infra.LastExperimentTimestamp(childComplexity), true
 
 	case "Infra.name":
 		if e.complexity.Infra.Name == nil {
@@ -4311,7 +4311,7 @@ type Infra implements ResourceDetails & Audit {
   """
   Timestamp of the last experiment run in the infra
   """
-  lastWorkflowTimestamp: String
+  lastExperimentTimestamp: String
   """
   Timestamp when the infra got connected
   """
@@ -13702,7 +13702,7 @@ func (ec *executionContext) _Infra_infraSaExists(ctx context.Context, field grap
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Infra_lastWorkflowTimestamp(ctx context.Context, field graphql.CollectedField, obj *model.Infra) (ret graphql.Marshaler) {
+func (ec *executionContext) _Infra_lastExperimentTimestamp(ctx context.Context, field graphql.CollectedField, obj *model.Infra) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13719,7 +13719,7 @@ func (ec *executionContext) _Infra_lastWorkflowTimestamp(ctx context.Context, fi
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LastWorkflowTimestamp, nil
+		return obj.LastExperimentTimestamp, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23979,8 +23979,8 @@ func (ec *executionContext) _Infra(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Infra_infraNsExists(ctx, field, obj)
 		case "infraSaExists":
 			out.Values[i] = ec._Infra_infraSaExists(ctx, field, obj)
-		case "lastWorkflowTimestamp":
-			out.Values[i] = ec._Infra_lastWorkflowTimestamp(ctx, field, obj)
+		case "lastExperimentTimestamp":
+			out.Values[i] = ec._Infra_lastExperimentTimestamp(ctx, field, obj)
 		case "startTime":
 			out.Values[i] = ec._Infra_startTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

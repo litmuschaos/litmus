@@ -729,7 +729,7 @@ type Infra struct {
 	// Bool value indicating whether service account used already exists on infra or not
 	InfraSaExists *bool `json:"infraSaExists"`
 	// Timestamp of the last experiment run in the infra
-	LastWorkflowTimestamp *string `json:"lastWorkflowTimestamp"`
+	LastExperimentTimestamp *string `json:"lastExperimentTimestamp"`
 	// Timestamp when the infra got connected
 	StartTime string `json:"startTime"`
 	// Version of the infra

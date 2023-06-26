@@ -94,7 +94,7 @@ type Infra implements ResourceDetails & Audit {
   """
   Timestamp of the last experiment run in the infra
   """
-  lastWorkflowTimestamp: String
+  lastExperimentTimestamp: String
   """
   Timestamp when the infra got connected
   """
