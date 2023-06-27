@@ -402,7 +402,7 @@ type ComplexityRoot struct {
 		DeleteChaosHub           func(childComplexity int, projectID string, hubID string) int
 		DeleteEnvironment        func(childComplexity int, projectID string, environmentID string) int
 		DeleteImageRegistry      func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteInfras             func(childComplexity int, projectID string, infraID string) int
+		DeleteInfra              func(childComplexity int, projectID string, infraID string) int
 		DisableGitOps            func(childComplexity int, projectID string) int
 		EnableGitOps             func(childComplexity int, configurations model.GitConfig) int
 		GenerateSSHKey           func(childComplexity int) int
@@ -563,7 +563,7 @@ type MutationResolver interface {
 	ChaosExperimentRun(ctx context.Context, request model.ExperimentRunRequest) (string, error)
 	RegisterInfra(ctx context.Context, projectID string, request model.RegisterInfraRequest) (*model.RegisterInfraResponse, error)
 	ConfirmInfraRegistration(ctx context.Context, request model.InfraIdentity) (*model.ConfirmInfraRegistrationResponse, error)
-	DeleteInfras(ctx context.Context, projectID string, infraID string) (string, error)
+	DeleteInfra(ctx context.Context, projectID string, infraID string) (string, error)
 	GetManifestWithInfraID(ctx context.Context, projectID string, infraID string, accessKey string) (string, error)
 	PodLog(ctx context.Context, request model.PodLog) (string, error)
 	KubeObj(ctx context.Context, request model.KubeObjectData) (string, error)
@@ -2404,17 +2404,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string)), true
 
-	case "Mutation.deleteInfras":
-		if e.complexity.Mutation.DeleteInfras == nil {
+	case "Mutation.deleteInfra":
+		if e.complexity.Mutation.DeleteInfra == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteInfras_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteInfra_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteInfras(childComplexity, args["projectID"].(string), args["infraID"].(string)), true
+		return e.complexity.Mutation.DeleteInfra(childComplexity, args["projectID"].(string), args["infraID"].(string)), true
 
 	case "Mutation.disableGitOps":
 		if e.complexity.Mutation.DisableGitOps == nil {
@@ -4845,7 +4845,7 @@ extend type Mutation {
   """
   Disconnects an infra and deletes its configuration from the control plane
   """
-  deleteInfras(projectID:ID!, infraID: String!): String! @authorized
+  deleteInfra(projectID:ID!, infraID: String!): String! @authorized
 
   """
   Fetches manifest details
@@ -6208,7 +6208,7 @@ func (ec *executionContext) field_Mutation_deleteImageRegistry_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteInfras_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteInfra_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -15205,7 +15205,7 @@ func (ec *executionContext) _Mutation_confirmInfraRegistration(ctx context.Conte
 	return ec.marshalNConfirmInfraRegistrationResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐConfirmInfraRegistrationResponse(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deleteInfras(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_deleteInfra(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -15221,7 +15221,7 @@ func (ec *executionContext) _Mutation_deleteInfras(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deleteInfras_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_deleteInfra_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -15230,7 +15230,7 @@ func (ec *executionContext) _Mutation_deleteInfras(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteInfras(rctx, args["projectID"].(string), args["infraID"].(string))
+			return ec.resolvers.Mutation().DeleteInfra(rctx, args["projectID"].(string), args["infraID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -24469,8 +24469,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteInfras":
-			out.Values[i] = ec._Mutation_deleteInfras(ctx, field)
+		case "deleteInfra":
+			out.Values[i] = ec._Mutation_deleteInfra(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

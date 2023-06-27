@@ -628,7 +628,7 @@ extend type Mutation {
   """
   Disconnects an infra and deletes its configuration from the control plane
   """
-  deleteInfras(projectID:ID!, infraID: String!): String! @authorized
+  deleteInfra(projectID:ID!, infraID: String!): String! @authorized
 
   """
   Fetches manifest details

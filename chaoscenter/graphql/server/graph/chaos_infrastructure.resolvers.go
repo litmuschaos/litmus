@@ -45,13 +45,13 @@ func (r *mutationResolver) ConfirmInfraRegistration(ctx context.Context, request
 	return r.chaosInfrastructureService.ConfirmInfraRegistration(request, *data_store.Store)
 }
 
-func (r *mutationResolver) DeleteInfras(ctx context.Context, projectID string, infraID string) (string, error) {
+func (r *mutationResolver) DeleteInfra(ctx context.Context, projectID string, infraID string) (string, error) {
 	logFields := logrus.Fields{
 		"projectId":    projectID,
 		"chaosInfraId": infraID,
 	}
 
-	logrus.WithFields(logFields).Info("request received to delete chaos infrastructures")
+	logrus.WithFields(logFields).Info("request received to delete chaos infrastructure")
 
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.DeleteInfrastructures],
