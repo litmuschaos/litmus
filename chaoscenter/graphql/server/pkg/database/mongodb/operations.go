@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -210,7 +209,6 @@ func (m *MongoOperations) WatchEvents(ctx context.Context, client *mongo.Client,
 
 	events, err := authDb.Collection("project").Watch(ctx, pipeline, opts...)
 	if err != nil {
-		fmt.Println("here3", err)
 		return nil, err
 	}
 	return events, nil

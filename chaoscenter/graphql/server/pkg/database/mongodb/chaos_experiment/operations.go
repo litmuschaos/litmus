@@ -8,7 +8,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -17,8 +17,20 @@ var (
 	backgroundContext = context.Background()
 )
 
+// Operator is the model for cluster collection
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewChaosExperimentOperator returns a new instance of Operator
+func NewChaosExperimentOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // GetExperiments takes a query parameter to retrieve the experiment details from the database
-func GetExperiments(query bson.D) ([]ChaosExperimentRequest, error) {
+func (c *Operator) GetExperiments(query bson.D) ([]ChaosExperimentRequest, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
@@ -37,7 +49,7 @@ func GetExperiments(query bson.D) ([]ChaosExperimentRequest, error) {
 }
 
 // GetExperiment takes a query parameter to retrieve the experiment details from the database
-func GetExperiment(ctx context.Context, query bson.D) (ChaosExperimentRequest, error) {
+func (c *Operator) GetExperiment(ctx context.Context, query bson.D) (ChaosExperimentRequest, error) {
 	var experiment ChaosExperimentRequest
 	results, err := mongodb.Operator.Get(ctx, mongodb.ChaosExperimentCollection, query)
 	if err != nil {
@@ -53,7 +65,7 @@ func GetExperiment(ctx context.Context, query bson.D) (ChaosExperimentRequest, e
 }
 
 // GetAggregateExperiments takes a mongo pipeline to retrieve the experiment details from the database
-func GetAggregateExperiments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+func (c *Operator) GetAggregateExperiments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
@@ -66,7 +78,7 @@ func GetAggregateExperiments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 }
 
 // GetExperimentsByInfraID takes a infraID parameter to retrieve the experiment details from the database
-func GetExperimentsByInfraID(infraID string) ([]ChaosExperimentRequest, error) {
+func (c *Operator) GetExperimentsByInfraID(infraID string) ([]ChaosExperimentRequest, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
@@ -85,7 +97,7 @@ func GetExperimentsByInfraID(infraID string) ([]ChaosExperimentRequest, error) {
 }
 
 // InsertChaosExperiment takes details of a experiment and inserts into the database collection
-func InsertChaosExperiment(ctx context.Context, chaosExperiment ChaosExperimentRequest) error {
+func (c *Operator) InsertChaosExperiment(ctx context.Context, chaosExperiment ChaosExperimentRequest) error {
 	err := mongodb.Operator.Create(ctx, mongodb.ChaosExperimentCollection, chaosExperiment)
 	if err != nil {
 		return err
@@ -94,7 +106,7 @@ func InsertChaosExperiment(ctx context.Context, chaosExperiment ChaosExperimentR
 }
 
 // UpdateChaosExperiment takes query and update parameters to update the experiment details in the database
-func UpdateChaosExperiment(ctx context.Context, query bson.D, update bson.D, opts ...*options.UpdateOptions) error {
+func (c *Operator) UpdateChaosExperiment(ctx context.Context, query bson.D, update bson.D, opts ...*options.UpdateOptions) error {
 	_, err := mongodb.Operator.Update(ctx, mongodb.ChaosExperimentCollection, query, update, opts...)
 	if err != nil {
 		return err
@@ -103,7 +115,7 @@ func UpdateChaosExperiment(ctx context.Context, query bson.D, update bson.D, opt
 }
 
 // UpdateChaosExperiments takes query and update parameters to updates multiple experiment's details in the database
-func UpdateChaosExperiments(ctx context.Context, query bson.D, update bson.D) error {
+func (c *Operator) UpdateChaosExperiments(ctx context.Context, query bson.D, update bson.D) error {
 
 	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.ChaosExperimentCollection, query, update)
 	if err != nil {

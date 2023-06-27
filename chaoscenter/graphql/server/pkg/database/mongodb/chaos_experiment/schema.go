@@ -1,9 +1,9 @@
 package chaos_experiment
 
 import (
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb/chaos_experiment_run"
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 )
 
 type ChaosExperimentType string
@@ -37,7 +37,7 @@ type ChaosExperimentRequest struct {
 	IsCustomExperiment         bool                  `bson:"is_custom_experiment"`
 	RecentExperimentRunDetails []ExperimentRunDetail `bson:"recent_experiment_run_details"` // stores the details of last 10 experiment runs
 	TotalExperimentRuns        int                   `bson:"total_experiment_runs"`
-	InfraType                  string                `bson:"infra_type"`
+	//InfraType                  string                `bson:"infra_type"`
 }
 
 // ChaosExperimentsWithRunDetails contains the required fields to be stored in the database for a chaos experiment input
@@ -71,11 +71,10 @@ type GetExperimentDetails struct {
 }
 
 type ExperimentRevision struct {
-	RevisionID         string                `bson:"revision_id"`
-	ExperimentManifest string                `bson:"experiment_manifest"`
-	UpdatedAt          int64                 `bson:"updated_at"`
-	Weightages         []*WeightagesInput    `bson:"weightages"`
-	ChaosFaultEvents   []*FaultEventMetadata `bson:"chaos_fault_events, omitempty"`
+	RevisionID         string             `bson:"revision_id"`
+	ExperimentManifest string             `bson:"experiment_manifest"`
+	UpdatedAt          int64              `bson:"updated_at"`
+	Weightages         []*WeightagesInput `bson:"weightages"`
 }
 
 // WeightagesInput contains the required fields to be stored in the database for a weightages input
@@ -124,6 +123,7 @@ type FlattenedExperimentRun struct {
 }
 
 type ExperimentDetails struct {
+	ExperimentType     ChaosExperimentType  `bson:"experiment_type"`
 	ExperimentName     string               `bson:"name"`
 	IsCustomExperiment bool                 `bson:"is_custom_experiment"`
 	Revision           []ExperimentRevision `bson:"revision"`

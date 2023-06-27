@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-controller-configmap
+  namespace: #{INFRA_NAMESPACE}
+data:
+  containerRuntimeExecutor: #{ARGO_CONTAINER_RUNTIME_EXECUTOR}
+  executor: |
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 0.15
+        memory: 512Mi
+  instanceID: #{INFRA_ID}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: workflow-controller-metrics
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  ports:
+    - name: metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app: workflow-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-controller
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: workflow-controller
+  template:
+    metadata:
+      labels:
+        app: workflow-controller
+    spec:
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      containers:
+        - args:
+            - --configmap
+            - workflow-controller-configmap
+            - --executor-image
+            -  #{ARGO_WORKFLOW_EXECUTOR}
+            - --namespaced
+            - --container-runtime-executor
+            -  #{ARGO_CONTAINER_RUNTIME_EXECUTOR}
+          command:
+            - workflow-controller
+          image: #{ARGO_WORKFLOW_CONTROLLER}
+          name: workflow-controller
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          env:
+            - name: LEADER_ELECTION_DISABLE
+              value: "true"
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
+      serviceAccountName: argo

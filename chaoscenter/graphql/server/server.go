@@ -1,12 +1,14 @@
 package main
 
 import (
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
-	"github.com/harness/hce-saas/graphql/server/pkg/handlers"
-	"github.com/harness/hce-saas/graphql/server/pkg/projects"
-	"github.com/harness/hce-saas/graphql/server/pkg/version"
-	pb "github.com/harness/hce-saas/graphql/server/protos"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
+	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+
 	"net"
 	"net/http"
 	"runtime"
@@ -14,15 +16,20 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
-	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-
-	"github.com/rs/cors"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
+	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -36,12 +43,25 @@ func init() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	//segmentRepo := metrics.NewSegmentRepository(utils.Config.SegmentApiKey)
-	//segmentRepo.Init()
 
 }
 
+func setupGin() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.New()
+	router.Use(middleware.DefaultStructuredLogger())
+	router.Use(gin.Recovery())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		AllowCredentials: true,
+	}))
+
+	return router
+}
+
 func main() {
+	router := setupGin()
 	var err error
 	mongodb.MgoClient, err = mongodb.MongoConnection()
 	if err != nil {
@@ -51,12 +71,7 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	// TODO: remove this when all packages shift to interface pattern
 	mongodb.Operator = mongodbOperator
-	//
-	//if err := validateVersion(); err != nil {
-	//	logrus.Fatal(err)
-	//}
 
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
 
@@ -75,28 +90,29 @@ func main() {
 	// to be removed in production
 	srv.Use(extension.Introspection{})
 
-	router := mux.NewRouter()
-
-	router.Use(cors.New(cors.Options{
-		AllowedHeaders:   []string{"*"},
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: true,
-	}).Handler)
+	// go routine for syncing chaos hubs
+	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
+	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).SyncDefaultChaosHubs()
 
 	// routers
-	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	router.Handle("/query", authorization.Middleware(srv))
-	router.Handle("/readiness", handlers.ReadinessHandler(srv, mongodb.MgoClient))
+	router.GET("/", handlers.PlaygroundHandler())
+	router.Any("/query", authorization.Middleware(srv))
 
-	router.HandleFunc("/file/{key}{path:.yaml}", handlers.FileHandler)
-	router.HandleFunc("/status", handlers.StatusHandler)
-	router.HandleFunc("/version", version.InitVersionInfo)
+	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
+
+	//chaos hub routers
+	router.GET("/icon/:projectId/:hubName/:chartName/:iconName", handler2.ChaosHubIconHandler())
+	router.GET("/icon/default/:hubName/:chartName/:iconName", handler2.DefaultChaosHubIconHandler())
+
+	//general routers
+	router.GET("/status", handlers.StatusHandler())
+	router.GET("/readiness", handlers.ReadinessHandler())
 
 	projectEventChannel := make(chan string)
 	go func() {
-		err := projects.ProjectEvents(projectEventChannel, mongodb.MgoClient)
+		err := projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 		if err != nil {
-
+			logrus.Error(err.Error())
 		}
 	}()
 

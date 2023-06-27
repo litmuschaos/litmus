@@ -2,17 +2,15 @@ package utils
 
 import (
 	"bytes"
-	"crypto/aes"
-	"crypto/cipher"
 	"encoding/base64"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"math/rand"
-	"net/http"
 	"reflect"
 	"strings"
 	"time"
 
-	"github.com/harness/hce-saas/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 
 	"github.com/google/uuid"
 )
@@ -20,7 +18,7 @@ import (
 const GRPCErrorPrefix string = "rpc error: code = Unknown desc ="
 
 // WriteHeaders adds important headers to API responses
-func WriteHeaders(w *http.ResponseWriter, statusCode int) {
+func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
 	(*w).Header().Set("Content-Type", "application/json; charset=utf-8")
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).WriteHeader(statusCode)
@@ -88,29 +86,6 @@ func GenerateUuid() string {
 	return base64.RawURLEncoding.EncodeToString(id[:])
 }
 
-// DecryptToken is used to decrypt a token with a key
-func DecryptToken(encryptedString string, keyString string) (decryptedString string) {
-	block, err := aes.NewCipher([]byte(keyString))
-	if err != nil {
-		return ""
-	}
-
-	cipherText, err := decode(encryptedString)
-	if err != nil {
-		return ""
-	}
-
-	var randBytes = []byte{50, 30, 90, 24, 44, 67, 24, 80, 82, 14, 50, 63, 46, 32, 14, 05}
-
-	cfb := cipher.NewCFBDecrypter(block, randBytes)
-
-	plainText := make([]byte, len(cipherText))
-
-	cfb.XORKeyStream(plainText, cipherText)
-
-	return string(plainText)
-}
-
 func decode(s string) ([]byte, error) {
 	data, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
@@ -145,11 +120,4 @@ func ParseGRPCError(err error) error {
 		return fmt.Errorf(grpcErr)
 	}
 	return err
-}
-
-func GetInfraType(t *model.InfrastructureType) model.InfrastructureType {
-	if t == nil {
-		return model.InfrastructureTypeAll
-	}
-	return *t
 }

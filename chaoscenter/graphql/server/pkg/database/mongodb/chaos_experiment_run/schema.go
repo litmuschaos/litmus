@@ -1,6 +1,6 @@
 package chaos_experiment_run
 
-import "github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
+import "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 
 // ChaosExperimentRun contains the required fields to be stored in the database for an experiment run
 type ChaosExperimentRun struct {

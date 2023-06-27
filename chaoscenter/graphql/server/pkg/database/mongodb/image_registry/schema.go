@@ -1,6 +1,9 @@
 package image_registry
 
+import "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+
 type ImageRegistry struct {
+	mongodb.Audit     `bson:",inline"`
 	ImageRegistryID   string  `bson:"image_registry_id"`
 	ProjectID         string  `bson:"project_id"`
 	ImageRegistryName string  `bson:"image_registry_name"`
@@ -10,7 +13,4 @@ type ImageRegistry struct {
 	SecretNamespace   *string `bson:"secret_namespace"`
 	IsDefault         bool    `bson:"is_default"`
 	EnableRegistry    *bool   `bson:"enable_registry"`
-	UpdatedAt         string  `bson:"updated_at"`
-	CreatedAt         *string `bson:"created_at"`
-	IsRemoved         bool    `bson:"is_removed"`
 }

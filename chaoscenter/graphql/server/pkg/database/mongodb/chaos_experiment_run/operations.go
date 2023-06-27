@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -71,12 +71,12 @@ func UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) (int, er
 		{"experiment_run_id", wfRun.ExperimentRunID},
 	}
 
-	//if wfRun.NotifyID != nil {
-	//	query = bson.D{
-	//		{"experiment_id", wfRun.ExperimentID},
-	//		{"notify_id", wfRun.NotifyID},
-	//	}
-	//}
+	if wfRun.NotifyID != nil {
+		query = bson.D{
+			{"experiment_id", wfRun.ExperimentID},
+			{"notify_id", wfRun.NotifyID},
+		}
+	}
 
 	count, err := mongodb.Operator.CountDocuments(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
@@ -86,7 +86,7 @@ func UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) (int, er
 	updateCount := 1
 	if count == 0 {
 		//Audit details for first time creation
-		wfRun.CreatedAt = time.Now().Unix()
+		wfRun.CreatedAt = time.Now().UnixMilli()
 		err := mongodb.Operator.Create(ctx, mongodb.ChaosExperimentRunsCollection, wfRun)
 		if err != nil {
 			return 0, err

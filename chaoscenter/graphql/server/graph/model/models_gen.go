@@ -16,10 +16,1659 @@ type ResourceDetails interface {
 	IsResourceDetails()
 }
 
+type ActionPayload struct {
+	RequestID    string  `json:"requestID"`
+	RequestType  string  `json:"requestType"`
+	K8sManifest  string  `json:"k8sManifest"`
+	Namespace    string  `json:"namespace"`
+	ExternalData *string `json:"externalData"`
+	Username     *string `json:"username"`
+}
+
+type Annotation struct {
+	Categories       string `json:"categories"`
+	Vendor           string `json:"vendor"`
+	CreatedAt        string `json:"createdAt"`
+	Repository       string `json:"repository"`
+	Support          string `json:"support"`
+	ChartDescription string `json:"chartDescription"`
+}
+
+// Defines the details for a chaos experiment
+type ChaosExperimentRequest struct {
+	// ID of the experiment
+	ExperimentID *string `json:"experimentID"`
+	// Boolean check indicating if the created scenario will be executed or not
+	RunExperiment *bool `json:"runExperiment"`
+	// Manifest of the experiment
+	ExperimentManifest string `json:"experimentManifest"`
+	// Type of the experiment
+	ExperimentType *ExperimentType `json:"experimentType"`
+	// Cron syntax of the experiment schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// Description of the experiment
+	ExperimentDescription string `json:"experimentDescription"`
+	// Array containing weightage and name of each chaos experiment in the experiment
+	Weightages []*WeightagesInput `json:"weightages"`
+	// Bool value indicating whether the experiment is a custom experiment or not
+	IsCustomExperiment bool `json:"isCustomExperiment"`
+	// ID of the target infra in which the experiment will run
+	InfraID string `json:"infraID"`
+	// Tags of the infra
+	Tags []string `json:"tags"`
+}
+
+// Defines the response received for querying the details of chaos experiment
+type ChaosExperimentResponse struct {
+	// ID of the experiment
+	ExperimentID string `json:"experimentID"`
+	ProjectID    string `json:"projectID"`
+	// Cron syntax of the experiment schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// Description of the experiment
+	ExperimentDescription string `json:"experimentDescription"`
+	// Bool value indicating whether the experiment is a custom experiment or not
+	IsCustomExperiment bool `json:"isCustomExperiment"`
+	// Tags of the infra
+	Tags []string `json:"tags"`
+}
+
+type ChaosHub struct {
+	// ID of the chaos hub
+	ID string `json:"id"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// ID of the project in which the chaos hub is present
+	ProjectID string `json:"projectID"`
+	// Default Hub Identifier
+	IsDefault bool `json:"isDefault"`
+	// Name of the chaos hub
+	Name string `json:"name"`
+	// Tags of the ChaosHub
+	Tags []string `json:"tags"`
+	// User who created the ChaosHub
+	CreatedBy *UserDetails `json:"createdBy"`
+	// User who has updated the ChaosHub
+	UpdatedBy *UserDetails `json:"updatedBy"`
+	// Description of ChaosHub
+	Description *string `json:"description"`
+	// Type of ChaosHub
+	HubType HubType `json:"hubType"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Bool value indicating if the chaos hub is removed
+	IsRemoved bool `json:"isRemoved"`
+	// Timestamp when the chaos hub was created
+	CreatedAt string `json:"createdAt"`
+	// Timestamp when the chaos hub was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the chaos hub was last synced
+	LastSyncedAt string `json:"lastSyncedAt"`
+}
+
+func (ChaosHub) IsResourceDetails() {}
+func (ChaosHub) IsAudit()           {}
+
+// Defines filter options for ChaosHub
+type ChaosHubFilterInput struct {
+	// Name of the ChaosHub
+	ChaosHubName *string `json:"chaosHubName"`
+	// Tags of a chaos hub
+	Tags []string `json:"tags"`
+	// Description of a chaos hub
+	Description *string `json:"description"`
+}
+
+type ChaosHubStatus struct {
+	// ID of the hub
+	ID string `json:"id"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is available or not.
+	IsAvailable bool `json:"isAvailable"`
+	// Total number of experiments in the hub
+	TotalFaults string `json:"totalFaults"`
+	// Total experiments
+	TotalExperiments string `json:"totalExperiments"`
+	// Name of the chaos hub
+	Name string `json:"name"`
+	// Type of ChaosHub
+	HubType HubType `json:"hubType"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Bool value indicating whether the hub is private or not.
+	IsRemoved bool `json:"isRemoved"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
+	// Timestamp when the chaos hub was last synced
+	LastSyncedAt string `json:"lastSyncedAt"`
+	// Tags of the ChaosHub
+	Tags []string `json:"tags"`
+	// User who created the ChaosHub
+	CreatedBy *UserDetails `json:"createdBy"`
+	// User who has updated the ChaosHub
+	UpdatedBy *UserDetails `json:"updatedBy"`
+	// Created at timestamp
+	CreatedAt string `json:"createdAt"`
+	// Updated at timestamp
+	UpdatedAt string `json:"updatedAt"`
+	// Description of ChaosHub
+	Description *string `json:"description"`
+	// Default Hub Identifier
+	IsDefault bool `json:"isDefault"`
+}
+
+func (ChaosHubStatus) IsResourceDetails() {}
+func (ChaosHubStatus) IsAudit()           {}
+
+type Chart struct {
+	APIVersion  string              `json:"apiVersion"`
+	Kind        string              `json:"kind"`
+	Metadata    *Metadata           `json:"metadata"`
+	Spec        *Spec               `json:"spec"`
+	PackageInfo *PackageInformation `json:"packageInfo"`
+}
+
+type CloningInput struct {
+	// Name of the chaos hub
+	Name string `json:"name"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password      *string `json:"password"`
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	IsDefault     bool    `json:"isDefault"`
+}
+
+type ConfirmInfraRegistrationResponse struct {
+	IsInfraConfirmed bool    `json:"isInfraConfirmed"`
+	NewAccessKey     *string `json:"newAccessKey"`
+	InfraID          *string `json:"infraID"`
+}
+
+// Defines the details required for creating a chaos hub
+type CreateChaosHubRequest struct {
+	// Name of the chaos hub
+	Name string `json:"name"`
+	// Tags of the ChaosHub
+	Tags []string `json:"tags"`
+	// Description of ChaosHub
+	Description *string `json:"description"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
+}
+
+type CreateEnvironmentRequest struct {
+	EnvironmentID string          `json:"environmentID"`
+	Name          string          `json:"name"`
+	Type          EnvironmentType `json:"type"`
+	Description   *string         `json:"description"`
+	Tags          []string        `json:"tags"`
+}
+
+type CreateRemoteChaosHub struct {
+	// Name of the chaos hub
+	Name string `json:"name"`
+	// Tags of the ChaosHub
+	Tags []string `json:"tags"`
+	// Description of ChaosHub
+	Description *string `json:"description"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+}
+
+// Defines the start date and end date for the filtering the data
+type DateRange struct {
+	// Start date
+	StartDate string `json:"startDate"`
+	// End date
+	EndDate *string `json:"endDate"`
+}
+
+type Environment struct {
+	ProjectID     string          `json:"projectID"`
+	EnvironmentID string          `json:"environmentID"`
+	Name          string          `json:"name"`
+	Description   *string         `json:"description"`
+	Tags          []string        `json:"tags"`
+	Type          EnvironmentType `json:"type"`
+	CreatedAt     string          `json:"createdAt"`
+	CreatedBy     *UserDetails    `json:"createdBy"`
+	UpdatedBy     *UserDetails    `json:"updatedBy"`
+	UpdatedAt     string          `json:"updatedAt"`
+	IsRemoved     *bool           `json:"isRemoved"`
+	InfraIDs      []string        `json:"infraIDs"`
+}
+
+func (Environment) IsResourceDetails() {}
+func (Environment) IsAudit()           {}
+
+// Defines filter options for infras
+type EnvironmentFilterInput struct {
+	// Name of the environment
+	Name *string `json:"name"`
+	// ID of the environment
+	Description *string `json:"description"`
+	// Type name of environment
+	Type *string `json:"type"`
+	// Tags of an environment
+	Tags []*EnvironmentType `json:"tags"`
+}
+
+// Defines sorting options for experiment
+type EnvironmentSortInput struct {
+	// Field in which sorting will be done
+	Field EnvironmentSortingField `json:"field"`
+	// Bool value indicating whether the sorting will be done in ascending order
+	Ascending *bool `json:"ascending"`
+}
+
+type EventMetadata struct {
+	FaultName             string   `json:"faultName"`
+	ServiceIdentifier     []string `json:"serviceIdentifier"`
+	EnvironmentIdentifier []string `json:"environmentIdentifier"`
+}
+
+type EventMetadataInput struct {
+	FaultName             string   `json:"faultName"`
+	ServiceIdentifier     []string `json:"serviceIdentifier"`
+	EnvironmentIdentifier []string `json:"environmentIdentifier"`
+}
+
+// Defines the details for a experiment
+type Experiment struct {
+	ProjectID string `json:"projectID"`
+	// ID of the experiment
+	ExperimentID string `json:"experimentID"`
+	// Type of the experiment
+	ExperimentType *string `json:"experimentType"`
+	// Manifest of the experiment
+	ExperimentManifest string `json:"experimentManifest"`
+	// Cron syntax of the experiment schedule
+	CronSyntax string `json:"cronSyntax"`
+	// Name of the experiment
+	Name string `json:"name"`
+	// Description of the experiment
+	Description string `json:"description"`
+	// Array containing weightage and name of each chaos fault in the experiment
+	Weightages []*Weightages `json:"weightages"`
+	// Bool value indicating whether the experiment is a custom experiment or not
+	IsCustomExperiment bool `json:"isCustomExperiment"`
+	// Timestamp when the experiment was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the experiment was created
+	CreatedAt string `json:"createdAt"`
+	// Target infra in which the experiment will run
+	Infra *Infra `json:"infra"`
+	// Bool value indicating if the experiment has removed
+	IsRemoved bool `json:"isRemoved"`
+	// Tags of the experiment
+	Tags []string `json:"tags"`
+	// User who created the experiment
+	CreatedBy *UserDetails `json:"createdBy"`
+	// Array of object containing details of recent experiment runs
+	RecentExperimentRunDetails []*RecentExperimentRun `json:"recentExperimentRunDetails"`
+	// Details of the user who updated the experiment
+	UpdatedBy *UserDetails `json:"updatedBy"`
+}
+
+func (Experiment) IsResourceDetails() {}
+func (Experiment) IsAudit()           {}
+
+type ExperimentDetails struct {
+	// Engine Manifest
+	EngineDetails string `json:"engineDetails"`
+	// Experiment Manifest
+	ExperimentDetails string `json:"experimentDetails"`
+}
+
+// Defines filter options for experiments
+type ExperimentFilterInput struct {
+	// Name of the experiment
+	ExperimentName *string `json:"experimentName"`
+	// Name of the infra in which the experiment is running
+	InfraName *string `json:"infraName"`
+	// ID of the infra in which the experiment is running
+	InfraID *string `json:"infraID"`
+	// Bool value indicating if Chaos Infrastructure is active
+	InfraActive *bool `json:"infraActive"`
+	// Scenario type of the experiment i.e. CRON or NON_CRON
+	ScheduleType *ScheduleType `json:"scheduleType"`
+	// Status of the latest experiment run
+	Status *string `json:"status"`
+	// Date range for filtering purpose
+	DateRange *DateRange `json:"dateRange"`
+	// Type of infras
+	InfraTypes []*InfrastructureType `json:"infraTypes"`
+}
+
+type ExperimentRequest struct {
+	// Name of the chart being used
+	Category string `json:"category"`
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// ID of the hub
+	HubID string `json:"hubID"`
+}
+
+// Defines the details of a experiment run
+type ExperimentRun struct {
+	ProjectID string `json:"projectID"`
+	// ID of the experiment run which is to be queried
+	ExperimentRunID string `json:"experimentRunID"`
+	// Type of the experiment
+	ExperimentType *string `json:"experimentType"`
+	// ID of the experiment
+	ExperimentID string `json:"experimentID"`
+	// Array containing weightage and name of each chaos fault in the experiment
+	Weightages []*Weightages `json:"weightages"`
+	// Timestamp at which experiment run was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp at which experiment run was created
+	CreatedAt string `json:"createdAt"`
+	// Target infra in which the experiment will run
+	Infra *Infra `json:"infra"`
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// Manifest of the experiment run
+	ExperimentManifest string `json:"experimentManifest"`
+	// Phase of the experiment run
+	Phase ExperimentRunStatus `json:"phase"`
+	// Resiliency score of the experiment
+	ResiliencyScore *float64 `json:"resiliencyScore"`
+	// Number of faults passed
+	FaultsPassed *int `json:"faultsPassed"`
+	// Number of faults failed
+	FaultsFailed *int `json:"faultsFailed"`
+	// Number of faults awaited
+	FaultsAwaited *int `json:"faultsAwaited"`
+	// Number of faults stopped
+	FaultsStopped *int `json:"faultsStopped"`
+	// Number of faults which are not available
+	FaultsNa *int `json:"faultsNa"`
+	// Total number of faults
+	TotalFaults *int `json:"totalFaults"`
+	// Stores all the experiment run details related to the nodes of DAG graph and chaos results of the faults
+	ExecutionData string `json:"executionData"`
+	// Bool value indicating if the experiment run has removed
+	IsRemoved *bool `json:"isRemoved"`
+	// User who has updated the experiment
+	UpdatedBy *UserDetails `json:"updatedBy"`
+	// User who has created the experiment run
+	CreatedBy *UserDetails `json:"createdBy"`
+}
+
+func (ExperimentRun) IsAudit() {}
+
+// Defines input type for experiment run filter
+type ExperimentRunFilterInput struct {
+	// Name of the experiment
+	ExperimentName *string `json:"experimentName"`
+	// Name of the infra infra
+	InfraID *string `json:"infraID"`
+	// Type of the experiment
+	ExperimentType *ScheduleType `json:"experimentType"`
+	// Status of the experiment run
+	ExperimentStatus *ExperimentRunStatus `json:"experimentStatus"`
+	// Date range for filtering purpose
+	DateRange *DateRange `json:"dateRange"`
+	// ID of experiment run
+	ExperimentRunID *string `json:"experimentRunID"`
+	// Array of experiment run status
+	ExperimentRunStatus []*string `json:"experimentRunStatus"`
+	// Type of infras
+	InfraTypes []*InfrastructureType `json:"infraTypes"`
+}
+
+// Defines the details for a experiment run
+type ExperimentRunRequest struct {
+	// ID of the experiment
+	ExperimentID string `json:"experimentID"`
+	// notifyID is required to give an ack for non cron experiment execution
+	NotifyID *string `json:"notifyID"`
+	// ID of the experiment run which is to be queried
+	ExperimentRunID string `json:"experimentRunID"`
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// Stores all the experiment run details related to the nodes of DAG graph and chaos results of the experiments
+	ExecutionData string `json:"executionData"`
+	// ID of the infra infra in which the experiment is running
+	InfraID *InfraIdentity `json:"infraID"`
+	// ID of the revision which consists manifest details
+	RevisionID string `json:"revisionID"`
+	// Bool value indicating if the experiment run has completed
+	Completed bool `json:"completed"`
+	// Bool value indicating if the experiment run has removed
+	IsRemoved *bool `json:"isRemoved"`
+	// User who has updated the experiment
+	UpdatedBy string `json:"updatedBy"`
+}
+
+// Defines sorting options for experiment runs
+type ExperimentRunSortInput struct {
+	// Field in which sorting will be done
+	Field ExperimentSortingField `json:"field"`
+	// Bool value indicating whether the sorting will be done in ascending order
+	Ascending *bool `json:"ascending"`
+}
+
+// Defines sorting options for experiment
+type ExperimentSortInput struct {
+	// Field in which sorting will be done
+	Field ExperimentSortingField `json:"field"`
+	// Bool value indicating whether the sorting will be done in ascending order
+	Ascending *bool `json:"ascending"`
+}
+
+type Experiments struct {
+	Name string `json:"name"`
+	Csv  string `json:"CSV"`
+	Desc string `json:"desc"`
+}
+
+// Fault Detail consists of all the fault related details
+type FaultDetails struct {
+	// fault consists of fault.yaml
+	Fault string `json:"fault"`
+	// engine consists engine.yaml
+	Engine string `json:"engine"`
+	// csv consists chartserviceversion.yaml
+	Csv string `json:"csv"`
+}
+
+type FaultList struct {
+	Name        string   `json:"name"`
+	DisplayName string   `json:"displayName"`
+	Description string   `json:"description"`
+	Plan        []string `json:"plan"`
+}
+
+type GetChaosHubStatsResponse struct {
+	// Total number of chaoshubs
+	TotalChaosHubs int `json:"totalChaosHubs"`
+}
+
+// Defines the details for a given experiment with some additional data
+type GetExperimentResponse struct {
+	// Details of experiment
+	ExperimentDetails *Experiment `json:"experimentDetails"`
+	// Average resiliency score of the experiment
+	AverageResiliencyScore *float64 `json:"averageResiliencyScore"`
+}
+
+type GetExperimentRunStatsResponse struct {
+	// Total number of experiment runs
+	TotalExperimentRuns int `json:"totalExperimentRuns"`
+	// Total number of completed experiments runs
+	TotalCompletedExperimentRuns int `json:"totalCompletedExperimentRuns"`
+	// Total number of stopped experiment runs
+	TotalTerminatedExperimentRuns int `json:"totalTerminatedExperimentRuns"`
+	// Total number of running experiment runs
+	TotalRunningExperimentRuns int `json:"totalRunningExperimentRuns"`
+	// Total number of stopped experiment runs
+	TotalStoppedExperimentRuns int `json:"totalStoppedExperimentRuns"`
+	// Total number of errored experiment runs
+	TotalErroredExperimentRuns int `json:"totalErroredExperimentRuns"`
+}
+
+type GetExperimentStatsResponse struct {
+	// Total number of experiments
+	TotalExperiments int `json:"totalExperiments"`
+	// Total number of cron experiments
+	TotalExpCategorizedByResiliencyScore []*ResilienceScoreCategory `json:"totalExpCategorizedByResiliencyScore"`
+}
+
+type GetInfraStatsResponse struct {
+	// Total number of infrastructures
+	TotalInfrastructures int `json:"totalInfrastructures"`
+	// Total number of active infrastructures
+	TotalActiveInfrastructure int `json:"totalActiveInfrastructure"`
+	// Total number of inactive infrastructures
+	TotalInactiveInfrastructures int `json:"totalInactiveInfrastructures"`
+	// Total number of confirmed infrastructures
+	TotalConfirmedInfrastructure int `json:"totalConfirmedInfrastructure"`
+	// Total number of non confirmed infrastructures
+	TotalNonConfirmedInfrastructures int `json:"totalNonConfirmedInfrastructures"`
+}
+
+// Details of setting a Git repository
+type GitConfig struct {
+	// ID of the project where GitOps is configured
+	ProjectID string `json:"projectID"`
+	// Git branch where the chaos charts will be pushed and synced
+	Branch string `json:"branch"`
+	// URL of the Git repository
+	RepoURL string `json:"repoURL"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token used for private repository
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key authenticating into git repository
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+}
+
+// Response received after configuring GitOps
+type GitConfigResponse struct {
+	// Bool value indicating whether GitOps is enabled or not
+	Enabled bool `json:"enabled"`
+	// ID of the project where GitOps is configured
+	ProjectID string `json:"projectID"`
+	// Git branch where the chaos charts will be pushed and synced
+	Branch *string `json:"branch"`
+	// URL of the Git repository
+	RepoURL *string `json:"repoURL"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType *AuthType `json:"authType"`
+	// Token used for private repository
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key authenticating into git repository
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+}
+
+// Defines details for image registry
+type ImageRegistry struct {
+	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+	IsDefault *bool `json:"isDefault"`
+	// Name of Image Registry
+	ImageRegistryName string `json:"imageRegistryName"`
+	// Name of image repository
+	ImageRepoName string `json:"imageRepoName"`
+	// Type of the image registry: public/private
+	ImageRegistryType string `json:"imageRegistryType"`
+	// Secret which is used for private registry
+	SecretName *string `json:"secretName"`
+	// Namespace where the secret is available
+	SecretNamespace *string `json:"secretNamespace"`
+	// Bool value indicating if image registry is enabled or not
+	EnableRegistry *bool `json:"enableRegistry"`
+}
+
+// Defines input data for querying the details of an image registry
+type ImageRegistryInput struct {
+	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+	IsDefault bool `json:"isDefault"`
+	// Name of Image Registry
+	ImageRegistryName string `json:"imageRegistryName"`
+	// Name of image repository
+	ImageRepoName string `json:"imageRepoName"`
+	// Type of the image registry: public/private
+	ImageRegistryType string `json:"imageRegistryType"`
+	// Secret which is used for private registry
+	SecretName *string `json:"secretName"`
+	// Namespace where the secret is available
+	SecretNamespace *string `json:"secretNamespace"`
+	// Bool value indicating if image registry is enabled or not
+	EnableRegistry *bool `json:"enableRegistry"`
+}
+
+// Defines response data for image registry
+type ImageRegistryResponse struct {
+	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+	IsDefault bool `json:"isDefault"`
+	// Information Image Registry
+	ImageRegistryInfo *ImageRegistry `json:"imageRegistryInfo"`
+	// ID of the image registry
+	ImageRegistryID string `json:"imageRegistryID"`
+	// ID of the project in which image registry is created
+	ProjectID string `json:"projectID"`
+	// Timestamp when the image registry was last updated
+	UpdatedAt *string `json:"updatedAt"`
+	// Timestamp when the image registry was created
+	CreatedAt *string `json:"createdAt"`
+	// User who created the infra
+	CreatedBy *UserDetails `json:"createdBy"`
+	// User who has updated the infra
+	UpdatedBy *UserDetails `json:"updatedBy"`
+	// Bool value indicating if the image registry has been removed
+	IsRemoved *bool `json:"isRemoved"`
+}
+
+func (ImageRegistryResponse) IsAudit() {}
+
+// Defines the details for a infra
+type Infra struct {
+	ProjectID string `json:"projectID"`
+	// ID of the infra
+	InfraID string `json:"infraID"`
+	// Name of the infra
+	Name string `json:"name"`
+	// Description of the infra
+	Description *string `json:"description"`
+	// Tags of the infra
+	Tags []string `json:"tags"`
+	// Environment ID for the infra
+	EnvironmentID string `json:"environmentID"`
+	// Infra Platform Name eg. GKE,AWS, Others
+	PlatformName string `json:"platformName"`
+	// Boolean value indicating if chaos infrastructure is active or not
+	IsActive bool `json:"isActive"`
+	// Boolean value indicating if chaos infrastructure is confirmed or not
+	IsInfraConfirmed bool `json:"isInfraConfirmed"`
+	// Boolean value indicating if chaos infrastructure is removed or not
+	IsRemoved bool `json:"isRemoved"`
+	// Timestamp when the infra was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the infra was created
+	CreatedAt string `json:"createdAt"`
+	// Number of schedules created in the infra
+	NoOfExperiments *int `json:"noOfExperiments"`
+	// Number of experiments run in the infra
+	NoOfExperimentRuns *int `json:"noOfExperimentRuns"`
+	// Token used to verify and retrieve the infra manifest
+	Token string `json:"token"`
+	// Namespace where the infra is being installed
+	InfraNamespace *string `json:"infraNamespace"`
+	// Name of service account used by infra
+	ServiceAccount *string `json:"serviceAccount"`
+	// Scope of the infra : ns or cluster
+	InfraScope string `json:"infraScope"`
+	// Bool value indicating whether infra ns used already exists on infra or not
+	InfraNsExists *bool `json:"infraNsExists"`
+	// Bool value indicating whether service account used already exists on infra or not
+	InfraSaExists *bool `json:"infraSaExists"`
+	// Timestamp of the last experiment run in the infra
+	LastExperimentTimestamp *string `json:"lastExperimentTimestamp"`
+	// Timestamp when the infra got connected
+	StartTime string `json:"startTime"`
+	// Version of the infra
+	Version string `json:"version"`
+	// User who created the infra
+	CreatedBy *UserDetails `json:"createdBy"`
+	// User who has updated the infra
+	UpdatedBy *UserDetails `json:"updatedBy"`
+	// Type of the infrastructure
+	InfraType *InfrastructureType `json:"infraType"`
+	// update status of infra
+	UpdateStatus UpdateStatus `json:"updateStatus"`
+}
+
+func (Infra) IsResourceDetails() {}
+func (Infra) IsAudit()           {}
+
+type InfraActionResponse struct {
+	ProjectID string         `json:"projectID"`
+	Action    *ActionPayload `json:"action"`
+}
+
+type InfraEventResponse struct {
+	EventID     string `json:"eventID"`
+	EventType   string `json:"eventType"`
+	EventName   string `json:"eventName"`
+	Description string `json:"description"`
+	Infra       *Infra `json:"infra"`
+}
+
+// Defines filter options for infras
+type InfraFilterInput struct {
+	// Name of the infra
+	Name *string `json:"name"`
+	// ID of the infra
+	InfraID *string `json:"infraID"`
+	// ID of the infra
+	Description *string `json:"description"`
+	// Platform name of infra
+	PlatformName *string `json:"platformName"`
+	// Scope of infra
+	InfraScope *InfraScope `json:"infraScope"`
+	// Status of infra
+	IsActive *bool `json:"isActive"`
+	// Tags of an infra
+	Tags []*string `json:"tags"`
+}
+
+type InfraIdentity struct {
+	InfraID   string `json:"infraID"`
+	AccessKey string `json:"accessKey"`
+	Version   string `json:"version"`
+}
+
+// InfraVersionDetails returns the details of compatible infra versions and the latest infra version supported
+type InfraVersionDetails struct {
+	// Latest infra version supported
+	LatestVersion string `json:"latestVersion"`
+	// List of all infra versions supported
+	CompatibleVersions []string `json:"compatibleVersions"`
+}
+
+type KubeGVRRequest struct {
+	Group    string `json:"group"`
+	Version  string `json:"version"`
+	Resource string `json:"resource"`
+}
+
+// KubeObject consists of the namespace and the available resources in the same
+type KubeObject struct {
+	// Namespace of the resource
+	Namespace string `json:"namespace"`
+	// Details of the resource
+	Data []*ObjectData `json:"data"`
+}
+
+// Defines the details of Kubernetes object
+type KubeObjectData struct {
+	// Unique request ID for fetching Kubernetes object details
+	RequestID string `json:"requestID"`
+	// ID of the infra in which the Kubernetes object is present
+	InfraID *InfraIdentity `json:"infraID"`
+	// Type of the Kubernetes object
+	KubeObj string `json:"kubeObj"`
+}
+
+// Defines details for fetching Kubernetes object data
+type KubeObjectRequest struct {
+	// ID of the infra in which the Kubernetes object is present
+	InfraID string `json:"infraID"`
+	// GVR Request
+	KubeObjRequest *KubeGVRRequest `json:"kubeObjRequest"`
+	ObjectType     string          `json:"objectType"`
+	Workloads      []*Workload     `json:"workloads"`
+}
+
+// Response received for querying Kubernetes Object
+type KubeObjectResponse struct {
+	// ID of the infra in which the Kubernetes object is present
+	InfraID string `json:"infraID"`
+	// Type of the Kubernetes object
+	KubeObj []*KubeObject `json:"kubeObj"`
+}
+
+type Link struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
+}
+
+type ListChaosHubRequest struct {
+	// Array of ChaosHub IDs for which details will be fetched
+	ChaosHubIDs []string `json:"chaosHubIDs"`
+	// Details for fetching filtered data
+	Filter *ChaosHubFilterInput `json:"filter"`
+}
+
+type ListEnvironmentRequest struct {
+	// Environment ID
+	EnvironmentIDs []string `json:"environmentIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching filtered data
+	Filter *EnvironmentFilterInput `json:"filter"`
+	// Details for fetching sorted data
+	Sort *EnvironmentSortInput `json:"sort"`
+}
+
+type ListEnvironmentResponse struct {
+	// Total number of environment
+	TotalNoOfEnvironments int            `json:"totalNoOfEnvironments"`
+	Environments          []*Environment `json:"environments"`
+}
+
+// Defines the details for a experiment
+type ListExperimentRequest struct {
+	// Array of experiment IDs for which details will be fetched
+	ExperimentIDs []*string `json:"experimentIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *ExperimentSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *ExperimentFilterInput `json:"filter"`
+}
+
+// Defines the details for a experiment with total experiment count
+type ListExperimentResponse struct {
+	// Total number of experiments
+	TotalNoOfExperiments int `json:"totalNoOfExperiments"`
+	// Details related to the experiments
+	Experiments []*Experiment `json:"experiments"`
+}
+
+// Defines the details for experiment runs
+type ListExperimentRunRequest struct {
+	// Array of experiment run IDs for which details will be fetched
+	ExperimentRunIDs []*string `json:"experimentRunIDs"`
+	// Array of experiment IDs for which details will be fetched
+	ExperimentIDs []*string `json:"experimentIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching sorted data
+	Sort *ExperimentRunSortInput `json:"sort"`
+	// Details for fetching filtered data
+	Filter *ExperimentRunFilterInput `json:"filter"`
+}
+
+// Defines the details of a experiment to sent as response
+type ListExperimentRunResponse struct {
+	// Total number of experiment runs
+	TotalNoOfExperimentRuns int `json:"totalNoOfExperimentRuns"`
+	// Defines details of experiment runs
+	ExperimentRuns []*ExperimentRun `json:"experimentRuns"`
+}
+
+// Defines the details for a infra
+type ListInfraRequest struct {
+	// Array of infra IDs for which details will be fetched
+	InfraIDs []string `json:"infraIDs"`
+	// Environment ID
+	EnvironmentIDs []string `json:"environmentIDs"`
+	// Details for fetching paginated data
+	Pagination *Pagination `json:"pagination"`
+	// Details for fetching filtered data
+	Filter *InfraFilterInput `json:"filter"`
+}
+
+// Defines the details for a infras with total infras count
+type ListInfraResponse struct {
+	// Total number of infras
+	TotalNoOfInfras int `json:"totalNoOfInfras"`
+	// Details related to the infras
+	Infras []*Infra `json:"infras"`
+}
+
+// Defines the details of the maintainer
+type Maintainer struct {
+	// Name of the maintainer
+	Name string `json:"name"`
+	// Email of the maintainer
+	Email string `json:"email"`
+}
+
+type Metadata struct {
+	Name        string      `json:"name"`
+	Version     string      `json:"version"`
+	Annotations *Annotation `json:"annotations"`
+}
+
+type NewInfraEventRequest struct {
+	EventName   string `json:"eventName"`
+	Description string `json:"description"`
+	InfraID     string `json:"infraID"`
+	AccessKey   string `json:"accessKey"`
+}
+
+type ObjectData struct {
+	// Labels present in the resource
+	Labels []string `json:"labels"`
+	// Name of the resource
+	Name string `json:"name"`
+}
+
+type PackageInformation struct {
+	PackageName string         `json:"packageName"`
+	Experiments []*Experiments `json:"experiments"`
+}
+
+// Defines data required to fetch paginated data
+type Pagination struct {
+	// Page number for which data will be fetched
+	Page int `json:"page"`
+	// Number of data to be fetched
+	Limit int `json:"limit"`
+}
+
+// Response received for querying pod logs
+type PodLog struct {
+	// ID of the cluster
+	InfraID *InfraIdentity `json:"infraID"`
+	// Unique request ID of a particular node which is being queried
+	RequestID string `json:"requestID"`
+	// ID of a experiment run
+	ExperimentRunID string `json:"experimentRunID"`
+	// Name of the pod for which logs are required
+	PodName string `json:"podName"`
+	// Type of the pod: chaosengine
+	PodType string `json:"podType"`
+	// Logs for the pod
+	Log string `json:"log"`
+}
+
+// Defines the details for fetching the pod logs
+type PodLogRequest struct {
+	// ID of the cluster
+	InfraID string `json:"infraID"`
+	// ID of a experiment run
+	ExperimentRunID string `json:"experimentRunID"`
+	// Name of the pod for which logs are required
+	PodName string `json:"podName"`
+	// Namespace where the pod is running
+	PodNamespace string `json:"podNamespace"`
+	// Type of the pod: chaosEngine or not pod
+	PodType string `json:"podType"`
+	// Name of the experiment pod fetched from execution data
+	ExpPod *string `json:"expPod"`
+	// Name of the runner pod fetched from execution data
+	RunnerPod *string `json:"runnerPod"`
+	// Namespace where the experiment is executing
+	ChaosNamespace *string `json:"chaosNamespace"`
+}
+
+// Defines the response received for querying querying the pod logs
+type PodLogResponse struct {
+	// ID of the experiment run which is to be queried
+	ExperimentRunID string `json:"experimentRunID"`
+	// Name of the pod for which logs are queried
+	PodName string `json:"podName"`
+	// Type of the pod: chaosengine
+	PodType string `json:"podType"`
+	// Logs for the pod
+	Log string `json:"log"`
+}
+
+type PredefinedExperimentList struct {
+	// Name of the experiment
+	ExperimentName string `json:"experimentName"`
+	// Experiment CSV
+	ExperimentCsv string `json:"experimentCSV"`
+	// Experiment Manifest
+	ExperimentManifest string `json:"experimentManifest"`
+}
+
+type Provider struct {
+	Name string `json:"name"`
+}
+
+type RecentExperimentRun struct {
+	// ID of the experiment run which is to be queried
+	ExperimentRunID string `json:"experimentRunID"`
+	// Phase of the experiment run
+	Phase string `json:"phase"`
+	// Resiliency score of the experiment
+	ResiliencyScore *float64 `json:"resiliencyScore"`
+	// Timestamp when the experiment was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp when the experiment was created
+	CreatedAt string `json:"createdAt"`
+	// User who created the experiment run
+	CreatedBy *UserDetails `json:"createdBy"`
+	// User who updated the experiment run
+	UpdatedBy *UserDetails `json:"updatedBy"`
+}
+
+func (RecentExperimentRun) IsAudit() {}
+
+// Defines the details for the new infra being connected
+type RegisterInfraRequest struct {
+	// Name of the infra
+	Name string `json:"name"`
+	// Environment ID for the infra
+	EnvironmentID string `json:"environmentID"`
+	// Type of Infra : internal/external
+	InfrastructureType InfrastructureType `json:"infrastructureType"`
+	// Description of the infra
+	Description *string `json:"description"`
+	// Infra Platform Name eg. GKE,AWS, Others
+	PlatformName string `json:"platformName"`
+	// Namespace where the infra is being installed
+	InfraNamespace *string `json:"infraNamespace"`
+	// Name of service account used by infra
+	ServiceAccount *string `json:"serviceAccount"`
+	// Scope of the infra : ns or infra
+	InfraScope string `json:"infraScope"`
+	// Bool value indicating whether infra ns used already exists on infra or not
+	InfraNsExists *bool `json:"infraNsExists"`
+	// Bool value indicating whether service account used already exists on infra or not
+	InfraSaExists *bool `json:"infraSaExists"`
+	// Bool value indicating whether infra will skip ssl checks or not
+	SkipSsl *bool `json:"skipSsl"`
+	// Node selectors used by infra
+	NodeSelector *string `json:"nodeSelector"`
+	// Node tolerations used by infra
+	Tolerations []*Toleration `json:"tolerations"`
+	// Tags of the infra
+	Tags []string `json:"tags"`
+}
+
+// Response received for registering a new infra
+type RegisterInfraResponse struct {
+	// Token used to verify and retrieve the infra manifest
+	Token string `json:"token"`
+	// Unique ID for the newly registered infra
+	InfraID string `json:"infraID"`
+	// Infra name as sent in request
+	Name string `json:"name"`
+	// Infra Manifest
+	Manifest string `json:"manifest"`
+}
+
+type ResilienceScoreCategory struct {
+	// Lower bound of the range(inclusive)
+	ID int `json:"id"`
+	// total experiments with avg resilience score between lower bound and upper bound(exclusive)
+	Count int `json:"count"`
+}
+
+type RunChaosExperimentResponse struct {
+	NotifyID string `json:"notifyID"`
+}
+
+// Defines the SSHKey details
+type SSHKey struct {
+	// Public SSH key authenticating into git repository
+	PublicKey string `json:"publicKey"`
+	// Private SSH key authenticating into git repository
+	PrivateKey string `json:"privateKey"`
+}
+
+// Defines the details for a chaos experiment
+type SaveChaosExperimentRequest struct {
+	// ID of the experiment
+	ID string `json:"id"`
+	// Type of the experiment
+	Type *ExperimentType `json:"type"`
+	// Name of the experiment
+	Name string `json:"name"`
+	// Description of the experiment
+	Description string `json:"description"`
+	// Manifest of the experiment
+	Manifest string `json:"manifest"`
+	// ID of the target infrastructure in which the experiment will run
+	InfraID string `json:"infraID"`
+	// Tags of the infrastructure
+	Tags []string `json:"tags"`
+}
+
+// Response received for fetching GQL server version
+type ServerVersionResponse struct {
+	// Returns server version key
+	Key string `json:"key"`
+	// Returns server version value
+	Value string `json:"value"`
+}
+
+type Spec struct {
+	DisplayName         string        `json:"displayName"`
+	CategoryDescription string        `json:"categoryDescription"`
+	Keywords            []string      `json:"keywords"`
+	Maturity            string        `json:"maturity"`
+	Maintainers         []*Maintainer `json:"maintainers"`
+	MinKubeVersion      string        `json:"minKubeVersion"`
+	Provider            *Provider     `json:"provider"`
+	Links               []*Link       `json:"links"`
+	Faults              []*FaultList  `json:"faults"`
+	Experiments         []string      `json:"experiments"`
+	ChaosExpCRDLink     string        `json:"chaosExpCRDLink"`
+	Platforms           []string      `json:"platforms"`
+	ChaosType           *string       `json:"chaosType"`
+}
+
+// Defines the request for stopping a experiment
+type StopExperimentRunsRequest struct {
+	ProjectID string `json:"projectID"`
+	// ID of the experiment to be stopped
+	ExperimentID string `json:"experimentID"`
+	// ID of the experiment run to be stopped
+	ExperimentRunID *string `json:"experimentRunID"`
+}
+
+type Toleration struct {
+	TolerationSeconds *int    `json:"tolerationSeconds"`
+	Key               *string `json:"key"`
+	Operator          *string `json:"operator"`
+	Effect            *string `json:"effect"`
+	Value             *string `json:"value"`
+}
+
+type UpdateChaosHubRequest struct {
+	// ID of the chaos hub
+	ID string `json:"id"`
+	// Name of the chaos hub
+	Name string `json:"name"`
+	// Description of the infra
+	Description *string `json:"description"`
+	// Tags of the infra
+	Tags []string `json:"tags"`
+	// URL of the git repository
+	RepoURL string `json:"repoURL"`
+	// Branch of the git repository
+	RepoBranch string `json:"repoBranch"`
+	// Bool value indicating whether the hub is private or not.
+	IsPrivate bool `json:"isPrivate"`
+	// Type of authentication used: 	BASIC, SSH,	TOKEN
+	AuthType AuthType `json:"authType"`
+	// Token for authentication of private chaos hub
+	Token *string `json:"token"`
+	// Git username
+	UserName *string `json:"userName"`
+	// Git password
+	Password *string `json:"password"`
+	// Private SSH key for authenticating into private chaos hub
+	SSHPrivateKey *string `json:"sshPrivateKey"`
+	// Public SSH key for authenticating into private chaos hub
+	SSHPublicKey *string `json:"sshPublicKey"`
+}
+
+type UpdateEnvironmentRequest struct {
+	EnvironmentID string           `json:"environmentID"`
+	Name          *string          `json:"name"`
+	Description   *string          `json:"description"`
+	Tags          []*string        `json:"tags"`
+	Type          *EnvironmentType `json:"type"`
+}
+
 type UserDetails struct {
 	UserID   string `json:"userID"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
+}
+
+// Defines the details of the weightages of each chaos fault in the experiment
+type Weightages struct {
+	// Name of the fault
+	FaultName string `json:"faultName"`
+	// Weightage of the experiment
+	Weightage int `json:"weightage"`
+}
+
+// Defines the details of the weightages of each chaos fault in the experiment
+type WeightagesInput struct {
+	// Name of the fault
+	FaultName string `json:"faultName"`
+	// Weightage of the fault
+	Weightage int `json:"weightage"`
+}
+
+type Workload struct {
+	Name      string `json:"name"`
+	Kind      string `json:"kind"`
+	Namespace string `json:"namespace"`
+}
+
+type AuthType string
+
+const (
+	AuthTypeBasic AuthType = "BASIC"
+	AuthTypeNone  AuthType = "NONE"
+	AuthTypeSSH   AuthType = "SSH"
+	AuthTypeToken AuthType = "TOKEN"
+)
+
+var AllAuthType = []AuthType{
+	AuthTypeBasic,
+	AuthTypeNone,
+	AuthTypeSSH,
+	AuthTypeToken,
+}
+
+func (e AuthType) IsValid() bool {
+	switch e {
+	case AuthTypeBasic, AuthTypeNone, AuthTypeSSH, AuthTypeToken:
+		return true
+	}
+	return false
+}
+
+func (e AuthType) String() string {
+	return string(e)
+}
+
+func (e *AuthType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AuthType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AuthType", str)
+	}
+	return nil
+}
+
+func (e AuthType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EnvironmentSortingField string
+
+const (
+	EnvironmentSortingFieldName EnvironmentSortingField = "NAME"
+	EnvironmentSortingFieldTime EnvironmentSortingField = "TIME"
+)
+
+var AllEnvironmentSortingField = []EnvironmentSortingField{
+	EnvironmentSortingFieldName,
+	EnvironmentSortingFieldTime,
+}
+
+func (e EnvironmentSortingField) IsValid() bool {
+	switch e {
+	case EnvironmentSortingFieldName, EnvironmentSortingFieldTime:
+		return true
+	}
+	return false
+}
+
+func (e EnvironmentSortingField) String() string {
+	return string(e)
+}
+
+func (e *EnvironmentSortingField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EnvironmentSortingField(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EnvironmentSortingField", str)
+	}
+	return nil
+}
+
+func (e EnvironmentSortingField) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type EnvironmentType string
+
+const (
+	EnvironmentTypeProd    EnvironmentType = "PROD"
+	EnvironmentTypeNonProd EnvironmentType = "NON_PROD"
+)
+
+var AllEnvironmentType = []EnvironmentType{
+	EnvironmentTypeProd,
+	EnvironmentTypeNonProd,
+}
+
+func (e EnvironmentType) IsValid() bool {
+	switch e {
+	case EnvironmentTypeProd, EnvironmentTypeNonProd:
+		return true
+	}
+	return false
+}
+
+func (e EnvironmentType) String() string {
+	return string(e)
+}
+
+func (e *EnvironmentType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EnvironmentType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EnvironmentType", str)
+	}
+	return nil
+}
+
+func (e EnvironmentType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExperimentRunStatus string
+
+const (
+	ExperimentRunStatusAll                ExperimentRunStatus = "All"
+	ExperimentRunStatusRunning            ExperimentRunStatus = "Running"
+	ExperimentRunStatusCompleted          ExperimentRunStatus = "Completed"
+	ExperimentRunStatusCompletedWithError ExperimentRunStatus = "Completed_With_Error"
+	ExperimentRunStatusStopped            ExperimentRunStatus = "Stopped"
+	ExperimentRunStatusSkipped            ExperimentRunStatus = "Skipped"
+	ExperimentRunStatusError              ExperimentRunStatus = "Error"
+	ExperimentRunStatusTimeout            ExperimentRunStatus = "Timeout"
+	ExperimentRunStatusNa                 ExperimentRunStatus = "NA"
+)
+
+var AllExperimentRunStatus = []ExperimentRunStatus{
+	ExperimentRunStatusAll,
+	ExperimentRunStatusRunning,
+	ExperimentRunStatusCompleted,
+	ExperimentRunStatusCompletedWithError,
+	ExperimentRunStatusStopped,
+	ExperimentRunStatusSkipped,
+	ExperimentRunStatusError,
+	ExperimentRunStatusTimeout,
+	ExperimentRunStatusNa,
+}
+
+func (e ExperimentRunStatus) IsValid() bool {
+	switch e {
+	case ExperimentRunStatusAll, ExperimentRunStatusRunning, ExperimentRunStatusCompleted, ExperimentRunStatusCompletedWithError, ExperimentRunStatusStopped, ExperimentRunStatusSkipped, ExperimentRunStatusError, ExperimentRunStatusTimeout, ExperimentRunStatusNa:
+		return true
+	}
+	return false
+}
+
+func (e ExperimentRunStatus) String() string {
+	return string(e)
+}
+
+func (e *ExperimentRunStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExperimentRunStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExperimentRunStatus", str)
+	}
+	return nil
+}
+
+func (e ExperimentRunStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExperimentSortingField string
+
+const (
+	ExperimentSortingFieldName ExperimentSortingField = "NAME"
+	ExperimentSortingFieldTime ExperimentSortingField = "TIME"
+)
+
+var AllExperimentSortingField = []ExperimentSortingField{
+	ExperimentSortingFieldName,
+	ExperimentSortingFieldTime,
+}
+
+func (e ExperimentSortingField) IsValid() bool {
+	switch e {
+	case ExperimentSortingFieldName, ExperimentSortingFieldTime:
+		return true
+	}
+	return false
+}
+
+func (e ExperimentSortingField) String() string {
+	return string(e)
+}
+
+func (e *ExperimentSortingField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExperimentSortingField(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExperimentSortingField", str)
+	}
+	return nil
+}
+
+func (e ExperimentSortingField) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExperimentType string
+
+const (
+	ExperimentTypeAll            ExperimentType = "All"
+	ExperimentTypeExperiment     ExperimentType = "Experiment"
+	ExperimentTypeCronExperiment ExperimentType = "CronExperiment"
+	ExperimentTypeChaosEngine    ExperimentType = "ChaosEngine"
+	ExperimentTypeChaosSchedule  ExperimentType = "ChaosSchedule"
+)
+
+var AllExperimentType = []ExperimentType{
+	ExperimentTypeAll,
+	ExperimentTypeExperiment,
+	ExperimentTypeCronExperiment,
+	ExperimentTypeChaosEngine,
+	ExperimentTypeChaosSchedule,
+}
+
+func (e ExperimentType) IsValid() bool {
+	switch e {
+	case ExperimentTypeAll, ExperimentTypeExperiment, ExperimentTypeCronExperiment, ExperimentTypeChaosEngine, ExperimentTypeChaosSchedule:
+		return true
+	}
+	return false
+}
+
+func (e ExperimentType) String() string {
+	return string(e)
+}
+
+func (e *ExperimentType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExperimentType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExperimentType", str)
+	}
+	return nil
+}
+
+func (e ExperimentType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type FileType string
+
+const (
+	FileTypeExperiment FileType = "EXPERIMENT"
+	FileTypeEngine     FileType = "ENGINE"
+	FileTypeWorkflow   FileType = "WORKFLOW"
+	FileTypeCsv        FileType = "CSV"
+)
+
+var AllFileType = []FileType{
+	FileTypeExperiment,
+	FileTypeEngine,
+	FileTypeWorkflow,
+	FileTypeCsv,
+}
+
+func (e FileType) IsValid() bool {
+	switch e {
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
+		return true
+	}
+	return false
+}
+
+func (e FileType) String() string {
+	return string(e)
+}
+
+func (e *FileType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = FileType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid FileType", str)
+	}
+	return nil
+}
+
+func (e FileType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type HubType string
+
+const (
+	HubTypeGit    HubType = "GIT"
+	HubTypeRemote HubType = "REMOTE"
+)
+
+var AllHubType = []HubType{
+	HubTypeGit,
+	HubTypeRemote,
+}
+
+func (e HubType) IsValid() bool {
+	switch e {
+	case HubTypeGit, HubTypeRemote:
+		return true
+	}
+	return false
+}
+
+func (e HubType) String() string {
+	return string(e)
+}
+
+func (e *HubType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = HubType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid HubType", str)
+	}
+	return nil
+}
+
+func (e HubType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type InfraScope string
+
+const (
+	InfraScopeNamespace InfraScope = "namespace"
+	InfraScopeCluster   InfraScope = "cluster"
+)
+
+var AllInfraScope = []InfraScope{
+	InfraScopeNamespace,
+	InfraScopeCluster,
+}
+
+func (e InfraScope) IsValid() bool {
+	switch e {
+	case InfraScopeNamespace, InfraScopeCluster:
+		return true
+	}
+	return false
+}
+
+func (e InfraScope) String() string {
+	return string(e)
+}
+
+func (e *InfraScope) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = InfraScope(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid INFRA_SCOPE", str)
+	}
+	return nil
+}
+
+func (e InfraScope) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type InfrastructureType string
+
+const (
+	InfrastructureTypeInternal InfrastructureType = "INTERNAL"
+	InfrastructureTypeExternal InfrastructureType = "EXTERNAL"
+)
+
+var AllInfrastructureType = []InfrastructureType{
+	InfrastructureTypeInternal,
+	InfrastructureTypeExternal,
+}
+
+func (e InfrastructureType) IsValid() bool {
+	switch e {
+	case InfrastructureTypeInternal, InfrastructureTypeExternal:
+		return true
+	}
+	return false
+}
+
+func (e InfrastructureType) String() string {
+	return string(e)
+}
+
+func (e *InfrastructureType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = InfrastructureType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid InfrastructureType", str)
+	}
+	return nil
+}
+
+func (e InfrastructureType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type Invitation string
@@ -103,5 +1752,92 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ScheduleType string
+
+const (
+	ScheduleTypeCron    ScheduleType = "CRON"
+	ScheduleTypeNonCron ScheduleType = "NON_CRON"
+	ScheduleTypeAll     ScheduleType = "ALL"
+)
+
+var AllScheduleType = []ScheduleType{
+	ScheduleTypeCron,
+	ScheduleTypeNonCron,
+	ScheduleTypeAll,
+}
+
+func (e ScheduleType) IsValid() bool {
+	switch e {
+	case ScheduleTypeCron, ScheduleTypeNonCron, ScheduleTypeAll:
+		return true
+	}
+	return false
+}
+
+func (e ScheduleType) String() string {
+	return string(e)
+}
+
+func (e *ScheduleType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ScheduleType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ScheduleType", str)
+	}
+	return nil
+}
+
+func (e ScheduleType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// UpdateStatus represents if infra needs to be updated
+type UpdateStatus string
+
+const (
+	UpdateStatusAvailable   UpdateStatus = "AVAILABLE"
+	UpdateStatusMandatory   UpdateStatus = "MANDATORY"
+	UpdateStatusNotRequired UpdateStatus = "NOT_REQUIRED"
+)
+
+var AllUpdateStatus = []UpdateStatus{
+	UpdateStatusAvailable,
+	UpdateStatusMandatory,
+	UpdateStatusNotRequired,
+}
+
+func (e UpdateStatus) IsValid() bool {
+	switch e {
+	case UpdateStatusAvailable, UpdateStatusMandatory, UpdateStatusNotRequired:
+		return true
+	}
+	return false
+}
+
+func (e UpdateStatus) String() string {
+	return string(e)
+}
+
+func (e *UpdateStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UpdateStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UpdateStatus", str)
+	}
+	return nil
+}
+
+func (e UpdateStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
