@@ -1,41 +1,42 @@
 package handlers
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/harness/hce-saas/graphql/server/pkg/chaos_infra"
-	dbChaosInfra "github.com/harness/hce-saas/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/harness/hce-saas/graphql/server/utils"
-	"net/http"
+	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
 
 // FileHandler dynamically generates the manifest file and sends it as a response
-func FileHandler(w http.ResponseWriter, r *http.Request) {
-	var (
-		vars  = mux.Vars(r)
-		token = vars["key"]
-	)
-	infraId, err := chaos_infra.InfraValidateJWT(token)
-	if err != nil {
-		logrus.Error(err)
-		utils.WriteHeaders(&w, 500)
-		w.Write([]byte(err.Error()))
-	}
+func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := strings.TrimSuffix(c.Param("key"), ".yaml")
 
-	infra, err := dbChaosInfra.GetInfra(infraId)
-	if err != nil {
-		logrus.Error(err)
-		utils.WriteHeaders(&w, 500)
-		w.Write([]byte(err.Error()))
-	}
+		infraId, err := chaos_infrastructure.InfraValidateJWT(token)
+		if err != nil {
+			logrus.Error(err)
+			utils.WriteHeaders(&c.Writer, 500)
+			c.Writer.Write([]byte(err.Error()))
+		}
 
-	response, err := chaos_infra.GetK8sInfraYaml(infra)
-	if err != nil {
-		logrus.Error(err)
-		utils.WriteHeaders(&w, 500)
-		w.Write([]byte(err.Error()))
+		infra, err := dbChaosInfra.NewInfrastructureOperator(mongodbOperator).GetInfra(infraId)
+		if err != nil {
+			logrus.Error(err)
+			utils.WriteHeaders(&c.Writer, 500)
+			c.Writer.Write([]byte(err.Error()))
+		}
+		response, err := chaos_infrastructure.GetK8sInfraYaml(infra)
+		if err != nil {
+			logrus.Error(err)
+			utils.WriteHeaders(&c.Writer, 500)
+			c.Writer.Write([]byte(err.Error()))
+		}
+
+		utils.WriteHeaders(&c.Writer, 200)
+		c.Writer.Write(response)
 	}
-	utils.WriteHeaders(&w, 200)
-	w.Write(response)
 }

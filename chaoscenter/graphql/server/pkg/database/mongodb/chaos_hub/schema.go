@@ -1,8 +1,8 @@
 package chaos_hub
 
 import (
-	"github.com/harness/hce-saas/graphql/server/graph/model"
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"strconv"
 )
 
@@ -23,6 +23,7 @@ type ChaosHub struct {
 	SSHPrivateKey           *string `bson:"ssh_private_key"`
 	SSHPublicKey            *string `bson:"ssh_public_key"`
 	LastSyncedAt            int64   `bson:"last_synced_at"`
+	IsDefault               bool    `bson:"is_default"`
 }
 
 // GetOutputChaosHub ...
@@ -40,6 +41,7 @@ func (c *ChaosHub) GetOutputChaosHub() *model.ChaosHub {
 		UserName:      c.UserName,
 		Password:      c.Password,
 		AuthType:      model.AuthType(c.AuthType),
+		IsDefault:     c.IsDefault,
 		Token:         c.Token,
 		IsRemoved:     c.IsRemoved,
 		SSHPrivateKey: c.SSHPrivateKey,

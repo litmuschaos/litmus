@@ -68,6 +68,9 @@ const (
 	ListImageRegistry            RoleQuery = "ListImageRegistry"
 	GetImageRegistry             RoleQuery = "GetImageRegistry"
 	CreateEnvironment            RoleQuery = "CreateEnvironment"
+	UpdateEnvironment            RoleQuery = "UpdateEnvironment"
+	DeleteEnvironment            RoleQuery = "DeleteEnvironment"
+	GetEnvironment               RoleQuery = "GetEnvironment"
 	ListEnvironments             RoleQuery = "ListEnvironments"
 	MemberRoleOwnerString                  = string(model.MemberRoleOwner)
 	MemberRoleEditorString                 = string(model.MemberRoleEditor)
@@ -138,5 +141,8 @@ var MutationRbacRules = map[RoleQuery][]string{
 	ListImageRegistry:            {MemberRoleOwnerString},
 	GetImageRegistry:             {MemberRoleOwnerString},
 	CreateEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
+	GetEnvironment:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListEnvironments:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 }

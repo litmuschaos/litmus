@@ -3,9 +3,8 @@ package grpc
 import (
 	"context"
 	"errors"
-	"fmt"
-	"github.com/harness/hce-saas/graphql/server/protos"
-	"github.com/harness/hce-saas/graphql/server/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -17,7 +16,6 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 	if err != nil {
 		logrus.Fatalf("did not connect: %s", err)
 	}
-	fmt.Println("connected", protos.NewAuthRpcServiceClient(conn))
 	return protos.NewAuthRpcServiceClient(conn), conn
 }
 

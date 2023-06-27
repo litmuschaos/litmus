@@ -31,7 +31,8 @@ func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 }
 
 func (s *ServerGrpc) GetProjectById(ctx context.Context,
-	inputRequest *protos.GetProjectByIdRequest) (*protos.GetProjectByIdResponse, error) {
+	inputRequest *protos.GetProjectByIdRequest) (*protos.
+	GetProjectByIdResponse, error) {
 
 	project, err := s.ApplicationService.GetProjectByProjectID(inputRequest.ProjectID)
 	if err != nil {

@@ -1,8 +1,7 @@
 package chaos_infrastructure
 
 import (
-	"github.com/harness/hce-saas/graphql/server/graph/model"
-	"github.com/harness/hce-saas/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 )
 
 // ChaosInfra contains the required fields to be stored in the database for an chaos_infra
@@ -40,29 +39,26 @@ type ChaosInfraDetails struct {
 	InfraID                 string `bson:"infra_id"`
 	mongodb.ResourceDetails `bson:",inline"`
 	mongodb.Audit           `bson:",inline"`
-	ProjectID               string                 `bson:"project_id"`
-	EnvironmentID           string                 `bson:"environment_id"`
-	PlatformName            string                 `bson:"platform_name"`
-	Token                   string                 `bson:"token"`
-	InfraScope              string                 `bson:"infra_scope"`
-	AccessKey               string                 `bson:"access_key"`
-	StartTime               string                 `bson:"start_time"`
-	Version                 string                 `bson:"version"`
-	NodeSelector            *string                `bson:"node_selector"`
-	InfraNamespace          *string                `bson:"infra_namespace"`
-	ServiceAccount          *string                `bson:"service_account"`
-	K8sConnectorID          *string                `bson:"k8s_connector_id,omitempty"`
-	InstallationType        model.InstallationType `bson:"installation_type"`
-	Tolerations             []*Toleration          `bson:"tolerations,omitempty"`
-	ExperimentRunDetails    []ExperimentRuns       `bson:"expRunDetails"`
-	ExperimentDetails       []Experiments          `bson:"experimentDetails"`
-	IsRegistered            bool                   `bson:"is_registered"`
-	IsInfraConfirmed        bool                   `bson:"is_infra_confirmed"`
-	IsActive                bool                   `bson:"is_active"`
-	SkipSSL                 *bool                  `bson:"skip_ssl"`
-	InfraNsExists           *bool                  `bson:"infra_ns_exists"`
-	InfraSaExists           *bool                  `bson:"infra_sa_exists"`
-	LastHeartBeat           string                 `bson:"last_heartbeat_timestamp"`
+	ProjectID               string           `bson:"project_id"`
+	EnvironmentID           string           `bson:"environment_id"`
+	PlatformName            string           `bson:"platform_name"`
+	Token                   string           `bson:"token"`
+	InfraScope              string           `bson:"infra_scope"`
+	AccessKey               string           `bson:"access_key"`
+	StartTime               string           `bson:"start_time"`
+	Version                 string           `bson:"version"`
+	NodeSelector            *string          `bson:"node_selector"`
+	InfraNamespace          *string          `bson:"infra_namespace"`
+	ServiceAccount          *string          `bson:"service_account"`
+	Tolerations             []*Toleration    `bson:"tolerations,omitempty"`
+	ExperimentRunDetails    []ExperimentRuns `bson:"expRunDetails"`
+	ExperimentDetails       []Experiments    `bson:"experimentDetails"`
+	IsRegistered            bool             `bson:"is_registered"`
+	IsInfraConfirmed        bool             `bson:"is_infra_confirmed"`
+	IsActive                bool             `bson:"is_active"`
+	SkipSSL                 *bool            `bson:"skip_ssl"`
+	InfraNsExists           *bool            `bson:"infra_ns_exists"`
+	InfraSaExists           *bool            `bson:"infra_sa_exists"`
 }
 
 type AggregatedGetInfras struct {
@@ -77,15 +73,15 @@ type AggregatedInfras struct {
 
 // ExperimentRuns returns corresponding experiment run details
 type ExperimentRuns struct {
-	LastRunTimestamp string `bson:"last_run_timestamp"`
-	TotalRuns        int    `bson:"exp_run_count"`
+	LastRunTimestamp int64 `bson:"last_run_timestamp"`
+	TotalRuns        int   `bson:"exp_run_count"`
 }
 
 // Experiments returns corresponding experiment run details
 type Experiments struct {
-	TotalSchedules   int    `bson:"experiments_count"`
-	LastRunTimestamp string `bson:"last_run_timestamp"`
-	TotalRuns        int    `bson:"exp_run_count"`
+	TotalSchedules   int   `bson:"experiments_count"`
+	LastRunTimestamp int64 `bson:"last_run_timestamp"`
+	TotalRuns        int   `bson:"exp_run_count"`
 }
 
 type Toleration struct {
