@@ -44,7 +44,6 @@ var (
 	Ctx             = context.Background()
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
-	//AgentNamespace  = os.Getenv("AGENT_NAMESPACE")
 )
 
 func CheckComponentStatus(componentEnv string) error {
