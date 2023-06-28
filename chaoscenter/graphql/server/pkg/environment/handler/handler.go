@@ -3,22 +3,19 @@ package handler
 import (
 	"context"
 	"errors"
+	"strconv"
+	"time"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"strconv"
-	"time"
 )
 
 func CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest) (*model.Environment, error) {
-	// TODO
-	//env, err :=environments.GetEnvironmentDetails(context.Background(),input.EnvironmentID,projectID)
-	//if err!=nil{
-	//	return model.Environment{},err
-	//}
+
 	currentTime := time.Now()
 	if input.Tags == nil || len(input.Tags) == 0 {
 		input.Tags = []string{}
