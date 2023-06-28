@@ -10,7 +10,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/usage"
 )
 
 func (r *queryResolver) GetUsageData(ctx context.Context, request model.UsageDataRequest) (*model.UsageDataResponse, error) {
@@ -18,5 +17,5 @@ func (r *queryResolver) GetUsageData(ctx context.Context, request model.UsageDat
 	if claims["role"].(string) != "admin" {
 		return nil, errors.New("only portal admin access")
 	}
-	return usage.GetUsageData(ctx, request)
+	return r.usageService.GetUsageData(ctx, request)
 }

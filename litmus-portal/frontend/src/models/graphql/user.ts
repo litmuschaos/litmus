@@ -6,7 +6,7 @@ export interface Member {
   Role: string;
   UserID: string;
   UserName: string;
-  DeactivatedAt: string;
+  deactivated_at: string;
 }
 
 export interface Project {
@@ -79,9 +79,9 @@ export interface UserData {
   email: string;
   name: string;
   loggedIn: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deactivatedAt: string;
+  created_at: string;
+  updated_at: string;
+  deactivated_at: string;
 }
 
 export interface Projects {

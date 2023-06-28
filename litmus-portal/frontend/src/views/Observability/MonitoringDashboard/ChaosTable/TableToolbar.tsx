@@ -112,7 +112,7 @@ const TableToolBar: React.FC<TableToolBarProps> = ({
             </MenuItem>
             {workflows.map((availableWorkflow: string) => (
               <MenuItem
-                key={`${availableWorkflow}-workflow-chaos-table-toolbar`}
+                key={`${availableWorkflow}-scenario-chaos-table-toolbar`}
                 value={availableWorkflow}
                 className={classes.menuListItem}
               >

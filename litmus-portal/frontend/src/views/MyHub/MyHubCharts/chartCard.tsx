@@ -1,7 +1,7 @@
 import { Card, CardContent, Link, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import config from '../../../config';
-import { HubDetails } from '../../../models/redux/myhub';
+import { HubDetails } from '../../../models/graphql/chaoshub';
 import { history } from '../../../redux/configureStore';
 import useStyles from './styles';
 

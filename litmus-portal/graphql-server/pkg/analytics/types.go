@@ -22,7 +22,7 @@ type PromSeries struct {
 	DSdetails *PromDSDetails
 }
 
-//Portal Dashboard Types
+// Portal Dashboard Types
 type PortalDashboard struct {
 	DashboardID               string `json:"dashboardID"`
 	Name                      string `json:"name"`

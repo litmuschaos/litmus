@@ -145,10 +145,3 @@ export const GET_WORKFLOW_RUNS_STATS = gql`
     }
   }
 `;
-
-// getPredefinedWorkflowList
-export const GET_PREDEFINED_WORKFLOW_LIST = gql`
-  query listPredefinedWorkflows($hubName: String!, $projectID: String!) {
-    listPredefinedWorkflows(hubName: $hubName, projectID: $projectID)
-  }
-`;

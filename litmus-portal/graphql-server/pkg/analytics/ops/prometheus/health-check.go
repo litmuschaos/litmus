@@ -2,7 +2,6 @@ package prometheus
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"time"
 
@@ -23,12 +22,10 @@ func TSDBHealthCheck(url, datasourceType string) string {
 		dbHealth = "Active"
 
 		if datasourceType == "Prometheus" {
-			prometheusHealth, prometheusHealthMsg := prometheusHealthCheck(url)
-			log.Printf(prometheusHealthMsg)
+			prometheusHealth, _ := prometheusHealthCheck(url)
 
 			if prometheusHealth == "ACTIVE" {
-				prometheusReadiness, prometheusReadinessMsg := prometheusReadinessCheck(url)
-				log.Printf(prometheusReadinessMsg)
+				prometheusReadiness, _ := prometheusReadinessCheck(url)
 
 				if prometheusReadiness != "ACTIVE" {
 					dbHealth = "Not Ready"

@@ -22,4 +22,3 @@ spec:
           operator: "Equal"
           value: "value1"
           effect: "Schedule"
-  

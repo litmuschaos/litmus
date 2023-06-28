@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginTop: theme.spacing(2),
     paddingBottom: theme.spacing(3),
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
 
   statisticsDiv: {
@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     paddingLeft: theme.spacing(-1),
     width: '100%',
+    height: '100%',
   },
 
   headerSection: {
@@ -193,12 +194,11 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     width: '100%',
-    height: '40rem',
     borderTop: `1px solid ${theme.palette.border.main}`,
   },
 
   comparisonHeadingFix: {
-    paddingTop: theme.spacing(3),
+    padding: theme.spacing(3),
     backgroundColor: theme.palette.background.paper,
   },
 

@@ -319,7 +319,7 @@ const BrowseWorkflow: React.FC<BrowseWorkflowProps> = ({
                   </div>
                 </TableCell>
 
-                {/* Target Agent */}
+                {/* Chaos Delegate */}
                 <TableCell>
                   <Typography className={classes.targetCluster}>
                     {t('chaosWorkflows.browseWorkflows.targetAgent')}

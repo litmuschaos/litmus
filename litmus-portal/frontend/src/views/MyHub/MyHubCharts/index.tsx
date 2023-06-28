@@ -17,7 +17,13 @@ import {
   GET_HUB_STATUS,
   GET_PREDEFINED_WORKFLOW_LIST,
 } from '../../../graphql';
-import { Chart, Charts, HubStatus } from '../../../models/redux/myhub';
+import {
+  Chart,
+  Charts,
+  HubStatus,
+  HubType,
+  PreDefinedScenarios,
+} from '../../../models/graphql/chaoshub';
 import useActions from '../../../redux/actions';
 import * as TabActions from '../../../redux/actions/tabs';
 import { RootState } from '../../../redux/reducers';
@@ -127,8 +133,9 @@ const MyHub: React.FC = () => {
 
   const filteredWorkflow =
     predefinedData?.listPredefinedWorkflows &&
-    predefinedData?.listPredefinedWorkflows.filter((data: string) =>
-      data.toLowerCase().includes(searchPredefined.trim())
+    predefinedData?.listPredefinedWorkflows.filter(
+      (data: PreDefinedScenarios) =>
+        data.workflowName.toLowerCase().includes(searchPredefined.trim())
     );
 
   const filteredExperiment =
@@ -159,10 +166,15 @@ const MyHub: React.FC = () => {
           {t('myhub.myhubChart.repoLink')}
           <strong>{UserHub?.repoURL}</strong>
         </Typography>
-        <Typography variant="h5">
-          {t('myhub.myhubChart.repoBranch')}
-          <strong>{UserHub?.repoBranch}</strong>
-        </Typography>
+        {UserHub?.hubType.toLowerCase() === HubType.remote.toLowerCase() ? (
+          <></>
+        ) : (
+          <Typography variant="h5">
+            {t('myhub.myhubChart.repoBranch')}
+            <strong>{UserHub?.repoBranch}</strong>
+          </Typography>
+        )}
+
         <Typography className={classes.lastSyncText}>
           {t('myhub.myhubChart.lastSynced')}{' '}
           {formatDate(UserHub ? UserHub.lastSyncedAt : '')}
@@ -178,7 +190,7 @@ const MyHub: React.FC = () => {
               backgroundColor: theme.palette.highlight,
             },
           }}
-          variant="fullWidth"
+          variant="standard"
         >
           <StyledTab
             label={`${t('myhub.myhubChart.preDefined')}`}
@@ -198,13 +210,13 @@ const MyHub: React.FC = () => {
           />
           <div className={classes.chartsGroup}>
             {filteredWorkflow?.length > 0 ? (
-              filteredWorkflow.map((expName: string) => {
+              filteredWorkflow.map((workflow: PreDefinedScenarios) => {
                 return (
                   <ChartCard
-                    key={expName}
+                    key={workflow.workflowName}
                     expName={{
                       ChaosName: 'predefined',
-                      ExperimentName: expName,
+                      ExperimentName: workflow.workflowName,
                     }}
                     UserHub={UserHub}
                     setSearch={setSearchPredefined}

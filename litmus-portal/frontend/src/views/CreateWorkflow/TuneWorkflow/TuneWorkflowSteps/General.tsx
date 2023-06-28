@@ -86,18 +86,19 @@ const General: React.FC<GeneralProps> = ({ gotoStep, isCustom }) => {
             {hubName.length > 0 && (
               <>
                 <InputField
-                  label="Hub"
+                  label="ChaosHub"
                   value={hubName}
                   InputProps={{
                     readOnly: true,
                   }}
+                  disabled
                   data-cy="HubName"
                 />
                 <br />
               </>
             )}
             <InputField
-              label="Experiment Name"
+              label="Chaos Experiment Name"
               value={experimentName}
               onChange={(e) => {
                 setExperimentName(e.target.value);

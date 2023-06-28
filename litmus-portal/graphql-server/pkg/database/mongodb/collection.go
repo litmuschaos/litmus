@@ -7,18 +7,13 @@ import (
 )
 
 type GetCollectionInterface interface {
-	getCollection(collectionType int) (*mongo.Collection, error)
+	getCollection(mongoClient MongoInterface, collectionType int) (*mongo.Collection, error)
 }
 
 type GetCollectionStruct struct{}
 
-var (
-	GetCollectionClient GetCollectionInterface = &GetCollectionStruct{}
-)
-
 // getCollection function returns the appropriate DB collection based on the collection value passed
-func (g *GetCollectionStruct) getCollection(collectionType int) (*mongo.Collection, error) {
-	mongoClient := Client
+func (g *GetCollectionStruct) getCollection(mongoClient MongoInterface, collectionType int) (*mongo.Collection, error) {
 	switch collectionType {
 	case ClusterCollection:
 		return mongoClient.(*MongoClient).ClusterCollection, nil
@@ -32,8 +27,8 @@ func (g *GetCollectionStruct) getCollection(collectionType int) (*mongo.Collecti
 		return mongoClient.(*MongoClient).WorkflowTemplateCollection, nil
 	case GitOpsCollection:
 		return mongoClient.(*MongoClient).GitOpsCollection, nil
-	case MyHubCollection:
-		return mongoClient.(*MongoClient).MyHubCollection, nil
+	case ChaosHubCollection:
+		return mongoClient.(*MongoClient).ChaosHubCollection, nil
 	case DataSourceCollection:
 		return mongoClient.(*MongoClient).DataSourceCollection, nil
 	case PanelCollection:

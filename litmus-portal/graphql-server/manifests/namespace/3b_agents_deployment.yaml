@@ -3,23 +3,23 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: agent-config
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 data:
   SERVER_ADDR: #{SERVER_ADDR}
-  AGENT_SCOPE: #{AGENT-SCOPE}
+  AGENT_SCOPE: #{AGENT_SCOPE}
   VERSION: #{VERSION}
   START_TIME: #{START_TIME}
   SKIP_SSL_VERIFY: "#{SKIP_SSL_VERIFY}"
   CUSTOM_TLS_CERT: "#{CUSTOM_TLS_CERT}"
   IS_CLUSTER_CONFIRMED: #{IS_CLUSTER_CONFIRMED}
   COMPONENTS: |
-    DEPLOYMENTS: #{AGENT-DEPLOYMENTS}
+    DEPLOYMENTS: #{AGENT_DEPLOYMENTS}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: agent-secret
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 stringData:
   CLUSTER_ID: #{CLUSTER_ID}
   ACCESS_KEY: #{ACCESS_KEY}
@@ -28,7 +28,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: subscriber
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     app: subscriber
 spec:
@@ -40,16 +40,12 @@ spec:
       labels:
         app: subscriber
     spec:
-      #{tolerations}
-      #{nodeselector}
-      serviceAccountName: #{SUBSCRIBER-SERVICE-ACCOUNT}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      serviceAccountName: #{SUBSCRIBER_SERVICE_ACCOUNT}
       containers:
         - name: subscriber
-          image: #{SUBSCRIBER-IMAGE}
-          resources:
-            limits:
-              cpu: 200m
-              memory: 500Mi
+          image: #{SUBSCRIBER_IMAGE}
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000
@@ -80,7 +76,7 @@ metadata:
   labels:
     app: event-tracker
   name: event-tracker
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -91,11 +87,11 @@ spec:
       labels:
         app: event-tracker
     spec:
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       serviceAccountName: event-tracker-sa
       containers:
-        - image: #{EVENT-TRACKER-IMAGE}
+        - image: #{EVENT_TRACKER_IMAGE}
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000

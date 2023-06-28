@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: subscriber-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: subscriber-role
 rules:
@@ -16,7 +16,7 @@ rules:
     verbs: ["get", "list", "watch"]
 
   - apiGroups: [""]
-    resources: ["pods", "namespaces", "nodes", "services"]
+    resources: ["pods","services"]
     verbs: ["get", "list", "watch"]
 
   - apiGroups: ["litmuschaos.io"]
@@ -29,7 +29,7 @@ rules:
 
   - apiGroups: ["apps"]
     resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-    verbs: ["get", "list", "delete"]
+    verbs: ["get", "list", "delete","deletecollection"]
 
   - apiGroups: ["argoproj.io"]
     resources:
@@ -48,11 +48,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: subscriber-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 subjects:
   - kind: ServiceAccount
-    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
-    namespace: #{AGENT-NAMESPACE}
+    name: #{SUBSCRIBER_SERVICE_ACCOUNT}
+    namespace: #{AGENT_NAMESPACE}
 roleRef:
   kind: Role
   name: subscriber-role
@@ -62,7 +62,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 ---
@@ -70,7 +70,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 rules:
@@ -170,16 +170,12 @@ rules:
     resources: ["chaosengines", "chaosexperiments", "chaosresults"]
     verbs: ["create", "list", "get", "patch", "update", "delete"]
 
-    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
-  - apiGroups: [""]
-    resources: ["nodes"]
-    verbs: ["patch", "get", "list", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 roleRef:
@@ -189,19 +185,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-admin
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-chaos
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: chaos-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 rules:
   # for managing the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: [""]
@@ -228,7 +224,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: chaos-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -236,19 +232,19 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-chaos
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: event-tracker-sa
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: event-tracker-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 rules:
   - apiGroups:
       - eventtracker.litmuschaos.io
@@ -272,15 +268,21 @@ rules:
       - update
   - apiGroups:
       - ""
+    resources:
+      - pods
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - extensions
       - apps
     resources:
       - deployments
       - daemonsets
       - statefulsets
-      - pods
-      - configmaps
-      - secrets
     verbs:
       - get
       - list
@@ -290,7 +292,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: event-tracker-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -298,4 +300,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: event-tracker-sa
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}

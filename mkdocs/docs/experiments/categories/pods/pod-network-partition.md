@@ -207,7 +207,7 @@ spec:
 
 ### Target Specific Namespace(s)
 
-The network partition experiment interrupt traffic for all the namespaces by default. The interruption of specific namespace can be tuned via providing namespace labels inside `NAMESPACE_SELECTOR` ENV.
+The network partition experiment interrupt traffic for all the namespaces by default. The access to/from pods in specific namespace can be allowed via providing namespace labels inside `NAMESPACE_SELECTOR` ENV.
 
 Use the following example to tune this:
 
@@ -239,7 +239,7 @@ spec:
 ```
 ### Target Specific Pod(s)
 
-The network partition experiment interrupt traffic for all the extranal pods by default. The interruption of specific pod(s) can be tuned via providing pod labels inside `POD_SELECTOR` ENV.
+The network partition experiment interrupt traffic for all the extranal pods by default. The access to/from specific pod(s) can be allowed via providing pod labels inside `POD_SELECTOR` ENV.
 
 Use the following example to tune this:
 
@@ -307,7 +307,13 @@ spec:
 
 ### Destination Ports
 
-The network partition experiment interrupt traffic for all the extranal ports by default. The interruption of specific port(s) can be tuned via providing comma separated list of ports inside `PORTS` ENV.
+The network partition experiment interrupt traffic for all the external ports by default. Access to specific port(s) can be allowed by providing comma separated list of ports inside `PORTS` ENV. 
+
+Note: 
+
+- If `PORT` is not set and none of the pod-selector, namespace-selector and destination_ips are provided then it will block traffic for all ports for all pods/ips
+- If `PORT` is not set but any of the podselector, nsselector and destination ips are provided then it will allow all ports for all the pods/ips filtered by the specified selectors
+
 Use the following example to tune this:
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-network-partition/ports.yaml yaml)
@@ -332,7 +338,7 @@ spec:
         env:
         # comma separated list of ports
         - name: PORTS
-          value: '8080,8088'
+          value: 'tcp: [8080,80], udp: [9000,90]'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```

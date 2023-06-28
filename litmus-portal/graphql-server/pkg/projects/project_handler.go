@@ -3,17 +3,23 @@ package projects
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
-	"google.golang.org/protobuf/types/known/wrapperspb"
-
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
-	imageRegistryOps "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry/ops"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/myhub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaoshub"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
+	dbSchemaChaosHub "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/chaoshub"
+	dbSchemaCluster "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/cluster"
+	dbOperationsImageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/image_registry"
+	dbOperationsWorkflow "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb/workflow"
+	imageRegistry "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/image_registry"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
 	selfDeployer "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/self-deployer"
 	pb "github.com/litmuschaos/litmus/litmus-portal/graphql-server/protos"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // InitializeProject implements project.ProjectServer
@@ -30,7 +36,7 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 	}
 
 	// ProjectInitializer initializes the project by creating instances for required stateful services
-	err := ProjectInitializer(ctx, req.ProjectID, req.Role)
+	err := ProjectInitializer(ctx, req.ProjectID, req.Role, s.Operator)
 	if err != nil {
 		return res, fmt.Errorf("failed to initialize project, %w", err)
 	} else {
@@ -39,10 +45,10 @@ func (s *ProjectServer) InitializeProject(ctx context.Context, req *pb.ProjectIn
 }
 
 // ProjectInitializer creates a default hub and default image registry for a new project
-func ProjectInitializer(ctx context.Context, projectID string, role string) error {
+func ProjectInitializer(ctx context.Context, projectID string, role string, operator mongodb.MongoOperator) error {
 
 	var (
-		selfCluster = os.Getenv("SELF_AGENT")
+		selfCluster = utils.Config.SelfAgent
 		bl_true     = true
 	)
 
@@ -50,14 +56,17 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 		ProjectID:  projectID,
 		HubName:    "Litmus ChaosHub",
 		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
-		RepoBranch: os.Getenv("HUB_BRANCH_NAME"),
+		RepoBranch: utils.Config.HubBranchName,
 	}
 
-	log.Print("Cloning https://github.com/litmuschaos/chaos-charts")
-	//TODO: Remove goroutine after adding hub optimisations
-	go myhub.AddChaosHub(context.Background(), defaultHub)
+	log.Info("cloning https://github.com/litmuschaos/chaos-charts")
 
-	_, err := imageRegistryOps.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
+	//TODO: Remove goroutine after adding hub optimisations
+	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(operator)).AddChaosHub(context.Background(), defaultHub)
+
+	_, err := imageRegistry.NewService(
+		dbOperationsImageRegistry.NewImageRegistryOperator(operator),
+	).CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
 		IsDefault:         bl_true,
 		ImageRegistryName: "docker.io",
 		ImageRepoName:     "litmuschaos",
@@ -68,8 +77,16 @@ func ProjectInitializer(ctx context.Context, projectID string, role string) erro
 	})
 
 	if strings.ToLower(selfCluster) == "true" && strings.ToLower(role) == "admin" {
-		log.Print("Starting self deployer")
-		go selfDeployer.StartDeployer(projectID)
+		log.Info("starting self deployer")
+		kubeCluster, err := k8s.NewKubeCluster()
+		if err != nil {
+			log.Fatalf("error in getting kube client, err: %v", err)
+		}
+		go selfDeployer.StartDeployer(cluster.NewService(
+			dbSchemaCluster.NewClusterOperator(operator),
+			dbOperationsWorkflow.NewChaosWorkflowOperator(operator),
+			kubeCluster,
+		), projectID)
 	}
 
 	return err

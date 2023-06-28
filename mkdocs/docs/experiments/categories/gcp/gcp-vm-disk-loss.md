@@ -140,7 +140,7 @@
         <td> Multiple disk volume names can be provided as disk1,disk2,... </td>
       </tr>  
       <tr>
-        <td> DISK_ZONES </td>
+        <td> ZONES </td>
         <td> The zones of respective target disk volumes </td>
         <td> Provide the zone for every target disk name as zone1,zone2... in the respective order of <code>DISK_VOLUME_NAMES</code>  </td>
       </tr>
@@ -189,7 +189,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Detach Volumes By Names
 
-It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given `DISK_VOLUME_NAMES` disk names and corresponding `DISK_ZONES` zone names and the `DEVICE_NAMES` device names in `GCP_PROJECT_ID` project.  It reattached the volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
+It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given `DISK_VOLUME_NAMES` disk names and corresponding `ZONES` zone names and the `DEVICE_NAMES` device names in `GCP_PROJECT_ID` project.  It reattached the volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 `NOTE:` The `DISK_VOLUME_NAMES` contains multiple comma-separated disk names. The comma-separated zone names should be provided in the same order as disk names.
 
@@ -216,7 +216,7 @@ spec:
           value: 'disk-01,disk-02'
         # comma separated list of zone names corresponds to the DISK_VOLUME_NAMES
         # it should be provided in same order of DISK_VOLUME_NAMES
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # comma separated list of device names corresponds to the DISK_VOLUME_NAMES
         # it should be provided in same order of DISK_VOLUME_NAMES
@@ -259,7 +259,7 @@ spec:
           VALUE: '60'
         - name: DISK_VOLUME_NAMES
           value: 'disk-01,disk-02'
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         - name: DEVICE_NAMES
           value: 'device-01,device-02'

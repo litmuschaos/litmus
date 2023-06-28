@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: kubectl
     name: litmus
   name: chaos-operator-ce
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -31,20 +31,22 @@ spec:
         name: chaos-operator
     spec:
       serviceAccountName: litmus-cluster-scope
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
         - name: chaos-operator
-          image: #{LITMUS-CHAOS-OPERATOR}
+          image: #{LITMUS_CHAOS_OPERATOR}
           command:
             - chaos-operator
+          args:
+            - -leader-elect=true
           imagePullPolicy: Always
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: #{LITMUS-CHAOS-RUNNER}
+              value: #{LITMUS_CHAOS_RUNNER}
             - name: WATCH_NAMESPACE
               value: ''
             - name: POD_NAME
@@ -74,7 +76,7 @@ metadata:
     app: chaos-exporter
     release: prometheus-stack
   name: chaos-exporter
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   replicas: 1
   selector:
@@ -86,10 +88,10 @@ spec:
         app: chaos-exporter
         release: prometheus-stack
     spec:
-      #{tolerations}
-      #{nodeselector}
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
       containers:
-        - image: #{LITMUS-CHAOS-EXPORTER}
+        - image: #{LITMUS_CHAOS_EXPORTER}
           imagePullPolicy: Always
           name: chaos-exporter
           securityContext:
@@ -118,7 +120,7 @@ metadata:
   labels:
     app: chaos-exporter
   name: chaos-exporter
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 spec:
   ports:
     - port: 8080

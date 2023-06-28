@@ -3,29 +3,29 @@
 - It injects http response latency on the service whose port is provided as `TARGET_SERVICE_PORT` by starting proxy server and then redirecting the traffic through the proxy server.
 - It can test the application's resilience to lossy/flaky http responses.
 
-!!! tip "Scenario: Add latency to the HTTP request"    
+!!! tip "Scenario: Add latency to the HTTP request"
     ![Pod HTTP Latency](../../images/pod-http.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
+??? info "View the uses of the experiment"
     coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
+??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.17
     - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-http-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-latency/experiment.yaml">here</a> 
-    
+    - Ensure that the <code>pod-http-latency</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-http-latency/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
+??? info "View the default validations"
     The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
+!!! tip "NOTE"
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
@@ -63,10 +63,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -75,7 +75,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -155,15 +155,21 @@
         <td> NETWORK_INTERFACE  </td>
         <td> Network interface to be used for the proxy</td>
         <td> Defaults to `eth0` </td>
+      </tr>
+      <tr>
+        <td> TOXICITY </td>
+        <td> Percentage of HTTP requests to be affected </td>
+        <td> Defaults to 100 </td>
+      </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
-        <td> Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+        <td> Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
       </tr>
       <tr>
         <td> SOCKET_PATH </td>
         <td> Path of the containerd/crio/docker socket file </td>
-        <td> Defaults to `/var/run/docker.sock` </td>
+        <td> Defaults to `/run/containerd/containerd.sock` </td>
       </tr>
       <tr>
         <td> TOTAL_CHAOS_DURATION </td>
@@ -174,12 +180,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod http latency chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr>    
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> LIB_IMAGE  </td>
         <td> Image used to run the netem command </td>
@@ -197,21 +203,21 @@
       </tr>
     </table>
 
-## Experiment Examples 
+## Experiment Examples
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
-### Target Port
+### Target Service Port
 
-It defines the target port of the service that is being targetted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
+It defines the port of the targeted service that is being targeted. It can be tuned via `TARGET_SERVICE_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/target-port.yaml yaml)
+[embedmd]:# (pod-http-latency/target-service-port.yaml yaml)
 ```yaml
-## provide the target port of the service
+## provide the port of the targeted service
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -223,25 +229,25 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-latency-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-latency
     spec:
       components:
         env:
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
-### Listen Port
+### Proxy Port
 
-It defines the listen port for the proxy server. It can be tuned via `PROXY_PORT` ENV.
+It defines the port on which the proxy server will listen for requests. It can be tuned via `PROXY_PORT` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/listen-port.yaml yaml)
+[embedmd]:# (pod-http-latency/proxy-port.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+# provide the port for proxy server
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -253,16 +259,16 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-latency-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-latency
     spec:
       components:
         env:
-        # provide the listen port for proxy
+        # provide the port for proxy server
         - name: PROXY_PORT
           value: '8080'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
@@ -287,28 +293,29 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-latency-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-latency
     spec:
       components:
         env:
         # provide the latency value
         - name: LATENCY
           value: '2000'
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```
 
-### Network Interface
-It defines the network interface to be used for the proxy. It can be tuned via `NETWORK_INTERFACE` ENV.
+### Toxicity
+It defines the toxicity value to be added to the http request. It can be tuned via `TOXICITY` ENV.
+Toxicity value defines the percentage of the total number of http requests to be affected.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-http-latency/network-interface.yaml yaml)
+[embedmd]:# (pod-http-latency/toxicity.yaml yaml)
 ```yaml
-## provide the listen port for proxy
+## provide the toxicity
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -320,16 +327,51 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-latency-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-latency
+    spec:
+      components:
+        env:
+        # toxicity is the probability of the request to be affected
+        # provide the percentage value in the range of 0-100
+        # 0 means no request will be affected and 100 means all request will be affected
+        - name: TOXICITY
+          value: "100"
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+```
+
+### Network Interface
+It defines the network interface to be used for the proxy. It can be tuned via `NETWORK_INTERFACE` ENV.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-http-latency/network-interface.yaml yaml)
+```yaml
+## provide the network interface for proxy
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-latency-sa
+  experiments:
+  - name: pod-http-latency
     spec:
       components:
         env:
         # provide the network interface for proxy
         - name: NETWORK_INTERFACE
           value: "eth0"
-        # provide the target port of the service
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: '80'
 ```
@@ -339,7 +381,7 @@ spec:
 It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container runtime and socket file path.
 
 - `CONTAINER_RUNTIME`: It supports `docker`, `containerd`, and `crio` runtimes. The default value is `docker`.
-- `SOCKET_PATH`: It contains path of docker socket file by default(`/var/run/docker.sock`). For other runtimes provide the appropriate path.
+- `SOCKET_PATH`: It contains path of docker socket file by default(`/run/containerd/containerd.sock`). For other runtimes provide the appropriate path.
 
 Use the following example to tune this:
 
@@ -357,20 +399,20 @@ spec:
     appns: "default"
     applabel: "app=nginx"
     appkind: "deployment"
-  chaosServiceAccount: pod-http-chaos-sa
+  chaosServiceAccount: pod-http-latency-sa
   experiments:
-  - name: pod-http-chaos
+  - name: pod-http-latency
     spec:
       components:
         env:
         # runtime for the container
         # supports docker, containerd, crio
         - name: CONTAINER_RUNTIME
-          value: 'docker'
+          value: 'containerd'
         # path of the socket file
         - name: SOCKET_PATH
-          value: '/var/run/docker.sock'
-        # provide the target port of the service
+          value: '/run/containerd/containerd.sock'
+        # provide the port of the targeted service
         - name: TARGET_SERVICE_PORT
           value: "80"
 ```

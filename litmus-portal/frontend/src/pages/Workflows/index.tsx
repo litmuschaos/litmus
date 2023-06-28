@@ -48,7 +48,7 @@ const Workflows = () => {
     });
     template.selectTemplate({ selectedTemplateID: 0, isDisable: true });
     history.push({
-      pathname: '/create-workflow',
+      pathname: '/create-scenario',
       search: `?projectID=${projectID}&projectRole=${userRole}`,
     });
   };
@@ -57,7 +57,7 @@ const Workflows = () => {
     <Wrapper>
       <section>
         <div className={classes.header}>
-          <Typography variant="h3">Litmus Workflows</Typography>
+          <Typography variant="h3">Chaos Scenarios</Typography>
           <div data-cy="scheduleWorkflowButton" className={classes.scheduleBtn}>
             <ButtonFilled onClick={handleScheduleWorkflow}>
               {t('workflows.scheduleAWorkflow')}
@@ -74,26 +74,26 @@ const Workflows = () => {
               backgroundColor: theme.palette.highlight,
             },
           }}
-          variant="fullWidth"
+          variant="standard"
         >
-          <StyledTab label={`${t('workflows.runs')}`} data-cy="runs" />
           <StyledTab
             label={`${t('workflows.schedules')}`}
             data-cy="browseSchedule"
           />
+          <StyledTab label={`${t('workflows.runs')}`} data-cy="runs" />
         </Tabs>
       </AppBar>
       <TabPanel value={workflowTabValue} index={0}>
+        <SuspenseLoader style={{ height: '50vh' }}>
+          <BrowseSchedule setWorkflowName={setSearchWorkflow} />
+        </SuspenseLoader>
+      </TabPanel>
+      <TabPanel value={workflowTabValue} index={1}>
         <SuspenseLoader style={{ height: '50vh' }}>
           <BrowseWorkflow
             workflowName={searchWorkflow}
             setWorkflowName={setSearchWorkflow}
           />
-        </SuspenseLoader>
-      </TabPanel>
-      <TabPanel value={workflowTabValue} index={1}>
-        <SuspenseLoader style={{ height: '50vh' }}>
-          <BrowseSchedule setWorkflowName={setSearchWorkflow} />
         </SuspenseLoader>
       </TabPanel>
     </Wrapper>

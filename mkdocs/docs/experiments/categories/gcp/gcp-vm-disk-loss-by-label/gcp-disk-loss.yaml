@@ -14,7 +14,7 @@ spec:
         - name: DISK_VOLUME_LABEL
           value: 'disk:target-disk'
         
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'us-east1-b'
         
         - name: GCP_PROJECT_ID
