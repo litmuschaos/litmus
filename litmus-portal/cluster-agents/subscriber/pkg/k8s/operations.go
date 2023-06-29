@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
@@ -19,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
@@ -242,7 +244,16 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		logrus.Info("successfully updated for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "delete" {
-		err := dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
+		var err error
+		if obj.GetName() != "" {
+			err = dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
+			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
+		} else if obj.GetLabels() != nil {
+			objLabels := obj.GetLabels()
+			delete(objLabels, "executed_by")
+			err = dr.DeleteCollection(ctx, metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: labels.FormatLabels(objLabels)})
+			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource labels: ", objLabels, ", and namespace: ", obj.GetNamespace())
+		}
 		if k8s_errors.IsNotFound(err) {
 			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
@@ -252,8 +263,6 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		if err != nil {
 			return nil, err
 		}
-
-		logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
 		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
@@ -313,7 +322,7 @@ func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, 
 		return nil, err
 	}
 
-	addCustomLabels(obj, map[string]string{"executed_by": clusterAction.Username})
+	addCustomLabels(obj, map[string]string{"executed_by": base64.RawURLEncoding.EncodeToString([]byte(clusterAction.Username))})
 
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)

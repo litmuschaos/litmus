@@ -3,7 +3,6 @@ package prometheus
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/api"
 	apiV1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	md "github.com/prometheus/common/model"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
@@ -69,7 +69,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 	data, ok := value.(md.Matrix)
 	if !ok {
-		log.Printf("Unsupported result format: %s", value.Type().String())
+		log.Errorf("unsupported result format: %s", value.Type().String())
 	}
 
 	chaosEventLabels := map[string]string{
@@ -132,7 +132,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 					timeStamp = 0
 				}
 				if err != nil {
-					log.Printf("Error parsing chaos injection time: %v\n", err)
+					log.Errorf("error parsing chaos injection time: %v\n", err)
 				} else {
 					for key, value := range keyValueMap {
 						if nameVal, ok := checkMap[key]; ok {

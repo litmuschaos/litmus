@@ -2,27 +2,26 @@ package self_deployer
 
 import (
 	"encoding/json"
-	"log"
-	"os"
 	"strings"
 
-	clusterHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster/handler"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/handlers"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/k8s"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/cluster"
 )
 
 // StartDeployer registers a new internal self-cluster and starts the deployer
-func StartDeployer(projectID string) {
+func StartDeployer(clusterService cluster.Service, projectID string) {
 	var (
 		isAllManifestInstall  = true
-		deployerNamespace     = os.Getenv("AGENT_NAMESPACE")
-		agentScope            = os.Getenv("AGENT_SCOPE")
-		skipSSL               = os.Getenv("SKIP_SSL_VERIFY")
-		selfAgentNodeSelector = os.Getenv("SELF_AGENT_NODE_SELECTOR")
-		selfAgentTolerations  = os.Getenv("SELF_AGENT_TOLERATIONS")
-		failedManifest        string
+		deployerNamespace     = utils.Config.AgentNamespace
+		agentScope            = utils.Config.AgentScope
+		skipSSL               = utils.Config.SkipSslVerify
+		selfAgentNodeSelector = utils.Config.SelfAgentNodeSelector
+		selfAgentTolerations  = utils.Config.SelfAgentTolerations
+
+		failedManifest string
 	)
 
 	tolerations := []*model.Toleration{}
@@ -35,7 +34,7 @@ func StartDeployer(projectID string) {
 	if selfAgentTolerations != "" {
 		err := json.Unmarshal([]byte(selfAgentTolerations), &tolerations)
 		if err != nil {
-			log.Print("SELF CLUSTER REG FAILED[TOLERATION-PARSING] : ", err)
+			log.Error("self cluster reg failed[toleration-parsing]: ", err)
 			// if toleration parsing fails skip actual manifest apply
 			return
 		}
@@ -59,25 +58,25 @@ func StartDeployer(projectID string) {
 		clusterInput.SkipSsl = &skip
 	}
 
-	resp, err := clusterHandler.RegisterCluster(clusterInput)
+	resp, err := clusterService.RegisterCluster(clusterInput)
 	if err != nil {
-		log.Print("SELF CLUSTER REG FAILED[DB-REG] : ", err)
+		log.Error("self cluster reg failed[db-reg]: ", err)
 		// if cluster registration fails skip actual manifest apply
 		return
 	}
 
-	response, statusCode, err := handlers.GetManifest(resp.Token)
+	response, statusCode, err := clusterService.GetManifest(resp.Token)
 	if err != nil {
-		log.Print("ERROR", err)
+		log.Error(err)
 	}
 
 	if statusCode == 200 {
 		manifests := strings.Split(string(response), "---")
 		for _, manifest := range manifests {
 			if len(strings.TrimSpace(manifest)) > 0 {
-				_, err = k8s.ClusterResource(manifest, deployerNamespace)
+				_, err = clusterService.GetClusterResource(manifest, deployerNamespace)
 				if err != nil {
-					log.Print(err)
+					log.Error(err)
 					failedManifest = failedManifest + manifest
 					isAllManifestInstall = false
 				}
@@ -87,8 +86,8 @@ func StartDeployer(projectID string) {
 	}
 
 	if isAllManifestInstall == true {
-		log.Print("ALL MANIFESTS HAS BEEN INSTALLED:")
+		log.Info("all manifests has been installed")
 	} else {
-		log.Print("SOME MANIFESTS HAS NOT BEEN INSTALLED:", failedManifest)
+		log.Error("some manifests has not been installed: ", failedManifest)
 	}
 }

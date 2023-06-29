@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     flexGrow: 1,
-    width: '100%',
     margin: 'auto',
     marginLeft: theme.spacing(6),
     justifyContent: 'space-between',
@@ -70,8 +69,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   plot: {
-    marginTop: theme.spacing(2),
-    width: '100%',
+    margin: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
   },
 
@@ -80,7 +78,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginLeft: theme.spacing(5),
     marginTop: theme.spacing(5),
-    width: '15rem',
     [theme.breakpoints.down('sm')]: {
       marginLeft: 0,
     },

@@ -157,7 +157,7 @@ const MonitoringDashboardCard: React.FC<MonitoringDashboardCardProps> = ({
                   {data.dbName}
                 </Typography>
                 <Typography className={classes.hint}>
-                  Agent: {data.clusterName}
+                  Chaos Delegate: {data.clusterName}
                 </Typography>
               </div>
             </div>

@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: upgrade-agent
+spec:
+  ttlSecondsAfterFinished: 60
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - name: upgrade-agent
+          image: litmuschaos/upgrade-agent-cp:3.0.0-beta3
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
+          imagePullPolicy: Always
+      restartPolicy: Never

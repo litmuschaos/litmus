@@ -35,13 +35,20 @@ By default applications would run under the <code>restricted</code> SCC. We can 
 ```bash
 apiVersion: security.openshift.io/v1
 kind: SecurityContextConstraints
+# To mount the socket path directory in helper pod
 allowHostDirVolumePlugin: true
 allowHostIPC: false
 allowHostNetwork: false
+# To run fault injection on a target container using pid namespace.
+# It is used in stress, network, dns and http experiments. 
 allowHostPID: true
 allowHostPorts: false
 allowPrivilegeEscalation: true
+# To run some privileged modules in dns, stress and network chaos
 allowPrivilegedContainer: true
+# NET_ADMIN & SYS_ADMIN: used in network chaos experiments to perform
+# network operations (running tc command in network ns of target container). 
+# SYS_ADMIN: used in stress chaos experiment to perform cgroup operations.
 allowedCapabilities:
 - 'NET_ADMIN'
 - 'SYS_ADMIN'
@@ -61,14 +68,18 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-- system:serviceaccount:litmus:agro
+- system:serviceaccount:litmus:argo
 volumes:
+# To allow configmaps mounts on upload scripts or envs.
 - configMap
+# To derive the experiment pod name in the experimemnt.
 - downwardAPI
+# used for chaos injection like io chaos.
 - emptyDir
 - hostPath
 - persistentVolumeClaim
 - projected
+# To authenticate with different cloud providers
 - secret
 ```
 

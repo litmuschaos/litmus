@@ -17,7 +17,7 @@ spec:
         - name: INSTANCE_LABEL
           value: 'vm:target-vm'
         
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'us-east1-b'
         
         - name: GCP_PROJECT_ID

@@ -100,6 +100,10 @@ nav:
             - Pod Network Loss: experiments/categories/pods/pod-network-loss.md
             - Pod Network Partition: experiments/categories/pods/pod-network-partition.md
             - Pod HTTP Latency: experiments/categories/pods/pod-http-latency.md
+            - Pod HTTP Reset Peer: experiments/categories/pods/pod-http-reset-peer.md
+            - Pod HTTP Status Code: experiments/categories/pods/pod-http-status-code.md
+            - Pod HTTP Modify Body: experiments/categories/pods/pod-http-modify-body.md
+            - Pod HTTP Modify Header: experiments/categories/pods/pod-http-modify-header.md
           - Node Chaos:
             - Docker Service Kill: experiments/categories/nodes/docker-service-kill.md
             - Kubelet Service Kill: experiments/categories/nodes/kubelet-service-kill.md
@@ -109,10 +113,13 @@ nav:
             - Node Memory Hog: experiments/categories/nodes/node-memory-hog.md
             - Node Restart: experiments/categories/nodes/node-restart.md
             - Node Taint: experiments/categories/nodes/node-taint.md
-        - Kafka:
-            - Kafka Broker Pod Failure: experiments/categories/kafka/kafka-broker-pod-failure.md
-        - Cassandra:
-            - Cassandra Pod Delete: experiments/categories/cassandra/cassandra-pod-delete.md
+        - Spring Boot:
+            - Spring Boot App Kill: experiments/categories/spring-boot/spring-boot-app-kill.md
+            - Spring Boot CPU Stress: experiments/categories/spring-boot/spring-boot-cpu-stress.md
+            - Spring Boot Memory Stress: experiments/categories/spring-boot/spring-boot-memory-stress.md
+            - Spring Boot Exceptions: experiments/categories/spring-boot/spring-boot-exceptions.md
+            - Spring Boot Latency: experiments/categories/spring-boot/spring-boot-latency.md
+            - Spring Boot Faults: experiments/categories/spring-boot/spring-boot-faults.md
       - Cloud Infrastructure:
         - AWS: 
             - EC2:

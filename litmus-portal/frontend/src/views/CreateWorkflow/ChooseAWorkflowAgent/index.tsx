@@ -274,7 +274,7 @@ const ChooseWorkflowAgent = forwardRef((_, ref) => {
           </div>
         ) : (
           <RadioGroup
-            name="Agent Selection"
+            name="Chaos Delegate Selection"
             value={currentlySelectedAgent}
             onChange={(e) => handleChange(e)}
             data-cy="AgentRadioGroup"

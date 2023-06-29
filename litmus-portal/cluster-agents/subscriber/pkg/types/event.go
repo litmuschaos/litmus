@@ -1,6 +1,6 @@
 package types
 
-import "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+import "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 
 // WorkflowEvent consists of workflow related data
 type WorkflowEvent struct {

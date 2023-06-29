@@ -1,14 +1,17 @@
-import React from 'react';
-import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
+import StepLabel from '@material-ui/core/StepLabel';
+import Stepper from '@material-ui/core/Stepper';
 import Typography from '@material-ui/core/Typography';
 import { ButtonOutlined } from 'litmus-ui';
-import General from '../TuneWorkflowSteps/General';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import YAML from 'yaml';
+import { RootState } from '../../../../redux/reducers';
+import AdvanceEngineTuning from '../TuneWorkflowSteps/AdvanceEngineTune';
+import EnvironmentVariables from '../TuneWorkflowSteps/EnvironmentVariables';
 import SteadyState from '../TuneWorkflowSteps/SteadyState';
 import TargetApplication from '../TuneWorkflowSteps/TargetApplication';
-import EnvironmentVariables from '../TuneWorkflowSteps/EnvironmentVariables';
 import useStyles from './styles';
 
 interface ConfigurationStepperProps {
@@ -24,25 +27,47 @@ function getStepContent(
   engineIndex: number,
   isCustom: boolean | undefined,
   gotoStep: (page: number) => void,
-  closeStepper: () => void
+  closeStepper: () => void,
+  infraEngine: boolean
 ): React.ReactNode {
-  switch (step) {
-    case 0:
-      return <General isCustom={isCustom} gotoStep={gotoStep} />;
-    case 1:
-      return <TargetApplication gotoStep={gotoStep} />;
-    case 2:
-      return <SteadyState gotoStep={gotoStep} />;
-    case 3:
-      return (
-        <EnvironmentVariables
-          engineIndex={engineIndex}
-          gotoStep={gotoStep}
-          closeStepper={closeStepper}
-        />
-      );
-    default:
-      return <General isCustom={isCustom} gotoStep={gotoStep} />;
+  if (infraEngine) {
+    switch (step) {
+      case 0:
+        return <SteadyState infra={infraEngine} gotoStep={gotoStep} />;
+      case 1:
+        return <EnvironmentVariables infra={infraEngine} gotoStep={gotoStep} />;
+      case 2:
+        return (
+          <AdvanceEngineTuning
+            engineIndex={engineIndex}
+            infra={infraEngine}
+            gotoStep={gotoStep}
+            closeStepper={closeStepper}
+          />
+        );
+      default:
+        return <TargetApplication gotoStep={gotoStep} />;
+    }
+  } else {
+    switch (step) {
+      case 0:
+        return <TargetApplication gotoStep={gotoStep} />;
+      case 1:
+        return <SteadyState infra={infraEngine} gotoStep={gotoStep} />;
+      case 2:
+        return <EnvironmentVariables infra={infraEngine} gotoStep={gotoStep} />;
+      case 3:
+        return (
+          <AdvanceEngineTuning
+            engineIndex={engineIndex}
+            infra={infraEngine}
+            gotoStep={gotoStep}
+            closeStepper={closeStepper}
+          />
+        );
+      default:
+        return <TargetApplication gotoStep={gotoStep} />;
+    }
   }
 }
 
@@ -53,16 +78,34 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
 }) => {
   const classes = useStyles();
 
+  const engine = useSelector(
+    (state: RootState) => state.workflowManifest.engineYAML
+  );
+  const [infraEngine, setInfraEngine] = useState(false);
+
+  useEffect(() => {
+    const parsedEngine = YAML.parse(engine);
+    if (!parsedEngine?.spec?.appinfo) {
+      setInfraEngine(true);
+    }
+  }, []);
+
   // State variable to handle Stepper Steps
   const [activeStep, setActiveStep] = React.useState(0);
 
   // Steps of stepper for custom and predefined workflows
-  const steps = [
-    'General',
-    'Target Application',
-    'Define the steady state for this application',
-    'Tune Experiment',
-  ];
+  const steps = infraEngine
+    ? [
+        'Define the steady state for this application',
+        'Tune Chaos Experiment',
+        'Advance ChaosEngine Configuration',
+      ]
+    : [
+        'Target Application',
+        'Define the steady state for this application',
+        'Tune Chaos Experiment',
+        'Advance ChaosEngine Configuration',
+      ];
 
   const gotoStep = (page: number) => {
     setActiveStep(page);
@@ -86,7 +129,8 @@ const ConfigurationStepper: React.FC<ConfigurationStepperProps> = ({
                   experimentIndex,
                   isCustom,
                   gotoStep,
-                  closeStepper
+                  closeStepper,
+                  infraEngine
                 )}
               </Typography>
             </StepContent>

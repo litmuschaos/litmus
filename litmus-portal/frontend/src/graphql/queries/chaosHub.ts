@@ -80,6 +80,7 @@ export const GET_HUB_STATUS = gql`
       authType
       isPrivate
       token
+      hubType
       userName
       password
       sshPrivateKey
@@ -104,5 +105,24 @@ export const GET_ENGINE_YAML = gql`
 export const GET_EXPERIMENT_YAML = gql`
   query getYAMLData($request: ExperimentRequest!) {
     getYAMLData(request: $request)
+  }
+`;
+
+export const GET_EXPERIMENT_MANIFEST_DETAILS = gql`
+  query getExperimentDetails($request: ExperimentRequest!) {
+    getExperimentDetails(request: $request) {
+      engineDetails
+      experimentDetails
+    }
+  }
+`;
+
+export const GET_PREDEFINED_WORKFLOW_LIST = gql`
+  query listPredefinedWorkflows($hubName: String!, $projectID: String!) {
+    listPredefinedWorkflows(hubName: $hubName, projectID: $projectID) {
+      workflowName
+      workflowCSV
+      workflowManifest
+    }
   }
 `;

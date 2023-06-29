@@ -91,12 +91,12 @@ const SideBar: React.FC = () => {
             key="workflow"
             handleClick={() => {
               history.push({
-                pathname: `/workflows`,
+                pathname: `/scenarios`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Litmus Workflows"
-            selected={['workflows', 'create-workflow'].includes(pathName)}
+            label="Chaos Scenarios"
+            selected={['scenarios', 'create-scenario'].includes(pathName)}
           >
             <WorkflowsIcon />
           </CustomisedListItem>
@@ -110,7 +110,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="ChaosAgents"
+            label="Chaos Delegates"
             selected={['targets', 'target-connect'].includes(pathName)}
           >
             <TargetsIcon />

@@ -136,7 +136,7 @@
         <td> The <code>DISK_VOLUME_LABEL</code> should be provided as <code>key:value</code> or <code>key</code> if the corresponding value is empty ex: <code>disk:target-disk</code> </td>
       </tr>  
       <tr>
-        <td> DISK_ZONES </td>
+        <td> ZONES </td>
         <td> The zone of target disk volumes </td>
         <td> Only one zone can be provided i.e. all target disks should lie in the same zone </td>
       </tr>
@@ -185,9 +185,9 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Detach Volumes By Label
 
-It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label `DISK_VOLUME_LABEL` in zone `DISK_ZONES` within the `GCP_PROJECT_ID` project.  It re-attaches the disk volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
+It contains the label of disk volumes to be subjected to disk loss chaos. It will detach all the disks with the label `DISK_VOLUME_LABEL` in zone `ZONES` within the `GCP_PROJECT_ID` project.  It re-attaches the disk volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
-`NOTE:` The `DISK_VOLUME_LABEL` accepts only one label and `DISK_ZONES` also accepts only one zone name. Therefore, all the disks must lie in the same zone.
+`NOTE:` The `DISK_VOLUME_LABEL` accepts only one label and `ZONES` also accepts only one zone name. Therefore, all the disks must lie in the same zone.
 
 Use the following example to tune this:
 
@@ -209,7 +209,7 @@ spec:
         - name: DISK_VOLUME_LABEL
           value: 'disk:target-disk'
         
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'us-east1-b'
         
         - name: GCP_PROJECT_ID
@@ -249,7 +249,7 @@ spec:
         - name: DISK_VOLUME_LABEL
           value: 'disk:target-disk'
         
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'us-east1-b'
         
         - name: GCP_PROJECT_ID

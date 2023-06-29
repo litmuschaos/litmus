@@ -93,8 +93,68 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 			VersionManager: nil,
 		},
 
-		// latest version no more upgrades available
 		"2.10.0": {
+			NextVersion:    "2.11.0",
+			VersionManager: nil,
+		},
+
+		"2.11.0": {
+			NextVersion:    "2.12.0",
+			VersionManager: nil,
+		},
+
+		"2.12.0": {
+			NextVersion:    "2.13.0",
+			VersionManager: nil,
+		},
+
+		"2.13.0": {
+			NextVersion:    "2.14.0",
+			VersionManager: nil,
+		},
+
+		"2.14.0": {
+			NextVersion:    "3.0-beta1",
+			VersionManager: nil,
+		},
+
+		"3.0-beta1": {
+			NextVersion:    "3.0.0-beta2",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta2": {
+			NextVersion:    "3.0.0-beta3",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta3": {
+			NextVersion:    "3.0.0-beta4",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta4": {
+			NextVersion:    "3.0.0-beta5",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta5": {
+			NextVersion:    "3.0.0-beta6",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta6": {
+			NextVersion:    "3.0.0-beta7",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta7": {
+			NextVersion:    "3.0.0-beta8",
+			VersionManager: nil,
+		},
+
+		// latest version, no more upgrades available
+		"3.0.0-beta8": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},

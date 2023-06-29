@@ -55,6 +55,7 @@ const WorkflowDetails: React.FC = () => {
   const classes = useStyles();
   const [logsModalOpen, setLogsModalOpen] = useState<boolean>(false);
   const [isInfoToggled, setIsInfoToggled] = useState<boolean>(false);
+  const [viewAll, setViewAll] = useState<boolean>(false);
   // State for Checking if workflow failed
   const [isWorkflowFailed, setWorkflowFailed] = useState<boolean>(false);
   const [workflowSchedulesDetails, setworkflowSchedulesDetails] =
@@ -186,6 +187,27 @@ const WorkflowDetails: React.FC = () => {
           <div>
             <Typography data-cy="wfName" className={classes.title}>
               {t('workflowDetailsView.headerDesc')} {workflowRun.workflowName}
+            </Typography>
+            <Typography data-cy="wfName" className={classes.desc}>
+              {workflowSchedulesDetails?.workflowDescription &&
+              workflowSchedulesDetails?.workflowDescription.length > 200 &&
+              !viewAll ? (
+                <div>
+                  {workflowSchedulesDetails?.workflowDescription.slice(0, 200)}
+                  ...{' '}
+                  <span
+                    role="button"
+                    className={classes.viewAll}
+                    tabIndex={0}
+                    onKeyDown={() => {}}
+                    onClick={() => setViewAll(true)}
+                  >
+                    View All
+                  </span>{' '}
+                </div>
+              ) : (
+                workflowSchedulesDetails?.workflowDescription
+              )}
             </Typography>
 
             {/* AppBar */}

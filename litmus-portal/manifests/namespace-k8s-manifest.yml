@@ -1,5 +1,5 @@
 ### RBAC Manifests
-## If SELF_AGENT="true" then these permissions are required to apply 
+## If SELF_AGENT="true" then these permissions are required to apply
 ## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -22,6 +22,9 @@ rules:
   - apiGroups: [argoproj.io]
     resources: [workflowtemplates, workflowtemplates/finalizers,workflowtasksets]
     verbs: [get, list, watch]
+  - apiGroups: [argoproj.io]
+    resources: [workflowtaskresults]
+    verbs: [list, watch, deletecollection]
   - apiGroups: [""]
     resources: [serviceaccounts]
     verbs: [get, list]
@@ -58,7 +61,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/version: ci
     app.kubernetes.io/component: operator-role
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -85,6 +88,12 @@ rules:
   - apiGroups: [litmuschaos.io]
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines/finalizers"]
+    verbs: ["update"]
+  - apiGroups: [ "coordination.k8s.io" ]
+    resources: [ "leases" ]
+    verbs: [ "get","create","list","update","delete" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -94,7 +103,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/version: ci
     app.kubernetes.io/component: operator-rolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -124,7 +133,7 @@ rules:
     verbs: [get, list, watch]
 
   - apiGroups: [""]
-    resources: [pods, namespaces, nodes, services]
+    resources: [pods, services]
     verbs: [get, list, watch]
 
   - apiGroups: [litmuschaos.io]
@@ -137,7 +146,7 @@ rules:
 
   - apiGroups: [apps]
     resources: [deployments, daemonsets, replicasets, statefulsets]
-    verbs: [get, list, delete]
+    verbs: [get, list, delete, deletecollection]
 
   - apiGroups: [argoproj.io]
     resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, rollouts]
@@ -256,10 +265,6 @@ rules:
     resources: [chaosengines, chaosexperiments, chaosresults]
     verbs: [create, list, get, patch, update, delete]
 
-    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
-  - apiGroups: [""]
-    resources: [nodes]
-    verbs: [patch, get, list, update]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -324,8 +329,11 @@ rules:
   - apiGroups: [eventtracker.litmuschaos.io]
     resources: [eventtrackerpolicies/status]
     verbs: [get, patch, update]
-  - apiGroups: ["", extensions, apps]
-    resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
+  - apiGroups: [""]
+    resources: [pods, configmaps, secrets]
+    verbs: [get, list, watch]
+  - apiGroups: [extensions, apps]
+    resources: [deployments, daemonsets, statefulsets]
     verbs: [get, list, watch]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -498,12 +506,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          env:
-            - name: AGENT_SCOPE
-              valueFrom:
-                configMapKeyRef:
-                  name: litmus-portal-admin-config
-                  key: AGENT_SCOPE
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/conf.d/default.conf
@@ -553,7 +555,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.7.0
+          image: litmuschaos/curl:3.0.0-beta3
           command: ["/bin/sh", "-c"]
           args:
             [
@@ -613,32 +615,40 @@ spec:
               value: "namespace"
             - name: AGENT_DEPLOYMENTS
               value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
+            - name: SERVER_SERVICE_NAME
+              value: "litmusportal-server-service"
             - name: CHAOS_CENTER_UI_ENDPOINT
-              value: "http://litmusportal-frontend-service:9091"
+              value: ""
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos/litmusportal-subscriber:ci"
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos/litmusportal-event-tracker:ci"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v3.2.9"
+              value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v3.2.9"
+              value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:2.8.0"
+              value: "litmuschaos/chaos-operator:3.0.0-beta3"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:2.8.0"
+              value: "litmuschaos/chaos-runner:3.0.0-beta3"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:2.8.0"
+              value: "litmuschaos/chaos-exporter:3.0.0-beta3"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: HUB_BRANCH_NAME
-              value: "v2.8.x"
+              value: "master"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "2.8.0"
+              value: "3.0.0-beta3"
+            - name: REMOTE_HUB_MAX_SIZE
+              value: "5000000"
+            - name: INGRESS
+              value: "false"
+            - name: INGRESS_NAME
+              value: "litmus-ingress"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -689,7 +699,7 @@ spec:
       automountServiceAccountToken: false
       initContainers:
         - name: wait-for-mongodb
-          image: litmuschaos/curl:2.7.0
+          image: litmuschaos/curl:3.0.0-beta3
           command: ["/bin/sh", "-c"]
           args:
             [

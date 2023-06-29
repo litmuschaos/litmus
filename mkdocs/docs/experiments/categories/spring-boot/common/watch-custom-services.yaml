@@ -1,0 +1,26 @@
+# it contains comma separated list of custom services
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: spring-boot-chaos
+  namespace: default
+spec:
+  appinfo:
+    appns: 'default'
+    applabel: 'app=spring-boot'
+    appkind: 'deployment'
+  # It can be active/stop
+  engineState: 'active'
+  chaosServiceAccount: spring-boot-app-kill-sa
+  experiments:
+    - name: spring-boot-app-kill
+      spec:
+        components:
+          env:
+            # port of the spring boot application
+            - name: CM_PORT
+              value: '8080'
+
+            # it limits watched packages/classes/methods
+            - name: CM_WATCHED_CUSTOM_SERVICES
+              value: 'com.example.chaosdemo.controller.HelloController.sayHello,com.example.chaosdemo.service.HelloService'

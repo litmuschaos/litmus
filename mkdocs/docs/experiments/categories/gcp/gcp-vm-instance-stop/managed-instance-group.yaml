@@ -21,7 +21,7 @@ spec:
           value: 'instance-01,instance-02'
         # comma separated list of zone names corresponds to the VM_INSTANCE_NAMES
         # it should be provided in same order of VM_INSTANCE_NAMES
-        - name: INSTANCE_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # gcp project id to which vm instance belongs
         - name: GCP_PROJECT_ID

@@ -85,7 +85,7 @@ const TableData: React.FC<TableDataProps> = ({ data, deleteRow }) => {
   const version = process.env.REACT_APP_KB_CHAOS_VERSION;
   const [upgradeModal, setUpgradeModal] = React.useState(false);
   const theme = useTheme();
-  const codeSnippet = `litmusctl upgrade agent --cluster-id="${
+  const codeSnippet = `litmusctl upgrade chaos-delegate --chaos-delegate-id="${
     data.clusterID
   }" --project-id="${getProjectID()}"`;
 

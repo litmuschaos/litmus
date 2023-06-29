@@ -8,7 +8,6 @@ import (
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/authorization"
-	wfHandler "github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/chaos-workflow/handler"
 )
 
 func (r *mutationResolver) CreateWorkflowTemplate(ctx context.Context, request *model.TemplateInput) (*model.WorkflowTemplate, error) {
@@ -19,7 +18,7 @@ func (r *mutationResolver) CreateWorkflowTemplate(ctx context.Context, request *
 		return nil, err
 	}
 
-	return wfHandler.CreateWorkflowTemplate(ctx, request)
+	return r.chaosWorkflowHandler.CreateWorkflowTemplate(ctx, request)
 }
 
 func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID string, templateID string) (bool, error) {
@@ -30,7 +29,7 @@ func (r *mutationResolver) DeleteWorkflowTemplate(ctx context.Context, projectID
 		return false, err
 	}
 
-	return wfHandler.DeleteWorkflowTemplate(ctx, projectID, templateID)
+	return r.chaosWorkflowHandler.DeleteWorkflowTemplate(ctx, projectID, templateID)
 }
 
 func (r *queryResolver) ListWorkflowManifests(ctx context.Context, projectID string) ([]*model.WorkflowTemplate, error) {
@@ -41,7 +40,7 @@ func (r *queryResolver) ListWorkflowManifests(ctx context.Context, projectID str
 		return nil, err
 	}
 
-	return wfHandler.ListWorkflowManifests(ctx, projectID)
+	return r.chaosWorkflowHandler.ListWorkflowManifests(ctx, projectID)
 }
 
 func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID string, templateID string) (*model.WorkflowTemplate, error) {
@@ -52,5 +51,5 @@ func (r *queryResolver) GetWorkflowManifestByID(ctx context.Context, projectID s
 		return nil, err
 	}
 
-	return wfHandler.GetWorkflowManifestByID(ctx, templateID)
+	return r.chaosWorkflowHandler.GetWorkflowManifestByID(ctx, templateID)
 }

@@ -258,7 +258,7 @@ const BrowseCluster: React.FC = () => {
                     </IconButton>
                   </div>
                 </TableCell>
-                {/* Workflow Name */}
+                {/* Scenario Name */}
                 <TableCell className={classes.workflowName}>
                   <div className={classes.tableCell}>
                     <Typography>
