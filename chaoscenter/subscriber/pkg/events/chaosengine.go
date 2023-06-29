@@ -29,7 +29,7 @@ func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, in
 
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get config")
+		logrus.WithError(err).Fatal("could not get kube config")
 	}
 
 	// ClientSet to create Informer
@@ -89,7 +89,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get config")
+		logrus.WithError(err).Fatal("could not get kube config")
 	}
 
 	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
