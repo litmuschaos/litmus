@@ -1,0 +1,126 @@
+import type { CollapsableSelectOptions } from '@harness/uicore';
+import type { IconName } from '@harness/icons';
+import type { FormikHelpers } from 'formik';
+import type { ExperimentMetadata } from '@db';
+import { InfraScope, InfrastructureUpdateStatus } from '@api/entities';
+
+/* 
+  Generic
+*/
+
+export function getChaosInfrastructureStatus(
+  isActive: boolean | undefined,
+  isInfraConfirmed: boolean | undefined,
+  updateStatus?: InfrastructureUpdateStatus
+): ChaosInfrastructureStatus {
+  if (isActive === undefined || isInfraConfirmed === undefined) {
+    return ChaosInfrastructureStatus.INACTIVE;
+  } else if (!isInfraConfirmed && !isActive) {
+    return ChaosInfrastructureStatus.PENDING;
+  } else if (isInfraConfirmed && updateStatus === InfrastructureUpdateStatus.MANDATORY) {
+    return ChaosInfrastructureStatus.UPGRADE_NEEDED;
+  } else if (isInfraConfirmed && !isActive) {
+    return ChaosInfrastructureStatus.INACTIVE;
+  } else if (isInfraConfirmed && isActive) {
+    return ChaosInfrastructureStatus.ACTIVE;
+  } else {
+    return ChaosInfrastructureStatus.INACTIVE;
+  }
+}
+
+export interface ChaosInfrastructureReferenceFieldProps {
+  setFieldValue: FormikHelpers<ExperimentMetadata>['setFieldValue'];
+  initialInfrastructureID: string | undefined;
+}
+
+export enum DeploymentScopeOptions {
+  CLUSTER = 'cluster',
+  NAMESPACE = 'namespace'
+}
+
+export enum ChaosInfrastructureStatus {
+  PENDING = 'PENDING',
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'CONNECTED',
+  UPGRADE_NEEDED = 'UPGRADE NEEDED'
+}
+
+export enum EnvironmentType {
+  PRODUCTION = 'Production',
+  NON_PRODUCTION = 'PreProduction'
+}
+
+export enum ConnectorScope {
+  PROJECT = 'project',
+  ORG = 'org',
+  ACCOUNT = 'account'
+}
+
+export interface InitialValueProps {
+  infraScope: DeploymentScopeOptions;
+  name: string;
+  description: string;
+  tags?: Array<string>;
+  chaosInfrastructureNamespace: string;
+  serviceAccountName: string;
+  skipSSLCheck: boolean;
+  addNodeselector: boolean;
+  nodeSelectorValues?: Array<NodeSelector>;
+  tolerations: boolean;
+  tolerationValues?: Array<Toleration>;
+}
+
+export interface DeploymentScopeItem extends CollapsableSelectOptions {
+  type: DeploymentScopeOptions;
+  name: string;
+  description: string;
+  iconName: IconName;
+  tooltipId?: string;
+}
+
+export interface Toleration {
+  tolerationSeconds?: number;
+  key?: string;
+  operator?: string;
+  effect?: string;
+  value?: string;
+}
+
+export interface NodeSelector {
+  key: string;
+  value: string;
+}
+
+export interface KubernetesInfrastructureFilterInput {
+  name?: string;
+  infraID?: string;
+  description?: string;
+  platformName?: string;
+  infraScope?: InfraScope;
+  isActive?: boolean;
+  tags?: Array<string>;
+}
+
+export const initialValues: InitialValueProps = {
+  infraScope: DeploymentScopeOptions.CLUSTER,
+  name: '',
+  description: '',
+  chaosInfrastructureNamespace: 'litmus',
+  serviceAccountName: 'litmus',
+  skipSSLCheck: false,
+  addNodeselector: false,
+  nodeSelectorValues: [{ key: '', value: '' }],
+  tolerations: false,
+  tolerationValues: [
+    {
+      tolerationSeconds: 0,
+      key: '',
+      operator: '',
+      effect: '',
+      value: ''
+    }
+  ]
+};
+
+export const kubernetesChaosInfrastructureCRDsEndpoint =
+  'https://raw.githubusercontent.com/chaosnative/hce-charts/main/hce-saas/hce-saas-crds.yaml';
