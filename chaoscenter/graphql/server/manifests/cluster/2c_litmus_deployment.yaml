@@ -1,0 +1,134 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: litmus
+    # provide unique instance-id if applicable
+    # app.kubernetes.io/instance: litmus-abcxzy
+    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/part-of: litmus
+    app.kubernetes.io/managed-by: kubectl
+    name: litmus
+  name: chaos-operator-ce
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: chaos-operator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: litmus
+        # provide unique instance-id if applicable
+        # app.kubernetes.io/instance: litmus-abcxzy
+        app.kubernetes.io/version: latest
+        app.kubernetes.io/component: operator
+        app.kubernetes.io/part-of: litmus
+        app.kubernetes.io/managed-by: kubectl
+        name: chaos-operator
+    spec:
+      serviceAccountName: litmus-cluster-scope
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      containers:
+        - name: chaos-operator
+          image: #{LITMUS_CHAOS_OPERATOR}
+          command:
+            - chaos-operator
+          args:
+            - -leader-elect=true
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          env:
+            - name: CHAOS_RUNNER_IMAGE
+              value: #{LITMUS_CHAOS_RUNNER}
+            - name: WATCH_NAMESPACE
+              value: ''
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: 'chaos-operator'
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chaos-exporter
+    release: prometheus-stack
+  name: chaos-exporter
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chaos-exporter
+  template:
+    metadata:
+      labels:
+        app: chaos-exporter
+        release: prometheus-stack
+    spec:
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      containers:
+        - image: #{LITMUS_CHAOS_EXPORTER}
+          imagePullPolicy: Always
+          name: chaos-exporter
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8080
+              name: tcp
+          env:
+            - name: TSDB_SCRAPE_INTERVAL
+              value: '10'
+            - name: INJECTION_TIME_FILTER
+              value: 'disable'
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
+      serviceAccountName: litmus-cluster-scope
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: chaos-exporter
+  name: chaos-exporter
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  ports:
+    - port: 8080
+      name: tcp
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: chaos-exporter
+  type: ClusterIP
