@@ -63,7 +63,6 @@ export interface InitialValueProps {
   tags?: Array<string>;
   chaosInfrastructureNamespace: string;
   serviceAccountName: string;
-  addHarnessInfrastructure: boolean; // not in API
   skipSSLCheck: boolean;
   addNodeselector: boolean;
   nodeSelectorValues?: Array<NodeSelector>;
@@ -108,7 +107,6 @@ export const initialValues: InitialValueProps = {
   description: '',
   chaosInfrastructureNamespace: 'litmus',
   serviceAccountName: 'litmus',
-  addHarnessInfrastructure: false,
   skipSSLCheck: false,
   addNodeselector: false,
   nodeSelectorValues: [{ key: '', value: '' }],
