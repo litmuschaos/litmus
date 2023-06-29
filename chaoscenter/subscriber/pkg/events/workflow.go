@@ -1,0 +1,278 @@
+package events
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
+	"subscriber/pkg/graphql"
+
+	"subscriber/pkg/k8s"
+	"subscriber/pkg/types"
+
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	"github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
+	"github.com/argoproj/argo-workflows/v3/pkg/client/informers/externalversions"
+	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
+	"github.com/sirupsen/logrus"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/cache"
+)
+
+// 0 means no resync
+const (
+	resyncPeriod time.Duration = 0
+)
+
+var eventMap map[string]types.WorkflowEvent
+
+func init() {
+	eventMap = make(map[string]types.WorkflowEvent)
+}
+
+var (
+	InfraScope     = os.Getenv("INFRA_SCOPE")
+	InfraNamespace = os.Getenv("INFRA_NAMESPACE")
+	InfraID        = os.Getenv("INFRA_ID")
+)
+
+// WorkflowEventWatcher initializes the Argo Workflow event watcher
+func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
+	startTime, err := strconv.Atoi(infraData["START_TIME"])
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to parse START_TIME")
+	}
+	cfg, err := k8s.GetKubeConfig()
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not get kube config")
+	}
+	// ClientSet to create Informer
+	clientSet, err := versioned.NewForConfig(cfg)
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not generate dynamic client for config")
+	}
+	// Create a factory object to watch workflows depending on default scope
+	f := externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod,
+		externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+			list.LabelSelector = fmt.Sprintf("infra_id=%s,workflows.argoproj.io/controller-instanceid=%s", InfraID, InfraID)
+		}))
+	informer := f.Argoproj().V1alpha1().Workflows().Informer()
+	if InfraScope == "namespace" {
+		f = externalversions.NewSharedInformerFactoryWithOptions(clientSet, resyncPeriod, externalversions.WithNamespace(InfraNamespace),
+			externalversions.WithTweakListOptions(func(list *v1.ListOptions) {
+				list.LabelSelector = fmt.Sprintf("infra_id=%s,workflows.argoproj.io/controller-instanceid=%s", InfraID, InfraID)
+			}))
+		informer = f.Argoproj().V1alpha1().Workflows().Informer()
+		// Start Event Watch
+	}
+	go startWatchWorkflow(stopCh, informer, stream, int64(startTime))
+}
+
+// handles the different events events - add, update and delete
+func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
+	handlers := cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			workflowObj := obj.(*v1alpha1.Workflow)
+			workflow, err := WorkflowEventHandler(workflowObj, "ADD", startTime)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			//stream
+			stream <- workflow
+
+		},
+		UpdateFunc: func(oldObj, obj interface{}) {
+			workflowObj := obj.(*v1alpha1.Workflow)
+			workflow, err := WorkflowEventHandler(workflowObj, "UPDATE", startTime)
+			if err != nil {
+				logrus.Error(err)
+			}
+			//stream
+			stream <- workflow
+
+		},
+	}
+	s.AddEventHandler(handlers)
+	s.Run(stopCh)
+}
+
+// WorkflowEventHandler is responsible for extracting the required data from the event and streaming
+func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
+	if workflowObj.Labels["workflow_id"] == "" {
+		logrus.WithFields(map[string]interface{}{
+			"uid":         string(workflowObj.ObjectMeta.UID),
+			"wf_id":       workflowObj.Labels["workflow_id"],
+			"instance_id": workflowObj.Labels["workflows.argoproj.io/controller-instanceid"],
+		}).Printf("WORKFLOW RUN IGNORED [INVALID METADATA]")
+		return types.WorkflowEvent{}, nil
+	}
+
+	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
+		return types.WorkflowEvent{}, nil
+	}
+
+	cfg, err := k8s.GetKubeConfig()
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not get kube config")
+	}
+
+	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)
+	if err != nil {
+		return types.WorkflowEvent{}, errors.New("could not get Chaos ClientSet: " + err.Error())
+	}
+
+	nodes := make(map[string]types.Node)
+	logrus.Info("Workflow RUN_ID: ", workflowObj.UID, " and event type: ", eventType)
+
+	for _, nodeStatus := range workflowObj.Status.Nodes {
+
+		var (
+			nodeType                  = string(nodeStatus.Type)
+			cd       *types.ChaosData = nil
+		)
+
+		// considering chaos events has only 1 artifact with manifest as raw data
+		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 && nodeStatus.Inputs.Artifacts[0].Raw != nil {
+			//extracts chaos data
+			nodeType, cd, err = CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
+			if err != nil {
+				logrus.WithError(err).Print("Failed to parse ChaosEngine CRD")
+			}
+		}
+
+		details := types.Node{
+			Name:       nodeStatus.DisplayName,
+			Phase:      string(nodeStatus.Phase),
+			Type:       nodeType,
+			StartedAt:  StrConvTime(nodeStatus.StartedAt.Unix()),
+			FinishedAt: StrConvTime(nodeStatus.FinishedAt.Unix()),
+			Children:   nodeStatus.Children,
+			ChaosExp:   cd,
+			Message:    nodeStatus.Message,
+		}
+		if cd != nil && strings.ToLower(cd.ExperimentVerdict) == "fail" {
+			details.Phase = "Failed"
+			details.Message = "Chaos Experiment Failed"
+			cd.ExperimentVerdict = "Fail"
+		} else if cd != nil && strings.ToLower(cd.ExperimentVerdict) == "pass" {
+			details.Phase = "Passed"
+			cd.ExperimentVerdict = "Pass"
+		}
+		nodes[nodeStatus.ID] = details
+	}
+
+	status := updateWorkflowStatus(workflowObj.Status.Phase)
+
+	finishedTime := StrConvTime(workflowObj.Status.FinishedAt.Unix())
+	if eventType == "STOPPED" {
+		status = "Stopped"
+		finishedTime = StrConvTime(time.Now().Unix())
+		nodes[workflowObj.Name] = types.Node{
+			Name:       workflowObj.Name,
+			Phase:      "Stopped",
+			StartedAt:  StrConvTime(workflowObj.CreationTimestamp.Unix()),
+			FinishedAt: finishedTime,
+			Children:   nodes[workflowObj.Name].Children,
+			Type:       nodes[workflowObj.Name].Type,
+		}
+	}
+	var notifyID *string = nil
+
+	if id, ok := workflowObj.Labels["notify_id"]; ok {
+		notifyID = &id
+	}
+
+	workflow := types.WorkflowEvent{
+		WorkflowType:      "events",
+		WorkflowID:        workflowObj.Labels["workflow_id"],
+		EventType:         eventType,
+		RevisionID:        workflowObj.Labels["revision_id"],
+		NotifyID:          notifyID,
+		UID:               string(workflowObj.ObjectMeta.UID),
+		Namespace:         workflowObj.ObjectMeta.Namespace,
+		Name:              workflowObj.ObjectMeta.Name,
+		CreationTimestamp: StrConvTime(workflowObj.ObjectMeta.CreationTimestamp.Unix()),
+		Phase:             status,
+		Message:           workflowObj.Status.Message,
+		StartedAt:         StrConvTime(workflowObj.Status.StartedAt.Unix()),
+		FinishedAt:        finishedTime,
+		Nodes:             nodes,
+		UpdatedBy:         workflowObj.Labels["updated_by"],
+	}
+
+	return workflow, nil
+}
+
+// SendWorkflowUpdates generates graphql mutation to send events updates to graphql server
+func SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error) {
+	if wfEvent, ok := eventMap[event.UID]; ok {
+		for key, node := range wfEvent.Nodes {
+			if node.Type == "ChaosEngine" && node.ChaosExp != nil && event.Nodes[key].ChaosExp == nil {
+				nodeData := event.Nodes[key]
+				nodeData.ChaosExp = node.ChaosExp
+				nodeData.Phase = node.Phase
+				nodeData.Message = node.Message
+				event.Nodes[key] = nodeData
+			}
+			if event.Phase == "Stopped" {
+				if event.Nodes[key].Phase == "Running" || event.Nodes[key].Phase == "Pending" {
+					nodeData := event.Nodes[key]
+					nodeData.Phase = "Stopped"
+					event.Nodes[key] = nodeData
+				}
+			}
+		}
+	}
+	eventMap[event.UID] = event
+
+	// generate graphql payload
+	payload, err := GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "false", event)
+	if err != nil {
+		return "", errors.New("Error while generating graphql payload from the workflow event" + err.Error())
+	}
+
+	if event.FinishedAt != "" {
+		payload, err = GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "true", event)
+		delete(eventMap, event.UID)
+	}
+
+	body, err := graphql.SendRequest(infraData["SERVER_ADDR"], payload)
+	if err != nil {
+		return "", err
+	}
+
+	return body, nil
+}
+
+func WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent) {
+	// listen on the channel for streaming event updates
+	for eventData := range event {
+		response, err := SendWorkflowUpdates(infraData, eventData)
+		if err != nil {
+			logrus.Print(err.Error())
+		}
+
+		logrus.Print("Response from the server: ", response)
+	}
+}
+
+func updateWorkflowStatus(status v1alpha1.WorkflowPhase) string {
+	switch status {
+	case v1alpha1.WorkflowRunning:
+		return "Running"
+	case v1alpha1.WorkflowSucceeded:
+		return "Completed"
+	case v1alpha1.WorkflowFailed:
+		return "Completed"
+	case v1alpha1.WorkflowPending:
+		return "Pending"
+	case v1alpha1.WorkflowError:
+		return "Error"
+	default:
+		return "Pending"
+	}
+}
