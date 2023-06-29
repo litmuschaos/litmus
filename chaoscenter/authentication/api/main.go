@@ -94,12 +94,6 @@ func main() {
 }
 
 func validatedAdminSetup(service services.ApplicationService) {
-	configs := map[string]string{"ADMIN_PASSWORD": utils.AdminPassword, "ADMIN_USERNAME": utils.AdminName, "DB_USER": utils.DBUser, "DB_SERVER": utils.DBUrl, "DB_NAME": utils.DBName, "DB_PASSWORD": utils.DBPassword, "JWT_SECRET": utils.JwtSecret}
-	for configName, configValue := range configs {
-		if configValue == "" {
-			log.Fatalf("Config %s has not been set", configName)
-		}
-	}
 
 	// Assigning UID to admin
 	uID := uuid.Must(uuid.NewRandom()).String()
@@ -117,17 +111,16 @@ func validatedAdminSetup(service services.ApplicationService) {
 		Password: password,
 		Role:     entities.RoleAdmin,
 		Audit: entities.Audit{
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
+			CreatedAt: time.Now().UnixMilli(),
+			UpdatedAt: time.Now().UnixMilli(),
 		},
 	}
 
 	_, err = service.CreateUser(&adminUser)
-	if err == utils.ErrUserExists {
+	if err != nil && err == utils.ErrUserExists {
 		log.Println("Admin already exists in the database, not creating a new admin")
-	}
-	if err != nil && err != utils.ErrUserExists {
-		log.Panicf("Unable to create admin, error: %s", err)
+	} else if err != nil {
+		log.Panicf("Unable to create admin, error: %v", err)
 	}
 }
 
@@ -157,7 +150,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
 	err := app.Run(utils.Port)
 	if err != nil {
-		log.Fatalf("Failure to start litmus-portal authentication server due to %s", err)
+		log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
 	}
 }
 
@@ -174,7 +167,6 @@ func runGrpcServer(applicationService services.ApplicationService) {
 	log.Infof("Listening and serving gRPC on %s", utils.GrpcPort)
 	err = grpcServer.Serve(lis)
 	if err != nil {
-		log.Fatalf("Failure to start litmus-portal authentication server due"+
-			" to %s", err)
+		log.Fatalf("Failure to start litmus-portal authentication GRPC server due to %v", err)
 	}
 }

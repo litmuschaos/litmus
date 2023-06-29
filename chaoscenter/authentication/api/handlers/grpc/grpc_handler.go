@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"litmus/litmus-portal/authentication/api/middleware"
 	"litmus/litmus-portal/authentication/api/presenter/protos"
 	"litmus/litmus-portal/authentication/pkg/entities"
@@ -82,13 +81,11 @@ func (s *ServerGrpc) GetProjectById(ctx context.Context,
 
 func (s *ServerGrpc) GetUserById(ctx context.Context,
 	inputRequest *protos.GetUserByIdRequest) (*protos.GetUserByIdResponse, error) {
-	fmt.Println("req", inputRequest.UserID)
 	user, err := s.ApplicationService.GetUser(inputRequest.UserID)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
-	fmt.Println("Resp", user)
 	var deactivatedAt string
 	if user.DeactivatedAt != nil {
 		deactivatedAt = strconv.FormatInt(*user.DeactivatedAt, 10)

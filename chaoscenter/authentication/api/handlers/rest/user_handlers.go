@@ -257,7 +257,7 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		c.JSON(200, gin.H{
-			"message": "password has been reset",
+			"message": "password has been updated successfully",
 		})
 	}
 }

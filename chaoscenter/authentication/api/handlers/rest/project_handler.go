@@ -108,10 +108,6 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 			})
 		}
 
-		if err != nil {
-			return
-		}
-
 		c.JSON(200, gin.H{"data": types.Project{
 			ID:    project.ID,
 			Name:  project.Name,
@@ -154,6 +150,8 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 		}
 		authUsers, err := service.FindUsersByUID(uids)
 		if err != nil || authUsers == nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 		memberMap := make(map[string]entities.User)
@@ -304,28 +302,6 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-
-		// Extracting user role
-		//role := c.MustGet("role").(string)
-		//
-		//var conn *grpc.ClientConn
-		//client, conn := utils.GetProjectGRPCSvcClient(conn)
-		//err = utils.ProjectInitializer(c, client, pID, role)
-		//
-		//defer func(conn *grpc.ClientConn) {
-		//	err := conn.Close()
-		//	if err != nil {
-		//		log.Errorf("could not close gRPC client connection: %v", err)
-		//		c.JSON(500, "could not close gRPC client connection")
-		//		return
-		//	}
-		//}(conn)
-		//
-		//if err != nil {
-		//	log.Errorf("could not initialize project %v: %v", userRequest.ProjectName, err)
-		//	c.JSON(500, "could not initialize project")
-		//	return
-		//}
 
 		c.JSON(200, gin.H{"data": newProject.GetProjectOutput()})
 
