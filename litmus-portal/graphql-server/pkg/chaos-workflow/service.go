@@ -367,7 +367,7 @@ func generateFaultWeights(templates []v1alpha1.Template, labels map[string]strin
 				var meta chaosTypes.ChaosEngine
 				err := yaml.Unmarshal([]byte(data), &meta)
 				if err != nil {
-					return nil, nil, errors.New("failed to unmarshal chaosengine")
+					return nil, nil, fmt.Errorf("failed to unmarshal chaosengine %v", err)
 				}
 
 				if strings.ToLower(meta.Kind) == "chaosengine" {
