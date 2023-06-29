@@ -1,18 +1,19 @@
 # BUILD STAGE
 FROM golang:1.20 AS builder
 
+LABEL maintainer="LitmusChaos"
+
 ARG TARGETOS=linux
 ARG TARGETARCH
 
-ADD . /auth-server
-WORKDIR /auth-server
+ADD . /subscriber
+WORKDIR /subscriber
 
 ENV GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH}
 
 RUN go env
-
-RUN CGO_ENABLED=0 go build -o /output/server -v ./api/
+RUN CGO_ENABLED=0 go build -o /output/subscriber -v
 
 # Packaging stage
 # Image source: https://github.com/litmuschaos/test-tools/blob/master/custom/hardened-alpine/infra/Dockerfile
@@ -21,8 +22,6 @@ FROM litmuschaos/infra-alpine
 
 LABEL maintainer="LitmusChaos"
 
-COPY --from=builder /output/server /litmus
+COPY --from=builder /output/subscriber /litmus
 
-CMD ["./server"]
-
-EXPOSE 3000
+CMD ["./subscriber"]

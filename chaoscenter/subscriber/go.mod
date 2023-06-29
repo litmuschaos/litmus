@@ -1,6 +1,6 @@
 module subscriber
 
-go 1.18
+go 1.20
 
 require (
 	github.com/argoproj/argo-workflows/v3 v3.3.1
