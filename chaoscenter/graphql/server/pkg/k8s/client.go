@@ -1,7 +1,7 @@
 package k8s
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"

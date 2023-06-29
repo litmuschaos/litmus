@@ -5,11 +5,10 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"log"
 	"strconv"
 	"strings"
-
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -24,10 +23,10 @@ import (
 var (
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
-	AgentNamespace  = utils.Config.AgentNamespace
+	AgentNamespace  = utils.Config.InfraNamespace
 )
 
-//InfraResource This function handles cluster operations
+// InfraResource This function handles cluster operations
 func InfraResource(manifest string, namespace string) (*unstructured.Unstructured, error) {
 	// Getting dynamic and discovery client
 	ctx := context.TODO()

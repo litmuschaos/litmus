@@ -1,7 +1,7 @@
 package authorization
 
 import (
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 )
 
 // RoleQuery states the query for the roles
