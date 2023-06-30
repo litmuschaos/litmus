@@ -330,18 +330,14 @@ func (c *chaosWorkflowService) ProcessCompletedWorkflowRun(execData ExecutionDat
 
 func updateManifestLabels(labels map[string]string, workflowID string, clusterID string, requiresType bool) map[string]string {
 	if labels == nil {
-		labels = map[string]string{
-			"workflow_id": workflowID,
-			"cluster_id":  clusterID,
-		}
+		labels = map[string]string{}
+	}
+	labels["workflow_id"] = workflowID
+	labels["cluster_id"] = clusterID
+	if requiresType {
+		labels["type"] = "standalone_workflow"
 	} else {
-		labels["workflow_id"] = workflowID
-		labels["cluster_id"] = clusterID
-		if requiresType {
-			labels["type"] = "standalone_workflow"
-		} else {
-			labels["workflows.argoproj.io/controller-instanceid"] = clusterID
-		}
+		labels["workflows.argoproj.io/controller-instanceid"] = clusterID
 	}
 	return labels
 }
