@@ -334,11 +334,6 @@ func updateManifestLabels(labels map[string]string, workflowID string, clusterID
 			"workflow_id": workflowID,
 			"cluster_id":  clusterID,
 		}
-		if requiresType {
-			labels["type"] = "standalone_workflow"
-		} else {
-			labels["workflows.argoproj.io/controller-instanceid"] = clusterID
-		}
 	} else {
 		labels["workflow_id"] = workflowID
 		labels["cluster_id"] = clusterID
