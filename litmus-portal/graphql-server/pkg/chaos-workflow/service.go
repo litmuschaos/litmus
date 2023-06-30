@@ -342,7 +342,7 @@ func updateManifestLabels(labels map[string]string, workflowID string, clusterID
 	return labels
 }
 
-func generateFaultWeights(templates []v1alpha1.Template, labels map[string]string, weights map[string]int) ([]v1alpha1.Template, []*model.WeightagesInput, error) {
+func generateFaultWeights(templates []v1alpha1.Template, weights map[string]int) ([]v1alpha1.Template, []*model.WeightagesInput, error) {
 	var newWeights []*model.WeightagesInput
 
 	for i, template := range templates {
@@ -415,7 +415,7 @@ func processWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights map[s
 
 	workflowManifest.Labels = updateManifestLabels(workflowManifest.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 
-	workflowManifest.Spec.Templates, newWeights, err = generateFaultWeights(workflowManifest.Spec.Templates, workflowManifest.Labels, weights)
+	workflowManifest.Spec.Templates, newWeights, err = generateFaultWeights(workflowManifest.Spec.Templates, weights)
 	if err != nil {
 		return err
 	}
@@ -455,7 +455,7 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights m
 		cronWorkflowManifest.Spec.WorkflowMetadata.Labels = updateManifestLabels(cronWorkflowManifest.Spec.WorkflowMetadata.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 	}
 
-	cronWorkflowManifest.Spec.WorkflowSpec.Templates, newWeights, err = generateFaultWeights(cronWorkflowManifest.Spec.WorkflowSpec.Templates, cronWorkflowManifest.Spec.WorkflowMetadata.Labels, weights)
+	cronWorkflowManifest.Spec.WorkflowSpec.Templates, newWeights, err = generateFaultWeights(cronWorkflowManifest.Spec.WorkflowSpec.Templates, weights)
 	if err != nil {
 		return err
 	}
