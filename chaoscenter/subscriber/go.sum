@@ -46,8 +46,8 @@ github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbt
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 h1:d+Bc7a5rLufV/sSk/8dngufqelfh6jnri85riMAaF/M=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/argoproj/argo-workflows/v3 v3.3.1 h1:cNhY6JRlMvwu0qhfCWtS/XmQ8nm2OjR7CBZ3K6zbcKI=
-github.com/argoproj/argo-workflows/v3 v3.3.1/go.mod h1:/VCBeEAgrhuNlrmlrdqS75mx2x77FwbotAjTmqpoAE4=
+github.com/argoproj/argo-workflows/v3 v3.3.5 h1:VcS9lIIYWjdaF8J2eEEbot9flK1BIU/ByXlg6MDNNLk=
+github.com/argoproj/argo-workflows/v3 v3.3.5/go.mod h1:bohtsSpNtnEo9XaGgcjA9RD/aM3VaybOZpPFBN4yqGQ=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
