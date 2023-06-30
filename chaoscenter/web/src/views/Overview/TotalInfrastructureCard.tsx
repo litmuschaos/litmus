@@ -3,7 +3,9 @@ import { Layout, Text } from '@harness/uicore';
 import { Color, FontVariation } from '@harness/design-system';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
+import { Link } from 'react-router-dom';
 import { useStrings } from '@strings';
+import { useRouteWithBaseUrl } from '@hooks';
 import type { InfraStatsData } from '@api/entities';
 import Loader from '@components/Loader';
 import css from './Overview.module.scss';
@@ -18,6 +20,7 @@ export default function TotalInfrastructureCard({
   loading
 }: TotalInfrastructureCardProps): React.ReactElement {
   const { getString } = useStrings();
+  const paths = useRouteWithBaseUrl();
 
   const pendingInfrastructures = Math.min(
     infraStats?.totalNonConfirmedInfrastructures ?? 0,
@@ -66,6 +69,7 @@ export default function TotalInfrastructureCard({
       {
         type: 'pie',
         name: 'deployments',
+        colorByPoint: true,
         data: [
           {
             name: 'Active',
@@ -103,6 +107,11 @@ export default function TotalInfrastructureCard({
             <Text font={{ variation: FontVariation.SMALL, weight: 'semi-bold' }} color={Color.GREY_600}>
               {getString('totalChaosInfrastructures')}
             </Text>
+            <Link to={paths.toEnvironments()}>
+              <Text font={{ variation: FontVariation.SMALL }} color={Color.PRIMARY_7}>
+                {getString('seeAllChaosInfrastructures')}
+              </Text>
+            </Link>
           </Layout.Horizontal>
           <Layout.Horizontal flex spacing="small">
             <Text font={{ variation: FontVariation.H2 }}>{infraStats?.totalInfrastructures ?? 0}</Text>

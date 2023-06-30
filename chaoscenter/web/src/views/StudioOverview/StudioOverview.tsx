@@ -14,7 +14,6 @@ import { Formik, Form, FormikProps, ErrorMessage, FormikErrors } from 'formik';
 import cx from 'classnames';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash-es';
-import KubernetesChaosInfrastructureReferenceFieldController from '@controllers/KubernetesChaosInfrastructureReferenceField';
 import type { ExperimentMetadata } from '@db';
 import { useStrings } from '@strings';
 import FormErrorListener from '@components/FormErrorListener';
@@ -22,6 +21,7 @@ import { useUpdateSearchParams } from '@hooks';
 import NameDescriptionTags from '@components/NameIdDescriptionTags';
 import { ChaosInfrastructureReferenceFieldProps, StudioErrorState, StudioTabs } from '@models';
 import experimentYamlService from 'services/experiment';
+import KubernetesChaosInfrastructureReferenceFieldController from '@controllers/KubernetesChaosInfrastructureReferenceField';
 import { InfrastructureType } from '@api/entities';
 import css from './StudioOverview.module.scss';
 

@@ -58,8 +58,22 @@ const CronDetails = ({ cronSyntax }: Pick<ExperimentDetails, 'cronSyntax'>): Rea
 const ChaosInfrastructureDetails = ({
   infrastructure
 }: Pick<ExperimentDetails, 'infrastructure'>): React.ReactElement => {
+  const history = useHistory();
+  const paths = useRouteWithBaseUrl();
   return (
-    <Container flex={{ justifyContent: 'flex-start' }}>
+    <Container
+      flex={{ justifyContent: 'flex-start' }}
+      onClick={() => {
+        if (infrastructure.environmentID && infrastructure.infrastructureID) {
+          history.push(
+            paths.toKubernetesChaosInfrastructureDetails({
+              environmentID: infrastructure.environmentID,
+              chaosInfrastructureID: infrastructure.infrastructureID
+            })
+          );
+        }
+      }}
+    >
       <Text font={{ size: 'small' }} margin={{ left: 'small' }} color={Color.PRIMARY_7} lineClamp={1}>
         {infrastructure.name}
       </Text>

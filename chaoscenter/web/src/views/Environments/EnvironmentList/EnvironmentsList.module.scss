@@ -1,0 +1,112 @@
+.horizontalTabs {
+  padding-left: var(--spacing-7) !important;
+  padding-top: var(--spacing-7) !important;
+  padding-bottom: var(--spacing-5) !important;
+  border-bottom: 1px solid #d9dae6;
+}
+.dialogStylesEnv {
+  position: relative;
+  width: 550px !important;
+  padding: 36px 40px 48px 40px !important;
+
+  > div[class*='bp3-dialog-header'] {
+    margin: 0px 0px 6px !important;
+    width: 330px;
+  }
+}
+
+.yamlToggleEnv {
+  padding-top: var(--spacing-4) !important;
+  padding-bottom: var(--spacing-4) !important;
+  width: 320px;
+}
+.label {
+  margin-bottom: var(--spacing-xsmall) !important;
+}
+.thumbnailSelect {
+  &:global(.bp3-form-group) {
+    margin-bottom: 0px;
+  }
+  button {
+    margin-top: var(--spacing-xlarge) !important;
+  }
+}
+
+.noEnvHeading {
+  padding-top: 50px !important;
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  line-height: 28px !important;
+  color: var(--grey-800) !important;
+}
+
+.noEnvText {
+  width: 400px;
+  padding: var(--spacing-large) 0 var(--spacing-xxlarge) !important;
+  font-size: var(--font-size-medium) !important;
+  line-height: 18px !important;
+  color: var(--grey-800) !important;
+  text-align: center !important;
+}
+
+.layout {
+  display: grid;
+  height: 100vh;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-areas:
+    'header'
+    'toolbar'
+    'content'
+    'footer';
+}
+
+.header {
+  grid-area: header;
+}
+
+.toolbar {
+  grid-area: toolbar;
+}
+
+.content {
+  grid-area: content;
+  overflow: auto;
+}
+
+.footer {
+  grid-area: footer;
+  padding: 0 var(--spacing-xlarge);
+}
+
+.loading {
+  grid-area: content;
+  place-self: center;
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  :global {
+    .bp3-card:nth-child(1) {
+      background: #e8e8ff !important;
+    }
+    .bp3-card:nth-child(2) {
+      background: #d3fcfe !important;
+    }
+  }
+}
+.card {
+  height: 90px;
+  width: 90px;
+}
+
+.maxInputNameID {
+  max-width: 320px;
+  position: relative;
+}
+
+.maxWidthFormInput {
+  max-width: 320px;
+}

@@ -13,10 +13,12 @@ import {
 import { Icon } from '@harness/icons';
 import cx from 'classnames';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useStrings } from '@strings';
 import FallbackBox from '@images/FallbackBox.svg';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import Loader from '@components/Loader';
+import { useRouteWithBaseUrl } from '@hooks';
 import css from './ChaosInfrastructureReferenceField.module.scss';
 
 export interface InfrastructureDetails {
@@ -52,6 +54,8 @@ function ChaosInfrastructureReferenceFieldView({
   pagination
 }: ChaosInfrastructureReferenceFieldViewProps): JSX.Element {
   const [isOpen, setOpen] = React.useState(false);
+  const paths = useRouteWithBaseUrl();
+  const history = useHistory();
   const [selectedInfrastructure, setSelectedInfrastructure] = React.useState<InfrastructureDetails | undefined>(
     preSelectedInfrastructure
   );
@@ -188,6 +192,15 @@ function ChaosInfrastructureReferenceFieldView({
                         ? getString('newUserNoInfra.title')
                         : getString('noFilteredActiveInfra')}
                     </Text>
+                    {searchInfrastructure === '' && (
+                      <Button
+                        variation={ButtonVariation.PRIMARY}
+                        text={getString('enableChaosInfraButton')}
+                        onClick={() => {
+                          history.push(paths.toEnvironments());
+                        }}
+                      />
+                    )}
                   </Layout.Vertical>
                 )}
               </Layout.Vertical>
