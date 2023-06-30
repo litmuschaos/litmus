@@ -1,0 +1,76 @@
+.fullHeight {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.tableV2 {
+  height: 100%;
+}
+
+.environmentModal {
+  .leftView {
+    width: 50%;
+    height: 230px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .headingText {
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    .btn {
+      font-size: 11px !important;
+    }
+  }
+
+  .rightView {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 230px;
+  }
+}
+
+.commonCard {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.totalExperimentCardContainer {
+  background: var(--white);
+  padding: var(--spacing-4);
+  border-radius: 4px;
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  min-width: 330px;
+  min-height: 148px;
+}
+
+.rateContainer {
+  display: flex;
+  align-items: center;
+}
+
+.totalEnvironmentCardContainer {
+  background: var(--white);
+  padding: var(--spacing-4);
+  border-radius: 4px;
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  min-width: 330px;
+  min-height: 148px;
+}
+
+.flexGrow {
+  flex-grow: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,59 @@
+.mainContainer {
+  height: 82px;
+  min-width: 161px;
+  position: relative;
+  border-radius: 4px;
+  .bgImg {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    opacity: 0.2;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+  min-width: 161px;
+}
+
+.experiment {
+  color: var(--purple-700);
+  background-color: var(--purple-50);
+}
+
+.run {
+  color: var(--primary-6);
+  background-color: var(--primary-1);
+}
+
+.undefined {
+  color: var(--primary-10);
+  background-color: var(--primary-bg);
+}
+
+.text {
+  padding: 15px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.titleText {
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.2px;
+  text-transform: capitalize;
+  color: #4f5162 !important;
+}
+
+.value {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
+}

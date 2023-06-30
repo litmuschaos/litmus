@@ -1,1 +1,933 @@
-litmus: litmus
+404Error: Oops, we could not find this page.
+FRI: FRI
+MON: MON
+NASlash: N/A
+SAT: SAT
+SUN: SUN
+THU: THU
+TUE: TUE
+WED: WED
+aboutChaosCTL: >-
+  You can configure and tune your chaos infrastructure, and download the
+  deployment manifest . This manifest is applied to your Kubernetes cluster.
+  Below mentioned Kubernetes permissions are required to install chaos
+  infrastructure:
+accessToAllNamespaces: Access to all namespaces
+accessType: Access Type
+account: Account
+accountSettings: Account Settings
+accountURL: Account URL
+actionItems: Action Items
+active: Active
+actualResilienceScore: Actual Resilience Score
+add: Add
+addExperimentToChaosHub: Add Experiment to ChaosHub
+addNewCluster: Add new cluster (Coming soon!)
+addNodeSelectorAgentDeployment: Add NodeSelector in Chaos Infrastructure deployment
+addProbe: Add Probe
+addResilienceStep: Add Resilience Step
+addRow: Add Row
+addToChaosHub: Add to ChaosHub
+addToTemplate: Add to Template
+addTolerationAgentDeployment: Add Toleration in Chaos Infrastructure deployment
+addViewSummaryNotes: Add/View Summary Notes
+addtoHubLoading: Adding to ChaosHub, please wait...
+advanced: Advanced (Optional)
+advancedOptions: Advanced Options
+all: All
+allChaosEnabled: All Chaos Enabled Infrastructures
+allFaultsExecuted: All your faults executed without any issue
+allRuns: All Runs
+alreadyExists: '{{value}} already exists'
+appKind: App Kind
+appKindName: app_kind
+appLabel: App Label
+appLabelName: app_label
+appNameSpace: App Namespace
+apply: Apply
+applyChanges: Apply Changes
+at: At
+atAGlance: At a Glance
+authenticationType: Authentication Type
+averageResilienceScore: Average Resilience Score
+back: Back
+basic: Basic
+blankCanvasDescription: >-
+  Chaos Experiment is a set of different operations coupled together to achieve
+  desired chaos impact on a Kubernetes Cluster. It is useful in automating a
+  series of pre-conditioning steps or action which is necessary to be performed
+  before triggering the chaos injection. A Chaos Experiment can also be used to
+  perform different operations paralleled to achieve a desired chaos injection
+  experiment.
+blankCanvasTitle: Select and arrange faults from ChaosHubs to create your desire sequence.
+blobLogsNotAvailable: Logs are not available for this node.
+cancel: Cancel
+cannotPushToDefault: Cannot push experiment to default ChaosHub
+cannotReRun: Cannot re-run an already running experiment
+chaos: Chaos
+chaosComponentInstallation: Chaos Components Installation
+chaosController: Chaos Controller
+chaosEnableFailed: Failed to register the chaos enablement job, please contact support
+chaosEngineName: ChaosEngine Name
+chaosEngineResult: Chaos Engine Result
+chaosExperiment: Chaos Experiment
+chaosExperiments: Chaos Experiments
+chaosFaults: Chaos Faults
+chaosHub: ChaosHub
+chaosHubExperiment: ChaosHub Experiment
+chaosHubFault: ChaosHub Fault
+chaosHubNoExp: No experiments found in this ChaosHub
+chaosHubNoFault: No faults found in this ChaosHub
+chaosHubNoSearchExperiment: No experiments found matching term '{{searchTerm}}'
+chaosHubNoSearchFault: No faults found matching term '{{searchTerm}}'
+chaosHubReferenceFielPlaceholder: '- Select a ChaosHub -'
+chaosHubStep1: Step 1 -> Click on "Launch Experiment".
+chaosHubStep2: Step 2 -> Choose a target Chaos Infrastructure.
+chaosHubStep3: Step 3 -> Configure the experiment and run as per your needs.
+chaosIncidentsDetected: Chaos incidents detected
+chaosIncidentsDiscovered: Chaos Incidents discovered?
+chaosInfraVersionAvailable: Chaos Infrastructure version {{version}} is available
+chaosInfrastructureDesc: >-
+  Kubernetes Chaos Infrastructures are the target deployments that are synced
+  with your source manifests.
+chaosInfrastructureDescription: Add a description for your Chaos Infrastructure
+chaosInfrastructureDetails: Chaos Infrastructure Details
+chaosInfrastructureLogs: Chaos Infrastructure Logs (Coming Soon!)
+chaosInfrastructureNamespace: Installation Location (Namespace)
+chaosInfrastructureOverview: Chaos Infrastructure Overview
+chaosInfrastructureSuccess: Chaos Infrastructure successfully created
+chaosInfrastructureText: Chaos Infrastructure
+chaosInfrastructures: Chaos Infrastructures
+chaosResultNotAvailable: Chaos Result not available yet
+chaosResults: Chaos Results
+chaosStudio: Chaos Studio
+chaoshubDisconnectedWillSync: ChaosHub is disconnected, will attempt to sync
+chaoshubs: ChaosHubs
+checkConnection: Check Connection
+checkLogs: Check the Chaos Infrastructure Logs
+checkStatus: Check the status of your Chaos Infrastructure on your cluster
+chooseAccessType: Choose Access Type
+chooseAuthenticationType: Choose Authentication Type
+chooseHubAccess: Choose Hub Access
+clickDownload: >-
+  Click on the “Download” button below to download the YML file to a machine
+  where you have kubectl installed and have access to your Kubernetes cluster.
+clone: Clone
+cloneExperiment: Clone Experiment
+closeTuneConfirmation: Close tune fault configuration?
+closeTuneConfirmationDescription: >-
+  Changes to your tune fault configuration will be lost if you do not apply your
+  changes.
+clusterScopeDescription: >-
+  Allows LitmusChaos to perform and monitor chaos in all namespaces in the
+  cluster.
+clusterWide: Cluster-wide
+clusterWideAccess: Cluster-wide access
+cmdDescription: >-
+  Allows developers to run shell commands and match the resulting output as part
+  of the entry/exit criteria.
+cmdProbeDetails: >-
+  The command probe allows developers to run shell commands and match the
+  resulting output as part of the entry/exit criteria. The intent behind this
+  probe was to allow users to implement a non-standard & imperative way of
+  expressing their hypothesis. For example, the cmdProbe enables you to check
+  for specific data within a database, parse the value out of a JSON blob being
+  dumped into a certain path, or check for the existence of a particular string
+  in the service logs.
+cmdProbeTitle: Execute any user-desired health-check function implemented as a shell command
+collaborators: Collaborators
+comingSoon: Coming Soon
+command: Command
+comparator: Comparator
+completed: Completed
+configure: Configure
+configureChaosInfrastructure: Configure Chaos Infrastructure
+configureDetails: Configure Details
+configureProperties: Configure Properties
+confirm: Confirm
+confirmText: Are you sure you want to proceed?
+connectChaosHub: Connect ChaosHub
+connectHub: Connect Hub
+connectInfraKubernetes: >-
+  Open your target cluster and run the following command to connect to your
+  kubernetes infrastructure
+connectInfraTooltip: >-
+  Note - It seems the cluster you have selected already has a cluster scope
+  chaos access on it, either remove it or continue with namespace mode.
+connected: Connected
+connectingChaosHub: Connecting ChaosHub
+connectionModal:
+  method: Select method of connection
+  options:
+    option1:
+      icon: github
+      text: Connect a new git repo
+    option2:
+      icon: argo
+      text: Connect other repo
+connectionStatus: Connection Status
+consoleLogs: Console Logs
+continue: Continue
+copyPrompt: >-
+  Copy the downloaded YML to a machine where you have kubectl installed and have
+  access to your Kubernetes cluster.
+copyPrompt1: 2. Apply the Chaos CRDs manually
+copyPrompt2: >-
+  3. Copy the downloaded YML to a machine where you have kubectl installed and
+  have access to your Kubernetes cluster.
+crdCopyPrompt: Apply the Chaos CRDs manually
+createChaosExperiment: Create Chaos Experiment
+createNamespace: 1. Create the namespace on your Kubernetes cluster
+createRecurringSchedule: Create recurring schedule
+created: Created
+createdOn: Created On
+creationTime: Creation Time
+criteria: Criteria
+cronExpression: Cron Expression
+cronExpressionRequired: Cron Expression required
+cronSelectOption: Cron (Recurring run)
+cronText: >-
+  The experiment will run periodically according to the cron provided below. You
+  can stop the schedule anytime you want.
+currentRun: Current Run
+currentUTCTime: Current UTC Time
+customLabel: Custom
+daily: Daily
+dailyMessage: Your chaos experiment will run daily at your chosen time.
+dateExecuted: Date Executed
+dayOfMonthLabel: Day of month
+dayOfWeekLabel: Day of week
+degelateNotActive: Selected infrastructure is inactive. Please select an active one.
+delete: Delete
+deleteChaosInfrastructure: Are you sure you want to disable this Chaos Infrastructure?
+deleteExperiment: Delete Experiment
+deleteExperimentDesc: >-
+  Deletes all the experiment runs from the chaos control plane. This will also
+  stop all experiments runs that are running.
+deleteExperimentHeading: Delete this experiment?
+deleteProbe: Delete Probe
+deleteProbeDesc: >-
+  Deletes the probe and all the associations with experiment runs from the chaos
+  control plane. This will also misplace any analytics that had incurred for the
+  previous runs for this probe.
+deleteProbeHeading: Delete this probe?
+deleteSuccess: Chaos Infrastructure Successfully Disabled
+deployChaosInfrastructure: Deploying your Infrastructure
+deployProbe: Deploy new Probe
+deploySetup: Deploy the setup
+deployedOn: Deployed using
+description: Description
+descriptionOptional: Description (Optional)
+details: Details
+detailsAndProperties: Details & Properties
+disable: Disable
+disableChaosInfrastructure: Disable Chaos Infrastructure
+discard: Discard
+discardExperiment: Are you sure you want to discard the current experiment?
+disconnectDescriptionClusterMode: Disable Chaos for this cluster.
+disconnectDescriptionNamespaceMode: Disable Chaos for this namespace.
+disconnected: Disconnected
+done: Done
+download: Download
+downloadChaosInfrastructureManifest: Re-Download the manifest
+downloadExperiment: Download Manifest
+downloadSuccess: Download request successfully sent
+downloadYAML: Download YML
+downloadYAMLFile: Step 1 - Download YML file
+downloadedSuccessfully: Downloaded successfully
+duration: Duration
+edit: Edit
+editChaosHub: Edit ChaosHub
+editExperiment: Edit Experiment
+editExperimentCopy: Edit Copy
+editExperimentOptions: Do you want to edit the same experiment or edit a copy?
+editExperimentSame: Edit Same
+editHubDescription: >-
+  We recommend you to create a new Experiment in case of addition/deletion of
+  faults or probes, as editing experiments with new faults or probes,
+  co-relation of analytics might get impacted.
+editInChaosStudio: Edit in Chaos Studio
+editProbe: Edit Probe
+editSameExperimentDescription: >-
+  When you edit directly on the existing experiment, you will not be able to
+  change the name and target environment/infrastructures of this experiment. And
+  your current experiment with run history will be overwritten.
+editSameExperimentTitle: Edit on the existing Experiment
+editYaml: Edit Yaml
+editingChaosHub: Editing ChaosHub
+effect: Effect
+enableChaosInfraButton: Enable Chaos in Environments
+enableChaosInfrastructure: Enable chaos infrastructure to run your first chaos experiment
+enableChaosInfrastructureDesc: >-
+  In order to run Chaos Experiments, you need to enable chaos infrastructure in
+  the Environments
+enableImageRegistryChanges: Enable Image Registry Changes
+enableSSLCheck: Enable SSL/TLS check
+enablingChaos: Enabling chaos...
+endTime: End Time
+endedAt: Ended at
+endpoint: Endpoint
+enterCustomCron: Enter a custom cron expression
+enterHubAccountURL: Enter Hub Account URL
+enterHubName: Enter Hub Name
+enterHubRepositoryBranch: Enter Hub Repository Branch
+enterHubRepositoryName: Enter Hub Repository Name
+enterHubRepositoryURL: Enter Hub Repository URL
+environment: Environment
+environmentError: It seems there was an error fetching the Environment Details.
+environments: Environments
+error: Error
+errorApplyChanges: Error in Applying the Changes. Please enter correct input values.
+errorFetchName: Error in fetching the name.
+executedBy: Executed by
+executedOn: Executed on
+executionDetails: Execution details goes here
+executionError: Execution Error
+executionHistory: Execution History
+executionOverview: Execution Overview
+executionStatus: Execution Status
+exhausted: Exhausted
+expCategory: Experiment Category Tag
+expDesc: Experiment Description
+expName: Experiment Name
+expSaved: Experiment saved successfully
+expectedResilienceScore: Expected Resilience Score
+expectedResponseCode: Expected Response Code
+experiment: Experiment
+experimentActivity: Experiment Activity
+experimentBuilder: Experiment Builder
+experimentDeleted: The experiment has been deleted successfully.
+experimentDeletedSuccessfully: Experiment deleted successfully
+experimentID: Experiment ID
+experimentInFault: Predefined Chaos Experiments using this Fault
+experimentIsRunning: Experiment execution in progress. Please wait.
+experimentNamespace: Experiment Namespace
+experimentOverview: Experiment Overview
+experimentPreview: Experiment Preview
+experimentRunDetails: Experiment Run Details
+experimentRunID: Experiment Run ID
+experimentRuns: Experiment Runs
+experimentStopSuccessMessage: Experiment successfully stopped
+experimentType: Experiment Type
+experiments: Experiments
+expressionBreakdown: Expression Breakdown
+failStep: Fail Step
+failed: Failed
+failedRuns: Failed Runs
+fault: Fault
+faultActivity: Fault Activity
+faultConfiguration: Fault Configuration
+faultDetails: Fault Details
+faultShouldHaveAtleastOneProbe: Fault should have at least one probe available
+faultSummary: Fault Summary
+faultVerdict: Fault Verdict
+faults: Faults
+faultsContained: Faults Contained
+faultsHaveProbeFailures: Faults have Probe Failures
+faultsLibrary: Faults Library
+featureRestriction:
+  experimentsPerMonthLevelUp: >-
+    You have used {{ count }} / {{ experimentsLimit }} free experiment runs this
+    month. Consider upgrading for more experiments runs.
+  initialDeploymentsWarningActive: >-
+    You have used {{ warningLimit }}% of experiment runs included in the free
+    plan. The free plan is restricted to 10 experiment runs per month.
+  resourceLevelUpFree: >-
+    You have used {{ resourceLimit }} {{ resourceName }} included in the free
+    plan. Consider upgrading to unlock more resources.
+  resourceLevelUpTeam: >-
+    You have used {{ resourceLimit }} resources included in the team plan.
+    Consider upgrading to unlock more resources.
+  resourceOveruseEnterprise: >-
+    You have exceeded your resource subscription limit. Consider increasing your
+    limits to keep shipping.
+fieldSelector: Field Selector
+genericResourceNotFoundError: >-
+  {{resource}} [{{resourceID}}] under Project [{{projectID}}] does not exist or
+  has been deleted.
+gitConnection: Repository Connection
+goBack: Go back to previous page
+goChaosHome: Go to Chaos Home
+greatJob: Great Job
+group: Group
+healthy: Healthy
+history: History
+hostedOn: Hosted on
+hostedOnAgent: Hosted on Chaos Infrastructure
+hourly: Hourly
+hourlyMessage: Your chaos experiment will run hourly at your chosen minute.
+hoursAnd: hours(s) and
+hoursLabel: Hours
+hoverFaultToViewDetails: Hover over a fault to view details
+howToFindServiceAccount: How to find Service Account Name?
+howToUseExp: How to use the Experiment
+httpDescription: >-
+  Allows developers to run HTTP commands and match the resulting output as part
+  of the entry/exit criteria.
+httpProbeDetails: >-
+  The httpProbe allows developers to specify a URL which the experiment uses to
+  gauge health/service availability (or other custom conditions) as part of the
+  entry/exit criteria. The received status code is mapped against an expected
+  status. It supports http Get and Post methods.
+httpProbeTitle: Query health/downstream URLs
+hubAccess: Hub Access
+hubConnectedSuccessfully: Hub Connected Successfully
+hubDeletedSuccessfully: Hub Deleted Successfully
+hubEditedSuccessfully: Hub Edited Successfully
+hubName: Hub Name
+hubRepositoryBranch: Hub Repository Branch
+hubRepositoryURL: Repository URL
+id: ID
+idlowerCase: id
+improveResilienceOfTheDeployedService: Improve resilience of the deployed service
+inactive: Inactive
+inactiveTooltip: >-
+  This infrastructure is Inactive as your deployment may have encountered a
+  problem. Please check the deployment logs
+infraName: Infrastructure Name
+infrastructure: Infrastructure
+infrastructureCommand: >-
+  Run the following command to apply the Chaos infrastructure to your Kubernetes
+  Cluster
+infrastructureRegistered: >-
+  Your infrastructure has been registered. The infrastructure takes up to 3-5
+  minutes to be available for chaos testing. You can check the status in
+  Environment -> Infrastructure list.
+infrastructureStates: Learn more about the states of Infrastructure
+infrastructureType: Infrastructure type
+initialDelaySeconds: Initial Delay Seconds
+insecureSkipVerify: Insecure skip verify
+installYaml: Install Chaos Infrastructure using YML
+interval: Interval
+intervalOptional: Interval (Optional)
+invalidSelection: Invalid Selection
+invalidText: Invalid
+isRequired: '{{field}} is required field'
+issueSupport: If the issue still persists, consider reaching out to support!
+k8sDescription: >-
+  Addresses verification of the desired resource state by allowing users to
+  define the Kubernetes GVR (group-version-resource) with appropriate filters
+  (field selectors/label selectors)
+k8sProbeDetails: >-
+  The k8sProbe addresses verification of the desired resource state by allowing
+  users to define the Kubernetes GVR (group-version-resource) with appropriate
+  filters (field selectors/label selectors). The experiment makes use of the
+  Kubernetes Dynamic Client to achieve this. It supports create, delete, present
+  and absent operations.
+k8sProbeTitle: Perform CRUD operations against native & custom Kubernetes resources
+key: Key
+kubectl: Kubectl
+kubernetes: Kubernetes
+kubernetesChaosInfrastructureClusterScopeDeleteStepTwo: 2. Delete the remaining components
+kubernetesChaosInfrastructureDeleteStepOne: 1. Delete the chaos experiment, engine, and result
+kubernetesChaosInfrastructureNamespaceScopeDeleteStepFour: 4. Delete the namespace
+kubernetesChaosInfrastructureNamespaceScopeDeleteStepThree: 3. Delete the remaining components
+kubernetesChaosInfrastructureNamespaceScopeDeleteStepTwo: 2. Delete the CRDs
+kubernetesClusterDetails: K8s Cluster Details
+kubernetesInfrastructureDeleteCRDSNote: >-
+  Note: If you have another Kubernetes chaos infrastructure on this cluster
+  under a different namespace then skip the below step (2)
+kubernetesInfrastructureDeleteNote: >-
+  Note: Please download the chaos infrastructure manifest from the menu and run
+  the following command on your Kubernetes cluster to clean up the
+  infrastructure resources
+kubernetesPermissions:
+  nameSpace: To create namespace for the chaos infrastructure namespace.
+  statefulSets: To create deployments for the chaos infrastructure plane.
+kubernetesPrerequisites: Kubernetes prerequisites
+kubernetesSetupInstructions: Kubernetes Setup Instructions
+labelSelector: Label Selector
+lastHeartBeat: Last HeartBeat
+lastModified: Last Modified
+lastResilienceScore: Last Resilience Score
+lastRun: Last Run
+lastSyncedAt: Last Synced at
+latestRun: Latest Run
+latestRunFallbackText: No Experiment Runs found
+launchExperiment: Launch Experiment
+learnMore: Learn More
+letsGetStarted: Let`s get started
+litmus: Litmus
+litmusChaos: LitmusChaos
+loading: Loading, please wait...
+logErrorMessage: Unable to fetch logs from log service, please try after some time.
+loginDescription: Login to create, orchestrate, analyze and collaborate your Chaos Experiments.
+logs: Logs
+logsOptional: Logs (Optional)
+mainTitle: How do you want to start off?
+manifestDownloadUnsuccessful: Manifest download is unavailable!
+manifestMissing: Manifest is missing! Please check your ChaosHub.
+manual: Manual
+manualInterruption: Manual Interruption needed
+markRunAsComplete: Mark Run as Complete
+markRunAsCompleteDescription: This will mark the run as complete and you will no longer be able to re-run.
+meetsExpectations: The resilience score has met the expectation.
+menuItems:
+  deleteHub: Delete Hub
+  editHub: Edit Hub
+  syncHub: Sync Hub
+  viewHub: View Hub
+method: Method
+minute: Minute
+minutesAfterTheHour: minute(s) after the hour
+minutesLabel: Minutes
+minutesParentheses: minute(s)
+mode: Mode
+moduleName: Chaos Module
+monitorCluster: >-
+  Allows LitmusChaos to perform and monitor chaos in all namespaces available in
+  this cluster
+monitorNamespace: >-
+  Allows LitmusChaos to perform and monitor chaos in a particular namespace
+  available in this cluster
+monthLabel: Month
+monthly: Monthly
+monthlyMessage: Your chaos experiment will run monthly at your chosen day and time.
+monthsParentheses: month(s)
+mostRecentDirection: Latest one on right side
+mustBeInteger: '{{field}} must be an integer'
+mustBePositive: '{{field}} must be a positive number'
+myProfile: My Profile
+na: Not Available
+name: Name
+nameIdDescriptionTags:
+  descriptionPlaceholder: Enter Description
+  namePlaceholder: Enter Name
+  optionalField: '{{name}} (optional)'
+  tagsLabel: Tags
+namespace: Namespace
+namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
+namespaceWide: Namespace-wide
+needAttention: Needs Attention
+newChaosExperiment: New Chaos Experiment
+newChaosHub: New ChaosHub
+newChaosInfrastructure: Enable Chaos
+newExperiment: New Experiment
+newProbe: New Probe
+newUpdates: New Updates
+newUserNoExperiments:
+  subtitle: >-
+    A chaos experiment contains a series of chaos faults and chaos probes to
+    verify the resilience of your service
+  title: There are no Chaos Experiments in your project
+newUserNoInfra:
+  title: There are no active Chaos Infrastructures in your project
+next: Next
+nextRun: Next Run
+nextSelectChaosExperiments: Next -> Select Chaos Experiments
+noAnalysis: No Analysis
+noChaosHubSelected: No ChaosHubs selected
+noChaosInfrastructure: There are no Kubernetes Chaos Infrastructures in this Environment
+noChaosInfrastructureFound: No Kuberenetes chaos infrastructure found!
+noClustersFound: Sorry, we can’t find any available clusters
+noData:
+  message: Oops, something went wrong on our end. Please contact Admin.
+  title: No Data Found
+noDataCV: No Data
+noDataToDisplay: No data to display
+noExpFound: No Predefined Chaos Experiments found using this Fault.
+noExperimentFoundMatchingSearch: No experiment found matching your search
+noExperimentSelected: No experiment selected
+noExperiments: No Experiments found
+noExperimentsAdded: No experiments added
+noFaults: No Faults found in selected hub
+noFilteredActiveInfra: No active Chaos Infrastructures found for the search term
+noFilteredData:
+  subtitle: Please try to modify your search criteria.
+  title: No records were found to match your search
+noHealthyState: If the Chaos Infrastructure didn’t reach a healthy state
+noKubernetesChaosInfrastructureFound: >-
+  No Kubernetes Chaos infrastructure found matching "{{value}}". Please adjust
+  the search criteria and try again.
+noLogs: Sorry, Logs are currently not available
+noMonitoredService: No monitoring services found for
+noProbeDescription: >-
+  Probes are pluggable checks that can be defined within the ChaosEngine for any
+  Chaos Fault. The experiment pods execute these checks based on the mode they
+  are defined in &amp; factor their success as necessary conditions in
+  determining the verdict of the experiment
+noProbes: No probes configured
+noProbesAvailable: No Probes available for this node
+noProbesFound:
+  errorMessage: Error in fetching probes
+  message: Experiment has no probes yet, chaos step may still be executing.
+  title: No Probes found
+noProjectFoundMatchingSearch: No project found matching your search {{searchTerm}}
+noResultsFound: No results found
+noRunsFound: No runs found
+noRunsFoundForThisExperiment: No runs found for this experiment
+noTunables: >-
+  Unable to identify fault configurations correctly, please refer to the fault
+  troubleshoot docs to learn more.
+noWorkflowRun: No experiment runs found
+nodeSelector: Node Selector
+nodeSelectorPlaceholderForKey: Enter the key
+nodeSelectorPlaceholderForValue: Enter the value
+nodeSelectorText: >-
+  Node Selector is a selector which will result in all pods of the experiment to
+  be scheduled on the selected node.
+nonCronSelectOption: Non-Cron (Single run)
+nonCronText: >-
+  The experiment will run once after you click on Run. If you want to run it
+  again, you can trigger it manually.
+nonProd: Non Prod
+notMeetsExpectations: The resilience score didn't meet the expectation.
+notMeetsExpectationsInterventionNeeded: >-
+  The resilience score did not meet the expectation. It needs the manual
+  intervention.
+notes: Notes
+numberOfExperiments: Number of Experiments
+objective: Objective
+objectives: Objectives
+observe: Observe
+ofEvery: of every
+'on': 'On'
+onThe: on the
+onThisPage: ON THIS PAGE
+openInNewTab: Open in new tab
+operation: Operation
+operator: Operator
+optional: (Optional)
+or: or
+orderBy: Order By
+organization: Organization
+outOf: OUT OF
+outOfSmall: out of
+overallNodeResult: Overall Node Result
+overallResiliencyScore: Overall Resilience Score
+overview: Overview
+overwriteYaml: Uploading a yaml will overwrite the existing one.
+parallel: Parallel
+passed: Passed
+passedRuns: Passed Runs
+pauseRun: Pause Run
+pending: Pending
+pendingTime: >-
+  It may take 3-5 minutes after applying the manifest for the infrastructure to
+  be connected.
+phase: Phase
+platform: Platform
+pleaseComplete: Please complete all the steps
+pleaseSelectLeastOneExperiment: Please select at least one experiment
+points: point(s)
+pollingInterval: Polling Interval
+preProd: Pre-Prod
+predefinedExperimentsNotFound: No Predefined Experiments found in this hub
+preview: Preview
+private: Private
+probeConfiguration: Probe Configuration
+probeDetails: Probe Details
+probeMode: Probe Mode
+probeModes:
+  Continuous: Continuous
+  EOT: EOT
+  Edge: Edge
+  OnChaos: OnChaos
+  SOT: SOT
+probeName: Probe Name
+probeOverview: Probe Overview
+probePassedSuccessfully: Probe passed successfully
+probeProperties: Probe Properties
+probeResult: Probe Result
+probeResultNotAvailable: Probe result is not available.
+probeResultsInPastRuns: Probe results in the past 10 runs
+probeStatus: Probe Status
+probeSuccessPercentage: Probe Success Percentage
+probeSummary: Probe Summary
+probeType: Probe Type
+probeTypes:
+  cmdProbe: Command Probe
+  httpProbe: HTTP Probe
+  k8sProbe: K8S Probe
+  promProbe: Prometheus Probe
+probeValidation:
+  body: POST body is a required field
+  command: Probe command is a required field
+  contentType: Content Type is a required field
+  criteria: Comparator criteria is a required field
+  endpoint: Probe endpoint is a required field
+  getCriteria: GET Criteria is a required field
+  getResponseCode: GET Response Code is a required field
+  interval: Probe interval is a required field
+  method: Probe method is a required field
+  name: Probe Name is a required field
+  namespace: Probe namespace is a required field
+  pollingInterval: Probe polling interval is a required field
+  postCriteria: POST Criteria is a required field
+  postResponseCode: POST Response Code is a required field
+  query: Probe query is a required field
+  responseTimeout: Probe response timeout is a required field
+  retry: Retry is a required field
+  timeout: Probe timeout is a required field
+  type: Comparator type is a required field
+  url: URL is a required field
+  value: Comparator value is a required field
+probes: Probes
+probesArePassed: probes are passed
+prod: Prod
+project: Project
+promDescription: >-
+  Allows users to define metrics-based SLOs in a declarative way and determine
+  the experiment verdict based on its success.
+promProbeDetails: >-
+  The promProbe allows users to run Prometheus queries and match the resulting
+  output against specific conditions. The intent behind this probe is to allow
+  users to define metrics-based SLOs in a declarative way and determine the
+  experiment verdict based on its success. The probe runs the query on a
+  Prometheus server defined by the endpoint, and checks whether the output
+  satisfies the specified criteria. A PromQL query needs to be provided, whose
+  outcome is then used for the probe validation.
+promProbeTitle: Execute promql queries and match prometheus metrics for specific criteria
+properties: Properties
+provideTargetApplicationDetails: Provide target application details where you want to induce the chaos
+public: Public
+query: Query
+queryPath: Query path
+ranAt: Ran at
+rbacDescription: You are missing permission '{{permission}}' to perform this action.
+rbacHeader: You do not have permission to perform this action
+reRunDesc: This will re-run the current experiment.
+reRunExperiment: Run Experiment
+reRunSuccessful: A new run scheduled successfully
+readMore: ' Read more'
+recentExecutionResults: Recent Execution Results
+recentExecutions: Recent Executions
+recentExperimentRuns: Recent Experiment Runs
+recentlyUsed: Recently Used
+recurringRun: Recurring Run (Cron)
+recurringSchedule: Recurring Schedule
+referencedBy: Referenced By
+registryName: Registry Name
+required: Required
+rerun: Rerun
+resetFilters: Reset Filters
+resilienceOverview: Resilience Overview
+resilienceProbes: Resilience Probes
+resilienceRate: Resilience Rate
+resilienceScoreOverview: Resilience Score Overview
+resilienceScoreTooltip: >-
+  Latest application resilience measured based on this formula Σ(Weights(fault)
+  * Probe Percentage(fault)) / Σ Weights(fault).
+resilienceScoreTrends: Resilience Score Trends
+resilienceStepCanHelpYou: Resilience Step can help you
+resilienceTabDescription: >-
+  Run controlled 'chaos' experiments to understand how real-world stress and
+  failures impact your systems. Create more reliable applications and
+  infrastructure.
+resiliencyScore: Resilience Score
+resource: Resource
+responseCode: Response Code
+responseTimeout: Response Timeout
+responseType: Response Type
+resultAfterExecution: Probe result would be available after execution completion
+resultMetExpectations: Result met expectations
+resultSummary: Result Summary
+resultsMetExpectations: Results of the run met expectations?
+resultsSummary: Results Summary
+retry: Retry
+retryOptional: Retry (Optional)
+revertSchedule: Revert Schedule
+revertScheduleText: Enabling this will make the schedule to revert after completion.
+run: Run
+runAllExperiment: Run All Experiments
+runAt: Run at
+runCommand: Step 2 - Run the command
+runCommands: Please copy and run the following command in your command prompt.
+runCreatedOn: Run created on
+runCreatedSuccessfully: Run created successfully
+runDailyAt: Run daily at
+runDetails: Run Details
+runEvery: Run every
+runHistory: Run History
+runLogsNotAvailableYet: Please wait until the faults have started to access the logs.
+runMarkedAsCompleted: Run marked as completed
+runNow: Run Now
+runOn: Run on
+runOnSpecificDay: Run on a specific day at monthly interval
+runOnSpecificDayMonth: Run on a specific day and month
+running: Running
+runs: Runs
+save: Save
+saveAndContinue: Save & Continue
+saveToChaosHub: Save to ChaosHub
+saveToChaosHubSuccess: Successfully pushed experiment to ChaosHub
+saveValues: Save Values
+schedule: Schedule
+scheduleType: Schedule Type
+scheduledBy: Scheduled by
+scheduledFor: Scheduled for
+scope: Scope
+search: Search
+searchExperimentRunID: Search for Experiment Run ID
+searchExperiments: Search Experiments
+searchForAProbe: Search For a Probe
+searchForChaosFaults: Search for Chaos Faults
+searchForHub: Search for a hub
+searchForMonitoredServices: Search for a monitored service
+searchHub: Search for a Hub
+secret: Secret
+seeAllChaosHubs: See All ChaosHubs
+seeAllChaosInfrastructures: See All Infrastructures
+seeAllEnvironments: See All Environments
+seeAllFaults: See All Faults
+selectAppKind: Select App Kind
+selectAppLabel: Select App Label
+selectAppNamespace: Select App Namespace
+selectChaosExperiment: Select Chaos Experiment
+selectChaosInfrastructure: Select a Chaos Infrastructure
+selectChaosInfrastructureFormLabel: Select a Chaos Infrastructure to run this experiment
+selectChaosInfrastructureType: Select Chaos Infrastructure Type
+selectDeployChaosInfrastructure: Enable Chaos on your infrastructure
+selectExperimentToViewDetails: Please select an experiment to view its details.
+selectExperiments: Select Experiments
+selectHub: Select a ChaosHub
+selectHubFromList: Select a hub from the list
+selectHubHeader: Create or select existing ChaosHub
+selectProbes: Select Probes
+selectProject: Select a Project
+selectTimeframe: Select time frame
+selectYourProbe: Select your chaos probe
+selectYourProbeType: Select your probe type
+selectedExperiments: Selected Experiments
+sequence: Sequence
+serviceAccount: Service Account
+serviceAccountName: Service Account Name
+serviceHealthScore: Service Health Score
+setFaultWeights: Set fault weights
+setupChaosInfrastructures: >-
+  Enabling Chaos on infrastructure helps to inject chaos by studying your
+  infrastructure and discover services
+setupProbe: Setup the Probe
+setupProbeBtn: Setup Probe
+showLess: ' Show less'
+showingAll: Showing all
+showingLastRuns: Showing last 50 runs only
+signOut: Sign Out
+singleRun: Single Run
+source: Source
+specificNamespaceAccess: Specific namespace access
+stages: Stages
+startBlankCanvasDescription: Start from scratch
+startBlankCanvasTitle: Blank Canvas
+startTime: Start Time
+startWith: Start with blank canvas
+startedAt: Started at
+startedOn: Started On
+startingWith: Starting with
+status: Status
+statusCheck: >-
+  Note: You may check the status of your Chaos Infrastructure in the status
+  column of the Chaos Infrastructures screen
+stop: Stop
+stopAllDesc: This will stop all the ongoing and upcoming experiment runs in this project.
+stopAllExp: Stop All Runs
+stopAllHeading: Stop all experiment runs?
+stopExpRun: Stop This Run
+stopExpRunDesc: This will stop the current experiment run.
+stopExpRuns: Stop Experiment
+stopExperimentDesc: This will stop all the ongoing and upcoming runs for this experiment.
+stopExperimentHeading: Stop all runs in this experiment?
+stopOnFailure: Stop On Failure
+stopped: Stopped
+stoppedRuns: Stopped Runs
+stoppedSuccessfully: stopped successfully
+succeeded: Succeeded
+success: Success
+successSummary: Success Summary
+suggestion1: Here is what you can do
+summary: Summary
+switchToBarChart: Switch to bar chart
+switchToLineChart: Switch to line chart
+syncLatestRun: Sync Latest Run
+syncedSuccessfully: Synced Successfully
+tags: 'Tags:'
+target: Target
+targetApplication: Target Application
+targetInfrastructure: Target Infrastructure
+taskIDSuccess: >-
+  Your Chaos Infrastructure deployment request has been successful with the
+  TaskID:
+templateFromChaosHubsDescription: Use experiments available in ChaosHubs
+templateFromChaosHubsTitle: Templates from ChaosHubs
+templateFromProjectDescription: Use experiments available in your Project
+templateFromProjectTitle: Templates from Project
+testConnection: Test Connection
+testSuccess: Chaos Infrastructure connection validated successfully
+testingConnection: Testing Chaos Infrastructure Connection
+thisExperimentHasNoRuns: This experiment has no runs yet
+timeout: Timeout
+toleration:
+  effectPlaceholder: Enter effect
+  keyPlaceholder: Enter key
+  operatorPlaceholder: Enter operator
+  title: Toleration
+  valuePlaceholder: Enter value
+tolerationSeconds: Toleration Seconds
+tolerationText: >-
+  Tolerations are applied to pods and allow the pods to schedule onto nodes with
+  matching taints.
+topology: Topology
+total: Total
+totalChaosHubs: Total ChaosHubs
+totalChaosInfrastructures: Total Infrastructures
+totalEnvironments: Total Environments
+totalExp: Total Experiments
+totalExperiments: Total Faults in Execution
+totalRuns: Total Runs
+triggeredBy: Triggered by
+troubleshooting: Troubleshooting
+tuneFault: Tune Fault
+tuneFaultProperties: Tune fault properties
+tuneFaultWeight: Tune fault weightage
+tuneWeight: Tune Weight
+type: Type
+unableToGetProbes: Unable to get probe information
+unhealthy: Unhealthy
+update: Update
+updatedAt: Updated at
+updatedBy: Updated by
+upgradeChaosInfrastructure: Upgrade Chaos Infrastructure
+upgradeManifestDownloadedSuccessfully: Upgrade manifest downloaded successfully
+uploadYAMLButton: Select YAML file from your device
+uploadYAMLDescription: Upload experiment manifest
+uploadYAMLDescriptionBuilder: >-
+  You can drag and drop an experiment YAML file and let Litmus visualize your
+  experiment flow.
+uploadYAMLDragText: Drag & Drop the YAML file
+uploadYAMLTitle: Upload YAML
+uploadYAMLTitleBuilder: Drag and drop experiment YAML file
+uploadYaml: Upload Yaml
+url: URL
+useIntegerValue: Please enter an integer value
+useThisTemplate: Use this template
+validationError: Validation Error
+value: Value
+valuePlaceholder: Enter a value
+version: Version
+view: View
+viewAllDefaultProperties: View all default properties
+viewAllExperiments: View All Experiments
+viewAllRuns: View All Runs
+viewDetailedExecution: View Detailed Execution
+viewExecution: View Execution
+viewExecutions: View Runs
+viewExperimentManifest: View Experiment manifest
+viewInChaosModule: View in Chaos Module
+viewLastExecution: View Last Execution
+viewLessDefaultProperties: View less default properties
+viewLogs: View Logs
+viewManifest: View YAML Manifest
+viewProbeDetails: View Probe Details
+viewProbeProperties: View Probe Properties
+viewRun: View Run
+warning: Warning
+weekly: Weekly
+weeklyMessage: Your chaos experiment will run weekly at your chosen day and time.
+weightAdjustDescription: >-
+  You have selected {{numberOfFaults}} faults in {{experimentName}} experiment.
+  Successful outcome of each fault carries a certain weight. We have
+  pre-selected weights for each fault for you. However, you may review and
+  modify the weighage. The weights are relative to each other.
+weightAdjustHeader: Adjust the weights of the faults in the Chaos Experiment
+welcomeToLitmus: Welcome to Litmus
+yearlyTabTitle: Yearly

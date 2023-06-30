@@ -1,0 +1,40 @@
+.popover {
+  transform: translate3d(17px, -5px, 0px) !important;
+}
+.popoverTarget {
+  border-radius: 0;
+  height: 24px !important;
+  width: 100%;
+  min-height: unset;
+  padding: var(--spacing-none) !important;
+  color: white !important;
+
+  &:active,
+  &[class*='active'] {
+    border: 0.5px solid var(--primary-5) !important;
+    color: var(--primary-5) !important;
+    box-shadow: none !important;
+  }
+}
+.selectButton {
+  width: 100%;
+  justify-content: space-between;
+  color: var(--white) !important;
+  border: 0.5px solid var(--grey-500) !important;
+  border-radius: 2px;
+  height: 26px !important;
+  padding: 0 var(--spacing-xsmall) !important;
+  &:hover {
+    border: 0.5px solid var(--primary-5) !important;
+    color: var(--primary-5) !important;
+    box-shadow: none !important;
+  }
+}
+.projectText {
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}

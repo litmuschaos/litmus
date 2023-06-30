@@ -1,0 +1,192 @@
+.referenceSelect {
+  padding: var(--spacing-xlarge) !important;
+
+  &.dialog {
+    width: 833px;
+    height: 86vh;
+    max-height: 989px;
+  }
+
+  :global {
+    .bp3-dialog-header {
+      padding: 0;
+      margin-top: 0 !important;
+    }
+
+    .Dialog--close {
+      top: 32px !important;
+      right: 28px !important;
+    }
+  }
+}
+
+.container {
+  box-shadow: none !important;
+  border: 1px solid var(--bp3-intent-color, var(--grey-200)) !important;
+  color: var(--grey-800) !important;
+  height: 36px !important;
+  position: relative;
+  padding: var(--spacing-xsmall) var(--spacing-small) !important;
+  background-color: var(--white) !important;
+  display: flex;
+  justify-content: space-between;
+  border-radius: var(--spacing-2);
+
+  &:hover {
+    border-color: var(--primary-6);
+  }
+
+  &:focus {
+    border-color: var(--primary-7);
+  }
+
+  :global(.bp3-button-text) {
+    width: 100%;
+  }
+
+  :global(.bp3-icon-chevron-down) {
+    position: absolute;
+    right: 0;
+    opacity: 0.5;
+    padding: var(--spacing-small) !important;
+  }
+
+  .placeholder {
+    color: var(--grey-700);
+  }
+}
+
+.selected {
+  background: #effbff;
+  border: 1.5px solid #0278d5;
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  border-radius: 4px;
+}
+
+.notSelected {
+  background: #fafbfc;
+  border: 1px solid rgba(40, 41, 61, 0.3);
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.agentList {
+  flex-grow: 1;
+  gap: 1rem;
+}
+
+.agentListInnerContainer {
+  flex-grow: 1;
+  overflow: auto;
+  gap: 1rem;
+  max-height: calc(100% - 48px);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 5fr 4fr 25px;
+  align-items: center;
+  gap: 0.5rem;
+
+  .leftInfo {
+    flex: 1;
+    align-items: center;
+  }
+
+  .iconCheck {
+    visibility: hidden;
+    margin-right: var(--spacing-xsmall);
+    margin-left: var(--spacing-xsmall);
+    cursor: pointer;
+    align-self: center;
+
+    > svg {
+      > path {
+        stroke-width: 1;
+        stroke: var(--grey-500);
+      }
+    }
+  }
+
+  .iconChecked {
+    visibility: visible !important;
+
+    > svg {
+      > path {
+        stroke: var(--primary-7);
+      }
+    }
+  }
+
+  &:hover {
+    .edit-btn {
+      color: var(--grey-600) !important;
+      visibility: visible;
+    }
+
+    .iconCheck {
+      visibility: visible;
+    }
+  }
+}
+
+.gitInfo {
+  display: grid;
+  grid-template-columns: 4fr 5fr;
+  padding: 6px 8px;
+  background: var(--grey-100) !important;
+  border-radius: 8px !important;
+  width: 100%;
+
+  .gitBranchIcon {
+    padding-left: var(--spacing-small) !important;
+    border-left: 1px var(--grey-600) solid;
+  }
+}
+
+.status {
+  align-items: center;
+  display: flex;
+  align-content: center;
+  padding-right: var(--spacing-xsmall) !important;
+
+  > svg {
+    margin: auto;
+  }
+
+  /* for increased specificity */
+  &.red-status:global(.bp3-icon) {
+    color: var(--red-500) !important;
+  }
+
+  /* for increased specificity */
+  &.green-status:global(.bp3-icon) {
+    color: var(--green-500) !important;
+  }
+}
+
+.fixed {
+  position: fixed;
+}
+
+.gap-4 {
+  gap: 1rem;
+  overflow: auto;
+}
+
+.paginationContainer {
+  padding-top: 8px;
+  overflow: hidden;
+  padding-bottom: 0 !important;
+  & span,
+  p {
+    font-size: 12px !important;
+  }
+  :global {
+    .bp3-transition-container {
+      top: -115px !important;
+      left: 5px !important;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+$sub-header-height: 65px;
+
+.test {
+  :global {
+    .PageHeader--large {
+      background-color: #eef6fc !important;
+    }
+    .PageHeader--breadcrumbsDiv {
+      margin-bottom: 8px !important;
+    }
+  }
+}
+
+.title {
+  line-height: 28px;
+}
+
+.subHeader {
+  overflow: auto;
+  height: $sub-header-height;
+  z-index: 2;
+}
+
+.pageBody {
+  position: relative;
+  height: calc(var(--page-min-height) - var(--page-header-height)) !important;
+}
+
+.pageBodyWithLevelUpBanner {
+  height: calc(var(--page-min-height) - var(--page-header-height) - 56px) !important;
+  min-height: calc(var(--page-min-height) - var(--page-header-height) - 56px) !important;
+}
+
+.leftSideBar {
+  height: 100vh;
+  border-right: 1px solid var(--grey-200);
+}
+
+.rightSideBar {
+  background-color: #fafbfc !important;
+  min-height: var(--page-min-height);
+  width: 64px;
+  height: 100vh;
+  border-left: 1px solid var(--grey-200);
+}
+
+.innerContainer {
+  z-index: 1;
+  overflow-y: scroll !important;
+  min-height: unset !important;
+}
+
+.innerContainerWithSubHeader {
+  height: calc(var(--page-min-height) - var(--page-header-height) - $sub-header-height) !important;
+}
+
+.innerContainerWithoutSubHeader {
+  height: calc(var(--page-min-height) - var(--page-header-height)) !important;
+}
+
+.container {
+  z-index: 1;
+  position: relative;
+  height: 100%;
+}

@@ -1,0 +1,82 @@
+.mainContainer {
+  height: 82px;
+  width: 161px;
+  position: relative;
+  border-radius: 4px;
+  .dartArrow {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+  min-width: 161px;
+}
+
+.running {
+  color: var(--primary-7);
+  background-color: var(--primary-1);
+}
+
+.green {
+  color: var(--green-700);
+  background-color: var(--lime-50);
+}
+
+.yellow {
+  color: var(--orange-500);
+  background-color: var(--orange-100);
+}
+
+.red {
+  color: var(--red-500);
+  background-color: var(--red-50);
+}
+
+.undefined {
+  color: var(--primary-10);
+  background-color: var(--primary-bg);
+}
+
+.text {
+  padding: 15px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.resilienceScoreText {
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.2px;
+  text-transform: capitalize;
+  color: #4f5162 !important;
+}
+
+.resilienceScoreValue {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.infoButton {
+  position: absolute;
+  right: 5px;
+  top: 4px;
+  svg {
+    color: #9293ab;
+  }
+  :global {
+    .Tooltip--tooltipIcon {
+      margin-left: 0 !important;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+.toothpick {
+  display: flex;
+  align-items: center;
+
+  .adjoiningText {
+    margin: 0 var(--spacing-medium) !important;
+    color: var(--grey-800) !important;
+  }
+}
+
+.label {
+  margin-bottom: var(--spacing-small) !important;
+  color: var(--grey-800) !important;
+  font-size: 14px !important;
+}
+
+.selectStyle {
+  [class*='bp3-input'] {
+    border-color: var(--bp3-intent-color, #dddddd) !important;
+  }
+}

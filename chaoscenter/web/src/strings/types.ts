@@ -192,8 +192,6 @@ export interface StringsMap {
   'download': unknown
   'downloadChaosInfrastructureManifest': unknown
   'downloadExperiment': unknown
-  'downloadReportText': unknown
-  'downloadRunReport': unknown
   'downloadSuccess': unknown
   'downloadYAML': unknown
   'downloadYAMLFile': unknown
@@ -572,8 +570,6 @@ export interface StringsMap {
   'recurringSchedule': unknown
   'referencedBy': unknown
   'registryName': unknown
-  'report': unknown
-  'reportGeneratedOn': PrimitiveObject<'dateNow' | 'timeNow'>
   'required': unknown
   'rerun': unknown
   'resetFilters': unknown
@@ -772,7 +768,6 @@ export interface StringsMap {
   'viewExecution': unknown
   'viewExecutions': unknown
   'viewExperimentManifest': unknown
-  'viewExperimentReport': unknown
   'viewInChaosModule': unknown
   'viewLastExecution': unknown
   'viewLessDefaultProperties': unknown
@@ -780,10 +775,7 @@ export interface StringsMap {
   'viewManifest': unknown
   'viewProbeDetails': unknown
   'viewProbeProperties': unknown
-  'viewReport': unknown
   'viewRun': unknown
-  'viewRunReport': unknown
-  'viewRunReportForThisRun': unknown
   'warning': unknown
   'weekly': unknown
   'weeklyMessage': unknown

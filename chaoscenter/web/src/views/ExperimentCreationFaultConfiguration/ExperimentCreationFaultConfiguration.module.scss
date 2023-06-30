@@ -1,0 +1,37 @@
+.tabs {
+  height: calc(100% - 96px);
+  :global {
+    .Tabs--horizontal .bp3-tab {
+      height: 100%;
+      padding: 0 var(--spacing-4);
+    }
+    .bp3-tab-list {
+      padding: 0px var(--spacing-xlarge);
+      background-color: var(--white);
+      border-bottom: 1px solid var(--grey-200);
+    }
+    .bp3-tab-panel {
+      margin-top: 0px;
+      height: calc(100vh - 103px);
+    }
+    .DropDown--main .DropDown--dropdownButton.DropDown--withBorder {
+      background-color: var(--white) !important;
+    }
+  }
+}
+
+.customButtons {
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+}
+
+.dialogWrapper {
+  padding-top: var(--spacing-xxlarge) !important;
+  p {
+    word-break: normal;
+  }
+  :global(.bp3-button-text) {
+    flex-shrink: 0 !important;
+  }
+}
