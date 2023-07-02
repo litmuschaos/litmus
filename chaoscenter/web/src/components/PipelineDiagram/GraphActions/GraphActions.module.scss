@@ -1,0 +1,59 @@
+.vertical {
+  position: absolute;
+  bottom: 25%;
+  right: var(--spacing-xxlarge);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-medium);
+}
+
+.canvas-buttons {
+  position: absolute;
+  right: var(--spacing-large);
+  bottom: 25px;
+
+  :global(.bp3-button) {
+    padding: var(--spacing-medium) !important;
+    border: 1px solid var(--pipeline-grey-border) !important;
+    color: var(--grey-350) !important;
+    font-size: var(--font-size-xsmall) !important;
+    background-color: var(--grey-50);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.0712686) !important;
+    &:hover {
+      box-shadow: none !important;
+      color: var(--primary-4) !important;
+      background-color: var(--primary-1) !important;
+      border: 1px solid var(--primary-3) !important;
+    }
+    span[data-icon]:first-of-type {
+      padding-right: 0 !important;
+    }
+  }
+
+  .vertical-buttons {
+    & > div {
+      line-height: 0 !important;
+
+      & > span:first-child button {
+        margin-right: 0;
+        margin-bottom: -1px;
+        border-top-right-radius: 4px !important;
+        border-bottom-right-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+      }
+      & > span:last-child button {
+        border-top-right-radius: 0 !important;
+        border-top-left-radius: 0 !important;
+        border-bottom-right-radius: 4px !important;
+        border-bottom-left-radius: 4px !important;
+      }
+    }
+    :global(.bp3-popover-target) {
+      display: block;
+    }
+    :global(.ButtonGroup--btnGroup) {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+  }
+}

@@ -490,7 +490,6 @@ spec:
                                 k8sProbe/inputs:
                                   type: object
                                   required:
-                                    - group
                                     - version
                                     - resource
                                     - operation
@@ -2410,6 +2409,8 @@ spec:
                                       type: string
                                     initialDelay:
                                       type: string
+                                    initialDelaySeconds:
+                                      type: integer
                                     stopOnFailure:
                                       type: boolean
                                 mode:

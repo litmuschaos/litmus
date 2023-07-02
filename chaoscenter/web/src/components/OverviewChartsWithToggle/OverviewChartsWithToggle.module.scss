@@ -1,0 +1,24 @@
+.toggleBtns {
+  align-items: center;
+  border-radius: 4px;
+  background: var(--grey-100) !important;
+  align-self: flex-start;
+
+  .chartIcon {
+    text-align: center;
+    cursor: pointer;
+    width: 30px;
+    height: 20px !important;
+    min-height: unset !important;
+    box-shadow: none;
+    padding: unset !important;
+  }
+
+  .active {
+    background-color: var(--primary-2) !important;
+    cursor: default;
+    border-radius: 4px;
+    box-shadow: var(--button-shadow) !important;
+    color: var(--primary-6) !important;
+  }
+}
