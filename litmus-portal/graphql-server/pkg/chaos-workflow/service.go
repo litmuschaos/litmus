@@ -444,18 +444,12 @@ func processCronWorkflowManifest(workflow *model.ChaosWorkFlowRequest, weights m
 	cronWorkflowManifest.Labels = updateManifestLabels(cronWorkflowManifest.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 
 	if cronWorkflowManifest.Spec.WorkflowMetadata == nil {
-		cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{
-			Labels: map[string]string{
-				"workflow_id": *workflow.WorkflowID,
-				"cluster_id":  workflow.ClusterID,
-				"workflows.argoproj.io/controller-instanceid": workflow.ClusterID,
-			},
-		}
-	} else {
-		cronWorkflowManifest.Spec.WorkflowMetadata.Labels = updateManifestLabels(cronWorkflowManifest.Spec.WorkflowMetadata.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
+		cronWorkflowManifest.Spec.WorkflowMetadata = &v1.ObjectMeta{}
 	}
+	cronWorkflowManifest.Spec.WorkflowMetadata.Labels = updateManifestLabels(cronWorkflowManifest.Spec.WorkflowMetadata.Labels, *workflow.WorkflowID, workflow.ClusterID, false)
 
 	cronWorkflowManifest.Spec.WorkflowSpec.Templates, newWeights, err = generateFaultWeights(cronWorkflowManifest.Spec.WorkflowSpec.Templates, weights)
+
 	if err != nil {
 		return err
 	}
