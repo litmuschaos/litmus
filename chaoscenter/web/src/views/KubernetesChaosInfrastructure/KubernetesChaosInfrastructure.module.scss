@@ -1,0 +1,24 @@
+.fullWidth {
+  height: calc(var(--page-min-height) - 78.5px);
+}
+
+.scrollContainer {
+  width: 100% !important;
+  height: 100%;
+  overflow: scroll;
+  display: flex;
+}
+
+.leftPanel {
+  width: min-content;
+  height: 100%;
+  border-right: 1px solid var(--grey-200);
+}
+
+.environmentIdBlock {
+  max-width: 100px;
+}
+
+.subHeader {
+  overflow: auto;
+}

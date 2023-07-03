@@ -128,6 +128,9 @@ export default function OverviewView({
               className={css.btn}
               variation={ButtonVariation.PRIMARY}
               text={getString('enableChaosInfraButton')}
+              onClick={() => {
+                history.push(paths.toEnvironments());
+              }}
             />
           </div>
           <div className={css.rightView}>

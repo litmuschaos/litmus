@@ -94,6 +94,8 @@ export default function SideNav(): ReactElement {
           <ProjectSelectorController />
           <SidebarLink label={'Overview'} to={paths.toDashboard()} />
           <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
+          <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
+          <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
         </Layout.Vertical>
       </div>
       <Container className={css.bottomContainer}>

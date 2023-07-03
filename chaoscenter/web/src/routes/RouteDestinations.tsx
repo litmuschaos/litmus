@@ -3,18 +3,30 @@ import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { useLogout, useRouteDefinitionsMatch, useRouteWithBaseUrl } from '@hooks';
 import { GenericErrorHandler } from '@errors';
 import OverviewController from '@controllers/Overview';
+import ChaosHubsController from '@controllers/ChaosHubs';
 import ChaosStudioCreateController from '@controllers/ChaosStudioCreate';
 import ChaosStudioEditController from '@controllers/ChaosStudioEdit';
 import ExperimentDashboardV2Controller from '@controllers/ExperimentDashboardV2';
 import ExperimentRunHistoryController from '@controllers/ExperimentRunHistory';
 import ExperimentRunDetailsController from '@controllers/ExperimentRunDetails';
+import ChaosHubController from '@controllers/ChaosHub';
+import ChaosFaultController from '@controllers/ChaosFault';
 import ChaosStudioCloneController from '@controllers/ChaosStudioClone';
+import PredefinedExperimentController from '@controllers/PredefinedExperiment';
+import KubernetesChaosInfrastructureController from '@controllers/KubernetesChaosInfrastructure';
+import KubernetesChaosInfrastructureDetailsController from '@controllers/KubernetesChaosInfrastructureDetails';
 import LoginController from '@controllers/Login';
 import { getUserDetails } from '@utils';
+import EnvironmentController from '@controllers/Environments';
 import { isUserAuthenticated } from 'utils/auth';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
+const hubID = ':hubID';
+const experimentName = ':experimentName';
+const faultName = ':faultName';
+const environmentID = ':environmentID';
+const chaosInfrastructureID = ':chaosInfrastructureID';
 const experimentKey = ':experimentKey';
 const notifyID = ':notifyID';
 
@@ -53,6 +65,32 @@ export function RoutesWithAuthentication(): React.ReactElement {
         exact
         path={matchPaths.toExperimentRunDetailsViaNotifyID({ experimentID, notifyID })}
         component={ExperimentRunDetailsController}
+      />
+      {/* ChaosHubs */}
+      <Route exact path={matchPaths.toChaosHubs()} component={ChaosHubsController} />
+      <Route exact path={matchPaths.toChaosHub({ hubID })} component={ChaosHubController} />
+      <Route
+        path={matchPaths.toPredefinedExperiment({ hubID, experimentName })}
+        component={PredefinedExperimentController}
+      />
+      <Route exact path={matchPaths.toChaosFault({ hubID, faultName })} component={ChaosFaultController} />
+      {/*Environments */}
+      <Route exact path={matchPaths.toEnvironments()} component={EnvironmentController} />
+      {/* Kubernetes Chaos Infrastructure */}
+      <Redirect
+        exact
+        from={matchPaths.toChaosInfrastructures({ environmentID })}
+        to={renderPaths.toKubernetesChaosInfrastructures({ environmentID })}
+      />
+      <Route
+        exact
+        path={matchPaths.toKubernetesChaosInfrastructures({ environmentID })}
+        component={KubernetesChaosInfrastructureController}
+      />
+      <Route
+        exact
+        path={matchPaths.toKubernetesChaosInfrastructureDetails({ environmentID, chaosInfrastructureID })}
+        component={KubernetesChaosInfrastructureDetailsController}
       />
     </Switch>
   );
