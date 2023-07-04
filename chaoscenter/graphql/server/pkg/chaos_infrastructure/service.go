@@ -688,7 +688,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 		}
 		newInfras = append(newInfras, &newInfra)
 
-		// TODO check if the below code is required
+
 		//var updateStatus model.UpdateStatus
 
 		// Fetching the list of compatible versions
