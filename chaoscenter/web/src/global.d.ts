@@ -8,8 +8,6 @@ declare interface Window {
 }
 
 declare const __DEV__: boolean;
-declare const __ENABLE_CDN__: boolean;
-declare let __webpack_public_path__: string;
 
 declare module 'strings/strings.en.yaml' {
   import { StringsMap } from './strings/types';

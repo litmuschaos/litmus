@@ -1,15 +1,12 @@
 const path = require('path');
 
-const {
-  container: { ModuleFederationPlugin },
-  DefinePlugin
-} = require('webpack');
+const { DefinePlugin } = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const { GenerateStringTypesPlugin } = require('../scripts/GenerateStringTypesPlugin');
 const { RetryChunkLoadPlugin } = require('webpack-retry-chunk-load-plugin');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 
-const moduleFederationConfig = require('./moduleFederation.config');
 const CONTEXT = process.cwd();
 
 module.exports = {
@@ -24,9 +21,7 @@ module.exports = {
     path: path.resolve(CONTEXT, 'dist/'),
     pathinfo: false
   },
-  entry: {
-    [moduleFederationConfig.name]: './src/public-path'
-  },
+  entry: './src/index.ts',
   module: {
     rules: [
       {
@@ -124,13 +119,17 @@ module.exports = {
     plugins: [new TsconfigPathsPlugin()]
   },
   plugins: [
-    new ModuleFederationPlugin(moduleFederationConfig),
     new DefinePlugin({
       'process.env': '{}' // required for @blueprintjs/core
     }),
     new GenerateStringTypesPlugin({
       input: 'src/strings/strings.en.yaml',
       output: 'src/strings/types.ts'
+    }),
+    new HTMLWebpackPlugin({
+      template: 'src/index.html',
+      filename: 'index.html',
+      minify: true
     }),
     new RetryChunkLoadPlugin({
       retryDelay: 1000,
