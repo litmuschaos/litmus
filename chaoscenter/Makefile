@@ -129,7 +129,7 @@ push-portal-component: docker.buildx buildx.push.image
 push-frontend: docker.buildx buildx.push.frontend
 
 buildx.push.frontend:
-	@cd frontend && \
+	@cd web && \
 	if [ "${IMG_TAG}" = "ci" ]; then \
         docker build . -f Dockerfile -t $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG) --build-arg REACT_APP_KB_CHAOS_VERSION=$(IMG_TAG) --build-arg REACT_APP_BUILD_TIME="$(timestamp)" --build-arg REACT_APP_HUB_BRANCH_NAME="v1.13.x" --build-arg PUBLIC_URL="$(PUBLIC_URL)" --build-arg TARGETARCH=amd64;\
         docker push $(REPONAME)/$(FRONTEND_IMAGE):$(IMG_TAG);\

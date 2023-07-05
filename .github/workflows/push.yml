@@ -181,3 +181,56 @@ jobs:
         run: |
           source env-vars
           make push-portal-component
+
+  ## TODO: the build time for multiarch frontend image is higher so it is used in the release
+  ## builds only need to optimize the build duration and also add it with ci tag
+  ## Build and push / base path
+  docker-build-and-push-frontend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        frontend:
+          [
+            { "image_name": "litmusportal-frontend", "path": "" },
+            {
+              "image_name": "litmusportal-frontend-path-litmuschaos",
+              "path": "/litmuschaos",
+            },
+          ]
+    needs:
+      - get-envs
+      - frontend-checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Downloading image artficate
+        uses: actions/download-artifact@v2
+        with:
+          name: env_artifact
+          path: chaos-center
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          version: latest
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push frontend docker image ( ${{ matrix.frontend.image_name }} )
+        env:
+          IMG_TAG: ${IMG_TAG}
+          PLATFORMS: ${{ secrets.PLATFORMS }}
+          REPONAME: ${{ secrets.REPONAME }}
+          timestamp: ${timestamp}
+          PUBLIC_URL: ${{ matrix.frontend.path }}
+        run: |
+          source env-vars
+          FRONTEND_IMAGE=${{ matrix.frontend.image_name }}
+          timestamp=`date "+%s"`
+          make push-frontend
