@@ -35,7 +35,7 @@ frontend-services-checks:
 	@echo "------------------"
 	@echo "--> checking code style [frontend]"
 	@echo "------------------"
-	cd web && yarn add eslint && yarn lint
+	cd web && yarn && yarn lint
 # @echo "------------------"
 # @echo "--> Check chaos-center frontend [depcheck]"
 # @echo "------------------"
