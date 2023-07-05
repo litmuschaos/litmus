@@ -44,7 +44,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-0::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 0%, rgba(243, 243, 250, 1) 0%);
+  background: linear-gradient(90deg, var(--primary-7) 0%, rgba(243, 243, 250, 1) 0%);
 }
 
 .inputScore-1::-webkit-slider-thumb {
@@ -52,7 +52,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-1::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 10%, rgba(243, 243, 250, 1) 10%);
+  background: linear-gradient(90deg, var(--primary-7) 10%, rgba(243, 243, 250, 1) 10%);
 }
 
 .inputScore-2::-webkit-slider-thumb {
@@ -60,7 +60,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-2::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 20%, rgba(243, 243, 250, 1) 20%);
+  background: linear-gradient(90deg, var(--primary-7) 20%, rgba(243, 243, 250, 1) 20%);
 }
 
 .inputScore-3::-webkit-slider-thumb {
@@ -68,7 +68,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-3::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 30%, rgba(243, 243, 250, 1) 30%);
+  background: linear-gradient(90deg, var(--primary-7) 30%, rgba(243, 243, 250, 1) 30%);
 }
 
 .inputScore-4::-webkit-slider-thumb {
@@ -76,7 +76,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-4::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 40%, rgba(243, 243, 250, 1) 40%);
+  background: linear-gradient(90deg, var(--primary-7) 40%, rgba(243, 243, 250, 1) 40%);
 }
 
 .inputScore-5::-webkit-slider-thumb {
@@ -84,7 +84,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-5::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 50%, rgba(243, 243, 250, 1) 50%);
+  background: linear-gradient(90deg, var(--primary-7) 50%, rgba(243, 243, 250, 1) 50%);
 }
 
 .inputScore-6::-webkit-slider-thumb {
@@ -92,7 +92,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-6::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 60%, rgba(243, 243, 250, 1) 60%);
+  background: linear-gradient(90deg, var(--primary-7) 60%, rgba(243, 243, 250, 1) 60%);
 }
 
 .inputScore-7::-webkit-slider-thumb {
@@ -100,7 +100,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-7::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 70%, rgba(243, 243, 250, 1) 70%);
+  background: linear-gradient(90deg, var(--primary-7) 70%, rgba(243, 243, 250, 1) 70%);
 }
 
 .inputScore-8::-webkit-slider-thumb {
@@ -108,7 +108,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-8::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 80%, rgba(243, 243, 250, 1) 80%);
+  background: linear-gradient(90deg, var(--primary-7) 80%, rgba(243, 243, 250, 1) 80%);
 }
 
 .inputScore-9::-webkit-slider-thumb {
@@ -116,7 +116,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-9::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 90%, rgba(243, 243, 250, 1) 90%);
+  background: linear-gradient(90deg, var(--primary-7) 90%, rgba(243, 243, 250, 1) 90%);
 }
 
 .inputScore-10::-webkit-slider-thumb {
@@ -124,7 +124,7 @@ input[type='range']::-webkit-slider-thumb {
   margin-right: 0;
 }
 .inputScore-10::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, rgba(0, 146, 228, 1) 100%, rgba(243, 243, 250, 1) 100%);
+  background: linear-gradient(90deg, var(--primary-7) 100%, rgba(243, 243, 250, 1) 100%);
 }
 
 input[type='range']::-moz-range-track {
