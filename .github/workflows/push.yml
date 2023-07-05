@@ -208,7 +208,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: env_artifact
-          path: chaos-center
+          path: chaoscenter
 
       - name: Set up Docker Buildx
         id: buildx
