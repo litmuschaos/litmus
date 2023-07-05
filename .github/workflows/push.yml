@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.14.2
+          node-version: 16
       - run: |
           make frontend-services-checks
 
