@@ -255,11 +255,11 @@ func SendExperimentToSubscriber(projectID string, workflow *model.ChaosExperimen
 		workflowNamespace = utils.Config.InfraNamespace
 	}
 	SendRequestToSubscriber(SubscriberRequests{
-		K8sManifest: workflow.ExperimentManifest,
-		RequestType: reqType,
-		ProjectID:   projectID,
-		InfraID:     workflow.InfraID,
-		Namespace:   workflowNamespace,
+		K8sManifest:  workflow.ExperimentManifest,
+		RequestType:  reqType,
+		ProjectID:    projectID,
+		InfraID:      workflow.InfraID,
+		Namespace:    workflowNamespace,
 		ExternalData: externalData,
 		Username:     username,
 	}, *r)

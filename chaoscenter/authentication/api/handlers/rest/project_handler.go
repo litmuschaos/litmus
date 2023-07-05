@@ -559,7 +559,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
-//  UpdateProjectName is used to update a project's name
+// UpdateProjectName is used to update a project's name
 func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.ProjectInput

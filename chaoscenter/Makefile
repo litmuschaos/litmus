@@ -35,7 +35,7 @@ frontend-services-checks:
 	@echo "------------------"
 	@echo "--> checking code style [frontend]"
 	@echo "------------------"
-	cd frontend && npm i eslint --no-save && npm run lint
+	cd web && npm i eslint --no-save && npm run lint
 # @echo "------------------"
 # @echo "--> Check chaos-center frontend [depcheck]"
 # @echo "------------------"

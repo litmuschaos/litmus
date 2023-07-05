@@ -6,12 +6,13 @@ import (
 	"strings"
 )
 
-//SanitizeString trims the string input
+// SanitizeString trims the string input
 func SanitizeString(input string) string {
 	return strings.TrimSpace(input)
 }
 
-/*ValidateStrictPassword represents and checks for the following patterns:
+/*
+ValidateStrictPassword represents and checks for the following patterns:
 - Input is at least 8 characters long
 - Input contains at least one special character
 - Input contains at least one digit
