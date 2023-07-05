@@ -35,11 +35,11 @@ frontend-services-checks:
 	@echo "------------------"
 	@echo "--> checking code style [frontend]"
 	@echo "------------------"
-	cd web && yarn && yarn lint
-# @echo "------------------"
-# @echo "--> Check chaos-center frontend [depcheck]"
-# @echo "------------------"
-# cd frontend && npm i depcheck --no-save && node_modules/.bin/depcheck --skip-missing .
+	cd web && yarn -s && yarn lint
+	# @echo "------------------"
+	# @echo "--> Check chaos-center frontend [depcheck]"
+	# @echo "------------------"
+	# cd web && npx depcheck --skip-missing .
 
 backend-services-checks:
 	@echo "------------------"
