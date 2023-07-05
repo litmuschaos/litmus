@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Heading, Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Heading, Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import cx from 'classnames';
 import { defaultTo } from 'lodash-es';
 import type { DefaultLayoutTemplateProps } from '@components/DefaultLayout/DefaultLayout';

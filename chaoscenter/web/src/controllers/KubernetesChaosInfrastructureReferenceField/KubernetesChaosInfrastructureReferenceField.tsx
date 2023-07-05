@@ -1,4 +1,4 @@
-import { Pagination, useToaster } from '@harness/uicore';
+import { Pagination, useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { listChaosInfra } from '@api/core';
 import { getScope } from '@utils';

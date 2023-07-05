@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, SelectOption } from '@harness/uicore';
+import { Layout, SelectOption } from '@harnessio/uicore';
 import { useStrings } from '@strings';
 import Toothpick from '@components/Toothpick';
 import TimeSelect from '@components/TimeSelect';

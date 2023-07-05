@@ -1,6 +1,6 @@
 import { Card } from '@blueprintjs/core';
-import { Color, FontVariation } from '@harness/design-system';
-import { Text, ButtonVariation, Layout } from '@harness/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
+import { Text, ButtonVariation, Layout } from '@harnessio/uicore';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { withErrorBoundary } from 'react-error-boundary';

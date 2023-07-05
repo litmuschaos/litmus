@@ -1,7 +1,7 @@
 import React from 'react';
-import { ButtonProps, Layout, Popover, SplitButton, Text } from '@harness/uicore';
+import { ButtonProps, Layout, Popover, SplitButton, Text } from '@harnessio/uicore';
 import { PopoverInteractionKind } from '@blueprintjs/core';
-import { Color, FontVariation, PopoverProps } from '@harness/design-system';
+import { Color, FontVariation, PopoverProps } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { isUserAllowed } from '@utils';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Container } from '@harness/uicore';
+import { Text, Container } from '@harnessio/uicore';
 import cx from 'classnames';
 import { useStrings } from '@strings';
 import { scheduleTabsId, isCronValid } from '../utils';

@@ -1,5 +1,5 @@
-import { useToaster } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { useToaster } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { DeploymentScope } from '@components/KubernetesChaosInfrastructureDeploymentCards';

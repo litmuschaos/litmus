@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Layout, Text } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, Text } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import cx from 'classnames';
 import type { ListProject } from '@models';
 import { useStrings } from '@strings';

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Color } from '@harness/design-system';
-import { Container } from '@harness/uicore';
+import { Color } from '@harnessio/design-system';
+import { Container } from '@harnessio/uicore';
 import { withErrorBoundary } from 'react-error-boundary';
 import { transformArgoData } from '@utils';
 import type { ExecutionData } from '@api/entities';

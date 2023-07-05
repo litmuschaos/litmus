@@ -1,5 +1,5 @@
-import { Color, FontVariation } from '@harness/design-system';
-import { Container, Layout, Text } from '@harness/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
+import { Container, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
 import type { ChaosData, ExperimentRunStatus } from '@api/entities';
 import { useStrings } from '@strings';

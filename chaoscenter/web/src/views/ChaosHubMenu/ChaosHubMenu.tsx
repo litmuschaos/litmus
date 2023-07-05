@@ -1,6 +1,6 @@
 import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
 import { Classes, Dialog, Menu } from '@blueprintjs/core';
-import { CardBody } from '@harness/uicore';
+import { CardBody } from '@harnessio/uicore';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import type {

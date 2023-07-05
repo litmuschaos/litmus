@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import cx from 'classnames';
 import { NavLink as Link } from 'react-router-dom';
-import { Text, Layout, Avatar } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Text, Layout, Avatar } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { AppStoreContext } from '@context';
 import { useLogout } from '@hooks';

@@ -1,9 +1,9 @@
 import React, { CSSProperties } from 'react';
 import cx from 'classnames';
 import { defaultTo } from 'lodash-es';
-import { Text } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Text } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { DiagramDrag, DiagramType, Event } from '../../Constants';
 import type { BaseReactComponentProps } from '../../types';
 import css from '../DefaultNode/DefaultNode.module.scss';

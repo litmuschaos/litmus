@@ -1,6 +1,6 @@
-import { Text, ButtonVariation, Layout } from '@harness/uicore';
-import { Icon, IconName } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Text, ButtonVariation, Layout } from '@harnessio/uicore';
+import { Icon, IconName } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import React from 'react';
 import type { MutationFunction } from '@apollo/client';
 import type {

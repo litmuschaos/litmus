@@ -1,9 +1,9 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import cx from 'classnames';
 import { NavLink as Link, NavLinkProps } from 'react-router-dom';
-import { Text, Layout, Container, TextProps, Popover } from '@harness/uicore';
-import { Icon, IconName } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Text, Layout, Container, TextProps, Popover } from '@harnessio/uicore';
+import { Icon, IconName } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { Classes, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';

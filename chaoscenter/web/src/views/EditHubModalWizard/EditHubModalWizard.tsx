@@ -12,13 +12,13 @@ import {
   Text,
   TextInput,
   useToaster
-} from '@harness/uicore';
-import { Icon } from '@harness/icons';
+} from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
-import type { GotoStepArgs } from '@harness/uicore/dist/components/StepWizard/StepWizard';
+import type { GotoStepArgs } from '@harnessio/uicore/dist/components/StepWizard/StepWizard';
 import type { MutationFunction } from '@apollo/client';
-import { Color, FontVariation } from '@harness/design-system';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { getScope } from '@utils';
 import { AuthType, ChaosHub, RepoType } from '@api/entities';
 import { useStrings } from '@strings';

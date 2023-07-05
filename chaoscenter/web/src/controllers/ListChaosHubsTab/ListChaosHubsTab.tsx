@@ -1,6 +1,6 @@
 import React from 'react';
-import { ExpandingSearchInput, Layout, MultiSelectDropDown, MultiSelectOption, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { ExpandingSearchInput, Layout, MultiSelectDropDown, MultiSelectOption, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { getScope } from '@utils';
 import { listChaosHub } from '@api/core';
 import type { ExperimentManifest } from '@models';

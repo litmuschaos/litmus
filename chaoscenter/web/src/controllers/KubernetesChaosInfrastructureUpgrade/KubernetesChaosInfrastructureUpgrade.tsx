@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { KubernetesChaosInfrastructure, InfrastructureUpdateStatus } from '@api/entities';
 import { getKubernetesChaosInfrastructureManifest, getVersionDetails } from '@api/core';
 import { downloadYamlAsFile, generateUpgradeInfrastructureName, getScope, toSentenceCase } from '@utils';

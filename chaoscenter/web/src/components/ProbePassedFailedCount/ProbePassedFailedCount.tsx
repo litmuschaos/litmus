@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layout, Text } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { Layout, Text } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { ExperimentRunFaultStatus } from '@api/entities';
 import { ProbeFailedIcon, ProbePassedIcon } from './ProbeIcons';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Layout, Text, Page, Heading, Container, Breadcrumb } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Layout, Text, Page, Heading, Container, Breadcrumb } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import cx from 'classnames';
 import MainNav from '@components/MainNav';
 import SideNav from '@components/SideNav';

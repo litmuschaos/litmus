@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from '@harness/uicore';
+import { Layout } from '@harnessio/uicore';
 import { isEmpty } from 'lodash-es';
 import { useStrings } from '@strings';
 import DefaultLayoutTemplate from '@components/DefaultLayout';

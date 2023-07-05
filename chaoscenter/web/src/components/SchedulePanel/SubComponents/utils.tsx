@@ -1,4 +1,4 @@
-import type { SelectOption } from '@harness/uicore';
+import type { SelectOption } from '@harnessio/uicore';
 import { isValidCron } from 'cron-validator';
 import { amPmOptions, oneTwelveDDOptions, zeroFiftyNineDDOptions } from '@utils';
 const cronSensicalMinutes = [5, 10, 15, 20, 30];

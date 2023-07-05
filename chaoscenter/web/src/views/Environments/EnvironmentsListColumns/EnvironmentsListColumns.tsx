@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { Avatar, Layout, Text } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { Avatar, Layout, Text } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import { defaultTo, isEmpty } from 'lodash-es';
 import type { Row } from 'react-table';
 import { useStrings } from '@strings';

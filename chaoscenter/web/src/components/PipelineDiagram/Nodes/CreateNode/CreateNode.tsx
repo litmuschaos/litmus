@@ -1,7 +1,7 @@
 import React from 'react';
 import { isEmpty } from 'lodash-es';
 import { Icon } from '@blueprintjs/core';
-import { Text } from '@harness/uicore';
+import { Text } from '@harnessio/uicore';
 
 interface CreateNodeProps {
   identifier: string | undefined;

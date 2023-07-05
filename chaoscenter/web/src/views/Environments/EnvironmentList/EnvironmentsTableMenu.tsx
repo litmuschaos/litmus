@@ -1,5 +1,5 @@
 import { Classes, Menu, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
-import { Button, Layout, ButtonVariation, Dialog, useToggleOpen } from '@harness/uicore';
+import { Button, Layout, ButtonVariation, Dialog, useToggleOpen } from '@harnessio/uicore';
 import React from 'react';
 import type { Row } from 'react-table';
 import { useStrings } from '@strings';

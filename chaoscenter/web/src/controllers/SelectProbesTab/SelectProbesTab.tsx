@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { parse } from 'yaml';
 import type { FaultData } from '@models';
 import { getScope } from '@utils';

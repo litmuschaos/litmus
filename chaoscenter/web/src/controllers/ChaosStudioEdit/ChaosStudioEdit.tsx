@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
 import { parse } from 'yaml';
 import { getScope } from '@utils';

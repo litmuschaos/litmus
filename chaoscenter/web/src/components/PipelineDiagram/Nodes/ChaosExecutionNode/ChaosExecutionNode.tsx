@@ -1,10 +1,10 @@
 import React from 'react';
 import cx from 'classnames';
 import { defaultTo } from 'lodash-es';
-import { Text, Button, ButtonVariation, Container, Layout } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import type { IconName } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Text, Button, ButtonVariation, Container, Layout } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import type { IconName } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import {
   DynamicPopover,
   DynamicPopoverHandlerBinding

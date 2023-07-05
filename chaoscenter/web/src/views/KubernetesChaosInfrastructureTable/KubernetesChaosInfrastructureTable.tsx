@@ -1,8 +1,8 @@
 import type { MutationFunction } from '@apollo/client';
 import { Classes, Menu, MenuDivider } from '@blueprintjs/core';
-import { Color, FontVariation, Intent } from '@harness/design-system';
-import { CardBody, ConfirmationDialog, Container, Layout, Text, useToaster, useToggleOpen } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Color, FontVariation, Intent } from '@harnessio/design-system';
+import { CardBody, ConfirmationDialog, Container, Layout, Text, useToaster, useToggleOpen } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import pendingTime from '@images/pendingTime.svg';

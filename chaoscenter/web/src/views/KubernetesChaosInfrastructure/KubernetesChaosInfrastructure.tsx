@@ -1,6 +1,6 @@
 import type { ApolloError, MutationFunction } from '@apollo/client';
-import { Color, FontVariation } from '@harness/design-system';
-import { Button, Container, ExpandingSearchInput, FlexExpander, Layout, Page, Text } from '@harness/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
+import { Button, Container, ExpandingSearchInput, FlexExpander, Layout, Page, Text } from '@harnessio/uicore';
 import React from 'react';
 import deployAgent from '@images/deployAgent.svg';
 import noFilteredData from '@images/noFilteredData.svg';

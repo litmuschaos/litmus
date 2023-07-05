@@ -1,6 +1,6 @@
 import React from 'react';
 import { withErrorBoundary } from 'react-error-boundary';
-import { DropDown, Layout, Switch, Text, TextInput } from '@harness/uicore';
+import { DropDown, Layout, Switch, Text, TextInput } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
 import type { KubernetesExperimentManifest, WorkflowToleration } from '@models';
 import { Fallback } from '@errors';

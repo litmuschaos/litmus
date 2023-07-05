@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { IconName } from '@harness/icons';
+import type { IconName } from '@harnessio/icons';
 import type { CSSProperties } from 'react';
 
 export interface ListenerHandle {

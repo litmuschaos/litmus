@@ -9,8 +9,8 @@ import Loader from '@components/Loader';
 import type { PredefinedExperiment } from '@api/entities';
 import { parse } from 'yaml';
 import { useStrings } from '@strings';
-import { Container, Text } from '@harness/uicore';
-import { FontVariation } from '@harness/design-system';
+import { Container, Text } from '@harnessio/uicore';
+import { FontVariation } from '@harnessio/design-system';
 import type { CustomizedMultiSelectOption } from '@controllers/ListChaosHubsTab';
 
 interface ListPredefinedExperimentsControllerProps {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, ButtonVariation, Dialog, StepWizard } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Button, ButtonVariation, Dialog, StepWizard } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import type { FaultData, ProbeAttributes } from '@models';
 import { useStrings } from '@strings';
 import { ProbeOverviewStep } from './ProbeOverviewStep';

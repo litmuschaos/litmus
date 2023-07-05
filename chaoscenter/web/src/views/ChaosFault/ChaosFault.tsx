@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Layout, Text } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, Text } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { parse } from 'yaml';
 import DefaultLayoutTemplate from '@components/DefaultLayout';
 import type { PredefinedExperiment } from '@api/entities';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Layout, Tabs, ExpandingSearchInput, ExpandingSearchInputHandle } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Container, Layout, Tabs, ExpandingSearchInput, ExpandingSearchInputHandle } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import type { TabId } from '@blueprintjs/core';
 import type { ApolloError } from '@apollo/client';
 import { useParams } from 'react-router-dom';

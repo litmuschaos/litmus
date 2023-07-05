@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { merge } from 'lodash-es';
 import type { SeriesColumnOptions } from 'highcharts';
-import { Button, Container, Layout } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { Button, Container, Layout } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import cx from 'classnames';
 import StackedColumnChart from '@components/StackedColumnChart';
 import TimeSeriesAreaChart from '@components/TimeSeriesAreaChart';

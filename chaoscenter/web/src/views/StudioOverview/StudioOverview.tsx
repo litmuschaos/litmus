@@ -7,8 +7,8 @@ import {
   Layout,
   Text,
   VisualYamlSelectedView
-} from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+} from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import * as Yup from 'yup';
 import { Formik, Form, FormikProps, ErrorMessage, FormikErrors } from 'formik';
 import cx from 'classnames';

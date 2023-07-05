@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Container, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Button, Container, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 
 import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';

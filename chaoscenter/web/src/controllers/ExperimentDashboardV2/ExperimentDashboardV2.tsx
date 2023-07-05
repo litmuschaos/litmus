@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { isEqual } from 'lodash-es';
 import { getScope } from '@utils';
 import { initialExperimentFilterState, useExperimentFilter, useSearchParams, useUpdateSearchParams } from '@hooks';

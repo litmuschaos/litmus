@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog } from '@blueprintjs/core';
-import { ButtonVariation } from '@harness/uicore';
+import { ButtonVariation } from '@harnessio/uicore';
 import type { ApolloQueryResult } from '@apollo/client';
 import AddHubModalWizardController from '@controllers/AddHubModalWizard';
 import type { ListChaosHubRequest, ListChaosHubResponse } from '@api/core';

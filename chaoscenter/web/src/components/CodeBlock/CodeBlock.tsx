@@ -1,5 +1,5 @@
-import { Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import React from 'react';
 import CopyButton from '@components/CopyButton';
 import css from './CodeBlock.module.scss';
