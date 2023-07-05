@@ -1,5 +1,5 @@
-import { Layout, Thumbnail, VisualYamlSelectedView } from '@harness/uicore';
-import type { IconName } from '@harness/icons';
+import { Layout, Thumbnail, VisualYamlSelectedView } from '@harnessio/uicore';
+import type { IconName } from '@harnessio/icons';
 import React from 'react';
 import type { FormikHelpers } from 'formik';
 import { useParams } from 'react-router-dom';

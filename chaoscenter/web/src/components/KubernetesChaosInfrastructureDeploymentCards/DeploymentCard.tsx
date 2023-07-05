@@ -1,6 +1,6 @@
-import { Text, Layout } from '@harness/uicore';
-import { Icon, IconName } from '@harness/icons';
-import { FontVariation } from '@harness/design-system';
+import { Text, Layout } from '@harnessio/uicore';
+import { Icon, IconName } from '@harnessio/icons';
+import { FontVariation } from '@harnessio/design-system';
 import React from 'react';
 
 export interface DeploymentCardProps {

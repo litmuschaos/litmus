@@ -1,6 +1,6 @@
 import React from 'react';
-import { Avatar, Button, ButtonVariation, Layout, Popover, TableV2, Text } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { Avatar, Button, ButtonVariation, Layout, Popover, TableV2, Text } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import type { Column, Row, UseExpandedRowProps } from 'react-table';
 import { Classes, Menu, MenuItem, Position } from '@blueprintjs/core';

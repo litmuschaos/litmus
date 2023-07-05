@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { AvatarGroup, Card, Container, Text } from '@harness/uicore';
-import { FontVariation, Color } from '@harness/design-system';
+import { AvatarGroup, Card, Container, Text } from '@harnessio/uicore';
+import { FontVariation, Color } from '@harnessio/design-system';
 import type { ListProject } from '@models';
 import { AppStoreContext } from '@context';
 import { useStrings } from '@strings';

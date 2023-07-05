@@ -1,6 +1,6 @@
 // interface for environment
 
-import type { PaginationProps } from '@harness/uicore';
+import type { PaginationProps } from '@harnessio/uicore';
 import type { ListEnvironmentRequest, ListEnvironmentResponse } from '@api/core/environments';
 import type { EnvironmentType, UserDetails } from '@api/entities';
 import type { GqlAPIQueryResponse } from '@api/types';

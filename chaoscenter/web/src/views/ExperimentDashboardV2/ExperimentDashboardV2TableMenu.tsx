@@ -1,5 +1,5 @@
 import { Classes, Intent, Menu, MenuDivider, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
-import { Button, Layout, ButtonVariation, useToaster, useToggleOpen, ConfirmationDialog } from '@harness/uicore';
+import { Button, Layout, ButtonVariation, useToaster, useToggleOpen, ConfirmationDialog } from '@harnessio/uicore';
 import { parse } from 'yaml';
 import React from 'react';
 import { useHistory } from 'react-router-dom';

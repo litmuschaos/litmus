@@ -1,5 +1,5 @@
-import { Button, Layout, Popover, Text } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { Button, Layout, Popover, Text } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import React, { useContext } from 'react';
 import { PopoverInteractionKind, Position } from '@blueprintjs/core';
 import cx from 'classnames';

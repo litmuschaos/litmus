@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { getChaosHubStats, getExperimentStats, getInfraStats, listExperiment } from '@api/core';
 import { getScope } from '@utils';
 import OverviewView from '@views/Overview';

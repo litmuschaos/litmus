@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { parse } from 'yaml';
 import { getChaosFault, getPredefinedExperiment } from '@api/core';
 import { getScope } from '@utils';

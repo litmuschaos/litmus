@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Text, Container, Layout, Button, SelectOption } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Text, Container, Layout, Button, SelectOption } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import cx from 'classnames';
 import { StringKeys, useStrings } from '@strings';
 import TimeSelect from '@components/TimeSelect';

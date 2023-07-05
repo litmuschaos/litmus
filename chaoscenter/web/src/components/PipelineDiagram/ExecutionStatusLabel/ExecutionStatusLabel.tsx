@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { Icon } from '@harness/icons';
-import type { IconProps } from '@harness/icons';
+import { Icon } from '@harnessio/icons';
+import type { IconProps } from '@harnessio/icons';
 
 import type { ExecutionStatus } from '../types';
 

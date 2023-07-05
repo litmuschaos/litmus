@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import experimentSvg from './experiment.svg';
 import runSvg from './run.svg';
 import css from './ExperimentAndRunCard.module.scss';

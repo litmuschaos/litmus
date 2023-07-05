@@ -11,7 +11,7 @@ import {
   MultiSelectDropDown,
   MultiSelectOption,
   useToaster
-} from '@harness/uicore';
+} from '@harnessio/uicore';
 import { useStrings } from '@strings';
 import { ExperimentFilterActionKind, ExperimentFilter, ExperimentFilterAction } from '@hooks';
 import { ExperimentListType, InfrastructureType } from '@api/entities';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonVariation } from '@harness/uicore';
+import { ButtonVariation } from '@harnessio/uicore';
 import { useHistory } from 'react-router-dom';
 import { ParentComponentErrorWrapper } from '@errors';
 import { useRouteWithBaseUrl } from '@hooks';

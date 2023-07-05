@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Layout, TableV2, Text, useToaster } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, TableV2, Text, useToaster } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { PopoverInteractionKind } from '@blueprintjs/core';
 import type { FaultData, ProbeAttributes } from '@models';
 import Options from '@components/Options';

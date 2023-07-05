@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { Text } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import { parse } from 'yaml';
 import config from '@config';
 import { getScope } from '@utils';

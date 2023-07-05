@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import cx from 'classnames';
 import { useStrings } from '@strings';
 import css from './InputSlider.module.scss';

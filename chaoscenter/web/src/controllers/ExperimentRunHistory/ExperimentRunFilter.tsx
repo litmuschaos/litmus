@@ -8,7 +8,7 @@ import {
   ButtonSize,
   ExpandingSearchInputHandle,
   ExpandingSearchInput
-} from '@harness/uicore';
+} from '@harnessio/uicore';
 import { useStrings } from '@strings';
 import { ExperimentRunFaultStatus, ExperimentRunStatus } from '@api/entities';
 import { ExperimentRunFilter, ExperimentRunFilterAction, ExperimentRunFilterActionKind } from '@hooks';

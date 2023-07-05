@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Layout, Switch, Text } from '@harness/uicore';
+import { Layout, Switch, Text } from '@harnessio/uicore';
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { DiagramFactory } from '@components/PipelineDiagram/DiagramFactory';

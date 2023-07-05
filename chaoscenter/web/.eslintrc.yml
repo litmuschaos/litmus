@@ -105,13 +105,13 @@ rules:
           message: 'import from "react-router-dom" instead'
         - name: microfrontends
           message: Import from 'microfrontends' is only allowed in child apps
-        - name: '@harness/uicore'
+        - name: '@harnessio/uicore'
           importNames:
             - Color
             - FontVariation
             - Intent
             - Spacing
-          message: import from "@harness/design-system" instead
+          message: import from "@harnessio/design-system" instead
   no-restricted-syntax:
     - error
     - selector: "CallExpression[callee.name='useContext'][arguments.0.name='PipelineContext']"

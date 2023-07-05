@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { withErrorBoundary } from 'react-error-boundary';
 import { useStrings } from '@strings';
 import { Fallback } from '@errors';

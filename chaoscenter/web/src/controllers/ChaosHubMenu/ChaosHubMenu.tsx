@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
 import {
   deleteChaosHub,

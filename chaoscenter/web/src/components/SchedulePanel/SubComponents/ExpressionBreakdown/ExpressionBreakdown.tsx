@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Container, Text } from '@harness/uicore';
+import { Layout, Container, Text } from '@harnessio/uicore';
 import { isUndefined } from 'lodash-es';
 import cx from 'classnames';
 import { StringKeys, useStrings } from '@strings';

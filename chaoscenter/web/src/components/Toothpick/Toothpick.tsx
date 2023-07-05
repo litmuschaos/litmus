@@ -1,5 +1,5 @@
 import React from 'react';
-import { SelectOption, Select, Text, Container } from '@harness/uicore';
+import { SelectOption, Select, Text, Container } from '@harnessio/uicore';
 import css from './Toothpick.module.scss';
 
 interface ToothpickPropsInterface {

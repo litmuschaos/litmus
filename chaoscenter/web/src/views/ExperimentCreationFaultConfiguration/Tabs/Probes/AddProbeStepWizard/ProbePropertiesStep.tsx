@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Yup from 'yup';
-import { FontVariation, Color } from '@harness/design-system';
-import { Layout, FormInput, ButtonVariation, Text, Container, Button } from '@harness/uicore';
+import { FontVariation, Color } from '@harnessio/design-system';
+import { Layout, FormInput, ButtonVariation, Text, Container, Button } from '@harnessio/uicore';
 import { Form, Formik } from 'formik';
 import { useStrings } from '@strings';
 import type { StepData, StepProps } from './AddProbeStepWizard';

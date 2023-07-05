@@ -1,6 +1,6 @@
 import React from 'react';
 import { Intent } from '@blueprintjs/core';
-import { FontVariation } from '@harness/design-system';
+import { FontVariation } from '@harnessio/design-system';
 import {
   Button,
   ButtonSize,
@@ -12,8 +12,8 @@ import {
   Text,
   useToaster,
   useToggleOpen
-} from '@harness/uicore';
-import { Icon } from '@harness/icons';
+} from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import { useParams } from 'react-router-dom';
 import type { FormikProps } from 'formik';
 import { cloneDeep, isEmpty, isEqual } from 'lodash-es';

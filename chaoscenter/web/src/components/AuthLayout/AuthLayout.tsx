@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@harness/uicore';
+import { Container } from '@harnessio/uicore';
 
 import loginLogo from '@images/login.svg';
 import css from './AuthLayout.module.scss';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@harness/uicore';
+import { Container } from '@harnessio/uicore';
 import { ExecutionData, ExperimentRunFaultStatus, ExperimentRunStatus } from '@api/entities';
 import Loader from '@components/Loader';
 import { useStrings } from '@strings';

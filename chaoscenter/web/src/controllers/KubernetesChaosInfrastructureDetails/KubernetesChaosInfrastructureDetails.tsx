@@ -1,4 +1,4 @@
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { deleteKubernetesChaosInfra, listChaosInfra } from '@api/core';

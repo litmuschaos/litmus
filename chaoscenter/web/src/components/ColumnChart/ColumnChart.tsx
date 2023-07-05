@@ -1,8 +1,8 @@
 import React from 'react';
 import { Classes, PopoverInteractionKind, PopoverPosition } from '@blueprintjs/core';
 import cx from 'classnames';
-import { Text, Container, Popover, Layout } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Text, Container, Popover, Layout } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { useHistory } from 'react-router-dom';
 import FallbackBox from '@images/FallbackBox.svg';
 import { useStrings } from '@strings';

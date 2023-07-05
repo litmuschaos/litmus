@@ -1,5 +1,5 @@
-import { Popover } from '@harness/uicore';
-import type { PopoverProps } from '@harness/uicore/dist/components/Popover/Popover';
+import { Popover } from '@harnessio/uicore';
+import type { PopoverProps } from '@harnessio/uicore/dist/components/Popover/Popover';
 import React from 'react';
 import cx from 'classnames';
 import css from './DarkPopover.module.scss';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@harness/uicore';
+import { Container } from '@harnessio/uicore';
 import css from './Spacer.module.scss';
 
 interface SpacerInterface {

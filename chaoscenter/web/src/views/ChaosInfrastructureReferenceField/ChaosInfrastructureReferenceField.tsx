@@ -1,5 +1,5 @@
 import { FormGroup } from '@blueprintjs/core';
-import { Color, FontVariation } from '@harness/design-system';
+import { Color, FontVariation } from '@harnessio/design-system';
 import {
   Button,
   ButtonVariation,
@@ -9,8 +9,8 @@ import {
   Layout,
   Text,
   useToaster
-} from '@harness/uicore';
-import { Icon } from '@harness/icons';
+} from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import cx from 'classnames';
 import React from 'react';
 import { useHistory } from 'react-router-dom';

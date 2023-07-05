@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { listChaosFaultsLazyQuery, listChaosHub } from '@api/core';
 import { getScope } from '@utils';
 import ExperimentCreationSelectFaultView from '@views/ExperimentCreationSelectFault';

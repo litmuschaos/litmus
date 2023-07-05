@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
 import { Link } from 'react-router-dom';

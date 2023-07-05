@@ -1,6 +1,6 @@
-import type { TagInputProps } from '@harness/uicore';
+import type { TagInputProps } from '@harnessio/uicore';
 import type { ITagInputProps, IInputGroupProps } from '@blueprintjs/core';
-import type { InputWithIdentifierProps } from '@harness/uicore/dist/components/InputWithIdentifier/InputWithIdentifier';
+import type { InputWithIdentifierProps } from '@harnessio/uicore/dist/components/InputWithIdentifier/InputWithIdentifier';
 import type { FormikProps } from 'formik';
 
 export interface DescriptionProps {

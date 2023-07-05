@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import config from '@config';
 import { setUserDetails } from '@utils';
 import { paths } from '@routes/RouteDefinitions';

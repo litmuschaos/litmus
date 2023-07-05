@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, DropDown, Layout, SelectOption, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, DropDown, Layout, SelectOption, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import type { ChaosEngine, FaultData } from '@models';
 import { gvrData } from '@controllers/TargetApplicationTab/grvData';
 import { useStrings } from '@strings';

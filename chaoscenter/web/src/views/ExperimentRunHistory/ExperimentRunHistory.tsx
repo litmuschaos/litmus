@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Layout, TabNavigation, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, TabNavigation, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { useParams } from 'react-router-dom';
 import ColumnChart from '@components/ColumnChart/ColumnChart';
 import { useStrings } from '@strings';

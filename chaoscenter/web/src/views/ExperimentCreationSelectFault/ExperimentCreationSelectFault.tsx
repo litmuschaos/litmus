@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layout, Text, ExpandingSearchInput } from '@harness/uicore';
-import { FontVariation } from '@harness/design-system';
+import { Layout, Text, ExpandingSearchInput } from '@harnessio/uicore';
+import { FontVariation } from '@harnessio/design-system';
 import Drawer from '@components/Drawer';
 import { DrawerTypes } from '@components/Drawer/Drawer';
 import type { ChaosHub, Chart } from '@api/entities';

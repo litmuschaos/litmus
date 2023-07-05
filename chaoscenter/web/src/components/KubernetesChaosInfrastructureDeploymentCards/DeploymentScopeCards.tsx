@@ -1,5 +1,5 @@
-import { CollapsableSelectType, FormikCollapsableSelect } from '@harness/uicore';
-import type { IconName } from '@harness/icons';
+import { CollapsableSelectType, FormikCollapsableSelect } from '@harnessio/uicore';
+import type { IconName } from '@harnessio/icons';
 import React from 'react';
 import { DeploymentScopeItem, DeploymentScopeOptions } from '@models';
 import { useStrings } from '@strings';

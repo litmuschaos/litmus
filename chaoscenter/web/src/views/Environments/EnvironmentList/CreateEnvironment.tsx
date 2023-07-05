@@ -1,5 +1,5 @@
-import { Button, ButtonVariation, CardSelect, Container, Dialog, FormInput, Layout, Text } from '@harness/uicore';
-import { FontVariation, Color } from '@harness/design-system';
+import { Button, ButtonVariation, CardSelect, Container, Dialog, FormInput, Layout, Text } from '@harnessio/uicore';
+import { FontVariation, Color } from '@harnessio/design-system';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';

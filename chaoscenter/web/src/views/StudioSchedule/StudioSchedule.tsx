@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react';
-import { Button, ButtonVariation, Container, Layout, RadioButtonGroup, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Button, ButtonVariation, Container, Layout, RadioButtonGroup, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { Form, Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';

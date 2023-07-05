@@ -1,5 +1,5 @@
-import type { CollapsableSelectOptions } from '@harness/uicore';
-import type { IconName } from '@harness/icons';
+import type { CollapsableSelectOptions } from '@harnessio/uicore';
+import type { IconName } from '@harnessio/icons';
 import type { FormikHelpers } from 'formik';
 import type { ExperimentMetadata } from '@db';
 import { InfraScope, InfrastructureUpdateStatus } from '@api/entities';

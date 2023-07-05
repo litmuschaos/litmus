@@ -505,20 +505,20 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@harness/design-system@1.6.0":
-  version "1.6.0"
-  resolved "https://npm.pkg.github.com/download/@harness/design-system/1.6.0/08be4ff6b6e6a42f163f69d6141875d995685a02#08be4ff6b6e6a42f163f69d6141875d995685a02"
-  integrity sha512-Js2mtSIrCrc0Slsc0P4+MGxQwIPqwwC6ynbSeytYaWmUHbvp9oXzuTw9ZN2CYYstaEv+xI6tJDCEJ4vqoM8ubw==
+"@harnessio/design-system@^1.6.0-beta.1":
+  version "1.6.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@harnessio/design-system/-/design-system-1.6.0-beta.1.tgz#9a0c45607ba3e7f32b61db87d44533a204d1fbaf"
+  integrity sha512-JOsVgj1ecqqWQL/j+WULSxO3GxcrLdBE00cKUUdhLnGjBQ29bO6o1JRLKyJMKfVitgiUVnK9QtqD+4WWfBQHdg==
 
-"@harness/icons@2.0.0-beta.1":
-  version "2.0.0-beta.1"
-  resolved "https://npm.pkg.github.com/download/@harness/icons/2.0.0-beta.1/a4dd831caa6bbb337bb3bc2ef1a909293a2ebc41#a4dd831caa6bbb337bb3bc2ef1a909293a2ebc41"
-  integrity sha512-Zuw/EYRoCLjLXVWxI/1BEO1jMh6JpsItNJDt6CAamOgGmiIUH7lmOi5botj2zAQ44T1Oaq9ur36Z1WBWPWN2Bw==
+"@harnessio/icons@^2.0.0-beta.2":
+  version "2.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@harnessio/icons/-/icons-2.0.0-beta.2.tgz#82c9602e44d3eccadc8b393ba58c4714aa829846"
+  integrity sha512-SAA/gDHdb8gNx2LnGgdFwcmJJETyYL2b7DzUSQL3HRZ9Ha3zfhfwAdpErFETpfF5maxfr2rHr8WbDPF69RchlQ==
 
-"@harness/uicore@4.0.0-beta.0":
-  version "4.0.0-beta.0"
-  resolved "https://npm.pkg.github.com/download/@harness/uicore/4.0.0-beta.0/657e7ab0a05ecc2b2032d9fd6ef25079e6b46ba6#657e7ab0a05ecc2b2032d9fd6ef25079e6b46ba6"
-  integrity sha512-SAvDcWGXSt48v08/Nupfwrd9MU50swJ9maLJxaGVBiYtErSI2aqntGRiHWXvxkYq8YK2P+EPBNCEJVJs1/eR8Q==
+"@harnessio/uicore@^4.0.0-beta.1":
+  version "4.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@harnessio/uicore/-/uicore-4.0.0-beta.1.tgz#2ad779d64db206a23ad4122572eaf47cfcd9e143"
+  integrity sha512-xrr7Vxfhfm7a0iVE/WFyNjPh4kFSUPDL7as4NxukITG7sgYCuXMTp0nEwePbIkBK5AvH/vFJk9EpMNHSBuNOSA==
 
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, ButtonVariation, Container, Layout, Text } from '@harness/uicore';
-import { FontVariation } from '@harness/design-system';
+import { Button, ButtonVariation, Container, Layout, Text } from '@harnessio/uicore';
+import { FontVariation } from '@harnessio/design-system';
 
 interface BlockEnvironmentDeletionViewProps {
   environmentID: string;

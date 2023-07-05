@@ -1,6 +1,6 @@
-import { Button, ButtonSize, ButtonVariation, Layout, Text } from '@harness/uicore';
+import { Button, ButtonSize, ButtonVariation, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
-import { Color } from '@harness/design-system';
+import { Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { useSearchParams } from '@hooks';
 import { ExperimentType } from '@api/entities';
