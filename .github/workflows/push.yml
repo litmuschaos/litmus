@@ -216,6 +216,13 @@ jobs:
         with:
           version: latest
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: yarn build
+        run: |
+          cd web && yarn build
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
