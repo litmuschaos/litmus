@@ -9,7 +9,7 @@ import type { AppInfoData, TargetApplicationData } from '@controllers/TargetAppl
 interface TargetApplicationViewProps {
   appInfoData: AppInfoData[];
   targetApp: TargetApplicationData | undefined;
-  setTargetApp: React.Dispatch<React.SetStateAction<TargetApplicationData | undefined>>;
+  setTargetApp: React.Dispatch<React.SetStateAction<TargetApplicationData>>;
   engineCR: ChaosEngine | undefined;
   setFaultData: React.Dispatch<React.SetStateAction<FaultData | undefined>>;
   // getKubeObjectLazyQueryFunction: LazyQueryFunction<KubeObjResponse, KubeObjRequest>;
