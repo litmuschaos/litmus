@@ -2,9 +2,10 @@ package chaoshubops
 
 import (
 	"fmt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"os"
 	"strings"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
