@@ -72,7 +72,7 @@ backend-services-checks:
 	@echo "------------------"
 	@echo "--> Check chaos-center subscriber [go mod tidy]"
 	@echo "------------------"
-	@tidyRes=$$(cd cluster-agents/subscriber && go mod tidy); \
+	@tidyRes=$$(cd subscriber && go mod tidy); \
 	if [ -n "$${tidyRes}" ]; then \
 		echo "go mod tidy checking failed!" && echo "$${tidyRes}" \
 		&& echo "Please ensure you are using $$($(GO) version) for formatting code" \
