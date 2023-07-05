@@ -1,6 +1,6 @@
 module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker
 
-go 1.16
+go 1.20
 
 require (
 	github.com/jmespath/go-jmespath v0.4.0
