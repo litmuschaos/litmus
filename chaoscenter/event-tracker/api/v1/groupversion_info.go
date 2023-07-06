@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 // Package v1 contains API Schema definitions for the eventtracker v1 API group
-//+kubebuilder:object:generate=true
-//+groupName=eventtracker.litmuschaos.io
+// +kubebuilder:object:generate=true
+// +groupName=eventtracker.litmuschaos.io
 package v1
 
 import (
