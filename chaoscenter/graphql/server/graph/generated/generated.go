@@ -44,7 +44,6 @@ type ResolverRoot interface {
 
 type DirectiveRoot struct {
 	Authorized func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
-	Internal   func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -401,7 +400,7 @@ type ComplexityRoot struct {
 		EnableGitOps             func(childComplexity int, configurations model.GitConfig) int
 		GenerateSSHKey           func(childComplexity int) int
 		GetManifestWithInfraID   func(childComplexity int, projectID string, infraID string, accessKey string) int
-		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, workflowID string) int
+		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
 		KubeObj                  func(childComplexity int, request model.KubeObjectData) int
 		PodLog                   func(childComplexity int, request model.PodLog) int
 		RegisterInfra            func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
@@ -571,7 +570,7 @@ type MutationResolver interface {
 	CreateEnvironment(ctx context.Context, projectID string, request *model.CreateEnvironmentRequest) (*model.Environment, error)
 	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error)
 	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
-	GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, workflowID string) (string, error)
+	GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, experimentID string) (string, error)
 	EnableGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
 	UpdateGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
@@ -2442,7 +2441,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.InfraIdentity), args["workflowID"].(string)), true
+		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.InfraIdentity), args["experimentID"].(string)), true
 
 	case "Mutation.kubeObj":
 		if e.complexity.Mutation.KubeObj == nil {
@@ -3383,7 +3382,7 @@ input WeightagesInput {
   weightage: Int!
 }
 
-enum ExperimentType{
+enum ExperimentType {
   All
   Experiment
   CronExperiment
@@ -3441,7 +3440,6 @@ input SaveChaosExperimentRequest {
   Tags of the infrastructure
   """
   tags: [String!]
-
 }
 
 """
@@ -3502,7 +3500,7 @@ type ChaosExperimentResponse {
   ID of the experiment
   """
   experimentID: String!
-  projectID:ID!
+  projectID: ID!
   """
   Cron syntax of the experiment schedule
   """
@@ -3616,7 +3614,7 @@ input ExperimentRunFilterInput {
   """
   Array of experiment run status
   """
-  experimentRunStatus:[String]
+  experimentRunStatus: [String]
   """
   Type of infras
   """
@@ -3699,7 +3697,7 @@ type Weightages {
 """
 Defines the details of a experiment run
 """
-type ExperimentRun implements Audit{
+type ExperimentRun implements Audit {
   projectID: ID!
   """
   ID of the experiment run which is to be queried
@@ -3817,7 +3815,7 @@ input ExperimentFilterInput {
   ID of the infra in which the experiment is running
   """
   infraID: String
-"""
+  """
   Bool value indicating if Chaos Infrastructure is active
   """
   infraActive: Boolean
@@ -3875,7 +3873,7 @@ input ExperimentSortInput {
   ascending: Boolean
 }
 
-type RecentExperimentRun implements Audit{
+type RecentExperimentRun implements Audit {
   """
   ID of the experiment run which is to be queried
   """
@@ -3904,14 +3902,13 @@ type RecentExperimentRun implements Audit{
   User who updated the experiment run
   """
   updatedBy: UserDetails
-
 }
 
 """
 Defines the details for a experiment
 """
-type Experiment implements ResourceDetails & Audit{
-  projectID:ID!
+type Experiment implements ResourceDetails & Audit {
+  projectID: ID!
   """
   ID of the experiment
   """
@@ -4010,7 +4007,7 @@ type ListExperimentResponse {
 Defines the request for stopping a experiment
 """
 type StopExperimentRunsRequest {
-  projectID:ID!
+  projectID: ID!
   """
   ID of the experiment to be stopped
   """
@@ -4025,7 +4022,7 @@ type RunChaosExperimentResponse {
   notifyID: ID!
 }
 
-type GetExperimentRunStatsResponse{
+type GetExperimentRunStatsResponse {
   """
   Total number of experiment runs
   """
@@ -4052,70 +4049,63 @@ type GetExperimentRunStatsResponse{
   totalErroredExperimentRuns: Int!
 }
 
-type ResilienceScoreCategory{
+type ResilienceScoreCategory {
   """
   Lower bound of the range(inclusive)
   """
-  id:Int!
+  id: Int!
   """
   total experiments with avg resilience score between lower bound and upper bound(exclusive)
   """
-  count:Int!
+  count: Int!
 }
 
-type GetExperimentStatsResponse{
+type GetExperimentStatsResponse {
   """
   Total number of experiments
   """
-  totalExperiments:Int!
+  totalExperiments: Int!
   """
   Total number of cron experiments
   """
-  totalExpCategorizedByResiliencyScore:[ResilienceScoreCategory]!
-
+  totalExpCategorizedByResiliencyScore: [ResilienceScoreCategory]!
 }
 
 extend type Query {
   """
   Returns experiment run based on experiment run ID
   """
-  getExperimentRun(
-    projectID:ID!
-    experimentRunID: String!
-  ): ExperimentRun!
+  getExperimentRun(projectID: ID!, experimentRunID: String!): ExperimentRun!
 
   """
   Returns the list of experiment run based on various filter parameters
   """
   listExperimentRun(
-    projectID:ID!
+    projectID: ID!
     request: ListExperimentRunRequest!
   ): ListExperimentRunResponse!
 
   """
   Returns the experiment based on experiment ID
   """
-  getExperiment(
-    projectID:ID!
-    experimentID: String!
-  ): GetExperimentResponse!
+  getExperiment(projectID: ID!, experimentID: String!): GetExperimentResponse!
 
   """
   Returns the list of experiments based on various filter parameters
   """
   listExperiment(
-    projectID:ID!
+    projectID: ID!
     request: ListExperimentRequest!
   ): ListExperimentResponse!
 
   """
   Query to get experiment run stats
   """
-  getExperimentRunStats(projectID:ID!): GetExperimentRunStatsResponse!
+  getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
   """
   Query to get experiment stats
   """
-  getExperimentStats(projectID:ID!): GetExperimentStatsResponse!
+  getExperimentStats(projectID: ID!): GetExperimentStatsResponse!
 }
 
 extend type Mutation {
@@ -4124,7 +4114,7 @@ extend type Mutation {
   """
   createChaosExperiment(
     request: ChaosExperimentRequest!
-    projectID:ID!
+    projectID: ID!
   ): ChaosExperimentResponse!
 
   """
@@ -4132,7 +4122,7 @@ extend type Mutation {
   """
   saveChaosExperiment(
     request: SaveChaosExperimentRequest!
-    projectID:ID!
+    projectID: ID!
   ): String!
 
   """
@@ -4140,7 +4130,7 @@ extend type Mutation {
   """
   runChaosExperiment(
     experimentID: String!
-    projectID:ID!
+    projectID: ID!
   ): RunChaosExperimentResponse!
 
   """
@@ -4148,7 +4138,7 @@ extend type Mutation {
   """
   updateChaosExperiment(
     request: ChaosExperimentRequest
-    projectID:ID!
+    projectID: ID!
   ): ChaosExperimentResponse!
 
   """
@@ -4157,16 +4147,8 @@ extend type Mutation {
   deleteChaosExperiment(
     experimentID: String!
     experimentRunID: String
-    projectID:ID!
+    projectID: ID!
   ): Boolean!
-#  """
-#  Manually sync the status of the experiment run
-#  """
-#  syncExperimentRun(
-#    experimentID: String!
-#    experimentRunID: String!
-#    projectID:ID!
-#  ): Boolean!
 
   """
   Creates a new experiment run and sends it to subscriber
@@ -4174,10 +4156,8 @@ extend type Mutation {
   # authorized directive not required
   chaosExperimentRun(request: ExperimentRunRequest!): String!
 }
-
 `, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/chaos_infrastructure.graphqls", Input: `directive @authorized on FIELD_DEFINITION
-directive @internal on FIELD_DEFINITION
 
 """
 UpdateStatus represents if infra needs to be updated
@@ -4299,7 +4279,7 @@ type Infra implements ResourceDetails & Audit {
   updateStatus: UpdateStatus!
 }
 
-enum InfrastructureType{
+enum InfrastructureType {
   INTERNAL
   EXTERNAL
 }
@@ -4402,8 +4382,6 @@ input NewInfraEventRequest {
   infraID: String!
   accessKey: String!
 }
-
-
 
 type ConfirmInfraRegistrationResponse {
   isInfraConfirmed: Boolean!
@@ -4689,7 +4667,7 @@ type ListInfraResponse {
   infras: [Infra]!
 }
 
-type GetInfraStatsResponse{
+type GetInfraStatsResponse {
   """
   Total number of infrastructures
   """
@@ -4740,46 +4718,39 @@ type ServerVersionResponse {
   value: String!
 }
 
-
 extend type Query {
   # INFRA OPERATIONS
   """
   Returns infra with a particular infraID in the project
   """
-  getInfra(
-    projectID:ID!
-    infraID: String!
-  ): Infra! @authorized
+  getInfra(projectID: ID!, infraID: String!): Infra! @authorized
 
   """
   Returns infras with a particular infra type in the project
   """
-  listInfras(
-    projectID:ID!
-    request: ListInfraRequest
-  ): ListInfraResponse! @authorized
+  listInfras(projectID: ID!, request: ListInfraRequest): ListInfraResponse!
+    @authorized
 
   """
   Returns infra details based on identifiers
   """
-  getInfraDetails(infraID: ID!, projectID:ID!): Infra!
-    @authorized
+  getInfraDetails(infraID: ID!, projectID: ID!): Infra! @authorized
 
   """
   Returns the manifest for a given infraID
   """
-  getInfraManifest(infraID: ID!, upgrade: Boolean!, projectID:ID!): String!
+  getInfraManifest(infraID: ID!, upgrade: Boolean!, projectID: ID!): String!
     @authorized
 
   """
   Query to get experiment stats
   """
-  getInfraStats(projectID:ID!): GetInfraStatsResponse! @authorized
+  getInfraStats(projectID: ID!): GetInfraStatsResponse! @authorized
 
   """
   Query to get the latest version of infra available
   """
-  getVersionDetails(projectID:ID!): InfraVersionDetails! @authorized
+  getVersionDetails(projectID: ID!): InfraVersionDetails! @authorized
   """
   Returns version of gql server
   """
@@ -4791,10 +4762,9 @@ extend type Mutation {
   Connect a new infra for a user in a specified project
   """
   registerInfra(
-    projectID:ID!
+    projectID: ID!
     request: RegisterInfraRequest!
   ): RegisterInfraResponse!
-
 
   """
   Confirms the subscriber's registration with the control plane
@@ -4806,13 +4776,13 @@ extend type Mutation {
   """
   Disconnects an infra and deletes its configuration from the control plane
   """
-  deleteInfra(projectID:ID!, infraID: String!): String! @authorized
+  deleteInfra(projectID: ID!, infraID: String!): String! @authorized
 
   """
   Fetches manifest details
   """
   getManifestWithInfraID(
-    projectID:ID!
+    projectID: ID!
     infraID: String!
     accessKey: String!
   ): String!
@@ -4853,7 +4823,8 @@ extend type Subscription {
   Returns a kubernetes object given an input
   """
   getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/chaoshub.graphqls", Input: `enum AuthType {
   BASIC
   NONE
@@ -5755,7 +5726,7 @@ extend type Mutation {
     Sends workflow run request(single run workflow only) to agent on gitops notification
     """
     # authorized directive not required
-    gitopsNotifier(clusterInfo: InfraIdentity!, workflowID: ID!): String!
+    gitopsNotifier(clusterInfo: InfraIdentity!, experimentID: ID!): String!
 
     """
     Enables gitops settings in the project
@@ -6261,13 +6232,13 @@ func (ec *executionContext) field_Mutation_gitopsNotifier_args(ctx context.Conte
 	}
 	args["clusterInfo"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["workflowID"]; ok {
+	if tmp, ok := rawArgs["experimentID"]; ok {
 		arg1, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflowID"] = arg1
+	args["experimentID"] = arg1
 	return args, nil
 }
 
@@ -15872,7 +15843,7 @@ func (ec *executionContext) _Mutation_gitopsNotifier(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().GitopsNotifier(rctx, args["clusterInfo"].(model.InfraIdentity), args["workflowID"].(string))
+		return ec.resolvers.Mutation().GitopsNotifier(rctx, args["clusterInfo"].(model.InfraIdentity), args["experimentID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

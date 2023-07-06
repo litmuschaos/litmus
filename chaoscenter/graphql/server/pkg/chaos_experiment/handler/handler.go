@@ -1377,7 +1377,6 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 
 	resKind := gjson.Get(workflow.Revision[0].ExperimentManifest, "kind").String()
 	if strings.ToLower(resKind) == "cronworkflow" {
-		//return nil, errors.New("cron-workflows cannot be re-run")
 		return &model.RunChaosExperimentResponse{NotifyID: notifyID}, c.RunCronExperiment(ctx, projectID, workflow, r)
 	}
 	notifyID = uuid.New().String()
@@ -1589,7 +1588,6 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 
 func (c *ChaosExperimentHandler) RunCronExperiment(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) error {
 	var (
-		//usrID                = currentUser.Name
 		cronExperimentManifest v1alpha1.CronWorkflow
 	)
 
