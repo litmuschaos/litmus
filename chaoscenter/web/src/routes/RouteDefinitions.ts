@@ -32,6 +32,7 @@ export interface UseRouteDefinitionsProps {
   toChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
+  toProjectMembers(): string;
 }
 
 export interface ExternalPathProps {
@@ -68,5 +69,7 @@ export const paths: UseRouteDefinitionsProps = {
   toChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}`,
   toKubernetesChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}/kubernetes`,
   toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
-    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`
+    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
+  // user route
+  toProjectMembers: () => '/members'
 };

@@ -19,6 +19,7 @@ import LoginController from '@controllers/Login';
 import { getUserDetails } from '@utils';
 import EnvironmentController from '@controllers/Environments';
 import { isUserAuthenticated } from 'utils/auth';
+import ProjectMembersController from '@controllers/ProjectMember';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
@@ -92,6 +93,8 @@ export function RoutesWithAuthentication(): React.ReactElement {
         path={matchPaths.toKubernetesChaosInfrastructureDetails({ environmentID, chaosInfrastructureID })}
         component={KubernetesChaosInfrastructureDetailsController}
       />
+      {/* Project */}
+      <Route exact path={matchPaths.toProjectMembers()} component={ProjectMembersController} />
     </Switch>
   );
 }
