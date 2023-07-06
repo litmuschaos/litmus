@@ -3,6 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net"
+	"runtime"
+	"time"
+
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/routes"
@@ -12,9 +16,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/user"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
-	"net"
-	"runtime"
-	"time"
 
 	"google.golang.org/grpc"
 

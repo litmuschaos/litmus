@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 

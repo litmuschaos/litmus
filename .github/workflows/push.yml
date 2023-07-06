@@ -58,7 +58,7 @@ jobs:
           echo export AUTHENTICATION_SERVER_IMAGE="litmusportal-auth-server" >> env-vars
           echo export FRONTEND_IMAGE="litmusportal-frontend" >> env-vars
           echo export SUBSCRIBER_IMAGE="litmusportal-subscriber" >> env-vars
-          # echo export EVENT_TRACKER="litmusportal-event-tracker" >> env-vars
+          echo export EVENT_TRACKER="litmusportal-event-tracker" >> env-vars
           # echo export UPGRADE_AGENT_CP="upgrade-agent-cp" >> env-vars
           # echo export DEX_SERVER="litmusportal-dex-server" >> env-vars
 

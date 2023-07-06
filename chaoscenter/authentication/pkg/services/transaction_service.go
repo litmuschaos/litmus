@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
