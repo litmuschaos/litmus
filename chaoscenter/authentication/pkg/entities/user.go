@@ -1,9 +1,10 @@
 package entities
 
 import (
-	"litmus/litmus-portal/authentication/pkg/utils"
 	"net/mail"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"

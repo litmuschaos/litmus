@@ -2,8 +2,9 @@ package user
 
 import (
 	"context"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/utils"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"github.com/google/uuid"
 

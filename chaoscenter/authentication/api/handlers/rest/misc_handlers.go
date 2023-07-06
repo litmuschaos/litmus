@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"

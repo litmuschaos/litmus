@@ -1,6 +1,6 @@
 package types
 
-import "litmus/litmus-portal/authentication/pkg/entities"
+import "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 
 // Project contains the required fields to be returned by GET APIs
 type Project struct {

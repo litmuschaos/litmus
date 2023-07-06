@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"fmt"
-	"litmus/litmus-portal/authentication/api/presenter"
-	"litmus/litmus-portal/authentication/pkg/utils"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"

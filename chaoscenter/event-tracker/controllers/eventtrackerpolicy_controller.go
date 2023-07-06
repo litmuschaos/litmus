@@ -22,7 +22,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/event-tracker/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/api/errors"
 
@@ -31,7 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
+	eventtrackerv1 "github.com/litmuschaos/litmus/chaoscenter/event-tracker/api/v1"
 )
 
 // EventTrackerPolicyReconciler reconciles a EventTrackerPolicy object

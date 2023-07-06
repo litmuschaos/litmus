@@ -28,8 +28,8 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/event-tracker/pkg/k8s"
+	"github.com/litmuschaos/litmus/chaoscenter/event-tracker/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/informers"
 
@@ -45,8 +45,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
-	eventtrackerv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/controllers"
+	eventtrackerv1 "github.com/litmuschaos/litmus/chaoscenter/event-tracker/api/v1"
+	"github.com/litmuschaos/litmus/chaoscenter/event-tracker/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
