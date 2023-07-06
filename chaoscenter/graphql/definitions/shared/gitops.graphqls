@@ -107,7 +107,7 @@ extend type Mutation {
     Sends workflow run request(single run workflow only) to agent on gitops notification
     """
     # authorized directive not required
-    gitopsNotifier(clusterInfo: InfraIdentity!, workflowID: ID!): String!
+    gitopsNotifier(clusterInfo: InfraIdentity!, experimentID: ID!): String!
 
     """
     Enables gitops settings in the project
