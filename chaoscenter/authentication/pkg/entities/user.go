@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"litmus/litmus-portal/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"net/mail"
 	"time"
 

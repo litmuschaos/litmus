@@ -1,4 +1,4 @@
-module github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker
+module github.com/litmuschaos/litmus/chaoscenter/event-tracker
 
 go 1.20
 

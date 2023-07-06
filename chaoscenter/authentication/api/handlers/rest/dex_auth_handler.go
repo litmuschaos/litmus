@@ -2,10 +2,10 @@ package rest
 
 import (
 	"context"
-	"litmus/litmus-portal/authentication/api/presenter"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/services"
-	"litmus/litmus-portal/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"net/http"
 	"time"
 

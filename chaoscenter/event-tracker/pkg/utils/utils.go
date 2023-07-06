@@ -11,8 +11,8 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/jmespath/go-jmespath"
-	litmuschaosv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
-	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/pkg/k8s"
+	litmuschaosv1 "github.com/litmuschaos/litmus/chaoscenter/event-tracker/api/v1"
+	"github.com/litmuschaos/litmus/chaoscenter/event-tracker/pkg/k8s"
 	v1 "k8s.io/api/apps/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

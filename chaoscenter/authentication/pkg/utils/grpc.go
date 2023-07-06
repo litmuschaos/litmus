@@ -2,7 +2,7 @@ package utils
 
 import (
 	"context"
-	grpc2 "litmus/litmus-portal/authentication/api/presenter/protos"
+	grpc2 "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"os"
 
 	"github.com/sirupsen/logrus"

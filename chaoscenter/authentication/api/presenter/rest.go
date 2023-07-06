@@ -1,6 +1,6 @@
 package presenter
 
-import "litmus/litmus-portal/authentication/pkg/utils"
+import "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 // ErrorResponseStruct defines the structure for error responses
 type ErrorResponseStruct struct {

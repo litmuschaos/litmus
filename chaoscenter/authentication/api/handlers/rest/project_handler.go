@@ -1,12 +1,12 @@
 package rest
 
 import (
-	"litmus/litmus-portal/authentication/api/presenter"
-	"litmus/litmus-portal/authentication/api/types"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/services"
-	"litmus/litmus-portal/authentication/pkg/utils"
-	"litmus/litmus-portal/authentication/pkg/validations"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 	"net/http"
 	"strconv"
 	"time"
