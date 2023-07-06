@@ -56,7 +56,8 @@ export default function TargetApplicationTab({
       <Container padding={{ left: 'xxlarge', right: 'xxlarge', top: 'xlarge', bottom: 'xlarge' }}>
         <Text font={{ variation: FontVariation.BODY }}>{getString('provideTargetApplicationDetails')}</Text>
         {engineCR?.spec?.appinfo?.appkind !== undefined && (
-          <Layout.Vertical margin={{ top: 'medium', bottom: 'medium' }}>
+          <Layout.Vertical margin={{ top: 'medium', bottom: 'medium' }} spacing="xsmall">
+            <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('appKind')}</Text>
             <DropDown
               width={'50%'}
               placeholder={getString('selectAppKind')}
@@ -72,29 +73,13 @@ export default function TargetApplicationTab({
                 setFaultData(faultData => {
                   if (faultData?.faultName) return { ...faultData, engineCR: faultData?.engineCR };
                 });
-                // gvrData.map(data => {
-                //   if (data.resource === selectedItem.label) {
-                //     getKubeObjectLazyQueryFunction({
-                //       variables: {
-                //         kubeObjectRequest: {
-                //           infraID: infrastructureID ?? '',
-                //           requestID: uuid(),
-                //           kubeObjRequest: {
-                //             group: data.group,
-                //             version: data.version,
-                //             resource: `${data.resource}s`
-                //           }
-                //         }
-                //       }
-                //     });
-                //   }
-                // });
               }}
             />
           </Layout.Vertical>
         )}
         {engineCR?.spec?.appinfo?.appns !== undefined && (
-          <Layout.Vertical margin={{ top: 'medium', bottom: 'medium' }}>
+          <Layout.Vertical margin={{ top: 'medium', bottom: 'medium' }} spacing="xsmall">
+            <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('appNameSpace')}</Text>
             <DropDown
               width={'50%'}
               placeholder={getString('selectAppNamespace')}
@@ -112,7 +97,8 @@ export default function TargetApplicationTab({
           </Layout.Vertical>
         )}
         {engineCR?.spec?.appinfo?.applabel !== undefined && (
-          <Layout.Vertical margin={{ top: 'medium', bottom: 'medium' }}>
+          <Layout.Vertical margin={{ top: 'medium', bottom: 'medium' }} spacing="xsmall">
+            <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('appLabel')}</Text>
             <DropDown
               width={'50%'}
               placeholder={getString('selectAppLabel')}

@@ -40,7 +40,8 @@ export function RoutesWithAuthentication(): React.ReactElement {
     if (!token || !isUserAuthenticated()) {
       forceLogout();
     }
-  }, [forceLogout, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   return (
     <Switch>
