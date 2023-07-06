@@ -29,7 +29,7 @@ func SendRequest(server string, payload []byte) (string, error) {
 	return string(body), nil
 }
 
-//MarshalGQLData processes event data into proper format acceptable by graphql
+// MarshalGQLData processes event data into proper format acceptable by graphql
 func MarshalGQLData(gqlData interface{}) (string, error) {
 	data, err := json.Marshal(gqlData)
 	if err != nil {

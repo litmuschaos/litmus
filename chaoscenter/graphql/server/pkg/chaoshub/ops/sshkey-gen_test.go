@@ -1,8 +1,9 @@
 package chaoshubops_test
 
 import (
-	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 	"testing"
+
+	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 
 	"github.com/stretchr/testify/assert"
 )

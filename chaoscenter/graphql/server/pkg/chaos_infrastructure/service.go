@@ -4,18 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
-	"github.com/sirupsen/logrus"
 	"log"
 	"math"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
+	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
@@ -687,7 +688,6 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 			Username: infra.UpdatedBy,
 		}
 		newInfras = append(newInfras, &newInfra)
-
 
 		//var updateStatus model.UpdateStatus
 

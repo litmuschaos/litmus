@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//Repository holds the mongo database implementation of the Service
+// Repository holds the mongo database implementation of the Service
 type Repository interface {
 	LoginUser(user *entities.User) (*entities.User, error)
 	GetUser(uid string) (*entities.User, error)

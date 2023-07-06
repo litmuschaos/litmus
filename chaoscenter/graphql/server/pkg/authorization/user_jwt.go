@@ -3,8 +3,9 @@ package authorization
 import (
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"log"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/golang-jwt/jwt"
 )

@@ -154,7 +154,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 	stream <- workflow
 }
 
-//StopChaosEngineState is used to patch all the chaosEngines with engineState=stop
+// StopChaosEngineState is used to patch all the chaosEngines with engineState=stop
 func StopChaosEngineState(namespace string, workflowRunID *string) error {
 	ctx := context.TODO()
 

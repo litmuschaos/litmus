@@ -1,9 +1,10 @@
 package chaos_hub
 
 import (
+	"strconv"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	"strconv"
 )
 
 // ChaosHub ...

@@ -16,10 +16,11 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       graphql-server: ${{ steps.filter.outputs.graphql-server }}
       authentication: ${{ steps.filter.outputs.authentication }}
-      subscriber: ${{ steps.filter.outputs.subscriber }}
       event-tracker: ${{ steps.filter.outputs.event-tracker }}
-      # upgrade-agent-cp: ${{ steps.filter.outputs.upgrade-agent-cp }}
-      # dex-server: ${{ steps.filter.outputs.dex-server }}
+      upgrade-agent-cp: ${{ steps.filter.outputs.upgrade-agent-cp }}
+      subscriber: ${{ steps.filter.outputs.subscriber }}
+      litmus-demo: ${{ steps.filter.outputs.litmus-demo }}
+      dex-server: ${{ steps.filter.outputs.dex-server }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v2
@@ -27,41 +28,40 @@ jobs:
         with:
           filters: |
             frontend:
-              - 'chaoscenter/web/**'
+              - 'litmus-portal/frontend/**'
             graphql-server:
-              - 'chaoscenter/graphql/server/**'
+              - 'litmus-portal/graphql-server/**'
             authentication:
-              - 'chaoscenter/authentication/**'
-            subscriber:
-              - 'chaoscenter/subscriber/**'
+              - 'litmus-portal/authentication/**'
             event-tracker:
-              - 'chaoscenter/event-tracker/**'
-            # upgrade-agent-cp:
-            #   - 'chaoscenter/upgrade-agents/control-plane/**'
-            # dex-server:
-            #   - 'chaoscenter/dex-server/**'
+              - 'litmus-portal/cluster-agents/event-tracker/**'
+            upgrade-agent-cp:
+              - 'litmus-portal/upgrade-agents/control-plane/**'
+            subscriber:
+              - 'litmus-portal/cluster-agents/subscriber/**'
+            litmus-demo:
+            - 'demo/1.x/**'
+            dex-server:
+              - 'litmus-portal/dex-server/**'
 
   backend-checks:
     runs-on: ubuntu-latest
     needs: changes
-    if: needs.changes.outputs.graphql-server == 'true' || needs.changes.outputs.authentication == 'true' || needs.changes.outputs.subscriber == 'true' || needs.changes.outputs.event-tracker == 'true'
+    if: needs.changes.outputs.graphql-server == 'true' || needs.changes.outputs.dex-server == 'true' || needs.changes.outputs.upgrade-agent-cp == 'true'  || needs.changes.outputs.authentication == 'true' || needs.changes.outputs.event-tracker == 'true' || needs.changes.outputs.subscriber == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - uses: actions/setup-go@v2
         with:
-          go-version: "1.20" # By default, the go version is v1.15 in runner.
-
+          go-version: "1.16" # By default, the go version is v1.15 in runner.
       - name: Check Golang imports order
         uses: Jerome1337/goimports-action@v1.0.3
         with:
-          goimports-path: ./chaoscenter
-
+          goimports-path: ./litmus-portal
       - name: Backend checks
         shell: bash
         run: |
-          cd chaoscenter
+          cd litmus-portal
           make backend-services-checks
 
   frontend-checks:
@@ -71,49 +71,46 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-
+          node-version: 16.14.2
       - name: Frontend checks
         shell: bash
         run: |
-          cd chaoscenter
+          cd litmus-portal
           make frontend-services-checks
 
-  # backend-unit-tests:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - changes
-  #     - backend-checks
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
-  #     - uses: actions/setup-go@v2
-  #       with:
-  #         go-version: "1.20" # By default, the go version is v1.15 in runner.
-  #     - name: Backend unit tests
-  #       shell: bash
-  #       run: |
-  #         cd chaoscenter
-  #         make unit-tests
+  backend-unit-tests:
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+      - backend-checks
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.16" # By default, the go version is v1.15 in runner.
+      - name: Backend unit tests
+        shell: bash
+        run: |
+          cd litmus-portal
+          make unit-tests
 
   docker-build-graphql-server:
     runs-on: ubuntu-latest
     needs:
       - backend-checks
       - changes
-      # - backend-unit-tests
+      - backend-unit-tests
     if: ${{ needs.changes.outputs.graphql-server == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Build graphql server docker image
         shell: bash
         run: |
-          cd chaoscenter/graphql/server
+          cd litmus-portal/graphql-server
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-server:${{ github.sha }} --build-arg TARGETARCH=amd64
 
       - name: Run Trivy vulnerability scanner
@@ -131,24 +128,22 @@ jobs:
     needs:
       - backend-checks
       - changes
-      # - backend-unit-tests
+      - backend-unit-tests
     if: ${{ needs.changes.outputs.authentication == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Build auth server docker image
         shell: bash
         run: |
-          cd chaoscenter/authentication
+          cd litmus-portal/authentication
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}  --build-arg TARGETARCH=amd64
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'docker.io/litmuschaos/litmusportal-auth-server:${{ github.sha }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
@@ -158,18 +153,16 @@ jobs:
     needs:
       - backend-checks
       - changes
-      # - backend-unit-tests
+      - backend-unit-tests
     if: ${{ needs.changes.outputs.subscriber == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Build subscriber docker image
         shell: bash
         run: |
-          cd chaoscenter/subscriber
+          cd litmus-portal/cluster-agents/subscriber
           docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-subscriber:${{ github.sha }} --build-arg TARGETARCH=amd64
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -180,6 +173,56 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
+  docker-build-event-tracker:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+      - backend-unit-tests
+    if: ${{ needs.changes.outputs.event-tracker == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build event tracker docker image
+        shell: bash
+        run: |
+          cd litmus-portal/cluster-agents/event-tracker
+          docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }} --build-arg TARGETARCH=amd64
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  docker-build-upgrade-agent-cp:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-checks
+      - changes
+      - backend-unit-tests
+    if: ${{ needs.changes.outputs.upgrade-agent-cp == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build control plane upgrade agent docker image
+        shell: bash
+        run: |
+          cd litmus-portal/upgrade-agents/control-plane
+          docker build . -f Dockerfile -t docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }} --build-arg TARGETARCH=amd64
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'             
+
   docker-build-frontend:
     runs-on: ubuntu-latest
     needs:
@@ -189,91 +232,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: yarn build check
-        run: |
-          cd chaoscenter/web && yarn && yarn build
-
-      - name: web docker build check
+      - name: Build frontend docker image
         shell: bash
         run: |
-          cd chaoscenter/web
-          docker build . -f Dockerfile --build-arg TARGETARCH=amd64 -t docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}
+          cd litmus-portal/frontend
+          docker build . -f Dockerfile --build-arg TARGETARCH=amd64
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-
-  docker-build-event-tracker:
+  docker-build-dex-server:
     runs-on: ubuntu-latest
     needs:
       - backend-checks
       - changes
-      # - backend-unit-tests
-    if: ${{ needs.changes.outputs.event-tracker == 'true' }}
+      - backend-unit-tests
+    if: needs.changes.outputs.dex-server == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Build event tracker docker image
+      - name: Build dex-server docker image
         shell: bash
         run: |
-          cd chaoscenter/event-tracker
-          docker build . -f Dockerfile -t docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }} --build-arg TARGETARCH=amd64
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'docker.io/litmuschaos/litmusportal-event-tracker:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-
-  # docker-build-upgrade-agent-cp:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - backend-checks
-  #     - changes
-  #     - backend-unit-tests
-  #   if: ${{ needs.changes.outputs.upgrade-agent-cp == 'true' }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: Build control plane upgrade agent docker image
-  #       shell: bash
-  #       run: |
-  #         cd chaoscenter/upgrade-agents/control-plane
-  #         docker build . -f Dockerfile -t docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }} --build-arg TARGETARCH=amd64
-  #     - name: Run Trivy vulnerability scanner
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         image-ref: 'docker.io/litmuschaos/upgrade-agent-cp:${{ github.sha }}'
-  #         format: 'table'
-  #         exit-code: '1'
-  #         ignore-unfixed: true
-  #         vuln-type: 'os,library'
-  #         severity: 'CRITICAL,HIGH'             
-
-  # docker-build-dex-server:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - backend-checks
-  #     - changes
-  #     - backend-unit-tests
-  #   if: needs.changes.outputs.dex-server == 'true'
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: Build dex-server docker image
-  #       shell: bash
-  #       run: |
-  #         cd chaoscenter/dex-server
-  #         docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
+          cd litmus-portal/dex-server
+          docker images && docker build . -f Dockerfile --build-arg TARGETARCH=amd64
