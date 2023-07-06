@@ -12,6 +12,8 @@ import (
 func ProjectRouter(router *gin.Engine, service services.ApplicationService) {
 	router.Use(middleware.JwtMiddleware())
 	router.GET("/get_project/:project_id", rest.GetProject(service))
+	router.GET("/get_active_project_members/:project_id", rest.GetActiveProjectMembers(service))
+	router.GET("/get_pending_project_members/:project_id", rest.GetPendingProjectMembers(service))
 	router.GET("/get_user_with_project/:username", rest.GetUserWithProject(service))
 	router.GET("/get_owner_projects", rest.GetOwnerProjectIDs(service))
 	router.GET("/get_project_role/:project_id", rest.GetProjectRole(service))
@@ -23,5 +25,5 @@ func ProjectRouter(router *gin.Engine, service services.ApplicationService) {
 	router.POST("/decline_invitation", rest.DeclineInvitation(service))
 	router.POST("/remove_invitation", rest.RemoveInvitation(service))
 	router.POST("/leave_project", rest.LeaveProject(service))
-	router.POST("/update_projectname", rest.UpdateProjectName(service))
+	router.POST("/update_project_name", rest.UpdateProjectName(service))
 }

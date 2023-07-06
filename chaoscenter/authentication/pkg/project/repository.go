@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"errors"
+	"fmt"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
@@ -29,6 +30,8 @@ type Repository interface {
 	UpdateProjectState(userID string, deactivateTime string) error
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
+	GetActiveProjectMembers(projectID string) ([]*entities.Member, error)
+	GetPendingProjectMembers(projectID string) ([]*entities.Member, error)
 }
 
 type repository struct {
@@ -392,6 +395,67 @@ func (r repository) GetProjectRole(projectID string, userID string) (*entities.M
 		return nil, nil
 	}
 	return &(res.Members[0].Role), nil
+}
+
+func (r repository) GetActiveProjectMembers(projectID string) ([]*entities.Member, error) {
+	filter := bson.D{
+		{"_id", projectID},
+	}
+	projection := bson.D{
+		{"_id", 0},
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"invitation", entities.AcceptedInvitation},
+			}},
+		}},
+	}
+
+	var res struct {
+		Members []*entities.Member `bson:"members"`
+	}
+	cursor, findErr := r.Collection.Find(context.TODO(), filter, options.Find().SetProjection(projection))
+	if findErr != nil {
+		return nil, findErr
+	}
+
+	err := cursor.All(context.TODO(), &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Members, nil
+}
+
+func (r repository) GetPendingProjectMembers(projectID string) ([]*entities.Member, error) {
+	filter := bson.D{
+		{"_id", projectID},
+	}
+	projection := bson.D{
+		{"_id", 0},
+		{"members", bson.D{
+			{"$elemMatch", bson.D{
+				{"$ne", bson.D{
+					{"invitation", entities.AcceptedInvitation},
+				}},
+			}},
+		}},
+	}
+
+	var members []*entities.Member
+	cursor, findErr := r.Collection.Find(context.TODO(), filter, options.Find().SetProjection(projection))
+	if findErr != nil {
+		fmt.Println("her2")
+
+		return nil, findErr
+	}
+
+	err := cursor.All(context.TODO(), &members)
+	if err != nil {
+		fmt.Println("her1")
+		return nil, err
+	}
+
+	return members, nil
 }
 
 // NewRepo creates a new instance of this repository

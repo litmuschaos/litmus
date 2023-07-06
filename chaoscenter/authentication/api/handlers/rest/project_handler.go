@@ -220,6 +220,32 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		members, err := service.GetActiveProjectMembers(projectID)
+		if err != nil {
+			log.Error("here", err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{"data": members})
+	}
+}
+
+func GetPendingProjectMembers(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		members, err := service.GetActiveProjectMembers(projectID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{"data": members})
+	}
+}
+
 // getInvitation returns the Invitation status
 func getInvitation(service services.ApplicationService, member entities.MemberInput) (entities.Invitation, error) {
 	project, err := service.GetProjectByProjectID(member.ProjectID)
@@ -559,7 +585,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
-//  UpdateProjectName is used to update a project's name
+// UpdateProjectName is used to update a project's name
 func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.ProjectInput
@@ -609,7 +635,7 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
-// GetOwnerProject returns an array of project IDs in which user is an owner
+// GetOwnerProjectIDs returns an array of project IDs in which user is an owner
 func GetOwnerProjectIDs(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uid := c.MustGet("uid").(string)
