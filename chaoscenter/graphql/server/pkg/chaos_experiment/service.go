@@ -46,6 +46,14 @@ type chaosExperimentService struct {
 	chaosInfrastructureOperator *dbChaosInfra.Operator
 }
 
+// NewChaosExperimentService returns a new instance of the chaos workflow service
+func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator) Service {
+	return &chaosExperimentService{
+		chaosExperimentOperator:     chaosWorkflowOperator,
+		chaosInfrastructureOperator: clusterOperator,
+	}
+}
+
 // ProcessExperiment takes the workflow and processes it as required
 func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error) {
 	// security check for chaos_infra access

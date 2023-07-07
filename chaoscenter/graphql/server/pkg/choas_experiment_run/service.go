@@ -28,21 +28,21 @@ type Service interface {
 }
 
 // chaosWorkflowService is the implementation of the chaos workflow service
-type chaosExperimentService struct {
+type chaosExperimentRunService struct {
 	chaosExperimentOperator     *dbChaosExperiment.Operator
 	chaosInfrastructureOperator *dbChaosInfra.Operator
 }
 
-// NewChaosExperimentService returns a new instance of the chaos workflow service
-func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator) Service {
-	return &chaosExperimentService{
+// NewChaosExperimentRunService returns a new instance of the chaos workflow service
+func NewChaosExperimentRunService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator) Service {
+	return &chaosExperimentRunService{
 		chaosExperimentOperator:     chaosWorkflowOperator,
 		chaosInfrastructureOperator: clusterOperator,
 	}
 }
 
 // ProcessExperimentRunDelete deletes a workflow entry and updates the database
-func (c *chaosExperimentService) ProcessExperimentRunDelete(ctx context.Context, query bson.D, workflowRunID *string, experimentRun dbChaosExperimentRun.ChaosExperimentRun, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error {
+func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Context, query bson.D, workflowRunID *string, experimentRun dbChaosExperimentRun.ChaosExperimentRun, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error {
 	update := bson.D{
 		{"$set", bson.D{
 			{"is_removed", experimentRun.IsRemoved},
@@ -65,7 +65,7 @@ func (c *chaosExperimentService) ProcessExperimentRunDelete(ctx context.Context,
 }
 
 // ProcessCompletedExperimentRun calculates the Resiliency Score and returns the updated ExecutionData
-func (c *chaosExperimentService) ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error) {
+func (c *chaosExperimentRunService) ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error) {
 	var weightSum, totalTestResult = 0, 0
 	var result ExperimentRunMetrics
 	weightMap := map[string]int{}

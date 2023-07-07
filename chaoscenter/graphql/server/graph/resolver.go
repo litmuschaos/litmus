@@ -2,6 +2,7 @@ package graph
 
 import (
 	"context"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
@@ -9,6 +10,8 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
+	chaos_experiment_run "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
+	runHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
@@ -29,6 +32,8 @@ type Resolver struct {
 	chaosInfrastructureService chaos_infrastructure.Service
 	chaosExperimentService     chaos_experiment2.Service
 	chaosExperimentHandler     handler.ChaosExperimentHandler
+	choasExperimentRunService  chaos_experiment_run.Service
+	chaosExperimentRunHandler  runHandler.ChaosExperimentRunHandler
 	gitopsService              gitops3.Service
 }
 
@@ -45,20 +50,24 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	chaosHubService := chaoshub.NewService(chaosHubOperator)
 	chaosInfrastructureService := chaos_infrastructure.NewChaosInfrastructureService(chaosInfraOperator)
 	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator)
+	chaosExperimentRunService := chaos_experiment_run.NewChaosExperimentRunService(chaosExperimentOperator, chaosInfraOperator)
 	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
 	imageRegistryService := image_registry.NewImageRegistryService(imageRegistryOperator)
 
 	//handler
 	chaosExperimentHandler := handler.NewChaosExperimentHandler(chaosExperimentService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, mongodbOperator)
+	choasExperimentRunHandler := runHandler.NewChaosExperimentRunHandler(chaosExperimentRunService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, mongodbOperator)
 
 	config := generated.Config{
 		Resolvers: &Resolver{
 			chaosHubService:            chaosHubService,
 			chaosInfrastructureService: chaosInfrastructureService,
 			chaosExperimentService:     chaosExperimentService,
+			choasExperimentRunService:  chaosExperimentRunService,
 			imageRegistryService:       imageRegistryService,
 			gitopsService:              gitOpsService,
 			chaosExperimentHandler:     *chaosExperimentHandler,
+			chaosExperimentRunHandler:  *choasExperimentRunHandler,
 		}}
 
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {

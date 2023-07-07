@@ -41,8 +41,8 @@ import (
 	"github.com/google/uuid"
 )
 
-// ChaosExperimentHandler is the handler for chaos experiment
-type ChaosExperimentHandler struct {
+// ChaosExperimentRunHandler is the handler for chaos experiment
+type ChaosExperimentRunHandler struct {
 	chaosExperimentRunService types.Service
 	infrastructureService     chaos_infrastructure.Service
 	gitOpsService             gitops.Service
@@ -50,15 +50,15 @@ type ChaosExperimentHandler struct {
 	mongodbOperator           mongodb.MongoOperator
 }
 
-// NewChaosExperimentHandler returns a new instance of ChaosWorkflowHandler
-func NewChaosExperimentHandler(
+// NewChaosExperimentRunHandler returns a new instance of ChaosWorkflowHandler
+func NewChaosExperimentRunHandler(
 	chaosExperimentRunService types.Service,
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
 	mongodbOperator mongodb.MongoOperator,
-) *ChaosExperimentHandler {
-	return &ChaosExperimentHandler{
+) *ChaosExperimentRunHandler {
+	return &ChaosExperimentRunHandler{
 		chaosExperimentRunService: chaosExperimentRunService,
 		infrastructureService:     infrastructureService,
 		gitOpsService:             gitOpsService,
@@ -68,7 +68,7 @@ func NewChaosExperimentHandler(
 }
 
 // GetExperimentRun returns details of a requested experiment run
-func (c *ChaosExperimentHandler) GetExperimentRun(ctx context.Context, projectID string, experimentRunID string) (*model.ExperimentRun, error) {
+func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projectID string, experimentRunID string) (*model.ExperimentRun, error) {
 	var pipeline mongo.Pipeline
 
 	// Matching with identifiers
@@ -234,7 +234,7 @@ func (c *ChaosExperimentHandler) GetExperimentRun(ctx context.Context, projectID
 }
 
 // ListExperimentRun returns all the workflow runs for matching identifiers from the DB
-func (c *ChaosExperimentHandler) ListExperimentRun(projectID string, request model.ListExperimentRunRequest) (*model.ListExperimentRunResponse, error) {
+func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request model.ListExperimentRunRequest) (*model.ListExperimentRunResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Matching with identifiers
@@ -615,7 +615,7 @@ func (c *ChaosExperimentHandler) ListExperimentRun(projectID string, request mod
 }
 
 // RunChaosWorkFlow sends workflow run request(single run workflow only) to chaos_infra on workflow re-run request
-func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) (*model.RunChaosExperimentResponse, error) {
+func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) (*model.RunChaosExperimentResponse, error) {
 	var notifyID string
 	infra, err := dbChaosInfra.NewInfrastructureOperator(c.mongodbOperator).GetInfra(workflow.InfraID)
 	if err != nil {
@@ -851,7 +851,7 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 	}, nil
 }
 
-func (c *ChaosExperimentHandler) RunCronExperiment(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) error {
+func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) error {
 	var (
 		//usrID                = currentUser.Name
 		cronExperimentManifest v1alpha1.CronWorkflow
@@ -929,7 +929,7 @@ func (c *ChaosExperimentHandler) RunCronExperiment(ctx context.Context, projectI
 	return nil
 }
 
-func (c *ChaosExperimentHandler) GetExperimentRunStats(ctx context.Context, projectID string) (*model.GetExperimentRunStatsResponse, error) {
+func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, projectID string) (*model.GetExperimentRunStatsResponse, error) {
 	var pipeline mongo.Pipeline
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
@@ -988,7 +988,7 @@ func (c *ChaosExperimentHandler) GetExperimentRunStats(ctx context.Context, proj
 	}, nil
 }
 
-func (c *ChaosExperimentHandler) ChaosExperimentRunEvent(event model.ExperimentRunRequest) (string, error) {
+func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.ExperimentRunRequest) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

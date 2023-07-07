@@ -15,7 +15,7 @@ import (
 )
 
 func (r *mutationResolver) ChaosExperimentRun(ctx context.Context, request model.ExperimentRunRequest) (string, error) {
-	return r.chaosExperimentHandler.ChaosExperimentRunEvent(request)
+	return r.chaosExperimentRunHandler.ChaosExperimentRunEvent(request)
 }
 
 func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID string, projectID string) (*model.RunChaosExperimentResponse, error) {
@@ -44,7 +44,7 @@ func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID 
 
 	var uiResponse *model.RunChaosExperimentResponse
 
-	uiResponse, err = r.chaosExperimentHandler.RunChaosWorkFlow(ctx, projectID, experiment, data_store.Store)
+	uiResponse, err = r.chaosExperimentRunHandler.RunChaosWorkFlow(ctx, projectID, experiment, data_store.Store)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -66,7 +66,7 @@ func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, 
 		return nil, err
 	}
 
-	expRunResponse, err := r.chaosExperimentHandler.GetExperimentRun(ctx, projectID, experimentRunID)
+	expRunResponse, err := r.chaosExperimentRunHandler.GetExperimentRun(ctx, projectID, experimentRunID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -88,7 +88,7 @@ func (r *queryResolver) ListExperimentRun(ctx context.Context, projectID string,
 	if err != nil {
 		return nil, err
 	}
-	uiResponse, err := r.chaosExperimentHandler.ListExperimentRun(projectID, request)
+	uiResponse, err := r.chaosExperimentRunHandler.ListExperimentRun(projectID, request)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -108,7 +108,7 @@ func (r *queryResolver) GetExperimentRunStats(ctx context.Context, projectID str
 		return nil, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.GetExperimentRunStats(ctx, projectID)
+	uiResponse, err := r.chaosExperimentRunHandler.GetExperimentRunStats(ctx, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
