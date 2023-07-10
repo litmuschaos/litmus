@@ -591,14 +591,6 @@ spec:
       labels:
         component: litmusportal-server
     spec:
-      initContainers:
-        - name: wait-for-mongodb
-          image: litmuschaos/curl:3.0.0-beta4
-          command: ["/bin/sh", "-c"]
-          args:
-            [
-              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
-            ]
       volumes:
         - name: gitops-storage
           emptyDir: {}
@@ -719,14 +711,6 @@ spec:
         component: litmusportal-auth-server
     spec:
       automountServiceAccountToken: false
-      initContainers:
-        - name: wait-for-mongodb
-          image: litmuschaos/curl:3.0.0-beta4
-          command: ["/bin/sh", "-c"]
-          args:
-            [
-              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
-            ]
       containers:
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:3.0.0-beta9
@@ -772,57 +756,3 @@ spec:
       targetPort: 3030
   selector:
     component: litmusportal-auth-server
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mongo
-  namespace: litmus
-  labels:
-    app: mongo
-spec:
-  selector:
-    matchLabels:
-      component: database
-  serviceName: mongo-headless-service
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        component: database
-    spec:
-      automountServiceAccountToken: false
-      containers:
-        - name: mongo
-          image: litmuschaos/mongo:4.2.8
-          securityContext:
-            #            runAsUser: 2000
-            allowPrivilegeEscalation: false
-          #            runAsNonRoot: true
-          args: ["--ipv6"]
-          ports:
-            - containerPort: 27017
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: mongo-persistent-storage
-              mountPath: /data/db
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: litmus-portal-admin-secret
-                  key: DB_USER
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: litmus-portal-admin-secret
-                  key: DB_PASSWORD
-  volumeClaimTemplates:
-    - metadata:
-        name: mongo-persistent-storage
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 20Gi

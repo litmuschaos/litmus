@@ -1,11 +1,5 @@
 ## Installation steps for Litmus 3.0.0-beta9
 
-Applying the manifest file will install all the required service account configuration and ChaosCenter.
-
-```shell
-kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta9/litmus-3.0.0-beta9.yaml
-```
-
 ### Mongo installation via Helm - Bitnami Mongo
 
 ```shell
@@ -34,4 +28,12 @@ metrics:
 
 ```shell
 helm install my-release bitnami/mongodb --values mongo-values.yml
+```
+
+### Apply the Manifest
+
+Applying the manifest file will install all the required service account configuration and ChaosCenter.
+
+```shell
+kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta9/litmus-3.0.0-beta9.yaml
 ```
