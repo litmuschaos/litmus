@@ -1,20 +1,15 @@
-import React, { useMemo } from 'react';
-import type { Column, Row } from 'react-table';
-import { Container, Layout, Tab, TableV2, Tabs, Text } from '@harnessio/uicore';
+import React from 'react';
+import { Container, Layout, Tab, Tabs, Text } from '@harnessio/uicore';
 import DefaultLayout from '@components/DefaultLayout';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import { MembersTabs, PermissionGroup } from '@models';
 import RbacButton from '@components/RbacButton';
-import type { ProjectMember } from '@controllers/ActiveProjectMembers/types';
-import { useStrings } from '@strings';
-import { MemberEmail, MemberName, MemberPermission } from './ActiveMembersListColumns';
-import { MenuCell } from './ActiveMemberTableMenu';
+import ActiveProjectMembersController from '@controllers/ActiveProjectMembers/ActiveProjectMembers';
 import styles from './ProjectMember.module.scss';
 
 export default function ProjectMembersView(): React.ReactElement {
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
-  const { getString } = useStrings();
   const selectedTabId = searchParams.get('tab') as MembersTabs;
 
   const handleTabChange = (tabID: MembersTabs): void => {
@@ -28,38 +23,6 @@ export default function ProjectMembersView(): React.ReactElement {
     }
   };
 
-  const envColumns: Column<ProjectMember>[] = useMemo(
-    () => [
-      {
-        Header: 'MEMBERS',
-        id: 'Username',
-        width: '40%',
-        accessor: 'Username',
-        Cell: MemberName
-      },
-      {
-        Header: 'EMAIL',
-        id: 'Email',
-        accessor: 'Email',
-        width: '30%',
-        Cell: MemberEmail
-      },
-      {
-        Header: 'PERMISSIONS',
-        id: 'Role',
-        width: '30%',
-        Cell: MemberPermission
-      },
-      {
-        Header: '',
-        id: 'threeDotMenu',
-        Cell: ({ row }: { row: Row<ProjectMember> }) => <MenuCell row={{ ...row }} />,
-        disableSortBy: true
-      }
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getString]
-  );
   return (
     <DefaultLayout breadcrumbs={[]} title={'Members'} noPadding>
       <Container className={styles.tabContainer}>
@@ -85,7 +48,7 @@ export default function ProjectMembersView(): React.ReactElement {
                 </Layout.Horizontal>
                 <Layout.Vertical padding="medium">
                   <Text>Total Members</Text>
-                  <TableV2<ProjectMember> columns={envColumns} sortable data={[]} />
+                  <ActiveProjectMembersController />
                 </Layout.Vertical>
               </Layout.Vertical>
             }

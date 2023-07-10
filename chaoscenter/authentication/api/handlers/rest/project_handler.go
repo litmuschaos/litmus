@@ -225,7 +225,6 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 		projectID := c.Param("project_id")
 		members, err := service.GetActiveProjectMembers(projectID)
 		if err != nil {
-			log.Error("here", err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}

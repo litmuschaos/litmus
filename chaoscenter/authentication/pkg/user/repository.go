@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//Repository holds the mongo database implementation of the Service
+// Repository holds the mongo database implementation of the Service
 type Repository interface {
 	LoginUser(user *entities.User) (*entities.User, error)
 	GetUser(uid string) (*entities.User, error)
@@ -25,6 +25,7 @@ type Repository interface {
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
+	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
 type repository struct {
@@ -83,6 +84,28 @@ func (r repository) GetUsers() (*[]entities.User, error) {
 		_ = cursor.Decode(&user)
 		Users = append(Users, *user.SanitizedUser())
 	}
+	return &Users, nil
+}
+
+func (r repository) InviteUsers(invitedUsers []string) (*[]entities.User, error) {
+	cursor, err := r.Collection.Find(context.Background(),
+		bson.D{
+			{"_id", bson.D{
+				{"$nin", invitedUsers},
+			}},
+		})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var Users = []entities.User{}
+	for cursor.Next(context.TODO()) {
+		var user entities.User
+		_ = cursor.Decode(&user)
+		Users = append(Users, *user.SanitizedUser())
+	}
+
 	return &Users, nil
 }
 

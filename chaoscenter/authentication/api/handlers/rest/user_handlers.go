@@ -137,6 +137,26 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		activeProjectMembers, err := service.GetActiveProjectMembers(projectID)
+		pendingProjectMembers, err := service.GetPendingProjectMembers(projectID)
+
+		var uids []string
+		for _, k := range activeProjectMembers {
+			uids
+		}
+		users, err := service.GetUsers()
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, users)
+	}
+}
+
 func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.User

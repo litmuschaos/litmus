@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"errors"
-	"fmt"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
@@ -409,18 +408,11 @@ func (r repository) GetActiveProjectMembers(projectID string) ([]*entities.Membe
 			}},
 		}},
 	}
+	var res entities.Members
 
-	var res struct {
-		Members []*entities.Member `bson:"members"`
-	}
-	cursor, findErr := r.Collection.Find(context.TODO(), filter, options.Find().SetProjection(projection))
-	if findErr != nil {
-		return nil, findErr
-	}
-
-	err := cursor.All(context.TODO(), &res)
-	if err != nil {
-		return nil, err
+	findOneErr := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
+	if findOneErr != nil {
+		return nil, findOneErr
 	}
 
 	return res.Members, nil
@@ -441,21 +433,14 @@ func (r repository) GetPendingProjectMembers(projectID string) ([]*entities.Memb
 		}},
 	}
 
-	var members []*entities.Member
-	cursor, findErr := r.Collection.Find(context.TODO(), filter, options.Find().SetProjection(projection))
-	if findErr != nil {
-		fmt.Println("her2")
+	var res entities.Members
 
-		return nil, findErr
+	findOneErr := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
+	if findOneErr != nil {
+		return nil, findOneErr
 	}
 
-	err := cursor.All(context.TODO(), &members)
-	if err != nil {
-		fmt.Println("her1")
-		return nil, err
-	}
-
-	return members, nil
+	return res.Members, nil
 }
 
 // NewRepo creates a new instance of this repository

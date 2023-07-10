@@ -32,6 +32,10 @@ type Member struct {
 	JoinedAt   string     `bson:"joined_at"`
 }
 
+type Members struct {
+	Members []*Member `bson:"members"`
+}
+
 type ProjectInput struct {
 	ProjectID   string `bson:"project_id" json:"project_id"`
 	ProjectName string `bson:"project_name" json:"project_name"`
