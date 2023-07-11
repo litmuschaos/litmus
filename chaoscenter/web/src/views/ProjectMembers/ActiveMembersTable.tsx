@@ -11,7 +11,6 @@ interface ActiveMembersTableViewProps {
 }
 export default function ActiveMembersTableView({ activeMembers }: ActiveMembersTableViewProps): React.ReactElement {
   const { getString } = useStrings();
-
   const envColumns: Column<ProjectMember>[] = useMemo(
     () => [
       {

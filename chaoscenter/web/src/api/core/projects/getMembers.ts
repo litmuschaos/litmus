@@ -9,9 +9,8 @@ interface MembersResponse {
 export function getActiveMembers(projectID: string): RestAPIResponse<MembersResponse> {
   const { data, error, loading } = useRequest<MembersResponse>({
     baseURL: config.restEndpoints?.authUri,
-    url: `/get_active_project_members/${projectID}`,
+    url: `/get_project_members/${projectID}/accepted`,
     method: 'GET'
   });
-  console.log('api', data?.data);
   return { data, error, loading };
 }

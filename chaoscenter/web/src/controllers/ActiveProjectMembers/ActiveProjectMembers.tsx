@@ -9,7 +9,6 @@ export default function ActiveProjectMembersController(): React.ReactElement {
   const { projectID } = useParams<{ projectID: string }>();
   const [projectMembers, setProjectMembers] = React.useState<ProjectMember[]>([]);
   const { data } = getActiveMembers(projectID);
-  console.log('data', data);
   React.useEffect(() => {
     data && setProjectMembers(generateActiveMemberTableContent(data.data));
   }, [data]);

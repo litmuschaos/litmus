@@ -1,17 +1,18 @@
 import React from 'react';
-import { Container, Layout, Tab, Tabs, Text } from '@harnessio/uicore';
+import { Container, Dialog, Layout, Tab, Tabs, Text } from '@harnessio/uicore';
 import DefaultLayout from '@components/DefaultLayout';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import { MembersTabs, PermissionGroup } from '@models';
 import RbacButton from '@components/RbacButton';
 import ActiveProjectMembersController from '@controllers/ActiveProjectMembers/ActiveProjectMembers';
+import InviteUsersController from '@controllers/InviteNewMembers';
 import styles from './ProjectMember.module.scss';
 
 export default function ProjectMembersView(): React.ReactElement {
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
   const selectedTabId = searchParams.get('tab') as MembersTabs;
-
+  const [hideModal, setHideModal] = React.useState<boolean>(true);
   const handleTabChange = (tabID: MembersTabs): void => {
     switch (tabID) {
       case MembersTabs.ACTIVE:
@@ -41,10 +42,18 @@ export default function ProjectMembersView(): React.ReactElement {
                       text="New Member"
                       permission={PermissionGroup.EDITOR}
                       onClick={() => {
-                        // setIsModalOpen(true);
+                        setHideModal(false);
                       }}
                     />
                   </Layout.Horizontal>
+                  <Dialog
+                    isOpen={!hideModal}
+                    enforceFocus={false}
+                    onClose={() => setHideModal(true)}
+                    // className={css.modalWithHelpPanel}
+                  >
+                    <InviteUsersController hideDarkModal={setHideModal} />
+                  </Dialog>
                 </Layout.Horizontal>
                 <Layout.Vertical padding="medium">
                   <Text>Total Members</Text>
