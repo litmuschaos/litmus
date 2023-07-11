@@ -27,7 +27,7 @@ metrics:
 ```
 
 ```shell
-helm install my-release bitnami/mongodb --values mongo-values.yml
+helm install my-release bitnami/mongodb --values mongo-values.yml -n <NAMESPACE>
 ```
 
 ### Apply the Manifest
