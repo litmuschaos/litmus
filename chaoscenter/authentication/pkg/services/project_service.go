@@ -23,8 +23,7 @@ type projectService interface {
 	UpdateProjectState(userID string, deactivateTime string) error
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
-	GetActiveProjectMembers(projectID string) ([]*entities.Member, error)
-	GetPendingProjectMembers(projectID string) ([]*entities.Member, error)
+	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -77,9 +76,6 @@ func (a applicationService) GetProjectRole(projectID string, userID string) (*en
 	return a.projectRepository.GetProjectRole(projectID, userID)
 }
 
-func (a applicationService) GetActiveProjectMembers(projectID string) ([]*entities.Member, error) {
-	return a.projectRepository.GetActiveProjectMembers(projectID)
-}
-func (a applicationService) GetPendingProjectMembers(projectID string) ([]*entities.Member, error) {
-	return a.projectRepository.GetPendingProjectMembers(projectID)
+func (a applicationService) GetProjectMembers(projectID string, state string) ([]*entities.Member, error) {
+	return a.projectRepository.GetProjectMembers(projectID, state)
 }

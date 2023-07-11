@@ -98,7 +98,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 		for _, member := range project.Members {
 			members = append(members, &types.Member{
 				UserID:        memberMap[member.UserID].ID,
-				UserName:      memberMap[member.UserID].UserName,
+				Username:      memberMap[member.UserID].Username,
 				Name:          memberMap[member.UserID].Name,
 				Role:          member.Role,
 				Email:         memberMap[member.UserID].Email,
@@ -168,7 +168,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			for _, member := range project.Members {
 				members = append(members, &types.Member{
 					UserID:        memberMap[member.UserID].ID,
-					UserName:      memberMap[member.UserID].UserName,
+					Username:      memberMap[member.UserID].Username,
 					Name:          memberMap[member.UserID].Name,
 					Role:          member.Role,
 					Email:         memberMap[member.UserID].Email,
@@ -223,21 +223,9 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
-		members, err := service.GetActiveProjectMembers(projectID)
+		state := c.Param("state")
+		members, err := service.GetProjectMembers(projectID, state)
 		if err != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-			return
-		}
-		c.JSON(200, gin.H{"data": members})
-	}
-}
-
-func GetPendingProjectMembers(service services.ApplicationService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		projectID := c.Param("project_id")
-		members, err := service.GetActiveProjectMembers(projectID)
-		if err != nil {
-			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
@@ -411,7 +399,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 		c.JSON(200, gin.H{"data": types.Member{
 			UserID:        user.ID,
-			UserName:      user.UserName,
+			Username:      user.Username,
 			Name:          user.Name,
 			Role:          entities.MemberRole(newMember.Role),
 			Email:         user.Email,

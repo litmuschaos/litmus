@@ -23,13 +23,13 @@ const (
 // User contains the user information
 type User struct {
 	Audit         `bson:",inline"`
-	ID            string `bson:"_id,omitempty" json:"_id"`
-	UserName      string `bson:"username,omitempty" json:"username"`
-	Password      string `bson:"password,omitempty" json:"password,omitempty"`
-	Email         string `bson:"email,omitempty" json:"email,omitempty"`
-	Name          string `bson:"name,omitempty" json:"name,omitempty"`
-	Role          Role   `bson:"role,omitempty" json:"role"`
-	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivated_at,omitempty"`
+	ID            string `bson:"_id,omitempty" json:"UserID"`
+	Username      string `bson:"username,omitempty" json:"Username"`
+	Password      string `bson:"password,omitempty" json:"Password,omitempty"`
+	Email         string `bson:"email,omitempty" json:"Email,omitempty"`
+	Name          string `bson:"name,omitempty" json:"Name,omitempty"`
+	Role          Role   `bson:"role,omitempty" json:"Role"`
+	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"Deactivated_at,omitempty"`
 }
 
 // UserDetails is used to update user's personal details
@@ -71,7 +71,7 @@ func (user User) GetUserWithProject() *UserWithProject {
 
 	return &UserWithProject{
 		ID:       user.ID,
-		Username: user.UserName,
+		Username: user.Username,
 		Name:     user.Name,
 		Audit: Audit{
 			IsRemoved: user.IsRemoved,
@@ -103,7 +103,7 @@ func (user *User) GetSignedJWT() (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID
 	claims["role"] = user.Role
-	claims["username"] = user.UserName
+	claims["username"] = user.Username
 	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))

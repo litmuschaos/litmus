@@ -17,7 +17,7 @@ type userService interface {
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
-	InviteUsers(projectID string) (*[]entities.User, error)
+	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
 // LoginUser is the implementation of the repository function `LoginUser`

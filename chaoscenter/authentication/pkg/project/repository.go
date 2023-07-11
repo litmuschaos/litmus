@@ -3,6 +3,8 @@ package project
 import (
 	"context"
 	"errors"
+	"fmt"
+	"litmus/litmus-portal/authentication/api/types"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
@@ -29,8 +31,7 @@ type Repository interface {
 	UpdateProjectState(userID string, deactivateTime string) error
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
-	GetActiveProjectMembers(projectID string) ([]*entities.Member, error)
-	GetPendingProjectMembers(projectID string) ([]*entities.Member, error)
+	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
 }
 
 type repository struct {
@@ -396,41 +397,39 @@ func (r repository) GetProjectRole(projectID string, userID string) (*entities.M
 	return &(res.Members[0].Role), nil
 }
 
-func (r repository) GetActiveProjectMembers(projectID string) ([]*entities.Member, error) {
+func (r repository) GetProjectMembers(projectID string, state string) ([]*entities.Member, error) {
 	filter := bson.D{
 		{"_id", projectID},
 	}
-	projection := bson.D{
-		{"_id", 0},
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"invitation", entities.AcceptedInvitation},
-			}},
-		}},
-	}
-	var res entities.Members
-
-	findOneErr := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
-	if findOneErr != nil {
-		return nil, findOneErr
-	}
-
-	return res.Members, nil
-}
-
-func (r repository) GetPendingProjectMembers(projectID string) ([]*entities.Member, error) {
-	filter := bson.D{
-		{"_id", projectID},
-	}
-	projection := bson.D{
-		{"_id", 0},
-		{"members", bson.D{
-			{"$elemMatch", bson.D{
-				{"$ne", bson.D{
+	fmt.Println(projectID)
+	var projection bson.D
+	switch state {
+	case string(types.Accepted):
+		projection = bson.D{
+			{"_id", 0},
+			{"members", bson.D{
+				{"$elemMatch", bson.D{
 					{"invitation", entities.AcceptedInvitation},
 				}},
 			}},
-		}},
+		}
+	case string(types.NotAccepted):
+		projection = bson.D{
+			{"_id", 0},
+			{"members", bson.D{
+				{"$elemMatch", bson.D{
+					{"$ne", bson.D{
+						{"invitation", entities.AcceptedInvitation},
+					}},
+				}},
+			}},
+		}
+	case string(types.All):
+		fmt.Println("all")
+		projection = bson.D{
+			{"_id", 0},
+			{"members", 1},
+		}
 	}
 
 	var res entities.Members
@@ -439,7 +438,6 @@ func (r repository) GetPendingProjectMembers(projectID string) ([]*entities.Memb
 	if findOneErr != nil {
 		return nil, findOneErr
 	}
-
 	return res.Members, nil
 }
 

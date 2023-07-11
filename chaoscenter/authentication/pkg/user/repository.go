@@ -47,7 +47,7 @@ func (r repository) LoginUser(user *entities.User) (*entities.User, error) {
 		if mongo.IsDuplicateKeyError(err) {
 			var result = entities.User{}
 			findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-				"username": user.UserName,
+				"username": user.Username,
 			}).Decode(&result)
 			if findOneErr != nil {
 				return nil, findOneErr
@@ -92,6 +92,9 @@ func (r repository) InviteUsers(invitedUsers []string) (*[]entities.User, error)
 		bson.D{
 			{"_id", bson.D{
 				{"$nin", invitedUsers},
+			}},
+			{"deactivated_at", bson.D{
+				{"$exists", false},
 			}},
 		})
 
@@ -159,9 +162,9 @@ func (r repository) CheckPasswordHash(hash, password string) error {
 // UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
-	result.UserName = userPassword.Username
+	result.Username = userPassword.Username
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-		"username": result.UserName,
+		"username": result.Username,
 	}).Decode(&result)
 	if findOneErr != nil {
 		return findOneErr
@@ -212,7 +215,7 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
 		"_id":      user.ID,
-		"username": user.UserName,
+		"username": user.Username,
 	}).Decode(&result)
 	if findOneErr != nil {
 		return findOneErr

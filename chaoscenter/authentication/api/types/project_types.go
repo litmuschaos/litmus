@@ -15,7 +15,7 @@ type Project struct {
 // Member contains the required fields to be returned by GET APIs
 type Member struct {
 	UserID        string              `bson:"user_id"`
-	UserName      string              `bson:"username"`
+	Username      string              `bson:"username"`
 	Name          string              `bson:"name"`
 	Role          entities.MemberRole `bson:"role"`
 	Email         string              `bson:"email"`
@@ -23,3 +23,11 @@ type Member struct {
 	JoinedAt      string              `bson:"joined_at"`
 	DeactivatedAt *int64              `bson:"deactivated_at"`
 }
+
+type State string
+
+const (
+	Accepted    State = "accepted"
+	NotAccepted State = "not_accepted"
+	All         State = "all"
+)

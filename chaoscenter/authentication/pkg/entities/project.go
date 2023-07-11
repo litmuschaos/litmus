@@ -27,6 +27,9 @@ type ProjectStats struct {
 // Member contains the required fields to be stored in the database for a member
 type Member struct {
 	UserID     string     `bson:"user_id"`
+	Username   string     `bson:"username"`
+	Email      string     `bson:"email"`
+	Name       string     `bson:"name"`
 	Role       MemberRole `bson:"role"`
 	Invitation Invitation `bson:"invitation"`
 	JoinedAt   string     `bson:"joined_at"`
