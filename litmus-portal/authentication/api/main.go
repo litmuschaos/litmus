@@ -81,11 +81,11 @@ func main() {
 	}
 
 	// Creating Session Collection
-	if err = utils.CreateCollection(utils.SessionCollection, db); err != nil {
+	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
 		log.Fatalf("failed to create collection  %s", err)
 	}
 
-	if err = utils.CreateTTLIndex(utils.SessionCollection, db); err != nil {
+	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
 		log.Fatalf("failed to create index  %s", err)
 	}
 
@@ -95,8 +95,8 @@ func main() {
 	projectCollection := db.Collection(utils.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
-	sessionCollection := db.Collection(utils.SessionCollection)
-	sessionRepo := session.NewRepo(sessionCollection)
+	revokedTokenCollection := db.Collection(utils.RevokedTokenCollection)
+	sessionRepo := session.NewRepo(revokedTokenCollection)
 
 	miscRepo := misc.NewRepo(db, client)
 

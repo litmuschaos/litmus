@@ -26,7 +26,7 @@ var (
 	GrpcPort                     = ":3030"
 	UserCollection               = "users"
 	ProjectCollection            = "project"
-	SessionCollection            = "session"
+	RevokedTokenCollection       = "revoked-token"
 	UsernameField                = "username"
 	ExpireOnField                = "expire_on"
 	PasswordEncryptionCost       = 15
