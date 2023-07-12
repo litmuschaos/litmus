@@ -2,6 +2,7 @@ import jwtDecode from 'jsonwebtoken';
 import { history } from '../redux/configureStore';
 import { getJWTToken, setCookie, setJWTToken } from './cookies';
 import { getJwtTokenFromURL } from './getSearchParams';
+import config from "../config";
 
 interface UserDetails {
   role: string;
@@ -15,8 +16,17 @@ interface UserDetails {
 
 // Logs out the user and unsets the jwt token
 export function logout() {
-  setCookie({ name: 'litmus-cc-token', value: '', exhours: 1 });
-  window.location.reload();
+  fetch(`${config.auth.url}/logout}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+  })
+      .then(() => {
+        setCookie({ name: 'litmus-cc-token', value: '', exhours: 1 });
+        window.location.reload();
+      });
 }
 
 // Sets the jwt token in the cookie
