@@ -570,7 +570,7 @@ spec:
           #   allowPrivilegeEscalation: false
           #   runAsNonRoot: true
           ports:
-            - containerPort: 8080
+            - containerPort: 8185
           resources:
             requests:
               memory: "150Mi"
@@ -599,7 +599,7 @@ spec:
   ports:
     - name: http
       port: 9091
-      targetPort: 8080
+      targetPort: 8185
   selector:
     component: litmusportal-frontend
 ---
