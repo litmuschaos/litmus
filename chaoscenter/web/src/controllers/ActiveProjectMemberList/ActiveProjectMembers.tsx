@@ -8,7 +8,7 @@ import type { ProjectMember } from './types';
 export default function ActiveProjectMembersController(): React.ReactElement {
   const { projectID } = useParams<{ projectID: string }>();
   const [projectMembers, setProjectMembers] = React.useState<ProjectMember[]>([]);
-  const { data } = getActiveMembers(projectID);
+  const { data } = getActiveMembers(projectID, 'accepted');
   React.useEffect(() => {
     data && setProjectMembers(generateActiveMemberTableContent(data.data));
   }, [data]);

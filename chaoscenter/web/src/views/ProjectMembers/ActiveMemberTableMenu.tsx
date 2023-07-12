@@ -6,7 +6,7 @@ import { useStrings } from '@strings';
 import { PermissionGroup } from '@models';
 import RbacMenuItem from '@components/RbacMenuItem';
 import { killEvent } from '@utils';
-import type { ProjectMember } from '@controllers/ActiveProjectMembers/types';
+import type { ProjectMember } from '@controllers/ActiveProjectMemberList/types';
 
 export const MenuCell = ({ row: { original: data } }: { row: Row<ProjectMember> }): React.ReactElement => {
   const { getString } = useStrings();

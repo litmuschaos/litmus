@@ -4,8 +4,9 @@ import DefaultLayout from '@components/DefaultLayout';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import { MembersTabs, PermissionGroup } from '@models';
 import RbacButton from '@components/RbacButton';
-import ActiveProjectMembersController from '@controllers/ActiveProjectMembers/ActiveProjectMembers';
+import ActiveProjectMembersController from '@controllers/ActiveProjectMemberList/ActiveProjectMembers';
 import InviteUsersController from '@controllers/InviteNewMembers';
+import PendingProjectMembersController from '@controllers/PendingProjectMemberList/PendingProjectMembers';
 import styles from './ProjectMember.module.scss';
 
 export default function ProjectMembersView(): React.ReactElement {
@@ -66,7 +67,12 @@ export default function ProjectMembersView(): React.ReactElement {
           <Tab
             id={MembersTabs.PENDING}
             // disabled={error.BUILDER || !hasFaults}
-            panel={<>pending</>}
+            panel={
+              <Layout.Vertical padding="medium">
+                <Text>Total Members</Text>
+                <PendingProjectMembersController />
+              </Layout.Vertical>
+            }
             title={MembersTabs.PENDING}
           />
         </Tabs>

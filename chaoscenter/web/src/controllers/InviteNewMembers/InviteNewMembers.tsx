@@ -22,7 +22,7 @@ export default function InviteUsersController({ hideDarkModal }: InviteUsersCont
 
   return (
     <Layout.Vertical>
-      <InviteUsersTableView hideModal={hideDarkModal} data={users} />
+      <InviteUsersTableView data={users} />
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
         <Button
           disabled={false}
