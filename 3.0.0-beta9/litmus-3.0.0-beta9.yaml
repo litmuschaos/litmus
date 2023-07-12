@@ -461,9 +461,11 @@ metadata:
 data:
   nginx.conf: |
     pid /tmp/nginx.pid;
+
     events {
       worker_connections  1024;
     }
+
     http {
         map $http_upgrade $connection_upgrade {
             default upgrade;
@@ -672,7 +674,7 @@ spec:
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: INFRA_DEPLOYMENTS
-              value: '["app=chaos-exporter", "name=chaos-operator", "app=event-tracker", "app=workflow-controller"]'
+              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller"]'
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
