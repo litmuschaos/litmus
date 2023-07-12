@@ -1,7 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { Button, ButtonVariation, Layout } from '@harnessio/uicore';
 import { getUsersForInvitation } from '@api/core/projects/inviteUsers';
 import InviteUsersTableView from '@views/InviteNewMembers';
+import { useStrings } from '@strings';
 import { generateInviteUsersTableContent } from './helper';
 import type { InviteUserDetails } from './types';
 
@@ -13,11 +15,22 @@ export default function InviteUsersController({ hideDarkModal }: InviteUsersCont
   const { projectID } = useParams<{ projectID: string }>();
   const [users, setUsers] = React.useState<InviteUserDetails[]>([]);
   const { data } = getUsersForInvitation(projectID);
-  console.log('inivte', data);
-
+  const { getString } = useStrings();
   React.useEffect(() => {
     data && setUsers(generateInviteUsersTableContent(data));
   }, [data]);
 
-  return <InviteUsersTableView hideModal={hideDarkModal} data={users} />;
+  return (
+    <Layout.Vertical>
+      <InviteUsersTableView hideModal={hideDarkModal} data={users} />
+      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
+        <Button
+          disabled={false}
+          onClick={() => hideDarkModal(true)}
+          variation={ButtonVariation.SECONDARY}
+          text={getString('cancel')}
+        />
+      </Layout.Horizontal>
+    </Layout.Vertical>
+  );
 }
