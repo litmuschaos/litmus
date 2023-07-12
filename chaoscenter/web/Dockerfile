@@ -14,6 +14,6 @@ RUN chown 65534:65534 -R /etc/nginx
 
 USER 65534
 
-EXPOSE 8184
+EXPOSE 8185
 
 ENTRYPOINT ["sh", "/opt/entrypoint.sh"]
