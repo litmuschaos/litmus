@@ -26,7 +26,9 @@ var (
 	GrpcPort                     = ":3030"
 	UserCollection               = "users"
 	ProjectCollection            = "project"
+	SessionCollection            = "session"
 	UsernameField                = "username"
+	ExpireOnField                = "expire_on"
 	PasswordEncryptionCost       = 15
 	DefaultLitmusGqlGrpcEndpoint = "localhost"
 	DefaultLitmusGqlGrpcPort     = ":8000"

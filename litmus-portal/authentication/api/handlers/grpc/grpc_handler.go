@@ -2,19 +2,17 @@ package grpc
 
 import (
 	"context"
-	"litmus/litmus-portal/authentication/api/middleware"
+
+	"github.com/golang-jwt/jwt"
+	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/api/presenter/protos"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/validations"
-
-	log "github.com/sirupsen/logrus"
-
-	"github.com/golang-jwt/jwt"
 )
 
 func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 	inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) {
-	token, err := middleware.ValidateToken(inputRequest.Jwt)
+	token, err := s.ValidateToken(inputRequest.Jwt)
 	if err != nil {
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
 	}
