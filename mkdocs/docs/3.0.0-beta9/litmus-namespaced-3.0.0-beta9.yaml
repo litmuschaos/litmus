@@ -458,7 +458,7 @@ data:
         error_log /var/log/nginx/error.log;
 
         server {
-            listen 8184 default_server;
+            listen 8185 default_server;
             root   /opt/chaos;
 
             location /health {
