@@ -83,7 +83,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 		return
 	}
 
-	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
+	if workflowObj.ObjectMeta.CreationTimestamp.UnixMilli() < startTime {
 		return
 	}
 
