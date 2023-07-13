@@ -1,21 +1,22 @@
 import { TableV2 } from '@harnessio/uicore';
 import React, { useMemo } from 'react';
-import type { Column } from 'react-table';
-import type { ProjectMember } from '@controllers/ProjectMemberList/types';
+import type { Column, Row } from 'react-table';
 import { useStrings } from '@strings';
-import { MemberEmail, MemberName } from './ActiveMembersListColumns';
+import type { ProjectMember } from '@controllers/ActiveProjectMemberList/types';
+import { InvitationOperation, MemberEmail, MemberName } from './ActiveMembersListColumns';
 
 interface PendingMembersTableViewProps {
   activeMembers: ProjectMember[];
 }
 export default function PendingMembersTableView({ activeMembers }: PendingMembersTableViewProps): React.ReactElement {
   const { getString } = useStrings();
+
   const envColumns: Column<ProjectMember>[] = useMemo(
     () => [
       {
         Header: 'MEMBERS',
         id: 'Username',
-        width: '40%',
+        width: '25%',
         accessor: 'Username',
         Cell: MemberName
       },
@@ -23,21 +24,16 @@ export default function PendingMembersTableView({ activeMembers }: PendingMember
         Header: 'EMAIL',
         id: 'Email',
         accessor: 'Email',
-        width: '30%',
+        width: '25%',
         Cell: MemberEmail
+      },
+      {
+        Header: 'PERMISSIONS',
+        id: 'Role',
+        width: '50%',
+        Cell: ({ row }: { row: Row<ProjectMember> }) => <InvitationOperation row={row} />,
+        disableSortBy: true
       }
-      // {
-      //   Header: 'PERMISSIONS',
-      //   id: 'Role',
-      //   width: '30%',
-      //   Cell: MemberPermission
-      // },
-      // {
-      //   Header: '',
-      //   id: 'threeDotMenu',
-      //   Cell: ({ row }: { row: Row<ProjectMember> }) => <MenuCell row={{ ...row }} />,
-      //   disableSortBy: true
-      // }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [getString]

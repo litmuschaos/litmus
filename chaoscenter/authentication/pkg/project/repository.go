@@ -398,47 +398,87 @@ func (r repository) GetProjectRole(projectID string, userID string) (*entities.M
 }
 
 func (r repository) GetProjectMembers(projectID string, state string) ([]*entities.Member, error) {
+	var pipeline mongo.Pipeline
 	filter := bson.D{
-		{"_id", projectID},
+		{"$match", bson.D{
+			{"_id", projectID},
+		}},
 	}
-	fmt.Println(projectID)
+	pipeline = append(pipeline, filter)
 	var projection bson.D
 	switch state {
 	case string(types.Accepted):
+		fmt.Println("acpt")
+		//	items: {
+		//		$filter: {
+		//	input: "$items",
+		//		cond: { $lte: [ "$$item.price", 150] },
+		//as: "item",
+		//	limit: 2.000
+		//}
+		//	}
 		projection = bson.D{
-			{"_id", 0},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"invitation", entities.AcceptedInvitation},
-				}},
-			}},
-		}
-	case string(types.NotAccepted):
-		projection = bson.D{
-			{"_id", 0},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"$ne", bson.D{
-						{"invitation", entities.AcceptedInvitation},
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", bson.D{
+					{"$filter", bson.D{
+						{"input", "$members"},
+						{"as", "member"},
+						{"cond", bson.D{{
+							"$eq", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+						}}},
 					}},
 				}},
 			}},
 		}
-	case string(types.All):
-		fmt.Println("all")
+		pipeline = append(pipeline, projection)
+	case string(types.NotAccepted):
 		projection = bson.D{
-			{"_id", 0},
-			{"members", 1},
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", bson.D{
+					{"$filter", bson.D{
+						{"input", "$members"},
+						{"as", "member"},
+						{"cond", bson.D{{
+							"$ne", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+						}}},
+					}},
+				}},
+			}},
 		}
+		pipeline = append(pipeline, projection)
+	case string(types.All):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", 1},
+			}},
+		}
+		pipeline = append(pipeline, projection)
 	}
 
-	var res entities.Members
-
-	findOneErr := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
-	if findOneErr != nil {
-		return nil, findOneErr
+	var res []entities.Members
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		fmt.Println("aggr", err)
+		return nil, err
 	}
-	return res.Members, nil
+
+	var results []bson.M
+	if err = cursor.All(context.TODO(), &res); err != nil {
+		fmt.Println("cur err", err)
+		return nil, err
+	}
+
+	fmt.Println(results)
+
+	//findOneErr := r.Collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&res)
+	//if findOneErr != nil {
+	//	return nil, findOneErr
+	//}
+	fmt.Println(res[0].Members)
+	return res[0].Members, nil
 }
 
 // NewRepo creates a new instance of this repository

@@ -7,6 +7,9 @@ export function generateActiveMemberTableContent(memberData: Array<Members> | un
       ? memberData.map(member => {
           return {
             UserID: member.UserID,
+            Name: member.Name,
+            Username: member.Username,
+            Email: member.Email,
             Invitation: member.Invitation,
             JoinedAt: member.JoinedAt,
             Role: member.Role

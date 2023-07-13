@@ -8,6 +8,9 @@ export enum Invitation {
 
 export interface Members {
   UserID: string;
+  Name: string;
+  Username: string;
+  Email: string;
   Role: PermissionGroup;
   Invitation: Invitation;
   JoinedAt: string;

@@ -8,7 +8,7 @@ import type { ProjectMember } from '../ActiveProjectMemberList/types';
 export default function PendingProjectMembersController(): React.ReactElement {
   const { projectID } = useParams<{ projectID: string }>();
   const [projectMembers, setProjectMembers] = React.useState<ProjectMember[]>([]);
-  const { data } = getActiveMembers(projectID, 'pending');
+  const { data } = getActiveMembers(projectID, 'not_accepted');
   React.useEffect(() => {
     data && setProjectMembers(generateActiveMemberTableContent(data.data));
   }, [data]);

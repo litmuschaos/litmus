@@ -50,8 +50,8 @@ type CreateProjectInput struct {
 }
 
 type MemberInput struct {
-	ProjectID string      `json:"project_id"`
-	UserID    string      `json:"user_id"`
+	ProjectID string      `json:"projectID"`
+	UserID    string      `json:"userID"`
 	Role      *MemberRole `json:"role"`
 }
 
