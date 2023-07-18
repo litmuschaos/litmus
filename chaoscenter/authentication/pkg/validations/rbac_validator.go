@@ -2,7 +2,8 @@ package validations
 
 import (
 	"errors"
-	"litmus/litmus-portal/authentication/pkg/services"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"

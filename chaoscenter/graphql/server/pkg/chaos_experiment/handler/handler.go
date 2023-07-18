@@ -6,16 +6,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
-	"sort"
-	"strconv"
-	"strings"
-	"time"
 
 	"github.com/ghodss/yaml"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -1377,7 +1378,6 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 
 	resKind := gjson.Get(workflow.Revision[0].ExperimentManifest, "kind").String()
 	if strings.ToLower(resKind) == "cronworkflow" {
-		//return nil, errors.New("cron-workflows cannot be re-run")
 		return &model.RunChaosExperimentResponse{NotifyID: notifyID}, c.RunCronExperiment(ctx, projectID, workflow, r)
 	}
 	notifyID = uuid.New().String()
@@ -1589,7 +1589,6 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 
 func (c *ChaosExperimentHandler) RunCronExperiment(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) error {
 	var (
-		//usrID                = currentUser.Name
 		cronExperimentManifest v1alpha1.CronWorkflow
 	)
 

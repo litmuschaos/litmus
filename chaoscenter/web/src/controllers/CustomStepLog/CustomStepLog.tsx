@@ -1,4 +1,4 @@
-import { SimpleLogViewer } from '@harness/uicore';
+import { SimpleLogViewer } from '@harnessio/uicore';
 import React from 'react';
 import { getPodLogsSubscription } from '@api/core';
 import { ChaosData, ExperimentRunStatus } from '@api/entities';

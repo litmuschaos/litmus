@@ -1,6 +1,6 @@
 import React from 'react';
-import { Color } from '@harness/design-system';
-import { Icon } from '@harness/icons';
+import { Color } from '@harnessio/design-system';
+import { Icon } from '@harnessio/icons';
 import type { FireEventMethod } from '../../../types';
 import { DiagramDrag, DiagramType, Event } from '../../../Constants';
 interface AddLinkNodeProps<T> {

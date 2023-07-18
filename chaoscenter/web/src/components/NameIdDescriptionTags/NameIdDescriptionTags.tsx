@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import type { DataTooltipInterface } from '@harness/uicore';
-import { Container, FormInput, Label } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import type { InputWithIdentifierProps } from '@harness/uicore/dist/components/InputWithIdentifier/InputWithIdentifier';
+import type { DataTooltipInterface } from '@harnessio/uicore';
+import { Container, FormInput, Label } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import type { InputWithIdentifierProps } from '@harnessio/uicore/dist/components/InputWithIdentifier/InputWithIdentifier';
 import { isEmpty } from 'lodash-es';
 import type { IInputGroupProps, ITagInputProps } from '@blueprintjs/core';
 import { Classes } from '@blueprintjs/core';

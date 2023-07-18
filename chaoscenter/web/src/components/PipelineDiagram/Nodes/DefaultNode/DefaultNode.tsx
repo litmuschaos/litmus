@@ -1,10 +1,10 @@
 import React from 'react';
 import cx from 'classnames';
 import { defaultTo } from 'lodash-es';
-import { Text, Button, ButtonVariation } from '@harness/uicore';
-import type { IconName } from '@harness/icons';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Text, Button, ButtonVariation } from '@harnessio/uicore';
+import type { IconName } from '@harnessio/icons';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { DiagramDrag, DiagramType, Event } from '../../Constants';
 import SVGMarker from '../SVGMarker';
 import type { BaseReactComponentProps } from '../../types';

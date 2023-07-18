@@ -1,4 +1,4 @@
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { deleteEnvironment } from '@api/core/environments';
 import DeleteEnvironmentView from '@views/Environments/EnvironmentList/DeleteEnvironment';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Heading, Layout, Text } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Heading, Layout, Text } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import type { DefaultLayoutTemplateProps } from '@components/DefaultLayout/DefaultLayout';
 import type { ExecutionData, ExperimentRunStatus } from '@api/entities';
 import { useStrings } from '@strings';

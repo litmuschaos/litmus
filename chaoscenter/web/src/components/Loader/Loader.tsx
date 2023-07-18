@@ -1,8 +1,8 @@
-import { Text, Layout, Container, NoDataCardProps, Page } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Text, Layout, Container, NoDataCardProps, Page } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import React from 'react';
 import cx from 'classnames';
-import { Color } from '@harness/design-system';
+import { Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import css from './Loader.module.scss';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Layout, Heading, Text, Container } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Layout, Heading, Text, Container } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 

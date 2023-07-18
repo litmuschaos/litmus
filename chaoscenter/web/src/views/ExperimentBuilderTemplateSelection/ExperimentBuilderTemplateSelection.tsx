@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Container, Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
-import { Icon, IconName } from '@harness/icons';
+import { Button, Container, Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
+import { Icon, IconName } from '@harnessio/icons';
 import { Drawer as BlueprintJSDrawer, Position } from '@blueprintjs/core';
 import cx from 'classnames';
 import { useStrings } from '@strings';

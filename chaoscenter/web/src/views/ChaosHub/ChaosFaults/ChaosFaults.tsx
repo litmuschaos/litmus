@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, Layout, Pagination, Text } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { FontVariation, Color } from '@harness/design-system';
+import { Card, Layout, Pagination, Text } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { FontVariation, Color } from '@harnessio/design-system';
 import { Link, useParams } from 'react-router-dom';
 import { withErrorBoundary } from 'react-error-boundary';
 import { toTitleCase } from '@utils';

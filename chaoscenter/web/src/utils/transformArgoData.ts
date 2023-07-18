@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash-es';
-import type { IconName } from '@harness/icons';
+import type { IconName } from '@harnessio/icons';
 import type { PipelineGraphState } from '@components/PipelineDiagram/types';
 import type { Nodes } from '@api/entities';
 

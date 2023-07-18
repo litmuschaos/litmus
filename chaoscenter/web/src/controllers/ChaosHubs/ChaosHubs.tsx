@@ -1,4 +1,4 @@
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { listChaosHub, syncChaosHub } from '@api/core';
 import { useStrings } from '@strings';

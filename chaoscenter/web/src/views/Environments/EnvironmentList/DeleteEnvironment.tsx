@@ -1,7 +1,7 @@
 import type { MutationFunction } from '@apollo/client';
 import React from 'react';
-import { Button, ButtonVariation, Container, Layout, Text } from '@harness/uicore';
-import { FontVariation } from '@harness/design-system';
+import { Button, ButtonVariation, Container, Layout, Text } from '@harnessio/uicore';
+import { FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { getScope } from '@utils';
 import { ParentComponentErrorWrapper } from '@errors';

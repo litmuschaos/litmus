@@ -17,7 +17,9 @@ export default function TargetApplicationTabController({
   setFaultData
 }: TargetApplicationControllerProps): React.ReactElement {
   const [appInfoData, setAppInfoData] = React.useState<AppInfoData[]>([]);
-  const [targetApp, setTargetApp] = React.useState<TargetApplicationData>();
+  const [targetApp, setTargetApp] = React.useState<TargetApplicationData>({
+    ...engineCR?.spec?.appinfo
+  });
   const [selectedGVR, setSelectedGVR] = React.useState<KubeGVRRequest>();
   const { data: result, loading } = kubeObjectSubscription({
     shouldResubscribe: true,

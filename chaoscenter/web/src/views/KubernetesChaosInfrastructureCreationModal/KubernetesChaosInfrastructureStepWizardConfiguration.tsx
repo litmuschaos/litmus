@@ -1,5 +1,5 @@
 import { Dialog } from '@blueprintjs/core';
-import { Color, FontVariation } from '@harness/design-system';
+import { Color, FontVariation } from '@harnessio/design-system';
 import {
   Button,
   ButtonVariation,
@@ -11,8 +11,8 @@ import {
   NestedAccordionProvider,
   StepWizard,
   Text
-} from '@harness/uicore';
-import { Icon } from '@harness/icons';
+} from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import { FieldArray, Formik, Form, FormikProps } from 'formik';
 import { get } from 'lodash-es';
 import React from 'react';

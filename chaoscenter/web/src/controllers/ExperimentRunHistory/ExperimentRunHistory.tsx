@@ -1,7 +1,7 @@
 import React from 'react';
-import { Layout, Text, useToaster, Utils } from '@harness/uicore';
+import { Layout, Text, useToaster, Utils } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
-import { Color } from '@harness/design-system';
+import { Color } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import { listExperimentRunForHistory } from '@api/core';
 import { getScope, getColorBasedOnResilienceScore } from '@utils';

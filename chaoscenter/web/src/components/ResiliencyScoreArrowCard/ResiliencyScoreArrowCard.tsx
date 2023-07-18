@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { ExperimentRunStatus } from '@api/entities';
 import DartSvg from './DartArrow';
 import css from './ResiliencyScoreArrowCard.module.scss';

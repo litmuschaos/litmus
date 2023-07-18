@@ -1,7 +1,7 @@
 import React from 'react';
 import { parse } from 'yaml';
-import { Container, Layout, NestedAccordionPanel, NestedAccordionProvider, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, NestedAccordionPanel, NestedAccordionProvider, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { withErrorBoundary } from 'react-error-boundary';
 import cx from 'classnames';
 import { useStrings } from '@strings';

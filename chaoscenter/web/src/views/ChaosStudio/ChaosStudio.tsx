@@ -1,5 +1,5 @@
 import type { MutationFunction } from '@apollo/client';
-import { Intent } from '@harness/design-system';
+import { Intent } from '@harnessio/design-system';
 import {
   ConfirmationDialog,
   Container,
@@ -10,11 +10,11 @@ import {
   useToaster,
   useToggleOpen,
   VisualYamlSelectedView
-} from '@harness/uicore';
+} from '@harnessio/uicore';
 import type { FormikProps } from 'formik';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Icon } from '@harness/icons';
+import { Icon } from '@harnessio/icons';
 import type {
   RunChaosExperimentRequest,
   RunChaosExperimentResponse,

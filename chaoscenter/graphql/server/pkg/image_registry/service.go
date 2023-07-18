@@ -2,14 +2,15 @@ package image_registry
 
 import (
 	"context"
+	"strconv"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
 	dbOperationsImageRegistry "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
 	"go.mongodb.org/mongo-driver/bson"
-	"strconv"
-	"time"
 )
 
 // Service is the interface for the image registry service

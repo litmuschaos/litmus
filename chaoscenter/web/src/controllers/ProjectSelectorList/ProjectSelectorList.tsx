@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExpandingSearchInput } from '@harness/uicore';
+import { ExpandingSearchInput } from '@harnessio/uicore';
 import ProjectSelectorListView from '@views/ProjectSelectorList';
 import type { ListProject } from '@models';
 import config from '@config';

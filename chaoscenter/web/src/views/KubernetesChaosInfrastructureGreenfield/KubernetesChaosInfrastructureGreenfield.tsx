@@ -1,4 +1,4 @@
-import { Button, ButtonVariation, Layout, useToaster } from '@harness/uicore';
+import { Button, ButtonVariation, Layout, useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import type { MutationFunction } from '@api/types';

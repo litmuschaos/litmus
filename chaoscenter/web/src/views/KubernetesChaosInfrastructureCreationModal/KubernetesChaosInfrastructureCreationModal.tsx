@@ -1,4 +1,4 @@
-import { ButtonVariation, Layout } from '@harness/uicore';
+import { ButtonVariation, Layout } from '@harnessio/uicore';
 import React from 'react';
 import { PermissionGroup } from '@models';
 import { useStrings } from '@strings';

@@ -1,7 +1,7 @@
 import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
-import { Color, FontVariation } from '@harness/design-system';
-import { Card, Container, ExpandingSearchInput, Layout, Text, useToaster } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
+import { Card, Container, ExpandingSearchInput, Layout, Text, useToaster } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import cx from 'classnames';
 import React from 'react';
 import { useHistory } from 'react-router-dom';

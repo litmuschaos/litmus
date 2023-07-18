@@ -1,7 +1,7 @@
 import React from 'react';
-import { Color } from '@harness/design-system';
-import { Container, Text, Utils } from '@harness/uicore';
-import { Icon, IconName } from '@harness/icons';
+import { Color } from '@harnessio/design-system';
+import { Container, Text, Utils } from '@harnessio/uicore';
+import { Icon, IconName } from '@harnessio/icons';
 import type { ExperimentRunFaultStatus, ExperimentRunStatus, FaultProbeStatus } from '@api/entities';
 import type { ChaosInfrastructureStatus } from '@models';
 import {

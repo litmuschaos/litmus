@@ -8,8 +8,8 @@ import {
   Layout,
   Text,
   useToaster
-} from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+} from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { Dialog } from '@blueprintjs/core';
 import { isEqual } from 'lodash-es';
 import cx from 'classnames';

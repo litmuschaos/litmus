@@ -2,12 +2,13 @@ package chaoshubops_test
 
 import (
 	"fmt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 	"io/ioutil"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-git/go-git/v5"

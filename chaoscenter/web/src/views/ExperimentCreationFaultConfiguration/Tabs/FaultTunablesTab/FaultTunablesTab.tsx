@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Form, FormikProps } from 'formik';
-import { Container, Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import type { FaultData, FaultTunables } from '@models';
 import SearchEmptyState from '@images/SearchEmptyState.png';
 import { useStrings } from '@strings';

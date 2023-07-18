@@ -1,6 +1,6 @@
 import React from 'react';
-import { Color, PopoverProps } from '@harness/design-system';
-import { useToaster, ButtonVariation, ButtonProps } from '@harness/uicore';
+import { Color, PopoverProps } from '@harnessio/design-system';
+import { useToaster, ButtonVariation, ButtonProps } from '@harnessio/uicore';
 import cx from 'classnames';
 import { Position } from '@blueprintjs/core';
 import { useHistory } from 'react-router-dom';

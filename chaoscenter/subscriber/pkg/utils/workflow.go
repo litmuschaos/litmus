@@ -2,11 +2,12 @@ package utils
 
 import (
 	"context"
+	"subscriber/pkg/events"
+	"subscriber/pkg/k8s"
+
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"subscriber/pkg/events"
-	"subscriber/pkg/k8s"
 )
 
 func WorkflowRequest(agentData map[string]string, requestType string, externalData string, uuid string) error {

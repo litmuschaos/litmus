@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import type { ApolloQueryResult } from '@apollo/client';
 import AddHubModalWizardView from '@views/AddHubModalWizard';
 import { addChaosHub, ListChaosHubRequest, ListChaosHubResponse } from '@api/core';

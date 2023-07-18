@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@harness/uicore';
+import { Container } from '@harnessio/uicore';
 import noExperiments from '@images/NoExperiments.svg';
 import { useStrings } from '@strings';
 import NewExperimentButton from '@components/NewExperimentButton';

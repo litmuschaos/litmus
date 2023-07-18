@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { Link } from 'react-router-dom';
 import { useStrings } from '@strings';
 import { useRouteWithBaseUrl } from '@hooks';

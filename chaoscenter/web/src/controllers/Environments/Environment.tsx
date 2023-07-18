@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { getScope } from '@utils';
 import { createEnvironment, deleteEnvironment, listEnvironment, updateEnvironment } from '@api/core/environments';
 import EnvironmentListView from '@views/Environments/EnvironmentList/EnvironmentsList';

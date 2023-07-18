@@ -1,5 +1,5 @@
 import React from 'react';
-import type { SelectOption } from '@harness/uicore';
+import type { SelectOption } from '@harnessio/uicore';
 import { useStrings } from '@strings';
 import TimeSelect from '@components/TimeSelect';
 import ExpressionBreakdown, { ActiveInputs } from '../ExpressionBreakdown/ExpressionBreakdown';

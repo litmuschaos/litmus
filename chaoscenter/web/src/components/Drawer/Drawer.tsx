@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer as BlueprintJSDrawer, Position } from '@blueprintjs/core';
 import classNames from 'classnames';
-import { Button, Container, Layout } from '@harness/uicore';
+import { Button, Container, Layout } from '@harnessio/uicore';
 import css from './Drawer.module.scss';
 
 export enum DrawerTypes {

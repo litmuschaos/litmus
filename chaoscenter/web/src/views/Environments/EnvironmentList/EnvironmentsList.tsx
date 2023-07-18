@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Layout, Container, TableV2 } from '@harness/uicore';
+import { Layout, Container, TableV2 } from '@harnessio/uicore';
 import type { Column, Row } from 'react-table';
 import { useHistory } from 'react-router-dom';
 import type { MutationFunction } from '@apollo/client';

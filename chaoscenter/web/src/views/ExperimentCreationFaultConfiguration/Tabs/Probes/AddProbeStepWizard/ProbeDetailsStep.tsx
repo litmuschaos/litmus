@@ -1,8 +1,8 @@
 import { ErrorMessage, Form, Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { Button, ButtonVariation, Container, FormInput, Layout, Text, useToaster } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Button, ButtonVariation, Container, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { FileInput, FormGroup } from '@blueprintjs/core';
 import type { CmdProbeInputs, HTTPProbeInputs, K8sProbeInputs, PromProbeInputs } from '@models';
 import { fileUpload } from '@utils';

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Layout, TableV2, Text } from '@harness/uicore';
+import { Container, Layout, TableV2, Text } from '@harnessio/uicore';
 import type { Column } from 'react-table';
-import { Color } from '@harness/design-system';
+import { Color } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import { useHistory } from 'react-router-dom';
 import type { ExperimentRunFaultDetails, ExperimentRunFaultDetailsTableProps } from '@controllers/ExperimentRunHistory';

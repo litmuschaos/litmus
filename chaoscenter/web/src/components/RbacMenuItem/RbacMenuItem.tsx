@@ -1,8 +1,8 @@
 import React from 'react';
 import { IMenuItemProps, Menu, MenuItem, PopoverInteractionKind, MaybeElement } from '@blueprintjs/core';
-import { Popover, Layout, Text } from '@harness/uicore';
-import { Icon, IconName } from '@harness/icons';
-import { FontVariation, Color } from '@harness/design-system';
+import { Popover, Layout, Text } from '@harnessio/uicore';
+import { Icon, IconName } from '@harnessio/icons';
+import { FontVariation, Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import { isUserAllowed } from '@utils';
 import styles from './RbacMenuItem.module.scss';

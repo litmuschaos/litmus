@@ -1,4 +1,4 @@
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { getEnvironment, updateEnvironment } from '@api/core/environments';
 import CreateEnvironment from '@views/Environments/EnvironmentList/CreateEnvironment';

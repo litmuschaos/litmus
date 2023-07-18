@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Tabs, Tab, Text } from '@harness/uicore';
+import { Layout, Tabs, Tab, Text } from '@harnessio/uicore';
 import cx from 'classnames';
 import { useStrings } from '@strings';
 import { getDefaultExpressionBreakdownValues, scheduleTabsId } from './SubComponents/utils';

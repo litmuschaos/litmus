@@ -1,7 +1,7 @@
 import React from 'react';
-import { CodeBlock, ConfirmationDialog, Container, Layout, Tabs, Text, useToggleOpen } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation, Intent } from '@harness/design-system';
+import { CodeBlock, ConfirmationDialog, Container, Layout, Tabs, Text, useToggleOpen } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation, Intent } from '@harnessio/design-system';
 import type { MutationFunction } from '@apollo/client';
 import type { DeleteKubernetesChaosInfraRequest, DeleteKubernetesChaosInfraResponse } from '@api/core';
 import { InfraScope, KubernetesChaosInfrastructure } from '@api/entities';
