@@ -135,6 +135,14 @@
     }
   }
 
+  .moduleLink {
+    padding: 0px;
+    border-bottom: none !important;
+    &::after {
+      content: none !important;
+    }
+  }
+
   .userName {
     overflow-wrap: anywhere;
     padding: var(--spacing-none) var(--spacing-xsmall) !important;

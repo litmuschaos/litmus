@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useToaster } from '@harnessio/uicore';
+import jwtDecode from 'jwt-decode';
 import config from '@config';
 import { setUserDetails } from '@utils';
 import { paths } from '@routes/RouteDefinitions';
 import LoginPageView from '@views/Login';
+import type { DecodedTokenType } from 'app/App';
 
 interface LoginForm {
   username: string;
@@ -27,12 +29,14 @@ const LoginController: React.FC = () => {
       setLoading(false);
       if (response.ok) {
         const json = await response.json();
+        const accountID = (jwtDecode(json.access_token) as DecodedTokenType).uid;
         setUserDetails({
           token: json.access_token,
           projectID: json.project_id,
-          role: json.project_role
+          role: json.project_role,
+          accountID: accountID
         });
-        history.push(paths.toDashboardWithProjectID({ projectID: json.project_id }));
+        history.push(`/account/${accountID}/project/${json.project_id}${paths.toDashboard()}`);
       } else {
         throw response;
       }

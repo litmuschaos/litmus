@@ -9,7 +9,7 @@ import { getUserDetails } from '@utils';
 import type { StringsMap } from 'strings/types';
 import { useLogout } from '@hooks';
 import { AppStoreProvider } from '@context';
-interface DecodedTokenType {
+export interface DecodedTokenType {
   exp: number;
   role: string;
   uid: string;
@@ -30,8 +30,8 @@ export function AppWithAuthentication(): React.ReactElement {
           username: tokenDecode.username,
           userRole: tokenDecode.role
         }}
-        renderUrl={`/project/${userDetails.projectID}`}
-        matchPath={'/project/:projectID'}
+        renderUrl={`/account/${tokenDecode.uid}`}
+        matchPath={'/account/:accountID'}
         updateAppStore={() => void 0}
       >
         <StringsContext.Provider value={{ data: strings as StringsMap }}>

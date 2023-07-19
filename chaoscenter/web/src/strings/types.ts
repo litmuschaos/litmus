@@ -18,7 +18,6 @@ export interface StringsMap {
   'accessToAllNamespaces': unknown
   'accessType': unknown
   'account': unknown
-  'accountSettings': unknown
   'accountURL': unknown
   'actionItems': unknown
   'active': unknown
@@ -55,12 +54,14 @@ export interface StringsMap {
   'averageResilienceScore': unknown
   'back': unknown
   'basic': unknown
+  'basicInformation': unknown
   'blankCanvasDescription': unknown
   'blankCanvasTitle': unknown
   'blobLogsNotAvailable': unknown
   'cancel': unknown
   'cannotPushToDefault': unknown
   'cannotReRun': unknown
+  'changePassword': unknown
   'chaos': unknown
   'chaosComponentInstallation': unknown
   'chaosController': unknown
@@ -547,6 +548,9 @@ export interface StringsMap {
   'probesArePassed': unknown
   'prod': unknown
   'project': unknown
+  'projectCreatedByYou': unknown
+  'projectsByInvite': unknown
+  'projectsInTotal': unknown
   'promDescription': unknown
   'promProbeDetails': unknown
   'promProbeTitle': unknown
@@ -661,6 +665,7 @@ export interface StringsMap {
   'serviceAccountName': unknown
   'serviceHealthScore': unknown
   'setFaultWeights': unknown
+  'settings': unknown
   'setupChaosInfrastructures': unknown
   'setupProbe': unknown
   'setupProbeBtn': unknown
@@ -756,6 +761,7 @@ export interface StringsMap {
   'url': unknown
   'useIntegerValue': unknown
   'useThisTemplate': unknown
+  'userManagement': unknown
   'validationError': unknown
   'value': unknown
   'valuePlaceholder': unknown
@@ -769,6 +775,7 @@ export interface StringsMap {
   'viewExecutions': unknown
   'viewExperimentManifest': unknown
   'viewInChaosModule': unknown
+  'viewInvitations': unknown
   'viewLastExecution': unknown
   'viewLessDefaultProperties': unknown
   'viewLogs': unknown

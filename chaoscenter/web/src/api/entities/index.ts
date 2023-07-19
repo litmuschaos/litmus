@@ -6,3 +6,5 @@ export * from './workflow';
 export * from './workflowRun';
 export * from './stats';
 export * from './environment';
+export * from './account';
+export * from './project';

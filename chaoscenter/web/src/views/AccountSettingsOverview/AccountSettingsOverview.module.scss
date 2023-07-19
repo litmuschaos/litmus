@@ -1,0 +1,27 @@
+.overviewCard {
+  width: 100%;
+  margin: var(--spacing-medium) 0 var(--spacing-xxlarge) 0;
+}
+.tableMainContainer {
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    padding-bottom: 20px;
+  }
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 2fr 2.5rem;
+  }
+}

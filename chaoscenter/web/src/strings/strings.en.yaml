@@ -15,7 +15,6 @@ aboutChaosCTL: >-
 accessToAllNamespaces: Access to all namespaces
 accessType: Access Type
 account: Account
-accountSettings: Account Settings
 accountURL: Account URL
 actionItems: Action Items
 active: Active
@@ -52,6 +51,7 @@ authenticationType: Authentication Type
 averageResilienceScore: Average Resilience Score
 back: Back
 basic: Basic
+basicInformation: Basic Information
 blankCanvasDescription: >-
   Chaos Experiment is a set of different operations coupled together to achieve
   desired chaos impact on a Kubernetes Cluster. It is useful in automating a
@@ -64,6 +64,7 @@ blobLogsNotAvailable: Logs are not available for this node.
 cancel: Cancel
 cannotPushToDefault: Cannot push experiment to default ChaosHub
 cannotReRun: Cannot re-run an already running experiment
+changePassword: Change Password
 chaos: Chaos
 chaosComponentInstallation: Chaos Components Installation
 chaosController: Chaos Controller
@@ -666,6 +667,9 @@ probes: Probes
 probesArePassed: probes are passed
 prod: Prod
 project: Project
+projectCreatedByYou: Your projects
+projectsByInvite: Projects by invite
+projectsInTotal: projects in total
 promDescription: >-
   Allows users to define metrics-based SLOs in a declarative way and determine
   the experiment verdict based on its success.
@@ -794,6 +798,7 @@ serviceAccount: Service Account
 serviceAccountName: Service Account Name
 serviceHealthScore: Service Health Score
 setFaultWeights: Set fault weights
+settings: Settings
 setupChaosInfrastructures: >-
   Enabling Chaos on infrastructure helps to inject chaos by studying your
   infrastructure and discover services
@@ -900,6 +905,7 @@ uploadYaml: Upload Yaml
 url: URL
 useIntegerValue: Please enter an integer value
 useThisTemplate: Use this template
+userManagement: User Management
 validationError: Validation Error
 value: Value
 valuePlaceholder: Enter a value
@@ -913,6 +919,7 @@ viewExecution: View Execution
 viewExecutions: View Runs
 viewExperimentManifest: View Experiment manifest
 viewInChaosModule: View in Chaos Module
+viewInvitations: View Invitation(s)
 viewLastExecution: View Last Execution
 viewLessDefaultProperties: View less default properties
 viewLogs: View Logs

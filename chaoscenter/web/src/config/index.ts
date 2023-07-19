@@ -31,5 +31,4 @@ const APIEndpoints: APIConfig = {
     chaosManagerUri: chaosManager
   }
 };
-
 export default APIEndpoints;
