@@ -6,13 +6,13 @@ export function generateActiveMemberTableContent(memberData: Array<Members> | un
     memberData && memberData?.length > 0
       ? memberData.map(member => {
           return {
-            UserID: member.UserID,
-            Name: member.Name,
-            Username: member.Username,
-            Email: member.Email,
-            Invitation: member.Invitation,
-            JoinedAt: member.JoinedAt,
-            Role: member.Role
+            UserID: member.userID,
+            Name: member.name,
+            Username: member.username,
+            Email: member.email,
+            Invitation: member.invitation,
+            JoinedAt: member.joinedAt,
+            Role: member.role
           };
         })
       : [];

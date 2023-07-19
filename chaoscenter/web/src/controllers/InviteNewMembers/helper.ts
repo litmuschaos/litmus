@@ -6,9 +6,9 @@ export function generateInviteUsersTableContent(userData: Array<Users> | undefin
     userData && userData?.length > 0
       ? userData.map(user => {
           return {
-            ID: user.UserID,
-            Username: user.Username,
-            Email: user.Email
+            ID: user.userID,
+            Username: user.username,
+            Email: user.email
           };
         })
       : [];

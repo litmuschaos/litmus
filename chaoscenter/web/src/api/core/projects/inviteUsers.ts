@@ -1,13 +1,10 @@
 import useRequest from '@api/useRequest';
 import config from '@config';
 import type { RestAPIResponse } from '@api/types';
-import type { User } from '@api/entities/users';
+import type { Users } from '@api/entities/users';
 
-interface InviteUsersResponse {
-  data: User[];
-}
-export function getUsersForInvitation(projectID: string): RestAPIResponse<Array<User>> {
-  const { data, error, loading } = useRequest<Array<User>>({
+export function getUsersForInvitation(projectID: string): RestAPIResponse<Array<Users>> {
+  const { data, error, loading } = useRequest<Array<Users>>({
     baseURL: config.restEndpoints?.authUri,
     url: `/invite_users/${projectID}`,
     method: 'GET'

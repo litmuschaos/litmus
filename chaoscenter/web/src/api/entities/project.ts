@@ -7,18 +7,18 @@ export enum Invitation {
 }
 
 export interface Members {
-  UserID: string;
-  Name: string;
-  Username: string;
-  Email: string;
-  Role: PermissionGroup;
-  Invitation: Invitation;
-  JoinedAt: string;
+  userID: string;
+  name: string;
+  username: string;
+  email: string;
+  role: PermissionGroup;
+  invitation: Invitation;
+  joinedAt: string;
 }
 
 export interface Project {
-  ID: string;
-  Name: string;
-  Members: Members[];
+  projectID: string;
+  name: string;
+  members: Members[];
   UID: string;
 }
