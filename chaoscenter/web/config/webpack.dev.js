@@ -41,13 +41,13 @@ const devConfig = {
           }
         },
         proxy: {
-          '/chaos/manager/api': {
-            pathRewrite: { '^/chaos/manager/api': '' },
+          '/api': {
+            pathRewrite: { '^/api': '' },
             target: process.env.CHAOS_MANAGER
               ? process.env.CHAOS_MANAGER
               : targetLocalHost
               ? 'http://localhost:8080'
-              : `${baseUrl}/chaos/manager/api`,
+              : `${baseUrl}/api`,
             secure: false,
             changeOrigin: true,
             logLevel: 'info'

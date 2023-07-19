@@ -3,15 +3,17 @@ package self_deployer
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	chaos_infra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"log"
 	"strings"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // StartDeployer registers a new internal self-infra and starts the deployer

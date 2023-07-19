@@ -7,10 +7,11 @@
 package protos
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -196,7 +197,7 @@ func (x *GetProjectByIdRequest) GetProjectID() string {
 	return ""
 }
 
-//ProjectMembers is the message struct that holds the details about the project members
+// ProjectMembers is the message struct that holds the details about the project members
 type ProjectMembers struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

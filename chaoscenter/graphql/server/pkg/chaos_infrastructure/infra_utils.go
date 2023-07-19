@@ -2,6 +2,7 @@ package chaos_infrastructure
 
 import (
 	"fmt"
+
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -255,11 +256,11 @@ func SendExperimentToSubscriber(projectID string, workflow *model.ChaosExperimen
 		workflowNamespace = utils.Config.InfraNamespace
 	}
 	SendRequestToSubscriber(SubscriberRequests{
-		K8sManifest: workflow.ExperimentManifest,
-		RequestType: reqType,
-		ProjectID:   projectID,
-		InfraID:     workflow.InfraID,
-		Namespace:   workflowNamespace,
+		K8sManifest:  workflow.ExperimentManifest,
+		RequestType:  reqType,
+		ProjectID:    projectID,
+		InfraID:      workflow.InfraID,
+		Namespace:    workflowNamespace,
 		ExternalData: externalData,
 		Username:     username,
 	}, *r)

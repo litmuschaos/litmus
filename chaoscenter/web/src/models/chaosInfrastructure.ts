@@ -125,4 +125,4 @@ export const initialValues: InitialValueProps = {
 };
 
 export const kubernetesChaosInfrastructureCRDsEndpoint =
-  'https://raw.githubusercontent.com/chaosnative/hce-charts/main/hce-saas/hce-saas-crds.yaml';
+  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta10/litmus-portal-crds-3.0.0-beta10.yml';

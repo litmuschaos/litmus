@@ -11,13 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (r *mutationResolver) GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, workflowID string) (string, error) {
+func (r *mutationResolver) GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, experimentID string) (string, error) {
 	infra, err := r.chaosInfrastructureService.VerifyInfra(clusterInfo)
 	if err != nil {
 		logrus.Error("Validation failed : ", clusterInfo.InfraID)
 		return "Validation failed", err
 	}
-	return r.gitopsService.GitOpsNotificationHandler(ctx, *infra, workflowID)
+	return r.gitopsService.GitOpsNotificationHandler(ctx, *infra, experimentID)
 }
 
 func (r *mutationResolver) EnableGitOps(ctx context.Context, configurations model.GitConfig) (bool, error) {

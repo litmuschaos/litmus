@@ -1,8 +1,8 @@
 package grpc
 
 import (
-	"litmus/litmus-portal/authentication/api/presenter/protos"
-	"litmus/litmus-portal/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 )
 
 type ServerGrpc struct {

@@ -2,11 +2,12 @@ package grpc
 
 import (
 	"context"
-	"litmus/litmus-portal/authentication/api/middleware"
-	"litmus/litmus-portal/authentication/api/presenter/protos"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/validations"
 	"strconv"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 
 	log "github.com/sirupsen/logrus"
 

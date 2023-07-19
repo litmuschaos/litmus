@@ -1,7 +1,7 @@
 package services
 
 import (
-	"litmus/litmus-portal/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 )
 
 // Service creates a service for user authentication operations

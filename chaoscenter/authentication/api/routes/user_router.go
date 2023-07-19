@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"litmus/litmus-portal/authentication/api/handlers/rest"
-	"litmus/litmus-portal/authentication/api/middleware"
-	"litmus/litmus-portal/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 
 	"github.com/gin-gonic/gin"
 )

@@ -111,8 +111,8 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 		return types.WorkflowEvent{}, nil
 	}
 
-	if workflowObj.ObjectMeta.CreationTimestamp.Unix() < startTime {
-		return types.WorkflowEvent{}, nil
+	if workflowObj.ObjectMeta.CreationTimestamp.UnixMilli() < startTime {
+		return types.WorkflowEvent{}, errors.New("startTime of subscriber is greater than experiment creation timestamp")
 	}
 
 	cfg, err := k8s.GetKubeConfig()

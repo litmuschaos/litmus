@@ -1,4 +1,4 @@
-module litmus/litmus-portal/authentication
+module github.com/litmuschaos/litmus/chaoscenter/authentication
 
 go 1.20
 
