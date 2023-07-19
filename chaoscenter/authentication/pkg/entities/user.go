@@ -23,13 +23,13 @@ const (
 // User contains the user information
 type User struct {
 	Audit         `bson:",inline"`
-	ID            string `bson:"_id,omitempty" json:"UserID"`
-	Username      string `bson:"username,omitempty" json:"Username"`
-	Password      string `bson:"password,omitempty" json:"Password,omitempty"`
-	Email         string `bson:"email,omitempty" json:"Email,omitempty"`
-	Name          string `bson:"name,omitempty" json:"Name,omitempty"`
-	Role          Role   `bson:"role,omitempty" json:"Role"`
-	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"Deactivated_at,omitempty"`
+	ID            string `bson:"_id,omitempty" json:"userID"`
+	Username      string `bson:"username,omitempty" json:"username"`
+	Password      string `bson:"password,omitempty" json:"password,omitempty"`
+	Email         string `bson:"email,omitempty" json:"email,omitempty"`
+	Name          string `bson:"name,omitempty" json:"name,omitempty"`
+	Role          Role   `bson:"role,omitempty" json:"role"`
+	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
 }
 
 // UserDetails is used to update user's personal details
@@ -43,14 +43,14 @@ type UserDetails struct {
 // UserPassword defines structure for password related requests
 type UserPassword struct {
 	Username    string `json:"username,omitempty"`
-	OldPassword string `json:"old_password,omitempty"`
-	NewPassword string `json:"new_password,omitempty"`
+	OldPassword string `json:"oldPassword,omitempty"`
+	NewPassword string `json:"newPassword,omitempty"`
 }
 
 // UpdateUserState defines structure to deactivate or reactivate user
 type UpdateUserState struct {
 	Username     string `json:"username"`
-	IsDeactivate *bool  `json:"is_deactivate"`
+	IsDeactivate *bool  `json:"isDeactivate"`
 }
 
 // APIStatus defines structure for APIroute status

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"litmus/litmus-portal/authentication/api/types"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
@@ -83,7 +82,7 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 			}}}
 	} else {
 		query = bson.D{
-			{"removed_at", ""},
+			{"is_removed", false},
 			{"members", bson.D{
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
@@ -407,7 +406,7 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 	pipeline = append(pipeline, filter)
 	var projection bson.D
 	switch state {
-	case string(types.Accepted):
+	case string(entities.Accepted):
 		fmt.Println("acpt")
 		//	items: {
 		//		$filter: {
@@ -432,7 +431,7 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 			}},
 		}
 		pipeline = append(pipeline, projection)
-	case string(types.NotAccepted):
+	case string(entities.NotAccepted):
 		projection = bson.D{
 			{"$project", bson.D{
 				{"_id", 0},
@@ -448,7 +447,7 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 			}},
 		}
 		pipeline = append(pipeline, projection)
-	case string(types.All):
+	case string(entities.All):
 		projection = bson.D{
 			{"$project", bson.D{
 				{"_id", 0},
@@ -461,13 +460,11 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 	var res []entities.Members
 	cursor, err := r.GetAggregateProjects(pipeline, nil)
 	if err != nil {
-		fmt.Println("aggr", err)
 		return nil, err
 	}
 
 	var results []bson.M
 	if err = cursor.All(context.TODO(), &res); err != nil {
-		fmt.Println("cur err", err)
 		return nil, err
 	}
 

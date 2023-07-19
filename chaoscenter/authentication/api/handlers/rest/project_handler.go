@@ -2,7 +2,6 @@ package rest
 
 import (
 	"litmus/litmus-portal/authentication/api/presenter"
-	"litmus/litmus-portal/authentication/api/types"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
@@ -92,23 +91,22 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 			memberMap[authUser.ID] = authUser
 		}
 
-		var members []*types.Member
+		var members []*entities.Member
 
 		// Adding additional details of project members
 		for _, member := range project.Members {
-			members = append(members, &types.Member{
-				UserID:        memberMap[member.UserID].ID,
-				Username:      memberMap[member.UserID].Username,
-				Name:          memberMap[member.UserID].Name,
-				Role:          member.Role,
-				Email:         memberMap[member.UserID].Email,
-				Invitation:    member.Invitation,
-				JoinedAt:      member.JoinedAt,
-				DeactivatedAt: memberMap[member.UserID].DeactivatedAt,
+			members = append(members, &entities.Member{
+				UserID:     memberMap[member.UserID].ID,
+				Username:   memberMap[member.UserID].Username,
+				Name:       memberMap[member.UserID].Name,
+				Role:       member.Role,
+				Email:      memberMap[member.UserID].Email,
+				Invitation: member.Invitation,
+				JoinedAt:   member.JoinedAt,
 			})
 		}
 
-		c.JSON(200, gin.H{"data": types.Project{
+		c.JSON(200, gin.H{"data": entities.Project{
 			ID:    project.ID,
 			Name:  project.Name,
 			State: project.State,
@@ -140,44 +138,23 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		var uids []string
-
-		// Fetching user ids of all members from all user's projects
-		for _, project := range projects {
-			for _, member := range project.Members {
-				uids = append(uids, member.UserID)
-			}
-		}
-		authUsers, err := service.FindUsersByUID(uids)
-		if err != nil || authUsers == nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-			return
-		}
-		memberMap := make(map[string]entities.User)
-
-		for _, authUser := range *authUsers {
-			memberMap[authUser.ID] = authUser
-		}
-
-		var outputProjects []*types.Project
+		var outputProjects []*entities.Project
 
 		// Adding additional details of project members
 		for _, project := range projects {
-			var members []*types.Member
+			var members []*entities.Member
 			for _, member := range project.Members {
-				members = append(members, &types.Member{
-					UserID:        memberMap[member.UserID].ID,
-					Username:      memberMap[member.UserID].Username,
-					Name:          memberMap[member.UserID].Name,
-					Role:          member.Role,
-					Email:         memberMap[member.UserID].Email,
-					Invitation:    member.Invitation,
-					JoinedAt:      member.JoinedAt,
-					DeactivatedAt: memberMap[member.UserID].DeactivatedAt,
+				members = append(members, &entities.Member{
+					UserID:     member.UserID,
+					Username:   member.Username,
+					Name:       member.Name,
+					Role:       member.Role,
+					Email:      member.Email,
+					Invitation: member.Invitation,
+					JoinedAt:   member.JoinedAt,
 				})
 			}
-			outputProjects = append(outputProjects, &types.Project{
+			outputProjects = append(outputProjects, &entities.Project{
 				ID:      project.ID,
 				Name:    project.Name,
 				Members: members,
@@ -397,15 +374,14 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{"data": types.Member{
-			UserID:        user.ID,
-			Username:      user.Username,
-			Name:          user.Name,
-			Role:          entities.MemberRole(newMember.Role),
-			Email:         user.Email,
-			Invitation:    entities.Invitation(newMember.Invitation),
-			JoinedAt:      newMember.JoinedAt,
-			DeactivatedAt: user.DeactivatedAt,
+		c.JSON(200, gin.H{"data": entities.Member{
+			UserID:     user.ID,
+			Username:   user.Username,
+			Name:       user.Name,
+			Role:       newMember.Role,
+			Email:      user.Email,
+			Invitation: newMember.Invitation,
+			JoinedAt:   newMember.JoinedAt,
 		}})
 	}
 }
