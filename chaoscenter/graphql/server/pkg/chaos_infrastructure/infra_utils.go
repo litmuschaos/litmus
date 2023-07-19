@@ -48,22 +48,22 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 	config.ServerEndpoint = endpoint
 
 	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
+	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
 		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if scope == namespaceScope {
+	if scope == NamespaceScope {
 		config.TLSCert = utils.Config.TlsCertB64
 	}
 
 	if !infra.IsRegistered {
 		var respData []byte
-		if infra.InfraScope == "cluster" {
+		if infra.InfraScope == ClusterScope {
 			respData, err = ManifestParser(infra, "manifests/cluster", &config)
-		} else if infra.InfraScope == "namespace" {
+		} else if infra.InfraScope == NamespaceScope {
 			respData, err = ManifestParser(infra, "manifests/namespace", &config)
 		} else {
 			logrus.Error("INFRA_SCOPE env is empty!")
