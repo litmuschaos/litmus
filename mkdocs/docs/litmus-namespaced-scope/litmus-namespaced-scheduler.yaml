@@ -16,11 +16,11 @@ spec:
       containers:
         - name: chaos-scheduler
           # Replace this with the built image name
-          image: litmuschaos/chaos-scheduler:3.0.0-beta8
+          image: litmuschaos/chaos-scheduler:3.0.0-beta9
           command:
           - chaos-scheduler
           imagePullPolicy: IfNotPresent
-          env: 
+          env:
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:
