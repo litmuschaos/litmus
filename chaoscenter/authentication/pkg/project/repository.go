@@ -81,7 +81,7 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 			}}}
 	} else {
 		query = bson.D{
-			{"removed_at", ""},
+			{"is_removed", false},
 			{"members", bson.D{
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
