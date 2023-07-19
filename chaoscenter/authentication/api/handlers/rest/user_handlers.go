@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -37,8 +38,8 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
-		if userRequest.Role == "" || userRequest.UserName == "" || userRequest.Password == "" {
+		userRequest.Username = utils.SanitizeString(userRequest.Username)
+		if userRequest.Role == "" || userRequest.Username == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
@@ -138,6 +139,30 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		if projectID == "" {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		projectMembers, err := service.GetProjectMembers(projectID, "all")
+
+		var uids []string
+		for _, k := range projectMembers {
+			uids = append(uids, k.UserID)
+		}
+		users, err := service.InviteUsers(uids)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		fmt.Println("users", users)
+		c.JSON(200, users)
+	}
+}
+
 func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.User
@@ -147,14 +172,14 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		userRequest.UserName = utils.SanitizeString(userRequest.UserName)
-		if userRequest.UserName == "" || userRequest.Password == "" {
+		userRequest.Username = utils.SanitizeString(userRequest.Username)
+		if userRequest.Username == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
 
 		// Checking if user exists
-		user, err := service.FindUserByUsername(userRequest.UserName)
+		user, err := service.FindUserByUsername(userRequest.Username)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
@@ -201,7 +226,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			state := "active"
 			newProject := &entities.Project{
 				ID:      uuid.Must(uuid.NewRandom()).String(),
-				Name:    user.UserName + "'s project",
+				Name:    user.Username + "'s project",
 				Members: members,
 				State:   &state,
 				Audit: entities.Audit{
@@ -274,7 +299,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 		}
 		uid := c.MustGet("uid").(string)
 		var adminUser entities.User
-		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.Username = c.MustGet("username").(string)
 		adminUser.ID = uid
 		if utils.StrictPasswordPolicy {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
@@ -321,7 +346,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		var adminUser entities.User
-		adminUser.UserName = c.MustGet("username").(string)
+		adminUser.Username = c.MustGet("username").(string)
 		adminUser.ID = c.MustGet("uid").(string)
 
 		// Checking if loggedIn user is admin
