@@ -779,11 +779,11 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	groupByInfraStatusStage := bson.D{
 		{
 			"$group", bson.D{
-			{"_id", "$is_active"},
-			{"count", bson.D{
-				{"$sum", 1},
-			}},
-		},
+				{"_id", "$is_active"},
+				{"count", bson.D{
+					{"$sum", 1},
+				}},
+			},
 		},
 	}
 
@@ -791,11 +791,11 @@ func (in *infraService) GetInfraStats(ctx context.Context, projectID string) (*m
 	groupByInfraConfirmedStage := bson.D{
 		{
 			"$group", bson.D{
-			{"_id", "$is_infra_confirmed"},
-			{"count", bson.D{
-				{"$sum", 1},
-			}},
-		},
+				{"_id", "$is_infra_confirmed"},
+				{"count", bson.D{
+					{"$sum", 1},
+				}},
+			},
 		},
 	}
 
@@ -1077,7 +1077,7 @@ func (in *infraService) GetManifest(token string) ([]byte, int, error) {
 		var respData []byte
 		if reqinfra.InfraScope == "cluster" {
 
-			respData, err = ManifestParser(reqinfra, "manifests/infra", &configurations)
+			respData, err = ManifestParser(reqinfra, "manifests/cluster", &configurations)
 		} else if reqinfra.InfraScope == "namespace" {
 			respData, err = ManifestParser(reqinfra, "manifests/namespace", &configurations)
 		} else {
@@ -1125,7 +1125,7 @@ func (in *infraService) GetManifestWithInfraID(infraID string, accessKey string)
 
 	var respData []byte
 	if reqinfra.InfraScope == clusterScope {
-		respData, err = ManifestParser(reqinfra, "manifests/infra", &configurations)
+		respData, err = ManifestParser(reqinfra, "manifests/cluster", &configurations)
 	} else if reqinfra.InfraScope == namespaceScope {
 		respData, err = ManifestParser(reqinfra, "manifests/namespace", &configurations)
 	} else {
