@@ -35,5 +35,5 @@ helm install my-release bitnami/mongodb --values mongo-values.yml -n <NAMESPACE>
 Applying the manifest file will install all the required service account configuration and ChaosCenter.
 
 ```shell
-kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta9/litmus-3.0.0-beta9.yaml
+kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta10/litmus-3.0.0-beta10.yaml
 ```
