@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextProps, timeToDisplayText } from '@harness/uicore';
+import { Text, TextProps, timeToDisplayText } from '@harnessio/uicore';
 import { isNil } from 'lodash-es';
 import { useStrings } from '@strings';
 

@@ -1,23 +1,24 @@
 import type { APIConfig } from '@api/LitmusAPIProvider';
 
+const loc = window.location;
 let auth: string;
 let chaosManager: string;
-let ngPlatform: string;
-let ngLogging: string;
 let sockURL: string;
+
+if (loc.protocol === 'https:') {
+  sockURL = 'wss:';
+} else {
+  sockURL = 'ws:';
+}
 
 if (__DEV__) {
   auth = `/auth`;
-  chaosManager = `/chaos/manager/api`;
-  sockURL = `ws://${window.location.hostname}:8080`;
-  ngPlatform = `/ng/api`;
-  ngLogging = `/log-service`;
+  chaosManager = `/api`;
+  sockURL += `//${window.location.hostname}:8080`;
 } else {
   auth = `${window.location.origin}/auth`;
-  chaosManager = `${window.location.origin}/gateway/chaos/manager/api`;
-  ngPlatform = `${window.location.origin}/gateway/ng/api`;
-  ngLogging = `${window.location.origin}/gateway/log-service`;
-  sockURL = `wss://${window.location.host}/chaos/ws`;
+  chaosManager = `${window.location.origin}/api`;
+  sockURL += `//${window.location.host}/ws`;
 }
 
 const APIEndpoints: APIConfig = {
@@ -27,8 +28,6 @@ const APIEndpoints: APIConfig = {
   },
   restEndpoints: {
     authUri: auth,
-    ngPlatformUri: ngPlatform,
-    ngLoggingUri: ngLogging,
     chaosManagerUri: chaosManager
   }
 };

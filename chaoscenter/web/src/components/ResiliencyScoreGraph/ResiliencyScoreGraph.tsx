@@ -7,7 +7,7 @@ import type { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
 import { PatternLines } from '@visx/pattern';
 import { LinearGradient } from '@visx/gradient';
 import { max, extent } from 'd3-array';
-import { Button, ButtonVariation } from '@harness/uicore';
+import { Button, ButtonVariation } from '@harnessio/uicore';
 import VisxAreaChart from './VisxAreaChart';
 
 interface GraphDataProps {

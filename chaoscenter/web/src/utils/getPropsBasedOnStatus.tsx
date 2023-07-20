@@ -1,4 +1,4 @@
-import { Color } from '@harness/design-system';
+import { Color } from '@harnessio/design-system';
 import { ChaosInfrastructureStatus } from '@models';
 import type { Status, StatusProps } from '@components/StatusBadgeV2';
 import { ExperimentRunFaultStatus, ExperimentRunStatus, FaultProbeStatus } from '@api/entities';

@@ -22,8 +22,6 @@ export interface APIConfig {
   };
   restEndpoints: {
     authUri: string;
-    ngPlatformUri: string;
-    ngLoggingUri: string;
     chaosManagerUri: string;
   };
 }
@@ -110,7 +108,7 @@ export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({
   children
 }): React.ReactElement => {
   if (config.restEndpoints) {
-    axios.defaults.baseURL = config.restEndpoints.ngPlatformUri;
+    axios.defaults.baseURL = config.restEndpoints.authUri;
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 

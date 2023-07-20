@@ -2,8 +2,9 @@ package utils
 
 import (
 	"context"
-	grpc2 "litmus/litmus-portal/authentication/api/presenter/protos"
 	"os"
+
+	grpc2 "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"

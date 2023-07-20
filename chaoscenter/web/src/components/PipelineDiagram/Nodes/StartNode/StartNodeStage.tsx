@@ -1,6 +1,6 @@
 import React from 'react';
-import { Icon, IconName } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Icon, IconName } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import cx from 'classnames';
 import SVGMarker from '../SVGMarker';
 import css from '../Nodes.module.scss';

@@ -3,11 +3,12 @@ package project
 import (
 	"context"
 	"errors"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/utils"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -80,7 +81,7 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 			}}}
 	} else {
 		query = bson.D{
-			{"removed_at", ""},
+			{"is_removed", false},
 			{"members", bson.D{
 				{"$elemMatch", bson.D{
 					{"user_id", userID},

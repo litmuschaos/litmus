@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { Text, Popover, Layout, Container, Tag } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Text, Popover, Layout, Container, Tag } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import { IPopoverProps, PopoverInteractionKind } from '@blueprintjs/core';
 import css from './CustomTagsPopover.module.scss';
 

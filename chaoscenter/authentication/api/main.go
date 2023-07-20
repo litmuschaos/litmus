@@ -3,18 +3,19 @@ package main
 import (
 	"flag"
 	"fmt"
-	grpcHandler "litmus/litmus-portal/authentication/api/handlers/grpc"
-	grpcPresenter "litmus/litmus-portal/authentication/api/presenter/protos"
-	"litmus/litmus-portal/authentication/api/routes"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/misc"
-	"litmus/litmus-portal/authentication/pkg/project"
-	"litmus/litmus-portal/authentication/pkg/services"
-	"litmus/litmus-portal/authentication/pkg/user"
-	"litmus/litmus-portal/authentication/pkg/utils"
 	"net"
 	"runtime"
 	"time"
+
+	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
+	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/routes"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/misc"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/project"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/user"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"google.golang.org/grpc"
 

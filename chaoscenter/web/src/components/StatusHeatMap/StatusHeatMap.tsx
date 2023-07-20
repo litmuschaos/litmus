@@ -1,7 +1,7 @@
-import { Avatar, Container, Layout, Popover, Text, Utils } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { Avatar, Container, Layout, Popover, Text, Utils } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 import cx from 'classnames';
-import { Color, FontVariation } from '@harness/design-system';
+import { Color, FontVariation } from '@harnessio/design-system';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Classes, PopoverInteractionKind, Position } from '@blueprintjs/core';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container } from '@harness/uicore';
+import { Container } from '@harnessio/uicore';
 import noFilteredData from '@images/noFilteredData.svg';
 import { useStrings } from '@strings';
 import css from './NoFilteredData.module.scss';

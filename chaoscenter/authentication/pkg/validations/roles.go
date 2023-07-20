@@ -1,6 +1,6 @@
 package validations
 
-import "litmus/litmus-portal/authentication/pkg/entities"
+import "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 
 var MutationRbacRules = map[string][]string{
 	"sendInvitation":   {string(entities.RoleOwner)},

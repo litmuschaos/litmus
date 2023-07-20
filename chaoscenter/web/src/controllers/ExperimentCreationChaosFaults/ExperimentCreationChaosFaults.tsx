@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { cloneDeep } from 'lodash-es';
 import { replaceHyphen, replaceSpace } from '@utils';
 import ExperimentCreationChaosFaultsView from '@views/ExperimentCreationSelectFault/ExperimentCreationChaosFaults';

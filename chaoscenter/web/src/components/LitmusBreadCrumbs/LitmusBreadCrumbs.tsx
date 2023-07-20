@@ -1,4 +1,4 @@
-import { Breadcrumbs, BreadcrumbsProps } from '@harness/uicore';
+import { Breadcrumbs, BreadcrumbsProps } from '@harnessio/uicore';
 import React from 'react';
 
 interface LitmusBreadCrumbsProps extends BreadcrumbsProps {

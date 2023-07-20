@@ -1,7 +1,7 @@
 import React from 'react';
-import { Avatar, Container, Layout, TableV2, Text } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Avatar, Container, Layout, TableV2, Text } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { cloneDeep, isEqual } from 'lodash-es';
 import type { Column, Row } from 'react-table';
 import { Classes, Popover, PopoverInteractionKind } from '@blueprintjs/core';
@@ -58,8 +58,22 @@ const CronDetails = ({ cronSyntax }: Pick<ExperimentDetails, 'cronSyntax'>): Rea
 const ChaosInfrastructureDetails = ({
   infrastructure
 }: Pick<ExperimentDetails, 'infrastructure'>): React.ReactElement => {
+  const history = useHistory();
+  const paths = useRouteWithBaseUrl();
   return (
-    <Container flex={{ justifyContent: 'flex-start' }}>
+    <Container
+      flex={{ justifyContent: 'flex-start' }}
+      onClick={() => {
+        if (infrastructure.environmentID && infrastructure.infrastructureID) {
+          history.push(
+            paths.toKubernetesChaosInfrastructureDetails({
+              environmentID: infrastructure.environmentID,
+              chaosInfrastructureID: infrastructure.infrastructureID
+            })
+          );
+        }
+      }}
+    >
       <Text font={{ size: 'small' }} margin={{ left: 'small' }} color={Color.PRIMARY_7} lineClamp={1}>
         {infrastructure.name}
       </Text>

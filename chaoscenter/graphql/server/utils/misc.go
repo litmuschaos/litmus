@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"math/rand"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 

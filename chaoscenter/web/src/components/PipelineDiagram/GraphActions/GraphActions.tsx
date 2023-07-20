@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonVariation, ButtonGroup, Button, Layout } from '@harness/uicore';
+import { ButtonVariation, ButtonGroup, Button, Layout } from '@harnessio/uicore';
 import cx from 'classnames';
 import { ZOOM_INC_DEC_LEVEL } from './constants';
 import css from './GraphActions.module.scss';

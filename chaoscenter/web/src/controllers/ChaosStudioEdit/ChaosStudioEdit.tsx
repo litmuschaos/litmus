@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
 import { parse } from 'yaml';
 import { getScope } from '@utils';
@@ -42,7 +42,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
 
   React.useEffect(() => {
     if (experimentData && showStudio < 2 && !hasUnsavedChangesInURL) {
-      const infrastructureType = experimentData?.infra?.infraType ?? InfrastructureType.KUBERNETES;
+      const infrastructureType = InfrastructureType.KUBERNETES;
       const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
       updateSearchParams({
         experimentName: experimentData.name,

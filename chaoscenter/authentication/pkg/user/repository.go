@@ -2,8 +2,9 @@ package user
 
 import (
 	"context"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/utils"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"github.com/google/uuid"
 
@@ -12,7 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//Repository holds the mongo database implementation of the Service
+// Repository holds the mongo database implementation of the Service
 type Repository interface {
 	LoginUser(user *entities.User) (*entities.User, error)
 	GetUser(uid string) (*entities.User, error)

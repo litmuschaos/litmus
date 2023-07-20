@@ -2,6 +2,7 @@ package chaos_infrastructure
 
 import (
 	"fmt"
+
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -47,22 +48,22 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 	config.ServerEndpoint = endpoint
 
 	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
+	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
 		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if scope == namespaceScope {
+	if scope == NamespaceScope {
 		config.TLSCert = utils.Config.TlsCertB64
 	}
 
 	if !infra.IsRegistered {
 		var respData []byte
-		if infra.InfraScope == "cluster" {
+		if infra.InfraScope == ClusterScope {
 			respData, err = ManifestParser(infra, "manifests/cluster", &config)
-		} else if infra.InfraScope == "namespace" {
+		} else if infra.InfraScope == NamespaceScope {
 			respData, err = ManifestParser(infra, "manifests/namespace", &config)
 		} else {
 			logrus.Error("INFRA_SCOPE env is empty!")
@@ -255,11 +256,11 @@ func SendExperimentToSubscriber(projectID string, workflow *model.ChaosExperimen
 		workflowNamespace = utils.Config.InfraNamespace
 	}
 	SendRequestToSubscriber(SubscriberRequests{
-		K8sManifest: workflow.ExperimentManifest,
-		RequestType: reqType,
-		ProjectID:   projectID,
-		InfraID:     workflow.InfraID,
-		Namespace:   workflowNamespace,
+		K8sManifest:  workflow.ExperimentManifest,
+		RequestType:  reqType,
+		ProjectID:    projectID,
+		InfraID:      workflow.InfraID,
+		Namespace:    workflowNamespace,
 		ExternalData: externalData,
 		Username:     username,
 	}, *r)

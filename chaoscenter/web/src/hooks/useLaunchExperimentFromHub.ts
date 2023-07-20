@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
 import { parse } from 'yaml';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import type { Chart, PredefinedExperiment } from '@api/entities';
 import type { ExperimentManifest } from '@models';
 import { useStrings } from '@strings';

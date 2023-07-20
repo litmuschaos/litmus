@@ -1,15 +1,16 @@
 package rest
 
 import (
-	"litmus/litmus-portal/authentication/api/presenter"
-	"litmus/litmus-portal/authentication/api/types"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/services"
-	"litmus/litmus-portal/authentication/pkg/utils"
-	"litmus/litmus-portal/authentication/pkg/validations"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -559,7 +560,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
-//  UpdateProjectName is used to update a project's name
+// UpdateProjectName is used to update a project's name
 func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.ProjectInput

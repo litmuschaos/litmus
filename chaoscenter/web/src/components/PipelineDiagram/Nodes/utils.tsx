@@ -1,6 +1,6 @@
-import { Utils } from '@harness/uicore';
-import type { IconName, IconProps } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Utils } from '@harnessio/uicore';
+import type { IconName, IconProps } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import type { CSSProperties } from 'react';
 import { ExperimentRunFaultStatus } from '@api/entities';
 import { ExecutionPipelineNodeType, ExecutionStatus, ExecutionStatusEnum } from '../types';

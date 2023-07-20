@@ -400,7 +400,7 @@ type ComplexityRoot struct {
 		EnableGitOps             func(childComplexity int, configurations model.GitConfig) int
 		GenerateSSHKey           func(childComplexity int) int
 		GetManifestWithInfraID   func(childComplexity int, projectID string, infraID string, accessKey string) int
-		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, workflowID string) int
+		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
 		KubeObj                  func(childComplexity int, request model.KubeObjectData) int
 		PodLog                   func(childComplexity int, request model.PodLog) int
 		RegisterInfra            func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
@@ -570,7 +570,7 @@ type MutationResolver interface {
 	CreateEnvironment(ctx context.Context, projectID string, request *model.CreateEnvironmentRequest) (*model.Environment, error)
 	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error)
 	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
-	GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, workflowID string) (string, error)
+	GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, experimentID string) (string, error)
 	EnableGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
 	UpdateGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
@@ -2441,7 +2441,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.InfraIdentity), args["workflowID"].(string)), true
+		return e.complexity.Mutation.GitopsNotifier(childComplexity, args["clusterInfo"].(model.InfraIdentity), args["experimentID"].(string)), true
 
 	case "Mutation.kubeObj":
 		if e.complexity.Mutation.KubeObj == nil {
@@ -4072,7 +4072,18 @@ type GetExperimentStatsResponse {
 }
 
 extend type Query {
+  """
+  Returns experiment run based on experiment run ID
+  """
+  getExperimentRun(projectID: ID!, experimentRunID: String!): ExperimentRun!
 
+  """
+  Returns the list of experiment run based on various filter parameters
+  """
+  listExperimentRun(
+    projectID: ID!
+    request: ListExperimentRunRequest!
+  ): ListExperimentRunResponse!
 
   """
   Returns the experiment based on experiment ID
@@ -4087,6 +4098,10 @@ extend type Query {
     request: ListExperimentRequest!
   ): ListExperimentResponse!
 
+  """
+  Query to get experiment run stats
+  """
+  getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
   """
   Query to get experiment stats
   """
@@ -4109,6 +4124,14 @@ extend type Mutation {
     request: SaveChaosExperimentRequest!
     projectID: ID!
   ): String!
+
+  """
+  Run the chaos experiment (used by frontend)
+  """
+  runChaosExperiment(
+    experimentID: String!
+    projectID: ID!
+  ): RunChaosExperimentResponse!
 
   """
   Updates the experiment
@@ -5732,7 +5755,7 @@ extend type Mutation {
     Sends workflow run request(single run workflow only) to agent on gitops notification
     """
     # authorized directive not required
-    gitopsNotifier(clusterInfo: InfraIdentity!, workflowID: ID!): String!
+    gitopsNotifier(clusterInfo: InfraIdentity!, experimentID: ID!): String!
 
     """
     Enables gitops settings in the project
@@ -6238,13 +6261,13 @@ func (ec *executionContext) field_Mutation_gitopsNotifier_args(ctx context.Conte
 	}
 	args["clusterInfo"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["workflowID"]; ok {
+	if tmp, ok := rawArgs["experimentID"]; ok {
 		arg1, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["workflowID"] = arg1
+	args["experimentID"] = arg1
 	return args, nil
 }
 
@@ -15849,7 +15872,7 @@ func (ec *executionContext) _Mutation_gitopsNotifier(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().GitopsNotifier(rctx, args["clusterInfo"].(model.InfraIdentity), args["workflowID"].(string))
+		return ec.resolvers.Mutation().GitopsNotifier(rctx, args["clusterInfo"].(model.InfraIdentity), args["experimentID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

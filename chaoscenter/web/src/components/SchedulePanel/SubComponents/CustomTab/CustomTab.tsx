@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { FormInput } from '@harness/uicore';
+import { FormInput } from '@harnessio/uicore';
 import { useStrings } from '@strings';
 import { getBreakdownValues } from '../utils';
 import ExpressionBreakdown, { ActiveInputs } from '../ExpressionBreakdown/ExpressionBreakdown';

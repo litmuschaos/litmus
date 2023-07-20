@@ -1,4 +1,4 @@
-import type { PaginationProps } from '@harness/uicore';
+import type { PaginationProps } from '@harnessio/uicore';
 import type { ExperimentRunStatus, InfrastructureInstallationType, UserDetails } from '@api/entities';
 import type {
   ListExperimentRequest,

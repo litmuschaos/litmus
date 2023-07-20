@@ -1,7 +1,7 @@
 import React from 'react';
-import { FormInput, Formik, Button, Text, Container } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { FormInput, Formik, Button, Text, Container } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { Form } from 'formik';
 import AuthLayout from '@components/AuthLayout/AuthLayout';
 import { useStrings } from '@strings';

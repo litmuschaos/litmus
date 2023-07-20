@@ -1,5 +1,5 @@
-import { Button, ButtonProps, Layout, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Button, ButtonProps, Layout, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import React from 'react';
 import { Classes, PopoverInteractionKind } from '@blueprintjs/core';
 import { useStrings } from '@strings';

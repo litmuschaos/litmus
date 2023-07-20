@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, SelectOption, Text, Container, Select } from '@harness/uicore';
+import { Layout, SelectOption, Text, Container, Select } from '@harnessio/uicore';
 import { zeroFiftyNineDDOptions, amPmOptions, oneTwelveDDOptions } from './TimeSelectUtils';
 import css from './TimeSelect.module.scss';
 

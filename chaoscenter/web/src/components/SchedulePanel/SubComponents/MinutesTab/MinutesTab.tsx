@@ -1,6 +1,6 @@
 import React from 'react';
-import { FormInput, Text, Layout } from '@harness/uicore';
-import { Color } from '@harness/design-system';
+import { FormInput, Text, Layout } from '@harnessio/uicore';
+import { Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import ExpressionBreakdown, { ActiveInputs } from '../ExpressionBreakdown/ExpressionBreakdown';
 import Expression from '../Expression/Expression';

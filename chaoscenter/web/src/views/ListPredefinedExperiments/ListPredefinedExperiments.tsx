@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Container, Layout, Text, useToaster } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import { Color, FontVariation } from '@harness/design-system';
+import { Button, Container, Layout, Text, useToaster } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { parse } from 'yaml';
 import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';

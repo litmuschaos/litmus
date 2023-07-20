@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, Text } from '@harness/uicore';
-import { Color, FontVariation } from '@harness/design-system';
+import { Container, Text } from '@harnessio/uicore';
+import { Color, FontVariation } from '@harnessio/design-system';
 import classNames from 'classnames';
 import { parse } from 'yaml';
 import { useParams } from 'react-router-dom';

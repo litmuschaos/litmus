@@ -1,6 +1,6 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
-import { Icon } from '@harness/icons';
+import { useToaster } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
 
 interface CopyButtonProps {
   stringToCopy: string;

@@ -5,10 +5,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"k8s.io/apimachinery/pkg/labels"
 	"strings"
 	"sync"
 	"time"
+
+	"k8s.io/apimachinery/pkg/labels"
 
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/types"

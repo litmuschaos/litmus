@@ -1,10 +1,10 @@
 import React, { CSSProperties, useRef } from 'react';
 import cx from 'classnames';
 import { defaultTo } from 'lodash-es';
-import { Text, Layout } from '@harness/uicore';
-import { Icon } from '@harness/icons';
-import type { IconName } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { Text, Layout } from '@harnessio/uicore';
+import { Icon } from '@harnessio/icons';
+import type { IconName } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import { DynamicPopover, DynamicPopoverHandlerBinding } from '../../DynamicPopover/DynamicPopover';
 import ExecutionStatusLabel from '../../ExecutionStatusLabel/ExecutionStatusLabel';
 import {

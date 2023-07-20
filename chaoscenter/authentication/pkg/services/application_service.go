@@ -1,9 +1,9 @@
 package services
 
 import (
-	"litmus/litmus-portal/authentication/pkg/misc"
-	"litmus/litmus-portal/authentication/pkg/project"
-	"litmus/litmus-portal/authentication/pkg/user"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/misc"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/project"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/user"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )

@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 const commonConfig = require('./webpack.common');
 
@@ -22,7 +21,6 @@ if (!isCI && !certificateExists) {
 
 const devConfig = {
   mode: 'development',
-  entry: './src/index.ts',
   devtool: 'cheap-module-source-map',
   cache: { type: 'filesystem' },
   output: {
@@ -43,13 +41,13 @@ const devConfig = {
           }
         },
         proxy: {
-          '/chaos/manager/api': {
-            pathRewrite: { '^/chaos/manager/api': '' },
+          '/api': {
+            pathRewrite: { '^/api': '' },
             target: process.env.CHAOS_MANAGER
               ? process.env.CHAOS_MANAGER
               : targetLocalHost
               ? 'http://localhost:8080'
-              : `${baseUrl}/chaos/manager/api`,
+              : `${baseUrl}/api`,
             secure: false,
             changeOrigin: true,
             logLevel: 'info'
@@ -73,15 +71,9 @@ const devConfig = {
       chunkFilename: '[name].[id].css',
       ignoreOrder: true
     }),
-    new HTMLWebpackPlugin({
-      template: 'src/index.html',
-      filename: 'index.html',
-      minify: false
-    }),
     new DefinePlugin({
       'process.env': '{}', // required for @blueprintjs/core
-      __DEV__: true,
-      __ENABLE_CDN__: false
+      __DEV__: true
     })
   ]
 };

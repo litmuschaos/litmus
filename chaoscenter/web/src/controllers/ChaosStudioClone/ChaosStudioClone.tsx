@@ -1,5 +1,5 @@
 import React from 'react';
-import { useToaster } from '@harness/uicore';
+import { useToaster } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
 import { parse } from 'yaml';
 import { getHash, getScope } from '@utils';
@@ -40,7 +40,7 @@ export default function ChaosStudioCloneController(): React.ReactElement {
   React.useEffect(() => {
     if (experimentData && showStudio < 2 && !hasUnsavedChangesInURL) {
       const clonedExperimentName = getHash(2, experimentData.name);
-      const infrastructureType = experimentData?.infra?.infraType ?? InfrastructureType.KUBERNETES;
+      const infrastructureType = InfrastructureType.KUBERNETES;
       const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
       updateSearchParams({
         experimentName: clonedExperimentName,

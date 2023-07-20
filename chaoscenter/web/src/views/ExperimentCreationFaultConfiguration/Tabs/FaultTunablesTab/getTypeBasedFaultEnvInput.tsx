@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container, FormInput, Select, Text } from '@harness/uicore';
-import { FontVariation } from '@harness/design-system';
+import { Container, FormInput, Select, Text } from '@harnessio/uicore';
+import { FontVariation } from '@harnessio/design-system';
 import type { FormikProps } from 'formik';
 import { startCase } from 'lodash-es';
 import { FaultTunableInputType, FaultTunable } from '@models';

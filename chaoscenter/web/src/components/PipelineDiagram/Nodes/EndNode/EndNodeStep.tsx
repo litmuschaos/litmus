@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, IconName } from '@harness/icons';
+import { Icon, IconName } from '@harnessio/icons';
 import cx from 'classnames';
 import { NodeType } from '../../types';
 import SVGMarker from '../SVGMarker';

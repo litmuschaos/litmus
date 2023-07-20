@@ -39,7 +39,7 @@ type Node struct {
 	FinishedAt string     `json:"finishedAt"`
 	Children   []string   `json:"children"`
 	Type       string     `json:"type"`
-	ChaosExp   *ChaosData `json:"chaos_data,omitempty"`
+	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
 }
 
 // ChaosData is the data we get from chaos exporter

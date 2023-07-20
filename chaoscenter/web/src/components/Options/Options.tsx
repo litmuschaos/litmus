@@ -1,6 +1,6 @@
-import { CardBody, Text } from '@harness/uicore';
-import { Icon, IconName } from '@harness/icons';
-import { Color } from '@harness/design-system';
+import { CardBody, Text } from '@harnessio/uicore';
+import { Icon, IconName } from '@harnessio/icons';
+import { Color } from '@harnessio/design-system';
 import React from 'react';
 import { Classes } from '@blueprintjs/core';
 import { useStrings } from '@strings';

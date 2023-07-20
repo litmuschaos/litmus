@@ -22,6 +22,16 @@ export interface UseRouteDefinitionsProps {
   toExperimentRunHistory(params: { experimentID: string }): string;
   toExperimentRunDetails(params: { experimentID: string; runID: string }): string;
   toExperimentRunDetailsViaNotifyID(params: { experimentID: string; notifyID: string }): string;
+  toChaosHubs(): string;
+  toChaosHub(params: { hubID: string }): string;
+  toChaosProbes(): string;
+  toChaosProbe(params: { probeID: string }): string;
+  toPredefinedExperiment(params: { hubID: string; experimentName: string }): string;
+  toChaosFault(params: { hubID: string; faultName: string }): string;
+  toEnvironments(): string;
+  toChaosInfrastructures(params: { environmentID: string }): string;
+  toKubernetesChaosInfrastructures(params: { environmentID: string }): string;
+  toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
 }
 
 export interface ExternalPathProps {
@@ -43,5 +53,20 @@ export const paths: UseRouteDefinitionsProps = {
   // experiment details route
   toExperimentRunHistory: ({ experimentID }) => `/experiments/${experimentID}/runs`,
   toExperimentRunDetails: ({ experimentID, runID }) => `/experiments/${experimentID}/runs/${runID}`,
-  toExperimentRunDetailsViaNotifyID: ({ experimentID, notifyID }) => `/experiments/${experimentID}/notifyID/${notifyID}`
+  toExperimentRunDetailsViaNotifyID: ({ experimentID, notifyID }) =>
+    `/experiments/${experimentID}/notifyID/${notifyID}`,
+  // chaoshub routes
+  toChaosHubs: () => '/chaos-hubs',
+  toChaosHub: ({ hubID }) => `/chaos-hubs/${hubID}`,
+  toPredefinedExperiment: ({ hubID, experimentName }) => `/chaos-hubs/${hubID}/experiment/${experimentName}`,
+  toChaosFault: ({ hubID, faultName }) => `/chaos-hubs/${hubID}/fault/${faultName}`,
+  // chaos probe routes
+  toChaosProbes: () => '/probes',
+  toChaosProbe: ({ probeID }) => `/probes/${probeID}`,
+  toEnvironments: () => '/environments',
+  // chaos infrastructures routes
+  toChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}`,
+  toKubernetesChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}/kubernetes`,
+  toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
+    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`
 };
