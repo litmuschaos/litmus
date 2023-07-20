@@ -32,8 +32,8 @@ import (
 const (
 	// CIVersion specifies the version tag used for ci builds
 	CIVersion             = "ci"
-	clusterScope   string = "cluster"
-	namespaceScope string = "namespace"
+	ClusterScope   string = "cluster"
+	NamespaceScope string = "namespace"
 )
 
 type Service interface {
@@ -1062,22 +1062,22 @@ func (in *infraService) GetManifest(token string) ([]byte, int, error) {
 	}
 
 	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
+	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
 		configurations.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, http.StatusInternalServerError, err
 		}
 	}
 
-	if scope == namespaceScope {
+	if scope == NamespaceScope {
 		configurations.TLSCert = utils.Config.TlsCertB64
 	}
 
 	if !reqinfra.IsRegistered {
 		var respData []byte
-		if reqinfra.InfraScope == "infra" {
+		if reqinfra.InfraScope == "cluster" {
 
-			respData, err = ManifestParser(reqinfra, "manifests/infra", &configurations)
+			respData, err = ManifestParser(reqinfra, "manifests/cluster", &configurations)
 		} else if reqinfra.InfraScope == "namespace" {
 			respData, err = ManifestParser(reqinfra, "manifests/namespace", &configurations)
 		} else {
@@ -1112,21 +1112,21 @@ func (in *infraService) GetManifestWithInfraID(infraID string, accessKey string)
 	}
 
 	var scope = utils.Config.ChaosCenterScope
-	if scope == clusterScope && utils.Config.TlsSecretName != "" {
+	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
 		configurations.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve the tls cert %v", err)
 		}
 	}
 
-	if scope == namespaceScope {
+	if scope == NamespaceScope {
 		configurations.TLSCert = utils.Config.TlsCertB64
 	}
 
 	var respData []byte
-	if reqinfra.InfraScope == clusterScope {
-		respData, err = ManifestParser(reqinfra, "manifests/infra", &configurations)
-	} else if reqinfra.InfraScope == namespaceScope {
+	if reqinfra.InfraScope == ClusterScope {
+		respData, err = ManifestParser(reqinfra, "manifests/cluster", &configurations)
+	} else if reqinfra.InfraScope == NamespaceScope {
 		respData, err = ManifestParser(reqinfra, "manifests/namespace", &configurations)
 	} else {
 		logrus.Error("INFRA_SCOPE env is empty")
