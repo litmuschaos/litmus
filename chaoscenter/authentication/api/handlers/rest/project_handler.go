@@ -74,52 +74,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// Fetching user ids of all the members in the project
-		var uids []string
-		for _, member := range project.Members {
-			uids = append(uids, member.UserID)
-		}
-
-		authUsers, err := service.FindUsersByUID(uids)
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-			return
-		}
-
-		memberMap := make(map[string]entities.User)
-		for _, authUser := range *authUsers {
-			memberMap[authUser.ID] = authUser
-		}
-
-		var members []*entities.Member
-
-		// Adding additional details of project members
-		for _, member := range project.Members {
-			members = append(members, &entities.Member{
-				UserID:     memberMap[member.UserID].ID,
-				Username:   memberMap[member.UserID].Username,
-				Name:       memberMap[member.UserID].Name,
-				Role:       member.Role,
-				Email:      memberMap[member.UserID].Email,
-				Invitation: member.Invitation,
-				JoinedAt:   member.JoinedAt,
-			})
-		}
-
-		c.JSON(200, gin.H{"data": entities.Project{
-			ID:    project.ID,
-			Name:  project.Name,
-			State: project.State,
-			Audit: entities.Audit{
-				IsRemoved: project.IsRemoved,
-				CreatedAt: project.CreatedAt,
-				CreatedBy: project.UpdatedBy,
-				UpdatedAt: project.UpdatedAt,
-				UpdatedBy: project.UpdatedBy,
-			},
-			Members: members,
-		}})
+		c.JSON(200, gin.H{"data": project})
 	}
 }
 
@@ -139,38 +94,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		var outputProjects []*entities.Project
-
-		// Adding additional details of project members
-		for _, project := range projects {
-			var members []*entities.Member
-			for _, member := range project.Members {
-				members = append(members, &entities.Member{
-					UserID:     member.UserID,
-					Username:   member.Username,
-					Name:       member.Name,
-					Role:       member.Role,
-					Email:      member.Email,
-					Invitation: member.Invitation,
-					JoinedAt:   member.JoinedAt,
-				})
-			}
-			outputProjects = append(outputProjects, &entities.Project{
-				ID:      project.ID,
-				Name:    project.Name,
-				Members: members,
-				State:   project.State,
-				Audit: entities.Audit{
-					IsRemoved: project.IsRemoved,
-					CreatedAt: project.CreatedAt,
-					CreatedBy: project.UpdatedBy,
-					UpdatedAt: project.UpdatedAt,
-					UpdatedBy: project.UpdatedBy,
-				},
-			})
-		}
-
-		c.JSON(200, gin.H{"data": outputProjects})
+		c.JSON(200, gin.H{"data": projects})
 	}
 }
 
@@ -281,9 +205,17 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			Audit: entities.Audit{
 				IsRemoved: false,
 				CreatedAt: time.Now().Unix(),
-				CreatedBy: user.ID,
+				CreatedBy: entities.UserDetailResponse{
+					Username: user.Username,
+					UserID:   user.ID,
+					Email:    user.Email,
+				},
 				UpdatedAt: time.Now().Unix(),
-				UpdatedBy: user.ID,
+				UpdatedBy: entities.UserDetailResponse{
+					Username: user.Username,
+					UserID:   user.ID,
+					Email:    user.Email,
+				},
 			},
 		}
 

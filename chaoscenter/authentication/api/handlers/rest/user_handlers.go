@@ -230,9 +230,17 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 				Audit: entities.Audit{
 					IsRemoved: false,
 					CreatedAt: time.Now().Unix(),
-					CreatedBy: user.ID,
+					CreatedBy: entities.UserDetailResponse{
+						Username: user.Username,
+						UserID:   user.ID,
+						Email:    user.Email,
+					},
 					UpdatedAt: time.Now().Unix(),
-					UpdatedBy: user.ID,
+					UpdatedBy: entities.UserDetailResponse{
+						Username: user.Username,
+						UserID:   user.ID,
+						Email:    user.Email,
+					},
 				},
 			}
 			err := service.CreateProject(newProject)

@@ -7,9 +7,15 @@ type ResourceDetails struct {
 }
 
 type Audit struct {
-	UpdatedAt int64  `bson:"updated_at" json:"updatedAt"`
-	CreatedAt int64  `bson:"created_at" json:"createdAt"`
-	CreatedBy string `bson:"created_by" json:"createdBy"`
-	UpdatedBy string `bson:"updated_by" json:"updatedBy"`
-	IsRemoved bool   `bson:"is_removed" json:"isRemoved"`
+	UpdatedAt int64              `bson:"updated_at" json:"updatedAt"`
+	CreatedAt int64              `bson:"created_at" json:"createdAt"`
+	CreatedBy UserDetailResponse `bson:"created_by" json:"createdBy"`
+	UpdatedBy UserDetailResponse `bson:"updated_by" json:"updatedBy"`
+	IsRemoved bool               `bson:"is_removed" json:"isRemoved"`
+}
+
+type UserDetailResponse struct {
+	UserID   string `bson:"user_id" json:"userID"`
+	Username string `bson:"username" json:"username"`
+	Email    string `bson:"email" json:"email"`
 }
