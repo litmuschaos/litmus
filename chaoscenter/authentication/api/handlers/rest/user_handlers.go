@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -158,7 +157,6 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		fmt.Println("users", users)
 		c.JSON(200, users)
 	}
 }
