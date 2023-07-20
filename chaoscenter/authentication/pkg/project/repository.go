@@ -454,7 +454,6 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 		return nil, err
 	}
 
-	var results []bson.M
 	if err = cursor.All(context.TODO(), &res); err != nil {
 		return nil, err
 	}
