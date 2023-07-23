@@ -4072,18 +4072,7 @@ type GetExperimentStatsResponse {
 }
 
 extend type Query {
-  """
-  Returns experiment run based on experiment run ID
-  """
-  getExperimentRun(projectID: ID!, experimentRunID: String!): ExperimentRun!
 
-  """
-  Returns the list of experiment run based on various filter parameters
-  """
-  listExperimentRun(
-    projectID: ID!
-    request: ListExperimentRunRequest!
-  ): ListExperimentRunResponse!
 
   """
   Returns the experiment based on experiment ID
@@ -4098,10 +4087,6 @@ extend type Query {
     request: ListExperimentRequest!
   ): ListExperimentResponse!
 
-  """
-  Query to get experiment run stats
-  """
-  getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
   """
   Query to get experiment stats
   """
@@ -4124,14 +4109,6 @@ extend type Mutation {
     request: SaveChaosExperimentRequest!
     projectID: ID!
   ): String!
-
-  """
-  Run the chaos experiment (used by frontend)
-  """
-  runChaosExperiment(
-    experimentID: String!
-    projectID: ID!
-  ): RunChaosExperimentResponse!
 
   """
   Updates the experiment
