@@ -58,8 +58,8 @@ var (
 		ChaosExperimentCollection:     "chaosExperiments",
 		ChaosExperimentRunsCollection: "chaosExperimentRuns",
 		ChaosHubCollection:            "chaosHubs",
-		ImageRegistryCollection:       "image-registry",
-		ServerConfigCollection:        "server-config",
+		ImageRegistryCollection:       "imageRegistry",
+		ServerConfigCollection:        "serverConfig",
 		GitOpsCollection:              "gitops",
 		UserCollection:                "user",
 		ProjectCollection:             "project",
@@ -224,6 +224,17 @@ func (m *MongoClient) initAllCollection() {
 		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection : ", err)
 	}
 	m.ImageRegistryCollection = m.Database.Collection(Collections[ImageRegistryCollection])
+	_, err = m.ImageRegistryCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"project_id": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection : ", err)
+	}
 	m.ServerConfigCollection = m.Database.Collection(Collections[ServerConfigCollection])
 	_, err = m.ServerConfigCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
 		{

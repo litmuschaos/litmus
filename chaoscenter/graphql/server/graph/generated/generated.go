@@ -452,7 +452,7 @@ type ComplexityRoot struct {
 		GetExperimentRunStats     func(childComplexity int, projectID string) int
 		GetExperimentStats        func(childComplexity int, projectID string) int
 		GetGitOpsDetails          func(childComplexity int, projectID string) int
-		GetImageRegistry          func(childComplexity int, imageRegistryID string, projectID string) int
+		GetImageRegistry          func(childComplexity int, projectID string) int
 		GetInfra                  func(childComplexity int, projectID string, infraID string) int
 		GetInfraDetails           func(childComplexity int, infraID string, projectID string) int
 		GetInfraManifest          func(childComplexity int, infraID string, upgrade bool, projectID string) int
@@ -603,7 +603,7 @@ type QueryResolver interface {
 	ListEnvironments(ctx context.Context, projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
-	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
+	GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error)
 }
 type SubscriptionResolver interface {
 	GetInfraEvents(ctx context.Context, projectID string) (<-chan *model.InfraEventResponse, error)
@@ -2789,7 +2789,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string)), true
+		return e.complexity.Query.GetImageRegistry(childComplexity, args["projectID"].(string)), true
 
 	case "Query.getInfra":
 		if e.complexity.Query.GetInfra == nil {
@@ -5858,7 +5858,6 @@ extend type Query {
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
   getImageRegistry(
-    imageRegistryID: String!
     projectID: String!
   ): ImageRegistryResponse! @authorized
 }
@@ -6674,21 +6673,13 @@ func (ec *executionContext) field_Query_getImageRegistry_args(ctx context.Contex
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["imageRegistryID"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["imageRegistryID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg1
+	args["projectID"] = arg0
 	return args, nil
 }
 
@@ -17964,7 +17955,7 @@ func (ec *executionContext) _Query_getImageRegistry(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetImageRegistry(rctx, args["imageRegistryID"].(string), args["projectID"].(string))
+			return ec.resolvers.Query().GetImageRegistry(rctx, args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
