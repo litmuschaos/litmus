@@ -19,6 +19,8 @@ import LoginController from '@controllers/Login';
 import { getUserDetails } from '@utils';
 import EnvironmentController from '@controllers/Environments';
 import { isUserAuthenticated } from 'utils/auth';
+import ImageRegistryController from '@controllers/ImageRegistry';
+import GitopsController from '@controllers/Gitops';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
@@ -93,6 +95,8 @@ export function RoutesWithAuthentication(): React.ReactElement {
         path={matchPaths.toKubernetesChaosInfrastructureDetails({ environmentID, chaosInfrastructureID })}
         component={KubernetesChaosInfrastructureDetailsController}
       />
+      <Route exact path={matchPaths.toImageRegistry()} component={ImageRegistryController} />
+      <Route exact path={matchPaths.toGitops()} component={GitopsController} />
     </Switch>
   );
 }

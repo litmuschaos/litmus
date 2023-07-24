@@ -32,6 +32,8 @@ export interface UseRouteDefinitionsProps {
   toChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
+  toImageRegistry(): string;
+  toGitops(): string;
 }
 
 export interface ExternalPathProps {
@@ -68,5 +70,8 @@ export const paths: UseRouteDefinitionsProps = {
   toChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}`,
   toKubernetesChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}/kubernetes`,
   toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
-    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`
+    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
+  // chaos image registry routes
+  toImageRegistry: () => `/image-registry/`,
+  toGitops: () => `/gitops`
 };
