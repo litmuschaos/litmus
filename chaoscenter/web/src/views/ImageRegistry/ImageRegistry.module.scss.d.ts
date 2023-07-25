@@ -1,7 +1,9 @@
 declare namespace ImageRegistryModuleScssNamespace {
   export interface IImageRegistryModuleScss {
-    insideCard: string;
+    formContainer: string;
+    radioButton: string;
     subCard: string;
+    subRadioBtn: string;
   }
 }
 

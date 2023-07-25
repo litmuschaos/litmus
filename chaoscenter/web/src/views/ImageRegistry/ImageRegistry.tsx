@@ -14,6 +14,7 @@ enum ImageRegistryValues {
 }
 
 interface CustomValuesData {
+  isDefault: boolean;
   imageRegistryName?: string;
   imageRegistryRepo?: string;
   registryType?: ImageRegistryType;
@@ -29,6 +30,7 @@ interface ImageRegistryViewProps {
 
 export default function ImageRegistryView({ getImageRegistryData }: ImageRegistryViewProps): React.ReactElement {
   const initialValues: CustomValuesData = {
+    isDefault: getImageRegistryData.isDefault,
     imageRegistryName: !getImageRegistryData?.isDefault ? getImageRegistryData?.imageRegistryName : '',
     imageRegistryRepo: !getImageRegistryData?.isDefault ? getImageRegistryData?.imageRepoName : '',
     registryType: !getImageRegistryData?.isDefault
@@ -58,146 +60,149 @@ export default function ImageRegistryView({ getImageRegistryData }: ImageRegistr
       breadcrumbs={[]}
       //   subHeader={}
     >
-      <Container padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }} height="100%" width="60%">
-        <Container className={css.insideCard} padding="medium">
-          <RadioButtonGroup
-            name="type"
-            selectedValue={getImageRegistryData?.isDefault ? ImageRegistryValues.DEFAULT : undefined}
-            options={[
-              {
-                label: (
-                  <Layout.Vertical>
-                    <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                      Use Default Values
-                    </Text>
-                    <Text font={{ size: 'small' }}>
-                      All YAML files use these default values provided by Litmus. The values cannot be changed.
-                    </Text>
-                  </Layout.Vertical>
-                ),
-                value: ImageRegistryValues.DEFAULT
-              }
-            ]}
-            onChange={(e: FormEvent<HTMLInputElement>) => {
-              setImageRegValuetype(e.currentTarget.value as ImageRegistryValues);
-            }}
-          />
-        </Container>
-        {imageRegValueType === ImageRegistryValues.DEFAULT && (
-          <Layout.Horizontal
-            spacing="large"
-            padding="xlarge"
-            flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
-            className={css.subCard}
-          >
-            <Layout.Vertical margin={{ right: 'huge' }}>
-              <Text>Registry:</Text>
-              <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                docker.io
-              </Text>
-            </Layout.Vertical>
-            <Layout.Vertical margin={{ right: 'huge' }}>
-              <Text>Repository:</Text>
-              <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                litmuschaos
-              </Text>
-            </Layout.Vertical>
-            <Layout.Vertical>
-              <Text>Registry Type:</Text>
-              <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                public
-              </Text>
-            </Layout.Vertical>
-          </Layout.Horizontal>
-        )}
-        <Container className={css.insideCard} padding="medium" margin={{ top: 'xlarge' }}>
-          <RadioButtonGroup
-            name="type"
-            options={[
-              {
-                label: (
-                  <Layout.Vertical>
-                    <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                      Use Custom Values
-                    </Text>
-                    <Text font={{ size: 'small' }}>
-                      All YAML files use these default values provided by Litmus. The values cannot be changed.
-                    </Text>
-                  </Layout.Vertical>
-                ),
-                value: ImageRegistryValues.CUSTOM
-              }
-            ]}
-            selectedValue={!getImageRegistryData?.isDefault ? ImageRegistryValues.CUSTOM : undefined}
-            onChange={(e: FormEvent<HTMLInputElement>) => {
-              setImageRegValuetype(e.currentTarget.value as ImageRegistryValues);
-            }}
-          />
-        </Container>
-        {imageRegValueType === ImageRegistryValues.CUSTOM && (
-          <Layout.Horizontal
-            spacing="large"
-            padding="xlarge"
-            flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
-            className={css.subCard}
-          >
-            <Formik initialValues={initialValues} onSubmit={() => console.log('')}>
-              {formikProps => {
-                return (
-                  <Form style={{ height: '100%', width: '60%' }}>
-                    <FormInput.Text
-                      name="imageRegistryName"
-                      label={
-                        <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                          Custom Image Registry
-                        </Text>
-                      }
-                      placeholder="Custom Name"
-                    />
-
-                    <FormInput.Text
-                      name="imageRegistryRepo"
-                      label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Custom Repo</Text>}
-                      placeholder="Repo URL"
-                    />
-                    <RadioButtonGroup
-                      name="registryType"
-                      label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Registry Type</Text>}
-                      inline={true}
-                      selectedValue={initialValues.registryType}
-                      onChange={(e: FormEvent<HTMLInputElement>) => {
-                        formikProps.setFieldValue('registryType', e.currentTarget.value);
-                      }}
-                      options={[
-                        {
-                          label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Public</Text>,
-                          value: ImageRegistryType.PUBLIC
-                        },
-                        {
-                          label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Private</Text>,
-                          value: ImageRegistryType.PRIVATE
-                        }
-                      ]}
-                    />
-                    {formikProps.values.registryType === ImageRegistryType.PRIVATE && (
-                      <Layout.Vertical>
-                        <FormInput.Text
-                          name="secretName"
-                          label={
-                            <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                              Image Secret
+      <Container
+        padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}
+        height="100%"
+        style={{ overflowY: 'auto' }}
+      >
+        <Formik initialValues={initialValues} onSubmit={() => console.log('')}>
+          {formikProps => {
+            return (
+              <Form className={css.formContainer}>
+                <RadioButtonGroup
+                  className={css.radioButton}
+                  name="type"
+                  inline={false}
+                  selectedValue={
+                    getImageRegistryData?.isDefault ? ImageRegistryValues.DEFAULT : ImageRegistryValues.CUSTOM
+                  }
+                  options={[
+                    {
+                      label: (
+                        <Layout.Vertical style={{ gap: '1rem' }}>
+                          <Layout.Vertical style={{ gap: '0.25rem' }}>
+                            <Text
+                              font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
+                              color={Color.BLACK}
+                            >
+                              Use Default Values
                             </Text>
-                          }
-                          placeholder="Enter your Image Secret"
-                        />
-                      </Layout.Vertical>
-                    )}
-                  </Form>
-                );
-              }}
-            </Formik>
-          </Layout.Horizontal>
-        )}
+                            <Text font={{ size: 'small' }}>
+                              All YAML files use these default values provided by Litmus. The values cannot be changed.
+                            </Text>
+                          </Layout.Vertical>
+                          {imageRegValueType === ImageRegistryValues.DEFAULT && (
+                            <Layout.Horizontal
+                              flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
+                              className={css.subCard}
+                            >
+                              <Layout.Vertical margin={{ right: 'huge' }}>
+                                <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
+                                  Registry:
+                                </Text>
+                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>docker.io</Text>
+                              </Layout.Vertical>
+                              <Layout.Vertical margin={{ right: 'huge' }}>
+                                <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
+                                  Repository:
+                                </Text>
+                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>litmuschaos</Text>
+                              </Layout.Vertical>
+                              <Layout.Vertical>
+                                <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
+                                  Registry Type:
+                                </Text>
+                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>public</Text>
+                              </Layout.Vertical>
+                            </Layout.Horizontal>
+                          )}
+                        </Layout.Vertical>
+                      ),
+                      value: ImageRegistryValues.DEFAULT
+                    },
+                    {
+                      label: (
+                        <Layout.Vertical style={{ gap: '0.5rem' }}>
+                          <Layout.Vertical style={{ gap: '0.25rem' }}>
+                            <Text
+                              font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
+                              color={Color.BLACK}
+                            >
+                              Use Custom Values
+                            </Text>
+                            <Text font={{ size: 'small' }}>
+                              All YAML files use these default values provided by Litmus. The values cannot be changed.
+                            </Text>
+                          </Layout.Vertical>
+
+                          {imageRegValueType === ImageRegistryValues.CUSTOM && (
+                            <Layout.Vertical
+                              flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
+                              className={css.subCard}
+                            >
+                              <FormInput.Text
+                                name="imageRegistryName"
+                                label={
+                                  <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'small' }}>
+                                    Custom Image Registry
+                                  </Text>
+                                }
+                                placeholder="Custom Name"
+                              />
+
+                              <FormInput.Text
+                                name="imageRegistryRepo"
+                                label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Custom Repo</Text>}
+                                placeholder="Repo URL"
+                              />
+                              <RadioButtonGroup
+                                name="registryType"
+                                label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Registry Type</Text>}
+                                selectedValue={initialValues.registryType}
+                                inline={true}
+                                className={css.subRadioBtn}
+                                onChange={(e: FormEvent<HTMLInputElement>) => {
+                                  formikProps.setFieldValue('registryType', e.currentTarget.value);
+                                }}
+                                options={[
+                                  {
+                                    label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Public</Text>,
+                                    value: ImageRegistryType.PUBLIC
+                                  },
+                                  {
+                                    label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Private</Text>,
+                                    value: ImageRegistryType.PRIVATE
+                                  }
+                                ]}
+                              />
+                              {formikProps.values.registryType === ImageRegistryType.PRIVATE && (
+                                <Layout.Vertical width={'100%'}>
+                                  <FormInput.Text
+                                    name="secretName"
+                                    label={
+                                      <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
+                                        Image Secret
+                                      </Text>
+                                    }
+                                    placeholder="Enter your Image Secret"
+                                  />
+                                </Layout.Vertical>
+                              )}
+                            </Layout.Vertical>
+                          )}
+                        </Layout.Vertical>
+                      ),
+                      value: ImageRegistryValues.CUSTOM
+                    }
+                  ]}
+                  onChange={(e: FormEvent<HTMLInputElement>) => {
+                    setImageRegValuetype(e.currentTarget.value as ImageRegistryValues);
+                  }}
+                />
+              </Form>
+            );
+          }}
+        </Formik>
       </Container>
     </DefaultLayout>
   );

@@ -1,6 +1,7 @@
 .subCard {
   background: rgba(250, 251, 252, 1);
   gap: 0.25rem;
+  width: 100%;
 }
 
 .radioButton {
@@ -48,4 +49,13 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.textInputContainer {
+  :global {
+    .bp3-input-action {
+      height: 100% !important;
+      right: 5px !important;
+    }
+  }
 }

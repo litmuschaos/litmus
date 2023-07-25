@@ -9,7 +9,6 @@ export interface GetImageRegistryRequest {
 // TODO: Update this API to latest API structure with options
 export function getImageRegistry({
   projectID,
-  imageRegistryID,
   options = {}
 }: GqlAPIQueryRequest<GetImageRegistryResponse, GetImageRegistryRequest>): GqlAPIQueryResponse<
   GetImageRegistryResponse,
@@ -35,7 +34,6 @@ export function getImageRegistry({
     `,
     {
       variables: {
-        imageRegistryID,
         projectID
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
