@@ -43,6 +43,7 @@ type ChaosExperimentHandler struct {
 // NewChaosExperimentHandler returns a new instance of ChaosWorkflowHandler
 func NewChaosExperimentHandler(
 	chaosExperimentService types.Service,
+	chaosExperimentRunService chaosExperimentRun.Service,
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,

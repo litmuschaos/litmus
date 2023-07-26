@@ -60,7 +60,7 @@ func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, 
 	}
 	logrus.WithFields(logFields).Info("request received to fetch chaos experiment run")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListWorkflowRuns],
+		authorization.MutationRbacRules[authorization.GetWorkflowRun],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
