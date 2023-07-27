@@ -102,7 +102,7 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 		var userData = entities.User{
 			Name:     claims.Name,
 			Email:    claims.Email,
-			UserName: claims.Email,
+			Username: claims.Email,
 			Role:     entities.RoleUser,
 			Audit: entities.Audit{
 				CreatedAt: createdAt,

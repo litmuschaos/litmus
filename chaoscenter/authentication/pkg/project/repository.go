@@ -30,6 +30,7 @@ type Repository interface {
 	UpdateProjectState(userID string, deactivateTime string) error
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
+	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
 }
 
 type repository struct {
@@ -393,6 +394,71 @@ func (r repository) GetProjectRole(projectID string, userID string) (*entities.M
 		return nil, nil
 	}
 	return &(res.Members[0].Role), nil
+}
+
+func (r repository) GetProjectMembers(projectID string, state string) ([]*entities.Member, error) {
+	var pipeline mongo.Pipeline
+	filter := bson.D{
+		{"$match", bson.D{
+			{"_id", projectID},
+		}},
+	}
+	pipeline = append(pipeline, filter)
+	var projection bson.D
+	switch state {
+	case string(entities.Accepted):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", bson.D{
+					{"$filter", bson.D{
+						{"input", "$members"},
+						{"as", "member"},
+						{"cond", bson.D{{
+							"$eq", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+						}}},
+					}},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, projection)
+	case string(entities.NotAccepted):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", bson.D{
+					{"$filter", bson.D{
+						{"input", "$members"},
+						{"as", "member"},
+						{"cond", bson.D{{
+							"$ne", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+						}}},
+					}},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, projection)
+	case string(entities.All):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", 1},
+			}},
+		}
+		pipeline = append(pipeline, projection)
+	}
+
+	var res []entities.Members
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = cursor.All(context.TODO(), &res); err != nil {
+		return nil, err
+	}
+
+	return res[0].Members, nil
 }
 
 // NewRepo creates a new instance of this repository
