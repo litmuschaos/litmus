@@ -71,14 +71,13 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["username", "password"],
               "properties": {
                 "username": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "password": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
