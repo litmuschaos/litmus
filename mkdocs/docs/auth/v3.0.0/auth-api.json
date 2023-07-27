@@ -181,18 +181,16 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["username", "oldPassword", "newPassword"],
               "properties": {
                 "username": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "oldPassword": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "newPassword": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -236,17 +234,15 @@
             "schema": {
               "type": "object",
               "properties": {
+                "required": ["username", "password", "role"],
                 "username": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "password": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "role": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "email": {
                   "type": "string"
@@ -297,18 +293,16 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["username", "oldPassword", "newPassword"],
               "properties": {
                 "username": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "oldPassword": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "newPassword": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -397,14 +391,13 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["username", "isDeactivate"],
               "properties": {
                 "username": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "isDeactivate": {
-                  "type": "boolean",
-                  "required": true
+                  "type": "boolean"
                 }
               },
               "example": {
@@ -461,10 +454,10 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["projectName"],
               "properties": {
                 "projectName": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -697,14 +690,13 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["projectID", "projectName"],
               "properties": {
                 "projectID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "projectName": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -755,19 +747,17 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["projectID", "userID", "role"],
               "properties": {
                 "projectID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "userID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "role": {
                   "type": "string",
-                  "enum": ["Owner", "Editor", "Viewer"],
-                  "required": true
+                  "enum": ["Owner", "Editor", "Viewer"]
                 }
               },
               "example": {
@@ -810,14 +800,13 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["projectID", "userID"],
               "properties": {
                 "projectID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "userID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -859,14 +848,13 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["projectID", "userID"],
               "properties": {
                 "projectID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "userID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -908,14 +896,13 @@
             "in": "body",
             "schema": {
               "type": "object",
+              "required": ["projectID", "userID"],
               "properties": {
                 "projectID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "userID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
@@ -958,13 +945,12 @@
             "schema": {
               "type": "object",
               "properties": {
+                "required": ["projectID", "userID"],
                 "projectID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 },
                 "userID": {
-                  "type": "string",
-                  "required": true
+                  "type": "string"
                 }
               },
               "example": {
