@@ -73,10 +73,12 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "password": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -182,13 +184,16 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "oldPassword": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "newPassword": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -233,13 +238,16 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "password": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "role": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "email": {
                   "type": "string"
@@ -292,13 +300,16 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "oldPassword": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "newPassword": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -389,10 +400,12 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "isDeactivate": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "required": true
                 }
               },
               "example": {
@@ -451,7 +464,8 @@
               "type": "object",
               "properties": {
                 "projectName": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -569,7 +583,6 @@
             "required": true,
             "description": "username of the user",
             "in": "path",
-
             "type": "string"
           }
         ],
@@ -687,10 +700,12 @@
               "type": "object",
               "properties": {
                 "projectID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "projectName": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -743,14 +758,17 @@
               "type": "object",
               "properties": {
                 "projectID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "userID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "role": {
                   "type": "string",
-                  "enum": ["Owner", "Editor", "Viewer"]
+                  "enum": ["Owner", "Editor", "Viewer"],
+                  "required": true
                 }
               },
               "example": {
@@ -795,10 +813,12 @@
               "type": "object",
               "properties": {
                 "projectID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "userID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -842,10 +862,12 @@
               "type": "object",
               "properties": {
                 "projectID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "userID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -889,10 +911,12 @@
               "type": "object",
               "properties": {
                 "projectID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "userID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -936,10 +960,12 @@
               "type": "object",
               "properties": {
                 "projectID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 },
                 "userID": {
-                  "type": "string"
+                  "type": "string",
+                  "required": true
                 }
               },
               "example": {
@@ -1005,7 +1031,6 @@
             "required": true,
             "description": "ID of the project",
             "in": "path",
-
             "type": "string"
           }
         ],
@@ -1062,7 +1087,6 @@
             "required": true,
             "description": "ID of the project",
             "in": "path",
-
             "type": "string"
           },
           {
@@ -1072,6 +1096,38 @@
             "in": "path",
             "type": "string",
             "enum": ["accepted", "not_accepted", "all"]
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/invite_users/{project_id}": {
+      "get": {
+        "description": "This API is used to fetch users who can be invited",
+        "operationId": "getUsersForInvitation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project",
+            "in": "path",
+            "type": "string"
           }
         ],
         "produces": ["application/json"]
@@ -1089,7 +1145,7 @@
         "error": {
           "type": "string"
         },
-        "error_description": {
+        "errorDescription": {
           "type": "string"
         }
       }
@@ -1097,16 +1153,16 @@
     "LoginResponse": {
       "type": "object",
       "properties": {
-        "access_token": {
+        "accessToken": {
           "type": "string"
         },
-        "expires_in": {
+        "expiresIn": {
           "type": "integer"
         },
-        "project_id": {
+        "projectID": {
           "type": "string"
         },
-        "project_role": {
+        "projectRole": {
           "type": "string"
         },
         "type": {

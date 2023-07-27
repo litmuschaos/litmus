@@ -251,11 +251,11 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		c.JSON(200, gin.H{
-			"access_token": token,
-			"project_id":   defaultProject,
-			"project_role": entities.RoleOwner,
-			"expires_in":   expiryTime,
-			"type":         "Bearer",
+			"accessToken": token,
+			"projectID":   defaultProject,
+			"projectRole": entities.RoleOwner,
+			"expiresIn":   expiryTime,
+			"type":        "Bearer",
 		})
 	}
 }
