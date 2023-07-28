@@ -458,6 +458,9 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 		return nil, err
 	}
 
+	if len(res) <= 0 {
+		return nil, nil
+	}
 	return res[0].Members, nil
 }
 
