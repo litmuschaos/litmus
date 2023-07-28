@@ -66,23 +66,23 @@ func main() {
 	// Creating User Collection
 	err = utils.CreateCollection(utils.UserCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	err = utils.CreateIndex(utils.UserCollection, utils.UsernameField, db)
 	if err != nil {
-		log.Fatalf("failed to create index  %s", err)
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	// Creating Project Collection
 	err = utils.CreateCollection(utils.ProjectCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	// Creating Session Collection
 	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
