@@ -44,7 +44,6 @@ func RbacValidator(uid string, projectID string,
 		return err
 	}
 	if project == nil {
-		log.Error("authgRPC Error: Unauthorised")
 		return errors.New("auth gRPC - Unauthorized")
 	}
 

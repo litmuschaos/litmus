@@ -3,48 +3,55 @@ package entities
 // Project contains the required fields to be stored in the database for a project
 type Project struct {
 	Audit   `bson:",inline"`
-	ID      string    `bson:"_id"`
-	Name    string    `bson:"name"`
-	Members []*Member `bson:"members"`
-	State   *string   `bson:"state"`
+	ID      string    `bson:"_id" json:"projectID"`
+	Name    string    `bson:"name" json:"name"`
+	Members []*Member `bson:"members" json:"members"`
+	State   *string   `bson:"state" json:"state"`
 }
 
 type Owner struct {
-	UserID   string `bson:"user_id"`
-	Username string `bson:"username"`
+	UserID   string `bson:"user_id" json:"userID"`
+	Username string `bson:"username" json:"username"`
 }
 type MemberStat struct {
-	Owner *[]Owner `bson:"owner"`
-	Total int      `bson:"total"`
+	Owner *[]Owner `bson:"owner" json:"owner"`
+	Total int      `bson:"total" json:"total"`
 }
 
 type ProjectStats struct {
-	Name      string      `bson:"name"`
-	ProjectID string      `bson:"_id"`
-	Members   *MemberStat `bson:"memberStat"`
+	Name      string      `bson:"name" json:"name"`
+	ProjectID string      `bson:"_id" json:"projectID"`
+	Members   *MemberStat `bson:"memberStat" json:"members"`
 }
 
 // Member contains the required fields to be stored in the database for a member
 type Member struct {
-	UserID     string     `bson:"user_id"`
-	Role       MemberRole `bson:"role"`
-	Invitation Invitation `bson:"invitation"`
-	JoinedAt   string     `bson:"joined_at"`
+	UserID     string     `bson:"user_id" json:"userID"`
+	Username   string     `bson:"username" json:"username"`
+	Email      string     `bson:"email" json:"email"`
+	Name       string     `bson:"name" json:"name"`
+	Role       MemberRole `bson:"role" json:"role"`
+	Invitation Invitation `bson:"invitation" json:"invitation"`
+	JoinedAt   string     `bson:"joined_at" json:"joinedAt"`
+}
+
+type Members struct {
+	Members []*Member `bson:"members" json:"members"`
 }
 
 type ProjectInput struct {
-	ProjectID   string `bson:"project_id" json:"project_id"`
-	ProjectName string `bson:"project_name" json:"project_name"`
+	ProjectID   string `bson:"project_id" json:"projectID"`
+	ProjectName string `bson:"project_name" json:"projectName"`
 }
 
 type CreateProjectInput struct {
-	ProjectName string `bson:"project_name" json:"project_name"`
-	UserID      string `bson:"user_id" json:"user_id"`
+	ProjectName string `bson:"project_name" json:"projectName"`
+	UserID      string `bson:"user_id" json:"userID"`
 }
 
 type MemberInput struct {
-	ProjectID string      `json:"project_id"`
-	UserID    string      `json:"user_id"`
+	ProjectID string      `json:"projectID"`
+	UserID    string      `json:"userID"`
 	Role      *MemberRole `json:"role"`
 }
 
@@ -113,4 +120,12 @@ const (
 
 	// ExitedProject is the state when the user has exited the project
 	ExitedProject Invitation = "Exited"
+)
+
+type State string
+
+const (
+	Accepted    State = "accepted"
+	NotAccepted State = "not_accepted"
+	All         State = "all"
 )
