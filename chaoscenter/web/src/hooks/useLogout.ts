@@ -1,7 +1,6 @@
 import { useHistory } from 'react-router-dom';
 import { paths } from '@routes/RouteDefinitions';
 import config from '@config';
-import useRequest from '@api/useRequest';
 
 interface UseLogoutReturn {
   forceLogout: () => void;
@@ -11,15 +10,19 @@ export const useLogout = (): UseLogoutReturn => {
   const history = useHistory();
 
   const forceLogout = (): void => {
-      useRequest({
-          baseURL: config.restEndpoints?.authUri,
-          url: `/logout`,
-          method: 'POST'
-      });
+    const token = localStorage.getItem('token') ?? '';
+    fetch(`${config.restEndpoints?.authUri}/logout}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    }).then(() => {
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('projectID');
       history.push(paths.toLogin());
+    });
   };
 
   return { forceLogout };

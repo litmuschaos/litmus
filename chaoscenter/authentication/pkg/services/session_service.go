@@ -32,7 +32,7 @@ func (a applicationService) RevokeToken(tokenString string) error {
 	return a.sessionRepository.RevokeToken(revokedToken)
 }
 
-//ValidateToken validates the given JWT Token
+// ValidateToken validates the given JWT Token
 func (a applicationService) ValidateToken(encodedToken string) (*jwt.Token, error) {
 	if a.isTokenRevoked(encodedToken) {
 		return &jwt.Token{Valid: false}, fmt.Errorf("token revoked")
