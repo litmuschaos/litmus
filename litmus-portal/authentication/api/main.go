@@ -86,7 +86,7 @@ func main() {
 	}
 
 	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
-		log.Fatalf("failed to create index  %s", err)
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	userCollection := db.Collection(utils.UserCollection)

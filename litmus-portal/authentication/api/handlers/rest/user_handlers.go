@@ -209,7 +209,7 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		c.JSON(200, gin.H{
-			"message": "logout succeed",
+			"message": "successfully logged out",
 		})
 	}
 }
