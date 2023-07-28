@@ -9,12 +9,7 @@ import { getUserDetails } from '@utils';
 import type { StringsMap } from 'strings/types';
 import { useLogout } from '@hooks';
 import { AppStoreProvider } from '@context';
-export interface DecodedTokenType {
-  exp: number;
-  role: string;
-  uid: string;
-  username: string;
-}
+import type { DecodedTokenType } from '@models';
 
 export function AppWithAuthentication(): React.ReactElement {
   const userDetails = getUserDetails();

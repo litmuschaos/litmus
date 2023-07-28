@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import {
   ApolloClient,
   ApolloLink,
@@ -14,6 +13,7 @@ import {
 } from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export interface APIConfig {
   gqlEndpoints: {
@@ -107,13 +107,23 @@ export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({
   token,
   children
 }): React.ReactElement => {
-  if (config.restEndpoints) {
-    axios.defaults.baseURL = config.restEndpoints.authUri;
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  }
-
-  // const scope = getScope();
   const apolloClient = createApolloClient({ config, token });
+  const reactQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false
+      },
+      mutations: {
+        retry: false
+      }
+    }
+  });
 
-  return apolloClient ? <ApolloProvider client={apolloClient}>{children}</ApolloProvider> : <></>;
+  return apolloClient && reactQueryClient ? (
+    <QueryClientProvider client={reactQueryClient}>
+      <ApolloProvider client={apolloClient}>{children}</ApolloProvider>
+    </QueryClientProvider>
+  ) : (
+    <></>
+  );
 };

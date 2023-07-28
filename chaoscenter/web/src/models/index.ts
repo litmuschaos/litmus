@@ -9,3 +9,4 @@ export * from './chaosStudio';
 export * from './license';
 export * from './rbac';
 export * from './user';
+export * from './token';
