@@ -85,7 +85,7 @@ echo "URL: http://$EXTERNAL_IP:$NODE_PORT"
 #### Minikube
 
 ```bash
-minikube -n $LITMUS_PORTAL_NAMESPACE --url litmusportal-frontend-service
+minikube service -n $LITMUS_PORTAL_NAMESPACE --url litmusportal-frontend-service
 ```
 
 Note: Default `username: admin` and `password: litmus`

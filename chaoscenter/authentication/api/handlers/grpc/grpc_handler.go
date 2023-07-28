@@ -59,7 +59,7 @@ func (s *ServerGrpc) GetProjectById(ctx context.Context,
 	for _, member := range project.Members {
 		var projectMember protos.ProjectMembers
 		projectMember.Email = memberMap[member.UserID].Email
-		projectMember.UserName = memberMap[member.UserID].UserName
+		projectMember.Username = memberMap[member.UserID].Username
 		projectMember.Invitation = string(member.Invitation)
 		projectMember.Uid = member.UserID
 		projectMember.JoinedAt = member.JoinedAt
@@ -94,7 +94,7 @@ func (s *ServerGrpc) GetUserById(ctx context.Context,
 	return &protos.GetUserByIdResponse{
 		Id:            user.ID,
 		Name:          user.Name,
-		Username:      user.UserName,
+		Username:      user.Username,
 		CreatedAt:     strconv.FormatInt(user.CreatedAt, 10),
 		UpdatedAt:     strconv.FormatInt(user.UpdatedAt, 10),
 		DeactivatedAt: deactivatedAt,
