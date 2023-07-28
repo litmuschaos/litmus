@@ -96,7 +96,7 @@ func main() {
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
-	router.Any("/query", authorization.Middleware(srv))
+	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
 
