@@ -32,12 +32,13 @@ import (
 
 // ChaosExperimentHandler is the handler for chaos experiment
 type ChaosExperimentHandler struct {
-	chaosExperimentService    types.Service
-	chaosExperimentRunService chaosExperimentRun.Service
-	infrastructureService     chaos_infrastructure.Service
-	gitOpsService             gitops.Service
-	chaosExperimentOperator   *dbChaosExperiment.Operator
-	mongodbOperator           mongodb.MongoOperator
+	chaosExperimentService     types.Service
+	chaosExperimentRunService  chaosExperimentRun.Service
+	infrastructureService      chaos_infrastructure.Service
+	gitOpsService              gitops.Service
+	chaosExperimentOperator    *dbChaosExperiment.Operator
+	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	mongodbOperator            mongodb.MongoOperator
 }
 
 // NewChaosExperimentHandler returns a new instance of ChaosWorkflowHandler
@@ -47,14 +48,17 @@ func NewChaosExperimentHandler(
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
+	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentHandler {
 	return &ChaosExperimentHandler{
-		chaosExperimentService:  chaosExperimentService,
-		infrastructureService:   infrastructureService,
-		gitOpsService:           gitOpsService,
-		chaosExperimentOperator: chaosExperimentOperator,
-		mongodbOperator:         mongodbOperator,
+		chaosExperimentService:     chaosExperimentService,
+		chaosExperimentRunService:  chaosExperimentRunService,
+		infrastructureService:      infrastructureService,
+		gitOpsService:              gitOpsService,
+		chaosExperimentOperator:    chaosExperimentOperator,
+		chaosExperimentRunOperator: chaosExperimentRunOperator,
+		mongodbOperator:            mongodbOperator,
 	}
 }
 
@@ -196,7 +200,7 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 			{"experiment_id", workflowID},
 			{"experiment_run_id", workflowRunID},
 		}
-		workflowRun, err := dbChaosExperimentRun.GetExperimentRun(query)
+		workflowRun, err := c.chaosExperimentRunOperator.GetExperimentRun(query)
 		if err != nil {
 			return false, err
 		}
@@ -794,7 +798,7 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 }
 
 // getWfRunDetails returns details of the latest workflow run of passed workflows.
-func getWfRunDetails(workflowIDs []string) (map[string]*types.LastRunDetails, error) {
+func (c *ChaosExperimentHandler) getWfRunDetails(workflowIDs []string) (map[string]*types.LastRunDetails, error) {
 	var pipeline mongo.Pipeline
 
 	// Match the workflowID
@@ -894,7 +898,7 @@ func getWfRunDetails(workflowIDs []string) (map[string]*types.LastRunDetails, er
 	}
 	pipeline = append(pipeline, facetStage)
 	// Call aggregation on pipeline
-	workflowsRunDetailCursor, err := dbChaosExperimentRun.GetAggregateExperimentRuns(pipeline)
+	workflowsRunDetailCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, err
 	}

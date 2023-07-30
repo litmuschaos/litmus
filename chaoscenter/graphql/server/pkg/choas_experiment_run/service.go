@@ -31,9 +31,10 @@ type Service interface {
 type chaosExperimentRunService struct {
 	chaosExperimentOperator     *dbChaosExperiment.Operator
 	chaosInfrastructureOperator *dbChaosInfra.Operator
+	chaosExperimentRunOperator  *dbChaosExperimentRun.Operator
 }
 
-// NewChaosExperimentRunService returns a new instance of the chaos workflow service
+// NewChaosExperimentRunService returns a new instance of the chaos workflow run service
 func NewChaosExperimentRunService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator) Service {
 	return &chaosExperimentRunService{
 		chaosExperimentOperator:     chaosWorkflowOperator,
@@ -51,7 +52,7 @@ func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Conte
 		}},
 	}
 
-	err := dbChaosExperimentRun.UpdateExperimentRunWithQuery(ctx, query, update)
+	err := c.chaosExperimentRunOperator.UpdateExperimentRunWithQuery(ctx, query, update)
 	if err != nil {
 		return err
 	}

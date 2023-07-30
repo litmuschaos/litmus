@@ -43,11 +43,12 @@ import (
 
 // ChaosExperimentRunHandler is the handler for chaos experiment
 type ChaosExperimentRunHandler struct {
-	chaosExperimentRunService types.Service
-	infrastructureService     chaos_infrastructure.Service
-	gitOpsService             gitops.Service
-	chaosExperimentOperator   *dbChaosExperiment.Operator
-	mongodbOperator           mongodb.MongoOperator
+	chaosExperimentRunService  types.Service
+	infrastructureService      chaos_infrastructure.Service
+	gitOpsService              gitops.Service
+	chaosExperimentOperator    *dbChaosExperiment.Operator
+	chaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	mongodbOperator            mongodb.MongoOperator
 }
 
 // NewChaosExperimentRunHandler returns a new instance of ChaosWorkflowHandler
@@ -56,14 +57,16 @@ func NewChaosExperimentRunHandler(
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
+	chaosExperimentRunOperator *dbChaosExperimentRun.Operator,
 	mongodbOperator mongodb.MongoOperator,
 ) *ChaosExperimentRunHandler {
 	return &ChaosExperimentRunHandler{
-		chaosExperimentRunService: chaosExperimentRunService,
-		infrastructureService:     infrastructureService,
-		gitOpsService:             gitOpsService,
-		chaosExperimentOperator:   chaosExperimentOperator,
-		mongodbOperator:           mongodbOperator,
+		chaosExperimentRunService:  chaosExperimentRunService,
+		infrastructureService:      infrastructureService,
+		gitOpsService:              gitOpsService,
+		chaosExperimentOperator:    chaosExperimentOperator,
+		chaosExperimentRunOperator: chaosExperimentRunOperator,
+		mongodbOperator:            mongodbOperator,
 	}
 }
 
@@ -146,7 +149,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 	pipeline = append(pipeline, fetchKubernetesInfraDetailsStage)
 
 	// Call aggregation on pipeline
-	expRunCursor, err := dbChaosExperimentRun.GetAggregateExperimentRuns(pipeline)
+	expRunCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, errors.New("DB aggregate stage error: " + err.Error())
 	}
@@ -504,7 +507,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 	pipeline = append(pipeline, facetStage)
 
 	// Call aggregation on pipeline
-	workflowsCursor, err := dbChaosExperimentRun.GetAggregateExperimentRuns(pipeline)
+	workflowsCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, errors.New("DB aggregate stage error: " + err.Error())
 	}
@@ -795,7 +798,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			logrus.Error("Failed to update experiment collection")
 		}
 
-		err = dbChaosExperimentRun.CreateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
+		err = c.chaosExperimentRunOperator.CreateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
 			InfraID:      workflow.InfraID,
 			ExperimentID: workflow.ExperimentID,
 			Phase:        "Queued",
@@ -953,7 +956,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 	}
 	pipeline = append(pipeline, groupByPhaseStage)
 	// Call aggregation on pipeline
-	experimentRunCursor, err := dbChaosExperimentRun.GetAggregateExperimentRuns(pipeline)
+	experimentRunCursor, err := c.chaosExperimentRunOperator.GetAggregateExperimentRuns(pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -1081,7 +1084,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			}
 		}
 
-		experimentRunCount, err := dbChaosExperimentRun.CountExperimentRuns(sessionContext, query)
+		experimentRunCount, err := c.chaosExperimentRunOperator.CountExperimentRuns(sessionContext, query)
 		if err != nil {
 			return err
 		}
@@ -1165,7 +1168,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			}
 		}
 
-		count, err := dbChaosExperimentRun.UpdateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
+		count, err := c.chaosExperimentRunOperator.UpdateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
 			InfraID:         event.InfraID.InfraID,
 			ProjectID:       experiment.ProjectID,
 			ExperimentRunID: event.ExperimentRunID,
