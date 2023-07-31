@@ -26,6 +26,7 @@ type Repository interface {
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
+	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
 type repository struct {
@@ -47,7 +48,7 @@ func (r repository) LoginUser(user *entities.User) (*entities.User, error) {
 		if mongo.IsDuplicateKeyError(err) {
 			var result = entities.User{}
 			findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-				"username": user.UserName,
+				"username": user.Username,
 			}).Decode(&result)
 			if findOneErr != nil {
 				return nil, findOneErr
@@ -87,6 +88,34 @@ func (r repository) GetUsers() (*[]entities.User, error) {
 	return &Users, nil
 }
 
+func (r repository) InviteUsers(invitedUsers []string) (*[]entities.User, error) {
+	cursor, err := r.Collection.Find(context.Background(),
+		bson.D{
+			{"_id", bson.D{
+				{"$nin", invitedUsers},
+			}},
+			{"deactivated_at", bson.D{
+				{"$exists", false},
+			}},
+		})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var Users = []entities.User{}
+	for cursor.Next(context.TODO()) {
+		var user entities.User
+		err := cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		Users = append(Users, *user.SanitizedUser())
+	}
+
+	return &Users, nil
+}
+
 // FindUsersByUID fetches the user from database that matches the passed uids
 func (r repository) FindUsersByUID(uid []string) (*[]entities.User, error) {
 	cursor, err := r.Collection.Find(context.Background(),
@@ -110,7 +139,7 @@ func (r repository) FindUsersByUID(uid []string) (*[]entities.User, error) {
 	return &Users, nil
 }
 
-// FindUser finds and returns a user if it exists
+// FindUserByUsername finds and returns a user if it exists
 func (r repository) FindUserByUsername(username string) (*entities.User, error) {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
@@ -137,9 +166,9 @@ func (r repository) CheckPasswordHash(hash, password string) error {
 // UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
-	result.UserName = userPassword.Username
+	result.Username = userPassword.Username
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-		"username": result.UserName,
+		"username": result.Username,
 	}).Decode(&result)
 	if findOneErr != nil {
 		return findOneErr
@@ -190,7 +219,7 @@ func (r repository) IsAdministrator(user *entities.User) error {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
 		"_id":      user.ID,
-		"username": user.UserName,
+		"username": user.Username,
 	}).Decode(&result)
 	if findOneErr != nil {
 		return findOneErr

@@ -108,7 +108,7 @@ func validatedAdminSetup(service services.ApplicationService) {
 
 	adminUser := entities.User{
 		ID:       uID,
-		UserName: utils.AdminName,
+		Username: utils.AdminName,
 		Password: password,
 		Role:     entities.RoleAdmin,
 		Audit: entities.Audit{

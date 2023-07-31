@@ -204,7 +204,7 @@ type ProjectMembers struct {
 	unknownFields protoimpl.UnknownFields
 
 	Uid        string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	UserName   string `protobuf:"bytes,2,opt,name=userName,proto3" json:"userName,omitempty"`
+	Username   string `protobuf:"bytes,2,opt,name=userName,proto3" json:"userName,omitempty"`
 	Role       string `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
 	Email      string `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
 	Invitation string `protobuf:"bytes,5,opt,name=invitation,proto3" json:"invitation,omitempty"`
@@ -250,9 +250,9 @@ func (x *ProjectMembers) GetUid() string {
 	return ""
 }
 
-func (x *ProjectMembers) GetUserName() string {
+func (x *ProjectMembers) GetUsername() string {
 	if x != nil {
-		return x.UserName
+		return x.Username
 	}
 	return ""
 }

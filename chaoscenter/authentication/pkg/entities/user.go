@@ -24,13 +24,13 @@ const (
 // User contains the user information
 type User struct {
 	Audit         `bson:",inline"`
-	ID            string `bson:"_id,omitempty" json:"_id"`
-	UserName      string `bson:"username,omitempty" json:"username"`
+	ID            string `bson:"_id,omitempty" json:"userID"`
+	Username      string `bson:"username,omitempty" json:"username"`
 	Password      string `bson:"password,omitempty" json:"password,omitempty"`
 	Email         string `bson:"email,omitempty" json:"email,omitempty"`
 	Name          string `bson:"name,omitempty" json:"name,omitempty"`
 	Role          Role   `bson:"role,omitempty" json:"role"`
-	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivated_at,omitempty"`
+	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
 }
 
 // UserDetails is used to update user's personal details
@@ -44,14 +44,14 @@ type UserDetails struct {
 // UserPassword defines structure for password related requests
 type UserPassword struct {
 	Username    string `json:"username,omitempty"`
-	OldPassword string `json:"old_password,omitempty"`
-	NewPassword string `json:"new_password,omitempty"`
+	OldPassword string `json:"oldPassword,omitempty"`
+	NewPassword string `json:"newPassword,omitempty"`
 }
 
 // UpdateUserState defines structure to deactivate or reactivate user
 type UpdateUserState struct {
 	Username     string `json:"username"`
-	IsDeactivate *bool  `json:"is_deactivate"`
+	IsDeactivate *bool  `json:"isDeactivate"`
 }
 
 // APIStatus defines structure for APIroute status
@@ -72,7 +72,7 @@ func (user User) GetUserWithProject() *UserWithProject {
 
 	return &UserWithProject{
 		ID:       user.ID,
-		Username: user.UserName,
+		Username: user.Username,
 		Name:     user.Name,
 		Audit: Audit{
 			IsRemoved: user.IsRemoved,
@@ -104,7 +104,7 @@ func (user *User) GetSignedJWT() (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID
 	claims["role"] = user.Role
-	claims["username"] = user.UserName
+	claims["username"] = user.Username
 	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
