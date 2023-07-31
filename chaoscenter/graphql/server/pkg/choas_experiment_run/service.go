@@ -35,10 +35,11 @@ type chaosExperimentRunService struct {
 }
 
 // NewChaosExperimentRunService returns a new instance of the chaos workflow run service
-func NewChaosExperimentRunService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator) Service {
+func NewChaosExperimentRunService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator, chaosExperimentRunOperator *dbChaosExperimentRun.Operator) Service {
 	return &chaosExperimentRunService{
 		chaosExperimentOperator:     chaosWorkflowOperator,
 		chaosInfrastructureOperator: clusterOperator,
+		chaosExperimentRunOperator:  chaosExperimentRunOperator,
 	}
 }
 
