@@ -378,13 +378,11 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 		}
 	}
 	visited := map[string]int{}
-	lastFile := ""
 
 	commitIter, err := r.Log(&git.LogOptions{
 		PathFilter: func(file string) bool {
 			if (strings.HasSuffix(path, "/") && strings.HasPrefix(file, path)) || (path == file) {
 				visited[file] += 1
-				lastFile = file
 				return true
 			}
 			return false
