@@ -418,9 +418,6 @@ func (c GitConfig) GetChanges() (string, map[string]int, error) {
 			return "", nil, err
 		}
 	}
-	if err != io.EOF && visited[lastFile] == 1 {
-		delete(visited, lastFile)
-	}
 	return c.LatestCommit, visited, nil
 }
 
