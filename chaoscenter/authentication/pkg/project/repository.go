@@ -362,16 +362,13 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 		return nil, err
 	}
 
-	var data []*entities.Project
-	for cursor.Next(ctx) {
-		res := entities.Project{}
-		if err := cursor.Decode(&res); err != nil {
-			log.Fatal(err)
-		}
-		data = append(data, &res)
+	var projects []*entities.Project
+	err = cursor.All(context.TODO(), &projects)
+	if err != nil {
+		return nil, err
 	}
 
-	return data, nil
+	return projects, nil
 }
 
 // GetProjectRole returns the role of a user in the project
@@ -476,9 +473,15 @@ func (r repository) ListInvitations(userID string) ([]*entities.Project, error) 
 	var pipeline mongo.Pipeline
 	filter := bson.D{
 		{"$match", bson.D{
-			{"members.user_id", userID},
-			{"members.invitation", entities.PendingInvitation},
-		}},
+			{"members", bson.D{
+				{"$elemMatch", bson.D{
+					{"user_id", userID},
+					{"invitation", bson.D{
+						{"$eq", entities.PendingInvitation},
+					}},
+				}},
+			}}},
+		},
 	}
 	pipeline = append(pipeline, filter)
 
@@ -507,16 +510,14 @@ func (r repository) ListInvitations(userID string) ([]*entities.Project, error) 
 	if err != nil {
 		return nil, err
 	}
-	var data []*entities.Project
-	for cursor.Next(context.TODO()) {
-		res := entities.Project{}
-		if err := cursor.Decode(&res); err != nil {
-			log.Fatal(err)
-		}
-		data = append(data, &res)
+
+	var projects []*entities.Project
+	err = cursor.All(context.TODO(), &projects)
+	if err != nil {
+		return nil, err
 	}
 
-	return data, nil
+	return projects, nil
 
 }
 

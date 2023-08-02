@@ -156,7 +156,7 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 		var response []entities.ListInvitationResponse
 		projects, err := service.ListInvitations(uID)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("Error while fetching invitations: %v", err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
