@@ -61,11 +61,11 @@ type APIStatus struct {
 
 type UserWithProject struct {
 	Audit    `bson:",inline"`
-	ID       string     `bson:"_id"`
-	Username string     `bson:"username"`
-	Email    string     `bson:"email"`
-	Name     string     `bson:"name"`
-	Projects []*Project `bson:"projects"`
+	ID       string     `bson:"_id" json:"id"`
+	Username string     `bson:"username" json:"username"`
+	Email    string     `bson:"email" json:"email"`
+	Name     string     `bson:"name" json:"name"`
+	Projects []*Project `bson:"projects" json:"projects"`
 }
 
 func (user User) GetUserWithProject() *UserWithProject {
