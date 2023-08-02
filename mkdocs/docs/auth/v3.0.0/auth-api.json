@@ -977,7 +977,7 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/GetInvitationResponse"
+                    "$ref": "#/definitions/Project"
                   }
                 }
               }
@@ -1001,7 +1001,7 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/Project"
+                    "$ref": "#/definitions/GetInvitationResponse"
                   }
                 }
               }
