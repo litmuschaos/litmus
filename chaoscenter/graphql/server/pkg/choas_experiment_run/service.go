@@ -1,4 +1,4 @@
-package chaos_experiment
+package chaos_experiment_run
 
 import (
 	"context"
