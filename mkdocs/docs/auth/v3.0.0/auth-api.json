@@ -971,15 +971,39 @@
         "responses": {
           "200": {
             "description": "OK",
-            "examples": {
-              "application/json": {
-                "data": ["0ecf9907-238d-4000-ac2f-3dbe38bc8e64"]
-              }
-            },
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/GetInvitationResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/list_invitations": {
+      "get": {
+        "description": "This API is used to list all the pending invitations of the user\n",
+        "operationId": "listInvitations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Project"
+                  }
+                }
               }
             }
           }
@@ -1238,6 +1262,24 @@
         }
       }
     },
+    "GetInvitationResponse": {
+      "type": "object",
+      "properties": {
+        "projectName": {
+          "type": "string"
+        },
+        "projectID": {
+          "type": "string"
+        },
+        "invitationRole": {
+          "type": "string",
+          "enum": ["Owner", "Editor", "Viewer"]
+        },
+        "projectOwner": {
+          "$ref": "#/definitions/ProjectMember"
+        }
+      }
+    },
     "Project": {
       "type": "object",
       "properties": {
@@ -1281,7 +1323,7 @@
         {
           "type": "object",
           "properties": {
-            "Projects": {
+            "projects": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Project"
