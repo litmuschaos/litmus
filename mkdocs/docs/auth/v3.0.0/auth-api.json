@@ -1323,7 +1323,7 @@
         {
           "type": "object",
           "properties": {
-            "Projects": {
+            "projects": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Project"
