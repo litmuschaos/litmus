@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
@@ -210,14 +209,14 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 		ownerProjects, err := service.GetOwnerProjectIDs(c, user.ID)
 
 		if len(ownerProjects) > 0 {
-			defaultProject = ownerProjects[0]
+			defaultProject = ownerProjects[0].ID
 		} else {
 			// Adding user as project owner in project's member list
 			newMember := &entities.Member{
 				UserID:     user.ID,
 				Role:       entities.RoleOwner,
 				Invitation: entities.AcceptedInvitation,
-				JoinedAt:   strconv.FormatInt(time.Now().Unix(), 10),
+				JoinedAt:   time.Now().Unix(),
 			}
 			var members []*entities.Member
 			members = append(members, newMember)
