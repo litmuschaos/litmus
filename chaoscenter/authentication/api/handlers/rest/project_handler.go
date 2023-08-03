@@ -2,7 +2,6 @@ package rest
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
@@ -150,6 +149,35 @@ func getInvitation(service services.ApplicationService, member entities.MemberIn
 	return "", nil
 }
 
+// ListInvitations returns the Invitation status
+func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uID := c.MustGet("uid").(string)
+		var response []entities.ListInvitationResponse
+		projects, err := service.ListInvitations(uID)
+		if err != nil {
+			log.Errorf("Error while fetching invitations: %v", err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		for _, project := range projects {
+			var inviteRes entities.ListInvitationResponse
+			inviteRes.ProjectName = project.Name
+			inviteRes.ProjectID = project.ID
+			for _, member := range project.Members {
+				if member.Role == entities.RoleOwner {
+					inviteRes.ProjectOwner = *member
+				} else {
+					inviteRes.InvitationRole = member.Invitation
+				}
+			}
+			response = append(response, inviteRes)
+		}
+		c.JSON(200, gin.H{"data": response})
+	}
+}
+
 func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.CreateProjectInput
@@ -192,7 +220,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			UserID:     user.ID,
 			Role:       entities.RoleOwner,
 			Invitation: entities.AcceptedInvitation,
-			JoinedAt:   strconv.FormatInt(time.Now().Unix(), 10),
+			JoinedAt:   time.Now().Unix(),
 		}
 		var members []*entities.Member
 		members = append(members, newMember)
@@ -297,7 +325,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			UserID:     user.ID,
 			Role:       *member.Role,
 			Invitation: entities.PendingInvitation,
-			JoinedAt:   strconv.FormatInt(time.Now().Unix(), 10),
+			JoinedAt:   time.Now().Unix(),
 		}
 
 		err = service.AddMember(member.ProjectID, newMember)
@@ -531,8 +559,8 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
-// GetOwnerProjectIDs returns an array of project IDs in which user is an owner
-func GetOwnerProjectIDs(service services.ApplicationService) gin.HandlerFunc {
+// GetOwnerProjects returns an array of projects in which user is an owner
+func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uid := c.MustGet("uid").(string)
 		res, err := service.GetOwnerProjectIDs(c, uid)

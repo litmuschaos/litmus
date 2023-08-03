@@ -28,16 +28,17 @@ type Repository interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
-	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
+	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
+	ListInvitations(userID string) ([]*entities.Project, error)
 }
 
 type repository struct {
 	Collection *mongo.Collection
 }
 
-// GetProject returns a project based on a query or filter value
+// GetProjectByProjectID returns a project based on a query or filter value
 func (r repository) GetProjectByProjectID(projectID string) (*entities.Project, error) {
 	var project = new(entities.Project)
 
@@ -283,7 +284,7 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 	return results, nil
 }
 
-// UpdateUserState updates the deactivated_at state of the member and removed_at field of the project
+// UpdateProjectState updates the deactivated_at state of the member and removed_at field of the project
 func (r repository) UpdateProjectState(userID string, deactivateTime string) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
@@ -329,8 +330,8 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 	return nil
 }
 
-// GetOwnerProjectIDs takes a userID to retrieve the project IDs in which user is the owner
-func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error) {
+// GetOwnerProjects takes a userID to retrieve the project IDs in which user is the owner
+func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error) {
 	filter := bson.D{
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
@@ -343,8 +344,16 @@ func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]st
 
 	pipeline := mongo.Pipeline{
 		bson.D{{"$match", filter}},
-		bson.D{{"$project", bson.M{
-			"_id": 1,
+		bson.D{{"$project", bson.D{
+			{"members", bson.D{
+				{"$filter", bson.D{
+					{"input", "$members"},
+					{"as", "member"},
+					{"cond", bson.D{{
+						"$eq", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+					}}},
+				}},
+			}},
 		}}},
 	}
 
@@ -353,15 +362,10 @@ func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]st
 		return nil, err
 	}
 
-	var results []bson.M
-	if err = cursor.All(ctx, &results); err != nil {
+	var projects []*entities.Project
+	err = cursor.All(context.TODO(), &projects)
+	if err != nil {
 		return nil, err
-	}
-
-	var projects []string
-
-	for _, result := range results {
-		projects = append(projects, result["_id"].(string))
 	}
 
 	return projects, nil
@@ -462,6 +466,59 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 		return nil, nil
 	}
 	return res[0].Members, nil
+}
+
+func (r repository) ListInvitations(userID string) ([]*entities.Project, error) {
+
+	var pipeline mongo.Pipeline
+	filter := bson.D{
+		{"$match", bson.D{
+			{"members", bson.D{
+				{"$elemMatch", bson.D{
+					{"user_id", userID},
+					{"invitation", bson.D{
+						{"$eq", entities.PendingInvitation},
+					}},
+				}},
+			}}},
+		},
+	}
+	pipeline = append(pipeline, filter)
+
+	projection := bson.D{
+		{"$project", bson.D{
+			{"name", 1},
+			{"members", bson.D{
+				{"$filter", bson.D{
+					{"input", "$members"},
+					{"as", "member"},
+					{"cond", bson.D{
+						{"$or", bson.A{
+							bson.D{{"$and", bson.A{
+								bson.D{{"$eq", bson.A{"$$member.invitation", entities.PendingInvitation}}},
+								bson.D{{"$eq", bson.A{"$$member.user_id", userID}}},
+							}}},
+							bson.D{{"$eq", bson.A{"$$member.role", entities.RoleOwner}}},
+						}},
+					}},
+				}},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, projection)
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var projects []*entities.Project
+	err = cursor.All(context.TODO(), &projects)
+	if err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+
 }
 
 // NewRepo creates a new instance of this repository
