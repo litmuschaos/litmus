@@ -1010,7 +1010,7 @@
         },
         "parameters": [
           {
-            "name": "invitation_state",
+            "name": "invitation-state",
             "required": true,
             "description": "state of the invitation",
             "in": "path",
