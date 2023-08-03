@@ -25,7 +25,7 @@ type projectService interface {
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
-	ListInvitations(userID string) ([]*entities.Project, error)
+	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -82,6 +82,6 @@ func (a applicationService) GetProjectMembers(projectID string, state string) ([
 	return a.projectRepository.GetProjectMembers(projectID, state)
 }
 
-func (a applicationService) ListInvitations(userID string) ([]*entities.Project, error) {
-	return a.projectRepository.ListInvitations(userID)
+func (a applicationService) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
+	return a.projectRepository.ListInvitations(userID, invitationState)
 }

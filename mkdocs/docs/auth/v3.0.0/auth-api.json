@@ -977,7 +977,7 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/GetInvitationResponse"
+                    "$ref": "#/definitions/Project"
                   }
                 }
               }
@@ -988,7 +988,7 @@
         "produces": ["application/json"]
       }
     },
-    "/list_invitations": {
+    "/list_invitations_with_filters/{invitation-state}": {
       "get": {
         "description": "This API is used to list all the pending invitations of the user\n",
         "operationId": "listInvitations",
@@ -1001,14 +1001,23 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/Project"
+                    "$ref": "#/definitions/GetInvitationResponse"
                   }
                 }
               }
             }
           }
         },
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "invitation_state",
+            "required": true,
+            "description": "state of the invitation",
+            "in": "path",
+            "type": "string",
+            "enum": ["Accepted", "Pending", "Declined", "Exited"]
+          }
+        ],
         "produces": ["application/json"]
       }
     },
@@ -1231,7 +1240,7 @@
     "Users": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Users"
+        "$ref": "#/definitions/User"
       }
     },
     "ProjectMember": {
