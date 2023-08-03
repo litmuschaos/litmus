@@ -22,7 +22,7 @@ export interface CreateProjectProps extends Omit<FetcherOptions<unknown, CreateP
 
 export function createProject(props: CreateProjectProps): Promise<CreateProjectOkResponse> {
   return fetcher<CreateProjectOkResponse, unknown, CreateProjectRequestBody>({
-    url: `auth/create_project`,
+    url: `/auth/create_project`,
     method: 'POST',
     ...props
   });

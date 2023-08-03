@@ -25,7 +25,7 @@ export interface CreateUserProps extends Omit<FetcherOptions<unknown, CreateUser
 
 export function createUser(props: CreateUserProps): Promise<CreateUserOkResponse> {
   return fetcher<CreateUserOkResponse, unknown, CreateUserRequestBody>({
-    url: `auth/create_user`,
+    url: `/auth/create_user`,
     method: 'POST',
     ...props
   });

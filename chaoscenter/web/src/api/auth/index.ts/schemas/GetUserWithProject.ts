@@ -5,5 +5,5 @@ import type { Project } from '../schemas/Project';
 import type { User } from '../schemas/User';
 
 export interface GetUserWithProject extends User {
-  Projects?: Project[];
+  projects?: Project[];
 }

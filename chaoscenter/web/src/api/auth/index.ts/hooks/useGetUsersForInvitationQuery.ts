@@ -22,7 +22,7 @@ export interface GetUsersForInvitationProps
 
 export function getUsersForInvitation(props: GetUsersForInvitationProps): Promise<GetUsersForInvitationOkResponse> {
   return fetcher<GetUsersForInvitationOkResponse, unknown, unknown>({
-    url: `auth/invite_users/${props.project_id}`,
+    url: `/auth/invite_users/${props.project_id}`,
     method: 'GET',
     ...props
   });

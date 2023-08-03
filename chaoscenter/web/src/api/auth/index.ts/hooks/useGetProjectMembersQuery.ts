@@ -23,7 +23,7 @@ export interface GetProjectMembersProps
 
 export function getProjectMembers(props: GetProjectMembersProps): Promise<GetProjectMembersOkResponse> {
   return fetcher<GetProjectMembersOkResponse, unknown, unknown>({
-    url: `auth/get_project_members/${props.project_id}/${props.state}`,
+    url: `/auth/get_project_members/${props.project_id}/${props.state}`,
     method: 'GET',
     ...props
   });

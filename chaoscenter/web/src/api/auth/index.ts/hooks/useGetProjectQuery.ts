@@ -20,7 +20,7 @@ export interface GetProjectProps extends GetProjectQueryPathParams, Omit<Fetcher
 
 export function getProject(props: GetProjectProps): Promise<GetProjectOkResponse> {
   return fetcher<GetProjectOkResponse, unknown, unknown>({
-    url: `auth/get_project/${props.project_id}`,
+    url: `/auth/get_project/${props.project_id}`,
     method: 'GET',
     ...props
   });

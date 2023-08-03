@@ -23,7 +23,7 @@ export interface UpdatePasswordProps extends Omit<FetcherOptions<unknown, Update
 
 export function updatePassword(props: UpdatePasswordProps): Promise<UpdatePasswordOkResponse> {
   return fetcher<UpdatePasswordOkResponse, unknown, UpdatePasswordRequestBody>({
-    url: `auth/update/password`,
+    url: `/auth/update/password`,
     method: 'POST',
     ...props
   });

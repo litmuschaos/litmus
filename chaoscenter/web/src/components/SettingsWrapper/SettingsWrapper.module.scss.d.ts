@@ -1,6 +1,8 @@
 declare namespace SettingsWrapperModuleScssNamespace {
   export interface ISettingsWrapperModuleScss {
+    editIcon: string;
     leftSideBar: string;
+    nameChangeDialog: string;
   }
 }
 

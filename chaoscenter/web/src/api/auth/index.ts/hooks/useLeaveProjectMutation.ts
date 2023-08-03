@@ -23,7 +23,7 @@ export interface LeaveProjectProps extends Omit<FetcherOptions<unknown, LeavePro
 
 export function leaveProject(props: LeaveProjectProps): Promise<LeaveProjectOkResponse> {
   return fetcher<LeaveProjectOkResponse, unknown, LeaveProjectRequestBody>({
-    url: `auth/leave_project`,
+    url: `/auth/leave_project`,
     method: 'POST',
     ...props
   });

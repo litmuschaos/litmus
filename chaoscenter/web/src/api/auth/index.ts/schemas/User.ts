@@ -4,7 +4,7 @@
 import type { ActionBy } from '../schemas/ActionBy';
 
 export interface User {
-  createAt?: number;
+  createdAt?: number;
   createdBy?: ActionBy;
   email?: string;
   isRemoved?: boolean;

@@ -22,7 +22,7 @@ export interface UpdateStateProps extends Omit<FetcherOptions<unknown, UpdateSta
 
 export function updateState(props: UpdateStateProps): Promise<UpdateStateOkResponse> {
   return fetcher<UpdateStateOkResponse, unknown, UpdateStateRequestBody>({
-    url: `auth/update/state`,
+    url: `/auth/update/state`,
     method: 'POST',
     ...props
   });

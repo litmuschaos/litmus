@@ -5,8 +5,8 @@ import { PopoverInteractionKind, Position } from '@blueprintjs/core';
 import cx from 'classnames';
 import { useStrings } from '@strings';
 import { AppStoreContext } from '@context';
-import type { Project } from '@models';
 import ProjectSelectorListController from '@controllers/ProjectSelectorList';
+import type { Project } from '@api/auth/index.ts';
 import styles from './ProjectSelector.module.scss';
 
 interface ProjectSelectorProps {
@@ -53,7 +53,7 @@ export default function ProjectSelectorView({ currentProjectDetails }: ProjectSe
           text={
             projectID ? (
               <Text color={Color.WHITE} font={{ size: 'small' }} padding="xsmall" className={styles.projectText}>
-                {currentProjectDetails?.Name ?? projectID}
+                {currentProjectDetails?.name ?? projectID}
               </Text>
             ) : (
               <Text color={Color.GREY_400} font={{ size: 'small' }} padding="xsmall">

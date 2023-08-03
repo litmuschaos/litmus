@@ -18,7 +18,7 @@ export interface GetUserProps extends GetUserQueryPathParams, Omit<FetcherOption
 
 export function getUser(props: GetUserProps): Promise<GetUserOkResponse> {
   return fetcher<GetUserOkResponse, unknown, unknown>({
-    url: `auth/get_user/${props.user_id}`,
+    url: `/auth/get_user/${props.user_id}`,
     method: 'GET',
     ...props
   });

@@ -20,7 +20,7 @@ export interface RemoveInvitationProps extends Omit<FetcherOptions<unknown, Remo
 
 export function removeInvitation(props: RemoveInvitationProps): Promise<RemoveInvitationOkResponse> {
   return fetcher<RemoveInvitationOkResponse, unknown, RemoveInvitationRequestBody>({
-    url: `auth/remove_invitation`,
+    url: `/auth/remove_invitation`,
     method: 'POST',
     ...props
   });

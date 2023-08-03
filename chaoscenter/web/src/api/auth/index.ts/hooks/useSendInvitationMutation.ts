@@ -24,7 +24,7 @@ export interface SendInvitationProps extends Omit<FetcherOptions<unknown, SendIn
 
 export function sendInvitation(props: SendInvitationProps): Promise<SendInvitationOkResponse> {
   return fetcher<SendInvitationOkResponse, unknown, SendInvitationRequestBody>({
-    url: `auth/send_invitation`,
+    url: `/auth/send_invitation`,
     method: 'POST',
     ...props
   });

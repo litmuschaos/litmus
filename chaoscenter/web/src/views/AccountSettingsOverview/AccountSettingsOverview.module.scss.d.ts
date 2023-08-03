@@ -1,7 +1,6 @@
 declare namespace AccountSettingsOverviewModuleScssNamespace {
   export interface IAccountSettingsOverviewModuleScss {
     overviewCard: string;
-    tableMainContainer: string;
   }
 }
 

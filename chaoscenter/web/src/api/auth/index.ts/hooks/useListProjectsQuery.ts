@@ -16,7 +16,7 @@ export interface ListProjectsProps extends Omit<FetcherOptions<unknown, unknown>
 
 export function listProjects(props: ListProjectsProps): Promise<ListProjectsOkResponse> {
   return fetcher<ListProjectsOkResponse, unknown, unknown>({
-    url: `auth/list_projects`,
+    url: `/auth/list_projects`,
     method: 'GET',
     ...props
   });

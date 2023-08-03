@@ -14,7 +14,7 @@ export interface UsersProps extends Omit<FetcherOptions<unknown, unknown>, 'url'
 
 export function users(props: UsersProps): Promise<UsersOkResponse> {
   return fetcher<UsersOkResponse, unknown, unknown>({
-    url: `auth/users`,
+    url: `/auth/users`,
     method: 'GET',
     ...props
   });

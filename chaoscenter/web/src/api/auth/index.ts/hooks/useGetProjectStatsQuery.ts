@@ -13,7 +13,7 @@ export interface GetProjectStatsProps extends Omit<FetcherOptions<unknown, unkno
 
 export function getProjectStats(props: GetProjectStatsProps): Promise<GetProjectStatsOkResponse> {
   return fetcher<GetProjectStatsOkResponse, unknown, unknown>({
-    url: `auth/get_projects_stats`,
+    url: `/auth/get_projects_stats`,
     method: 'GET',
     ...props
   });

@@ -23,7 +23,7 @@ export interface ResetPasswordProps extends Omit<FetcherOptions<unknown, ResetPa
 
 export function resetPassword(props: ResetPasswordProps): Promise<ResetPasswordOkResponse> {
   return fetcher<ResetPasswordOkResponse, unknown, ResetPasswordRequestBody>({
-    url: `auth/reset/password`,
+    url: `/auth/reset/password`,
     method: 'POST',
     ...props
   });

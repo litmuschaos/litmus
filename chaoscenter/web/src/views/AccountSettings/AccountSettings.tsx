@@ -3,16 +3,21 @@ import { Container, Tabs } from '@harnessio/uicore';
 import type { TabId } from '@blueprintjs/core';
 import { Color } from '@harnessio/design-system';
 import cx from 'classnames';
+import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import SettingsWrapper from '@components/SettingsWrapper';
-import type { User as GetUserResponse } from '@api/entities';
 import { useStrings } from '@strings';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import AccountSettingsOverviewController from '@controllers/AccountSettingsOverview';
 import AccountSettingsUserManagementController from '@controllers/AccountSettingsUserManagement';
+import type { User } from '@api/auth/index.ts';
 import css from './AccountSettings.module.scss';
 
 interface AccountSettingsViewProps {
-  userAccountDetails: GetUserResponse | undefined;
+  userAccountDetails: User | undefined;
+  userAccountDetailsRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<User, unknown>>;
+
   loading: {
     getUser: boolean;
   };
@@ -26,9 +31,9 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
   const { getString } = useStrings();
   const updateSearchParams = useUpdateSearchParams();
   const searchParams = useSearchParams();
+  const { userAccountDetails, loading, userAccountDetailsRefetch } = props;
   const selectedTabId = searchParams.get('tab') as AccountSettingsTabTypes;
   const [activeTab, setActiveTab] = React.useState<TabId | undefined>('overview');
-  const { userAccountDetails, loading } = props;
 
   React.useEffect(() => {
     if (!selectedTabId) {
@@ -54,7 +59,11 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
   };
 
   return (
-    <SettingsWrapper loading={loading.getUser} userAccountDetails={userAccountDetails}>
+    <SettingsWrapper
+      loading={loading.getUser}
+      userAccountDetails={userAccountDetails}
+      userAccountDetailsRefetch={userAccountDetailsRefetch}
+    >
       <Container
         width={'100%'}
         height={'100%'}
@@ -73,7 +82,7 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
             {
               id: 'overview',
               title: getString('overview'),
-              panel: <AccountSettingsOverviewController />
+              panel: <AccountSettingsOverviewController username={userAccountDetails?.username} />
             },
             {
               id: 'user-management',

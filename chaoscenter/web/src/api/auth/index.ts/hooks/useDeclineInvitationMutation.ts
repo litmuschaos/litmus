@@ -20,7 +20,7 @@ export interface DeclineInvitationProps extends Omit<FetcherOptions<unknown, Dec
 
 export function declineInvitation(props: DeclineInvitationProps): Promise<DeclineInvitationOkResponse> {
   return fetcher<DeclineInvitationOkResponse, unknown, DeclineInvitationRequestBody>({
-    url: `auth/decline_invitation`,
+    url: `/auth/decline_invitation`,
     method: 'POST',
     ...props
   });

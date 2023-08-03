@@ -22,7 +22,7 @@ export interface UpdateProjectNameProps extends Omit<FetcherOptions<unknown, Upd
 
 export function updateProjectName(props: UpdateProjectNameProps): Promise<UpdateProjectNameOkResponse> {
   return fetcher<UpdateProjectNameOkResponse, unknown, UpdateProjectNameRequestBody>({
-    url: `auth/update_project_name`,
+    url: `/auth/update_project_name`,
     method: 'POST',
     ...props
   });

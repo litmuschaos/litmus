@@ -1,17 +1,25 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import AccountSettingsView from '@views/AccountSettings';
-import { getUser } from '@api/core/account';
+import { useGetUserQuery } from '@api/auth/index.ts';
 
 export default function AccountSettingsController(): React.ReactElement {
   const { accountID } = useParams<{ accountID: string }>();
-  const { data, loading } = getUser({ userID: accountID });
+
+  const {
+    data,
+    isLoading,
+    refetch: userAccountDetailsRefetch
+  } = useGetUserQuery({
+    user_id: accountID
+  });
 
   return (
     <AccountSettingsView
       userAccountDetails={data}
+      userAccountDetailsRefetch={userAccountDetailsRefetch}
       loading={{
-        getUser: loading
+        getUser: isLoading
       }}
     />
   );

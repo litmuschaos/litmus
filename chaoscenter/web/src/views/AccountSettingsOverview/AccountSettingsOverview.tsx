@@ -3,14 +3,26 @@ import React from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Icon } from '@harnessio/icons';
 import { useStrings } from '@strings';
-import UserCreatedProjects from './UserCreatedProjects';
+import type { GetUserWithProjectOkResponse } from '@api/auth/index.ts';
+import UserCreatedProjectsController from '@controllers/UserCreatedProjects';
+import ProjectsJoinedController from '@controllers/ProjectsJoined';
+import ProjectInvitationsController from '@controllers/ProjectInvitations';
 import css from './AccountSettingsOverview.module.scss';
 
-export default function AccountSettingsOverviewView(): React.ReactElement {
+interface AccountSettingsOverviewViewProps {
+  userProjectData: GetUserWithProjectOkResponse | undefined;
+  projectCount: {
+    userCreatedProjects: number | undefined;
+    userJoinedProjects: number | undefined;
+  };
+}
+
+export default function AccountSettingsOverviewView(props: AccountSettingsOverviewViewProps): React.ReactElement {
+  const { userProjectData, projectCount } = props;
   const { getString } = useStrings();
 
   return (
-    <Layout.Vertical padding={'medium'}>
+    <Layout.Vertical padding={'medium'} height={'100%'}>
       <Container border={{ bottom: true }}>
         <Text font={{ variation: FontVariation.H3 }}>{getString('overview')}</Text>
         <Card className={css.overviewCard}>
@@ -19,7 +31,7 @@ export default function AccountSettingsOverviewView(): React.ReactElement {
               <Icon name="nav-project" size={40} color={Color.GREY_800} />
               <Layout.Horizontal flex={{ alignItems: 'flex-end' }} style={{ gap: '0.25rem' }}>
                 <Text font={{ variation: FontVariation.H1 }} color={Color.PRIMARY_7} style={{ lineHeight: 1 }}>
-                  {20}
+                  {userProjectData?.data?.projects?.length ?? 0}
                 </Text>
                 <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_600}>
                   {getString('projectsInTotal')}
@@ -32,7 +44,7 @@ export default function AccountSettingsOverviewView(): React.ReactElement {
                 style={{ gap: '0.25rem' }}
               >
                 <Text font={{ variation: FontVariation.H4 }} style={{ lineHeight: 1 }}>
-                  1
+                  {projectCount.userCreatedProjects ?? 0}
                 </Text>
                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600} style={{ lineHeight: 1 }}>
                   {getString('projectCreatedByYou')}
@@ -43,27 +55,19 @@ export default function AccountSettingsOverviewView(): React.ReactElement {
                 style={{ gap: '0.25rem' }}
               >
                 <Text font={{ variation: FontVariation.H4 }} style={{ lineHeight: 1 }}>
-                  4
+                  {projectCount.userJoinedProjects ?? 0}
                 </Text>
                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600} style={{ lineHeight: 1 }}>
                   {getString('projectsByInvite')}
                 </Text>
               </Layout.Horizontal>
             </Layout.Vertical>
-            <Layout.Horizontal>
-              <Text
-                font={{ variation: FontVariation.BODY }}
-                color={Color.PRIMARY_7}
-                style={{ userSelect: 'none', cursor: 'pointer' }}
-                onClick={() => alert('View Invitations')}
-              >
-                {getString('viewInvitations')}
-              </Text>
-            </Layout.Horizontal>
           </Layout.Horizontal>
         </Card>
       </Container>
-      <UserCreatedProjects />
+      <UserCreatedProjectsController />
+      <ProjectsJoinedController />
+      <ProjectInvitationsController />
     </Layout.Vertical>
   );
 }

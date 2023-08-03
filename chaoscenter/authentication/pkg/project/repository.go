@@ -345,6 +345,13 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 	pipeline := mongo.Pipeline{
 		bson.D{{"$match", filter}},
 		bson.D{{"$project", bson.D{
+			{"name", 1},
+			{"state", 1},
+			{"created_at", 1},
+			{"updated_at", 1},
+			{"created_by", 1},
+			{"updated_by", 1},
+			{"is_removed", 1},
 			{"members", bson.D{
 				{"$filter", bson.D{
 					{"input", "$members"},

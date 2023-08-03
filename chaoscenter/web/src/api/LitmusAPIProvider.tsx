@@ -7,18 +7,13 @@ import {
   HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
-  Operation,
-  RequestHandler,
-  split
+  RequestHandler
 } from '@apollo/client';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition } from '@apollo/client/utilities';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export interface APIConfig {
   gqlEndpoints: {
     chaosManagerUri: string;
-    sockURL: string;
   };
   restEndpoints: {
     authUri: string;
@@ -38,25 +33,13 @@ function createApolloClient({
   if (!config.gqlEndpoints) return undefined;
 
   const httpLinkUri = config.gqlEndpoints.chaosManagerUri;
-  const wsLinkUri = config.gqlEndpoints.sockURL;
 
-  if (!httpLinkUri && !wsLinkUri) return undefined;
+  if (!httpLinkUri) return undefined;
 
   let httpLink: HttpLink | null = null;
   if (httpLinkUri) {
     httpLink = new HttpLink({
       uri: httpLinkUri
-    });
-  }
-
-  let wsLink: WebSocketLink | null = null;
-  if (wsLinkUri) {
-    wsLink = new WebSocketLink({
-      uri: wsLinkUri,
-      options: {
-        reconnect: true,
-        timeout: 30000
-      }
     });
   }
 
@@ -74,24 +57,8 @@ function createApolloClient({
 
   const links: (ApolloLink | RequestHandler)[] = [authLink];
 
-  // The split function takes three parameters:
-  //
-  // * A function that's called for each operation to execute
-  // * The Link to use for an operation if the function returns a "truthy" value
-  // * The Link to use for an operation if the function returns a "falsy" value
-  const splitOperation = ({ query }: Operation): boolean => {
-    const definition = getMainDefinition(query);
-    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-  };
-
-  if (httpLink && !wsLink) {
+  if (httpLink) {
     links.push(httpLink);
-  } else if (!httpLink && wsLink) {
-    const splitLink = split(splitOperation, wsLink);
-    links.push(splitLink);
-  } else if (httpLink && wsLink) {
-    const splitLink = split(splitOperation, wsLink, httpLink);
-    links.push(splitLink);
   }
 
   const client = new ApolloClient({

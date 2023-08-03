@@ -22,7 +22,7 @@ export interface LoginProps extends Omit<FetcherOptions<unknown, LoginRequestBod
 
 export function login(props: LoginProps): Promise<LoginOkResponse> {
   return fetcher<LoginOkResponse, unknown, LoginRequestBody>({
-    url: `auth/login`,
+    url: `/auth/login`,
     method: 'POST',
     ...props
   });

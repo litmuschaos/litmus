@@ -22,7 +22,7 @@ export interface GetUserWithProjectProps
 
 export function getUserWithProject(props: GetUserWithProjectProps): Promise<GetUserWithProjectOkResponse> {
   return fetcher<GetUserWithProjectOkResponse, unknown, unknown>({
-    url: `auth/get_user_with_project/${props.username}`,
+    url: `/auth/get_user_with_project/${props.username}`,
     method: 'GET',
     ...props
   });

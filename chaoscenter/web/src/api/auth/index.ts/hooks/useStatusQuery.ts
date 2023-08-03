@@ -15,7 +15,7 @@ export interface StatusProps extends Omit<FetcherOptions<unknown, unknown>, 'url
 
 export function status(props: StatusProps): Promise<StatusOkResponse> {
   return fetcher<StatusOkResponse, unknown, unknown>({
-    url: `auth/status`,
+    url: `/auth/status`,
     method: 'GET',
     ...props
   });

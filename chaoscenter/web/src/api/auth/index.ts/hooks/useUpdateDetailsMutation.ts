@@ -22,7 +22,7 @@ export interface UpdateDetailsProps extends Omit<FetcherOptions<unknown, UpdateD
 
 export function updateDetails(props: UpdateDetailsProps): Promise<UpdateDetailsOkResponse> {
   return fetcher<UpdateDetailsOkResponse, unknown, UpdateDetailsRequestBody>({
-    url: `auth/update/details`,
+    url: `/auth/update/details`,
     method: 'POST',
     ...props
   });

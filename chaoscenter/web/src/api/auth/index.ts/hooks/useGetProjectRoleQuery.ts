@@ -21,7 +21,7 @@ export interface GetProjectRoleProps
 
 export function getProjectRole(props: GetProjectRoleProps): Promise<GetProjectRoleOkResponse> {
   return fetcher<GetProjectRoleOkResponse, unknown, unknown>({
-    url: `auth/get_project_role/${props.project_id}`,
+    url: `/auth/get_project_role/${props.project_id}`,
     method: 'GET',
     ...props
   });

@@ -22,7 +22,7 @@ export interface AcceptInvitationProps extends Omit<FetcherOptions<unknown, Acce
 
 export function acceptInvitation(props: AcceptInvitationProps): Promise<AcceptInvitationOkResponse> {
   return fetcher<AcceptInvitationOkResponse, unknown, AcceptInvitationRequestBody>({
-    url: `auth/accept_invitation`,
+    url: `/auth/accept_invitation`,
     method: 'POST',
     ...props
   });
