@@ -31,7 +31,7 @@ type Repository interface {
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
-	ListInvitations(userID string) ([]*entities.Project, error)
+	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
 type repository struct {
@@ -468,7 +468,7 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 	return res[0].Members, nil
 }
 
-func (r repository) ListInvitations(userID string) ([]*entities.Project, error) {
+func (r repository) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
 
 	var pipeline mongo.Pipeline
 	filter := bson.D{
@@ -477,7 +477,7 @@ func (r repository) ListInvitations(userID string) ([]*entities.Project, error) 
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
 					{"invitation", bson.D{
-						{"$eq", entities.PendingInvitation},
+						{"$eq", invitationState},
 					}},
 				}},
 			}}},
@@ -495,7 +495,7 @@ func (r repository) ListInvitations(userID string) ([]*entities.Project, error) 
 					{"cond", bson.D{
 						{"$or", bson.A{
 							bson.D{{"$and", bson.A{
-								bson.D{{"$eq", bson.A{"$$member.invitation", entities.PendingInvitation}}},
+								bson.D{{"$eq", bson.A{"$$member.invitation", invitationState}}},
 								bson.D{{"$eq", bson.A{"$$member.user_id", userID}}},
 							}}},
 							bson.D{{"$eq", bson.A{"$$member.role", entities.RoleOwner}}},

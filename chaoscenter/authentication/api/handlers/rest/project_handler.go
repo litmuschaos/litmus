@@ -153,8 +153,9 @@ func getInvitation(service services.ApplicationService, member entities.MemberIn
 func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uID := c.MustGet("uid").(string)
+		invitationState := c.Param("invitation-state")
 		var response []entities.ListInvitationResponse
-		projects, err := service.ListInvitations(uID)
+		projects, err := service.ListInvitations(uID, entities.Invitation(invitationState))
 		if err != nil {
 			log.Errorf("Error while fetching invitations: %v", err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
