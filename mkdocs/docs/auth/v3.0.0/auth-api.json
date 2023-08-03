@@ -1229,7 +1229,7 @@
         "createdBy": {
           "$ref": "#/definitions/ActionBy"
         },
-        "createAt": {
+        "createdAt": {
           "type": "integer"
         },
         "updatedAt": {
