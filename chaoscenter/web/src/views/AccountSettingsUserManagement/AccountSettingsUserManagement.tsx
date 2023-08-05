@@ -1,13 +1,25 @@
 import { Color, FontVariation } from '@harnessio/design-system';
-import { Avatar, Button, ButtonVariation, Checkbox, Container, Layout, TableV2, Text } from '@harnessio/uicore';
+import {
+  Avatar,
+  Button,
+  ButtonVariation,
+  Checkbox,
+  Container,
+  Layout,
+  TableV2,
+  Text,
+  useToggleOpen
+} from '@harnessio/uicore';
 import React from 'react';
 import type { Column, Row } from 'react-table';
-import { Classes, Menu, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { Classes, Dialog, Menu, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import { Icon } from '@harnessio/icons';
+import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import type { User, Users } from '@api/auth/index.ts';
 import { getFormattedTime, killEvent } from '@utils';
 import Loader from '@components/Loader';
+import CreateNewUserController from '@controllers/CreateNewUser';
 import css from './AccountSettingsUserManagement.module.scss';
 
 interface AccountSettingsUserManagementViewProps {
@@ -18,6 +30,9 @@ interface AccountSettingsUserManagementViewProps {
     includeDisabledUsers: boolean;
     setIncludeDisabledUsers: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  getUsersRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<Users, unknown>>;
 }
 
 function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
@@ -46,7 +61,9 @@ function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
           return (
             <Layout.Horizontal style={{ gap: '0.25rem' }} flex={{ alignItems: 'center', justifyContent: 'flex-start' }}>
               <Avatar name={data.name} hoverCard={false} />
-              <Text font={{ variation: FontVariation.BODY }}>{data.name ?? getString('NASlash')}</Text>
+              <Text font={{ variation: FontVariation.BODY }} lineClamp={1}>
+                {data.name ?? getString('NASlash')}
+              </Text>
             </Layout.Horizontal>
           );
         }
@@ -55,14 +72,22 @@ function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
         id: 'username',
         Header: getString('username'),
         Cell: ({ row: { original: data } }: { row: Row<User> }) => {
-          return <Text font={{ variation: FontVariation.BODY }}>{data.username ?? getString('NASlash')}</Text>;
+          return (
+            <Text font={{ variation: FontVariation.BODY }} lineClamp={1}>
+              {data.username ?? getString('NASlash')}
+            </Text>
+          );
         }
       },
       {
         id: 'email',
         Header: getString('email'),
         Cell: ({ row: { original: data } }: { row: Row<User> }) => {
-          return <Text font={{ variation: FontVariation.BODY }}>{data.email ?? getString('NASlash')}</Text>;
+          return (
+            <Text font={{ variation: FontVariation.BODY }} lineClamp={1}>
+              {data.email ?? getString('NASlash')}
+            </Text>
+          );
         }
       },
       {
@@ -124,7 +149,8 @@ function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
 export default function AccountSettingsUserManagementView(
   props: AccountSettingsUserManagementViewProps
 ): React.ReactElement {
-  const { searchInput, usersData, disabledUserFilter, useUsersQueryLoading } = props;
+  const { searchInput, usersData, disabledUserFilter, useUsersQueryLoading, getUsersRefetch } = props;
+  const { isOpen: isCreateUserModalOpen, open: openCreateUserModal, close: closeCreateUserModal } = useToggleOpen();
   const { getString } = useStrings();
 
   return (
@@ -137,12 +163,28 @@ export default function AccountSettingsUserManagementView(
         className={css.subHeader}
       >
         <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'flex-start' }} style={{ gap: '1rem' }}>
-          <Button text={'New User'} variation={ButtonVariation.PRIMARY} icon="plus" />
+          <Button
+            text={getString('newUser')}
+            variation={ButtonVariation.PRIMARY}
+            icon="plus"
+            onClick={() => openCreateUserModal()}
+          />
           <Checkbox
             labelElement={<Text font={{ variation: FontVariation.SMALL }}>{getString('showDisabledUsers')}</Text>}
             checked={disabledUserFilter.includeDisabledUsers}
             onChange={() => disabledUserFilter.setIncludeDisabledUsers(!disabledUserFilter.includeDisabledUsers)}
           />
+          {isCreateUserModalOpen && (
+            <Dialog
+              isOpen={isCreateUserModalOpen}
+              canOutsideClickClose={false}
+              canEscapeKeyClose={false}
+              onClose={() => closeCreateUserModal()}
+              className={css.nameChangeDialog}
+            >
+              <CreateNewUserController getUsersRefetch={getUsersRefetch} handleClose={closeCreateUserModal} />
+            </Dialog>
+          )}
         </Layout.Horizontal>
         {searchInput}
       </Layout.Horizontal>

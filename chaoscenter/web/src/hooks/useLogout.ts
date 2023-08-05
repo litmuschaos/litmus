@@ -10,8 +10,11 @@ export const useLogout = (): UseLogoutReturn => {
 
   const forceLogout = (): void => {
     localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem('projectRole');
     localStorage.removeItem('projectID');
+    localStorage.removeItem('accountID');
+    localStorage.removeItem('accountRole');
+
     history.push(paths.toLogin());
   };
 

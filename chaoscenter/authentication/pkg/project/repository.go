@@ -478,17 +478,36 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 func (r repository) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
 
 	var pipeline mongo.Pipeline
-	filter := bson.D{
-		{"$match", bson.D{
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"invitation", bson.D{
-						{"$eq", invitationState},
+	var filter bson.D
+	if invitationState == entities.PendingInvitation {
+		filter = bson.D{
+			{"$match", bson.D{
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", userID},
+						{"invitation", bson.D{
+							{"$eq", invitationState},
+						}},
 					}},
-				}},
-			}}},
-		},
+				}}},
+			},
+		}
+	} else if invitationState == entities.AcceptedInvitation {
+		filter = bson.D{
+			{"$match", bson.D{
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", userID},
+						{"role", bson.D{
+							{"$ne", entities.RoleOwner},
+						}},
+						{"invitation", bson.D{
+							{"$eq", invitationState},
+						}},
+					}},
+				}}},
+			},
+		}
 	}
 	pipeline = append(pipeline, filter)
 

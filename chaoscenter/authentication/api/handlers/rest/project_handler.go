@@ -153,7 +153,7 @@ func getInvitation(service services.ApplicationService, member entities.MemberIn
 func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uID := c.MustGet("uid").(string)
-		invitationState := c.Param("invitation-state")
+		invitationState := c.Param("invitation_state")
 		var response []entities.ListInvitationResponse
 		projects, err := service.ListInvitations(uID, entities.Invitation(invitationState))
 		if err != nil {

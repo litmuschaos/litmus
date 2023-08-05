@@ -6,7 +6,7 @@ import { useUsersQuery } from '@api/auth/index.ts';
 
 export default function AccountSettingsUserManagementController(): React.ReactElement {
   const { getString } = useStrings();
-  const { data, isLoading } = useUsersQuery({});
+  const { data, isLoading, refetch: getUsersRefetch } = useUsersQuery({});
 
   const [includeDisabledUsers, setIncludeDisabledUsers] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -29,6 +29,7 @@ export default function AccountSettingsUserManagementController(): React.ReactEl
 
   return (
     <AccountSettingsUserManagementView
+      getUsersRefetch={getUsersRefetch}
       searchInput={searchInput}
       usersData={filteredData}
       useUsersQueryLoading={isLoading}

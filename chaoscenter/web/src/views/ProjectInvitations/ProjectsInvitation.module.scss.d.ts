@@ -1,5 +1,6 @@
 declare namespace ProjectsInvitationModuleScssNamespace {
   export interface IProjectsInvitationModuleScss {
+    nameChangeDialog: string;
     tableMainContainer: string;
   }
 }

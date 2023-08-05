@@ -1,19 +1,56 @@
-import { Avatar, Button, ButtonVariation, Layout, TableV2, Text } from '@harnessio/uicore';
+import { Avatar, Button, ButtonVariation, Layout, TableV2, Text, useToggleOpen } from '@harnessio/uicore';
 import React from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import type { Column, Row } from 'react-table';
 import { Icon } from '@harnessio/icons';
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  UseMutateFunction
+} from '@tanstack/react-query';
+import { Dialog } from '@blueprintjs/core';
 import { useStrings } from '@strings';
-import type { GetInvitationResponse, ListInvitationsOkResponse } from '@api/auth/index.ts';
+import type {
+  AcceptInvitationMutationProps,
+  AcceptInvitationOkResponse,
+  GetInvitationResponse,
+  ListInvitationsOkResponse
+} from '@api/auth/index.ts';
 import Loader from '@components/Loader';
+import DeleteProjectInvitationController from '@controllers/DeleteProjectInvitation';
+import { useAppStore } from '@context';
 import css from './ProjectsInvitation.module.scss';
 
 interface ProjectsInvitationsViewProps {
   invitations: ListInvitationsOkResponse | undefined;
   useListInvitationsQueryLoading: boolean;
+  listInvitationsMutationRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+  acceptInvitationMutation: UseMutateFunction<
+    AcceptInvitationOkResponse,
+    unknown,
+    AcceptInvitationMutationProps<never>,
+    unknown
+  >;
 }
 
-function MemoizedInvitationsTable({ invitations }: { invitations: GetInvitationResponse[] }): React.ReactElement {
+interface InvitationsTableProps {
+  invitations: GetInvitationResponse[];
+  acceptInvitationMutation: UseMutateFunction<
+    AcceptInvitationOkResponse,
+    unknown,
+    AcceptInvitationMutationProps<never>,
+    unknown
+  >;
+  listInvitationsMutationRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+}
+
+function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElement {
+  const { invitations, acceptInvitationMutation, listInvitationsMutationRefetch } = props;
   const { getString } = useStrings();
 
   const columns: Column<GetInvitationResponse>[] = React.useMemo(() => {
@@ -53,15 +90,52 @@ function MemoizedInvitationsTable({ invitations }: { invitations: GetInvitationR
         id: 'ctaItems',
         Header: '',
         Cell: ({ row: { original: data } }: { row: Row<GetInvitationResponse> }) => {
+          const { open, isOpen, close } = useToggleOpen();
+          const { currentUserInfo } = useAppStore();
           return (
             <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'flex-start' }} style={{ gap: '0.25rem' }}>
-              <Button key={data.projectID} variation={ButtonVariation.PRIMARY} text={getString('acceptInvitation')} />
+              <Button
+                key={data.projectID}
+                variation={ButtonVariation.PRIMARY}
+                text={getString('acceptInvitation')}
+                onClick={() =>
+                  acceptInvitationMutation(
+                    {
+                      body: {
+                        projectID: data.projectID ?? '',
+                        userID: currentUserInfo?.ID ?? ''
+                      }
+                    },
+                    {
+                      onSuccess: () => {
+                        listInvitationsMutationRefetch();
+                      }
+                    }
+                  )
+                }
+              />
               <Button
                 key={data.projectID}
                 icon="main-trash"
                 iconProps={{ size: 18, color: Color.RED_300 }}
                 variation={ButtonVariation.ICON}
+                onClick={() => open()}
               />
+              {isOpen && (
+                <Dialog
+                  isOpen={isOpen}
+                  canOutsideClickClose={false}
+                  canEscapeKeyClose={false}
+                  onClose={() => close()}
+                  className={css.nameChangeDialog}
+                >
+                  <DeleteProjectInvitationController
+                    handleClose={close}
+                    listInvitationsMutationRefetch={listInvitationsMutationRefetch}
+                    projectID={data.projectID}
+                  />
+                </Dialog>
+              )}
             </Layout.Horizontal>
           );
         }
@@ -81,7 +155,8 @@ function MemoizedInvitationsTable({ invitations }: { invitations: GetInvitationR
 }
 
 export default function ProjectsInvitationsView(props: ProjectsInvitationsViewProps): React.ReactElement {
-  const { invitations, useListInvitationsQueryLoading } = props;
+  const { invitations, useListInvitationsQueryLoading, acceptInvitationMutation, listInvitationsMutationRefetch } =
+    props;
   const { getString } = useStrings();
 
   return (
@@ -97,7 +172,13 @@ export default function ProjectsInvitationsView(props: ProjectsInvitationsViewPr
           message: getString('noInvitationsFound')
         }}
       >
-        {invitations?.data && <MemoizedInvitationsTable invitations={invitations?.data} />}
+        {invitations?.data && (
+          <MemoizedInvitationsTable
+            invitations={invitations?.data}
+            acceptInvitationMutation={acceptInvitationMutation}
+            listInvitationsMutationRefetch={listInvitationsMutationRefetch}
+          />
+        )}
       </Loader>
     </Layout.Vertical>
   );

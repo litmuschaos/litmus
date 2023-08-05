@@ -2,16 +2,16 @@ import { PermissionGroup } from '@models';
 import { getUserDetails } from './userDetails';
 
 export function isUserAllowed(permission: string): boolean {
-  const { role } = getUserDetails();
+  const { projectRole } = getUserDetails();
 
-  if (role) {
-    if (role === PermissionGroup.OWNER) {
+  if (projectRole) {
+    if (projectRole === PermissionGroup.OWNER) {
       return false;
-    } else if (role === PermissionGroup.EDITOR) {
+    } else if (projectRole === PermissionGroup.EDITOR) {
       if (permission === PermissionGroup.EDITOR || permission === PermissionGroup.VIEWER) {
         return false;
       }
-    } else if (role === PermissionGroup.VIEWER) {
+    } else if (projectRole === PermissionGroup.VIEWER) {
       if (permission === PermissionGroup.VIEWER) {
         return false;
       }

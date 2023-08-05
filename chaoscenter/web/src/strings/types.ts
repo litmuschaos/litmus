@@ -51,6 +51,7 @@ export interface StringsMap {
   'applyChanges': unknown
   'at': unknown
   'atAGlance': unknown
+  'authentication': unknown
   'authenticationType': unknown
   'averageResilienceScore': unknown
   'back': unknown
@@ -127,6 +128,7 @@ export interface StringsMap {
   'configureDetails': unknown
   'configureProperties': unknown
   'confirm': unknown
+  'confirmPassword': unknown
   'confirmText': unknown
   'connectChaosHub': unknown
   'connectHub': unknown
@@ -148,6 +150,7 @@ export interface StringsMap {
   'crdCopyPrompt': unknown
   'createChaosExperiment': unknown
   'createNamespace': unknown
+  'createNewUser': unknown
   'createRecurringSchedule': unknown
   'created': unknown
   'createdOn': unknown
@@ -165,6 +168,8 @@ export interface StringsMap {
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
+  'declineInvitation': unknown
+  'declineInvitationDescription': unknown
   'degelateNotActive': unknown
   'delete': unknown
   'deleteChaosInfrastructure': unknown
@@ -238,6 +243,8 @@ export interface StringsMap {
   'enterProjectName': unknown
   'enterYourEmail': unknown
   'enterYourName': unknown
+  'enterYourPassword': unknown
+  'enterYourUsername': unknown
   'environment': unknown
   'environmentError': unknown
   'environments': unknown
@@ -374,6 +381,7 @@ export interface StringsMap {
   'launchExperiment': unknown
   'learnMore': unknown
   'leaveProject': unknown
+  'leaveProjectDescription': unknown
   'letsGetStarted': unknown
   'litmus': unknown
   'litmusChaos': unknown
@@ -429,6 +437,7 @@ export interface StringsMap {
   'newPassword': unknown
   'newProbe': unknown
   'newUpdates': unknown
+  'newUser': unknown
   'newUserNoExperiments.subtitle': unknown
   'newUserNoExperiments.title': unknown
   'newUserNoInfra.title': unknown
@@ -508,6 +517,7 @@ export interface StringsMap {
   'parallel': unknown
   'passed': unknown
   'passedRuns': unknown
+  'password': unknown
   'pauseRun': unknown
   'pending': unknown
   'pendingTime': unknown
@@ -585,6 +595,7 @@ export interface StringsMap {
   'rbacDescription': PrimitiveObject<'permission'>
   'rbacHeader': unknown
   'reEnterNewPassword': unknown
+  'reEnterYourPassword': unknown
   'reRunDesc': unknown
   'reRunExperiment': unknown
   'reRunSuccessful': unknown
@@ -789,6 +800,8 @@ export interface StringsMap {
   'url': unknown
   'useIntegerValue': unknown
   'useThisTemplate': unknown
+  'userCreateModalBottomText': unknown
+  'userCreateSuccessMessage': PrimitiveObject<'name'>
   'userCreatedOn': unknown
   'userManagement': unknown
   'username': unknown

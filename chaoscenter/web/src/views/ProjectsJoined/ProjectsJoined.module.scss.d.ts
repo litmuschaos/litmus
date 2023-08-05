@@ -1,5 +1,6 @@
 declare namespace ProjectsJoinedModuleScssNamespace {
   export interface IProjectsJoinedModuleScss {
+    nameChangeDialog: string;
     tableMainContainer: string;
   }
 }

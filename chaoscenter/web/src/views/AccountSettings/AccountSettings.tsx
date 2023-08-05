@@ -10,6 +10,8 @@ import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import AccountSettingsOverviewController from '@controllers/AccountSettingsOverview';
 import AccountSettingsUserManagementController from '@controllers/AccountSettingsUserManagement';
 import type { User } from '@api/auth/index.ts';
+import { useAppStore } from '@context';
+import { UserType } from '@models';
 import css from './AccountSettings.module.scss';
 
 interface AccountSettingsViewProps {
@@ -34,6 +36,7 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
   const { userAccountDetails, loading, userAccountDetailsRefetch } = props;
   const selectedTabId = searchParams.get('tab') as AccountSettingsTabTypes;
   const [activeTab, setActiveTab] = React.useState<TabId | undefined>('overview');
+  const { currentUserInfo } = useAppStore();
 
   React.useEffect(() => {
     if (!selectedTabId) {
@@ -87,6 +90,7 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
             {
               id: 'user-management',
               title: getString('userManagement'),
+              hidden: currentUserInfo?.userRole !== UserType.ADMIN,
               panel: <AccountSettingsUserManagementController />
             }
           ]}

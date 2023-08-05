@@ -1,21 +1,35 @@
-import { Avatar, Button, ButtonVariation, Layout, TableV2, Text } from '@harnessio/uicore';
+import { Avatar, Button, ButtonVariation, Layout, TableV2, Text, useToggleOpen } from '@harnessio/uicore';
 import React from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import type { Column, Row } from 'react-table';
 import { Icon } from '@harnessio/icons';
+import { Dialog } from '@blueprintjs/core';
+import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import { PermissionGroup } from '@models';
+import type { PermissionGroup } from '@models';
 import type { GetInvitationResponse, ListInvitationsOkResponse } from '@api/auth/index.ts';
 import StatusBadgeV2, { StatusBadgeEntity } from '@components/StatusBadgeV2';
 import Loader from '@components/Loader';
+import LeaveProjectController from '@controllers/LeaveProject';
 import css from './ProjectsJoined.module.scss';
 
 interface ProjectsJoinedViewProps {
   joinedProjects: ListInvitationsOkResponse | undefined;
   useGetUserWithProjectQueryLoading: boolean;
+  projectsJoinedRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
 }
 
-function MemoizedProjectsJoinedTable({ projects }: { projects: GetInvitationResponse[] }): React.ReactElement {
+interface MemoizedProjectsJoinedTableProps {
+  projects: GetInvitationResponse[];
+  projectsJoinedRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+}
+
+function MemoizedProjectsJoinedTable(props: MemoizedProjectsJoinedTableProps): React.ReactElement {
+  const { projects, projectsJoinedRefetch } = props;
   const { getString } = useStrings();
 
   const columns: Column<GetInvitationResponse>[] = React.useMemo(() => {
@@ -40,7 +54,7 @@ function MemoizedProjectsJoinedTable({ projects }: { projects: GetInvitationResp
             <StatusBadgeV2
               key={data.projectID}
               entity={StatusBadgeEntity.PermissionGroup}
-              status={PermissionGroup.OWNER}
+              status={data.invitationRole as PermissionGroup}
             />
           );
         }
@@ -65,6 +79,7 @@ function MemoizedProjectsJoinedTable({ projects }: { projects: GetInvitationResp
         id: 'leaveProject',
         Header: '',
         Cell: ({ row: { original: data } }: { row: Row<GetInvitationResponse> }) => {
+          const { isOpen, open, close } = useToggleOpen();
           return (
             <Layout.Horizontal flex={{ justifyContent: 'flex-end' }}>
               <Button
@@ -75,7 +90,23 @@ function MemoizedProjectsJoinedTable({ projects }: { projects: GetInvitationResp
                   </Text>
                 }
                 variation={ButtonVariation.LINK}
+                onClick={() => open()}
               />
+              {isOpen && (
+                <Dialog
+                  isOpen={isOpen}
+                  canOutsideClickClose={false}
+                  canEscapeKeyClose={false}
+                  onClose={() => close()}
+                  className={css.nameChangeDialog}
+                >
+                  <LeaveProjectController
+                    handleClose={close}
+                    projectsJoinedRefetch={projectsJoinedRefetch}
+                    projectID={data.projectID}
+                  />
+                </Dialog>
+              )}
             </Layout.Horizontal>
           );
         }
@@ -89,7 +120,7 @@ function MemoizedProjectsJoinedTable({ projects }: { projects: GetInvitationResp
 }
 
 export default function ProjectsJoinedView(props: ProjectsJoinedViewProps): React.ReactElement {
-  const { joinedProjects, useGetUserWithProjectQueryLoading } = props;
+  const { joinedProjects, useGetUserWithProjectQueryLoading, projectsJoinedRefetch } = props;
   const { getString } = useStrings();
 
   return (
@@ -105,7 +136,9 @@ export default function ProjectsJoinedView(props: ProjectsJoinedViewProps): Reac
           message: getString('noProjectsJoined')
         }}
       >
-        {joinedProjects?.data && <MemoizedProjectsJoinedTable projects={joinedProjects.data} />}
+        {joinedProjects?.data && (
+          <MemoizedProjectsJoinedTable projects={joinedProjects.data} projectsJoinedRefetch={projectsJoinedRefetch} />
+        )}
       </Loader>
     </Layout.Vertical>
   );
