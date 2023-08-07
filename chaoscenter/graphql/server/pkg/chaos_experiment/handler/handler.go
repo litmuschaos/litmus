@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
 	"sort"
 	"strconv"
 	"strings"
@@ -45,7 +48,7 @@ import (
 
 // ChaosExperimentHandler is the handler for chaos experiment
 type ChaosExperimentHandler struct {
-	chaosExperimentService  types.Service
+	chaosExperimentService  ops.Service
 	infrastructureService   chaos_infrastructure.Service
 	gitOpsService           gitops.Service
 	chaosExperimentOperator *dbChaosExperiment.Operator
@@ -54,7 +57,7 @@ type ChaosExperimentHandler struct {
 
 // NewChaosExperimentHandler returns a new instance of ChaosWorkflowHandler
 func NewChaosExperimentHandler(
-	chaosExperimentService types.Service,
+	chaosExperimentService ops.Service,
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
 	chaosExperimentOperator *dbChaosExperiment.Operator,
@@ -1395,6 +1398,7 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 	workflowManifest.Labels["notify_id"] = notifyID
 	workflowManifest.Name = workflowManifest.Name + "-" + strconv.FormatInt(currentTime, 10)
 
+	var probes []dbChaosExperimentRun.Probes
 	for i, template := range workflowManifest.Spec.Templates {
 		artifact := template.Inputs.Artifacts
 		if len(artifact) > 0 {
@@ -1416,6 +1420,23 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 					if meta.Annotations != nil {
 						annotation = meta.Annotations
 					}
+
+					var annotationArray []string
+					for _, key := range annotation {
+						var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
+						err := json.Unmarshal([]byte(key), &manifestAnnotation)
+						if err != nil {
+							return nil, errors.New("failed to unmarshal experiment annotation object")
+						}
+						for _, annotationKey := range manifestAnnotation {
+							annotationArray = append(annotationArray, annotationKey.Name)
+						}
+					}
+					probes = append(probes, dbChaosExperimentRun.Probes{
+						artifact[0].Name,
+						annotationArray,
+					})
+
 					meta.Annotations = annotation
 
 					if meta.Labels == nil {
@@ -1430,6 +1451,9 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
 					}
 
+					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
+					}
 					res, err := yaml.Marshal(&meta)
 					if err != nil {
 						return nil, errors.New("failed to marshal chaosengine")
@@ -1548,6 +1572,8 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 			Completed:       false,
 			ResiliencyScore: &resScore,
 			ExecutionData:   string(parsedData),
+			Probes:          probes,
+			//TODO add probes
 		})
 		if err != nil {
 			logrus.Error("Failed to create run operation in db")
@@ -1599,7 +1625,7 @@ func (c *ChaosExperimentHandler) RunCronExperiment(ctx context.Context, projectI
 		return workflow.Revision[i].UpdatedAt > workflow.Revision[j].UpdatedAt
 	})
 
-	err := json.Unmarshal([]byte(workflow.Revision[0].ExperimentManifest), &cronExperimentManifest)
+	cronExperimentManifest, err := probe.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
 	if err != nil {
 		return errors.New("failed to unmarshal experiment manifest")
 	}
@@ -1634,6 +1660,9 @@ func (c *ChaosExperimentHandler) RunCronExperiment(ctx context.Context, projectI
 						meta.Labels["infra_id"] = workflow.InfraID
 						meta.Labels["step_pod_name"] = "{{pod.name}}"
 						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
+					}
+					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
 					}
 					res, err := yaml.Marshal(&meta)
 					if err != nil {
@@ -2340,4 +2369,101 @@ func (c *ChaosExperimentHandler) GetDBExperiment(query bson.D) (dbChaosExperimen
 		return dbChaosExperiment.ChaosExperimentRequest{}, err
 	}
 	return experiment, nil
+}
+
+func GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error) {
+	var (
+		probeDetails        []*model.GetProbesInExperimentRunResponse
+		probeStatusMap      = make(map[string]model.ProbeVerdict)
+		probeDescriptionMap = make(map[string]*string)
+		executionData       types.ExecutionData
+	)
+
+	wfRun, err := dbChaosExperimentRun.GetExperimentRun(bson.D{
+		{"project_id", projectID},
+		{"is_removed", false},
+		{"experiment_run_id", experimentRunID},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
+		return nil, errors.New("failed to unmarshal workflow manifest")
+	}
+
+	for _, _probe := range wfRun.Probes {
+		if _probe.FaultName == faultName {
+
+			mode := "SOT"
+			for _, probeName := range _probe.ProbeNames {
+				probeStatusMap[probeName] = model.ProbeVerdictNa
+				description := "Either probe is not executed or not evaluated"
+				probeDescriptionMap[probeName] = &description
+
+				if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
+					return nil, errors.New("failed to unmarshal workflow manifest")
+				}
+
+				if len(executionData.Nodes) > 0 {
+					for _, nodeData := range executionData.Nodes {
+						if nodeData.Name == faultName {
+							if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp == nil {
+								probeStatusMap[probeName] = model.ProbeVerdictNa
+							} else if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp != nil {
+								probeStatusMap[probeName] = model.ProbeVerdictNa
+								if nodeData.ChaosExp.ChaosResult != nil {
+									probeStatusMap[probeName] = model.ProbeVerdictAwaited
+									probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
+
+									for _, probeStatus := range probeStatuses {
+										if probeStatus.Name == probeName {
+											mode = probeStatus.Mode
+
+											description := probeStatus.Status.Description
+											probeDescriptionMap[probeStatus.Name] = &description
+
+											switch probeStatus.Status.Verdict {
+											case chaosTypes.ProbeVerdictPassed:
+												probeStatusMap[probeName] = model.ProbeVerdictPassed
+												break
+											case chaosTypes.ProbeVerdictFailed:
+												probeStatusMap[probeName] = model.ProbeVerdictFailed
+												break
+											case chaosTypes.ProbeVerdictAwaited:
+												probeStatusMap[probeName] = model.ProbeVerdictAwaited
+												break
+											default:
+												probeStatusMap[probeName] = model.ProbeVerdictNa
+												break
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			for _, probeName := range _probe.ProbeNames {
+				singleProbe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+				if err != nil {
+					return nil, err
+				}
+
+				probeDetails = append(probeDetails, &model.GetProbesInExperimentRunResponse{
+					Probe: singleProbe.GetOutputProbe(),
+					Mode:  model.Mode(mode),
+					Status: &model.Status{
+						Verdict:     probeStatusMap[probeName],
+						Description: probeDescriptionMap[probeName],
+					},
+				})
+			}
+
+		}
+	}
+
+	return probeDetails, nil
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 )
 
 const GRPCErrorPrefix string = "rpc error: code = Unknown desc ="
+const UnitValidationRegex string = `\b(\d+(\.\d+)?)((ns|us|ms|s|m|h))\b`
 
 // WriteHeaders adds important headers to API responses
 func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
@@ -121,4 +123,18 @@ func ParseGRPCError(err error) error {
 		return fmt.Errorf(grpcErr)
 	}
 	return err
+}
+
+func validateUnits(value string, unit string) string {
+	if len(value) == 0 {
+		return ""
+	}
+	matched, err := regexp.MatchString(UnitValidationRegex, value)
+	if err != nil {
+		return value
+	}
+	if !matched {
+		return fmt.Sprintf("%s%s", value, unit)
+	}
+	return value
 }
