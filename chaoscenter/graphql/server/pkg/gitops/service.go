@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -497,7 +498,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 		} else {
 			err = g.updateExperiment(string(data), wfID, file, config)
 			if err != nil {
-				logrus.Error("Error while creating new experiment db entry : " + file + " | " + err.Error())
+				logrus.Error("Error while updating experiment db entry : " + file + " | " + err.Error())
 				continue
 			}
 		}

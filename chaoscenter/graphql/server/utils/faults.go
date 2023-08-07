@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"strconv"
+
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"strconv"
 )
 
 func TransformProbe(probeList []v1alpha1.ProbeAttributes) []v1alpha1.ProbeAttributes {
