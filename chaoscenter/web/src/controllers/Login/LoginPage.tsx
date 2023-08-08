@@ -19,14 +19,7 @@ const LoginController: React.FC = () => {
       onSuccess: response => {
         if (response.accessToken) {
           const accountID = (jwtDecode(response.accessToken) as DecodedTokenType).uid;
-          const accountRole = (jwtDecode(response.accessToken) as DecodedTokenType).role;
-          setUserDetails({
-            token: response.accessToken,
-            projectID: response.projectID ?? '',
-            projectRole: response.projectRole ?? '',
-            accountID,
-            accountRole
-          });
+          setUserDetails(response);
           history.push(normalizePath(`/account/${accountID}/project/${response.projectID ?? ''}/dashboard`));
         }
       },

@@ -7,7 +7,11 @@ import { Dialog } from '@blueprintjs/core';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import type { PermissionGroup } from '@models';
-import type { GetInvitationResponse, ListInvitationsOkResponse } from '@api/auth/index.ts';
+import type {
+  GetInvitationResponse,
+  GetUserWithProjectOkResponse,
+  ListInvitationsOkResponse
+} from '@api/auth/index.ts';
 import StatusBadgeV2, { StatusBadgeEntity } from '@components/StatusBadgeV2';
 import Loader from '@components/Loader';
 import LeaveProjectController from '@controllers/LeaveProject';
@@ -19,6 +23,9 @@ interface ProjectsJoinedViewProps {
   projectsJoinedRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+  getUserWithProjectsRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 interface MemoizedProjectsJoinedTableProps {
@@ -26,10 +33,13 @@ interface MemoizedProjectsJoinedTableProps {
   projectsJoinedRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+  getUserWithProjectsRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 function MemoizedProjectsJoinedTable(props: MemoizedProjectsJoinedTableProps): React.ReactElement {
-  const { projects, projectsJoinedRefetch } = props;
+  const { projects, projectsJoinedRefetch, getUserWithProjectsRefetch } = props;
   const { getString } = useStrings();
 
   const columns: Column<GetInvitationResponse>[] = React.useMemo(() => {
@@ -104,6 +114,7 @@ function MemoizedProjectsJoinedTable(props: MemoizedProjectsJoinedTableProps): R
                     handleClose={close}
                     projectsJoinedRefetch={projectsJoinedRefetch}
                     projectID={data.projectID}
+                    getUserWithProjectsRefetch={getUserWithProjectsRefetch}
                   />
                 </Dialog>
               )}
@@ -120,7 +131,8 @@ function MemoizedProjectsJoinedTable(props: MemoizedProjectsJoinedTableProps): R
 }
 
 export default function ProjectsJoinedView(props: ProjectsJoinedViewProps): React.ReactElement {
-  const { joinedProjects, useGetUserWithProjectQueryLoading, projectsJoinedRefetch } = props;
+  const { joinedProjects, useGetUserWithProjectQueryLoading, projectsJoinedRefetch, getUserWithProjectsRefetch } =
+    props;
   const { getString } = useStrings();
 
   return (
@@ -137,7 +149,11 @@ export default function ProjectsJoinedView(props: ProjectsJoinedViewProps): Reac
         }}
       >
         {joinedProjects?.data && (
-          <MemoizedProjectsJoinedTable projects={joinedProjects.data} projectsJoinedRefetch={projectsJoinedRefetch} />
+          <MemoizedProjectsJoinedTable
+            projects={joinedProjects.data}
+            projectsJoinedRefetch={projectsJoinedRefetch}
+            getUserWithProjectsRefetch={getUserWithProjectsRefetch}
+          />
         )}
       </Loader>
     </Layout.Vertical>

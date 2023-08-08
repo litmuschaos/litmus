@@ -11,6 +11,7 @@ declare namespace MainNavModuleScssNamespace {
     hiddenText: string;
     hoverNavLink: string;
     hoverText: string;
+    logOutButton: string;
     main: string;
     moduleLink: string;
     modules: string;

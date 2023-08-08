@@ -38,7 +38,7 @@ export function RoutesWithAuthentication(): React.ReactElement {
   const accountRenderPaths = useRouteDefinitionsMatch('account');
 
   const { forceLogout } = useLogout();
-  const { token } = getUserDetails();
+  const { accessToken: token } = getUserDetails();
 
   useEffect(() => {
     if (!token || !isUserAuthenticated()) {
@@ -114,7 +114,7 @@ export function RoutesWithAuthentication(): React.ReactElement {
 export function RoutesWithoutAuthentication(): React.ReactElement {
   const matchPaths = useRouteDefinitionsMatch('account');
   const renderPaths = useRouteWithBaseUrl('account');
-  const { token, projectID, accountID } = getUserDetails();
+  const { accessToken: token, projectID, accountID } = getUserDetails();
   const history = useHistory();
 
   React.useEffect(() => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import LeaveProjectView from '@views/LeaveProject';
-import { ListInvitationsOkResponse, useLeaveProjectMutation } from '@api/auth/index.ts';
+import { GetUserWithProjectOkResponse, ListInvitationsOkResponse, useLeaveProjectMutation } from '@api/auth/index.ts';
 
 interface LeaveProjectControllerProps {
   handleClose: () => void;
@@ -9,15 +9,21 @@ interface LeaveProjectControllerProps {
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
   projectID: string | undefined;
+  getUserWithProjectsRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 export default function LeaveProjectController(props: LeaveProjectControllerProps): React.ReactElement {
-  const { handleClose, projectsJoinedRefetch, projectID } = props;
+  const { handleClose, projectsJoinedRefetch, projectID, getUserWithProjectsRefetch } = props;
 
   const { mutate: leaveProjectMutation } = useLeaveProjectMutation(
     {},
     {
-      onSuccess: () => projectsJoinedRefetch()
+      onSuccess: () => {
+        projectsJoinedRefetch();
+        getUserWithProjectsRefetch();
+      }
     }
   );
 

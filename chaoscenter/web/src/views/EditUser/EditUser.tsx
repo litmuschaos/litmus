@@ -1,31 +1,30 @@
-import { FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Container, FormInput, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
+import { Button, ButtonVariation, Container, FormInput, Layout, Text } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
+import { FontVariation } from '@harnessio/design-system';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import type { UpdateDetailsMutationProps, UpdateDetailsOkResponse, User } from '@api/auth/index.ts';
 
-interface AccountDetailsChangeViewProps {
+interface EditUserViewProps {
   handleClose: () => void;
-  currentUser: User | undefined;
+  userData: User | undefined;
   updateDetailsMutation: UseMutateFunction<
     UpdateDetailsOkResponse,
     unknown,
     UpdateDetailsMutationProps<never>,
     unknown
   >;
-  updateDetailsMutationLoading: boolean;
 }
-interface AccountDetailsChangeFormProps {
+interface EditUserFormProps {
   name: string;
   email: string;
 }
 
-export default function AccountDetailsChangeView(props: AccountDetailsChangeViewProps): React.ReactElement {
-  const { handleClose, currentUser, updateDetailsMutation, updateDetailsMutationLoading } = props;
+export default function EditUserView(props: EditUserViewProps): React.ReactElement {
+  const { handleClose, userData, updateDetailsMutation } = props;
   const { getString } = useStrings();
 
   function manageNameCase(newName: string): string {
@@ -36,7 +35,7 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
     return nameArrayCapitalized.join(' ');
   }
 
-  function handleSubmit(values: AccountDetailsChangeFormProps): void {
+  function handleSubmit(values: EditUserFormProps): void {
     updateDetailsMutation({
       body: {
         name: manageNameCase(values.name),
@@ -46,10 +45,10 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
     handleClose();
   }
 
-  function isUserDetailsUpdated(values: AccountDetailsChangeFormProps): boolean {
+  function isUserDetailsUpdated(values: EditUserFormProps): boolean {
     return (
-      (currentUser?.name ?? '').toLowerCase() === values.name.toLowerCase() &&
-      (currentUser?.email ?? '').toLowerCase() === values.email.toLowerCase()
+      (userData?.name ?? '').toLowerCase() === values.name.toLowerCase() &&
+      (userData?.email ?? '').toLowerCase() === values.email.toLowerCase()
     );
   }
 
@@ -60,11 +59,12 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
         <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
       </Layout.Horizontal>
       <Container>
-        <Formik<AccountDetailsChangeFormProps>
+        <Formik<EditUserFormProps>
           initialValues={{
-            name: currentUser?.name ?? '',
-            email: currentUser?.email ?? ''
+            name: userData?.name ?? '',
+            email: userData?.email ?? ''
           }}
+          enableReinitialize
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
             name: Yup.string()
@@ -95,7 +95,7 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
                       text={getString('confirm')}
-                      loading={updateDetailsMutationLoading}
+                      onClick={() => formikProps.handleSubmit()}
                       disabled={isUserDetailsUpdated(formikProps.values)}
                     />
                     <Button

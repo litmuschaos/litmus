@@ -3,6 +3,7 @@ import { ExpandingSearchInput } from '@harnessio/uicore';
 import AccountSettingsUserManagementView from '@views/AccountSettingsUserManagement';
 import { useStrings } from '@strings';
 import { useUsersQuery } from '@api/auth/index.ts';
+import { UserType } from '@models';
 
 export default function AccountSettingsUserManagementController(): React.ReactElement {
   const { getString } = useStrings();
@@ -17,6 +18,7 @@ export default function AccountSettingsUserManagementController(): React.ReactEl
   const filteredData = React.useMemo(() => {
     if (!data) return [];
     return data.filter(user => {
+      if (user.role === UserType.ADMIN) return false;
       if (!includeDisabledUsers && user.isRemoved) return false;
       if (!searchQuery) return true;
       return (

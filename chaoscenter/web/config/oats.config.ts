@@ -5,7 +5,7 @@ import { mapKeys, omit } from 'lodash-es';
 export default defineConfig({
   services: {
     auth: {
-      url: 'https://raw.githubusercontent.com/hrishavjha/litmus/master/mkdocs/docs/auth/v3.0.0/auth-api.json',
+      url: 'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/auth/v3.0.0/auth-api.json',
       output: 'src/api/auth/index.ts',
       transformer(spec) {
         return {

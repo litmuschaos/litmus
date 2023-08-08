@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -88,6 +87,9 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
 					{"$and", bson.A{
+						bson.D{{"invitation", bson.D{
+							{"$ne", entities.PendingInvitation},
+						}}},
 						bson.D{{"invitation", bson.D{
 							{"$ne", entities.DeclinedInvitation},
 						}}},
@@ -241,7 +243,7 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 		update = bson.D{
 			{"$set", bson.D{
 				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", strconv.FormatInt(time.Now().Unix(), 10)},
+				{"members.$[elem].joined_at", time.Now().Unix()},
 			}}}
 	case entities.ExitedProject:
 		update = bson.D{

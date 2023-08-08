@@ -67,7 +67,7 @@ export default function MainNav(): React.ReactElement {
           <Layout.Vertical
             flex
             spacing="xsmall"
-            className={cx(css.navLink, css.settings, css.hoverNavLink)}
+            className={cx(css.navLink, css.settings, css.hoverNavLink, css.logOutButton)}
             onClick={forceLogout}
           >
             <Icon name="log-out" size={20} />

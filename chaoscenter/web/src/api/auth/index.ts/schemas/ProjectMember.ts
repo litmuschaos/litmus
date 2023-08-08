@@ -4,10 +4,10 @@
 
 export interface ProjectMember {
   email?: string;
-  invitation?: 'Accepted' | 'Declined' | 'Exited' | 'Pending';
+  invitation: 'Accepted' | 'Declined' | 'Exited' | 'Pending';
   joinedAt?: string;
   name?: string;
-  role?: 'Editor' | 'Owner' | 'Viewer';
-  userID?: string;
-  username?: string;
+  role: 'Editor' | 'Owner' | 'Viewer';
+  userID: string;
+  username: string;
 }

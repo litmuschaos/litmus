@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import { AvatarGroup, Card, Container, Text } from '@harnessio/uicore';
 import { FontVariation, Color } from '@harnessio/design-system';
+import { useHistory } from 'react-router-dom';
 import { AppStoreContext } from '@context';
 import { useStrings } from '@strings';
 import type { Project } from '@api/auth/index.ts';
+import { setUserDetails } from '@utils';
 import styles from './ProjectCard.module.scss';
 
 interface ProjectCardProps {
@@ -12,7 +14,8 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ data }: ProjectCardProps): React.ReactElement {
   const { getString } = useStrings();
-  const { projectID, updateAppStore } = useContext(AppStoreContext);
+  const history = useHistory();
+  const { projectID, currentUserInfo } = useContext(AppStoreContext);
 
   const isSelected = projectID === data.projectID;
   const collaborators = data.members?.map(member => {
@@ -23,7 +26,12 @@ export default function ProjectCard({ data }: ProjectCardProps): React.ReactElem
   });
 
   const handleProjectSelect = (): void => {
-    updateAppStore({ projectID: data.projectID });
+    const projectRole = data.members?.find(member => member.userID === currentUserInfo?.ID)?.role;
+    setUserDetails({
+      projectRole,
+      projectID: data.projectID
+    });
+    history.replace(`/`);
   };
 
   return (

@@ -58,7 +58,10 @@ export default function UpdateProjectNameView(props: UpdateProjectNameViewProps)
           }}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
-            name: Yup.string().trim().required('Project name is required in order to update.')
+            name: Yup.string()
+              .trim()
+              .matches(/^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi, 'Name can only contain letters.')
+              .required('Project name is required in order to update.')
           })}
         >
           {formikProps => {

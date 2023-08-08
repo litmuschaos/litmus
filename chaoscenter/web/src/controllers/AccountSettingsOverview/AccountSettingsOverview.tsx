@@ -12,7 +12,7 @@ export default function AccountSettingsOverviewController(
 ): React.ReactElement {
   const { username } = props;
 
-  const { data } = useGetUserWithProjectQuery(
+  const { data, refetch: getUserWithProjectsRefetch } = useGetUserWithProjectQuery(
     {
       username: username ?? ''
     },
@@ -31,6 +31,7 @@ export default function AccountSettingsOverviewController(
   return (
     <AccountSettingsOverviewView
       userProjectData={data}
+      getUserWithProjectsRefetch={getUserWithProjectsRefetch}
       projectCount={{
         userCreatedProjects,
         userJoinedProjects

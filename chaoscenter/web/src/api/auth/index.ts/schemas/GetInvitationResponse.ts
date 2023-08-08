@@ -4,8 +4,8 @@
 import type { ProjectMember } from '../schemas/ProjectMember';
 
 export interface GetInvitationResponse {
-  invitationRole?: 'Editor' | 'Owner' | 'Viewer';
-  projectID?: string;
-  projectName?: string;
-  projectOwner?: ProjectMember;
+  invitationRole: 'Editor' | 'Owner' | 'Viewer';
+  projectID: string;
+  projectName: string;
+  projectOwner: ProjectMember;
 }

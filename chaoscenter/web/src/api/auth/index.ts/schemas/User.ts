@@ -7,11 +7,11 @@ export interface User {
   createdAt?: number;
   createdBy?: ActionBy;
   email?: string;
-  isRemoved?: boolean;
+  isRemoved: boolean;
   name?: string;
-  role?: string;
+  role: string;
   updatedAt?: number;
   updatedBy?: ActionBy;
-  userID?: string;
-  username?: string;
+  userID: string;
+  username: string;
 }

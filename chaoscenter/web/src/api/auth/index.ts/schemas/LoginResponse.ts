@@ -3,9 +3,9 @@
 // Please do not modify this code directly.
 
 export interface LoginResponse {
-  accessToken?: string;
-  expiresIn?: number;
-  projectID?: string;
-  projectRole?: string;
-  type?: string;
+  accessToken: string;
+  expiresIn: number;
+  projectID: string;
+  projectRole: string;
+  type: string;
 }

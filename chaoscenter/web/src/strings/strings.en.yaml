@@ -230,6 +230,7 @@ detailsAndProperties: Details & Properties
 disable: Disable
 disableChaosInfrastructure: Disable Chaos Infrastructure
 disableUser: Disable User
+disableUserDescription: Are you sure you want to disable this user?
 discard: Discard
 discardExperiment: Are you sure you want to discard the current experiment?
 disconnectDescriptionClusterMode: Disable Chaos for this cluster.
@@ -275,6 +276,7 @@ enableChaosInfrastructureDesc: >-
 enableImageRegistryChanges: Enable Image Registry Changes
 enableSSLCheck: Enable SSL/TLS check
 enableUser: Enable User
+enableUserDescription: Are you sure you want to enable this user?
 enablingChaos: Enabling chaos...
 endTime: End Time
 endedAt: Ended at
@@ -632,6 +634,7 @@ parallel: Parallel
 passed: Passed
 passedRuns: Passed Runs
 password: Password
+passwordResetSuccess: Password reset successfully
 pauseRun: Pause Run
 pending: Pending
 pendingTime: >-

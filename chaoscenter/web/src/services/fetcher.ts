@@ -16,7 +16,7 @@ export async function fetcher<TResponse = unknown, TQueryParams = never, TBody =
 ): Promise<TResponse> {
   const { stringifyQueryParamsOptions, headers, body, url, queryParams, ...rest } = options;
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   let finalUrl = url;
   const finalQueryParams: Record<string, string> = {};
 

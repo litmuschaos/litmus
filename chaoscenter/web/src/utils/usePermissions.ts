@@ -1,8 +1,13 @@
 import { PermissionGroup } from '@models';
-import { getUserDetails } from './userDetails';
+import { useAppStore } from '@context';
 
-export function isUserAllowed(permission: string): boolean {
-  const { projectRole } = getUserDetails();
+interface UserPermissionsProps {
+  permission: string;
+}
+
+export function usePermissions(props: UserPermissionsProps): boolean {
+  const { permission } = props;
+  const { projectRole } = useAppStore();
 
   if (projectRole) {
     if (projectRole === PermissionGroup.OWNER) {

@@ -143,6 +143,10 @@
     }
   }
 
+  .logOutButton {
+    cursor: pointer;
+  }
+
   .userName {
     overflow-wrap: anywhere;
     padding: var(--spacing-none) var(--spacing-xsmall) !important;

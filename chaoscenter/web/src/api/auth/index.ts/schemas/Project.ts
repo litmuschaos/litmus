@@ -8,9 +8,9 @@ export interface Project {
   createAt?: number;
   createdBy?: ActionBy;
   isRemoved?: boolean;
-  members?: ProjectMember[];
-  name?: string;
-  projectID?: string;
+  members: ProjectMember[];
+  name: string;
+  projectID: string;
   state?: string;
   updatedAt?: number;
   updatedBy?: ActionBy;

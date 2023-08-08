@@ -4,7 +4,7 @@ import { Popover, Layout, Text } from '@harnessio/uicore';
 import { Icon, IconName } from '@harnessio/icons';
 import { FontVariation, Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
-import { isUserAllowed } from '@utils';
+import { usePermissions } from '@utils';
 import styles from './RbacMenuItem.module.scss';
 
 export interface RbacMenuItemProps extends Omit<IMenuItemProps, 'icon'> {
@@ -14,7 +14,9 @@ export interface RbacMenuItemProps extends Omit<IMenuItemProps, 'icon'> {
 
 const RbacMenuItem: React.FC<RbacMenuItemProps> = ({ permission, icon, ...restProps }) => {
   const { getString } = useStrings();
-  const disabled = isUserAllowed(permission);
+  const disabled = usePermissions({
+    permission
+  });
 
   const toolTip = (
     <Layout.Vertical padding="small">

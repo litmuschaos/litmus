@@ -5,7 +5,7 @@ import { ListInvitationsOkResponse, useDeclineInvitationMutation } from '@api/au
 
 interface DeleteProjectInvitationControllerProps {
   handleClose: () => void;
-  listInvitationsMutationRefetch: <TPageData>(
+  listInvitationsRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
   projectID: string | undefined;
@@ -14,10 +14,10 @@ interface DeleteProjectInvitationControllerProps {
 export default function DeleteProjectInvitationController(
   props: DeleteProjectInvitationControllerProps
 ): React.ReactElement {
-  const { handleClose, listInvitationsMutationRefetch, projectID } = props;
+  const { handleClose, listInvitationsRefetch, projectID } = props;
   const { mutate: declineInvitationMutation } = useDeclineInvitationMutation(
     {},
-    { onSuccess: () => listInvitationsMutationRefetch() }
+    { onSuccess: () => listInvitationsRefetch() }
   );
 
   return (

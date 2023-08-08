@@ -15,6 +15,7 @@ import type {
   AcceptInvitationMutationProps,
   AcceptInvitationOkResponse,
   GetInvitationResponse,
+  GetUserWithProjectOkResponse,
   ListInvitationsOkResponse
 } from '@api/auth/index.ts';
 import Loader from '@components/Loader';
@@ -25,7 +26,7 @@ import css from './ProjectsInvitation.module.scss';
 interface ProjectsInvitationsViewProps {
   invitations: ListInvitationsOkResponse | undefined;
   useListInvitationsQueryLoading: boolean;
-  listInvitationsMutationRefetch: <TPageData>(
+  listInvitationsRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
   acceptInvitationMutation: UseMutateFunction<
@@ -34,6 +35,12 @@ interface ProjectsInvitationsViewProps {
     AcceptInvitationMutationProps<never>,
     unknown
   >;
+  projectsJoinedRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+  getUserWithProjectsRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 interface InvitationsTableProps {
@@ -44,13 +51,25 @@ interface InvitationsTableProps {
     AcceptInvitationMutationProps<never>,
     unknown
   >;
-  listInvitationsMutationRefetch: <TPageData>(
+  listInvitationsRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+  projectsJoinedRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
+  getUserWithProjectsRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElement {
-  const { invitations, acceptInvitationMutation, listInvitationsMutationRefetch } = props;
+  const {
+    invitations,
+    acceptInvitationMutation,
+    listInvitationsRefetch,
+    projectsJoinedRefetch,
+    getUserWithProjectsRefetch
+  } = props;
   const { getString } = useStrings();
 
   const columns: Column<GetInvitationResponse>[] = React.useMemo(() => {
@@ -108,7 +127,9 @@ function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElem
                     },
                     {
                       onSuccess: () => {
-                        listInvitationsMutationRefetch();
+                        listInvitationsRefetch();
+                        projectsJoinedRefetch();
+                        getUserWithProjectsRefetch();
                       }
                     }
                   )
@@ -131,7 +152,7 @@ function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElem
                 >
                   <DeleteProjectInvitationController
                     handleClose={close}
-                    listInvitationsMutationRefetch={listInvitationsMutationRefetch}
+                    listInvitationsRefetch={listInvitationsRefetch}
                     projectID={data.projectID}
                   />
                 </Dialog>
@@ -155,8 +176,14 @@ function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElem
 }
 
 export default function ProjectsInvitationsView(props: ProjectsInvitationsViewProps): React.ReactElement {
-  const { invitations, useListInvitationsQueryLoading, acceptInvitationMutation, listInvitationsMutationRefetch } =
-    props;
+  const {
+    invitations,
+    useListInvitationsQueryLoading,
+    acceptInvitationMutation,
+    listInvitationsRefetch,
+    projectsJoinedRefetch,
+    getUserWithProjectsRefetch
+  } = props;
   const { getString } = useStrings();
 
   return (
@@ -176,7 +203,9 @@ export default function ProjectsInvitationsView(props: ProjectsInvitationsViewPr
           <MemoizedInvitationsTable
             invitations={invitations?.data}
             acceptInvitationMutation={acceptInvitationMutation}
-            listInvitationsMutationRefetch={listInvitationsMutationRefetch}
+            listInvitationsRefetch={listInvitationsRefetch}
+            projectsJoinedRefetch={projectsJoinedRefetch}
+            getUserWithProjectsRefetch={getUserWithProjectsRefetch}
           />
         )}
       </Loader>

@@ -20,6 +20,9 @@ import type { User, Users } from '@api/auth/index.ts';
 import { getFormattedTime, killEvent } from '@utils';
 import Loader from '@components/Loader';
 import CreateNewUserController from '@controllers/CreateNewUser';
+import EditUserController from '@controllers/EditUser';
+import ResetPasswordController from '@controllers/ResetPassword';
+import EnableDisableUserController from '@controllers/EnableDisableUser';
 import css from './AccountSettingsUserManagement.module.scss';
 
 interface AccountSettingsUserManagementViewProps {
@@ -35,7 +38,14 @@ interface AccountSettingsUserManagementViewProps {
   ) => Promise<QueryObserverResult<Users, unknown>>;
 }
 
-function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
+interface MemoizedUsersTableProps {
+  users: User[];
+  getUsersRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<Users, unknown>>;
+}
+
+function MemoizedUsersTable({ users, getUsersRefetch }: MemoizedUsersTableProps): React.ReactElement {
   const { getString } = useStrings();
   const columns: Column<User>[] = React.useMemo(() => {
     return [
@@ -107,6 +117,18 @@ function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
         id: 'menuItems',
         Header: '',
         Cell: ({ row: { original: data } }: { row: Row<User> }) => {
+          const { isOpen: isEditModalOpen, open: openEditModal, close: closeEditModal } = useToggleOpen();
+          const {
+            isOpen: isResetPasswordModalOpen,
+            open: openResetPasswordModal,
+            close: closeResetPasswordModal
+          } = useToggleOpen();
+          const {
+            isOpen: isEnableDisableModalOpen,
+            open: openEnableDisableModal,
+            close: closeEnableDisableModal
+          } = useToggleOpen();
+
           return (
             <Layout.Vertical flex={{ justifyContent: 'center', alignItems: 'flex-end' }} onClick={killEvent}>
               <Popover
@@ -117,25 +139,58 @@ function MemoizedUsersTable({ users }: { users: User[] }): React.ReactElement {
               >
                 <Button variation={ButtonVariation.ICON} icon="Options" />
                 <Menu style={{ backgroundColor: 'unset' }}>
-                  <Menu.Item
-                    text={getString('edit')}
-                    icon="edit"
-                    onClick={() => alert(`${data.name} edit modal opens here`)}
-                  />
-                  <Menu.Divider />
-                  <Menu.Item
-                    text={getString('resetPassword')}
-                    icon="lock"
-                    onClick={() => alert(`${data.name} edit modal opens here`)}
-                  />
+                  <Menu.Item text={getString('edit')} icon="edit" onClick={() => openEditModal()} disabled />
+                  <Menu.Item text={getString('resetPassword')} icon="lock" onClick={() => openResetPasswordModal()} />
                   <Menu.Divider />
                   <Menu.Item
                     text={data.isRemoved ? getString('enableUser') : getString('disableUser')}
                     icon={data.isRemoved ? 'unlock' : 'lock'}
-                    onClick={() => alert(`${data.name} edit modal opens here`)}
+                    onClick={() => openEnableDisableModal()}
                   />
                 </Menu>
               </Popover>
+              {isEditModalOpen && (
+                <Dialog
+                  isOpen={isEditModalOpen}
+                  canOutsideClickClose={false}
+                  canEscapeKeyClose={false}
+                  onClose={() => closeEditModal()}
+                  className={css.nameChangeDialog}
+                >
+                  <EditUserController
+                    handleClose={closeEditModal}
+                    userID={data.userID}
+                    getUsersRefetch={getUsersRefetch}
+                  />
+                </Dialog>
+              )}
+              {isResetPasswordModalOpen && (
+                <Dialog
+                  isOpen={isResetPasswordModalOpen}
+                  canOutsideClickClose={false}
+                  canEscapeKeyClose={false}
+                  onClose={() => closeResetPasswordModal()}
+                  className={css.nameChangeDialog}
+                >
+                  <ResetPasswordController username={data.username} handleClose={closeResetPasswordModal} />
+                </Dialog>
+              )}
+              {isEnableDisableModalOpen && (
+                <Dialog
+                  isOpen={isEnableDisableModalOpen}
+                  canOutsideClickClose={false}
+                  canEscapeKeyClose={false}
+                  onClose={() => closeEnableDisableModal()}
+                  className={css.nameChangeDialog}
+                >
+                  <EnableDisableUserController
+                    username={data.username}
+                    currentState={data.isRemoved}
+                    handleClose={closeEnableDisableModal}
+                    getUsersRefetch={getUsersRefetch}
+                  />
+                </Dialog>
+              )}
             </Layout.Vertical>
           );
         }
@@ -200,7 +255,9 @@ export default function AccountSettingsUserManagementView(
           <Text font={{ variation: FontVariation.H4 }}>
             {getString('totalUsers')}: {usersData?.length ?? 0}
           </Text>
-          <Container style={{ flexGrow: 1 }}>{usersData && <MemoizedUsersTable users={usersData} />}</Container>
+          <Container style={{ flexGrow: 1 }}>
+            {usersData && <MemoizedUsersTable users={usersData} getUsersRefetch={getUsersRefetch} />}
+          </Container>
         </Loader>
       </Layout.Vertical>
     </Layout.Vertical>

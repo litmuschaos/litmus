@@ -191,6 +191,7 @@ export interface StringsMap {
   'disable': unknown
   'disableChaosInfrastructure': unknown
   'disableUser': unknown
+  'disableUserDescription': unknown
   'discard': unknown
   'discardExperiment': unknown
   'disconnectDescriptionClusterMode': unknown
@@ -228,6 +229,7 @@ export interface StringsMap {
   'enableImageRegistryChanges': unknown
   'enableSSLCheck': unknown
   'enableUser': unknown
+  'enableUserDescription': unknown
   'enablingChaos': unknown
   'endTime': unknown
   'endedAt': unknown
@@ -518,6 +520,7 @@ export interface StringsMap {
   'passed': unknown
   'passedRuns': unknown
   'password': unknown
+  'passwordResetSuccess': unknown
   'pauseRun': unknown
   'pending': unknown
   'pendingTime': unknown
