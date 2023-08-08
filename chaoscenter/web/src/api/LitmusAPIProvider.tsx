@@ -37,11 +37,9 @@ function createApolloClient({
   if (!httpLinkUri) return undefined;
 
   let httpLink: HttpLink | null = null;
-  if (httpLinkUri) {
-    httpLink = new HttpLink({
-      uri: httpLinkUri
-    });
-  }
+  httpLink = new HttpLink({
+    uri: httpLinkUri
+  });
 
   const authLink = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
@@ -56,10 +54,7 @@ function createApolloClient({
   });
 
   const links: (ApolloLink | RequestHandler)[] = [authLink];
-
-  if (httpLink) {
-    links.push(httpLink);
-  }
+  links.push(httpLink);
 
   const client = new ApolloClient({
     link: from(links),
@@ -86,7 +81,7 @@ export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({
     }
   });
 
-  return apolloClient && reactQueryClient ? (
+  return apolloClient ? (
     <QueryClientProvider client={reactQueryClient}>
       <ApolloProvider client={apolloClient}>{children}</ApolloProvider>
     </QueryClientProvider>

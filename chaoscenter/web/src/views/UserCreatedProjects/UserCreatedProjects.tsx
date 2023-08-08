@@ -65,15 +65,15 @@ function MemoizedUserCreatedProjectsTable({
         Header: 'Members',
         Cell: ({ row: { original: data } }: { row: Row<Project> }) => {
           return (
-            data.members && (
-              <AvatarGroup
-                avatarGroupProps={{ hoverCard: false }}
-                avatars={data?.members?.map(member => ({
+            <AvatarGroup
+              avatarGroupProps={{ hoverCard: false }}
+              avatars={
+                data?.members?.map(member => ({
                   name: member.name
-                }))}
-                restrictLengthTo={5}
-              />
-            )
+                })) ?? []
+              }
+              restrictLengthTo={5}
+            />
           );
         }
       },
