@@ -20,7 +20,6 @@ import type { User, Users } from '@api/auth/index.ts';
 import { getFormattedTime, killEvent } from '@utils';
 import Loader from '@components/Loader';
 import CreateNewUserController from '@controllers/CreateNewUser';
-import EditUserController from '@controllers/EditUser';
 import ResetPasswordController from '@controllers/ResetPassword';
 import EnableDisableUserController from '@controllers/EnableDisableUser';
 import css from './AccountSettingsUserManagement.module.scss';
@@ -117,7 +116,6 @@ function MemoizedUsersTable({ users, getUsersRefetch }: MemoizedUsersTableProps)
         id: 'menuItems',
         Header: '',
         Cell: ({ row: { original: data } }: { row: Row<User> }) => {
-          const { isOpen: isEditModalOpen, open: openEditModal, close: closeEditModal } = useToggleOpen();
           const {
             isOpen: isResetPasswordModalOpen,
             open: openResetPasswordModal,
@@ -139,8 +137,7 @@ function MemoizedUsersTable({ users, getUsersRefetch }: MemoizedUsersTableProps)
               >
                 <Button variation={ButtonVariation.ICON} icon="Options" />
                 <Menu style={{ backgroundColor: 'unset' }}>
-                  <Menu.Item text={getString('edit')} icon="edit" onClick={() => openEditModal()} disabled />
-                  <Menu.Item text={getString('resetPassword')} icon="lock" onClick={() => openResetPasswordModal()} />
+                  <Menu.Item text={getString('resetPassword')} icon="edit" onClick={() => openResetPasswordModal()} />
                   <Menu.Divider />
                   <Menu.Item
                     text={data.isRemoved ? getString('enableUser') : getString('disableUser')}
@@ -149,21 +146,6 @@ function MemoizedUsersTable({ users, getUsersRefetch }: MemoizedUsersTableProps)
                   />
                 </Menu>
               </Popover>
-              {isEditModalOpen && (
-                <Dialog
-                  isOpen={isEditModalOpen}
-                  canOutsideClickClose={false}
-                  canEscapeKeyClose={false}
-                  onClose={() => closeEditModal()}
-                  className={css.nameChangeDialog}
-                >
-                  <EditUserController
-                    handleClose={closeEditModal}
-                    userID={data.userID}
-                    getUsersRefetch={getUsersRefetch}
-                  />
-                </Dialog>
-              )}
               {isResetPasswordModalOpen && (
                 <Dialog
                   isOpen={isResetPasswordModalOpen}
