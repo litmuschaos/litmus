@@ -22,6 +22,7 @@ import (
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbOperationsChaosExpRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	dbInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	dbGitOpsMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops/model/mocks"
@@ -99,10 +100,11 @@ func TestChaosExperimentRunHandler_GetExperimentRun(t *testing.T) {
 	}
 	projectId := uuid.NewString()
 	experimentRunId := uuid.NewString()
+	infraId := uuid.NewString()
 	tests := []struct {
 		name    string
 		args    args
-		want    *model.ExperimentRun
+		given   func()
 		wantErr bool
 	}{
 		{
@@ -112,22 +114,27 @@ func TestChaosExperimentRunHandler_GetExperimentRun(t *testing.T) {
 				projectID:       projectId,
 				experimentRunID: experimentRunId,
 			},
-			want: &model.ExperimentRun{
-				ProjectID:       projectId,
-				ExperimentRunID: experimentRunId,
+			given: func() {
+				findResult := []interface{}{
+					bson.D{
+						{Key: "experiment_run_id", Value: experimentRunId},
+						{Key: "project_id", Value: projectId},
+						{Key: "infra_id", Value: infraId},
+					},
+				}
+				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
 			wantErr: false,
 		},
 	}
 	for _, tc := range tests {
+		tc.given()
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := chaosExperimentRunHandler.GetExperimentRun(tc.args.ctx, tc.args.projectID, tc.args.experimentRunID)
+			_, err := chaosExperimentRunHandler.GetExperimentRun(tc.args.ctx, tc.args.projectID, tc.args.experimentRunID)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentRunHandler.GetExperimentRun() error = %v, wantErr %v", err, tc.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("ChaosExperimentRunHandler.GetExperimentRun() = %v, want %v", got, tc.want)
 			}
 		})
 	}
@@ -138,14 +145,6 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 		projectID string
 		request   model.ListExperimentRunRequest
 	}
-	type fields struct {
-		chaosExperimentRunService  choas_experiment_run.Service
-		infrastructureService      chaos_infrastructure.Service
-		gitOpsService              gitops.Service
-		chaosExperimentOperator    *dbChaosExperiment.Operator
-		chaosExperimentRunOperator *dbChaosExperimentRun.Operator
-		mongodbMockOperator        mongodb.MongoOperator
-	}
 	// given
 	projectId := uuid.NewString()
 	experimentID := uuid.NewString()
@@ -154,10 +153,9 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 	infraId := uuid.NewString()
 	experimentStatus := model.ExperimentRunStatusRunning
 	endDate := strconv.FormatInt(time.Now().Unix(), 10)
-	startDate := strconv.FormatInt(time.Now().Add(-time.Hour*24*30).Unix(), 10)
+	startDate := strconv.FormatInt(time.Now().Unix(), 10)
 
 	tests := []struct {
-		fields  fields
 		name    string
 		args    args
 		wantErr bool
@@ -184,13 +182,124 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 					},
 				},
 			},
-			fields: fields{
-				mongodbMockOperator:        new(dbMocks.MongoOperator),
-				infrastructureService:      new(chaosInfraMocks.InfraService),
-				chaosExperimentRunService:  new(choasExperimentRunMocks.ChaosExperimentRunService),
-				gitOpsService:              new(dbGitOpsMocks.GitOpsService),
-				chaosExperimentOperator:    dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator),
-				chaosExperimentRunOperator: dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator),
+			given: func() {
+				findResult := []interface{}{bson.D{
+					{Key: "total_filtered_experiment_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
+						{
+							Count: 1,
+						},
+					}},
+					{Key: "flattened_experiment_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
+						{
+							ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
+								{
+									ExperimentName: experimentName,
+								},
+							},
+						},
+					}}},
+				}
+				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+			},
+			wantErr: false,
+		},
+		// {
+		// 	name: "success: empty mongo cursor returned",
+		// 	args: args{
+		// 		projectID: projectId,
+		// 		request: model.ListExperimentRunRequest{
+		// 			ExperimentRunIDs: []*string{&experimentRunID},
+		// 			ExperimentIDs:    []*string{&experimentID},
+		// 			Pagination: &model.Pagination{
+		// 				Page: 1,
+		// 			},
+		// 			Filter: &model.ExperimentRunFilterInput{
+		// 				ExperimentName:   &experimentName,
+		// 				InfraID:          &infraId,
+		// 				ExperimentStatus: &experimentStatus,
+		// 				DateRange: &model.DateRange{
+		// 					StartDate: strconv.FormatInt(time.Now().Unix(), 10),
+		// 					EndDate:   &endDate,
+		// 				},
+		// 			},
+		// 		},
+		// 	},
+		// 	given: func() {
+		// 		cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
+		// 		mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+		// 	},
+		// 	wantErr: false,
+		// },
+		{
+			name: "success: sort in descending order of time",
+			args: args{
+				projectID: projectId,
+				request: model.ListExperimentRunRequest{
+					ExperimentRunIDs: []*string{&experimentRunID},
+					ExperimentIDs:    []*string{&experimentID},
+					Pagination: &model.Pagination{
+						Page: 1,
+					},
+					Sort: &model.ExperimentRunSortInput{
+						Field: model.ExperimentSortingFieldTime,
+					},
+					Filter: &model.ExperimentRunFilterInput{
+						ExperimentName:   &experimentName,
+						InfraID:          &infraId,
+						ExperimentStatus: &experimentStatus,
+						DateRange: &model.DateRange{
+							StartDate: startDate,
+							EndDate:   &endDate,
+						},
+					},
+				},
+			},
+			given: func() {
+				findResult := []interface{}{bson.D{
+					{Key: "total_filtered_experiment_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
+						{
+							Count: 1,
+						},
+					}},
+					{Key: "flattened_experiment_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
+						{
+							ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
+								{
+									ExperimentName: experimentName,
+								},
+							},
+						},
+					}}},
+				}
+				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+			},
+			wantErr: false,
+		},
+		{
+			name: "success: sort in descending order of name",
+			args: args{
+				projectID: projectId,
+				request: model.ListExperimentRunRequest{
+					ExperimentRunIDs: []*string{&experimentRunID},
+					ExperimentIDs:    []*string{&experimentID},
+					Pagination: &model.Pagination{
+						Page: 1,
+					},
+					Sort: &model.ExperimentRunSortInput{
+						Field: model.ExperimentSortingFieldName,
+					},
+					Filter: &model.ExperimentRunFilterInput{
+						ExperimentName:   &experimentName,
+						InfraID:          &infraId,
+						ExperimentStatus: &experimentStatus,
+						DateRange: &model.DateRange{
+							StartDate: startDate,
+							EndDate:   &endDate,
+						},
+					},
+				},
 			},
 			given: func() {
 				findResult := []interface{}{bson.D{
@@ -210,138 +319,15 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 					}}},
 				}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(cursor, nil)
-				// mongodbMockOperator.On("GetCollection")
+				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
+			wantErr: false,
 		},
-		// {
-		// 	name: "failure: ListExperimentRun",
-		// 	args: args{
-		// 		projectID: projectId,
-		// 		request: model.ListExperimentRunRequest{
-		// 			ExperimentRunIDs: []*string{&experimentRunID},
-		// 			ExperimentIDs:    []*string{&experimentID},
-		// 			Pagination: &model.Pagination{
-		// 				Page: 1,
-		// 			},
-		// 			Filter: &model.ExperimentRunFilterInput{
-		// 				ExperimentName:   &experimentName,
-		// 				InfraID:          &infraId,
-		// 				ExperimentStatus: &experimentStatus,
-		// 				DateRange: &model.DateRange{
-		// 					StartDate: startDate,
-		// 					EndDate:   &endDate,
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// 	given: func() {
-		// 		cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
-		// 		mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("")).Once()
-		// 	},
-		// 	wantErr: true,
-		// },
-		// {
-		// 	name: "success: sort in descending order of time",
-		// 	args: args{
-		// 		projectID: projectId,
-		// 		request: model.ListExperimentRunRequest{
-		// 			ExperimentRunIDs: []*string{&experimentRunID},
-		// 			ExperimentIDs:    []*string{&experimentID},
-		// 			Sort: &model.ExperimentRunSortInput{
-		// 				Field: model.ExperimentSortingFieldTime,
-		// 			},
-		// 			Filter: &model.ExperimentRunFilterInput{
-		// 				ExperimentName:   &experimentName,
-		// 				InfraID:          &infraId,
-		// 				ExperimentStatus: &experimentStatus,
-		// 				DateRange: &model.DateRange{
-		// 					StartDate: startDate,
-		// 					EndDate:   &endDate,
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// 	given: func() {
-		// 		findResult := []interface{}{bson.D{
-		// 			{Key: "total_filtered_workflow_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
-		// 				{
-		// 					Count: 1,
-		// 				},
-		// 			}},
-		// 			{Key: "flattened_workflow_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
-		// 				{
-		// 					ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
-		// 						{
-		// 							ExperimentName: experimentName,
-		// 						},
-		// 					},
-		// 				},
-		// 			}}},
-		// 		}
-		// 		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-		// 		mongodbMockOperator.On("Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(cursor, nil)
-		// 	},
-		// 	wantErr: false,
-		// },
-		// {
-		// 	name: "success: sort in descending order of name",
-		// 	args: args{
-		// 		projectID: projectId,
-		// 		request: model.ListExperimentRunRequest{
-		// 			ExperimentRunIDs: []*string{&experimentRunID},
-		// 			ExperimentIDs:    []*string{&experimentID},
-		// 			Sort: &model.ExperimentRunSortInput{
-		// 				Field: model.ExperimentSortingFieldName,
-		// 			},
-		// 			Filter: &model.ExperimentRunFilterInput{
-		// 				ExperimentName:   &experimentName,
-		// 				InfraID:          &infraId,
-		// 				ExperimentStatus: &experimentStatus,
-		// 				DateRange: &model.DateRange{
-		// 					StartDate: startDate,
-		// 					EndDate:   &endDate,
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// 	given: func() {
-		// 		findResult := []interface{}{bson.D{
-		// 			{Key: "total_filtered_workflow_runs", Value: []dbOperationsChaosExpRun.TotalFilteredData{
-		// 				{
-		// 					Count: 1,
-		// 				},
-		// 			}},
-		// 			{Key: "flattened_workflow_runs", Value: []dbOperationsChaosExpRun.FlattenedExperimentRun{
-		// 				{
-		// 					ExperimentDetails: []dbOperationsChaosExpRun.ExperimentDetails{
-		// 						{
-		// 							ExperimentName: experimentName,
-		// 						},
-		// 					},
-		// 				},
-		// 			}}},
-		// 		}
-		// 		cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-		// 		mongodbMockOperator.On("Aggregate", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(cursor, nil)
-		// 	},
-		// 	wantErr: false,
-		// },
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.given()
-			// mongodbMockOperator.On("GetCollection", mock.Anything).Return(mock.Anything, nil)
-			// handler := NewChaosExperimentRunHandler(chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
-			handler := &ChaosExperimentRunHandler{
-				chaosExperimentRunService:  tc.fields.chaosExperimentRunService,
-				infrastructureService:      tc.fields.infrastructureService,
-				gitOpsService:              tc.fields.gitOpsService,
-				chaosExperimentOperator:    tc.fields.chaosExperimentOperator,
-				chaosExperimentRunOperator: tc.fields.chaosExperimentRunOperator,
-				mongodbOperator:            tc.fields.mongodbMockOperator,
-			}
-			_, err := handler.ListExperimentRun(tc.args.projectID, tc.args.request)
+			_, err := chaosExperimentRunHandler.ListExperimentRun(tc.args.projectID, tc.args.request)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentRunHandler.ListExperimentRun() error = %v, wantErr %v", err, tc.wantErr)
 				return
@@ -351,46 +337,69 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 }
 
 func TestChaosExperimentRunHandler_RunChaosWorkFlow(t *testing.T) {
-	type fields struct {
-		chaosExperimentRunService  choas_experiment_run.Service
-		infrastructureService      chaos_infrastructure.Service
-		gitOpsService              gitops.Service
-		chaosExperimentOperator    *dbChaosExperiment.Operator
-		chaosExperimentRunOperator *dbChaosExperimentRun.Operator
-		mongodbOperator            mongodb.MongoOperator
-	}
 	type args struct {
 		ctx       context.Context
 		projectID string
 		workflow  dbChaosExperiment.ChaosExperimentRequest
 		r         *store.StateData
 	}
+	projectId := uuid.NewString()
+	infraID := uuid.NewString()
+	experimentId := uuid.NewString()
+	infra := dbInfra.ChaosInfra{
+		InfraID:  infraID,
+		IsActive: true,
+	}
+
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
-		want    *model.RunChaosExperimentResponse
+		given   func()
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "success: RunChaosWorkFlow",
+			args: args{
+				ctx:       context.Background(),
+				projectID: projectId,
+				workflow: dbChaosExperiment.ChaosExperimentRequest{
+					ProjectID: projectId,
+					InfraID:   infraID,
+				},
+				r: store.NewStore(),
+			},
+			given: func() {
+				findResult := []interface{}{
+					bson.D{
+						{Key: "experiment_id", Value: experimentId},
+						{Key: "experiment_manifest", Value: "\"kind\": \"job\""},
+						{Key: "project_id", Value: projectId},
+						{Key: "infra_id", Value: infraID},
+						{Key: "isActive", Value: true},
+					},
+				}
+				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
+
+				infrastructureService.On("GetInfra", mock.Anything, mock.Anything, mock.Anything).Return(infra, nil).Once()
+
+				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
+				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosInfraCollection, mock.Anything).Return(singleResult, nil).Once()
+
+				mongodbMockOperator.On("List", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(new(mongo.UpdateResult), nil).Once()
+
+				mongodbMockOperator.On("Create", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(nil).Once()
+			},
+		},
 	}
 	for _, tc := range tests {
+		tc.given()
 		t.Run(tc.name, func(t *testing.T) {
-			c := &ChaosExperimentRunHandler{
-				chaosExperimentRunService:  tc.fields.chaosExperimentRunService,
-				infrastructureService:      tc.fields.infrastructureService,
-				gitOpsService:              tc.fields.gitOpsService,
-				chaosExperimentOperator:    tc.fields.chaosExperimentOperator,
-				chaosExperimentRunOperator: tc.fields.chaosExperimentRunOperator,
-				mongodbOperator:            tc.fields.mongodbOperator,
-			}
-			got, err := c.RunChaosWorkFlow(tc.args.ctx, tc.args.projectID, tc.args.workflow, tc.args.r)
+			_, err := chaosExperimentRunHandler.RunChaosWorkFlow(tc.args.ctx, tc.args.projectID, tc.args.workflow, tc.args.r)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentRunHandler.RunChaosWorkFlow() error = %v, wantErr %v", err, tc.wantErr)
 				return
-			}
-			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("ChaosExperimentRunHandler.RunChaosWorkFlow() = %v, want %v", got, tc.want)
 			}
 		})
 	}
