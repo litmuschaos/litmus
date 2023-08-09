@@ -15,11 +15,24 @@ export default function AccountSettingsUserManagementController(): React.ReactEl
     <ExpandingSearchInput placeholder={getString('search')} alwaysExpanded onChange={value => setSearchQuery(value)} />
   );
 
-  function isSearchedValuePresentInUser(user: User): boolean {
+  /**
+   *
+   * @typedef {Object} User
+   * @param user The user to check against the filter criteria.
+   * @description This filter works on following rules:
+   * If the user role is an admin, they will not be shown in the list.
+   * If the user is disabled and the includeDisabledUsers flag is false, they will not be shown in the list.
+   * If the user's name, username, or email includes the search query, they will be shown in the list.
+   * @returns A boolean indicating whether the user should be shown in the list or not.
+   */
+  function doesFilterCriteriaMatch(user: User): boolean {
+    const updatedSearchQuery = searchQuery.trim();
+    if (user.role === UserType.ADMIN) return false;
+    if (!includeDisabledUsers && user.isRemoved) return false;
     if (
-      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+      user.name?.toLowerCase().includes(updatedSearchQuery.toLowerCase()) ||
+      user.username?.toLowerCase().includes(updatedSearchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(updatedSearchQuery.toLowerCase())
     )
       return true;
     return false;
@@ -27,12 +40,7 @@ export default function AccountSettingsUserManagementController(): React.ReactEl
 
   const filteredData = React.useMemo(() => {
     if (!data) return [];
-    return data.filter(user => {
-      if (user.role === UserType.ADMIN) return false;
-      if (!includeDisabledUsers && user.isRemoved) return false;
-      if (!searchQuery) return true;
-      return isSearchedValuePresentInUser(user);
-    });
+    return data.filter(user => doesFilterCriteriaMatch(user));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, includeDisabledUsers, searchQuery]);
 
