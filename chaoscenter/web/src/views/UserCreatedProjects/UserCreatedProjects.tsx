@@ -20,11 +20,9 @@ interface UserCreatedProjectsViewProps {
   ) => Promise<QueryObserverResult<GetOwnerProjectsOkResponse, unknown>>;
 }
 
-interface MemoizedUserCreatedProjectsTableProps {
+interface MemoizedUserCreatedProjectsTableProps
+  extends Omit<UserCreatedProjectsViewProps, 'projectData' | 'useGetOwnerProjectsQuery'> {
   projects: Project[];
-  getProjectDataRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<GetOwnerProjectsOkResponse, unknown>>;
 }
 
 function MemoizedUserCreatedProjectsTable({

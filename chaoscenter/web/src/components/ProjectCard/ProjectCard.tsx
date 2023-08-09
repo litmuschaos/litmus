@@ -41,7 +41,7 @@ export default function ProjectCard({ data }: ProjectCardProps): React.ReactElem
           {data?.name}
         </Text>
         <Text font={{ variation: FontVariation.TINY }} lineClamp={1} color={Color.GREY_700}>
-          {getString('id')}: {data?.projectID}
+          {getString('id')}: {data.projectID ?? getString('NASlash')}
         </Text>
         <Container margin={{ top: 'small' }}>
           <Text

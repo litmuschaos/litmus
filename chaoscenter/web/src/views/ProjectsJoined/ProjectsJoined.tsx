@@ -28,14 +28,9 @@ interface ProjectsJoinedViewProps {
   ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
-interface MemoizedProjectsJoinedTableProps {
+interface MemoizedProjectsJoinedTableProps
+  extends Omit<ProjectsJoinedViewProps, 'joinedProjects' | 'useGetUserWithProjectQueryLoading'> {
   projects: GetInvitationResponse[];
-  projectsJoinedRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
-  getUserWithProjectsRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 function MemoizedProjectsJoinedTable(props: MemoizedProjectsJoinedTableProps): React.ReactElement {

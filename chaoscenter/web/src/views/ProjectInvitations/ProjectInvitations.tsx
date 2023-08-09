@@ -43,23 +43,9 @@ interface ProjectsInvitationsViewProps {
   ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
-interface InvitationsTableProps {
+interface InvitationsTableProps
+  extends Omit<ProjectsInvitationsViewProps, 'invitations' | 'useListInvitationsQueryLoading'> {
   invitations: GetInvitationResponse[];
-  acceptInvitationMutation: UseMutateFunction<
-    AcceptInvitationOkResponse,
-    unknown,
-    AcceptInvitationMutationProps<never>,
-    unknown
-  >;
-  listInvitationsRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
-  projectsJoinedRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<ListInvitationsOkResponse, unknown>>;
-  getUserWithProjectsRefetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<GetUserWithProjectOkResponse, unknown>>;
 }
 
 function MemoizedInvitationsTable(props: InvitationsTableProps): React.ReactElement {

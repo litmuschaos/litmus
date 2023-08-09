@@ -9,6 +9,7 @@ import {
 import UserCreatedProjectsView from '@views/UserCreatedProjects';
 import ProjectsJoinedView from '@views/ProjectsJoined';
 import ProjectInvitationsView from '@views/ProjectInvitations';
+import { InvitationState } from '@models';
 
 interface AccountSettingsOverviewProjectsControllerProps {
   getUserWithProjectsRefetch: <TPageData>(
@@ -29,7 +30,7 @@ export default function AccountSettingsOverviewProjectsController({
     isLoading: projectsJoinedLoading,
     refetch: projectsJoinedRefetch
   } = useListInvitationsQuery({
-    invitation_state: 'Accepted'
+    invitation_state: InvitationState.ACCEPTED
   });
   const {
     data: invitationsData,
@@ -37,7 +38,7 @@ export default function AccountSettingsOverviewProjectsController({
     refetch: listInvitationsRefetch
   } = useListInvitationsQuery(
     {
-      invitation_state: 'Pending'
+      invitation_state: InvitationState.PENDING
     },
     {
       refetchInterval: 10000

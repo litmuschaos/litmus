@@ -21,7 +21,7 @@ export interface DefaultLayoutTemplateProps {
     message: React.ReactNode;
   };
   loading?: boolean;
-  hidSideNav?: boolean;
+  hideSideNav?: boolean;
 }
 
 export default function DefaultLayoutTemplate({
@@ -35,7 +35,7 @@ export default function DefaultLayoutTemplate({
   levelUpBanner,
   loading,
   children,
-  hidSideNav
+  hideSideNav
 }: React.PropsWithChildren<DefaultLayoutTemplateProps>): React.ReactElement {
   const breadCrumb = <LitmusBreadCrumbs links={breadcrumbs} />;
   return (
@@ -43,7 +43,7 @@ export default function DefaultLayoutTemplate({
       <Container className={css.test} flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
         <Container flex className={css.leftSideBar}>
           <MainNav />
-          {!hidSideNav && <SideNav />}
+          {!hideSideNav && <SideNav />}
         </Container>
         <Container width={'100%'} border={{ right: true, style: `1px solid ${Color.GREY_200}` }}>
           <Page.Header

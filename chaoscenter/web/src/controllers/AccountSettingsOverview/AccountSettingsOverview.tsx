@@ -10,14 +10,14 @@ interface AccountSettingsOverviewControllerProps {
 export default function AccountSettingsOverviewController(
   props: AccountSettingsOverviewControllerProps
 ): React.ReactElement {
-  const { username } = props;
+  const { username = '' } = props;
 
   const { data, refetch: getUserWithProjectsRefetch } = useGetUserWithProjectQuery(
     {
-      username: username ?? ''
+      username: username
     },
     {
-      enabled: !!username
+      enabled: username !== ''
     }
   );
 

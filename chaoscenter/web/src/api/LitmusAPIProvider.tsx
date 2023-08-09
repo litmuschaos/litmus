@@ -86,6 +86,6 @@ export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({
       <ApolloProvider client={apolloClient}>{children}</ApolloProvider>
     </QueryClientProvider>
   ) : (
-    <></>
+    <>{children}</>
   );
 };

@@ -2,7 +2,7 @@ import type { UseMutateFunction } from '@tanstack/react-query';
 import React from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Layout, Container, FormInput, ButtonVariation, Text, Button } from '@harnessio/uicore';
-import { Formik, Form, FormikProps } from 'formik';
+import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
 import type { CreateUserMutationProps, User } from '@api/auth/index.ts';
@@ -44,21 +44,6 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
       }
     );
   }
-  function isSubmitButtonDisabled(formikProps: FormikProps<CreateNewUserFormProps>): boolean {
-    return (
-      formikProps.values.name.length === 0 ||
-      formikProps.values.email.length === 0 ||
-      formikProps.values.username.length === 0 ||
-      formikProps.values.password.length === 0 ||
-      formikProps.values.reEnterPassword.length === 0 ||
-      formikProps.errors.name !== undefined ||
-      formikProps.errors.email !== undefined ||
-      formikProps.errors.username !== undefined ||
-      formikProps.errors.password !== undefined ||
-      formikProps.errors.reEnterPassword !== undefined ||
-      formikProps.values.password !== formikProps.values.reEnterPassword
-    );
-  }
 
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
@@ -76,7 +61,15 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
             reEnterPassword: ''
           }}
           onSubmit={values => handleSubmit(values)}
-          validationSchema={Yup.object().shape({})}
+          validationSchema={Yup.object().shape({
+            name: Yup.string().required(getString('nameIsARequiredField')),
+            email: Yup.string().email(getString('invalidEmailText')).required(getString('emailIsRequired')),
+            username: Yup.string().required(getString('usernameIsRequired')),
+            password: Yup.string().required(getString('passwordIsRequired')),
+            reEnterPassword: Yup.string()
+              .required(getString('reEnterPassword'))
+              .oneOf([Yup.ref('password'), null], getString('passwordsDoNotMatch'))
+          })}
         >
           {formikProps => {
             return (
@@ -124,7 +117,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                         variation={ButtonVariation.PRIMARY}
                         text={getString('confirm')}
                         loading={createNewUserMutationLoading || formikProps.isSubmitting}
-                        disabled={isSubmitButtonDisabled(formikProps)}
+                        disabled={Object.keys(formikProps.errors).length > 0}
                       />
                       <Button
                         variation={ButtonVariation.TERTIARY}

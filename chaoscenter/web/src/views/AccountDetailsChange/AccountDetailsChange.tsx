@@ -69,9 +69,9 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
           validationSchema={Yup.object().shape({
             name: Yup.string()
               .trim()
-              .matches(/^([A-Za-z\u00C0-\u00D6\u00D8-\u00f6\u00f8-\u00ff\s]*)$/gi, 'Name can only contain letters.')
-              .required('Name is required in order to update.'),
-            email: Yup.string().trim().email('Invalid email address.').required('Email is required in order to update.')
+              .matches(/^[a-zA-Z ]*$/, getString('nameVaidText'))
+              .required(getString('nameIsRequired')),
+            email: Yup.string().trim().email(getString('invalidEmailText')).required(getString('emailIsRequired'))
           })}
         >
           {formikProps => {

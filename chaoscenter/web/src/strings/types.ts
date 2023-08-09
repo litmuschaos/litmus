@@ -223,6 +223,7 @@ export interface StringsMap {
   'editingChaosHub': unknown
   'effect': unknown
   'email': unknown
+  'emailIsRequired': unknown
   'enableChaosInfraButton': unknown
   'enableChaosInfrastructure': unknown
   'enableChaosInfrastructureDesc': unknown
@@ -348,6 +349,7 @@ export interface StringsMap {
   'installYaml': unknown
   'interval': unknown
   'intervalOptional': unknown
+  'invalidEmailText': unknown
   'invalidSelection': unknown
   'invalidText': unknown
   'invitations': unknown
@@ -428,6 +430,9 @@ export interface StringsMap {
   'nameIdDescriptionTags.namePlaceholder': unknown
   'nameIdDescriptionTags.optionalField': PrimitiveObject<'name'>
   'nameIdDescriptionTags.tagsLabel': unknown
+  'nameIsARequiredField': unknown
+  'nameIsRequired': unknown
+  'nameVaidText': unknown
   'namespace': unknown
   'namespaceScopeDescription': unknown
   'namespaceWide': unknown
@@ -520,7 +525,9 @@ export interface StringsMap {
   'passed': unknown
   'passedRuns': unknown
   'password': unknown
+  'passwordIsRequired': unknown
   'passwordResetSuccess': unknown
+  'passwordsDoNotMatch': unknown
   'pauseRun': unknown
   'pending': unknown
   'pendingTime': unknown
@@ -583,6 +590,8 @@ export interface StringsMap {
   'prod': unknown
   'project': unknown
   'projectCreatedByYou': unknown
+  'projectNameIsRequired': unknown
+  'projectNameValidText': unknown
   'projectsByInvite': unknown
   'projectsInTotal': unknown
   'projectsJoined': unknown
@@ -598,6 +607,7 @@ export interface StringsMap {
   'rbacDescription': PrimitiveObject<'permission'>
   'rbacHeader': unknown
   'reEnterNewPassword': unknown
+  'reEnterPassword': unknown
   'reEnterYourPassword': unknown
   'reRunDesc': unknown
   'reRunExperiment': unknown
@@ -808,6 +818,7 @@ export interface StringsMap {
   'userCreatedOn': unknown
   'userManagement': unknown
   'username': unknown
+  'usernameIsRequired': unknown
   'validationError': unknown
   'value': unknown
   'valuePlaceholder': unknown

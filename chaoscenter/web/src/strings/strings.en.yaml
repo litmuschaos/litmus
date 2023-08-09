@@ -268,6 +268,7 @@ editYaml: Edit Yaml
 editingChaosHub: Editing ChaosHub
 effect: Effect
 email: Email
+emailIsRequired: Email is a required field
 enableChaosInfraButton: Enable Chaos in Environments
 enableChaosInfrastructure: Enable chaos infrastructure to run your first chaos experiment
 enableChaosInfrastructureDesc: >-
@@ -421,6 +422,7 @@ insecureSkipVerify: Insecure skip verify
 installYaml: Install Chaos Infrastructure using YML
 interval: Interval
 intervalOptional: Interval (Optional)
+invalidEmailText: Please enter a valid email address
 invalidSelection: Invalid Selection
 invalidText: Invalid
 invitations: Invitations
@@ -521,6 +523,9 @@ nameIdDescriptionTags:
   namePlaceholder: Enter Name
   optionalField: '{{name}} (optional)'
   tagsLabel: Tags
+nameIsARequiredField: Name is a required field
+nameIsRequired: Name is a required in order to update.
+nameVaidText: Name can only contain alphabets.
 namespace: Namespace
 namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
 namespaceWide: Namespace-wide
@@ -634,7 +639,9 @@ parallel: Parallel
 passed: Passed
 passedRuns: Passed Runs
 password: Password
+passwordIsRequired: Password is a required field
 passwordResetSuccess: Password reset successfully
+passwordsDoNotMatch: Passwords do not match
 pauseRun: Pause Run
 pending: Pending
 pendingTime: >-
@@ -702,6 +709,8 @@ probesArePassed: probes are passed
 prod: Prod
 project: Project
 projectCreatedByYou: Your Projects
+projectNameIsRequired: Project name is a required in order to update.
+projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
 projectsByInvite: Projects By Invite
 projectsInTotal: project(s) in total
 projectsJoined: Projects Joined
@@ -726,6 +735,7 @@ ranAt: Ran at
 rbacDescription: You are missing permission '{{permission}}' to perform this action.
 rbacHeader: You do not have permission to perform this action
 reEnterNewPassword: Re-enter new password
+reEnterPassword: Re-enter password
 reEnterYourPassword: Re-enter your password
 reRunDesc: This will re-run the current experiment.
 reRunExperiment: Run Experiment
@@ -952,6 +962,7 @@ userCreateSuccessMessage: User '{{name}}' created successfully
 userCreatedOn: User Created On
 userManagement: User Management
 username: Username
+usernameIsRequired: Username is a required field
 validationError: Validation Error
 value: Value
 valuePlaceholder: Enter a value
