@@ -396,22 +396,6 @@ type EnvironmentSortInput struct {
 	Ascending *bool `json:"ascending"`
 }
 
-// EvaluationWindow is the time period for which the SLO probe will work
-type EvaluationWindow struct {
-	// Start time of evaluation
-	EvaluationStartTime *int `json:"evaluationStartTime"`
-	// End time of evaluation
-	EvaluationEndTime *int `json:"evaluationEndTime"`
-}
-
-// Defines the input properties of EvaluationWindow
-type EvaluationWindowInput struct {
-	// Start time of evaluation
-	EvaluationStartTime *int `json:"evaluationStartTime"`
-	// End time of evaluation
-	EvaluationEndTime *int `json:"evaluationEndTime"`
-}
-
 // Defines the Executed by which experiment details for Probes
 type ExecutedByExperiment struct {
 	// Experiment ID
@@ -1748,94 +1732,6 @@ func (e AuthType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// Types of AzureDataDiskCachingModes
-type AzureDataDiskCachingMode string
-
-const (
-	AzureDataDiskCachingModeNone      AzureDataDiskCachingMode = "None"
-	AzureDataDiskCachingModeReadOnly  AzureDataDiskCachingMode = "ReadOnly"
-	AzureDataDiskCachingModeReadWrite AzureDataDiskCachingMode = "ReadWrite"
-)
-
-var AllAzureDataDiskCachingMode = []AzureDataDiskCachingMode{
-	AzureDataDiskCachingModeNone,
-	AzureDataDiskCachingModeReadOnly,
-	AzureDataDiskCachingModeReadWrite,
-}
-
-func (e AzureDataDiskCachingMode) IsValid() bool {
-	switch e {
-	case AzureDataDiskCachingModeNone, AzureDataDiskCachingModeReadOnly, AzureDataDiskCachingModeReadWrite:
-		return true
-	}
-	return false
-}
-
-func (e AzureDataDiskCachingMode) String() string {
-	return string(e)
-}
-
-func (e *AzureDataDiskCachingMode) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = AzureDataDiskCachingMode(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AzureDataDiskCachingMode", str)
-	}
-	return nil
-}
-
-func (e AzureDataDiskCachingMode) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// Types of AzureDataDiskKind
-type AzureDataDiskKind string
-
-const (
-	AzureDataDiskKindShared    AzureDataDiskKind = "Shared"
-	AzureDataDiskKindDedicated AzureDataDiskKind = "Dedicated"
-	AzureDataDiskKindManaged   AzureDataDiskKind = "Managed"
-)
-
-var AllAzureDataDiskKind = []AzureDataDiskKind{
-	AzureDataDiskKindShared,
-	AzureDataDiskKindDedicated,
-	AzureDataDiskKindManaged,
-}
-
-func (e AzureDataDiskKind) IsValid() bool {
-	switch e {
-	case AzureDataDiskKindShared, AzureDataDiskKindDedicated, AzureDataDiskKindManaged:
-		return true
-	}
-	return false
-}
-
-func (e AzureDataDiskKind) String() string {
-	return string(e)
-}
-
-func (e *AzureDataDiskKind) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = AzureDataDiskKind(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AzureDataDiskKind", str)
-	}
-	return nil
-}
-
-func (e AzureDataDiskKind) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type EnvironmentSortingField string
 
 const (
@@ -2103,58 +1999,6 @@ func (e *FileType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e FileType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// Type for HostPath Volume
-type HostPathType string
-
-const (
-	HostPathTypeDirectoryOrCreate HostPathType = "DirectoryOrCreate"
-	HostPathTypeDirectory         HostPathType = "Directory"
-	HostPathTypeFileOrCreate      HostPathType = "FileOrCreate"
-	HostPathTypeFile              HostPathType = "File"
-	HostPathTypeSocket            HostPathType = "Socket"
-	HostPathTypeCharDevice        HostPathType = "CharDevice"
-	HostPathTypeBlockDevice       HostPathType = "BlockDevice"
-)
-
-var AllHostPathType = []HostPathType{
-	HostPathTypeDirectoryOrCreate,
-	HostPathTypeDirectory,
-	HostPathTypeFileOrCreate,
-	HostPathTypeFile,
-	HostPathTypeSocket,
-	HostPathTypeCharDevice,
-	HostPathTypeBlockDevice,
-}
-
-func (e HostPathType) IsValid() bool {
-	switch e {
-	case HostPathTypeDirectoryOrCreate, HostPathTypeDirectory, HostPathTypeFileOrCreate, HostPathTypeFile, HostPathTypeSocket, HostPathTypeCharDevice, HostPathTypeBlockDevice:
-		return true
-	}
-	return false
-}
-
-func (e HostPathType) String() string {
-	return string(e)
-}
-
-func (e *HostPathType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = HostPathType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid HostPathType", str)
-	}
-	return nil
-}
-
-func (e HostPathType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -2457,50 +2301,6 @@ func (e Mode) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// MountPropagationMode describes mount propagation.
-type MountPropagationMode string
-
-const (
-	MountPropagationModeNone            MountPropagationMode = "None"
-	MountPropagationModeHostToContainer MountPropagationMode = "HostToContainer"
-	MountPropagationModeBidirectional   MountPropagationMode = "Bidirectional"
-)
-
-var AllMountPropagationMode = []MountPropagationMode{
-	MountPropagationModeNone,
-	MountPropagationModeHostToContainer,
-	MountPropagationModeBidirectional,
-}
-
-func (e MountPropagationMode) IsValid() bool {
-	switch e {
-	case MountPropagationModeNone, MountPropagationModeHostToContainer, MountPropagationModeBidirectional:
-		return true
-	}
-	return false
-}
-
-func (e MountPropagationMode) String() string {
-	return string(e)
-}
-
-func (e *MountPropagationMode) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = MountPropagationMode(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid MountPropagationMode", str)
-	}
-	return nil
-}
-
-func (e MountPropagationMode) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 // Defines the different statuses of Probes
 type ProbeStatus string
 
@@ -2643,57 +2443,6 @@ func (e ProbeVerdict) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// Quantity is a fixed-point representation of a number.
-// It provides convenient marshaling/unmarshaling in JSON and YAML,
-type Quantity string
-
-const (
-	QuantityI               Quantity = "i"
-	QuantityD               Quantity = "d"
-	QuantityS               Quantity = "s"
-	QuantityDecimalExponent Quantity = "DecimalExponent"
-	QuantityBinarySi        Quantity = "BinarySI"
-	QuantityDecimalSi       Quantity = "DecimalSI"
-)
-
-var AllQuantity = []Quantity{
-	QuantityI,
-	QuantityD,
-	QuantityS,
-	QuantityDecimalExponent,
-	QuantityBinarySi,
-	QuantityDecimalSi,
-}
-
-func (e Quantity) IsValid() bool {
-	switch e {
-	case QuantityI, QuantityD, QuantityS, QuantityDecimalExponent, QuantityBinarySi, QuantityDecimalSi:
-		return true
-	}
-	return false
-}
-
-func (e Quantity) String() string {
-	return string(e)
-}
-
-func (e *Quantity) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Quantity(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Quantity", str)
-	}
-	return nil
-}
-
-func (e Quantity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type ScheduleType string
 
 const (
@@ -2734,48 +2483,6 @@ func (e *ScheduleType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ScheduleType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// StorageMedium defines ways that storage can be allocated to a volume.
-type StorageMedium string
-
-const (
-	StorageMediumMemory    StorageMedium = "Memory"
-	StorageMediumHugePages StorageMedium = "HugePages"
-)
-
-var AllStorageMedium = []StorageMedium{
-	StorageMediumMemory,
-	StorageMediumHugePages,
-}
-
-func (e StorageMedium) IsValid() bool {
-	switch e {
-	case StorageMediumMemory, StorageMediumHugePages:
-		return true
-	}
-	return false
-}
-
-func (e StorageMedium) String() string {
-	return string(e)
-}
-
-func (e *StorageMedium) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = StorageMedium(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid StorageMedium", str)
-	}
-	return nil
-}
-
-func (e StorageMedium) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

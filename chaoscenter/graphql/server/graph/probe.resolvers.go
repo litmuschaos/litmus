@@ -171,7 +171,7 @@ func (r *queryResolver) GetProbeYaml(ctx context.Context, projectID string, requ
 	logrus.WithFields(logFields).Info("request received to get probe YAML")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.AddProbe],
+		authorization.MutationRbacRules[authorization.GetProbe],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err

@@ -175,11 +175,6 @@ type ComplexityRoot struct {
 		UpdatedBy     func(childComplexity int) int
 	}
 
-	EvaluationWindow struct {
-		EvaluationEndTime   func(childComplexity int) int
-		EvaluationStartTime func(childComplexity int) int
-	}
-
 	ExecutedByExperiment struct {
 		ExperimentID   func(childComplexity int) int
 		ExperimentName func(childComplexity int) int
@@ -1480,20 +1475,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Environment.UpdatedBy(childComplexity), true
-
-	case "EvaluationWindow.evaluationEndTime":
-		if e.complexity.EvaluationWindow.EvaluationEndTime == nil {
-			break
-		}
-
-		return e.complexity.EvaluationWindow.EvaluationEndTime(childComplexity), true
-
-	case "EvaluationWindow.evaluationStartTime":
-		if e.complexity.EvaluationWindow.EvaluationStartTime == nil {
-			break
-		}
-
-		return e.complexity.EvaluationWindow.EvaluationStartTime(childComplexity), true
 
 	case "ExecutedByExperiment.experimentID":
 		if e.complexity.ExecutedByExperiment.ExperimentID == nil {
@@ -6877,24 +6858,6 @@ enum ImagePullPolicy {
 }
 
 """
-Types of AzureDataDiskCachingModes
-"""
-enum AzureDataDiskCachingMode {
-  None
-  ReadOnly
-  ReadWrite
-}
-
-"""
-Types of AzureDataDiskKind
-"""
-enum AzureDataDiskKind {
-  Shared
-  Dedicated
-  Managed
-}
-
-"""
 Defines the different modes of Probes
 """
 enum Mode {
@@ -6925,49 +6888,6 @@ enum ProbeVerdict {
   Failed
   NA
   Awaited
-}
-
-"""
-Type for HostPath Volume
-"""
-enum HostPathType {
-  DirectoryOrCreate
-  Directory
-  FileOrCreate
-  File
-  Socket
-  CharDevice
-  BlockDevice
-}
-
-"""
-StorageMedium defines ways that storage can be allocated to a volume.
-"""
-enum StorageMedium {
-  Memory
-  HugePages
-}
-
-"""
-MountPropagationMode describes mount propagation.
-"""
-enum MountPropagationMode {
-  None
-  HostToContainer
-  Bidirectional
-}
-
-"""
-Quantity is a fixed-point representation of a number.
-It provides convenient marshaling/unmarshaling in JSON and YAML,
-"""
-enum Quantity {
-  i
-  d
-  s
-  DecimalExponent
-  BinarySI
-  DecimalSI
 }
 
 """
@@ -7190,33 +7110,7 @@ input ComparatorInput {
   criteria: String!
 }
 
-"""
-EvaluationWindow is the time period for which the SLO probe will work
-"""
-type EvaluationWindow {
-  """
-  Start time of evaluation
-  """
-  evaluationStartTime: Int
-  """
-  End time of evaluation
-  """
-  evaluationEndTime: Int
-}
 
-"""
-Defines the input properties of EvaluationWindow
-"""
-input EvaluationWindowInput {
-  """
-  Start time of evaluation
-  """
-  evaluationStartTime: Int
-  """
-  End time of evaluation
-  """
-  evaluationEndTime: Int
-}
 
 """
 Defines the Executed by which experiment details for Probes
@@ -7237,7 +7131,7 @@ type ExecutedByExperiment {
   """
   User who has updated the experiment
   """
-  updatedBy: UserDetails!
+  updatedBy: UserDetails
 }
 
 """
@@ -12588,68 +12482,6 @@ func (ec *executionContext) _Environment_infraIDs(ctx context.Context, field gra
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _EvaluationWindow_evaluationStartTime(ctx context.Context, field graphql.CollectedField, obj *model.EvaluationWindow) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "EvaluationWindow",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EvaluationStartTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _EvaluationWindow_evaluationEndTime(ctx context.Context, field graphql.CollectedField, obj *model.EvaluationWindow) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:   "EvaluationWindow",
-		Field:    field,
-		Args:     nil,
-		IsMethod: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EvaluationEndTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ExecutedByExperiment_experimentID(ctx context.Context, field graphql.CollectedField, obj *model.ExecutedByExperiment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12776,14 +12608,11 @@ func (ec *executionContext) _ExecutedByExperiment_updatedBy(ctx context.Context,
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.UserDetails)
 	fc.Result = res
-	return ec.marshalNUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
+	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExecutionHistory_status(ctx context.Context, field graphql.CollectedField, obj *model.ExecutionHistory) (ret graphql.Marshaler) {
@@ -27232,30 +27061,6 @@ func (ec *executionContext) unmarshalInputEnvironmentSortInput(ctx context.Conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputEvaluationWindowInput(ctx context.Context, obj interface{}) (model.EvaluationWindowInput, error) {
-	var it model.EvaluationWindowInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "evaluationStartTime":
-			var err error
-			it.EvaluationStartTime, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "evaluationEndTime":
-			var err error
-			it.EvaluationEndTime, err = ec.unmarshalOInt2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputExperimentFilterInput(ctx context.Context, obj interface{}) (model.ExperimentFilterInput, error) {
 	var it model.ExperimentFilterInput
 	var asMap = obj.(map[string]interface{})
@@ -29781,32 +29586,6 @@ func (ec *executionContext) _Environment(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var evaluationWindowImplementors = []string{"EvaluationWindow"}
-
-func (ec *executionContext) _EvaluationWindow(ctx context.Context, sel ast.SelectionSet, obj *model.EvaluationWindow) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, evaluationWindowImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("EvaluationWindow")
-		case "evaluationStartTime":
-			out.Values[i] = ec._EvaluationWindow_evaluationStartTime(ctx, field, obj)
-		case "evaluationEndTime":
-			out.Values[i] = ec._EvaluationWindow_evaluationEndTime(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var executedByExperimentImplementors = []string{"ExecutedByExperiment"}
 
 func (ec *executionContext) _ExecutedByExperiment(ctx context.Context, sel ast.SelectionSet, obj *model.ExecutedByExperiment) graphql.Marshaler {
@@ -29835,9 +29614,6 @@ func (ec *executionContext) _ExecutedByExperiment(ctx context.Context, sel ast.S
 			}
 		case "updatedBy":
 			out.Values[i] = ec._ExecutedByExperiment_updatedBy(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -34639,20 +34415,6 @@ func (ec *executionContext) unmarshalNUpdateStatus2githubᚗcomᚋlitmuschaosᚋ
 
 func (ec *executionContext) marshalNUpdateStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUpdateStatus(ctx context.Context, sel ast.SelectionSet, v model.UpdateStatus) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNUserDetails2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx context.Context, sel ast.SelectionSet, v model.UserDetails) graphql.Marshaler {
-	return ec._UserDetails(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx context.Context, sel ast.SelectionSet, v *model.UserDetails) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._UserDetails(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNWeightages2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐWeightages(ctx context.Context, sel ast.SelectionSet, v model.Weightages) graphql.Marshaler {

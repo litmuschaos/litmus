@@ -224,7 +224,7 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 		_probe.Mode = string(mode)
 
 		if probe.HTTPProperties.InsecureSkipVerify != nil {
-			_probe.HTTPProbeInputs = &HTTPProbeInputs{
+			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				InsecureSkipVerify: *probe.HTTPProperties.InsecureSkipVerify,
 			}
 
@@ -232,7 +232,7 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 
 		if probe.HTTPProperties.Method.Get != nil {
 
-			_probe.HTTPProbeInputs = &HTTPProbeInputs{
+			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				URL: httpProbeURL,
 				Method: v1alpha1.HTTPMethod{
 					Get: &v1alpha1.GetMethod{
@@ -242,7 +242,7 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 				},
 			}
 		} else if probe.HTTPProperties.Method.Post != nil {
-			_probe.HTTPProbeInputs = &HTTPProbeInputs{
+			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				URL: httpProbeURL,
 				Method: v1alpha1.HTTPMethod{
 					Post: &v1alpha1.PostMethod{
@@ -303,7 +303,7 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 		_probe.Name = probe.Name
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(mode)
-		_probe.CmdProbeInputs = CmdProbeInputs{
+		_probe.CmdProbeInputs = v1alpha1.CmdProbeInputs{
 			Command: probe.CmdProperties.Command,
 			Comparator: v1alpha1.ComparatorInfo{
 				Type:     probe.CmdProperties.Comparator.Type,

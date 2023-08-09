@@ -18,24 +18,6 @@ enum ImagePullPolicy {
 }
 
 """
-Types of AzureDataDiskCachingModes
-"""
-enum AzureDataDiskCachingMode {
-  None
-  ReadOnly
-  ReadWrite
-}
-
-"""
-Types of AzureDataDiskKind
-"""
-enum AzureDataDiskKind {
-  Shared
-  Dedicated
-  Managed
-}
-
-"""
 Defines the different modes of Probes
 """
 enum Mode {
@@ -66,49 +48,6 @@ enum ProbeVerdict {
   Failed
   NA
   Awaited
-}
-
-"""
-Type for HostPath Volume
-"""
-enum HostPathType {
-  DirectoryOrCreate
-  Directory
-  FileOrCreate
-  File
-  Socket
-  CharDevice
-  BlockDevice
-}
-
-"""
-StorageMedium defines ways that storage can be allocated to a volume.
-"""
-enum StorageMedium {
-  Memory
-  HugePages
-}
-
-"""
-MountPropagationMode describes mount propagation.
-"""
-enum MountPropagationMode {
-  None
-  HostToContainer
-  Bidirectional
-}
-
-"""
-Quantity is a fixed-point representation of a number.
-It provides convenient marshaling/unmarshaling in JSON and YAML,
-"""
-enum Quantity {
-  i
-  d
-  s
-  DecimalExponent
-  BinarySI
-  DecimalSI
 }
 
 """
@@ -331,33 +270,7 @@ input ComparatorInput {
   criteria: String!
 }
 
-"""
-EvaluationWindow is the time period for which the SLO probe will work
-"""
-type EvaluationWindow {
-  """
-  Start time of evaluation
-  """
-  evaluationStartTime: Int
-  """
-  End time of evaluation
-  """
-  evaluationEndTime: Int
-}
 
-"""
-Defines the input properties of EvaluationWindow
-"""
-input EvaluationWindowInput {
-  """
-  Start time of evaluation
-  """
-  evaluationStartTime: Int
-  """
-  End time of evaluation
-  """
-  evaluationEndTime: Int
-}
 
 """
 Defines the Executed by which experiment details for Probes
@@ -378,7 +291,7 @@ type ExecutedByExperiment {
   """
   User who has updated the experiment
   """
-  updatedBy: UserDetails!
+  updatedBy: UserDetails
 }
 
 """

@@ -211,7 +211,7 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 		_probe.Name = probe.Name
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(probeRequest.Mode)
-		_probe.HTTPProbeInputs = &HTTPProbeInputs{
+		_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 			URL: probe.HTTPProperties.URL,
 		}
 
@@ -220,7 +220,7 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 		}
 
 		if probe.HTTPProperties.Method.GET != nil {
-			_probe.HTTPProbeInputs = &HTTPProbeInputs{
+			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				Method: v1alpha1.HTTPMethod{
 					Get: &v1alpha1.GetMethod{
 						Criteria:     probe.HTTPProperties.Method.GET.Criteria,
@@ -229,7 +229,7 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 				},
 			}
 		} else if probe.HTTPProperties.Method.POST != nil {
-			_probe.HTTPProbeInputs = &HTTPProbeInputs{
+			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				Method: v1alpha1.HTTPMethod{
 					Post: &v1alpha1.PostMethod{
 						Criteria:     probe.HTTPProperties.Method.POST.Criteria,
@@ -293,7 +293,7 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 		_probe.Name = probe.Name
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(probeRequest.Mode)
-		_probe.CmdProbeInputs = CmdProbeInputs{
+		_probe.CmdProbeInputs = v1alpha1.CmdProbeInputs{
 			Command: probe.CMDProperties.Command,
 			Comparator: v1alpha1.ComparatorInfo{
 				Type:     probe.CMDProperties.Comparator.Type,
