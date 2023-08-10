@@ -14,7 +14,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest) (*model.Environment, error) {
+type EnvironmentService interface {
+	CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest) (*model.Environment, error)
+	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error)
+	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
+	GetEnvironment(projectID string, environmentID string) (*model.Environment, error)
+	ListEnvironments(projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error)
+}
+
+type EnvironmentHandler struct{}
+
+func NewEnvironmentHandler() EnvironmentService {
+	return &EnvironmentHandler{}
+}
+
+func (eh *EnvironmentHandler) CreateEnvironment(ctx context.Context, projectID string, input *model.CreateEnvironmentRequest) (*model.Environment, error) {
 
 	currentTime := time.Now()
 	if input.Tags == nil || len(input.Tags) == 0 {
@@ -68,7 +82,7 @@ func CreateEnvironment(ctx context.Context, projectID string, input *model.Creat
 
 }
 
-func UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error) {
+func (eh *EnvironmentHandler) UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error) {
 
 	query := bson.D{
 		{"environment_id", request.EnvironmentID},
@@ -131,7 +145,7 @@ func UpdateEnvironment(ctx context.Context, projectID string, request *model.Upd
 	return "environment updated successfully", nil
 }
 
-func DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error) {
+func (eh *EnvironmentHandler) DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error) {
 	currTime := time.Now().UnixMilli()
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
@@ -163,7 +177,7 @@ func DeleteEnvironment(ctx context.Context, projectID string, environmentID stri
 	return "successfully deleted environment", nil
 }
 
-func GetEnvironment(projectID string, environmentID string) (*model.Environment, error) {
+func (eh *EnvironmentHandler) GetEnvironment(projectID string, environmentID string) (*model.Environment, error) {
 	query := bson.D{
 		{"environment_id", environmentID},
 		{"project_id", projectID},
@@ -192,7 +206,7 @@ func GetEnvironment(projectID string, environmentID string) (*model.Environment,
 
 }
 
-func ListEnvironments(projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error) {
+func (eh *EnvironmentHandler) ListEnvironments(projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error) {
 	var pipeline mongo.Pipeline
 
 	// Match with identifiers
