@@ -46,6 +46,8 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetReportCaller(true)
 }
 
 func main() {

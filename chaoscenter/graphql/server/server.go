@@ -36,6 +36,7 @@ import (
 
 func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetReportCaller(true)
 	logrus.Printf("go version: %s", runtime.Version())
 	logrus.Printf("go os/arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 

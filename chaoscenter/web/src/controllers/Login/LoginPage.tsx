@@ -28,11 +28,11 @@ const LoginController: React.FC = () => {
       if (response.ok) {
         const json = await response.json();
         setUserDetails({
-          token: json.access_token,
-          projectID: json.project_id,
-          role: json.project_role
+          token: json.accessToken,
+          role: json.projectRole,
+          projectID: json.projectID
         });
-        history.push(paths.toDashboardWithProjectID({ projectID: json.project_id }));
+        history.push(paths.toDashboardWithProjectID({ projectID: json.projectID }));
       } else {
         throw response;
       }

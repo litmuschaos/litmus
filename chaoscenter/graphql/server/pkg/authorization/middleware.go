@@ -41,15 +41,9 @@ func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc
 // IsRevokedToken checks if the given JWT Token is revoked
 func IsRevokedToken(tokenString string, mongoClient *mongo.Client) bool {
 	collection := mongoClient.Database("auth").Collection("revoked-token")
-	result := struct {
-		Token     string `bson:"token"`
-		ExpireOn  int64  `bson:"expire_on"`
-		CreatedAt int64  `bson:"created_at"`
-	}{}
-	err := collection.FindOne(context.Background(), bson.M{
+	if err := collection.FindOne(context.Background(), bson.M{
 		"token": tokenString,
-	}).Decode(&result)
-	if err != nil {
+	}).Err(); err != nil {
 		return false
 	}
 	return true

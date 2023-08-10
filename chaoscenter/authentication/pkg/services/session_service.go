@@ -34,10 +34,14 @@ func (a applicationService) RevokeToken(tokenString string) error {
 
 // ValidateToken validates the given JWT Token
 func (a applicationService) ValidateToken(encodedToken string) (*jwt.Token, error) {
-	if a.isTokenRevoked(encodedToken) {
+	parsedToken, err := a.parseToken(encodedToken)
+	if err != nil {
+		return nil, err
+	}
+	if a.isTokenRevoked(parsedToken.Raw) {
 		return &jwt.Token{Valid: false}, fmt.Errorf("token revoked")
 	}
-	return a.parseToken(encodedToken)
+	return parsedToken, err
 }
 
 // isTokenRevoked checks if the given JWT Token is revoked

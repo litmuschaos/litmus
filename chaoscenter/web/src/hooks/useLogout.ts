@@ -11,7 +11,7 @@ export const useLogout = (): UseLogoutReturn => {
 
   const forceLogout = (): void => {
     const token = localStorage.getItem('token') ?? '';
-    fetch(`${config.restEndpoints?.authUri}/logout}`, {
+    fetch(`${config.restEndpoints?.authUri}/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
