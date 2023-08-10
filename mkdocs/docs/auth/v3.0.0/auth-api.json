@@ -971,20 +971,53 @@
         "responses": {
           "200": {
             "description": "OK",
-            "examples": {
-              "application/json": {
-                "data": ["0ecf9907-238d-4000-ac2f-3dbe38bc8e64"]
-              }
-            },
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Project"
+                  }
+                }
               }
             }
           }
         },
         "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/list_invitations_with_filters/{invitation-state}": {
+      "get": {
+        "description": "This API is used to list all the pending invitations of the user\n",
+        "operationId": "listInvitations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/GetInvitationResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "invitation_state",
+            "required": true,
+            "description": "state of the invitation",
+            "in": "path",
+            "type": "string",
+            "enum": ["Accepted", "Pending", "Declined", "Exited"]
+          }
+        ],
         "produces": ["application/json"]
       }
     },
@@ -1207,7 +1240,7 @@
     "Users": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/Users"
+        "$ref": "#/definitions/User"
       }
     },
     "ProjectMember": {
@@ -1235,6 +1268,24 @@
         },
         "joinedAt": {
           "type": "string"
+        }
+      }
+    },
+    "GetInvitationResponse": {
+      "type": "object",
+      "properties": {
+        "projectName": {
+          "type": "string"
+        },
+        "projectID": {
+          "type": "string"
+        },
+        "invitationRole": {
+          "type": "string",
+          "enum": ["Owner", "Editor", "Viewer"]
+        },
+        "projectOwner": {
+          "$ref": "#/definitions/ProjectMember"
         }
       }
     },
@@ -1281,7 +1332,7 @@
         {
           "type": "object",
           "properties": {
-            "Projects": {
+            "projects": {
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Project"
