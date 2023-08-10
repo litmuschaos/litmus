@@ -7,7 +7,7 @@ import './bootstrap.scss';
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
-      <Route path={'/project/:projectID'}>
+      <Route path={'/account/:accountID'}>
         <AppWithAuthentication />
       </Route>
       <Route path="/">

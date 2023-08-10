@@ -15,10 +15,10 @@ export interface StringsMap {
   'TUE': unknown
   'WED': unknown
   'aboutChaosCTL': unknown
+  'acceptInvitation': unknown
   'accessToAllNamespaces': unknown
   'accessType': unknown
   'account': unknown
-  'accountSettings': unknown
   'accountURL': unknown
   'actionItems': unknown
   'active': unknown
@@ -51,16 +51,19 @@ export interface StringsMap {
   'applyChanges': unknown
   'at': unknown
   'atAGlance': unknown
+  'authentication': unknown
   'authenticationType': unknown
   'averageResilienceScore': unknown
   'back': unknown
   'basic': unknown
+  'basicInformation': unknown
   'blankCanvasDescription': unknown
   'blankCanvasTitle': unknown
   'blobLogsNotAvailable': unknown
   'cancel': unknown
   'cannotPushToDefault': unknown
   'cannotReRun': unknown
+  'changePassword': unknown
   'chaos': unknown
   'chaosComponentInstallation': unknown
   'chaosController': unknown
@@ -125,6 +128,7 @@ export interface StringsMap {
   'configureDetails': unknown
   'configureProperties': unknown
   'confirm': unknown
+  'confirmPassword': unknown
   'confirmText': unknown
   'connectChaosHub': unknown
   'connectHub': unknown
@@ -146,6 +150,7 @@ export interface StringsMap {
   'crdCopyPrompt': unknown
   'createChaosExperiment': unknown
   'createNamespace': unknown
+  'createNewUser': unknown
   'createRecurringSchedule': unknown
   'created': unknown
   'createdOn': unknown
@@ -163,6 +168,8 @@ export interface StringsMap {
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
+  'declineInvitation': unknown
+  'declineInvitationDescription': unknown
   'degelateNotActive': unknown
   'delete': unknown
   'deleteChaosInfrastructure': unknown
@@ -183,6 +190,8 @@ export interface StringsMap {
   'detailsAndProperties': unknown
   'disable': unknown
   'disableChaosInfrastructure': unknown
+  'disableUser': unknown
+  'disableUserDescription': unknown
   'discard': unknown
   'discardExperiment': unknown
   'disconnectDescriptionClusterMode': unknown
@@ -205,17 +214,23 @@ export interface StringsMap {
   'editExperimentSame': unknown
   'editHubDescription': unknown
   'editInChaosStudio': unknown
+  'editName': unknown
   'editProbe': unknown
+  'editProjectName': unknown
   'editSameExperimentDescription': unknown
   'editSameExperimentTitle': unknown
   'editYaml': unknown
   'editingChaosHub': unknown
   'effect': unknown
+  'email': unknown
+  'emailIsRequired': unknown
   'enableChaosInfraButton': unknown
   'enableChaosInfrastructure': unknown
   'enableChaosInfrastructureDesc': unknown
   'enableImageRegistryChanges': unknown
   'enableSSLCheck': unknown
+  'enableUser': unknown
+  'enableUserDescription': unknown
   'enablingChaos': unknown
   'endTime': unknown
   'endedAt': unknown
@@ -226,6 +241,13 @@ export interface StringsMap {
   'enterHubRepositoryBranch': unknown
   'enterHubRepositoryName': unknown
   'enterHubRepositoryURL': unknown
+  'enterNewPassword': unknown
+  'enterOldPassword': unknown
+  'enterProjectName': unknown
+  'enterYourEmail': unknown
+  'enterYourName': unknown
+  'enterYourPassword': unknown
+  'enterYourUsername': unknown
   'environment': unknown
   'environmentError': unknown
   'environments': unknown
@@ -327,8 +349,11 @@ export interface StringsMap {
   'installYaml': unknown
   'interval': unknown
   'intervalOptional': unknown
+  'invalidEmailText': unknown
   'invalidSelection': unknown
   'invalidText': unknown
+  'invitations': unknown
+  'invitedBy': unknown
   'isRequired': PrimitiveObject<'field'>
   'issueSupport': unknown
   'k8sDescription': unknown
@@ -359,12 +384,15 @@ export interface StringsMap {
   'latestRunFallbackText': unknown
   'launchExperiment': unknown
   'learnMore': unknown
+  'leaveProject': unknown
+  'leaveProjectDescription': unknown
   'letsGetStarted': unknown
   'litmus': unknown
   'litmusChaos': unknown
   'loading': unknown
   'logErrorMessage': unknown
   'loginDescription': unknown
+  'loginToContinue': unknown
   'logs': unknown
   'logsOptional': unknown
   'mainTitle': unknown
@@ -402,6 +430,9 @@ export interface StringsMap {
   'nameIdDescriptionTags.namePlaceholder': unknown
   'nameIdDescriptionTags.optionalField': PrimitiveObject<'name'>
   'nameIdDescriptionTags.tagsLabel': unknown
+  'nameIsARequiredField': unknown
+  'nameIsRequired': unknown
+  'nameVaidText': unknown
   'namespace': unknown
   'namespaceScopeDescription': unknown
   'namespaceWide': unknown
@@ -410,8 +441,10 @@ export interface StringsMap {
   'newChaosHub': unknown
   'newChaosInfrastructure': unknown
   'newExperiment': unknown
+  'newPassword': unknown
   'newProbe': unknown
   'newUpdates': unknown
+  'newUser': unknown
   'newUserNoExperiments.subtitle': unknown
   'newUserNoExperiments.title': unknown
   'newUserNoInfra.title': unknown
@@ -437,6 +470,7 @@ export interface StringsMap {
   'noFilteredData.subtitle': unknown
   'noFilteredData.title': unknown
   'noHealthyState': unknown
+  'noInvitationsFound': unknown
   'noKubernetesChaosInfrastructureFound': PrimitiveObject<'value'>
   'noLogs': unknown
   'noMonitoredService': unknown
@@ -447,10 +481,13 @@ export interface StringsMap {
   'noProbesFound.message': unknown
   'noProbesFound.title': unknown
   'noProjectFoundMatchingSearch': PrimitiveObject<'searchTerm'>
+  'noProjectsFound': unknown
+  'noProjectsJoined': unknown
   'noResultsFound': unknown
   'noRunsFound': unknown
   'noRunsFoundForThisExperiment': unknown
   'noTunables': unknown
+  'noUserAddUsers': unknown
   'noWorkflowRun': unknown
   'nodeSelector': unknown
   'nodeSelectorPlaceholderForKey': unknown
@@ -467,6 +504,7 @@ export interface StringsMap {
   'objectives': unknown
   'observe': unknown
   'ofEvery': unknown
+  'oldPassword': unknown
   'on': unknown
   'onThe': unknown
   'onThisPage': unknown
@@ -486,6 +524,10 @@ export interface StringsMap {
   'parallel': unknown
   'passed': unknown
   'passedRuns': unknown
+  'password': unknown
+  'passwordIsRequired': unknown
+  'passwordResetSuccess': unknown
+  'passwordsDoNotMatch': unknown
   'pauseRun': unknown
   'pending': unknown
   'pendingTime': unknown
@@ -547,6 +589,12 @@ export interface StringsMap {
   'probesArePassed': unknown
   'prod': unknown
   'project': unknown
+  'projectCreatedByYou': unknown
+  'projectNameIsRequired': unknown
+  'projectNameValidText': unknown
+  'projectsByInvite': unknown
+  'projectsInTotal': unknown
+  'projectsJoined': unknown
   'promDescription': unknown
   'promProbeDetails': unknown
   'promProbeTitle': unknown
@@ -558,6 +606,9 @@ export interface StringsMap {
   'ranAt': unknown
   'rbacDescription': PrimitiveObject<'permission'>
   'rbacHeader': unknown
+  'reEnterNewPassword': unknown
+  'reEnterPassword': unknown
+  'reEnterYourPassword': unknown
   'reRunDesc': unknown
   'reRunExperiment': unknown
   'reRunSuccessful': unknown
@@ -573,6 +624,7 @@ export interface StringsMap {
   'required': unknown
   'rerun': unknown
   'resetFilters': unknown
+  'resetPassword': unknown
   'resilienceOverview': unknown
   'resilienceProbes': unknown
   'resilienceRate': unknown
@@ -595,6 +647,7 @@ export interface StringsMap {
   'retryOptional': unknown
   'revertSchedule': unknown
   'revertScheduleText': unknown
+  'role': unknown
   'run': unknown
   'runAllExperiment': unknown
   'runAt': unknown
@@ -661,9 +714,11 @@ export interface StringsMap {
   'serviceAccountName': unknown
   'serviceHealthScore': unknown
   'setFaultWeights': unknown
+  'settings': unknown
   'setupChaosInfrastructures': unknown
   'setupProbe': unknown
   'setupProbeBtn': unknown
+  'showDisabledUsers': unknown
   'showLess': unknown
   'showingAll': unknown
   'showingLastRuns': unknown
@@ -732,6 +787,7 @@ export interface StringsMap {
   'totalExp': unknown
   'totalExperiments': unknown
   'totalRuns': unknown
+  'totalUsers': unknown
   'triggeredBy': unknown
   'troubleshooting': unknown
   'tuneFault': unknown
@@ -739,6 +795,7 @@ export interface StringsMap {
   'tuneFaultWeight': unknown
   'tuneWeight': unknown
   'type': unknown
+  'udpatePassword': unknown
   'unableToGetProbes': unknown
   'unhealthy': unknown
   'update': unknown
@@ -756,6 +813,12 @@ export interface StringsMap {
   'url': unknown
   'useIntegerValue': unknown
   'useThisTemplate': unknown
+  'userCreateModalBottomText': unknown
+  'userCreateSuccessMessage': PrimitiveObject<'name'>
+  'userCreatedOn': unknown
+  'userManagement': unknown
+  'username': unknown
+  'usernameIsRequired': unknown
   'validationError': unknown
   'value': unknown
   'valuePlaceholder': unknown
@@ -769,6 +832,7 @@ export interface StringsMap {
   'viewExecutions': unknown
   'viewExperimentManifest': unknown
   'viewInChaosModule': unknown
+  'viewInvitations': unknown
   'viewLastExecution': unknown
   'viewLessDefaultProperties': unknown
   'viewLogs': unknown

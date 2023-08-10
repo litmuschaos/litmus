@@ -1,12 +1,12 @@
 import { Button, Layout, Popover, Text } from '@harnessio/uicore';
 import { Color } from '@harnessio/design-system';
-import React, { useContext } from 'react';
+import React from 'react';
 import { PopoverInteractionKind, Position } from '@blueprintjs/core';
 import cx from 'classnames';
 import { useStrings } from '@strings';
-import { AppStoreContext } from '@context';
-import type { Project } from '@models';
+import { useAppStore } from '@context';
 import ProjectSelectorListController from '@controllers/ProjectSelectorList';
+import type { Project } from '@api/auth';
 import styles from './ProjectSelector.module.scss';
 
 interface ProjectSelectorProps {
@@ -15,7 +15,7 @@ interface ProjectSelectorProps {
 
 export default function ProjectSelectorView({ currentProjectDetails }: ProjectSelectorProps): React.ReactElement {
   const { getString } = useStrings();
-  const { projectID } = useContext(AppStoreContext);
+  const { projectID } = useAppStore();
 
   return (
     <Layout.Vertical padding={{ left: 'medium', right: 'medium', top: 'large', bottom: 'small' }}>
@@ -53,7 +53,7 @@ export default function ProjectSelectorView({ currentProjectDetails }: ProjectSe
           text={
             projectID ? (
               <Text color={Color.WHITE} font={{ size: 'small' }} padding="xsmall" className={styles.projectText}>
-                {currentProjectDetails?.Name ?? projectID}
+                {currentProjectDetails?.name ?? projectID}
               </Text>
             ) : (
               <Text color={Color.GREY_400} font={{ size: 'small' }} padding="xsmall">

@@ -1,5 +1,6 @@
 declare interface Window {
   apiUrl: string;
+  noAuthHeader: boolean;
   getApiBaseUrl: (str: string) => string;
   helpPanelAccessToken: string;
   helpPanelSpace: string;

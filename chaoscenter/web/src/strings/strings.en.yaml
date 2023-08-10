@@ -12,10 +12,10 @@ aboutChaosCTL: >-
   deployment manifest . This manifest is applied to your Kubernetes cluster.
   Below mentioned Kubernetes permissions are required to install chaos
   infrastructure:
+acceptInvitation: Accept Invitation
 accessToAllNamespaces: Access to all namespaces
 accessType: Access Type
 account: Account
-accountSettings: Account Settings
 accountURL: Account URL
 actionItems: Action Items
 active: Active
@@ -48,10 +48,12 @@ apply: Apply
 applyChanges: Apply Changes
 at: At
 atAGlance: At a Glance
+authentication: Authentication
 authenticationType: Authentication Type
 averageResilienceScore: Average Resilience Score
 back: Back
 basic: Basic
+basicInformation: Basic Information
 blankCanvasDescription: >-
   Chaos Experiment is a set of different operations coupled together to achieve
   desired chaos impact on a Kubernetes Cluster. It is useful in automating a
@@ -64,6 +66,7 @@ blobLogsNotAvailable: Logs are not available for this node.
 cancel: Cancel
 cannotPushToDefault: Cannot push experiment to default ChaosHub
 cannotReRun: Cannot re-run an already running experiment
+changePassword: Change Password
 chaos: Chaos
 chaosComponentInstallation: Chaos Components Installation
 chaosController: Chaos Controller
@@ -145,6 +148,7 @@ configureChaosInfrastructure: Configure Chaos Infrastructure
 configureDetails: Configure Details
 configureProperties: Configure Properties
 confirm: Confirm
+confirmPassword: Confirm Password
 confirmText: Are you sure you want to proceed?
 connectChaosHub: Connect ChaosHub
 connectHub: Connect Hub
@@ -178,6 +182,7 @@ copyPrompt2: >-
 crdCopyPrompt: Apply the Chaos CRDs manually
 createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
+createNewUser: Create New User
 createRecurringSchedule: Create recurring schedule
 created: Created
 createdOn: Created On
@@ -197,6 +202,8 @@ dailyMessage: Your chaos experiment will run daily at your chosen time.
 dateExecuted: Date Executed
 dayOfMonthLabel: Day of month
 dayOfWeekLabel: Day of week
+declineInvitation: Decline Invitation
+declineInvitationDescription: Are you sure you want to decline the invitation?
 degelateNotActive: Selected infrastructure is inactive. Please select an active one.
 delete: Delete
 deleteChaosInfrastructure: Are you sure you want to disable this Chaos Infrastructure?
@@ -222,6 +229,8 @@ details: Details
 detailsAndProperties: Details & Properties
 disable: Disable
 disableChaosInfrastructure: Disable Chaos Infrastructure
+disableUser: Disable User
+disableUserDescription: Are you sure you want to disable this user?
 discard: Discard
 discardExperiment: Are you sure you want to discard the current experiment?
 disconnectDescriptionClusterMode: Disable Chaos for this cluster.
@@ -247,7 +256,9 @@ editHubDescription: >-
   faults or probes, as editing experiments with new faults or probes,
   co-relation of analytics might get impacted.
 editInChaosStudio: Edit in Chaos Studio
+editName: Edit Name
 editProbe: Edit Probe
+editProjectName: Edit Project Name
 editSameExperimentDescription: >-
   When you edit directly on the existing experiment, you will not be able to
   change the name and target environment/infrastructures of this experiment. And
@@ -256,6 +267,8 @@ editSameExperimentTitle: Edit on the existing Experiment
 editYaml: Edit Yaml
 editingChaosHub: Editing ChaosHub
 effect: Effect
+email: Email
+emailIsRequired: Email is a required field
 enableChaosInfraButton: Enable Chaos in Environments
 enableChaosInfrastructure: Enable chaos infrastructure to run your first chaos experiment
 enableChaosInfrastructureDesc: >-
@@ -263,6 +276,8 @@ enableChaosInfrastructureDesc: >-
   the Environments
 enableImageRegistryChanges: Enable Image Registry Changes
 enableSSLCheck: Enable SSL/TLS check
+enableUser: Enable User
+enableUserDescription: Are you sure you want to enable this user?
 enablingChaos: Enabling chaos...
 endTime: End Time
 endedAt: Ended at
@@ -273,6 +288,13 @@ enterHubName: Enter Hub Name
 enterHubRepositoryBranch: Enter Hub Repository Branch
 enterHubRepositoryName: Enter Hub Repository Name
 enterHubRepositoryURL: Enter Hub Repository URL
+enterNewPassword: Enter new password
+enterOldPassword: Enter old password
+enterProjectName: Enter Project Name
+enterYourEmail: Enter your email
+enterYourName: Enter your name
+enterYourPassword: Enter your password
+enterYourUsername: Enter your username
 environment: Environment
 environmentError: It seems there was an error fetching the Environment Details.
 environments: Environments
@@ -400,8 +422,11 @@ insecureSkipVerify: Insecure skip verify
 installYaml: Install Chaos Infrastructure using YML
 interval: Interval
 intervalOptional: Interval (Optional)
+invalidEmailText: Please enter a valid email address
 invalidSelection: Invalid Selection
 invalidText: Invalid
+invitations: Invitations
+invitedBy: Invited By
 isRequired: '{{field}} is required field'
 issueSupport: If the issue still persists, consider reaching out to support!
 k8sDescription: >-
@@ -446,12 +471,15 @@ latestRun: Latest Run
 latestRunFallbackText: No Experiment Runs found
 launchExperiment: Launch Experiment
 learnMore: Learn More
+leaveProject: Leave Project
+leaveProjectDescription: Are you sure you want to leave the project?
 letsGetStarted: Let`s get started
 litmus: Litmus
 litmusChaos: LitmusChaos
 loading: Loading, please wait...
 logErrorMessage: Unable to fetch logs from log service, please try after some time.
 loginDescription: Login to create, orchestrate, analyze and collaborate your Chaos Experiments.
+loginToContinue: login to continue
 logs: Logs
 logsOptional: Logs (Optional)
 mainTitle: How do you want to start off?
@@ -495,6 +523,9 @@ nameIdDescriptionTags:
   namePlaceholder: Enter Name
   optionalField: '{{name}} (optional)'
   tagsLabel: Tags
+nameIsARequiredField: Name is a required field
+nameIsRequired: Name is a required in order to update.
+nameVaidText: Name can only contain alphabets.
 namespace: Namespace
 namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
 namespaceWide: Namespace-wide
@@ -503,8 +534,10 @@ newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
 newExperiment: New Experiment
+newPassword: New Password
 newProbe: New Probe
 newUpdates: New Updates
+newUser: New User
 newUserNoExperiments:
   subtitle: >-
     A chaos experiment contains a series of chaos faults and chaos probes to
@@ -536,6 +569,7 @@ noFilteredData:
   subtitle: Please try to modify your search criteria.
   title: No records were found to match your search
 noHealthyState: If the Chaos Infrastructure didn’t reach a healthy state
+noInvitationsFound: No invitations found
 noKubernetesChaosInfrastructureFound: >-
   No Kubernetes Chaos infrastructure found matching "{{value}}". Please adjust
   the search criteria and try again.
@@ -553,12 +587,15 @@ noProbesFound:
   message: Experiment has no probes yet, chaos step may still be executing.
   title: No Probes found
 noProjectFoundMatchingSearch: No project found matching your search {{searchTerm}}
+noProjectsFound: No projects found
+noProjectsJoined: No projects joined
 noResultsFound: No results found
 noRunsFound: No runs found
 noRunsFoundForThisExperiment: No runs found for this experiment
 noTunables: >-
   Unable to identify fault configurations correctly, please refer to the fault
   troubleshoot docs to learn more.
+noUserAddUsers: No users found, click on 'New User' to add users.
 noWorkflowRun: No experiment runs found
 nodeSelector: Node Selector
 nodeSelectorPlaceholderForKey: Enter the key
@@ -581,6 +618,7 @@ objective: Objective
 objectives: Objectives
 observe: Observe
 ofEvery: of every
+oldPassword: Old Password
 'on': 'On'
 onThe: on the
 onThisPage: ON THIS PAGE
@@ -600,6 +638,10 @@ overwriteYaml: Uploading a yaml will overwrite the existing one.
 parallel: Parallel
 passed: Passed
 passedRuns: Passed Runs
+password: Password
+passwordIsRequired: Password is a required field
+passwordResetSuccess: Password reset successfully
+passwordsDoNotMatch: Passwords do not match
 pauseRun: Pause Run
 pending: Pending
 pendingTime: >-
@@ -666,6 +708,12 @@ probes: Probes
 probesArePassed: probes are passed
 prod: Prod
 project: Project
+projectCreatedByYou: Your Projects
+projectNameIsRequired: Project name is a required in order to update.
+projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
+projectsByInvite: Projects By Invite
+projectsInTotal: project(s) in total
+projectsJoined: Projects Joined
 promDescription: >-
   Allows users to define metrics-based SLOs in a declarative way and determine
   the experiment verdict based on its success.
@@ -686,6 +734,9 @@ queryPath: Query path
 ranAt: Ran at
 rbacDescription: You are missing permission '{{permission}}' to perform this action.
 rbacHeader: You do not have permission to perform this action
+reEnterNewPassword: Re-enter new password
+reEnterPassword: Re-enter password
+reEnterYourPassword: Re-enter your password
 reRunDesc: This will re-run the current experiment.
 reRunExperiment: Run Experiment
 reRunSuccessful: A new run scheduled successfully
@@ -701,6 +752,7 @@ registryName: Registry Name
 required: Required
 rerun: Rerun
 resetFilters: Reset Filters
+resetPassword: Reset Password
 resilienceOverview: Resilience Overview
 resilienceProbes: Resilience Probes
 resilienceRate: Resilience Rate
@@ -728,6 +780,7 @@ retry: Retry
 retryOptional: Retry (Optional)
 revertSchedule: Revert Schedule
 revertScheduleText: Enabling this will make the schedule to revert after completion.
+role: Role
 run: Run
 runAllExperiment: Run All Experiments
 runAt: Run at
@@ -794,11 +847,13 @@ serviceAccount: Service Account
 serviceAccountName: Service Account Name
 serviceHealthScore: Service Health Score
 setFaultWeights: Set fault weights
+settings: Settings
 setupChaosInfrastructures: >-
   Enabling Chaos on infrastructure helps to inject chaos by studying your
   infrastructure and discover services
 setupProbe: Setup the Probe
 setupProbeBtn: Setup Probe
+showDisabledUsers: Include disabled users
 showLess: ' Show less'
 showingAll: Showing all
 showingLastRuns: Showing last 50 runs only
@@ -874,6 +929,7 @@ totalEnvironments: Total Environments
 totalExp: Total Experiments
 totalExperiments: Total Faults in Execution
 totalRuns: Total Runs
+totalUsers: Total Users
 triggeredBy: Triggered by
 troubleshooting: Troubleshooting
 tuneFault: Tune Fault
@@ -881,6 +937,7 @@ tuneFaultProperties: Tune fault properties
 tuneFaultWeight: Tune fault weightage
 tuneWeight: Tune Weight
 type: Type
+udpatePassword: Update Password
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
 update: Update
@@ -900,6 +957,12 @@ uploadYaml: Upload Yaml
 url: URL
 useIntegerValue: Please enter an integer value
 useThisTemplate: Use this template
+userCreateModalBottomText: By creating user an invitation will be send to the provided email address
+userCreateSuccessMessage: User '{{name}}' created successfully
+userCreatedOn: User Created On
+userManagement: User Management
+username: Username
+usernameIsRequired: Username is a required field
 validationError: Validation Error
 value: Value
 valuePlaceholder: Enter a value
@@ -913,6 +976,7 @@ viewExecution: View Execution
 viewExecutions: View Runs
 viewExperimentManifest: View Experiment manifest
 viewInChaosModule: View in Chaos Module
+viewInvitations: View Invitation(s)
 viewLastExecution: View Last Execution
 viewLessDefaultProperties: View less default properties
 viewLogs: View Logs
