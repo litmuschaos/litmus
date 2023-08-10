@@ -7,7 +7,7 @@ import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@
 import MainNav from '@components/MainNav';
 import Loader from '@components/Loader';
 import { useStrings } from '@strings';
-import type { User } from '@api/auth/index.ts';
+import type { User } from '@api/auth';
 import AccountDetailsChangeController from '@controllers/AccountDetailsChange';
 import AccountPasswordChangeController from '@controllers/AccountPasswordChange';
 import css from './SettingsWrapper.module.scss';

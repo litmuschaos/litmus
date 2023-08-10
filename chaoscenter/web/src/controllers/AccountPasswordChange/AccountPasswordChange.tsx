@@ -1,6 +1,6 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
-import { useUpdatePasswordMutation } from '@api/auth/index.ts';
+import { useUpdatePasswordMutation } from '@api/auth';
 import AccountPasswordChangeView from '@views/AccountPasswordChange';
 import { useLogout } from '@hooks';
 import { useStrings } from '@strings';

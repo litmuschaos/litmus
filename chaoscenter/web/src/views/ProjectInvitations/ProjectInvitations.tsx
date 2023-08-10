@@ -17,7 +17,7 @@ import type {
   GetInvitationResponse,
   GetUserWithProjectOkResponse,
   ListInvitationsOkResponse
-} from '@api/auth/index.ts';
+} from '@api/auth';
 import Loader from '@components/Loader';
 import DeleteProjectInvitationController from '@controllers/DeleteProjectInvitation';
 import { useAppStore } from '@context';

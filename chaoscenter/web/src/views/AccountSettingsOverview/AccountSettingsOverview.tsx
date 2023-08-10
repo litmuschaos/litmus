@@ -4,7 +4,7 @@ import { Color, FontVariation } from '@harnessio/design-system';
 import { Icon } from '@harnessio/icons';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { GetUserWithProjectOkResponse } from '@api/auth/index.ts';
+import type { GetUserWithProjectOkResponse } from '@api/auth';
 import AccountSettingsOverviewProjectsController from '@controllers/AccountSettingsOverviewProjects';
 import css from './AccountSettingsOverview.module.scss';
 

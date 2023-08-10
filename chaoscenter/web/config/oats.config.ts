@@ -10,7 +10,7 @@ export default defineConfig({
   services: {
     auth: {
       url: 'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/auth/v3.0.0/auth-api.json',
-      output: 'src/api/auth/index.ts',
+      output: 'src/api/auth',
       transformer(spec) {
         return {
           ...spec,

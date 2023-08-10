@@ -1,6 +1,6 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
-import { useResetPasswordMutation } from '@api/auth/index.ts';
+import { useResetPasswordMutation } from '@api/auth';
 import ResetPasswordView from '@views/ResetPassword';
 import { useStrings } from '@strings';
 

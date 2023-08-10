@@ -5,7 +5,7 @@ import type { UseMutateFunction } from '@tanstack/react-query';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
-import type { ResetPasswordOkResponse, ResetPasswordMutationProps } from '@api/auth/index.ts';
+import type { ResetPasswordOkResponse, ResetPasswordMutationProps } from '@api/auth';
 import { useStrings } from '@strings';
 
 interface ResetPasswordViewProps {

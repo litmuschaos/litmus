@@ -2,7 +2,7 @@ import React from 'react';
 import { useToaster } from '@harnessio/uicore';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import UpdateProjectNameView from '@views/UpdateProjectName';
-import { GetOwnerProjectsOkResponse, useUpdateProjectNameMutation } from '@api/auth/index.ts';
+import { GetOwnerProjectsOkResponse, useUpdateProjectNameMutation } from '@api/auth';
 
 interface UpdateProjectNameControllerProps {
   projectDetails: {

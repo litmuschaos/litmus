@@ -4,7 +4,7 @@ import { Icon } from '@harnessio/icons';
 import { FontVariation } from '@harnessio/design-system';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { UpdateStateOkResponse, UpdateStateMutationProps } from '@api/auth/index.ts';
+import type { UpdateStateOkResponse, UpdateStateMutationProps } from '@api/auth';
 
 interface EnableDisableUserViewProps {
   handleClose: () => void;

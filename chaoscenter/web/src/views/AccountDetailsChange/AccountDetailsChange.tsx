@@ -6,7 +6,7 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { UpdateDetailsMutationProps, UpdateDetailsOkResponse, User } from '@api/auth/index.ts';
+import type { UpdateDetailsMutationProps, UpdateDetailsOkResponse, User } from '@api/auth';
 
 interface AccountDetailsChangeViewProps {
   handleClose: () => void;

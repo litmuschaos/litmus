@@ -1,7 +1,7 @@
 import React from 'react';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import LeaveProjectView from '@views/LeaveProject';
-import { GetUserWithProjectOkResponse, ListInvitationsOkResponse, useLeaveProjectMutation } from '@api/auth/index.ts';
+import { GetUserWithProjectOkResponse, ListInvitationsOkResponse, useLeaveProjectMutation } from '@api/auth';
 
 interface LeaveProjectControllerProps {
   handleClose: () => void;

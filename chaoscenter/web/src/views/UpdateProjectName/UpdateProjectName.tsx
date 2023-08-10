@@ -5,7 +5,7 @@ import { FontVariation } from '@harnessio/design-system';
 import { Form, Formik } from 'formik';
 import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
-import type { UpdateProjectNameMutationProps, UpdateProjectNameOkResponse } from '@api/auth/index.ts';
+import type { UpdateProjectNameMutationProps, UpdateProjectNameOkResponse } from '@api/auth';
 import { useStrings } from '@strings';
 
 interface UpdateProjectNameViewProps {

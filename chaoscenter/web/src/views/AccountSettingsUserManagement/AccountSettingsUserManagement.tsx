@@ -16,7 +16,7 @@ import { Classes, Dialog, Menu, Popover, PopoverInteractionKind, Position } from
 import { Icon } from '@harnessio/icons';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { User, Users } from '@api/auth/index.ts';
+import type { User, Users } from '@api/auth';
 import { getFormattedTime, killEvent } from '@utils';
 import Loader from '@components/Loader';
 import CreateNewUserController from '@controllers/CreateNewUser';

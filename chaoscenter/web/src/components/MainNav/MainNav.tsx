@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import cx from 'classnames';
 import { NavLink as Link } from 'react-router-dom';
 import { Text, Layout, Avatar } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
 import { useStrings } from '@strings';
-import { AppStoreContext } from '@context';
+import { useAppStore } from '@context';
 import { useLogout, useRouteWithBaseUrl } from '@hooks';
 import css from './MainNav.module.scss';
 
@@ -40,7 +40,7 @@ export const LitmusNavItem = (): React.ReactElement => {
 export default function MainNav(): React.ReactElement {
   const accountScopedPaths = useRouteWithBaseUrl('account');
   const { getString } = useStrings();
-  const userData = useContext(AppStoreContext);
+  const { currentUserInfo } = useAppStore();
   const { forceLogout } = useLogout();
 
   return (
@@ -80,13 +80,13 @@ export default function MainNav(): React.ReactElement {
           <Link className={cx(css.navLink, css.userLink, css.hoverNavLink)} activeClassName={css.active} to={'#'}>
             <Layout.Vertical flex spacing="xsmall">
               <Avatar
-                name={userData?.currentUserInfo?.fullName ?? userData?.currentUserInfo?.username}
-                email={userData?.currentUserInfo?.email}
+                name={currentUserInfo?.fullName ?? currentUserInfo?.username}
+                email={currentUserInfo?.email}
                 size="small"
                 hoverCard={false}
               />
               <Text font={{ size: 'xsmall', align: 'center' }} color={Color.WHITE} className={css.hiddenText}>
-                {userData?.currentUserInfo?.fullName ?? userData?.currentUserInfo?.username}
+                {currentUserInfo?.fullName ?? currentUserInfo?.username}
               </Text>
             </Layout.Vertical>
           </Link>

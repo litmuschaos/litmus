@@ -6,7 +6,7 @@ import cx from 'classnames';
 import { useStrings } from '@strings';
 import ProjectCard from '@components/ProjectCard';
 import Loader from '@components/Loader';
-import type { Project } from '@api/auth/index.ts';
+import type { Project } from '@api/auth';
 import styles from './ProjectSelectorList.module.scss';
 
 interface ProjectSelectorListProps {

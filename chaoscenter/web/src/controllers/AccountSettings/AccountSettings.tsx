@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import AccountSettingsView from '@views/AccountSettings';
-import { useGetUserQuery } from '@api/auth/index.ts';
+import { useGetUserQuery } from '@api/auth';
 
 export default function AccountSettingsController(): React.ReactElement {
   const { accountID } = useParams<{ accountID: string }>();

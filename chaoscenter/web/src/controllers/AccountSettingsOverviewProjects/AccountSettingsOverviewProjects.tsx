@@ -5,7 +5,7 @@ import {
   useListInvitationsQuery,
   useAcceptInvitationMutation,
   GetUserWithProjectOkResponse
-} from '@api/auth/index.ts';
+} from '@api/auth';
 import UserCreatedProjectsView from '@views/UserCreatedProjects';
 import ProjectsJoinedView from '@views/ProjectsJoined';
 import ProjectInvitationsView from '@views/ProjectInvitations';

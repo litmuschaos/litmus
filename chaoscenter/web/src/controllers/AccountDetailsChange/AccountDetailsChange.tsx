@@ -2,7 +2,7 @@ import React from 'react';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useToaster } from '@harnessio/uicore';
 import AccountNameChangeView from '@views/AccountDetailsChange';
-import { User, useUpdateDetailsMutation } from '@api/auth/index.ts';
+import { User, useUpdateDetailsMutation } from '@api/auth';
 
 interface AccountDetailsChangeControllerProps {
   handleClose: () => void;

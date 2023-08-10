@@ -9,7 +9,7 @@ import { useStrings } from '@strings';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import AccountSettingsOverviewController from '@controllers/AccountSettingsOverview';
 import AccountSettingsUserManagementController from '@controllers/AccountSettingsUserManagement';
-import type { User } from '@api/auth/index.ts';
+import type { User } from '@api/auth';
 import { useAppStore } from '@context';
 import { UserType } from '@models';
 import css from './AccountSettings.module.scss';

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import DeleteProjectInvitationView from '@views/DeleteProjectInvitation';
-import { ListInvitationsOkResponse, useDeclineInvitationMutation } from '@api/auth/index.ts';
+import { ListInvitationsOkResponse, useDeclineInvitationMutation } from '@api/auth';
 
 interface DeleteProjectInvitationControllerProps {
   handleClose: () => void;

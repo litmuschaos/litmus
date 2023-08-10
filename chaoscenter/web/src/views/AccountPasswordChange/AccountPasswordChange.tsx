@@ -6,7 +6,7 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { UpdatePasswordMutationProps, UpdatePasswordOkResponse } from '@api/auth/index.ts';
+import type { UpdatePasswordMutationProps, UpdatePasswordOkResponse } from '@api/auth';
 
 interface AccountPasswordChangeViewProps {
   handleClose: () => void;

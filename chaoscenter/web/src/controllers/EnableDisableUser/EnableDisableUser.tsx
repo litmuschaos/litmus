@@ -2,7 +2,7 @@ import React from 'react';
 import { useToaster } from '@harnessio/uicore';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import EnableDisableUserView from '@views/EnableDisableUser';
-import { Users, useUpdateStateMutation } from '@api/auth/index.ts';
+import { Users, useUpdateStateMutation } from '@api/auth';
 
 interface EnableDisableUserControllerProps {
   handleClose: () => void;

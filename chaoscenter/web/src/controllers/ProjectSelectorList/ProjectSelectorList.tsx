@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExpandingSearchInput } from '@harnessio/uicore';
 import ProjectSelectorListView from '@views/ProjectSelectorList';
-import { useListProjectsQuery } from '@api/auth/index.ts';
+import { useListProjectsQuery } from '@api/auth';
 
 export default function ProjectSelectorListController(): React.ReactElement {
   const [searchText, setSearchText] = React.useState<string>('');

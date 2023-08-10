@@ -2,7 +2,7 @@ import React from 'react';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useToaster } from '@harnessio/uicore';
 import CreateNewUserView from '@views/CreateNewUser';
-import { useCreateUserMutation, Users } from '@api/auth/index.ts';
+import { useCreateUserMutation, Users } from '@api/auth';
 import { useStrings } from '@strings';
 
 interface CreateNewUserControllerProps {

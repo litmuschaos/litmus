@@ -2,7 +2,7 @@ import React from 'react';
 import { ExpandingSearchInput } from '@harnessio/uicore';
 import AccountSettingsUserManagementView from '@views/AccountSettingsUserManagement';
 import { useStrings } from '@strings';
-import { User, useUsersQuery } from '@api/auth/index.ts';
+import { User, useUsersQuery } from '@api/auth';
 import { UserType } from '@models';
 
 export default function AccountSettingsUserManagementController(): React.ReactElement {

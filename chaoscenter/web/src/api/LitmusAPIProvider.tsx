@@ -10,6 +10,7 @@ import {
   RequestHandler
 } from '@apollo/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getUserDetails } from '@utils';
 
 export interface APIConfig {
   gqlEndpoints: {
@@ -23,13 +24,10 @@ export interface APIConfig {
 
 interface LitmusAPIProviderProps {
   config: APIConfig;
-  token: string;
 }
 
-function createApolloClient({
-  config,
-  token
-}: LitmusAPIProviderProps): ApolloClient<NormalizedCacheObject> | undefined {
+function createApolloClient({ config }: LitmusAPIProviderProps): ApolloClient<NormalizedCacheObject> | undefined {
+  const { accessToken } = getUserDetails();
   if (!config.gqlEndpoints) return undefined;
 
   const httpLinkUri = config.gqlEndpoints.chaosManagerUri;
@@ -46,7 +44,7 @@ function createApolloClient({
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: token
+        authorization: `${accessToken}`
       }
     }));
 
@@ -64,12 +62,8 @@ function createApolloClient({
   return client;
 }
 
-export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({
-  config,
-  token,
-  children
-}): React.ReactElement => {
-  const apolloClient = createApolloClient({ config, token });
+export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({ config, children }): React.ReactElement => {
+  const apolloClient = createApolloClient({ config });
   const reactQueryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -81,11 +75,9 @@ export const LitmusAPIProvider: React.FC<LitmusAPIProviderProps> = ({
     }
   });
 
-  return apolloClient ? (
+  return (
     <QueryClientProvider client={reactQueryClient}>
-      <ApolloProvider client={apolloClient}>{children}</ApolloProvider>
+      {apolloClient ? <ApolloProvider client={apolloClient}>{children}</ApolloProvider> : children}
     </QueryClientProvider>
-  ) : (
-    <>{children}</>
   );
 };

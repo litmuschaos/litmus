@@ -7,7 +7,7 @@ import { Classes, Dialog, Menu, Popover, PopoverInteractionKind, Position } from
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import { getFormattedTime, killEvent } from '@utils';
-import type { GetOwnerProjectsOkResponse, Project } from '@api/auth/index.ts';
+import type { GetOwnerProjectsOkResponse, Project } from '@api/auth';
 import Loader from '@components/Loader';
 import UpdateProjectNameController from '@controllers/UpdateProjectName';
 import css from './UserCreatedProjects.module.scss';

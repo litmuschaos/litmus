@@ -6,7 +6,7 @@ import { Form } from 'formik';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import AuthLayout from '@components/AuthLayout/AuthLayout';
 import { useStrings } from '@strings';
-import type { ErrorModel, LoginMutationProps, LoginResponse } from '@api/auth/index.ts';
+import type { ErrorModel, LoginMutationProps, LoginResponse } from '@api/auth';
 
 interface LoginForm {
   username: string;

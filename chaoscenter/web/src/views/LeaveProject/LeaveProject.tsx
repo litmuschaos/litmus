@@ -5,7 +5,7 @@ import { FontVariation } from '@harnessio/design-system';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import { useAppStore } from '@context';
-import type { LeaveProjectOkResponse, LeaveProjectMutationProps } from '@api/auth/index.ts';
+import type { LeaveProjectOkResponse, LeaveProjectMutationProps } from '@api/auth';
 
 interface LeaveProjectViewProps {
   handleClose: () => void;

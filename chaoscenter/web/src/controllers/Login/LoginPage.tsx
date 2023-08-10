@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useToaster } from '@harnessio/uicore';
 import jwtDecode from 'jwt-decode';
 import LoginPageView from '@views/Login';
-import { useLoginMutation } from '@api/auth/index.ts';
+import { useLoginMutation } from '@api/auth';
 import { setUserDetails } from '@utils';
 import { normalizePath } from '@routes/RouteDefinitions';
 import type { DecodedTokenType } from '@models';

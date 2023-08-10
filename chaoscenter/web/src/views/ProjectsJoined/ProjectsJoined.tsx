@@ -7,11 +7,7 @@ import { Dialog } from '@blueprintjs/core';
 import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import type { PermissionGroup } from '@models';
-import type {
-  GetInvitationResponse,
-  GetUserWithProjectOkResponse,
-  ListInvitationsOkResponse
-} from '@api/auth/index.ts';
+import type { GetInvitationResponse, GetUserWithProjectOkResponse, ListInvitationsOkResponse } from '@api/auth';
 import StatusBadgeV2, { StatusBadgeEntity } from '@components/StatusBadgeV2';
 import Loader from '@components/Loader';
 import LeaveProjectController from '@controllers/LeaveProject';

@@ -1,6 +1,6 @@
 import React from 'react';
 import AccountSettingsOverviewView from '@views/AccountSettingsOverview';
-import { useGetUserWithProjectQuery } from '@api/auth/index.ts';
+import { useGetUserWithProjectQuery } from '@api/auth';
 import { InvitationState } from '@models';
 
 interface AccountSettingsOverviewControllerProps {

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, ButtonVariation, Layout, Text } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { FontVariation } from '@harnessio/design-system';
-import type { DeclineInvitationOkResponse, DeclineInvitationMutationProps } from '@api/auth/index.ts';
+import type { DeclineInvitationOkResponse, DeclineInvitationMutationProps } from '@api/auth';
 import { useStrings } from '@strings';
 import { useAppStore } from '@context';
 

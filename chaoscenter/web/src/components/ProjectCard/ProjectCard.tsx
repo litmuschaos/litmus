@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { AvatarGroup, Card, Container, Text } from '@harnessio/uicore';
 import { FontVariation, Color } from '@harnessio/design-system';
 import { useHistory } from 'react-router-dom';
-import { AppStoreContext } from '@context';
+import { useAppStore } from '@context';
 import { useStrings } from '@strings';
-import type { Project } from '@api/auth/index.ts';
+import type { Project } from '@api/auth';
 import { setUserDetails } from '@utils';
 import styles from './ProjectCard.module.scss';
 
@@ -15,7 +15,7 @@ interface ProjectCardProps {
 export default function ProjectCard({ data }: ProjectCardProps): React.ReactElement {
   const { getString } = useStrings();
   const history = useHistory();
-  const { projectID, currentUserInfo } = useContext(AppStoreContext);
+  const { projectID, currentUserInfo } = useAppStore();
 
   const isSelected = projectID === data.projectID;
   const collaborators = data.members?.map(member => {
