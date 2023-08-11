@@ -19,6 +19,7 @@ import LoginController from '@controllers/Login';
 import { getUserDetails } from '@utils';
 import EnvironmentController from '@controllers/Environments';
 import { isUserAuthenticated } from 'utils/auth';
+import AccountSettingsController from '@controllers/AccountSettings';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
@@ -31,10 +32,13 @@ const experimentKey = ':experimentKey';
 const notifyID = ':notifyID';
 
 export function RoutesWithAuthentication(): React.ReactElement {
-  const matchPaths = useRouteDefinitionsMatch();
-  const renderPaths = useRouteWithBaseUrl();
+  const projectMatchPaths = useRouteDefinitionsMatch();
+  const projectRenderPaths = useRouteWithBaseUrl();
+  const accountMatchPaths = useRouteDefinitionsMatch('account');
+  const accountRenderPaths = useRouteDefinitionsMatch('account');
+
   const { forceLogout } = useLogout();
-  const { token } = getUserDetails();
+  const { accessToken: token } = getUserDetails();
 
   useEffect(() => {
     if (!token || !isUserAuthenticated()) {
@@ -45,52 +49,62 @@ export function RoutesWithAuthentication(): React.ReactElement {
 
   return (
     <Switch>
-      <Redirect exact from={matchPaths.toRoot()} to={renderPaths.toDashboard()} />
-      <Route exact path={matchPaths.toDashboard()} component={OverviewController} />
+      <Redirect exact from={accountMatchPaths.toRoot()} to={accountRenderPaths.toAccountSettingsOverview()} />
+      <Redirect exact from={projectMatchPaths.toRoot()} to={projectRenderPaths.toDashboard()} />
+      <Route exact path={accountMatchPaths.toAccountSettingsOverview()} component={AccountSettingsController} />
+      <Route exact path={projectMatchPaths.toDashboard()} component={OverviewController} />
       {/* Chaos Experiments */}
-      <Route exact path={matchPaths.toExperiments()} component={ExperimentDashboardV2Controller} />
-      <Route exact path={matchPaths.toNewExperiment({ experimentKey })} component={ChaosStudioCreateController} />
-      <Route exact path={matchPaths.toEditExperiment({ experimentKey })} component={ChaosStudioEditController} />
-      <Route exact path={matchPaths.toCloneExperiment({ experimentKey })} component={ChaosStudioCloneController} />
+      <Route exact path={projectMatchPaths.toExperiments()} component={ExperimentDashboardV2Controller} />
       <Route
         exact
-        path={matchPaths.toExperimentRunHistory({ experimentID })}
+        path={projectMatchPaths.toNewExperiment({ experimentKey })}
+        component={ChaosStudioCreateController}
+      />
+      <Route exact path={projectMatchPaths.toEditExperiment({ experimentKey })} component={ChaosStudioEditController} />
+      <Route
+        exact
+        path={projectMatchPaths.toCloneExperiment({ experimentKey })}
+        component={ChaosStudioCloneController}
+      />
+      <Route
+        exact
+        path={projectMatchPaths.toExperimentRunHistory({ experimentID })}
         component={ExperimentRunHistoryController}
       />
       <Route
         exact
-        path={matchPaths.toExperimentRunDetails({ experimentID, runID })}
+        path={projectMatchPaths.toExperimentRunDetails({ experimentID, runID })}
         component={ExperimentRunDetailsController}
       />
       <Route
         exact
-        path={matchPaths.toExperimentRunDetailsViaNotifyID({ experimentID, notifyID })}
+        path={projectMatchPaths.toExperimentRunDetailsViaNotifyID({ experimentID, notifyID })}
         component={ExperimentRunDetailsController}
       />
       {/* ChaosHubs */}
-      <Route exact path={matchPaths.toChaosHubs()} component={ChaosHubsController} />
-      <Route exact path={matchPaths.toChaosHub({ hubID })} component={ChaosHubController} />
+      <Route exact path={projectMatchPaths.toChaosHubs()} component={ChaosHubsController} />
+      <Route exact path={projectMatchPaths.toChaosHub({ hubID })} component={ChaosHubController} />
       <Route
-        path={matchPaths.toPredefinedExperiment({ hubID, experimentName })}
+        path={projectMatchPaths.toPredefinedExperiment({ hubID, experimentName })}
         component={PredefinedExperimentController}
       />
-      <Route exact path={matchPaths.toChaosFault({ hubID, faultName })} component={ChaosFaultController} />
+      <Route exact path={projectMatchPaths.toChaosFault({ hubID, faultName })} component={ChaosFaultController} />
       {/*Environments */}
-      <Route exact path={matchPaths.toEnvironments()} component={EnvironmentController} />
+      <Route exact path={projectMatchPaths.toEnvironments()} component={EnvironmentController} />
       {/* Kubernetes Chaos Infrastructure */}
       <Redirect
         exact
-        from={matchPaths.toChaosInfrastructures({ environmentID })}
-        to={renderPaths.toKubernetesChaosInfrastructures({ environmentID })}
+        from={projectMatchPaths.toChaosInfrastructures({ environmentID })}
+        to={projectRenderPaths.toKubernetesChaosInfrastructures({ environmentID })}
       />
       <Route
         exact
-        path={matchPaths.toKubernetesChaosInfrastructures({ environmentID })}
+        path={projectMatchPaths.toKubernetesChaosInfrastructures({ environmentID })}
         component={KubernetesChaosInfrastructureController}
       />
       <Route
         exact
-        path={matchPaths.toKubernetesChaosInfrastructureDetails({ environmentID, chaosInfrastructureID })}
+        path={projectMatchPaths.toKubernetesChaosInfrastructureDetails({ environmentID, chaosInfrastructureID })}
         component={KubernetesChaosInfrastructureDetailsController}
       />
     </Switch>
@@ -98,14 +112,14 @@ export function RoutesWithAuthentication(): React.ReactElement {
 }
 
 export function RoutesWithoutAuthentication(): React.ReactElement {
-  const matchPaths = useRouteDefinitionsMatch();
-  const renderPaths = useRouteWithBaseUrl();
-  const { token, projectID } = getUserDetails();
+  const matchPaths = useRouteDefinitionsMatch('account');
+  const renderPaths = useRouteWithBaseUrl('account');
+  const { accessToken: token, projectID, accountID } = getUserDetails();
   const history = useHistory();
 
   React.useEffect(() => {
     if (token && isUserAuthenticated()) {
-      history.push(`/project/${projectID}${renderPaths.toDashboard()}`);
+      history.push(`/account/${accountID}/project/${projectID}${renderPaths.toDashboard()}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectID, token]);

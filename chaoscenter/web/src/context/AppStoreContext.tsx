@@ -1,6 +1,7 @@
 import React, { createContext } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import type { UserInfo } from '@models';
+import jwtDecode from 'jwt-decode';
+import type { DecodedTokenType, UserInfo } from '@models';
+import { getUserDetails } from '../utils/userDetails';
 
 export interface AppStoreContextProps {
   readonly projectID?: string;
@@ -8,7 +9,7 @@ export interface AppStoreContextProps {
   readonly currentUserInfo?: UserInfo;
   readonly matchPath?: string;
   readonly renderUrl?: string;
-  updateAppStore(
+  updateAppStore?(
     data: Partial<
       Pick<AppStoreContextProps, 'projectID' | 'projectRole' | 'currentUserInfo' | 'matchPath' | 'renderUrl'>
     >
@@ -32,25 +33,24 @@ export function useAppStore(): AppStoreContextProps {
   return React.useContext(AppStoreContext);
 }
 
-export const AppStoreProvider: React.FC<AppStoreContextProps> = ({ children, ...props }) => {
-  const history = useHistory();
-  const [appStore, setAppStore] = React.useState<AppStoreContextProps>(props);
-  const { projectID: projectIDFromParams } = useParams<{ projectID: string }>();
-
-  React.useEffect(() => {
-    if (projectIDFromParams) {
-      setAppStore(prev => ({ ...prev, projectID: projectIDFromParams }));
-      localStorage.setItem('projectID', projectIDFromParams);
-    }
-  }, [projectIDFromParams]);
-
+export const AppStoreProvider: React.FC<AppStoreContextProps> = ({ children }) => {
+  const userDetails = getUserDetails();
+  const tokenDecode: DecodedTokenType = jwtDecode(userDetails.accessToken);
+  const [appStore, setAppStore] = React.useState<AppStoreContextProps>({
+    projectID: userDetails.projectID,
+    projectRole: userDetails.projectRole,
+    currentUserInfo: {
+      ID: tokenDecode.uid,
+      username: tokenDecode.username,
+      userRole: tokenDecode.role
+    },
+    renderUrl: `/account/${tokenDecode.uid}`,
+    matchPath: '/account/:accountID',
+    updateAppStore: () => void 0
+  });
   const updateAppStore = React.useCallback(
     (data: Partial<AppStoreContextProps>) => {
       setAppStore(prev => ({ ...prev, ...data }));
-      if (data.projectID) {
-        localStorage.setItem('projectID', data.projectID);
-        history.replace(`/`);
-      }
     },
     [setAppStore]
   );

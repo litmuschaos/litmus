@@ -2,19 +2,10 @@ export function normalizePath(url: string): string {
   return url.replace(/\/{2,}/g, '/');
 }
 
-export function withProjectID<T>(fn: (args: T) => string) {
-  return (params: T & { projectID: string }): string => {
-    const path = fn(params);
-
-    return `/project/${params.projectID}/${path.replace(/^\//, '')}`;
-  };
-}
-
 export interface UseRouteDefinitionsProps {
   toRoot(): string;
   toLogin(): string;
   toDashboard(): string;
-  toDashboardWithProjectID(params: { projectID: string }): string;
   toExperiments(): string;
   toNewExperiment(params: { experimentKey: string }): string;
   toCloneExperiment(params: { experimentKey: string }): string;
@@ -32,19 +23,14 @@ export interface UseRouteDefinitionsProps {
   toChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
-}
-
-export interface ExternalPathProps {
-  toCVAddMonitoringServicesEdit(params: { serviceIdentifier: string }): string;
-  toExternalDashboard(params: { dashboardID: string }): string;
-  toDashboardsMain(): string;
+  // Account Scoped Routes
+  toAccountSettingsOverview(): string;
 }
 
 export const paths: UseRouteDefinitionsProps = {
   toRoot: () => '/',
   toLogin: () => '/login',
   toDashboard: () => '/dashboard',
-  toDashboardWithProjectID: withProjectID(() => 'dashboard'),
   toExperiments: () => '/experiments',
   // chaos studio routes
   toNewExperiment: ({ experimentKey }) => `/experiments/new/${experimentKey}/chaos-studio`,
@@ -68,5 +54,7 @@ export const paths: UseRouteDefinitionsProps = {
   toChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}`,
   toKubernetesChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}/kubernetes`,
   toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
-    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`
+    `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
+  // Account Scoped Routes
+  toAccountSettingsOverview: () => '/settings/overview'
 };

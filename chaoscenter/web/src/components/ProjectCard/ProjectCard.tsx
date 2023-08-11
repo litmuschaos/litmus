@@ -1,39 +1,47 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { AvatarGroup, Card, Container, Text } from '@harnessio/uicore';
 import { FontVariation, Color } from '@harnessio/design-system';
-import type { ListProject } from '@models';
-import { AppStoreContext } from '@context';
+import { useHistory } from 'react-router-dom';
+import { useAppStore } from '@context';
 import { useStrings } from '@strings';
+import type { Project } from '@api/auth';
+import { setUserDetails } from '@utils';
 import styles from './ProjectCard.module.scss';
 
 interface ProjectCardProps {
-  data: ListProject;
+  data: Project;
 }
 
 export default function ProjectCard({ data }: ProjectCardProps): React.ReactElement {
   const { getString } = useStrings();
-  const { projectID, updateAppStore } = useContext(AppStoreContext);
+  const history = useHistory();
+  const { projectID, currentUserInfo } = useAppStore();
 
-  const isSelected = projectID === data.ID;
-  const collaborators = data.Members?.map(member => {
+  const isSelected = projectID === data.projectID;
+  const collaborators = data.members?.map(member => {
     return {
-      name: member.UserName,
-      email: member.Email
+      name: member.username,
+      email: member.email
     };
   });
 
   const handleProjectSelect = (): void => {
-    updateAppStore({ projectID: data.ID });
+    const projectRole = data.members?.find(member => member.userID === currentUserInfo?.ID)?.role;
+    setUserDetails({
+      projectRole,
+      projectID: data.projectID
+    });
+    history.replace(`/`);
   };
 
   return (
     <Card selected={isSelected} onClick={handleProjectSelect} className={styles.projectCard}>
       <Container padding="small">
         <Text font={{ variation: FontVariation.CARD_TITLE }} lineClamp={1} color={Color.BLACK}>
-          {data?.Name}
+          {data?.name}
         </Text>
         <Text font={{ variation: FontVariation.TINY }} lineClamp={1} color={Color.GREY_700}>
-          {getString('id')}: {data?.ID}
+          {getString('id')}: {data.projectID ?? getString('NASlash')}
         </Text>
         <Container margin={{ top: 'small' }}>
           <Text
@@ -43,7 +51,12 @@ export default function ProjectCard({ data }: ProjectCardProps): React.ReactElem
           >
             {getString('collaborators')} ({collaborators?.length ?? 0})
           </Text>
-          <AvatarGroup size="small" restrictLengthTo={5} avatars={collaborators ?? [{}]} />
+          <AvatarGroup
+            avatarGroupProps={{ hoverCard: false }}
+            size="small"
+            restrictLengthTo={5}
+            avatars={collaborators ?? [{}]}
+          />
         </Container>
       </Container>
     </Card>

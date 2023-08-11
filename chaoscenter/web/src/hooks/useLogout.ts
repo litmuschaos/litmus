@@ -9,9 +9,10 @@ export const useLogout = (): UseLogoutReturn => {
   const history = useHistory();
 
   const forceLogout = (): void => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('projectRole');
     localStorage.removeItem('projectID');
+
     history.push(paths.toLogin());
   };
 

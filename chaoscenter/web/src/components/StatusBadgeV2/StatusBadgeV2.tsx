@@ -3,22 +3,29 @@ import { Color } from '@harnessio/design-system';
 import { Container, Text, Utils } from '@harnessio/uicore';
 import { Icon, IconName } from '@harnessio/icons';
 import type { ExperimentRunFaultStatus, ExperimentRunStatus, FaultProbeStatus } from '@api/entities';
-import type { ChaosInfrastructureStatus } from '@models';
+import type { ChaosInfrastructureStatus, PermissionGroup } from '@models';
 import {
   getPropsBasedOnChaosInfrastructureStatus,
   getPropsBasedOnExperimentRunFaultStatus,
   getPropsBasedOnExperimentRunStatus,
+  getPropsBasedOnPermissionGroup,
   getPropsBasedOnProbeStatus,
   phaseToUI
 } from '@utils';
 
-export type Status = ExperimentRunStatus | ExperimentRunFaultStatus | FaultProbeStatus | ChaosInfrastructureStatus;
+export type Status =
+  | ExperimentRunStatus
+  | ExperimentRunFaultStatus
+  | FaultProbeStatus
+  | ChaosInfrastructureStatus
+  | PermissionGroup;
 
 export enum StatusBadgeEntity {
   ExperimentRun = 'ExperimentRun',
   ExperimentRunFault = 'ExperimentRunFault',
   Probe = 'Probe',
-  Infrastructure = 'Infrastructure'
+  Infrastructure = 'Infrastructure',
+  PermissionGroup = 'PermissionGroup'
 }
 
 interface StatusBadgeV2Props {
@@ -52,6 +59,8 @@ export function StatusBadgeV2({ status, entity, tooltip }: StatusBadgeV2Props): 
         return getPropsBasedOnProbeStatus(status);
       case StatusBadgeEntity.Infrastructure:
         return getPropsBasedOnChaosInfrastructureStatus(status);
+      case StatusBadgeEntity.PermissionGroup:
+        return getPropsBasedOnPermissionGroup(status);
       default:
         return {
           color: Color.GREY_700
