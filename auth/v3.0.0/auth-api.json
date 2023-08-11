@@ -1170,6 +1170,13 @@
     },
     "LoginResponse": {
       "type": "object",
+      "required": [
+        "accessToken",
+        "expiresIn",
+        "projectID",
+        "projectRole",
+        "type"
+      ],
       "properties": {
         "accessToken": {
           "type": "string"
@@ -1204,6 +1211,7 @@
     },
     "User": {
       "type": "object",
+      "required": ["userID", "username", "role", "isRemoved"],
       "properties": {
         "userID": {
           "type": "string"
@@ -1245,6 +1253,7 @@
     },
     "ProjectMember": {
       "type": "object",
+      "required": ["userID", "username", "invitation", "role"],
       "properties": {
         "userID": {
           "type": "string"
@@ -1273,6 +1282,12 @@
     },
     "GetInvitationResponse": {
       "type": "object",
+      "required": [
+        "projectID",
+        "projectName",
+        "invitationRole",
+        "projectOwner"
+      ],
       "properties": {
         "projectName": {
           "type": "string"
@@ -1291,6 +1306,7 @@
     },
     "Project": {
       "type": "object",
+      "required": ["projectID", "name", "members"],
       "properties": {
         "updatedBy": {
           "$ref": "#/definitions/ActionBy"
