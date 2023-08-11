@@ -1574,7 +1574,6 @@ func (c *ChaosExperimentHandler) RunChaosWorkFlow(ctx context.Context, projectID
 			ResiliencyScore: &resScore,
 			ExecutionData:   string(parsedData),
 			Probes:          probes,
-			//TODO add probes
 		})
 		if err != nil {
 			logrus.Error("Failed to create run operation in db")

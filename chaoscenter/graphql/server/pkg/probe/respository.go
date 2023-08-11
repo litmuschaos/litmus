@@ -112,8 +112,6 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 		return nil, err
 	}
 
-	// TODO: Create Audit Trail event
-
 	return newProbe.GetOutputProbe(), nil
 }
 
@@ -125,6 +123,21 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 	pr, err := dbSchemaProbe.GetProbeByName(ctx, request.Name, p.ProjectID)
 	if err != nil {
 		return "", err
+	}
+
+	logFields := logrus.Fields{
+		"projectId": p.ProjectID,
+		"probeName": pr.Name,
+	}
+	uniqueProbe, err := p.ValidateUniqueProbe(ctx, request.Name)
+	if err != nil {
+		return "", err
+	} else if uniqueProbe == true {
+		return "", Error(logFields, "probe name doesn't exist")
+	}
+
+	if request.Type != model.ProbeType(pr.Type) {
+		return "", Error(logFields, "mismatched probe types")
 	}
 
 	// Shared Properties
