@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
 import { paths } from '@routes/RouteDefinitions';
-import config from '@config';
+import { useLogoutMutation } from '@api/auth';
 
 interface UseLogoutReturn {
   forceLogout: () => void;
@@ -8,22 +8,20 @@ interface UseLogoutReturn {
 
 export const useLogout = (): UseLogoutReturn => {
   const history = useHistory();
-
+  const { mutate: handleLogout } = useLogoutMutation(
+    {},
+    {
+      onSettled: _ => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('projectRole');
+        localStorage.removeItem('projectID');
+        history.push(paths.toLogin());
+      },
+      retry: false
+    }
+  );
   const forceLogout = (): void => {
-    const token = localStorage.getItem('token') ?? '';
-    fetch(`${config.restEndpoints?.authUri}/logout`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      }
-    }).then(() => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('projectID');
-      history.push(paths.toLogin());
-    });
+    handleLogout({ body: {} });
   };
-
   return { forceLogout };
 };
