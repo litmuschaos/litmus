@@ -11,8 +11,8 @@ import (
 func GenerateOAuthJWT() (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(OAuthJWTExpDuration)).Unix()
-	tokenString, err := token.SignedString([]byte(OAuthJwtSecret))
+	claims["exp"] = time.Now().Add(time.Minute * time.Duration(Config.OAuthJWTExpDuration)).Unix()
+	tokenString, err := token.SignedString([]byte(Config.OAuthJwtSecret))
 	if err != nil {
 		logrus.Info(err)
 		return "", err
@@ -25,7 +25,7 @@ func ValidateOAuthJWT(tokenString string) (bool, error) {
 		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
 			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
 		}
-		return []byte(OAuthJwtSecret), nil
+		return []byte(Config.OAuthJwtSecret), nil
 	})
 	if err != nil {
 		return false, err

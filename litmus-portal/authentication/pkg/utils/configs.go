@@ -1,49 +1,34 @@
 package utils
 
-import (
-	"os"
-	"strconv"
-)
+//Add required field at the start of the struct
 
-var (
-	JwtSecret                    = os.Getenv("JWT_SECRET")
-	AdminName                    = os.Getenv("ADMIN_USERNAME")
-	AdminPassword                = os.Getenv("ADMIN_PASSWORD")
-	DBUrl                        = os.Getenv("DB_SERVER")
-	DBUser                       = os.Getenv("DB_USER")
-	DBPassword                   = os.Getenv("DB_PASSWORD")
-	JWTExpiryDuration            = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
-	OAuthJWTExpDuration          = getEnvAsInt("OAUTH_JWT_EXP_MINS", 5)
-	OAuthJwtSecret               = os.Getenv("OAUTH_SECRET")
-	StrictPasswordPolicy         = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
-	DexEnabled                   = getEnvAsBool("DEX_ENABLED", false)
-	DexCallBackURL               = os.Getenv("DEX_OAUTH_CALLBACK_URL")
-	DexClientID                  = os.Getenv("DEX_OAUTH_CLIENT_ID")
-	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
-	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
-	DBName                       = "auth"
-	Port                         = ":3000"
-	GrpcPort                     = ":3030"
-	UserCollection               = "users"
-	ProjectCollection            = "project"
-	UsernameField                = "username"
-	PasswordEncryptionCost       = 15
-	DefaultLitmusGqlGrpcEndpoint = "localhost"
-	DefaultLitmusGqlGrpcPort     = ":8000"
-)
-
-func getEnvAsInt(name string, defaultVal int) int {
-	valueStr := os.Getenv(name)
-	if value, err := strconv.Atoi(valueStr); err == nil {
-		return value
-	}
-	return defaultVal
+type Configurations struct {
+	JwtSecret                    string `required:"true" envconfig:"JWT_SECRET"`
+	AdminUserName                string `required:"true" envconfig:"ADMIN_USERNAME"`
+	AdminPassword                string `required:"true" envconfig:"ADMIN_PASSWORD"`
+	DbServer                     string `required:"true" envconfig:"DB_SERVER"`
+	DbUser                       string `required:"true" envconfig:"DB_USER"`
+	DbPassword                   string `required:"true" envconfig:"DB_PASSWORD"`
+	DbName                       string `envconfig:"DB_NAME" default:"auth"`
+	Port                         string `required:"true" default:":3000"`
+	GrpcPort                     string `required:"true" default:":3030"`
+	UserCollection               string `required:"true" default:"users"`
+	ProjectCollection            string `required:"true" default:"project"`
+	UsernameField                string `required:"true" default:"username"`
+	PasswordEncryptionCost       int    `required:"true" default:"15"`
+	DefaultLitmusGqlGrpcEndpoint string `required:"true" default:"localhost"`
+	DefaultLitmusGqlGrpcPort     string `required:"true" default:":8000"`
+	JwtExpiryDuration            int    `envconfig:"JWT_EXPIRY_MINS" default:"1440"`
+	OAuthJWTExpDuration          int    `envconfig:"OAUTH_JWT_EXP_MINS" default:"5"`
+	OAuthJwtSecret               string `envconfig:"OAUTH_SECRET"`
+	StrictPassword               bool   `envconfig:"STRICT_PASSWORD_POLICY" default:"false"`
+	DexEnabled                   bool   `envconfig:"DEX_ENABLED" default:"false"`
+	DexCallBackURL               string `envconfig:"DEX_OAUTH_CALLBACK_URL"`
+	DexClientID                  string `envconfig:"DEX_OAUTH_CLIENT_ID"`
+	DexClientSecret              string `envconfig:"DEX_OAUTH_CLIENT_SECRET"`
+	DexOIDCIssuer                string `envconfig:"OIDC_ISSUER"`
+	LitmusGqlGrpcEndpoint        string `envconfig:"LITMUS_GQL_GRPC_ENDPOINT"`
+	LitmusGqlGrpcPort            string `envconfig:"LITMUS_GQL_GRPC_PORT"`
 }
 
-func getEnvAsBool(name string, defaultVal bool) bool {
-	valueStr := os.Getenv(name)
-	if valueStr, err := strconv.ParseBool(valueStr); err == nil {
-		return valueStr
-	}
-	return defaultVal
-}
+var Config Configurations

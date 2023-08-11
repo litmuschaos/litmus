@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//Repository holds the mongo database implementation of the Service
+// Repository holds the mongo database implementation of the Service
 type Repository interface {
 	LoginUser(user *entities.User) (*entities.User, error)
 	GetUser(uid string) (*entities.User, error)
@@ -36,7 +36,7 @@ type repository struct {
 // LoginUser helps to Login the user via OAuth, if user does not exists, creates a new user
 func (r repository) LoginUser(user *entities.User) (*entities.User, error) {
 	user.ID = uuid.Must(uuid.NewRandom()).String()
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.PasswordEncryptionCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), utils.Config.PasswordEncryptionCost)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,11 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 		}
 	}
 
-	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.Config.PasswordEncryptionCost)
+	if err != nil {
+		return err
+	}
+
 	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"_id": result.ID}, bson.M{"$set": bson.M{
 		"password": string(newHashedPassword),
 	}})

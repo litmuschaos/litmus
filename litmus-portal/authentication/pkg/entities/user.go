@@ -99,9 +99,9 @@ func (user *User) GetSignedJWT() (string, error) {
 	claims["uid"] = user.ID
 	claims["role"] = user.Role
 	claims["username"] = user.UserName
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.Config.JwtExpiryDuration)).Unix()
 
-	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
+	tokenString, err := token.SignedString([]byte(utils.Config.JwtSecret))
 	if err != nil {
 		logrus.Info(err)
 		return "", err

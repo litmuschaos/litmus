@@ -18,30 +18,30 @@ import (
 
 func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 	ctx := oidc.ClientContext(context.Background(), &http.Client{})
-	provider, err := oidc.NewProvider(ctx, utils.DexOIDCIssuer)
+	provider, err := oidc.NewProvider(ctx, utils.Config.DexOIDCIssuer)
 	if err != nil {
 		log.Errorf("OAuth Error: Something went wrong with OIDC provider %s", err)
 		return nil, nil, err
 	}
 	return &oauth2.Config{
-		RedirectURL:  utils.DexCallBackURL,
-		ClientID:     utils.DexClientID,
-		ClientSecret: utils.DexClientSecret,
+		RedirectURL:  utils.Config.DexCallBackURL,
+		ClientID:     utils.Config.DexClientID,
+		ClientSecret: utils.Config.DexClientSecret,
 		Scopes:       []string{"openid", "profile", "email"},
 		Endpoint:     provider.Endpoint(),
-	}, provider.Verifier(&oidc.Config{ClientID: utils.DexClientID}), nil
+	}, provider.Verifier(&oidc.Config{ClientID: utils.Config.DexClientID}), nil
 }
 
 // DexLogin handles and redirects to DexServer to proceed with OAuth
 func DexLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		dexToken, err := utils.GenerateOAuthJWT()
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
+
 		config, _, err := oAuthDexConfig()
 		if err != nil {
 			log.Error(err)
@@ -58,9 +58,16 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		incomingState := c.Query("state")
 		validated, err := utils.ValidateOAuthJWT(incomingState)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
 		if !validated {
 			c.Redirect(http.StatusTemporaryRedirect, "/")
 		}
+
 		config, verifier, err := oAuthDexConfig()
 		if err != nil {
 			log.Error(err)

@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-//Repository holds the mongo database implementation of the Service
+// Repository holds the mongo database implementation of the Service
 type Repository interface {
 	ListCollection() ([]string, error)
 	ListDataBase() ([]string, error)
