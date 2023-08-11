@@ -502,10 +502,10 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, filter *mod
 		matchProbeName := bson.D{
 			{
 				Key: "$match", Value: bson.D{
-				{"name", bson.D{
-					{"$in", probeNames},
-				}},
-			},
+					{"name", bson.D{
+						{"$in", probeNames},
+					}},
+				},
 			},
 		}
 
@@ -519,10 +519,10 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, filter *mod
 			matchProbeType := bson.D{
 				{
 					Key: "$match", Value: bson.D{
-					{"type", bson.D{
-						{"$in", filter.Type},
-					}},
-				},
+						{"type", bson.D{
+							{"$in", filter.Type},
+						}},
+					},
 				},
 			}
 			pipeline = append(pipeline, matchProbeType)
@@ -565,9 +565,9 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, filter *mod
 	matchIdentifierStage := bson.D{
 		{
 			Key: "$match", Value: bson.D{
-			{"project_id", p.ProjectID},
-			{"is_removed", false},
-		},
+				{"project_id", p.ProjectID},
+				{"is_removed", false},
+			},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifierStage)
@@ -755,14 +755,14 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 	matchIdentifiersStage := bson.D{
 		{
 			"$match", bson.D{{
-			"$and", bson.A{
-				bson.D{
-					{"project_id", p.ProjectID},
-					{"name", probeName},
-					{"is_removed", false},
+				"$and", bson.A{
+					bson.D{
+						{"project_id", p.ProjectID},
+						{"name", probeName},
+						{"is_removed", false},
+					},
 				},
-			},
-		}},
+			}},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifiersStage)
@@ -774,23 +774,23 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 				{"from", "chaosExperimentRuns"},
 				{
 					"pipeline", bson.A{
-					bson.D{{"$match", bson.D{
-						{"probes.probe_names", bson.D{
-							{"$eq", probeName},
-						}},
-					}}},
-					bson.D{
-						{"$project", bson.D{
-							{"experiment_name", 1},
-							{"probes.fault_name", 1},
-							{"phase", 1},
-							{"updated_at", 1},
-							{"updated_by", 1},
-							{"execution_data", 1},
-							{"experiment_id", 1},
-						}},
+						bson.D{{"$match", bson.D{
+							{"probes.probe_names", bson.D{
+								{"$eq", probeName},
+							}},
+						}}},
+						bson.D{
+							{"$project", bson.D{
+								{"experiment_name", 1},
+								{"probes.fault_name", 1},
+								{"phase", 1},
+								{"updated_at", 1},
+								{"updated_by", 1},
+								{"execution_data", 1},
+								{"experiment_id", 1},
+							}},
+						},
 					},
-				},
 				},
 				{"as", "execution_history"},
 			},
