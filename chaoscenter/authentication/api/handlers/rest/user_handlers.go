@@ -129,6 +129,12 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 
 func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
 		users, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
@@ -319,6 +325,13 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 
 func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {
@@ -362,6 +375,14 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 
 func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		var userRequest entities.UpdateUserState
 		err := c.BindJSON(&userRequest)
 		if err != nil {
