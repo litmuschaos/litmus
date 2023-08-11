@@ -18,7 +18,7 @@ func ProjectRouter(router *gin.Engine, service services.ApplicationService) {
 	router.GET("/get_project_role/:project_id", rest.GetProjectRole(service))
 	router.GET("/list_projects", rest.GetProjectsByUserID(service))
 	router.GET("/get_projects_stats", rest.GetProjectStats(service))
-	router.GET("/list_invitations_with_filters/:invitation-state", rest.ListInvitations(service))
+	router.GET("/list_invitations_with_filters/:invitation_state", rest.ListInvitations(service))
 	router.POST("/create_project", rest.CreateProject(service))
 	router.POST("/send_invitation", rest.SendInvitation(service))
 	router.POST("/accept_invitation", rest.AcceptInvitation(service))

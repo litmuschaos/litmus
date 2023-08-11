@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -88,6 +87,9 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
 					{"$and", bson.A{
+						bson.D{{"invitation", bson.D{
+							{"$ne", entities.PendingInvitation},
+						}}},
 						bson.D{{"invitation", bson.D{
 							{"$ne", entities.DeclinedInvitation},
 						}}},
@@ -241,7 +243,7 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 		update = bson.D{
 			{"$set", bson.D{
 				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", strconv.FormatInt(time.Now().Unix(), 10)},
+				{"members.$[elem].joined_at", time.Now().Unix()},
 			}}}
 	case entities.ExitedProject:
 		update = bson.D{
@@ -345,6 +347,13 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 	pipeline := mongo.Pipeline{
 		bson.D{{"$match", filter}},
 		bson.D{{"$project", bson.D{
+			{"name", 1},
+			{"state", 1},
+			{"created_at", 1},
+			{"updated_at", 1},
+			{"created_by", 1},
+			{"updated_by", 1},
+			{"is_removed", 1},
 			{"members", bson.D{
 				{"$filter", bson.D{
 					{"input", "$members"},
@@ -471,17 +480,36 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 func (r repository) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
 
 	var pipeline mongo.Pipeline
-	filter := bson.D{
-		{"$match", bson.D{
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"invitation", bson.D{
-						{"$eq", invitationState},
+	var filter bson.D
+	if invitationState == entities.PendingInvitation {
+		filter = bson.D{
+			{"$match", bson.D{
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", userID},
+						{"invitation", bson.D{
+							{"$eq", invitationState},
+						}},
 					}},
-				}},
-			}}},
-		},
+				}}},
+			},
+		}
+	} else if invitationState == entities.AcceptedInvitation {
+		filter = bson.D{
+			{"$match", bson.D{
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", userID},
+						{"role", bson.D{
+							{"$ne", entities.RoleOwner},
+						}},
+						{"invitation", bson.D{
+							{"$eq", invitationState},
+						}},
+					}},
+				}}},
+			},
+		}
 	}
 	pipeline = append(pipeline, filter)
 

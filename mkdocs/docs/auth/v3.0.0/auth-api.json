@@ -988,7 +988,7 @@
         "produces": ["application/json"]
       }
     },
-    "/list_invitations_with_filters/{invitation-state}": {
+    "/list_invitations_with_filters/{invitation_state}": {
       "get": {
         "description": "This API is used to list all the pending invitations of the user\n",
         "operationId": "listInvitations",
@@ -1229,7 +1229,7 @@
         "createdBy": {
           "$ref": "#/definitions/ActionBy"
         },
-        "createAt": {
+        "createdAt": {
           "type": "integer"
         },
         "updatedAt": {
