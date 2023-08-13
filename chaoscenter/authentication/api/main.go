@@ -38,6 +38,8 @@ type Config struct {
 }
 
 func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetReportCaller(true)
 	printVersion()
 
 	var c Config
@@ -46,8 +48,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.SetFormatter(&log.JSONFormatter{})
-	log.SetReportCaller(true)
 }
 
 func main() {
