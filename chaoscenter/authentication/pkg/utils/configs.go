@@ -28,7 +28,7 @@ var (
 	ProjectCollection            = "project"
 	RevokedTokenCollection       = "revoked-token"
 	UsernameField                = "username"
-	ExpireOnField                = "expire_on"
+	ExpiresAtField               = "expires_at"
 	PasswordEncryptionCost       = 15
 	DefaultLitmusGqlGrpcEndpoint = "localhost"
 	DefaultLitmusGqlGrpcPort     = ":8000"

@@ -47,7 +47,7 @@ func CreateIndex(collectionName string, field string, db *mongo.Database) error 
 func CreateTTLIndex(collectionName string, db *mongo.Database) error {
 	// more info: https://www.mongodb.com/docs/manual/tutorial/expire-data/#expire-documents-at-a-specific-clock-time
 	mod := mongo.IndexModel{
-		Keys:    bson.M{ExpireOnField: 1},
+		Keys:    bson.M{ExpiresAtField: 1},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

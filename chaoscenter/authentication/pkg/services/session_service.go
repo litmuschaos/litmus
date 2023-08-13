@@ -26,7 +26,7 @@ func (a applicationService) RevokeToken(tokenString string) error {
 	claims := token.Claims.(jwt.MapClaims)
 	revokedToken := &entities.RevokedToken{
 		Token:     tokenString,
-		ExpireOn:  int64(claims["exp"].(float64)),
+		ExpiresAt: int64(claims["exp"].(float64)),
 		CreatedAt: time.Now().Unix(),
 	}
 	return a.sessionRepository.RevokeToken(revokedToken)
