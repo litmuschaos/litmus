@@ -14,6 +14,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const BearerSchema = "Bearer "
+
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -203,7 +205,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := user.GetSignedJWT()
+		token, err := service.GetSignedJWT(user)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -261,6 +263,28 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			"projectRole": entities.RoleOwner,
 			"expiresIn":   expiryTime,
 			"type":        "Bearer",
+		})
+	}
+}
+
+// LogoutUser revokes the token passed in the Authorization header
+func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+		tokenString := authHeader[len(BearerSchema):]
+		// revoke token
+		err := service.RevokeToken(tokenString)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "successfully logged out",
 		})
 	}
 }

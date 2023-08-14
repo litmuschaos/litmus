@@ -24,6 +24,14 @@ metrics:
   enabled: false
   prometheusRule:
     enabled: false
+    
+# bitnami/mongodb is not yet supported on ARM.
+# Using unofficial tools to build bitnami/mongodb (arm64 support)
+# more info: https://github.com/ZCube/bitnami-compat
+#image:
+#  registry: ghcr.io/zcube
+#  repository: bitnami-compat/mongodb
+#  tag: 6.0.5
 ```
 
 ```shell

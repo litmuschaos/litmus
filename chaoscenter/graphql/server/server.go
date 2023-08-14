@@ -30,18 +30,19 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
 func init() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.Printf("go version: %s", runtime.Version())
-	logrus.Printf("go os/arch: %s/%s", runtime.GOOS, runtime.GOARCH)
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetReportCaller(true)
+	log.Printf("go version: %s", runtime.Version())
+	log.Printf("go os/arch: %s/%s", runtime.GOOS, runtime.GOARCH)
 
 	err := envconfig.Process("", &utils.Config)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 }
@@ -65,7 +66,7 @@ func main() {
 	var err error
 	mongodb.MgoClient, err = mongodb.MongoConnection()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
@@ -96,7 +97,7 @@ func main() {
 
 	// routers
 	router.GET("/", handlers.PlaygroundHandler())
-	router.Any("/query", authorization.Middleware(srv))
+	router.Any("/query", authorization.Middleware(srv, mongodb.MgoClient))
 
 	router.Any("/file/:key", handlers.FileHandler(mongodbOperator))
 
@@ -112,19 +113,19 @@ func main() {
 	go func() {
 		err := projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 		if err != nil {
-			logrus.Error(err.Error())
+			log.Error(err.Error())
 		}
 	}()
 
-	logrus.Printf("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
-	logrus.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	log.Infof("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
+	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
 func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		logrus.Fatal("failed to listen: %w", err)
+		log.Fatal("failed to listen: %w", err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -133,6 +134,6 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 
 	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
 
-	logrus.Printf("GRPC server listening on %v", lis.Addr())
-	logrus.Fatal(grpcServer.Serve(lis))
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
 }

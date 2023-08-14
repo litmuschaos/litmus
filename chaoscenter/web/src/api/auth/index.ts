@@ -114,6 +114,13 @@ export type {
 } from './hooks/useLoginMutation';
 export { login, useLoginMutation } from './hooks/useLoginMutation';
 export type {
+  LogoutErrorResponse,
+  LogoutMutationProps,
+  LogoutOkResponse,
+  LogoutProps
+} from './hooks/useLogoutMutation';
+export { logout, useLogoutMutation } from './hooks/useLogoutMutation';
+export type {
   RemoveInvitationErrorResponse,
   RemoveInvitationMutationProps,
   RemoveInvitationOkResponse,
@@ -179,6 +186,7 @@ export type { ErrorModel } from './schemas/ErrorModel';
 export type { GetInvitationResponse } from './schemas/GetInvitationResponse';
 export type { GetUserWithProject } from './schemas/GetUserWithProject';
 export type { LoginResponse } from './schemas/LoginResponse';
+export type { LogoutResponse } from './schemas/LogoutResponse';
 export type { Project } from './schemas/Project';
 export type { ProjectMember } from './schemas/ProjectMember';
 export type { User } from './schemas/User';

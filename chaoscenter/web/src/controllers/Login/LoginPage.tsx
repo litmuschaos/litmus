@@ -11,7 +11,6 @@ import type { DecodedTokenType } from '@models';
 const LoginController: React.FC = () => {
   const history = useHistory();
   const { showError } = useToaster();
-
   const { isLoading, mutate: handleLogin } = useLoginMutation(
     {},
     {
