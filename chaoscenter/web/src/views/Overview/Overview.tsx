@@ -97,7 +97,7 @@ export default function OverviewView({
               <NewExperimentButton />
               <ParentComponentErrorWrapper>
                 <RbacButton
-                  permission={PermissionGroup.EDITOR}
+                  permission={PermissionGroup.VIEWER}
                   variation={ButtonVariation.SECONDARY}
                   text={getString('viewAllExperiments')}
                   onClick={() => history.push(paths.toExperiments())}

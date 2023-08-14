@@ -19,4 +19,4 @@ export * from './nodes';
 export * from './getInfrastructureTypeFromExperimentKind';
 export * from './faultTunableForm';
 export * from './isOnPrem';
-export * from './isUserAllowed';
+export * from './usePermissions';

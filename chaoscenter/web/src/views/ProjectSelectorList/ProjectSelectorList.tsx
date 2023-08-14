@@ -3,14 +3,14 @@ import { Container, Layout, Text } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { Color, FontVariation } from '@harnessio/design-system';
 import cx from 'classnames';
-import type { ListProject } from '@models';
 import { useStrings } from '@strings';
 import ProjectCard from '@components/ProjectCard';
 import Loader from '@components/Loader';
+import type { Project } from '@api/auth';
 import styles from './ProjectSelectorList.module.scss';
 
 interface ProjectSelectorListProps {
-  projectList: ListProject[] | undefined;
+  projectList: Project[] | undefined;
   searchBar: React.ReactElement;
   totalProjects: number;
   searchTerm: string;
@@ -40,7 +40,7 @@ export default function ProjectSelectorListView({
           {projectList && projectList.length > 0 ? (
             <Container className={cx(styles.grow, styles.cardListContainer)}>
               {projectList?.map(project => (
-                <ProjectCard key={project.ID} data={project} />
+                <ProjectCard key={project.projectID} data={project} />
               ))}
             </Container>
           ) : (

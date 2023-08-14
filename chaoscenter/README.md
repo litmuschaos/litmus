@@ -24,6 +24,14 @@ metrics:
   enabled: false
   prometheusRule:
     enabled: false
+    
+# bitnami/mongodb is not yet supported on ARM.
+# Using unofficial tools to build bitnami/mongodb (arm64 support)
+# more info: https://github.com/ZCube/bitnami-compat
+#image:
+#  registry: ghcr.io/zcube
+#  repository: bitnami-compat/mongodb
+#  tag: 6.0.5
 ```
 
 ```shell
@@ -35,5 +43,5 @@ helm install my-release bitnami/mongodb --values mongo-values.yml -n <NAMESPACE>
 Applying the manifest file will install all the required service account configuration and ChaosCenter.
 
 ```shell
-kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta9/litmus-3.0.0-beta9.yaml
+kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta10/litmus-3.0.0-beta10.yaml
 ```

@@ -106,7 +106,10 @@ func (r repository) InviteUsers(invitedUsers []string) (*[]entities.User, error)
 	var Users = []entities.User{}
 	for cursor.Next(context.TODO()) {
 		var user entities.User
-		_ = cursor.Decode(&user)
+		err := cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
 		Users = append(Users, *user.SanitizedUser())
 	}
 
@@ -136,7 +139,7 @@ func (r repository) FindUsersByUID(uid []string) (*[]entities.User, error) {
 	return &Users, nil
 }
 
-// FindUser finds and returns a user if it exists
+// FindUserByUsername finds and returns a user if it exists
 func (r repository) FindUserByUsername(username string) (*entities.User, error) {
 	var result = entities.User{}
 	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
@@ -233,10 +236,12 @@ func (r repository) UpdateUserState(username string, isDeactivate bool, deactiva
 	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
 			"deactivated_at": deactivateTime,
+			"is_removed":     true,
 		}})
 	} else {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
 			"deactivated_at": nil,
+			"is_removed":     false,
 		}})
 	}
 
