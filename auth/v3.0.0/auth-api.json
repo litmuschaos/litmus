@@ -91,6 +91,39 @@
         "produces": ["application/json"]
       }
     },
+    "/logout": {
+      "post": {
+        "description": "This API is used to logout into auth server.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message":"successfully logged out"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/LogoutResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
     "/users": {
       "get": {
         "description": "This API is used to get the list of users",
@@ -1191,6 +1224,17 @@
           "type": "string"
         },
         "type": {
+          "type": "string"
+        }
+      }
+    },
+    "LogoutResponse": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
           "type": "string"
         }
       }
