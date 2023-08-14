@@ -4,6 +4,7 @@ import { Button, ButtonVariation, Layout } from '@harnessio/uicore';
 import { getUsersForInvitation } from '@api/core/projects/inviteUsers';
 import InviteUsersTableView from '@views/InviteNewMembers';
 import { useStrings } from '@strings';
+import { useGetUsersForInvitationQuery } from '@api/auth';
 import { generateInviteUsersTableContent } from './helper';
 import type { InviteUserDetails } from './types';
 
@@ -14,15 +15,14 @@ interface InviteUsersControllerProps {
 export default function InviteUsersController({ hideDarkModal }: InviteUsersControllerProps): React.ReactElement {
   const { projectID } = useParams<{ projectID: string }>();
   const [users, setUsers] = React.useState<InviteUserDetails[]>([]);
-  const { data } = getUsersForInvitation(projectID);
+  const { data, isLoading, refetch: getUsers } = useGetUsersForInvitationQuery({ project_id: projectID });
   const { getString } = useStrings();
   React.useEffect(() => {
-    data && setUsers(generateInviteUsersTableContent(data));
-  }, [data]);
-
+    if (isLoading === false && data?.data) setUsers(generateInviteUsersTableContent(data.data));
+  }, [data, isLoading]);
   return (
     <Layout.Vertical>
-      <InviteUsersTableView data={users} />
+      <InviteUsersTableView data={users} getUsers={getUsers} />
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
         <Button
           disabled={false}

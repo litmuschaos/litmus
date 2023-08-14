@@ -205,6 +205,7 @@ func (r repository) RemoveInvitation(projectID string, userID string, invitation
 
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
 	if err != nil {
+		// TODO check it's use
 		if invitation == entities.AcceptedInvitation {
 			return err
 		}

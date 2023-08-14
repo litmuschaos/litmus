@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Dialog, Layout, Tab, Tabs, Text } from '@harnessio/uicore';
+import { Container, Dialog, Layout, Tab, Tabs } from '@harnessio/uicore';
 import DefaultLayout from '@components/DefaultLayout';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import { MembersTabs, PermissionGroup } from '@models';
@@ -57,7 +57,6 @@ export default function ProjectMembersView(): React.ReactElement {
                   </Dialog>
                 </Layout.Horizontal>
                 <Layout.Vertical padding="medium">
-                  <Text>Total Members</Text>
                   <ActiveProjectMembersController />
                 </Layout.Vertical>
               </Layout.Vertical>
@@ -69,7 +68,6 @@ export default function ProjectMembersView(): React.ReactElement {
             // disabled={error.BUILDER || !hasFaults}
             panel={
               <Layout.Vertical padding="medium">
-                <Text>Total Members</Text>
                 <PendingProjectMembersController />
               </Layout.Vertical>
             }

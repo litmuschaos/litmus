@@ -1,13 +1,18 @@
-import { TableV2 } from '@harnessio/uicore';
+import { Layout, TableV2, Text } from '@harnessio/uicore';
 import React, { useMemo } from 'react';
 import type { Column, Row } from 'react-table';
-import type { ProjectMember } from '@controllers/ActiveProjectMembers/types';
+import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useStrings } from '@strings';
+import type { GetProjectMembersOkResponse, ProjectMember } from '@api/auth';
 import { MemberEmail, MemberName, MemberPermission } from './ActiveMembersListColumns';
 import { MenuCell } from './ActiveMemberTableMenu';
 
 interface ActiveMembersTableViewProps {
   activeMembers: ProjectMember[];
+  isLoading: boolean;
+  getMembersRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetProjectMembersOkResponse, unknown>>;
 }
 export default function ActiveMembersTableView({ activeMembers }: ActiveMembersTableViewProps): React.ReactElement {
   const { getString } = useStrings();
@@ -15,21 +20,22 @@ export default function ActiveMembersTableView({ activeMembers }: ActiveMembersT
     () => [
       {
         Header: 'MEMBERS',
-        id: 'Username',
+        id: 'username',
         width: '40%',
-        accessor: 'Username',
+        accessor: 'username',
         Cell: MemberName
       },
       {
         Header: 'EMAIL',
-        id: 'Email',
-        accessor: 'Email',
+        id: 'email',
+        accessor: 'email',
         width: '30%',
         Cell: MemberEmail
       },
       {
         Header: 'PERMISSIONS',
-        id: 'Role',
+        id: 'role',
+        accessor: 'role',
         width: '30%',
         Cell: MemberPermission
       },
@@ -43,5 +49,10 @@ export default function ActiveMembersTableView({ activeMembers }: ActiveMembersT
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [getString]
   );
-  return <TableV2<ProjectMember> columns={envColumns} sortable data={activeMembers} />;
+  return (
+    <Layout.Vertical>
+      <Text>Total Pending Invitations {activeMembers.length}</Text>
+      <TableV2<ProjectMember> columns={envColumns} sortable data={activeMembers} />
+    </Layout.Vertical>
+  );
 }

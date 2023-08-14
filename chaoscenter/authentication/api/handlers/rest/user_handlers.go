@@ -164,7 +164,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, users)
+		c.JSON(200, gin.H{"data": users})
 	}
 }
 

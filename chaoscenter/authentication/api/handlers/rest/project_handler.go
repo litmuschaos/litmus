@@ -499,7 +499,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 		case entities.DeclinedInvitation, entities.ExitedProject:
 			{
-				c.JSON(400, gin.H{"message": "User is already not a part of your project"})
+				c.JSON(400, gin.H{"message": "User is not a part of your project"})
 				return
 			}
 		}
