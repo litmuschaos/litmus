@@ -2,13 +2,14 @@ package rest
 
 import (
 	"context"
+	"net/http"
+	"strconv"
+	"time"
+
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -113,7 +114,8 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		jwtToken, err := signedInUser.GetSignedJWT()
+
+		jwtToken, err := userService.GetSignedJWT(signedInUser)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

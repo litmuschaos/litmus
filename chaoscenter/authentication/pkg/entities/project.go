@@ -32,7 +32,7 @@ type Member struct {
 	Name       string     `bson:"name" json:"name"`
 	Role       MemberRole `bson:"role" json:"role"`
 	Invitation Invitation `bson:"invitation" json:"invitation"`
-	JoinedAt   string     `bson:"joined_at" json:"joinedAt"`
+	JoinedAt   int64      `bson:"joined_at" json:"joinedAt"`
 }
 
 type Members struct {
@@ -53,6 +53,13 @@ type MemberInput struct {
 	ProjectID string      `json:"projectID"`
 	UserID    string      `json:"userID"`
 	Role      *MemberRole `json:"role"`
+}
+
+type ListInvitationResponse struct {
+	ProjectID      string     `json:"projectID"`
+	ProjectName    string     `json:"projectName"`
+	ProjectOwner   Member     `json:"projectOwner"`
+	InvitationRole Invitation `json:"invitationRole"`
 }
 
 // GetProjectOutput takes a Project struct as input and returns the graphQL model equivalent

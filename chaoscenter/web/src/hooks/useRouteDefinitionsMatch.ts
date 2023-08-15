@@ -12,12 +12,25 @@ import { useAppStore } from './useAppStore';
  *
  */
 
-export function useRouteDefinitionsMatch(): UseRouteDefinitionsProps {
+type RouteScope = 'account' | 'project';
+
+export function useRouteDefinitionsMatch(scope?: RouteScope): UseRouteDefinitionsProps {
   const { matchPath } = useAppStore();
+
+  function withProjectID(route: string): string {
+    return `/project/:projectID/${route.replace(/^\//, '')}`;
+  }
 
   return React.useMemo(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    () => mapValues(paths, route => (params?: any) => normalizePath(`${matchPath}/${route(params)}`)),
+    () =>
+      mapValues(
+        paths,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        route => (params?: any) =>
+          normalizePath(`${matchPath}/${scope === 'account' ? route(params) : withProjectID(route(params))}`)
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [matchPath]
   );
 }

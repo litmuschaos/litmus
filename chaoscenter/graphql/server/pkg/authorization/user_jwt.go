@@ -13,8 +13,8 @@ import (
 // UserValidateJWT validates the cluster jwt
 func UserValidateJWT(token string) (jwt.MapClaims, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		if ok := token.Method.Alg() == jwt.SigningMethodHS512.Alg(); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
+			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
 		}
 		return []byte(utils.Config.JwtSecret), nil
 	})

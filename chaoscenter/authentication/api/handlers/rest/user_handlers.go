@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
@@ -14,6 +13,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
+
+const BearerSchema = "Bearer "
 
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -128,6 +129,12 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 
 func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
 		users, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
@@ -198,7 +205,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := user.GetSignedJWT()
+		token, err := service.GetSignedJWT(user)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -210,14 +217,14 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 		ownerProjects, err := service.GetOwnerProjectIDs(c, user.ID)
 
 		if len(ownerProjects) > 0 {
-			defaultProject = ownerProjects[0]
+			defaultProject = ownerProjects[0].ID
 		} else {
 			// Adding user as project owner in project's member list
 			newMember := &entities.Member{
 				UserID:     user.ID,
 				Role:       entities.RoleOwner,
 				Invitation: entities.AcceptedInvitation,
-				JoinedAt:   strconv.FormatInt(time.Now().Unix(), 10),
+				JoinedAt:   time.Now().Unix(),
 			}
 			var members []*entities.Member
 			members = append(members, newMember)
@@ -260,6 +267,28 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// LogoutUser revokes the token passed in the Authorization header
+func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+		tokenString := authHeader[len(BearerSchema):]
+		// revoke token
+		err := service.RevokeToken(tokenString)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "successfully logged out",
+		})
+	}
+}
+
 func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
@@ -296,6 +325,13 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 
 func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {
@@ -339,6 +375,14 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 
 func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		var userRequest entities.UpdateUserState
 		err := c.BindJSON(&userRequest)
 		if err != nil {
