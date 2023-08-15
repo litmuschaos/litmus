@@ -59,23 +59,19 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 		config.TLSCert = utils.Config.TlsCertB64
 	}
 
-	if !infra.IsRegistered {
-		var respData []byte
-		if infra.InfraScope == ClusterScope {
-			respData, err = ManifestParser(infra, "manifests/cluster", &config)
-		} else if infra.InfraScope == NamespaceScope {
-			respData, err = ManifestParser(infra, "manifests/namespace", &config)
-		} else {
-			logrus.Error("INFRA_SCOPE env is empty!")
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		return respData, nil
+	var respData []byte
+	if infra.InfraScope == ClusterScope {
+		respData, err = ManifestParser(infra, "manifests/cluster", &config)
+	} else if infra.InfraScope == NamespaceScope {
+		respData, err = ManifestParser(infra, "manifests/namespace", &config)
 	} else {
-		return []byte("Infra is already registered"), nil
+		logrus.Error("INFRA_SCOPE env is empty!")
 	}
+	if err != nil {
+		return nil, err
+	}
+
+	return respData, nil
 }
 
 // ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
