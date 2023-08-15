@@ -3,7 +3,7 @@ import { Layout, Popover, SplitButtonOption, Text } from '@harnessio/uicore';
 import { IMenuItemProps, PopoverInteractionKind } from '@blueprintjs/core';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
-import { isUserAllowed } from '@utils';
+import { usePermissions } from '@utils';
 
 interface RbacCustomButtonProps {
   permission: string;
@@ -17,7 +17,9 @@ export const RBACSplitButtonOption = ({
   ...props
 }: RbacCustomButtonProps & SplitButtonOptionProps): React.ReactElement => {
   const { getString } = useStrings();
-  const disabled = isUserAllowed(permission);
+  const disabled = usePermissions({
+    permission
+  });
 
   const toolTip = (
     <Layout.Vertical padding="small">

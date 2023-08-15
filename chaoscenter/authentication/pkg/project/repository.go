@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -28,15 +27,17 @@ type Repository interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
-	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
+	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
+	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
+	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
 type repository struct {
 	Collection *mongo.Collection
 }
 
-// GetProject returns a project based on a query or filter value
+// GetProjectByProjectID returns a project based on a query or filter value
 func (r repository) GetProjectByProjectID(projectID string) (*entities.Project, error) {
 	var project = new(entities.Project)
 
@@ -86,6 +87,9 @@ func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entitie
 				{"$elemMatch", bson.D{
 					{"user_id", userID},
 					{"$and", bson.A{
+						bson.D{{"invitation", bson.D{
+							{"$ne", entities.PendingInvitation},
+						}}},
 						bson.D{{"invitation", bson.D{
 							{"$ne", entities.DeclinedInvitation},
 						}}},
@@ -239,7 +243,7 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 		update = bson.D{
 			{"$set", bson.D{
 				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", strconv.FormatInt(time.Now().Unix(), 10)},
+				{"members.$[elem].joined_at", time.Now().Unix()},
 			}}}
 	case entities.ExitedProject:
 		update = bson.D{
@@ -282,7 +286,7 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 	return results, nil
 }
 
-// UpdateUserState updates the deactivated_at state of the member and removed_at field of the project
+// UpdateProjectState updates the deactivated_at state of the member and removed_at field of the project
 func (r repository) UpdateProjectState(userID string, deactivateTime string) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
@@ -328,8 +332,8 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 	return nil
 }
 
-// GetOwnerProjectIDs takes a userID to retrieve the project IDs in which user is the owner
-func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error) {
+// GetOwnerProjects takes a userID to retrieve the project IDs in which user is the owner
+func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error) {
 	filter := bson.D{
 		{"members", bson.D{
 			{"$elemMatch", bson.D{
@@ -342,8 +346,23 @@ func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]st
 
 	pipeline := mongo.Pipeline{
 		bson.D{{"$match", filter}},
-		bson.D{{"$project", bson.M{
-			"_id": 1,
+		bson.D{{"$project", bson.D{
+			{"name", 1},
+			{"state", 1},
+			{"created_at", 1},
+			{"updated_at", 1},
+			{"created_by", 1},
+			{"updated_by", 1},
+			{"is_removed", 1},
+			{"members", bson.D{
+				{"$filter", bson.D{
+					{"input", "$members"},
+					{"as", "member"},
+					{"cond", bson.D{{
+						"$eq", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+					}}},
+				}},
+			}},
 		}}},
 	}
 
@@ -352,15 +371,10 @@ func (r repository) GetOwnerProjectIDs(ctx context.Context, userID string) ([]st
 		return nil, err
 	}
 
-	var results []bson.M
-	if err = cursor.All(ctx, &results); err != nil {
+	var projects []*entities.Project
+	err = cursor.All(context.TODO(), &projects)
+	if err != nil {
 		return nil, err
-	}
-
-	var projects []string
-
-	for _, result := range results {
-		projects = append(projects, result["_id"].(string))
 	}
 
 	return projects, nil
@@ -393,6 +407,146 @@ func (r repository) GetProjectRole(projectID string, userID string) (*entities.M
 		return nil, nil
 	}
 	return &(res.Members[0].Role), nil
+}
+
+func (r repository) GetProjectMembers(projectID string, state string) ([]*entities.Member, error) {
+	var pipeline mongo.Pipeline
+	filter := bson.D{
+		{"$match", bson.D{
+			{"_id", projectID},
+		}},
+	}
+	pipeline = append(pipeline, filter)
+	var projection bson.D
+	switch state {
+	case string(entities.Accepted):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", bson.D{
+					{"$filter", bson.D{
+						{"input", "$members"},
+						{"as", "member"},
+						{"cond", bson.D{{
+							"$eq", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+						}}},
+					}},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, projection)
+	case string(entities.NotAccepted):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", bson.D{
+					{"$filter", bson.D{
+						{"input", "$members"},
+						{"as", "member"},
+						{"cond", bson.D{{
+							"$ne", bson.A{"$$member.invitation", entities.AcceptedInvitation},
+						}}},
+					}},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, projection)
+	case string(entities.All):
+		projection = bson.D{
+			{"$project", bson.D{
+				{"_id", 0},
+				{"members", 1},
+			}},
+		}
+		pipeline = append(pipeline, projection)
+	}
+
+	var res []entities.Members
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = cursor.All(context.TODO(), &res); err != nil {
+		return nil, err
+	}
+
+	if len(res) <= 0 {
+		return nil, nil
+	}
+	return res[0].Members, nil
+}
+
+func (r repository) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
+
+	var pipeline mongo.Pipeline
+	var filter bson.D
+	if invitationState == entities.PendingInvitation {
+		filter = bson.D{
+			{"$match", bson.D{
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", userID},
+						{"invitation", bson.D{
+							{"$eq", invitationState},
+						}},
+					}},
+				}}},
+			},
+		}
+	} else if invitationState == entities.AcceptedInvitation {
+		filter = bson.D{
+			{"$match", bson.D{
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", userID},
+						{"role", bson.D{
+							{"$ne", entities.RoleOwner},
+						}},
+						{"invitation", bson.D{
+							{"$eq", invitationState},
+						}},
+					}},
+				}}},
+			},
+		}
+	}
+	pipeline = append(pipeline, filter)
+
+	projection := bson.D{
+		{"$project", bson.D{
+			{"name", 1},
+			{"members", bson.D{
+				{"$filter", bson.D{
+					{"input", "$members"},
+					{"as", "member"},
+					{"cond", bson.D{
+						{"$or", bson.A{
+							bson.D{{"$and", bson.A{
+								bson.D{{"$eq", bson.A{"$$member.invitation", invitationState}}},
+								bson.D{{"$eq", bson.A{"$$member.user_id", userID}}},
+							}}},
+							bson.D{{"$eq", bson.A{"$$member.role", entities.RoleOwner}}},
+						}},
+					}},
+				}},
+			}},
+		}},
+	}
+	pipeline = append(pipeline, projection)
+	cursor, err := r.GetAggregateProjects(pipeline, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var projects []*entities.Project
+	err = cursor.All(context.TODO(), &projects)
+	if err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+
 }
 
 // NewRepo creates a new instance of this repository

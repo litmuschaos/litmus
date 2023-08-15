@@ -17,6 +17,7 @@ type userService interface {
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
+	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
 // LoginUser is the implementation of the repository function `LoginUser`
@@ -72,4 +73,8 @@ func (a applicationService) IsAdministrator(user *entities.User) error {
 // UpdateUserState updates deactivated_at state of the user
 func (a applicationService) UpdateUserState(username string, isDeactivate bool, deactivateTime string) error {
 	return a.userRepository.UpdateUserState(username, isDeactivate, deactivateTime)
+}
+
+func (a applicationService) InviteUsers(invitedUsers []string) (*[]entities.User, error) {
+	return a.userRepository.InviteUsers(invitedUsers)
 }

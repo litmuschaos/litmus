@@ -139,9 +139,9 @@ func main() {
 
 	// routers
 	router.GET("/", rest_handlers.PlaygroundHandler())
-	router.Any("/query", authorization.Middleware(srv))
+	router.Any("/query", authorization.Middleware(srv, client))
 	router.GET("/readiness", rest_handlers.ReadinessHandler(client, mongodbOperator))
-	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(rest_handlers.GetIconHandler, nil))
+	router.GET("/icon/:ProjectID/:HubName/:ChartName/:IconName", authorization.RestMiddlewareWithRole(rest_handlers.GetIconHandler, client, nil))
 	router.Any("/file/:key", rest_handlers.FileHandler(mongodbOperator, kubeClients))
 	router.GET("/status", rest_handlers.StatusHandler)
 	router.GET("/workflow_helper_image_version", rest_handlers.WorkflowHelperImageVersionHandler)
