@@ -11,33 +11,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 
 	// choasExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run/model/mocks"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
-	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/database/mongodb"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
-	mongodbMockOperator = new(dbMocks.MongoOperator)
-	infraOperator       = new(dbChaosInfra.Operator)
-	// infrastructureService      = chaos_infrastructure.NewChaosInfrastructureService(infraOperator)
-	// gitOpsService              = new(dbGitOps.GitOpsService)
+	mongodbMockOperator        = new(dbMocks.MongoOperator)
+	infraOperator              = dbChaosInfra.NewInfrastructureOperator(mongodbMockOperator)
 	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
 )
 
-var runService = NewChaosExperimentRunService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator)
-
-// var runService = new(mocks.ChaosExperimentRunService)
+var chaosExperimentRunTestService = NewChaosExperimentRunService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator)
 
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
@@ -122,7 +118,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunDelete(t *testing.T) {
 			},
 			given: func() {
 				// given
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.WorkflowCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, nil).Once()
 			},
 			wantErr: false,
 		},
@@ -147,7 +143,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunDelete(t *testing.T) {
 			},
 			given: func() {
 				// given
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.WorkflowCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 1}, errors.New("")).Once()
+				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(&mongo.UpdateResult{MatchedCount: 0}, errors.New("")).Once()
 			},
 			wantErr: true,
 		},
@@ -155,8 +151,7 @@ func Test_chaosExperimentRunService_ProcessExperimentRunDelete(t *testing.T) {
 	for _, tc := range testcases {
 		tc.given()
 		t.Run(tc.name, func(t *testing.T) {
-			service := NewChaosExperimentRunService(chaosExperimentOperator, infraOperator, chaosExperimentRunOperator)
-			if err := service.ProcessExperimentRunDelete(tc.args.ctx, tc.args.query, tc.args.workflowRunID, tc.args.experimentRun, tc.args.workflow, tc.args.username, tc.args.r); (err != nil) != tc.wantErr {
+			if err := chaosExperimentRunTestService.ProcessExperimentRunDelete(tc.args.ctx, tc.args.query, tc.args.workflowRunID, tc.args.experimentRun, tc.args.workflow, tc.args.username, tc.args.r); (err != nil) != tc.wantErr {
 				t.Errorf("chaosExperimentRunService.ProcessExperimentRunDelete() error = %v, wantErr %v", err, tc.wantErr)
 			}
 		})
@@ -170,9 +165,7 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 		runID    string
 	}
 	experimentRunId := uuid.New().String()
-	// projectID := uuid.New().String()
 	experimentID := uuid.New().String()
-	// infraId := uuid.New().String()
 
 	testcases := []struct {
 		name    string
@@ -191,8 +184,8 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 			},
 			given: func() {
 				findResult := []interface{}{bson.D{{Key: "experiment_id", Value: experimentID}, {Key: "weightages", Value: []*model.WeightagesInput{{FaultName: uuid.NewString(), Weightage: 10}}}}}
-				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("List", mock.Anything, mongodb.WorkflowCollection, mock.Anything).Return(cursor, nil).Once()
+				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
+				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 			},
 			wantErr: false,
 		},
@@ -207,13 +200,13 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 			},
 			given: func() {
 				findResult := []interface{}{bson.D{{Key: "experiment_id", Value: experimentID}}, bson.D{{Key: "experiment_id", Value: uuid.NewString()}}}
-				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("List", mock.Anything, mongodb.WorkflowCollection, mock.Anything).Return(cursor, nil).Once()
+				singleResult := mongo.NewSingleResultFromDocument(findResult, nil, nil)
+				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 			},
 			wantErr: true,
 		},
 		{
-			name: "failure: can't find experiment run",
+			name: "failure: nil mongo single result",
 			args: args{
 				execData: ExecutionData{
 					ExperimentID: experimentID,
@@ -222,8 +215,8 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 				runID: experimentRunId,
 			},
 			given: func() {
-				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
-				mongodbMockOperator.On("List", mock.Anything, mongodb.WorkflowCollection, mock.Anything).Return(cursor, errors.New("")).Once()
+				singleResult := mongo.NewSingleResultFromDocument(nil, nil, nil)
+				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, errors.New("")).Once()
 			},
 			wantErr: true,
 		},
@@ -231,7 +224,7 @@ func Test_chaosExperimentRunService_ProcessCompletedExperimentRun(t *testing.T) 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.given()
-			_, err := runService.ProcessCompletedExperimentRun(tc.args.execData, tc.args.wfID, tc.args.runID)
+			_, err := chaosExperimentRunTestService.ProcessCompletedExperimentRun(tc.args.execData, tc.args.wfID, tc.args.runID)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("chaosExperimentRunService.ProcessCompletedExperimentRun() error = %v, wantErr %v", err, tc.wantErr)
 				return
