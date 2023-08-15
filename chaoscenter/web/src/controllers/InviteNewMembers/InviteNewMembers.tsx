@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, ButtonVariation, Layout } from '@harnessio/uicore';
-import { getUsersForInvitation } from '@api/core/projects/inviteUsers';
 import InviteUsersTableView from '@views/InviteNewMembers';
 import { useStrings } from '@strings';
 import { useGetUsersForInvitationQuery } from '@api/auth';
@@ -22,7 +21,7 @@ export default function InviteUsersController({ hideDarkModal }: InviteUsersCont
   }, [data, isLoading]);
   return (
     <Layout.Vertical>
-      <InviteUsersTableView data={users} getUsers={getUsers} />
+      <InviteUsersTableView users={users} getUsers={getUsers} />
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
         <Button
           disabled={false}

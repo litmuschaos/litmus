@@ -1,26 +1,26 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
-import { useRemoveInvitationMutation } from '@api/auth';
+import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
+import { GetProjectMembersOkResponse, useRemoveInvitationMutation } from '@api/auth';
 import RemoveMemberView from '@views/RemoveMember';
 
 interface RemoveMemberControllerProps {
   userID: string;
   username: string;
   hideDeleteModal: () => void;
-  //   getUsersRefetch: <TPageData>(
-  //     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  //   ) => Promise<QueryObserverResult<Users, unknown>>;
-  // }
+  getMembersRefetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<GetProjectMembersOkResponse, unknown>>;
 }
 export default function RemoveMemberController(props: RemoveMemberControllerProps): React.ReactElement {
-  const { userID, username, hideDeleteModal } = props;
+  const { userID, username, hideDeleteModal, getMembersRefetch } = props;
   const { showSuccess } = useToaster();
 
   const { mutate: removeMemberMutation } = useRemoveInvitationMutation(
     {},
     {
       onSuccess: data => {
-        // getUsersRefetch();
+        getMembersRefetch();
         showSuccess(data.message);
       }
     }

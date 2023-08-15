@@ -12,6 +12,5 @@ export function generateInviteUsersTableContent(userData: Array<User> | undefine
           };
         })
       : [];
-  console.log('context', userData);
   return content;
 }
