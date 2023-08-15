@@ -1,0 +1,72 @@
+.mainContainerShadow {
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.main {
+  background-color: #ffffff;
+  position: relative;
+  min-height: 120px;
+  width: 100% !important;
+  padding-left: 52px;
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+    align-items: self-end;
+    justify-content: space-around;
+  }
+
+  .graph {
+    position: relative;
+    margin-top: 20px;
+    min-height: 88px;
+    .column {
+      border-top-right-radius: 3px;
+      border-top-left-radius: 3px;
+      display: inline-block;
+      z-index: 2;
+    }
+    .yAxisLabel {
+      position: absolute;
+      left: -80px;
+      font-size: 10px;
+      top: 45%;
+      transform: rotate(-90deg);
+    }
+    .scale {
+      z-index: 1;
+      width: 100%;
+      position: absolute;
+      border: 0.1px solid #f3f3fa;
+      :global {
+        span {
+          position: absolute;
+          left: -28px;
+          top: -6px;
+          font-size: 10px;
+        }
+      }
+    }
+    .xAxisLabel {
+      position: absolute;
+      left: 50%;
+      bottom: -38px;
+      font-size: 11px;
+    }
+  }
+
+  .xAxisLabels {
+    position: relative;
+    .xAxisRunNumberLabel {
+      background-color: var(--white);
+      margin-top: 8px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      font-size: 10px;
+      line-height: 12px;
+    }
+  }
+}

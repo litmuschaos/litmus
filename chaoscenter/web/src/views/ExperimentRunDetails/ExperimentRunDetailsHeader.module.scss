@@ -1,0 +1,51 @@
+.headerLabel {
+  color: var(--grey-600);
+}
+
+.breakLine {
+  display: inline-block;
+  height: 15px;
+  width: 1px;
+  background-color: var(--grey-600);
+}
+
+.rightSideBar {
+  background-color: #fafbfc !important;
+  min-height: var(--page-min-height);
+  width: 62px;
+  height: 100vh;
+  border-left: 1px solid var(--grey-200);
+}
+.gap-1 {
+  gap: 0.25rem;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+.hr {
+  width: 1px;
+  height: 14px;
+  background-color: var(--grey-800);
+}
+.flexGrow {
+  flex-grow: 1;
+}
+
+.test {
+  :global {
+    .PageHeader--large {
+      background-color: #eef6fc !important;
+    }
+    .PageHeader--breadcrumbsDiv {
+      margin-bottom: 8px !important;
+    }
+  }
+}
+
+.leftSideBar {
+  height: 100vh;
+  border-right: 1px solid var(--grey-200);
+}

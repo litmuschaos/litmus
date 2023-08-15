@@ -1,0 +1,116 @@
+.path-execute {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 10s linear;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.draggableParent {
+  overflow: hidden;
+  cursor: move !important;
+}
+
+.graph-main {
+  --pipeline-color-dark-grey: var(--grey-400);
+  --pipeline-select-blue: var(--primary-6);
+  --pipeline-tag-bc: var(--primary-2);
+  --pipeline-subtext: var(--grey-300);
+  --pipeline-barrier: var(--yellow-500);
+  --pipeline-barrier-yellow: var(--yellow-400);
+  --pipeline-grey-border: var(--grey-300);
+  --diagram-grey: var(--grey-300);
+  --diagram-light-grey: var(--grey-100);
+  --diagram-selected: var(--primary-6);
+  --diagram-link: var(--primary-4);
+  --diagram-start-node: var(--green-400);
+  --diagram-stop-node: var(--grey-400);
+  --diagram-hover-link-color: var(--primary-7);
+  --diagram-add-node-color: var(--grey-400);
+  --diagram-color-in-label: var(--grey-400);
+  --diagram-in-label-font: 10px;
+  --execution-pipeline-color-arrow-complete: var(--primary-6);
+  --execution-pipeline-color-blue: var(--primary-6);
+  --execution-pipeline-color-arrow-not-started: var(--grey-200);
+  --execution-pipeline-color-grey: var(--grey-300);
+  --execution-pipeline-color-dark-grey: var(--grey-400);
+  --execution-pipeline-color-red: var(--red-400);
+  --execution-pipeline-color-dark-red: var(--red-800);
+  --execution-pipeline-color-orange: var(--orange-500);
+  --execution-pipeline-color-orange2: var(--orange-700);
+  --execution-pipeline-color-dark-grey2: var(--grey-400);
+
+  position: relative;
+  height: 100%;
+  width: 100%;
+  transform-origin: top left;
+}
+
+.main {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  border-top: 2px solid var(--grey-100);
+  background: var(--pipeline-studio-bg);
+  background-size: 10px 10px;
+}
+
+.graph-node {
+  width: fit-content;
+  opacity: 1;
+  position: relative;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.common {
+  inset: 0px;
+  position: absolute;
+  transform-origin: 0px 0px;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  cursor: default;
+}
+.svg-arrow {
+  stroke: #d3d3d3;
+  stroke-width: 2;
+  stroke-dasharray: 0;
+  fill: none;
+  pointer-events: all;
+}
+
+.graph-tree {
+  display: flex;
+  column-gap: 80px;
+  cursor: move;
+}
+
+.parallel {
+  margin-top: 40px;
+  margin-bottom: 0;
+}
+
+.overlay {
+  width: 100%;
+  height: 100vh;
+  background-size: 10px 10px;
+  position: relative;
+}
+
+.nodeRightPadding {
+  margin-right: 15px;
+}
+.nodeLeftPadding {
+  margin-left: 15px;
+}
+.node {
+  height: fit-content;
+  width: fit-content;
+}

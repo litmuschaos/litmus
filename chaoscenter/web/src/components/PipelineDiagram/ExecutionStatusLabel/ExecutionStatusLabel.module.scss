@@ -1,0 +1,72 @@
+.status {
+  --execution-status-bg-color: var(--grey-350);
+  --execution-status-color: var(--white);
+  white-space: nowrap !important;
+  font-size: var(--font-size-xsmall);
+  color: var(--execution-status-color) !important;
+  border: none;
+  background-color: var(--execution-status-bg-color) !important;
+  border-radius: var(--spacing-2);
+  padding: var(--spacing-1) var(--spacing-3) !important;
+  height: 18px;
+  line-height: var(--font-size-normal) !important;
+  font-weight: bold !important;
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 0.2px;
+
+  &.failed,
+  &.errored,
+  &.rejected,
+  &.suspended,
+  &.approvalrejected {
+    --execution-status-bg-color: var(--red-50);
+    --execution-status-color: var(--red-900);
+  }
+
+  &.skipped,
+  &.queued,
+  &.aborted,
+  &.discontinuing,
+  &.expired {
+    --execution-status-bg-color: var(--grey-200);
+    --execution-status-color: var(--grey-700);
+  }
+
+  &.success,
+  &.ignorefailed {
+    --execution-status-bg-color: var(--green-50);
+    --execution-status-color: var(--green-800);
+  }
+
+  &.running,
+  &.asyncwaiting,
+  &.taskwaiting,
+  &.timedwaiting {
+    --execution-status-bg-color: var(--primary-7);
+  }
+
+  &.resourcewaiting,
+  &.approvalwaiting,
+  &.interventionwaiting {
+    --execution-status-bg-color: var(--yellow-200);
+    --execution-status-color: #d2261d;
+  }
+
+  &.pausing,
+  &.paused {
+    --execution-status-bg-color: var(--primary-2);
+    --execution-status-color: var(--primary-7);
+  }
+
+  &.notstarted {
+    --execution-status-bg-color: var(--grey-100);
+    --execution-status-color: var(--grey-700);
+  }
+
+  .icon {
+    margin-right: var(--spacing-2) !important;
+    color: var(--execution-status-color) !important;
+  }
+}

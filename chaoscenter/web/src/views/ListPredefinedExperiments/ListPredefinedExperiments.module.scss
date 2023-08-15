@@ -1,0 +1,24 @@
+.hubCard {
+  box-shadow: 0px 2px 4px 0px #60617029, 0px 0px 1px 0px #28293d0a;
+  border-radius: 4px;
+}
+.hubCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  padding: var(--spacing-4);
+}
+.previewCont {
+  height: 240px;
+  width: 100%;
+  background-color: #bbdef520;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.hubCardMainCont {
+  display: grid;
+  gap: 1rem;
+}
