@@ -102,7 +102,7 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 		var userData = entities.User{
 			Name:     claims.Name,
 			Email:    claims.Email,
-			UserName: claims.Email,
+			Username: claims.Email,
 			Role:     entities.RoleUser,
 			Audit: entities.Audit{
 				CreatedAt: createdAt,
@@ -116,7 +116,7 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		jwtToken, err := signedInUser.GetSignedJWT()
+		jwtToken, err := userService.GetSignedJWT(signedInUser)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

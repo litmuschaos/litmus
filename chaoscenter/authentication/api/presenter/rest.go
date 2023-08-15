@@ -5,7 +5,7 @@ import "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 // ErrorResponseStruct defines the structure for error responses
 type ErrorResponseStruct struct {
 	Error            string `json:"error"`
-	ErrorDescription string `json:"error_description"`
+	ErrorDescription string `json:"errorDescription"`
 }
 
 // CreateErrorResponse is a helper function that creates a ErrorResponseStruct

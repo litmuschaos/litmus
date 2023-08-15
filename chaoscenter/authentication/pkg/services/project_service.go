@@ -22,8 +22,10 @@ type projectService interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
-	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
+	GetOwnerProjectIDs(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
+	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
+	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -69,9 +71,17 @@ func (a applicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *
 func (a applicationService) UpdateProjectState(userID string, deactivateTime string) error {
 	return a.projectRepository.UpdateProjectState(userID, deactivateTime)
 }
-func (a applicationService) GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error) {
-	return a.projectRepository.GetOwnerProjectIDs(ctx, userID)
+func (a applicationService) GetOwnerProjectIDs(ctx context.Context, userID string) ([]*entities.Project, error) {
+	return a.projectRepository.GetOwnerProjects(ctx, userID)
 }
 func (a applicationService) GetProjectRole(projectID string, userID string) (*entities.MemberRole, error) {
 	return a.projectRepository.GetProjectRole(projectID, userID)
+}
+
+func (a applicationService) GetProjectMembers(projectID string, state string) ([]*entities.Member, error) {
+	return a.projectRepository.GetProjectMembers(projectID, state)
+}
+
+func (a applicationService) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
+	return a.projectRepository.ListInvitations(userID, invitationState)
 }

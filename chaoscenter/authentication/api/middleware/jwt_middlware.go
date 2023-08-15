@@ -1,18 +1,16 @@
 package middleware
 
 import (
-	"fmt"
-
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
-
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"github.com/sirupsen/logrus"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 // JwtMiddleware is a Gin Middleware that authorises requests
-func JwtMiddleware() gin.HandlerFunc {
+func JwtMiddleware(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const BearerSchema = "Bearer "
 		authHeader := c.GetHeader("Authorization")
@@ -21,7 +19,12 @@ func JwtMiddleware() gin.HandlerFunc {
 			return
 		}
 		tokenString := authHeader[len(BearerSchema):]
-		token, err := ValidateToken(tokenString)
+		token, err := service.ValidateToken(tokenString)
+		if err != nil {
+			log.Error(err)
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
 		if token.Valid {
 			claims := token.Claims.(jwt.MapClaims)
 			c.Set("username", claims["username"])
@@ -29,20 +32,8 @@ func JwtMiddleware() gin.HandlerFunc {
 			c.Set("role", claims["role"])
 			c.Next()
 		} else {
-			logrus.Info(err)
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
 	}
-}
-
-// ValidateToken validates the given JWT Token
-func ValidateToken(encodedToken string) (*jwt.Token, error) {
-	return jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
-		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
-			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
-		}
-		return []byte(utils.JwtSecret), nil
-	})
-
 }

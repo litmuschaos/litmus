@@ -4,7 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
@@ -16,7 +15,7 @@ import (
 
 func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 	inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) {
-	token, err := middleware.ValidateToken(inputRequest.Jwt)
+	token, err := s.ValidateToken(inputRequest.Jwt)
 	if err != nil {
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
 	}
@@ -59,10 +58,10 @@ func (s *ServerGrpc) GetProjectById(ctx context.Context,
 	for _, member := range project.Members {
 		var projectMember protos.ProjectMembers
 		projectMember.Email = memberMap[member.UserID].Email
-		projectMember.UserName = memberMap[member.UserID].UserName
+		projectMember.Username = memberMap[member.UserID].Username
 		projectMember.Invitation = string(member.Invitation)
 		projectMember.Uid = member.UserID
-		projectMember.JoinedAt = member.JoinedAt
+		projectMember.JoinedAt = strconv.FormatInt(member.JoinedAt, 10)
 		projectMembers = append(projectMembers, &projectMember)
 	}
 
@@ -94,7 +93,7 @@ func (s *ServerGrpc) GetUserById(ctx context.Context,
 	return &protos.GetUserByIdResponse{
 		Id:            user.ID,
 		Name:          user.Name,
-		Username:      user.UserName,
+		Username:      user.Username,
 		CreatedAt:     strconv.FormatInt(user.CreatedAt, 10),
 		UpdatedAt:     strconv.FormatInt(user.UpdatedAt, 10),
 		DeactivatedAt: deactivatedAt,

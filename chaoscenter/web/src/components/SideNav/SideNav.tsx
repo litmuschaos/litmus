@@ -7,7 +7,7 @@ import { Color } from '@harnessio/design-system';
 import { Classes, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
-import ProjectSelectorController from '@controllers/ProjectSelector/ProjectSelector';
+import ProjectSelectorController from '@controllers/ProjectSelector';
 import css from './SideNav.module.scss';
 
 interface SidebarLinkProps extends NavLinkProps {
