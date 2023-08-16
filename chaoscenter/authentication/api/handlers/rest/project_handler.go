@@ -325,6 +325,9 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		newMember := &entities.Member{
 			UserID:     user.ID,
 			Role:       *member.Role,
+			Username:   user.Username,
+			Name:       user.Name,
+			Email:      user.Email,
 			Invitation: entities.PendingInvitation,
 			JoinedAt:   time.Now().Unix(),
 		}
