@@ -1,5 +1,6 @@
 export interface InviteUserDetails {
-  Username: string;
-  ID: string;
-  Email: string;
+  username: string;
+  id: string;
+  email: string;
+  name: string;
 }

@@ -1,35 +1,50 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, ButtonVariation, Layout } from '@harnessio/uicore';
-import InviteUsersTableView from '@views/InviteNewMembers';
+import { ExpandingSearchInput } from '@harnessio/uicore';
 import { useStrings } from '@strings';
 import { useGetUsersForInvitationQuery } from '@api/auth';
+import InviteNewMembersView from '@views/InviteNewMembers/InviteNewMembers';
 import { generateInviteUsersTableContent } from './helper';
 import type { InviteUserDetails } from './types';
 
 interface InviteUsersControllerProps {
-  hideDarkModal: (value: React.SetStateAction<boolean>) => void;
+  handleClose: () => void;
 }
 
-export default function InviteUsersController({ hideDarkModal }: InviteUsersControllerProps): React.ReactElement {
+export default function InviteUsersController({ handleClose }: InviteUsersControllerProps): React.ReactElement {
   const { projectID } = useParams<{ projectID: string }>();
-  const [users, setUsers] = React.useState<InviteUserDetails[]>([]);
   const { data, isLoading, refetch: getUsers } = useGetUsersForInvitationQuery({ project_id: projectID });
   const { getString } = useStrings();
-  React.useEffect(() => {
-    if (isLoading === false && data?.data) setUsers(generateInviteUsersTableContent(data.data));
-  }, [data, isLoading]);
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const searchInput = (
+    <ExpandingSearchInput placeholder={getString('search')} alwaysExpanded onChange={value => setSearchQuery(value)} />
+  );
+
+  function doesFilterCriteriaMatch(user: InviteUserDetails): boolean {
+    const updatedSearchQuery = searchQuery.trim();
+    if (
+      user.name?.toLowerCase().includes(updatedSearchQuery.toLowerCase()) ||
+      user.username?.toLowerCase().includes(updatedSearchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(updatedSearchQuery.toLowerCase())
+    )
+      return true;
+    return false;
+  }
+
+  const filteredData = React.useMemo(() => {
+    if (!data?.data) return [];
+    return generateInviteUsersTableContent(data.data).filter(user => doesFilterCriteriaMatch(user));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, searchQuery]);
+
   return (
-    <Layout.Vertical>
-      <InviteUsersTableView users={users} getUsers={getUsers} />
-      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
-        <Button
-          disabled={false}
-          onClick={() => hideDarkModal(true)}
-          variation={ButtonVariation.SECONDARY}
-          text={getString('cancel')}
-        />
-      </Layout.Horizontal>
-    </Layout.Vertical>
+    <InviteNewMembersView
+      data={filteredData}
+      getUsers={getUsers}
+      handleClose={handleClose}
+      isLoading={isLoading}
+      searchInput={searchInput}
+    />
   );
 }

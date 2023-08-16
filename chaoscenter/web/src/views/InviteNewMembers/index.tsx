@@ -1,3 +1,3 @@
-import InviteUsersTableView from './InviteNewMemberModal';
+import InviteUsersTableView from './InviteUsersTable';
 
 export default InviteUsersTableView;

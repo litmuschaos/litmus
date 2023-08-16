@@ -9,6 +9,7 @@ import { useStrings } from '@strings';
 import { GetUsersForInvitationOkResponse, useSendInvitationMutation } from '@api/auth';
 import { killEvent } from '@utils';
 import { UserEmail, UserName } from './InviteNewMemberListColumns';
+import css from './InviteNewMemberTable.module.scss';
 
 interface InviteUsersTableViewProps {
   users: InviteUserDetails[];
@@ -23,15 +24,13 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
     () => [
       {
         Header: 'MEMBERS',
-        id: 'Username',
+        id: 'username',
         width: '40%',
-        accessor: 'Username',
         Cell: UserName
       },
       {
         Header: 'EMAIL',
-        id: 'Email',
-        accessor: 'Email',
+        id: 'email',
         width: '30%',
         Cell: UserEmail
       },
@@ -53,7 +52,11 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
           );
 
           return (
-            <Layout.Vertical flex={{ justifyContent: 'center', alignItems: 'flex-end' }} onClick={killEvent}>
+            <Layout.Vertical
+              flex={{ justifyContent: 'center', alignItems: 'flex-end' }}
+              onClick={killEvent}
+              width="100%"
+            >
               <SplitButton
                 text="Invite as"
                 variation={ButtonVariation.PRIMARY}
@@ -71,7 +74,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                       body: {
                         projectID: projectID,
                         role: 'Editor',
-                        userID: data.ID
+                        userID: data.id
                       }
                     })
                   }
@@ -83,7 +86,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                       body: {
                         projectID: projectID,
                         role: 'Viewer',
-                        userID: data.ID
+                        userID: data.id
                       }
                     })
                   }
@@ -97,5 +100,5 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [getString]
   );
-  return <TableV2 columns={envColumns} data={users} />;
+  return <TableV2 columns={envColumns} data={users} className={css.inviteTable} />;
 }

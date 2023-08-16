@@ -10,27 +10,29 @@ interface MemberRow {
 }
 
 const UserName = ({ row: { original: data } }: MemberRow): React.ReactElement => {
-  const { Username, ID } = data;
+  const { username, id, name } = data;
   const { getString } = useStrings();
   return (
     <Layout.Vertical>
-      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <Text color={Color.BLACK}>{Username}</Text>
+      <Text color={Color.BLACK}>{name ?? username}</Text>
+      <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'flex-start' }} style={{ gap: '0.25rem' }}>
+        <Text color={Color.GREY_500} font={{ size: 'small' }} lineClamp={1}>
+          {getString('id')}:
+        </Text>
+        <Text color={Color.GREY_500} font={{ size: 'small' }} lineClamp={1} width={100}>
+          {id}
+        </Text>
       </Layout.Horizontal>
-
-      <Text color={Color.GREY_500} font={{ size: 'small' }} lineClamp={1}>
-        {getString('id')}: {ID}
-      </Text>
     </Layout.Vertical>
   );
 };
 
 const UserEmail = ({ row: { original: data } }: MemberRow): React.ReactElement => {
-  const { Email } = data;
+  const { email } = data;
   return (
     <Layout.Vertical>
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <Text color={Color.BLACK}>{Email}</Text>
+        <Text color={Color.BLACK}>{email}</Text>
       </Layout.Horizontal>
     </Layout.Vertical>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container, Dialog, Layout, Tab, Tabs } from '@harnessio/uicore';
+import { Container, Layout, Tab, Tabs, useToggleOpen } from '@harnessio/uicore';
+import { Dialog } from '@blueprintjs/core';
 import DefaultLayout from '@components/DefaultLayout';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import { MembersTabs, PermissionGroup } from '@models';
@@ -13,7 +14,7 @@ export default function ProjectMembersView(): React.ReactElement {
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
   const selectedTabId = searchParams.get('tab') as MembersTabs;
-  const [hideModal, setHideModal] = React.useState<boolean>(true);
+  const { isOpen, close, open } = useToggleOpen();
   const handleTabChange = (tabID: MembersTabs): void => {
     switch (tabID) {
       case MembersTabs.ACTIVE:
@@ -43,18 +44,20 @@ export default function ProjectMembersView(): React.ReactElement {
                       text="New Member"
                       permission={PermissionGroup.EDITOR}
                       onClick={() => {
-                        setHideModal(false);
+                        open();
                       }}
                     />
                   </Layout.Horizontal>
-                  <Dialog
-                    isOpen={!hideModal}
-                    enforceFocus={false}
-                    onClose={() => setHideModal(true)}
-                    // className={css.modalWithHelpPanel}
-                  >
-                    <InviteUsersController hideDarkModal={setHideModal} />
-                  </Dialog>
+                  {isOpen && (
+                    <Dialog
+                      isOpen={isOpen}
+                      enforceFocus={false}
+                      onClose={() => close()}
+                      className={styles.modalWithHelpPanel}
+                    >
+                      <InviteUsersController handleClose={close} />
+                    </Dialog>
+                  )}
                 </Layout.Horizontal>
                 <Layout.Vertical padding="medium">
                   <ActiveProjectMembersController />
