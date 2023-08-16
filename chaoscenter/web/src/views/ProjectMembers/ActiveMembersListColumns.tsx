@@ -10,12 +10,12 @@ interface MemberRow {
 }
 
 const MemberName = ({ row: { original: data } }: MemberRow): React.ReactElement => {
-  const { username, userID } = data;
+  const { username, userID, name } = data;
   const { getString } = useStrings();
   return (
     <Layout.Vertical>
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <Text color={Color.BLACK}>{username}</Text>
+        <Text color={Color.BLACK}>{name ?? username}</Text>
       </Layout.Horizontal>
 
       <Text color={Color.GREY_500} font={{ size: 'small' }} lineClamp={1}>

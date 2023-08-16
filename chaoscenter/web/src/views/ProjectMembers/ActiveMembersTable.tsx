@@ -3,12 +3,14 @@ import React, { useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { Classes, Menu, PopoverInteractionKind, Position } from '@blueprintjs/core';
+import { FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import type { GetProjectMembersOkResponse, ProjectMember } from '@api/auth';
 import { killEvent } from '@utils';
 import { PermissionGroup } from '@models';
 import RbacMenuItem from '@components/RbacMenuItem';
 import RemoveMemberController from '@controllers/RemoveMember/RemoveMember';
+import Loader from '@components/Loader';
 import { MemberEmail, MemberName, MemberPermission } from './ActiveMembersListColumns';
 import css from './ProjectMember.module.scss';
 
@@ -21,7 +23,8 @@ interface ActiveMembersTableViewProps {
 }
 export default function ActiveMembersTableView({
   activeMembers,
-  getMembersRefetch
+  getMembersRefetch,
+  isLoading
 }: ActiveMembersTableViewProps): React.ReactElement {
   const { getString } = useStrings();
   const envColumns: Column<ProjectMember>[] = useMemo(
@@ -100,8 +103,17 @@ export default function ActiveMembersTableView({
   );
   return (
     <Layout.Vertical>
-      <Text>Total Pending Invitations {activeMembers.length}</Text>
-      <TableV2<ProjectMember> columns={envColumns} sortable data={activeMembers} />
+      <Text font={{ variation: FontVariation.H6 }}>Total Members: {activeMembers.length}</Text>
+      <Loader
+        loading={isLoading}
+        noData={{
+          when: () => activeMembers.length === 0,
+          messageTitle: 'No members present',
+          message: 'No active project members available'
+        }}
+      >
+        <TableV2<ProjectMember> columns={envColumns} sortable data={activeMembers} />
+      </Loader>
     </Layout.Vertical>
   );
 }

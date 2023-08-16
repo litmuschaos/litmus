@@ -1,4 +1,4 @@
 export enum MembersTabs {
-  ACTIVE = 'Active Members',
-  PENDING = 'Pending Members'
+  ACTIVE = 'active-members',
+  PENDING = 'pending-members'
 }

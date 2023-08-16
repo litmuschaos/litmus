@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import { FontVariation } from '@harnessio/design-system';
 import { useStrings } from '@strings';
 import {
   GetProjectMembersOkResponse,
@@ -10,6 +11,7 @@ import {
   useRemoveInvitationMutation,
   useSendInvitationMutation
 } from '@api/auth';
+import Loader from '@components/Loader';
 import { MemberEmail, MemberName } from './ActiveMembersListColumns';
 
 interface PendingMembersTableViewProps {
@@ -21,7 +23,8 @@ interface PendingMembersTableViewProps {
 }
 export default function PendingMembersTableView({
   pendingMembers,
-  getPendingMembersRefetch
+  getPendingMembersRefetch,
+  isLoading
 }: PendingMembersTableViewProps): React.ReactElement {
   const { getString } = useStrings();
 
@@ -132,8 +135,17 @@ export default function PendingMembersTableView({
   );
   return (
     <Layout.Vertical>
-      <Text>Total Pending Invitations {pendingMembers.length}</Text>
-      <TableV2<ProjectMember> columns={envColumns} sortable data={pendingMembers} />
+      <Text font={{ variation: FontVariation.H6 }}>Total Pending Invitations: {pendingMembers.length}</Text>
+      <Loader
+        loading={isLoading}
+        noData={{
+          when: () => pendingMembers.length === 0,
+          messageTitle: 'No pending invitations present',
+          message: 'No pending invitations present'
+        }}
+      >
+        <TableV2<ProjectMember> columns={envColumns} sortable data={pendingMembers} />
+      </Loader>
     </Layout.Vertical>
   );
 }

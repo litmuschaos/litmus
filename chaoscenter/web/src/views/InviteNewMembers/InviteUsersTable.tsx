@@ -59,6 +59,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
             >
               <SplitButton
                 text="Invite as"
+                icon="email-inline"
                 variation={ButtonVariation.PRIMARY}
                 loading={isLoading}
                 popoverProps={{
