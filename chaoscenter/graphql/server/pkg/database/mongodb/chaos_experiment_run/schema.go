@@ -22,3 +22,27 @@ type ChaosExperimentRun struct {
 	TotalFaults     *int     `bson:"total_faults,omitempty"`
 	Completed       bool     `bson:"completed"`
 }
+
+type TotalFilteredData struct {
+	Count int `bson:"count"`
+}
+
+type WeightagesInput struct {
+	ExperimentName string `bson:"experiment_name"`
+	Weightage      int    `bson:"weightage"`
+}
+
+type FlattenedExperimentRun struct {
+	ProjectID        string             `bson:"project_id"`
+	InfraID          string             `bson:"infra_id"`
+	ExperimentRunID  string             `bson:"experiment_run_id"`
+	ExperimentID     string             `bson:"experiment_id"`
+	ExperimentName   string             `bson:"experiment_name"`
+	CronSyntax       string             `bson:"cronSyntax"`
+	Weightages       []*WeightagesInput `bson:"weightages"`
+	IsCustomWorkflow bool               `bson:"isCustomWorkflow"`
+	UpdatedAt        string             `bson:"updated_at"`
+	CreatedAt        string             `bson:"created_at"`
+	ExperimentRuns   ChaosExperimentRun `bson:"experiment_runs"`
+	IsRemoved        bool               `bson:"isRemoved"`
+}
