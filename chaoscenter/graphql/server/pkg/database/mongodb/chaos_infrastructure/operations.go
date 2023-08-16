@@ -28,7 +28,7 @@ func NewInfrastructureOperator(mongodbOperator mongodb.MongoOperator) *Operator 
 
 // InsertInfra takes details of a chaos_infra and inserts into the database collection
 func (c *Operator) InsertInfra(ctx context.Context, infra ChaosInfra) error {
-	err := c.operator.Create(ctx, mongodb.ChaosInfraCollection, infra)
+	err := mongodb.Operator.Create(ctx, mongodb.ChaosInfraCollection, infra)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (c *Operator) GetInfra(infraID string) (ChaosInfra, error) {
 	query := bson.D{{"infra_id", infraID}}
 
 	var infra ChaosInfra
-	result, err := c.operator.Get(ctx, mongodb.ChaosInfraCollection, query)
+	result, err := mongodb.Operator.Get(ctx, mongodb.ChaosInfraCollection, query)
 	err = result.Decode(&infra)
 	if err != nil {
 		return ChaosInfra{}, err
@@ -61,7 +61,7 @@ func (c *Operator) GetInfraDetails(ctx context.Context, infraID string, projectI
 	}
 
 	var infra ChaosInfra
-	result, err := c.operator.Get(ctx, mongodb.ChaosInfraCollection, query)
+	result, err := mongodb.Operator.Get(ctx, mongodb.ChaosInfraCollection, query)
 	err = result.Decode(&infra)
 	if err != nil {
 		return ChaosInfra{}, err
@@ -72,7 +72,7 @@ func (c *Operator) GetInfraDetails(ctx context.Context, infraID string, projectI
 
 // UpdateInfra takes query and update parameters to update the chaos_infra details in the database
 func (c *Operator) UpdateInfra(ctx context.Context, query bson.D, update bson.D) error {
-	_, err := c.operator.UpdateMany(ctx, mongodb.ChaosInfraCollection, query, update)
+	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.ChaosInfraCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -93,7 +93,7 @@ func (c *Operator) GetInfraWithProjectID(projectID string) ([]*ChaosInfra, error
 	defer cancel()
 
 	var infras []*ChaosInfra
-	results, err := c.operator.List(ctx, mongodb.ChaosInfraCollection, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.ChaosInfraCollection, query)
 	if err != nil {
 		return []*ChaosInfra{}, err
 	}
@@ -109,7 +109,7 @@ func (c *Operator) GetInfraWithProjectID(projectID string) ([]*ChaosInfra, error
 // GetInfras returns all the infras matching the query
 func (c *Operator) GetInfras(ctx context.Context, query bson.D) ([]ChaosInfra, error) {
 	var infras []ChaosInfra
-	results, err := c.operator.List(ctx, mongodb.ChaosInfraCollection, query)
+	results, err := mongodb.Operator.List(ctx, mongodb.ChaosInfraCollection, query)
 	if err != nil {
 		return []ChaosInfra{}, err
 	}
@@ -125,7 +125,7 @@ func (c *Operator) GetAggregateInfras(pipeline mongo.Pipeline) (*mongo.Cursor, e
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
-	results, err := c.operator.Aggregate(ctx, mongodb.ChaosInfraCollection, pipeline)
+	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ChaosInfraCollection, pipeline)
 	if err != nil {
 		return nil, err
 	}
