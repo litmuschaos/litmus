@@ -25,7 +25,7 @@ func NewChaosExperimentRunOperator(mongodbOperator mongodb.MongoOperator) *Opera
 }
 
 func (c *Operator) CreateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ChaosExperimentRunsCollection, wfRun)
+	err := c.operator.Create(ctx, mongodb.ChaosExperimentRunsCollection, wfRun)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func (c *Operator) GetExperimentRuns(query bson.D) ([]ChaosExperimentRun, error)
 	defer cancel()
 	var experiments []ChaosExperimentRun
 
-	results, err := mongodb.Operator.List(ctx, mongodb.ChaosExperimentRunsCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *Operator) GetExperimentRuns(query bson.D) ([]ChaosExperimentRun, error)
 }
 
 func (c *Operator) CountExperimentRuns(ctx context.Context, query bson.D) (int64, error) {
-	results, err := mongodb.Operator.CountDocuments(ctx, mongodb.ChaosExperimentRunsCollection, query)
+	results, err := c.operator.CountDocuments(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +62,7 @@ func (c *Operator) GetExperimentRun(query bson.D) (ChaosExperimentRun, error) {
 	defer cancel()
 
 	var experimentRun ChaosExperimentRun
-	results, err := mongodb.Operator.Get(ctx, mongodb.ChaosExperimentRunsCollection, query)
+	results, err := c.operator.Get(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
 		return ChaosExperimentRun{}, err
 	}
@@ -88,7 +88,7 @@ func (c *Operator) UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimen
 		}
 	}
 
-	count, err := mongodb.Operator.CountDocuments(ctx, mongodb.ChaosExperimentRunsCollection, query)
+	count, err := c.operator.CountDocuments(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
 		return 0, err
 	}
@@ -97,7 +97,7 @@ func (c *Operator) UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimen
 	if count == 0 {
 		//Audit details for first time creation
 		wfRun.CreatedAt = time.Now().UnixMilli()
-		err := mongodb.Operator.Create(ctx, mongodb.ChaosExperimentRunsCollection, wfRun)
+		err := c.operator.Create(ctx, mongodb.ChaosExperimentRunsCollection, wfRun)
 		if err != nil {
 			return 0, err
 		}
@@ -134,7 +134,7 @@ func (c *Operator) UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimen
 				{"is_removed", wfRun.IsRemoved},
 			}}}
 
-		result, err := mongodb.Operator.Update(ctx, mongodb.ChaosExperimentRunsCollection, updateQuery, update)
+		result, err := c.operator.Update(ctx, mongodb.ChaosExperimentRunsCollection, updateQuery, update)
 		if err != nil {
 			return 0, err
 		}
@@ -145,7 +145,7 @@ func (c *Operator) UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimen
 }
 
 func (c *Operator) UpdateExperimentRunWithQuery(ctx context.Context, query bson.D, update bson.D) error {
-	_, err := mongodb.Operator.Update(ctx, mongodb.ChaosExperimentRunsCollection, query, update)
+	_, err := c.operator.Update(ctx, mongodb.ChaosExperimentRunsCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -155,7 +155,7 @@ func (c *Operator) UpdateExperimentRunWithQuery(ctx context.Context, query bson.
 
 func (c *Operator) UpdateExperimentRunsWithQuery(ctx context.Context, query bson.D, update bson.D) error {
 
-	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.ChaosExperimentRunsCollection, query, update)
+	_, err := c.operator.UpdateMany(ctx, mongodb.ChaosExperimentRunsCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func (c *Operator) GetExperimentRunsByInfraID(infraID string) ([]ChaosExperiment
 	defer cancel()
 
 	query := bson.D{{"infra_id", infraID}}
-	results, err := mongodb.Operator.List(ctx, mongodb.ChaosExperimentRunsCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func (c *Operator) GetAggregateExperimentRuns(pipeline mongo.Pipeline) (*mongo.C
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ChaosExperimentRunsCollection, pipeline)
+	results, err := c.operator.Aggregate(ctx, mongodb.ChaosExperimentRunsCollection, pipeline)
 	if err != nil {
 		return nil, err
 	}
