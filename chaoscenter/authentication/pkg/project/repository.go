@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -205,7 +204,7 @@ func (r repository) RemoveInvitation(projectID string, userID string, invitation
 
 	result, err := r.Collection.UpdateOne(context.TODO(), query, update)
 	if err != nil {
-		// TODO check it's use
+		// TODO check it's usage
 		if invitation == entities.AcceptedInvitation {
 			return err
 		}
@@ -422,15 +421,6 @@ func (r repository) GetProjectMembers(projectID string, state string) ([]*entiti
 	var projection bson.D
 	switch state {
 	case string(entities.Accepted):
-		fmt.Println("acpt")
-		//	items: {
-		//		$filter: {
-		//	input: "$items",
-		//		cond: { $lte: [ "$$item.price", 150] },
-		//as: "item",
-		//	limit: 2.000
-		//}
-		//	}
 		projection = bson.D{
 			{"$project", bson.D{
 				{"_id", 0},
