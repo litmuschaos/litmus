@@ -64,7 +64,7 @@ export default function GitopsView({ gitopsDetails }: GitopsViewProps): React.Re
         <Layout.Horizontal flex={{ distribution: 'space-between' }} width="12%">
           <RbacButton
             intent="primary"
-            data-testid="save-image-registry"
+            data-testid="gitops"
             iconProps={{ size: 10 }}
             text="Save"
             permission={PermissionGroup.EDITOR}
@@ -72,7 +72,7 @@ export default function GitopsView({ gitopsDetails }: GitopsViewProps): React.Re
           <Button disabled={false} variation={ButtonVariation.SECONDARY} text="Discard" />
         </Layout.Horizontal>
       }
-      title="Image Registry"
+      title="Gitops"
       breadcrumbs={[]}
       //   subHeader={}
     >

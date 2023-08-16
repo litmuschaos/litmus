@@ -59,7 +59,7 @@ export const paths: UseRouteDefinitionsProps = {
     `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
   // chaos image registry routes
   toImageRegistry: () => `/image-registry/`,
-  toGitops: () => `/gitops`
+  toGitops: () => `/gitops`,
   // Account Scoped Routes
   toAccountSettingsOverview: () => '/settings/overview'
 };

@@ -1,11 +1,22 @@
 import { Button, ButtonVariation, Text, Layout, Container, RadioButtonGroup, FormInput } from '@harnessio/uicore';
 import React, { FormEvent } from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
-import { Form, Formik } from 'formik';
+import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
+import { useParams } from 'react-router-dom';
+import { Form, FormikProps, Formik } from 'formik';
 import DefaultLayout from '@components/DefaultLayout';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
-import { ImageRegistryInfo, ImageRegistryType, RepoType } from '@api/entities';
+import {
+  AddImageRegistryRequest,
+  CreateImageRegistryResponse,
+  GetImageRegistryResponse,
+  ImageRegistry,
+  ImageRegistryType,
+  UpdateImageRegistryResponse
+} from '@api/entities';
+import type { GetImageRegistryRequest } from '@api/core/ImageRegistry';
+import type { UpdateImageRegistryRequest } from '@api/core/ImageRegistry/updateImageRegistry';
 import css from './ImageRegistry.module.scss';
 
 enum ImageRegistryValues {
@@ -22,26 +33,79 @@ interface CustomValuesData {
 }
 
 interface ImageRegistryViewProps {
-  getImageRegistryData: ImageRegistryInfo;
+  getImageRegistryData: ImageRegistry;
+  addImageRegistryMutation: MutationFunction<CreateImageRegistryResponse, AddImageRegistryRequest>;
+  updateImageRegistryMutation: MutationFunction<UpdateImageRegistryResponse, UpdateImageRegistryRequest>;
+  listImageRegistryRefetch: (
+    variables?: Partial<GetImageRegistryRequest> | undefined
+  ) => Promise<ApolloQueryResult<GetImageRegistryResponse>>;
   loading: {
     getImageRegistry: boolean;
+    addImageRegistryMutationLoading: boolean;
+    updateImageRegistryMutationLoading: boolean;
   };
 }
 
-export default function ImageRegistryView({ getImageRegistryData }: ImageRegistryViewProps): React.ReactElement {
+export default function ImageRegistryView({
+  getImageRegistryData,
+  addImageRegistryMutation,
+  updateImageRegistryMutation
+}: ImageRegistryViewProps): React.ReactElement {
   const initialValues: CustomValuesData = {
-    isDefault: getImageRegistryData.isDefault,
-    imageRegistryName: !getImageRegistryData?.isDefault ? getImageRegistryData?.imageRegistryName : '',
-    imageRegistryRepo: !getImageRegistryData?.isDefault ? getImageRegistryData?.imageRepoName : '',
-    registryType: !getImageRegistryData?.isDefault
-      ? (getImageRegistryData?.imageRegistryType as ImageRegistryType)
+    isDefault: getImageRegistryData.imageRegistryInfo.isDefault,
+    imageRegistryName: !getImageRegistryData?.imageRegistryInfo.isDefault
+      ? getImageRegistryData?.imageRegistryInfo.imageRegistryName
+      : '',
+    imageRegistryRepo: !getImageRegistryData?.imageRegistryInfo.isDefault
+      ? getImageRegistryData?.imageRegistryInfo.imageRepoName
+      : '',
+    registryType: !getImageRegistryData?.imageRegistryInfo.isDefault
+      ? (getImageRegistryData?.imageRegistryInfo.imageRegistryType as ImageRegistryType)
       : ImageRegistryType.PUBLIC,
-    secretName: !getImageRegistryData?.isDefault ? getImageRegistryData?.secretName : ''
+    secretName: !getImageRegistryData?.imageRegistryInfo.isDefault
+      ? getImageRegistryData?.imageRegistryInfo.secretName
+      : ''
   };
 
   const [imageRegValueType, setImageRegValuetype] = React.useState<ImageRegistryValues>(
-    !getImageRegistryData?.isDefault ? ImageRegistryValues.CUSTOM : ImageRegistryValues.DEFAULT
+    !getImageRegistryData?.imageRegistryInfo.isDefault ? ImageRegistryValues.CUSTOM : ImageRegistryValues.DEFAULT
   );
+
+  const { projectID } = useParams<{ projectID: string }>();
+  const formikRef: React.Ref<FormikProps<CustomValuesData>> = React.useRef(null);
+
+  function handleSubmit(values: CustomValuesData): void {
+    getImageRegistryData
+      ? updateImageRegistryMutation({
+          variables: {
+            projectID: projectID,
+            imageRegistryID: getImageRegistryData.imageRegistryID,
+            imageRegistryInfo: {
+              imageRegistryName: values.imageRegistryName ?? '',
+              imageRepoName: values.imageRegistryRepo ?? '',
+              imageRegistryType: values.registryType ?? ImageRegistryType.PUBLIC,
+              secretName: values.secretName ?? '',
+              secretNamespace: values.imageRegistryName ?? '',
+              enableRegistry: true,
+              isDefault: values.isDefault
+            }
+          }
+        })
+      : addImageRegistryMutation({
+          variables: {
+            projectID: projectID,
+            imageRegistryInfo: {
+              imageRegistryName: values.imageRegistryName ?? '',
+              imageRepoName: values.imageRegistryRepo ?? '',
+              imageRegistryType: values.registryType ?? ImageRegistryType.PUBLIC,
+              secretName: values.secretName ?? '',
+              secretNamespace: values.imageRegistryName ?? '',
+              enableRegistry: true,
+              isDefault: values.isDefault
+            }
+          }
+        });
+  }
   return (
     <DefaultLayout
       headerToolbar={
@@ -52,6 +116,7 @@ export default function ImageRegistryView({ getImageRegistryData }: ImageRegistr
             iconProps={{ size: 10 }}
             text="Save"
             permission={PermissionGroup.EDITOR}
+            onClick={() => formikRef.current?.handleSubmit()}
           />
           <Button disabled={false} variation={ButtonVariation.SECONDARY} text="Discard" />
         </Layout.Horizontal>
@@ -65,7 +130,11 @@ export default function ImageRegistryView({ getImageRegistryData }: ImageRegistr
         height="100%"
         style={{ overflowY: 'auto' }}
       >
-        <Formik initialValues={initialValues} onSubmit={() => console.log('')}>
+        <Formik<CustomValuesData>
+          initialValues={initialValues}
+          onSubmit={values => handleSubmit(values)}
+          innerRef={formikRef}
+        >
           {formikProps => {
             return (
               <Form className={css.formContainer}>
@@ -74,7 +143,9 @@ export default function ImageRegistryView({ getImageRegistryData }: ImageRegistr
                   name="type"
                   inline={false}
                   selectedValue={
-                    getImageRegistryData?.isDefault ? ImageRegistryValues.DEFAULT : ImageRegistryValues.CUSTOM
+                    getImageRegistryData?.imageRegistryInfo.isDefault
+                      ? ImageRegistryValues.DEFAULT
+                      : ImageRegistryValues.CUSTOM
                   }
                   options={[
                     {

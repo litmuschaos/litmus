@@ -38,3 +38,8 @@ export interface ListImageRegistryResponse {
 export interface UpdateImageRegistryResponse {
   updateImageRegistry: ImageRegistry;
 }
+
+export interface AddImageRegistryRequest {
+  projectID: string;
+  imageRegistryInfo: ImageRegistryInfo;
+}
