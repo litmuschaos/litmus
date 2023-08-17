@@ -18,10 +18,6 @@ Details of setting a Git repository
 """
 input GitConfig {
     """
-    ID of the project where GitOps is configured
-    """
-    projectID: ID!
-    """
     Git branch where the chaos charts will be pushed and synced
     """
     branch: String!
@@ -112,15 +108,15 @@ extend type Mutation {
     """
     Enables gitops settings in the project
     """
-    enableGitOps(configurations: GitConfig!): Boolean! @authorized
+    enableGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
 
     """
     Disables gitops settings in the project
     """
-    disableGitOps(projectID: String!): Boolean! @authorized
+    disableGitOps(projectID: ID!): Boolean! @authorized
 
     """
     Updates gitops settings in the project
     """
-    updateGitOps(configurations: GitConfig!): Boolean! @authorized
+    updateGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
 }

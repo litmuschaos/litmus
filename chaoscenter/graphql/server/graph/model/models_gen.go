@@ -575,8 +575,6 @@ type GetInfraStatsResponse struct {
 
 // Details of setting a Git repository
 type GitConfig struct {
-	// ID of the project where GitOps is configured
-	ProjectID string `json:"projectID"`
 	// Git branch where the chaos charts will be pushed and synced
 	Branch string `json:"branch"`
 	// URL of the Git repository
