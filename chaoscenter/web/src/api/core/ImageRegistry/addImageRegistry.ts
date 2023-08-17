@@ -7,7 +7,7 @@ export function addImageRegistry(
 ): GqlAPIMutationResponse<CreateImageRegistryResponse, AddImageRegistryRequest> {
   const [addImageRegistryMutation, result] = useMutation<CreateImageRegistryResponse, AddImageRegistryRequest>(
     gql`
-      mutation createImageRegistry($projectID: String!, $imageRegistryInfo: imageRegistryInput!) {
+      mutation createImageRegistry($projectID: String!, $imageRegistryInfo: ImageRegistryInput!) {
         createImageRegistry(projectID: $projectID, imageRegistryInfo: $imageRegistryInfo) {
           imageRegistryInfo {
             imageRepoName

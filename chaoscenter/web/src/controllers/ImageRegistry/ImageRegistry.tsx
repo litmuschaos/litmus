@@ -2,10 +2,10 @@ import React from 'react';
 import { useToaster } from '@harnessio/uicore';
 import { getScope } from '@utils';
 import { getImageRegistry } from '@api/core/ImageRegistry';
-import Loader from '@components/Loader';
 import { addImageRegistry } from '@api/core/ImageRegistry/addImageRegistry';
 import { updateImageRegistry } from '@api/core/ImageRegistry/updateImageRegistry';
 import ImageRegistryView from '@views/ImageRegistry';
+import Loader from '@components/Loader';
 
 const ImageRegistryController: React.FC = () => {
   const scope = getScope();
@@ -17,8 +17,7 @@ const ImageRegistryController: React.FC = () => {
   } = getImageRegistry({
     projectID: scope.projectID,
     options: {
-      // eslint-disable-next-line no-console
-      onError: error => console.error(error.message),
+      onError: err => showError(err.message),
       nextFetchPolicy: 'cache-first'
     }
   });
@@ -40,19 +39,17 @@ const ImageRegistryController: React.FC = () => {
   });
   return (
     <Loader loading={getImageRegistryLoading}>
-      {getImageRegistryData && (
-        <ImageRegistryView
-          listImageRegistryRefetch={listImageRegistryRefetch}
-          getImageRegistryData={getImageRegistryData?.getImageRegistry}
-          loading={{
-            getImageRegistry: getImageRegistryLoading,
-            addImageRegistryMutationLoading: addImageRegistryMutationLoading,
-            updateImageRegistryMutationLoading: updateImageRegistryMutationLoading
-          }}
-          updateImageRegistryMutation={updateImageRegistryMutation}
-          addImageRegistryMutation={addImageRegistryMutation}
-        />
-      )}
+      <ImageRegistryView
+        listImageRegistryRefetch={listImageRegistryRefetch}
+        getImageRegistryData={getImageRegistryData?.getImageRegistry}
+        loading={{
+          getImageRegistry: getImageRegistryLoading,
+          addImageRegistryMutationLoading: addImageRegistryMutationLoading,
+          updateImageRegistryMutationLoading: updateImageRegistryMutationLoading
+        }}
+        updateImageRegistryMutation={updateImageRegistryMutation}
+        addImageRegistryMutation={addImageRegistryMutation}
+      />
     </Loader>
   );
 };

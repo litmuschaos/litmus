@@ -12,6 +12,7 @@ import {
   CreateImageRegistryResponse,
   GetImageRegistryResponse,
   ImageRegistry,
+  ImageRegistryInfo,
   ImageRegistryType,
   UpdateImageRegistryResponse
 } from '@api/entities';
@@ -33,7 +34,7 @@ interface CustomValuesData {
 }
 
 interface ImageRegistryViewProps {
-  getImageRegistryData: ImageRegistry;
+  getImageRegistryData: ImageRegistry | undefined;
   addImageRegistryMutation: MutationFunction<CreateImageRegistryResponse, AddImageRegistryRequest>;
   updateImageRegistryMutation: MutationFunction<UpdateImageRegistryResponse, UpdateImageRegistryRequest>;
   listImageRegistryRefetch: (
@@ -49,10 +50,11 @@ interface ImageRegistryViewProps {
 export default function ImageRegistryView({
   getImageRegistryData,
   addImageRegistryMutation,
-  updateImageRegistryMutation
+  updateImageRegistryMutation,
+  loading
 }: ImageRegistryViewProps): React.ReactElement {
   const initialValues: CustomValuesData = {
-    isDefault: getImageRegistryData.imageRegistryInfo.isDefault,
+    isDefault: getImageRegistryData?.imageRegistryInfo.isDefault ?? true,
     imageRegistryName: !getImageRegistryData?.imageRegistryInfo.isDefault
       ? getImageRegistryData?.imageRegistryInfo.imageRegistryName
       : '',
@@ -68,41 +70,55 @@ export default function ImageRegistryView({
   };
 
   const [imageRegValueType, setImageRegValuetype] = React.useState<ImageRegistryValues>(
-    !getImageRegistryData?.imageRegistryInfo.isDefault ? ImageRegistryValues.CUSTOM : ImageRegistryValues.DEFAULT
+    getImageRegistryData
+      ? getImageRegistryData.imageRegistryInfo.isDefault
+        ? ImageRegistryValues.DEFAULT
+        : ImageRegistryValues.CUSTOM
+      : ImageRegistryValues.DEFAULT
   );
-
+  console.log(getImageRegistryData?.imageRegistryInfo.isDefault);
+  console.log(imageRegValueType);
   const { projectID } = useParams<{ projectID: string }>();
   const formikRef: React.Ref<FormikProps<CustomValuesData>> = React.useRef(null);
 
   function handleSubmit(values: CustomValuesData): void {
+    const data: ImageRegistryInfo = {
+      imageRegistryName: values.imageRegistryName
+        ? imageRegValueType === ImageRegistryValues.DEFAULT
+          ? 'docker.io'
+          : values.imageRegistryName
+        : '',
+      imageRepoName: values.imageRegistryRepo
+        ? imageRegValueType === ImageRegistryValues.DEFAULT
+          ? 'litmuschaos'
+          : values.imageRegistryRepo
+        : '',
+      imageRegistryType: values.registryType
+        ? imageRegValueType === ImageRegistryValues.DEFAULT
+          ? ImageRegistryType.PUBLIC
+          : values.registryType
+        : ImageRegistryType.PUBLIC,
+      secretName: values.secretName ? (imageRegValueType === ImageRegistryValues.DEFAULT ? '' : values.secretName) : '',
+      secretNamespace: values.imageRegistryName
+        ? imageRegValueType === ImageRegistryValues.DEFAULT
+          ? ''
+          : values.imageRegistryName
+        : '',
+      enableRegistry: imageRegValueType === ImageRegistryValues.DEFAULT ? false : true,
+      isDefault: imageRegValueType === ImageRegistryValues.DEFAULT ? true : false
+    };
     getImageRegistryData
       ? updateImageRegistryMutation({
           variables: {
             projectID: projectID,
             imageRegistryID: getImageRegistryData.imageRegistryID,
-            imageRegistryInfo: {
-              imageRegistryName: values.imageRegistryName ?? '',
-              imageRepoName: values.imageRegistryRepo ?? '',
-              imageRegistryType: values.registryType ?? ImageRegistryType.PUBLIC,
-              secretName: values.secretName ?? '',
-              secretNamespace: values.imageRegistryName ?? '',
-              enableRegistry: true,
-              isDefault: values.isDefault
-            }
+            imageRegistryInfo: data
           }
         })
       : addImageRegistryMutation({
           variables: {
             projectID: projectID,
-            imageRegistryInfo: {
-              imageRegistryName: values.imageRegistryName ?? '',
-              imageRepoName: values.imageRegistryRepo ?? '',
-              imageRegistryType: values.registryType ?? ImageRegistryType.PUBLIC,
-              secretName: values.secretName ?? '',
-              secretNamespace: values.imageRegistryName ?? '',
-              enableRegistry: true,
-              isDefault: values.isDefault
-            }
+            imageRegistryInfo: data
           }
         });
   }
@@ -115,6 +131,11 @@ export default function ImageRegistryView({
             data-testid="save-image-registry"
             iconProps={{ size: 10 }}
             text="Save"
+            loading={
+              getImageRegistryData
+                ? loading.updateImageRegistryMutationLoading
+                : loading.addImageRegistryMutationLoading
+            }
             permission={PermissionGroup.EDITOR}
             onClick={() => formikRef.current?.handleSubmit()}
           />
@@ -130,6 +151,15 @@ export default function ImageRegistryView({
         height="100%"
         style={{ overflowY: 'auto' }}
       >
+        {/* <Loader
+          loading={loading.getImageRegistry}
+          noData={{
+            when: () => getImageRegistryData === undefined,
+            messageTitle: 'No Image registry available',
+            message: 'No Image registry available'
+          }}
+        >
+          {' '} */}
         <Formik<CustomValuesData>
           initialValues={initialValues}
           onSubmit={values => handleSubmit(values)}
@@ -143,9 +173,11 @@ export default function ImageRegistryView({
                   name="type"
                   inline={false}
                   selectedValue={
-                    getImageRegistryData?.imageRegistryInfo.isDefault
-                      ? ImageRegistryValues.DEFAULT
-                      : ImageRegistryValues.CUSTOM
+                    getImageRegistryData
+                      ? getImageRegistryData?.imageRegistryInfo.isDefault
+                        ? ImageRegistryValues.DEFAULT
+                        : ImageRegistryValues.CUSTOM
+                      : ImageRegistryValues.DEFAULT
                   }
                   options={[
                     {
@@ -274,6 +306,7 @@ export default function ImageRegistryView({
             );
           }}
         </Formik>
+        {/* </Loader> */}
       </Container>
     </DefaultLayout>
   );

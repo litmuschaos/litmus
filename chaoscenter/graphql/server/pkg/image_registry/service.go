@@ -86,7 +86,8 @@ func (i *imageRegistryService) CreateImageRegistry(ctx context.Context, projectI
 func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 
 	var (
-		currentTime = strconv.FormatInt(time.Now().Unix(), 10)
+		currentTime = time.Now().Unix()
+		currTimeStr = strconv.FormatInt(currentTime, 10)
 		bl          = false
 	)
 
@@ -119,7 +120,7 @@ func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageReg
 			EnableRegistry:    imageRegistryInfo.EnableRegistry,
 			IsDefault:         &imageRegistryInfo.IsDefault,
 		},
-		UpdatedAt: &currentTime,
+		UpdatedAt: &currTimeStr,
 		IsRemoved: &bl,
 	}, nil
 }

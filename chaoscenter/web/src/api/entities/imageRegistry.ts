@@ -14,7 +14,6 @@ export enum ImageRegistryType {
 }
 
 export interface ImageRegistry {
-  isDefualt: boolean;
   imageRegistryInfo: ImageRegistryInfo;
   imageRegistryID: string;
   projectID: string;
