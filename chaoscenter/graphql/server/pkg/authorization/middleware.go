@@ -3,6 +3,7 @@ package authorization
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,12 +25,10 @@ func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc
 		jwt := ""
 		if c.Request.Header.Get("Authorization") != "" {
 			jwt = c.Request.Header.Get("Authorization")
-		} else {
-			c.Writer.WriteHeader(http.StatusUnauthorized)
-			c.Writer.Write([]byte("Error verifying JWT token: Token not found"))
-			return
 		}
-		jwt = jwt[len(BearerSchema):]
+		if strings.HasPrefix(jwt, BearerSchema) {
+			jwt = jwt[len(BearerSchema):]
+		}
 		if IsRevokedToken(jwt, mongoClient) {
 			c.Writer.WriteHeader(http.StatusUnauthorized)
 			c.Writer.Write([]byte("Error verifying JWT token: Token is revoked"))
