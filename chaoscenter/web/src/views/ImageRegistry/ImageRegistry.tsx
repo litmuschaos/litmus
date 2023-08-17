@@ -2,7 +2,7 @@ import { Button, ButtonVariation, Text, Layout, Container, RadioButtonGroup, For
 import React, { FormEvent } from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Form, FormikProps, Formik } from 'formik';
 import DefaultLayout from '@components/DefaultLayout';
 import RbacButton from '@components/RbacButton';
@@ -18,6 +18,7 @@ import {
 } from '@api/entities';
 import type { GetImageRegistryRequest } from '@api/core/ImageRegistry';
 import type { UpdateImageRegistryRequest } from '@api/core/ImageRegistry/updateImageRegistry';
+import { useRouteWithBaseUrl } from '@hooks';
 import css from './ImageRegistry.module.scss';
 
 enum ImageRegistryValues {
@@ -68,7 +69,8 @@ export default function ImageRegistryView({
       ? getImageRegistryData?.imageRegistryInfo.secretName
       : ''
   };
-
+  const history = useHistory();
+  const paths = useRouteWithBaseUrl();
   const [imageRegValueType, setImageRegValuetype] = React.useState<ImageRegistryValues>(
     getImageRegistryData
       ? getImageRegistryData.imageRegistryInfo.isDefault
@@ -76,8 +78,7 @@ export default function ImageRegistryView({
         : ImageRegistryValues.CUSTOM
       : ImageRegistryValues.DEFAULT
   );
-  console.log(getImageRegistryData?.imageRegistryInfo.isDefault);
-  console.log(imageRegValueType);
+
   const { projectID } = useParams<{ projectID: string }>();
   const formikRef: React.Ref<FormikProps<CustomValuesData>> = React.useRef(null);
 
@@ -139,7 +140,12 @@ export default function ImageRegistryView({
             permission={PermissionGroup.EDITOR}
             onClick={() => formikRef.current?.handleSubmit()}
           />
-          <Button disabled={false} variation={ButtonVariation.SECONDARY} text="Discard" />
+          <Button
+            disabled={false}
+            variation={ButtonVariation.SECONDARY}
+            text="Discard"
+            onClick={() => history.push(paths.toDashboard())}
+          />
         </Layout.Horizontal>
       }
       title="Image Registry"

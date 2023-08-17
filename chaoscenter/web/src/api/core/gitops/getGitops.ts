@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import type { GqlAPIQueryRequest, GqlAPIQueryResponse } from '@api/types';
-import type { GitOpsData } from '@api/entities/gitops';
+import type { GetGitOpsDetailResponse } from '@api/entities/gitops';
 
 export interface GetGitOpsDetailsRequest {
   projectID: string;
@@ -10,9 +10,12 @@ export interface GetGitOpsDetailsRequest {
 export function getGitOpsDetails({
   projectID,
   options = {}
-}: GqlAPIQueryRequest<GitOpsData, GetGitOpsDetailsRequest>): GqlAPIQueryResponse<GitOpsData, GetGitOpsDetailsRequest> {
+}: GqlAPIQueryRequest<GetGitOpsDetailResponse, GetGitOpsDetailsRequest>): GqlAPIQueryResponse<
+  GetGitOpsDetailResponse,
+  GetGitOpsDetailsRequest
+> {
   // Query to get chaosHub
-  const { data, loading, ...rest } = useQuery<GitOpsData, GetGitOpsDetailsRequest>(
+  const { data, loading, ...rest } = useQuery<GetGitOpsDetailResponse, GetGitOpsDetailsRequest>(
     gql`
       query getGitOpsDetails($projectID: ID!) {
         getGitOpsDetails(projectID: $projectID) {

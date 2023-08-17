@@ -9,7 +9,7 @@ import Loader from '@components/Loader';
 
 const ImageRegistryController: React.FC = () => {
   const scope = getScope();
-  const { showError } = useToaster();
+  const { showError, showSuccess } = useToaster();
   const {
     data: getImageRegistryData,
     loading: getImageRegistryLoading,
@@ -24,6 +24,7 @@ const ImageRegistryController: React.FC = () => {
 
   const [addImageRegistryMutation, { loading: addImageRegistryMutationLoading }] = addImageRegistry({
     onCompleted: () => {
+      showSuccess('Image Registry added successfully');
       listImageRegistryRefetch();
     },
     onError: err => showError(err.message)
@@ -31,11 +32,10 @@ const ImageRegistryController: React.FC = () => {
 
   const [updateImageRegistryMutation, { loading: updateImageRegistryMutationLoading }] = updateImageRegistry({
     onCompleted: () => {
+      showSuccess('Image Registry updated successfully');
       listImageRegistryRefetch();
     },
-    onError: (err: {
-      message: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined;
-    }) => showError(err.message)
+    onError: err => showError(err.message)
   });
   return (
     <Loader loading={getImageRegistryLoading}>

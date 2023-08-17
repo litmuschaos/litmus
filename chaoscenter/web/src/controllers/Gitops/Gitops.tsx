@@ -1,24 +1,62 @@
 import React from 'react';
+import { useToaster } from '@harnessio/uicore';
 import GitopsView from '@views/Gitops/Gitops';
-import { getGitOpsDetails } from '@api/core/gitops';
+import { enableGitOps, getGitOpsDetails, updateGitOps } from '@api/core/gitops';
 import { getScope } from '@utils';
 import Loader from '@components/Loader';
+import { disableGitOps } from '@api/core/gitops/disableGitops';
 
-const GitopsController: React.FC = () => {
+export default function GitopsController(): React.ReactElement {
   const scope = getScope();
-  const { data: getGitOpsDetailsData, loading: getGitOpsDetailsLoading } = getGitOpsDetails({
+  const { showError, showSuccess } = useToaster();
+  const {
+    data: getGitOpsDetailsData,
+    loading: getGitOpsDetailsLoading,
+    refetch: getGitOpsDetailsRefetch
+  } = getGitOpsDetails({
     projectID: scope.projectID,
     options: {
-      // eslint-disable-next-line no-console
-      onError: error => console.error(error.message),
+      onError: error => showError(error.message),
+
       nextFetchPolicy: 'cache-first'
     }
   });
+  const [enableGitopsMutation, { loading: enableGitopsMutationLoading }] = enableGitOps({
+    onCompleted: () => {
+      showSuccess('Gitops enabled successfully');
+      getGitOpsDetailsRefetch();
+    },
+    onError: err => showError(err.message)
+  });
+
+  const [updateGitopsMutation, { loading: updateGitopsMutationLoading }] = updateGitOps({
+    onCompleted: () => {
+      showSuccess('Gitops enabled successfully');
+      getGitOpsDetailsRefetch();
+    },
+    onError: err => showError(err.message)
+  });
+
+  const [disableGitopsMutation, { loading: disableGitopsMutationLoading }] = disableGitOps({
+    onCompleted: () => {
+      showSuccess('Gitops disabled successfully');
+      getGitOpsDetailsRefetch();
+    },
+    onError: err => showError(err.message)
+  });
   return (
     <Loader loading={getGitOpsDetailsLoading}>
-      {getGitOpsDetailsData && <GitopsView gitopsDetails={getGitOpsDetailsData} />}
+      <GitopsView
+        gitopsDetails={getGitOpsDetailsData?.getGitOpsDetails}
+        enableGitops={enableGitopsMutation}
+        disableGitops={disableGitopsMutation}
+        updateGitops={updateGitopsMutation}
+        loading={{
+          disableGitopsMutationLoading: disableGitopsMutationLoading,
+          updateGitopsMutationLoading: updateGitopsMutationLoading,
+          enableGitopsMutationLoading: enableGitopsMutationLoading
+        }}
+      />
     </Loader>
   );
-};
-
-export default GitopsController;
+}

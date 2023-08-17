@@ -1,15 +1,38 @@
-export interface GitOpsData {
+export interface GitOpsConfig {
   enabled: boolean;
-  projectID: string | null;
-  branch: string | null;
-  repoURL: string | null;
-  authType: string | null;
-  token: string | null;
-  userName: string | null;
-  password: string | null;
-  sshPrivateKey: string | null;
+  branch: string;
+  repoURL: string;
+  authType: string;
+  token: string;
+  userName: string;
+  password: string;
+  sshPrivateKey: string;
 }
 
-export interface GetGitOpsDetailRequest {
-  getGitOpsDetails: GitOpsData;
+export interface GitOpsConfigRequest {
+  branch: string;
+  repoURL: string;
+  authType: string;
+  token: string;
+  userName: string;
+  password: string;
+  sshPrivateKey: string;
+}
+
+export interface GetGitOpsDetailResponse {
+  getGitOpsDetails: GitOpsConfig;
+}
+
+export interface EnableGitOpsRequest {
+  projectID: string;
+  configurations: GitOpsConfigRequest;
+}
+
+export interface DisableGitOpsRequest {
+  projectID: string;
+}
+
+export interface UpdateGitOpsRequest {
+  projectID: string;
+  configurations: GitOpsConfigRequest;
 }

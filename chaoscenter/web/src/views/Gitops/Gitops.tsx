@@ -11,15 +11,23 @@ import {
 } from '@harnessio/uicore';
 import React, { FormEvent } from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikProps } from 'formik';
 import { Icon } from '@harnessio/icons';
+import type { MutationFunction } from '@apollo/client';
+import { useHistory, useParams } from 'react-router-dom';
 import DefaultLayout from '@components/DefaultLayout';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
 import { AuthType } from '@api/entities';
 import CopyButton from '@components/CopyButton';
 import { generateSSHKey } from '@api/core/chaoshubs/generateSSH';
-import type { GitOpsData } from '@api/entities/gitops';
+import type {
+  DisableGitOpsRequest,
+  EnableGitOpsRequest,
+  GitOpsConfig,
+  UpdateGitOpsRequest
+} from '@api/entities/gitops';
+import { useRouteWithBaseUrl } from '@hooks';
 import css from './Gitops.module.scss';
 
 enum GitopsValues {
@@ -38,25 +46,85 @@ interface GitopsData {
 }
 
 interface GitopsViewProps {
-  gitopsDetails: GitOpsData;
+  gitopsDetails: GitOpsConfig | undefined;
+  enableGitops: MutationFunction<boolean, EnableGitOpsRequest>;
+  updateGitops: MutationFunction<boolean, UpdateGitOpsRequest>;
+  disableGitops: MutationFunction<boolean, DisableGitOpsRequest>;
+  loading: {
+    enableGitopsMutationLoading: boolean;
+    updateGitopsMutationLoading: boolean;
+    disableGitopsMutationLoading: boolean;
+  };
 }
 
-export default function GitopsView({ gitopsDetails }: GitopsViewProps): React.ReactElement {
-  const initialValues: GitopsData = {
-    branch: gitopsDetails.branch ?? '',
-    repoURL: gitopsDetails.repoURL ?? '',
-    authType: (gitopsDetails.authType as AuthType) ?? AuthType.TOKEN,
-    token: gitopsDetails.token ?? '',
-    sshPrivateKey: gitopsDetails.sshPrivateKey ?? ''
-  };
+export default function GitopsView({
+  gitopsDetails,
+  enableGitops,
+  disableGitops,
+  updateGitops,
+  loading
+}: GitopsViewProps): React.ReactElement {
   const [sshPublicKey, setPublicSshKey] = React.useState<string>('');
   const [gitopsType, setGitopstype] = React.useState<GitopsValues>(
-    gitopsDetails.enabled ? GitopsValues.GITHUB : GitopsValues.LOCAL
+    gitopsDetails?.enabled ? GitopsValues.GITHUB : GitopsValues.LOCAL
   );
+
+  const initialValues: GitopsData = {
+    branch: gitopsDetails?.branch ?? '',
+    repoURL: gitopsDetails?.repoURL ?? '',
+    authType: (gitopsDetails?.authType as AuthType) ?? AuthType.TOKEN,
+    token: gitopsDetails?.token ?? '',
+    sshPrivateKey: gitopsDetails?.sshPrivateKey ?? ''
+  };
+
   const { showError } = useToaster();
   const [generateSSHKeyMutation] = generateSSHKey({
     onError: error => showError(error.message)
   });
+
+  const { projectID } = useParams<{ projectID: string }>();
+  const history = useHistory();
+  const paths = useRouteWithBaseUrl();
+  const formikRef: React.Ref<FormikProps<GitopsData>> = React.useRef(null);
+  function handleSubmit(values: GitopsData): void {
+    if (gitopsDetails?.enabled) {
+      if (gitopsType === GitopsValues.LOCAL) {
+        disableGitops({ variables: { projectID: projectID } });
+      } else {
+        updateGitops({
+          variables: {
+            projectID: projectID,
+            configurations: {
+              branch: values.branch ?? '',
+              repoURL: values.repoURL ?? '',
+              authType: values.authType,
+              token: values.token ?? '',
+              sshPrivateKey: values.sshPrivateKey ?? '',
+              userName: values.userName ?? '',
+              password: values.password ?? ''
+            }
+          }
+        });
+      }
+    } else {
+      if (gitopsType === GitopsValues.GITHUB) {
+        enableGitops({
+          variables: {
+            projectID: projectID,
+            configurations: {
+              branch: values.branch ?? '',
+              repoURL: values.repoURL ?? '',
+              authType: values.authType,
+              token: values.token ?? '',
+              sshPrivateKey: values.sshPrivateKey ?? '',
+              userName: values.userName ?? '',
+              password: values.password ?? ''
+            }
+          }
+        });
+      }
+    }
+  }
 
   return (
     <DefaultLayout
@@ -68,8 +136,19 @@ export default function GitopsView({ gitopsDetails }: GitopsViewProps): React.Re
             iconProps={{ size: 10 }}
             text="Save"
             permission={PermissionGroup.EDITOR}
+            loading={
+              loading.disableGitopsMutationLoading ||
+              loading.enableGitopsMutationLoading ||
+              loading.updateGitopsMutationLoading
+            }
+            onClick={() => formikRef.current?.handleSubmit()}
           />
-          <Button disabled={false} variation={ButtonVariation.SECONDARY} text="Discard" />
+          <Button
+            disabled={false}
+            variation={ButtonVariation.SECONDARY}
+            text="Discard"
+            onClick={() => history.push(paths.toDashboard())}
+          />
         </Layout.Horizontal>
       }
       title="Gitops"
@@ -81,7 +160,11 @@ export default function GitopsView({ gitopsDetails }: GitopsViewProps): React.Re
         height="100%"
         style={{ overflowY: 'auto' }}
       >
-        <Formik initialValues={initialValues} onSubmit={() => console.log('')}>
+        <Formik<GitopsData>
+          initialValues={initialValues}
+          onSubmit={values => handleSubmit(values)}
+          innerRef={formikRef}
+        >
           {formikProps => {
             return (
               <Form className={css.formContainer}>
@@ -128,7 +211,7 @@ export default function GitopsView({ gitopsDetails }: GitopsViewProps): React.Re
                               />
 
                               <FormInput.Text
-                                name="repoBranch"
+                                name="branch"
                                 label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Branch</Text>}
                                 placeholder="Enter repository branch"
                               />
