@@ -12,21 +12,24 @@ import (
 type contextKey string
 
 const (
-	AuthKey    = contextKey("authorization")
-	UserClaim  = contextKey("user-claims")
-	CookieName = "token"
+	AuthKey      = contextKey("authorization")
+	UserClaim    = contextKey("user-claims")
+	BearerSchema = "Bearer "
+	CookieName   = "token"
 )
 
 // Middleware verifies jwt and checks if user has enough privilege to access route (no roles' info needed)
 func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		jwt := ""
-		auth, err := c.Request.Cookie(CookieName)
-		if err == nil {
-			jwt = auth.Value
-		} else if c.Request.Header.Get("Authorization") != "" {
+		if c.Request.Header.Get("Authorization") != "" {
 			jwt = c.Request.Header.Get("Authorization")
+		} else {
+			c.Writer.WriteHeader(http.StatusUnauthorized)
+			c.Writer.Write([]byte("Error verifying JWT token: Token not found"))
+			return
 		}
+		jwt = jwt[len(BearerSchema):]
 		if IsRevokedToken(jwt, mongoClient) {
 			c.Writer.WriteHeader(http.StatusUnauthorized)
 			c.Writer.Write([]byte("Error verifying JWT token: Token is revoked"))
