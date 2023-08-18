@@ -420,3 +420,86 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		})
 	}
 }
+
+// CreateApiToken creates a new api token for the user
+func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var apiTokenRequest entities.ApiTokenInput
+		err := c.BindJSON(&apiTokenRequest)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		// Checking if user exists
+		user, err := service.GetUser(apiTokenRequest.UserID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
+			return
+		}
+
+		// Checking if user is deactivated
+		if user.DeactivatedAt != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrUserDeactivated))
+			return
+		}
+
+		if token, err := service.CreateApiToken(user, apiTokenRequest); err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		} else {
+			c.JSON(200, gin.H{
+				"accessToken": token,
+				"type":        "Bearer",
+			})
+		}
+	}
+}
+
+// GetApiTokens returns all the api tokens for the user
+func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid := c.Param("uid")
+		apiTokens, err := service.GetApiTokensByUserID(uid)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"apiTokens": apiTokens,
+		})
+	}
+}
+
+// DeleteApiToken deletes the api token for the user
+func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var deleteApiTokenRequest entities.DeleteApiTokenInput
+		err := c.BindJSON(&deleteApiTokenRequest)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		token := deleteApiTokenRequest.Token
+		err = service.DeleteApiToken(token)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		if err = service.RevokeToken(token); err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		} else {
+			c.JSON(200, gin.H{
+				"message": "api token deleted successfully",
+			})
+		}
+	}
+}
