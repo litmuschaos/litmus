@@ -42,6 +42,7 @@ export interface StringsMap {
   'allFaultsExecuted': unknown
   'allRuns': unknown
   'alreadyExists': PrimitiveObject<'value'>
+  'apiTokens': unknown
   'appKind': unknown
   'appKindName': unknown
   'appLabel': unknown
@@ -144,6 +145,7 @@ export interface StringsMap {
   'connectionStatus': unknown
   'consoleLogs': unknown
   'continue': unknown
+  'copiedToClipboard': unknown
   'copyPrompt': unknown
   'copyPrompt1': unknown
   'copyPrompt2': unknown
@@ -153,6 +155,7 @@ export interface StringsMap {
   'createNewUser': unknown
   'createRecurringSchedule': unknown
   'created': unknown
+  'createdAt': unknown
   'createdOn': unknown
   'creationTime': unknown
   'criteria': unknown
@@ -168,10 +171,13 @@ export interface StringsMap {
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
+  'days': PrimitiveObject<'count'>
   'declineInvitation': unknown
   'declineInvitationDescription': unknown
   'degelateNotActive': unknown
   'delete': unknown
+  'deleteApiToken': unknown
+  'deleteApiTokenDescription': unknown
   'deleteChaosInfrastructure': unknown
   'deleteExperiment': unknown
   'deleteExperimentDesc': unknown
@@ -285,6 +291,8 @@ export interface StringsMap {
   'experimentStopSuccessMessage': unknown
   'experimentType': unknown
   'experiments': unknown
+  'expiresAt': unknown
+  'expiresIn': unknown
   'expressionBreakdown': unknown
   'failStep': unknown
   'failed': unknown
@@ -443,6 +451,7 @@ export interface StringsMap {
   'newExperiment': unknown
   'newPassword': unknown
   'newProbe': unknown
+  'newToken': unknown
   'newUpdates': unknown
   'newUser': unknown
   'newUserNoExperiments.subtitle': unknown
@@ -452,6 +461,7 @@ export interface StringsMap {
   'nextRun': unknown
   'nextSelectChaosExperiments': unknown
   'noAnalysis': unknown
+  'noApiTokensFound': unknown
   'noChaosHubSelected': unknown
   'noChaosInfrastructure': unknown
   'noChaosInfrastructureFound': unknown
@@ -465,6 +475,7 @@ export interface StringsMap {
   'noExperimentSelected': unknown
   'noExperiments': unknown
   'noExperimentsAdded': unknown
+  'noExpiration': unknown
   'noFaults': unknown
   'noFilteredActiveInfra': unknown
   'noFilteredData.subtitle': unknown
@@ -772,6 +783,7 @@ export interface StringsMap {
   'testingConnection': unknown
   'thisExperimentHasNoRuns': unknown
   'timeout': unknown
+  'tokenCreateSuccessMessage': unknown
   'toleration.effectPlaceholder': unknown
   'toleration.keyPlaceholder': unknown
   'toleration.operatorPlaceholder': unknown

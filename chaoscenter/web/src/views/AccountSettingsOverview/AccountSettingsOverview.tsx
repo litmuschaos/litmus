@@ -49,6 +49,17 @@ export default function AccountSettingsOverviewView(props: AccountSettingsOvervi
                   {projectCount.userCreatedProjects ?? 0}
                 </Text>
                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600} style={{ lineHeight: 1 }}>
+                  {getString('apiTokens')}
+                </Text>
+              </Layout.Horizontal>
+              <Layout.Horizontal
+                flex={{ alignItems: 'center', justifyContent: 'flex-start' }}
+                style={{ gap: '0.25rem' }}
+              >
+                <Text font={{ variation: FontVariation.H4 }} style={{ lineHeight: 1 }}>
+                  {projectCount.userCreatedProjects ?? 0}
+                </Text>
+                <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600} style={{ lineHeight: 1 }}>
                   {getString('projectCreatedByYou')}
                 </Text>
               </Layout.Horizontal>
