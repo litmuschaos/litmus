@@ -21,9 +21,9 @@ type DeleteApiTokenInput struct {
 
 // ApiToken struct for storing API tokens
 type ApiToken struct {
-	UserID    string `bson:"user_id"`
-	Name      string `bson:"name"`
-	Token     string `bson:"token"`
-	ExpiresAt int64  `bson:"expires_at"`
-	CreatedAt int64  `bson:"created_at"`
+	UserID    string `bson:"user_id" json:"user_id"`
+	Name      string `bson:"name" json:"name"`
+	Token     string `bson:"token" json:"token"`
+	ExpiresAt int64  `bson:"expires_at" json:"expires_at"`
+	CreatedAt int64  `bson:"created_at" json:"created_at"`
 }
