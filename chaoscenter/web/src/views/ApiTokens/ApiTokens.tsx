@@ -85,7 +85,7 @@ function MemoizedApiTokensTable({ apiTokens, apiTokensRefetch }: MemoizedApiToke
                 key={data.token}
                 text={
                   <Text font={{ variation: FontVariation.SMALL_SEMI }} color={Color.RED_600}>
-                    {getString('deleteApiToken')}
+                    {getString('delete')}
                   </Text>
                 }
                 variation={ButtonVariation.LINK}

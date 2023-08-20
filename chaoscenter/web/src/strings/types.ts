@@ -176,7 +176,6 @@ export interface StringsMap {
   'declineInvitationDescription': unknown
   'degelateNotActive': unknown
   'delete': unknown
-  'deleteApiToken': unknown
   'deleteApiTokenDescription': unknown
   'deleteChaosInfrastructure': unknown
   'deleteExperiment': unknown

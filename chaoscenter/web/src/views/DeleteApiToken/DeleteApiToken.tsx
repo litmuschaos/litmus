@@ -24,7 +24,7 @@ export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): Reac
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>{getString('deleteApiToken')}</Text>
+        <Text font={{ variation: FontVariation.H4 }}>{getString('delete')}</Text>
         <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
       </Layout.Horizontal>
       <Text font={{ variation: FontVariation.BODY }}>{getString('deleteApiTokenDescription')}</Text>
