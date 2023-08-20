@@ -126,7 +126,7 @@ export default function ApiTokensView(props: ApiTokensViewProps): React.ReactEle
     <Layout.Vertical padding={{ top: 'large', bottom: 'large' }} style={{ minHeight: 200 }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H5 }}>
-          {getString('apiTokens')} ({apiTokens?.length ?? 0})
+          {getString('apiTokens')} ({apiTokens.length})
         </Text>
         <Button text={getString('newToken')} variation={ButtonVariation.PRIMARY} icon="plus" onClick={() => open()} />
         {isOpen && (
@@ -145,7 +145,7 @@ export default function ApiTokensView(props: ApiTokensViewProps): React.ReactEle
         small
         loading={useGetApiTokensQuery}
         noData={{
-          when: () => !apiTokens?.length,
+          when: () => !apiTokens.length,
           message: getString('noApiTokensFound')
         }}
       >
