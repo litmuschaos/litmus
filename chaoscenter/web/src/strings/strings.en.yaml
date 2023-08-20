@@ -184,6 +184,7 @@ copyPrompt2: >-
 crdCopyPrompt: Apply the Chaos CRDs manually
 createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
+createNewToken: Create New Token
 createNewUser: Create New User
 createRecurringSchedule: Create recurring schedule
 created: Created

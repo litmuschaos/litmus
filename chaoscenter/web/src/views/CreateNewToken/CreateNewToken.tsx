@@ -20,7 +20,7 @@ interface CreateNewTokenViewProps {
   handleClose: () => void;
 }
 
-interface CreateNewUserFormProps {
+interface CreateNewTokenFormProps {
   name: string;
   expirationDateInDays: number;
 }
@@ -30,7 +30,7 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
   const { getString } = useStrings();
   const { currentUserInfo } = useAppStore();
 
-  function handleSubmit(values: CreateNewUserFormProps): void {
+  function handleSubmit(values: CreateNewTokenFormProps): void {
     createNewTokenMutation(
       {
         body: {
@@ -50,11 +50,11 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>{getString('createNewUser')}</Text>
+        <Text font={{ variation: FontVariation.H4 }}>{getString('createNewToken')}</Text>
         <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
       </Layout.Horizontal>
       <Container>
-        <Formik<CreateNewUserFormProps>
+        <Formik<CreateNewTokenFormProps>
           initialValues={{
             name: '',
             expirationDateInDays: 30

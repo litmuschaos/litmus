@@ -152,6 +152,7 @@ export interface StringsMap {
   'crdCopyPrompt': unknown
   'createChaosExperiment': unknown
   'createNamespace': unknown
+  'createNewToken': unknown
   'createNewUser': unknown
   'createRecurringSchedule': unknown
   'created': unknown
