@@ -73,7 +73,7 @@ func (a applicationService) GetSignedJWT(user *entities.User) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
-		log.Info(err)
+		log.Error(err)
 		return "", err
 	}
 
@@ -83,7 +83,7 @@ func (a applicationService) GetSignedJWT(user *entities.User) (string, error) {
 // CreateApiToken creates a new API Token for the user
 func (a applicationService) CreateApiToken(user *entities.User, request entities.ApiTokenInput) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
-	expiresAt := time.Now().AddDate(0, 0, request.ExpirationDateInDays).Unix()
+	expiresAt := time.Now().AddDate(0, 0, request.DaysUntilExpiration).Unix()
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID
 	claims["role"] = user.Role
@@ -92,7 +92,7 @@ func (a applicationService) CreateApiToken(user *entities.User, request entities
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
-		log.Info(err)
+		log.Error(err)
 		return "", err
 	}
 

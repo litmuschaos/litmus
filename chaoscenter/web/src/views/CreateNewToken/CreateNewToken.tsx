@@ -22,7 +22,7 @@ interface CreateNewTokenViewProps {
 
 interface CreateNewTokenFormProps {
   name: string;
-  expirationDateInDays: number;
+  daysUntilExpiration: number;
 }
 
 export default function CreateNewTokenView(props: CreateNewTokenViewProps): React.ReactElement {
@@ -35,8 +35,8 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
       {
         body: {
           name: values.name,
-          user_id: currentUserInfo?.ID || '',
-          expiration_date_in_days: values.expirationDateInDays
+          user_id: currentUserInfo?.ID ?? '',
+          days_until_expiration: values.daysUntilExpiration
         }
       },
       {
@@ -57,7 +57,7 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
         <Formik<CreateNewTokenFormProps>
           initialValues={{
             name: '',
-            expirationDateInDays: 30
+            daysUntilExpiration: 30
           }}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
@@ -75,7 +75,7 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('name')}</Text>}
                     />
                     <FormInput.Select
-                      name="expirationDateInDays"
+                      name="daysUntilExpiration"
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('expiresIn')}</Text>}
                       items={[
                         { value: 30, label: getString('days', { count: 30 }) },

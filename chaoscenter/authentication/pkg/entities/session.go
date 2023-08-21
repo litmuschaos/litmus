@@ -9,9 +9,9 @@ type RevokedToken struct {
 
 // ApiTokenInput struct for storing ApiTokenInput
 type ApiTokenInput struct {
-	UserID               string `json:"user_id"`
-	Name                 string `json:"name"`
-	ExpirationDateInDays int    `json:"expiration_date_in_days"`
+	UserID              string `json:"user_id"`
+	Name                string `json:"name"`
+	DaysUntilExpiration int    `json:"days_until_expiration"`
 }
 
 // DeleteApiTokenInput struct for storing DeleteApiTokenInput

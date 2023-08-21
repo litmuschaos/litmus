@@ -14,7 +14,7 @@ func UserRouter(router *gin.Engine, service services.ApplicationService) {
 	router.POST("/logout", rest.LogoutUser(service))
 	router.Use(middleware.JwtMiddleware(service))
 	router.GET("/token/:uid", rest.GetApiTokens(service))
-	router.POST("/token", rest.CreateApiToken(service))
+	router.POST("/create_token", rest.CreateApiToken(service))
 	router.POST("/remove_token", rest.DeleteApiToken(service))
 	router.POST("/update/password", rest.UpdatePassword(service))
 	router.POST("/reset/password", rest.ResetPassword(service))

@@ -173,7 +173,7 @@
         "produces": ["application/json"]
       }
     },
-    "/token": {
+    "/create_token": {
       "post": {
         "description": "This API is used to create api-token for a user",
         "operationId": "createApiToken",
@@ -209,7 +209,7 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["user_id", "name", "expiration_date_in_days"],
+              "required": ["user_id", "name", "days_until_expiration"],
               "properties": {
                 "user_id": {
                   "type": "string"
@@ -217,14 +217,14 @@
                 "name": {
                   "type": "string"
                 },
-                "expiration_date_in_days": {
+                "days_until_expiration": {
                   "type": "integer"
                 }
               },
               "example": {
                 "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
                 "name": "test api token",
-                "expiration_date_in_days": 30
+                "days_until_expiration": 30
               }
             }
           }

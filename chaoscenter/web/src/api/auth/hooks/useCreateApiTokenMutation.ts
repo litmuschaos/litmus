@@ -8,7 +8,7 @@ import type { ErrorModel } from '../schemas/ErrorModel';
 import { fetcher, FetcherOptions } from 'services/fetcher';
 
 export type CreateApiTokenRequestBody = {
-  expiration_date_in_days: number;
+  days_until_expiration: number;
   name: string;
   user_id: string;
 };
@@ -23,7 +23,7 @@ export interface CreateApiTokenProps extends Omit<FetcherOptions<unknown, Create
 
 export function createApiToken(props: CreateApiTokenProps): Promise<CreateApiTokenOkResponse> {
   return fetcher<CreateApiTokenOkResponse, unknown, CreateApiTokenRequestBody>({
-    url: `/auth/token`,
+    url: `/auth/create_token`,
     method: 'POST',
     ...props
   });
