@@ -56,6 +56,8 @@ func StructuredLogger(logger *logrus.Logger) gin.HandlerFunc {
 
 		if c.Writer.Status() >= 500 {
 			logrus.WithFields(logFields).Error()
+		} else {
+			logrus.WithFields(logFields).Info()
 		}
 
 	}
