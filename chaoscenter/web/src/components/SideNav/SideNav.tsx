@@ -96,6 +96,7 @@ export default function SideNav(): ReactElement {
           <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
           <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
           <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
+          <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
         </Layout.Vertical>
       </div>
       <Container className={css.bottomContainer}>

@@ -23,6 +23,8 @@ export interface UseRouteDefinitionsProps {
   toChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
+  // Project scoped
+  toProjectMembers(): string;
   // Account Scoped Routes
   toAccountSettingsOverview(): string;
 }
@@ -56,5 +58,7 @@ export const paths: UseRouteDefinitionsProps = {
   toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
     `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
   // Account Scoped Routes
-  toAccountSettingsOverview: () => '/settings/overview'
+  toAccountSettingsOverview: () => '/settings/overview',
+  // user route
+  toProjectMembers: () => '/members'
 };
