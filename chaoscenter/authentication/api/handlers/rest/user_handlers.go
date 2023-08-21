@@ -164,7 +164,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, users)
+		c.JSON(200, gin.H{"data": users})
 	}
 }
 
@@ -224,6 +224,9 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 				UserID:     user.ID,
 				Role:       entities.RoleOwner,
 				Invitation: entities.AcceptedInvitation,
+				Username:   user.Username,
+				Name:       user.Name,
+				Email:      user.Email,
 				JoinedAt:   time.Now().Unix(),
 			}
 			var members []*entities.Member
