@@ -71,6 +71,7 @@ const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React
 
 const InvitationOperation = ({ row: { original: data } }: MemberRow): React.ReactElement => {
   const { projectID } = useParams<{ projectID: string }>();
+  const { getString } = useStrings();
   const { role } = data;
   const [memberRole, setMemberRole] = React.useState<'Editor' | 'Owner' | 'Viewer'>(role);
   const rolesDropDown: SelectOption[] = [
@@ -89,7 +90,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
     {},
     {
       onSuccess: () => {
-        showSuccess('Invitation sent successfully');
+        showSuccess(getString('invitationSuccess'));
       }
     }
   );
@@ -98,7 +99,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
     {},
     {
       onSuccess: () => {
-        showSuccess('Invitation removed successfully');
+        showSuccess(getString('invitationRemoveSuccess'));
       }
     }
   );
@@ -126,7 +127,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
             })
           }
           variation={ButtonVariation.PRIMARY}
-          text="Resend"
+          text={getString('resend')}
         />
         <Button
           disabled={false}
@@ -140,7 +141,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
             })
           }
           variation={ButtonVariation.SECONDARY}
-          text="Remove"
+          text={getString('remove')}
         />
       </Layout.Horizontal>
     </Layout.Horizontal>

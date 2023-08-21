@@ -4,15 +4,14 @@ import type { Column, Row } from 'react-table';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { PopoverPosition } from '@blueprintjs/core';
-import type { InviteUserDetails } from '@controllers/InviteNewMembers/types';
 import { useStrings } from '@strings';
-import { GetUsersForInvitationOkResponse, useSendInvitationMutation } from '@api/auth';
+import { GetUsersForInvitationOkResponse, User, useSendInvitationMutation } from '@api/auth';
 import { killEvent } from '@utils';
 import { UserEmail, UserName } from './InviteNewMemberListColumns';
 import css from './InviteNewMemberTable.module.scss';
 
 interface InviteUsersTableViewProps {
-  users: InviteUserDetails[];
+  users: User[];
   getUsers: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<GetUsersForInvitationOkResponse, unknown>>;
@@ -20,7 +19,7 @@ interface InviteUsersTableViewProps {
 
 export default function InviteUsersTableView({ users, getUsers }: InviteUsersTableViewProps): React.ReactElement {
   const { getString } = useStrings();
-  const envColumns: Column<InviteUserDetails>[] = useMemo(
+  const envColumns: Column<User>[] = useMemo(
     () => [
       {
         Header: 'MEMBERS',
@@ -38,14 +37,14 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
         Header: '',
         id: 'threeDotMenu',
         disableSortBy: true,
-        Cell: ({ row: { original: data } }: { row: Row<InviteUserDetails> }) => {
+        Cell: ({ row: { original: data } }: { row: Row<User> }) => {
           const { projectID } = useParams<{ projectID: string }>();
           const { showSuccess } = useToaster();
           const { mutate: sendInvitationMutation, isLoading } = useSendInvitationMutation(
             {},
             {
               onSuccess: () => {
-                showSuccess('Invitation sent successfully');
+                showSuccess(getString('invitationSuccess'));
                 getUsers();
               }
             }
@@ -58,7 +57,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
               width="100%"
             >
               <SplitButton
-                text="Invite as"
+                text={getString('inviteAs')}
                 icon="email-inline"
                 variation={ButtonVariation.PRIMARY}
                 loading={isLoading}
@@ -75,7 +74,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                       body: {
                         projectID: projectID,
                         role: 'Editor',
-                        userID: data.id
+                        userID: data.userID
                       }
                     })
                   }
@@ -87,7 +86,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                       body: {
                         projectID: projectID,
                         role: 'Viewer',
-                        userID: data.id
+                        userID: data.userID
                       }
                     })
                   }
@@ -99,7 +98,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getString]
+    []
   );
-  return <TableV2 columns={envColumns} data={users} className={css.inviteTable} />;
+  return <TableV2<User> columns={envColumns} data={users} className={css.inviteTable} />;
 }

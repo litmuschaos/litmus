@@ -15,7 +15,7 @@ import { MemberEmail, MemberName, MemberPermission } from './ActiveMembersListCo
 import css from './ProjectMember.module.scss';
 
 interface ActiveMembersTableViewProps {
-  activeMembers: ProjectMember[];
+  activeMembers: ProjectMember[] | undefined;
   isLoading: boolean;
   getMembersRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
@@ -71,7 +71,7 @@ export default function ActiveMembersTableView({
                   {/* <RbacMenuItem icon="edit" text="Edit Role" onClick={openEditModal} permission={PermissionGroup.OWNER} /> */}
                   <RbacMenuItem
                     icon="trash"
-                    text="Remove Member"
+                    text={getString('removeMember')}
                     onClick={openDeleteModal}
                     permission={PermissionGroup.OWNER}
                   />
@@ -99,20 +99,20 @@ export default function ActiveMembersTableView({
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getString]
+    []
   );
   return (
-    <Layout.Vertical>
-      <Text font={{ variation: FontVariation.H6 }}>Total Members: {activeMembers.length}</Text>
+    <Layout.Vertical height={'100%'} padding="medium">
+      <Text font={{ variation: FontVariation.H6 }}>Total Members: {activeMembers?.length ?? 0}</Text>
       <Loader
         loading={isLoading}
         noData={{
-          when: () => activeMembers.length === 0,
-          messageTitle: 'No members present',
-          message: 'No active project members available'
+          when: () => activeMembers?.length === 0,
+          messageTitle: getString('membersNotAvailableTitle'),
+          message: getString('membersNotAvailableMessage')
         }}
       >
-        <TableV2<ProjectMember> columns={envColumns} sortable data={activeMembers} />
+        {activeMembers && <TableV2<ProjectMember> columns={envColumns} sortable data={activeMembers} />}
       </Loader>
     </Layout.Vertical>
   );

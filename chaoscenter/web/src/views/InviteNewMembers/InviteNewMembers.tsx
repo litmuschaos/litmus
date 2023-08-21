@@ -4,15 +4,14 @@ import React from 'react';
 import { Icon } from '@harnessio/icons';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import Loader from '@components/Loader';
-import type { InviteUserDetails } from '@controllers/InviteNewMembers/types';
-import type { GetUsersForInvitationOkResponse } from '@api/auth';
+import type { GetUsersForInvitationOkResponse, User } from '@api/auth';
 import { useStrings } from '@strings';
 import InviteUsersTableView from './InviteUsersTable';
 
 interface InviteNewMembersViewProps {
   isLoading: boolean;
   handleClose: () => void;
-  data: InviteUserDetails[];
+  data: User[];
   searchInput: React.ReactElement;
   getUsers: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
@@ -34,8 +33,8 @@ export default function InviteNewMembersView(props: InviteNewMembersViewProps): 
           loading={isLoading}
           noData={{
             when: () => data.length === 0,
-            messageTitle: 'No users available',
-            message: 'No users available to send invitation'
+            messageTitle: getString('usersNotAvailableTitle'),
+            message: getString('usersNotAvailableMessage')
           }}
         >
           <InviteUsersTableView users={data} getUsers={getUsers} />

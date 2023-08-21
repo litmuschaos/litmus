@@ -25,9 +25,9 @@ export default function RemoveMemberView(props: RemoveMemberViewProps): React.Re
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>Remove Member</Text>
+        <Text font={{ variation: FontVariation.H4 }}>{getString('removeMember')}</Text>
       </Layout.Horizontal>
-      <Text font={{ variation: FontVariation.BODY }}>Are you sure you want to remove {username}?</Text>
+      <Text font={{ variation: FontVariation.BODY }}>{getString('removeMemberConfirmation', { username })}</Text>
       <Layout.Horizontal style={{ gap: '1rem' }}>
         <Button
           type="submit"

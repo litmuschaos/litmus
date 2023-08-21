@@ -15,7 +15,7 @@ import Loader from '@components/Loader';
 import { MemberEmail, MemberName } from './ActiveMembersListColumns';
 
 interface PendingMembersTableViewProps {
-  pendingMembers: ProjectMember[];
+  pendingMembers: ProjectMember[] | undefined;
   isLoading: boolean;
   getPendingMembersRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
@@ -69,7 +69,7 @@ export default function PendingMembersTableView({
             {},
             {
               onSuccess: () => {
-                showSuccess('Invitation sent successfully');
+                showSuccess(getString('invitationSuccess'));
                 getPendingMembersRefetch();
               }
             }
@@ -79,7 +79,7 @@ export default function PendingMembersTableView({
             {},
             {
               onSuccess: () => {
-                showSuccess('Invitation removed successfully');
+                showSuccess(getString('invitationRemoveSuccess'));
                 getPendingMembersRefetch();
               }
             }
@@ -108,7 +108,7 @@ export default function PendingMembersTableView({
                     })
                   }
                   variation={ButtonVariation.PRIMARY}
-                  text="Resend"
+                  text={getString('resend')}
                 />
                 <Button
                   disabled={false}
@@ -122,7 +122,7 @@ export default function PendingMembersTableView({
                     })
                   }
                   variation={ButtonVariation.SECONDARY}
-                  text="Remove"
+                  text={getString('remove')}
                 />
               </Layout.Horizontal>
             </Layout.Horizontal>
@@ -131,20 +131,20 @@ export default function PendingMembersTableView({
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getString]
+    []
   );
   return (
-    <Layout.Vertical>
-      <Text font={{ variation: FontVariation.H6 }}>Total Pending Invitations: {pendingMembers.length}</Text>
+    <Layout.Vertical height={'100%'} padding="medium">
+      <Text font={{ variation: FontVariation.H6 }}>Total Pending Invitations: {pendingMembers?.length ?? 0}</Text>
       <Loader
         loading={isLoading}
         noData={{
-          when: () => pendingMembers.length === 0,
-          messageTitle: 'No pending invitations present',
-          message: 'No pending invitations present'
+          when: () => pendingMembers?.length === 0,
+          messageTitle: getString('pendingInvitationsNotAvailableTitle'),
+          message: getString('pendingInvitationsNotAvailableMessage')
         }}
       >
-        <TableV2<ProjectMember> columns={envColumns} sortable data={pendingMembers} />
+        {pendingMembers && <TableV2<ProjectMember> columns={envColumns} sortable data={pendingMembers} />}
       </Loader>
     </Layout.Vertical>
   );

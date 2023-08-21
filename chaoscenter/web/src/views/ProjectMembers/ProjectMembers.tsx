@@ -8,6 +8,7 @@ import RbacButton from '@components/RbacButton';
 import ActiveProjectMembersController from '@controllers/ActiveProjectMemberList/ActiveProjectMembers';
 import InviteUsersController from '@controllers/InviteNewMembers';
 import PendingProjectMembersController from '@controllers/PendingProjectMemberList/PendingProjectMembers';
+import { useStrings } from '@strings';
 import styles from './ProjectMember.module.scss';
 
 export default function ProjectMembersView(): React.ReactElement {
@@ -16,6 +17,7 @@ export default function ProjectMembersView(): React.ReactElement {
   const selectedTabId = searchParams.get('tab') as MembersTabs;
   const { isOpen, close, open } = useToggleOpen();
   const [activeTab, setActiveTab] = React.useState<TabId | undefined>('overview');
+  const { getString } = useStrings();
 
   React.useEffect(() => {
     if (!selectedTabId) {
@@ -50,7 +52,7 @@ export default function ProjectMembersView(): React.ReactElement {
           tabList={[
             {
               id: 'active-members',
-              title: 'Active Members',
+              title: getString('activeMembers'),
               panel: (
                 <Layout.Vertical height={'100%'}>
                   <Layout.Horizontal
@@ -64,7 +66,7 @@ export default function ProjectMembersView(): React.ReactElement {
                         data-testid="add-members"
                         icon="plus"
                         iconProps={{ size: 10 }}
-                        text="New Member"
+                        text={getString('newMember')}
                         permission={PermissionGroup.EDITOR}
                         onClick={() => {
                           open();
@@ -82,20 +84,14 @@ export default function ProjectMembersView(): React.ReactElement {
                       </Dialog>
                     )}
                   </Layout.Horizontal>
-                  <Layout.Vertical padding="medium">
-                    <ActiveProjectMembersController />
-                  </Layout.Vertical>
+                  <ActiveProjectMembersController />
                 </Layout.Vertical>
               )
             },
             {
               id: 'pending-members',
-              title: 'Pending Members',
-              panel: (
-                <Layout.Vertical padding="medium">
-                  <PendingProjectMembersController />
-                </Layout.Vertical>
-              )
+              title: getString('pendingMembers'),
+              panel: <PendingProjectMembersController />
             }
           ]}
         />
