@@ -325,6 +325,9 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		newMember := &entities.Member{
 			UserID:     user.ID,
 			Role:       *member.Role,
+			Username:   user.Username,
+			Name:       user.Name,
+			Email:      user.Email,
 			Invitation: entities.PendingInvitation,
 			JoinedAt:   time.Now().Unix(),
 		}
@@ -499,7 +502,7 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 		case entities.DeclinedInvitation, entities.ExitedProject:
 			{
-				c.JSON(400, gin.H{"message": "User is already not a part of your project"})
+				c.JSON(400, gin.H{"message": "User is not a part of your project"})
 				return
 			}
 		}

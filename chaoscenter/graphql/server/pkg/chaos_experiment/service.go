@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -24,8 +23,6 @@ import (
 
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/ghodss/yaml"
 	"github.com/google/uuid"
@@ -41,14 +38,13 @@ type Service interface {
 	ProcessExperimentCreation(ctx context.Context, input *model.ChaosExperimentRequest, username string, projectID string, wfType *dbChaosExperiment.ChaosExperimentType, revisionID string, r *store.StateData) error
 	ProcessExperimentUpdate(workflow *model.ChaosExperimentRequest, username string, wfType *dbChaosExperiment.ChaosExperimentType, revisionID string, updateRevision bool, projectID string, r *store.StateData) error
 	ProcessExperimentDelete(query bson.D, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error
-	ProcessExperimentRunDelete(ctx context.Context, query bson.D, workflowRunID *string, experimentRun dbChaosExperimentRun.ChaosExperimentRun, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error
-	ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error)
 }
 
 // chaosWorkflowService is the implementation of the chaos workflow service
 type chaosExperimentService struct {
 	chaosExperimentOperator     *dbChaosExperiment.Operator
 	chaosInfrastructureOperator *dbChaosInfra.Operator
+	chaosExperimentRunOperator  *dbChaosExperimentRun.Operator
 }
 
 // NewChaosExperimentService returns a new instance of the chaos workflow service
@@ -313,7 +309,7 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 		}
 
 		//Update chaosExperimentRuns collection
-		err = dbChaosExperimentRun.UpdateExperimentRunsWithQuery(sessionContext, bson.D{{"experiment_id", workflow.ExperimentID}}, update)
+		err = c.chaosExperimentRunOperator.UpdateExperimentRunsWithQuery(sessionContext, bson.D{{"experiment_id", workflow.ExperimentID}}, update)
 		if err != nil {
 			return err
 		}
@@ -339,96 +335,6 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 
 	return nil
 }
-
-// ProcessExperimentRunDelete deletes a workflow entry and updates the database
-func (c *chaosExperimentService) ProcessExperimentRunDelete(ctx context.Context, query bson.D, workflowRunID *string, experimentRun dbChaosExperimentRun.ChaosExperimentRun, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error {
-	update := bson.D{
-		{"$set", bson.D{
-			{"is_removed", experimentRun.IsRemoved},
-			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
-		}},
-	}
-
-	err := dbChaosExperimentRun.UpdateExperimentRunWithQuery(ctx, query, update)
-	if err != nil {
-		return err
-	}
-	if r != nil {
-		chaos_infrastructure.SendExperimentToSubscriber(experimentRun.ProjectID, &model.ChaosExperimentRequest{
-			InfraID: workflow.InfraID,
-		}, &username, workflowRunID, "workflow_run_delete", r)
-	}
-
-	return nil
-}
-
-// ProcessCompletedExperimentRun calculates the Resiliency Score and returns the updated ExecutionData
-func (c *chaosExperimentService) ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error) {
-	var weightSum, totalTestResult = 0, 0
-	var result ExperimentRunMetrics
-	weightMap := map[string]int{}
-
-	chaosExperiments, err := c.chaosExperimentOperator.GetExperiment(context.TODO(), bson.D{
-		{"experiment_id", wfID},
-	})
-	if err != nil {
-		return result, fmt.Errorf("failed to get experiment from db on complete, error: %w", err)
-	}
-	for _, rev := range chaosExperiments.Revision {
-		if rev.RevisionID == execData.RevisionID {
-			for _, weights := range rev.Weightages {
-				weightMap[weights.FaultName] = weights.Weightage
-				// Total weight calculated for all experiments
-				weightSum = weightSum + weights.Weightage
-			}
-		}
-	}
-
-	result.TotalExperiments = len(weightMap)
-
-	for _, value := range execData.Nodes {
-		if value.Type == "ChaosEngine" {
-			experimentName := ""
-			if value.ChaosExp == nil {
-				continue
-			}
-
-			for expName := range weightMap {
-				if strings.Contains(value.ChaosExp.EngineName, expName) {
-					experimentName = expName
-				}
-			}
-			weight, ok := weightMap[experimentName]
-			// probeSuccessPercentage will be included only if chaosData is present
-			if ok {
-				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
-				totalTestResult += weight * x
-			}
-			if value.ChaosExp.FaultVerdict == "Pass" {
-				result.FaultsPassed += 1
-			}
-			if value.ChaosExp.FaultVerdict == "Fail" {
-				result.FaultsFailed += 1
-			}
-			if value.ChaosExp.FaultVerdict == "Awaited" {
-				result.FaultsAwaited += 1
-			}
-			if value.ChaosExp.FaultVerdict == "Stopped" {
-				result.FaultsStopped += 1
-			}
-			if value.ChaosExp.FaultVerdict == "N/A" || value.ChaosExp.FaultVerdict == "" {
-				result.FaultsNA += 1
-			}
-		}
-	}
-	if weightSum != 0 {
-		result.ResiliencyScore = utils.Truncate(float64(totalTestResult) / float64(weightSum))
-	}
-
-	return result, nil
-}
-
 func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
 	var (
 		newWeights       []*model.WeightagesInput

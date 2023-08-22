@@ -22,6 +22,7 @@ import { isUserAuthenticated } from 'utils/auth';
 import ImageRegistryController from '@controllers/ImageRegistry';
 import GitopsController from '@controllers/Gitops';
 import AccountSettingsController from '@controllers/AccountSettings';
+import ProjectMembersView from '@views/ProjectMembers';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
@@ -111,6 +112,8 @@ export function RoutesWithAuthentication(): React.ReactElement {
       />
       <Route exact path={projectMatchPaths.toImageRegistry()} component={ImageRegistryController} />
       <Route exact path={projectMatchPaths.toGitops()} component={GitopsController} />
+      {/* Project */}
+      <Route exact path={projectMatchPaths.toProjectMembers()} component={ProjectMembersView} />
     </Switch>
   );
 }
