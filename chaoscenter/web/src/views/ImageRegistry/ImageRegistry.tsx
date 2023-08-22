@@ -19,6 +19,7 @@ import {
 import type { GetImageRegistryRequest } from '@api/core/ImageRegistry';
 import type { UpdateImageRegistryRequest } from '@api/core/ImageRegistry/updateImageRegistry';
 import { useRouteWithBaseUrl } from '@hooks';
+import { useStrings } from '@strings';
 import css from './ImageRegistry.module.scss';
 
 enum ImageRegistryValues {
@@ -54,6 +55,7 @@ export default function ImageRegistryView({
   updateImageRegistryMutation,
   loading
 }: ImageRegistryViewProps): React.ReactElement {
+  const { getString } = useStrings();
   const initialValues: CustomValuesData = {
     isDefault: getImageRegistryData?.imageRegistryInfo.isDefault ?? true,
     imageRegistryName: !getImageRegistryData?.imageRegistryInfo.isDefault
@@ -96,7 +98,7 @@ export default function ImageRegistryView({
         : '',
       imageRegistryType: values.registryType
         ? imageRegValueType === ImageRegistryValues.DEFAULT
-          ? ImageRegistryType.PUBLIC
+          ? ImageRegistryType.PRIVATE
           : values.registryType
         : ImageRegistryType.PUBLIC,
       secretName: values.secretName ? (imageRegValueType === ImageRegistryValues.DEFAULT ? '' : values.secretName) : '',
@@ -131,7 +133,7 @@ export default function ImageRegistryView({
             intent="primary"
             data-testid="save-image-registry"
             iconProps={{ size: 10 }}
-            text="Save"
+            text={getString('save')}
             loading={
               getImageRegistryData
                 ? loading.updateImageRegistryMutationLoading
@@ -143,29 +145,19 @@ export default function ImageRegistryView({
           <Button
             disabled={false}
             variation={ButtonVariation.SECONDARY}
-            text="Discard"
+            text={getString('discard')}
             onClick={() => history.push(paths.toDashboard())}
           />
         </Layout.Horizontal>
       }
-      title="Image Registry"
+      title={getString('imageRegistry')}
       breadcrumbs={[]}
-      //   subHeader={}
     >
       <Container
         padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}
         height="100%"
         style={{ overflowY: 'auto' }}
       >
-        {/* <Loader
-          loading={loading.getImageRegistry}
-          noData={{
-            when: () => getImageRegistryData === undefined,
-            messageTitle: 'No Image registry available',
-            message: 'No Image registry available'
-          }}
-        >
-          {' '} */}
         <Formik<CustomValuesData>
           initialValues={initialValues}
           onSubmit={values => handleSubmit(values)}
@@ -194,11 +186,9 @@ export default function ImageRegistryView({
                               font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
                               color={Color.BLACK}
                             >
-                              Use Default Values
+                              {getString('defaultValueOption')}
                             </Text>
-                            <Text font={{ size: 'small' }}>
-                              All YAML files use these default values provided by Litmus. The values cannot be changed.
-                            </Text>
+                            <Text font={{ size: 'small' }}>{getString('defaultValueText')}</Text>
                           </Layout.Vertical>
                           {imageRegValueType === ImageRegistryValues.DEFAULT && (
                             <Layout.Horizontal
@@ -207,21 +197,27 @@ export default function ImageRegistryView({
                             >
                               <Layout.Vertical margin={{ right: 'huge' }}>
                                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
-                                  Registry:
+                                  {getString('registry')}:
                                 </Text>
-                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>docker.io</Text>
+                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>
+                                  {getString('docker')}
+                                </Text>
                               </Layout.Vertical>
                               <Layout.Vertical margin={{ right: 'huge' }}>
                                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
-                                  Repository:
+                                  {getString('repository')}:
                                 </Text>
-                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>litmuschaos</Text>
+                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>
+                                  {getString('litmusChaos')}
+                                </Text>
                               </Layout.Vertical>
                               <Layout.Vertical>
                                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
-                                  Registry Type:
+                                  {getString('registryType')}:
                                 </Text>
-                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>public</Text>
+                                <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>
+                                  {getString('public')}
+                                </Text>
                               </Layout.Vertical>
                             </Layout.Horizontal>
                           )}
@@ -237,11 +233,9 @@ export default function ImageRegistryView({
                               font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
                               color={Color.BLACK}
                             >
-                              Use Custom Values
+                              {getString('customValues')}
                             </Text>
-                            <Text font={{ size: 'small' }}>
-                              All YAML files use these default values provided by Litmus. The values cannot be changed.
-                            </Text>
+                            <Text font={{ size: 'small' }}>{getString('customValueText')}</Text>
                           </Layout.Vertical>
 
                           {imageRegValueType === ImageRegistryValues.CUSTOM && (
@@ -253,20 +247,26 @@ export default function ImageRegistryView({
                                 name="imageRegistryName"
                                 label={
                                   <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'small' }}>
-                                    Custom Image Registry
+                                    {getString('customImageRegistry')}
                                   </Text>
                                 }
-                                placeholder="Custom Name"
+                                placeholder={getString('name')}
                               />
 
                               <FormInput.Text
                                 name="imageRegistryRepo"
-                                label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Custom Repo</Text>}
-                                placeholder="Repo URL"
+                                label={
+                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('customRepo')}</Text>
+                                }
+                                placeholder={getString('hubRepositoryURL')}
                               />
                               <RadioButtonGroup
                                 name="registryType"
-                                label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Registry Type</Text>}
+                                label={
+                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>
+                                    {getString('registryType')}
+                                  </Text>
+                                }
                                 selectedValue={initialValues.registryType}
                                 inline={true}
                                 className={css.subRadioBtn}
@@ -275,11 +275,15 @@ export default function ImageRegistryView({
                                 }}
                                 options={[
                                   {
-                                    label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Public</Text>,
+                                    label: (
+                                      <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('public')}</Text>
+                                    ),
                                     value: ImageRegistryType.PUBLIC
                                   },
                                   {
-                                    label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Private</Text>,
+                                    label: (
+                                      <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('private')}</Text>
+                                    ),
                                     value: ImageRegistryType.PRIVATE
                                   }
                                 ]}
@@ -290,10 +294,10 @@ export default function ImageRegistryView({
                                     name="secretName"
                                     label={
                                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                                        Image Secret
+                                        {getString('imageSecret')}
                                       </Text>
                                     }
-                                    placeholder="Enter your Image Secret"
+                                    placeholder={getString('imageSecretPlaceholder')}
                                   />
                                 </Layout.Vertical>
                               )}

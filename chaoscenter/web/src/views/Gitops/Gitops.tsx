@@ -28,6 +28,7 @@ import type {
   UpdateGitOpsRequest
 } from '@api/entities/gitops';
 import { useRouteWithBaseUrl } from '@hooks';
+import { useStrings } from '@strings';
 import css from './Gitops.module.scss';
 
 enum GitopsValues {
@@ -68,7 +69,7 @@ export default function GitopsView({
   const [gitopsType, setGitopstype] = React.useState<GitopsValues>(
     gitopsDetails?.enabled ? GitopsValues.GITHUB : GitopsValues.LOCAL
   );
-
+  const { getString } = useStrings();
   const initialValues: GitopsData = {
     branch: gitopsDetails?.branch ?? '',
     repoURL: gitopsDetails?.repoURL ?? '',
@@ -134,7 +135,7 @@ export default function GitopsView({
             intent="primary"
             data-testid="gitops"
             iconProps={{ size: 10 }}
-            text="Save"
+            text={getString('save')}
             permission={PermissionGroup.EDITOR}
             loading={
               loading.disableGitopsMutationLoading ||
@@ -146,14 +147,13 @@ export default function GitopsView({
           <Button
             disabled={false}
             variation={ButtonVariation.SECONDARY}
-            text="Discard"
+            text={getString('discard')}
             onClick={() => history.push(paths.toDashboard())}
           />
         </Layout.Horizontal>
       }
-      title="Gitops"
+      title={getString('gitops')}
       breadcrumbs={[]}
-      //   subHeader={}
     >
       <Container
         padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}
@@ -178,7 +178,7 @@ export default function GitopsView({
                       label: (
                         <Layout.Vertical style={{ gap: '1rem' }}>
                           <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                            Locally in Litmus
+                            {getString('local')}
                           </Text>
                         </Layout.Vertical>
                       ),
@@ -192,7 +192,7 @@ export default function GitopsView({
                               font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
                               color={Color.BLACK}
                             >
-                              GitHub repository
+                              {getString('githubRepo')}
                             </Text>
                           </Layout.Vertical>
                           {gitopsType === GitopsValues.GITHUB && (
@@ -204,36 +204,45 @@ export default function GitopsView({
                                 name="repoURL"
                                 label={
                                   <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                                    Repository URL
+                                    {getString('hubRepositoryURL')}
                                   </Text>
                                 }
-                                placeholder="Enter repository URL"
+                                placeholder={getString('repoURLPlaceholder')}
                               />
 
                               <FormInput.Text
                                 name="branch"
-                                label={<Text font={{ variation: FontVariation.FORM_LABEL }}>Branch</Text>}
-                                placeholder="Enter repository branch"
+                                label={
+                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('branch')}</Text>
+                                }
+                                placeholder={getString('repoBranchPlaceholder')}
                               />
                               <RadioButtonGroup
                                 name="authType"
                                 selectedValue={initialValues.authType ?? AuthType.TOKEN}
                                 label={
-                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>Select Security Key Type</Text>
+                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>
+                                    {getString('securityKeyType')}
+                                  </Text>
                                 }
                                 inline={true}
                                 className={css.subRadioBtn}
-                                // selectedValue={formikProps.values.authType}
                                 onChange={(e: FormEvent<HTMLInputElement>) => {
                                   formikProps.setFieldValue('authType', e.currentTarget.value);
                                 }}
                                 options={[
                                   {
-                                    label: <Text font={{ variation: FontVariation.FORM_LABEL }}>Access Token</Text>,
+                                    label: (
+                                      <Text font={{ variation: FontVariation.FORM_LABEL }}>
+                                        {getString('accessToken')}
+                                      </Text>
+                                    ),
                                     value: AuthType.TOKEN
                                   },
                                   {
-                                    label: <Text font={{ variation: FontVariation.FORM_LABEL }}>SSH</Text>,
+                                    label: (
+                                      <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('ssh')}</Text>
+                                    ),
                                     value: AuthType.SSH
                                   }
                                 ]}
@@ -243,10 +252,10 @@ export default function GitopsView({
                                   name="token"
                                   label={
                                     <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                                      Access Token
+                                      {getString('accessToken')}
                                     </Text>
                                   }
-                                  placeholder="Enter your Personal Acess Token"
+                                  placeholder={getString('accessTokenPlaceholder')}
                                 />
                               )}
                               {formikProps.values.authType === AuthType.SSH && (
@@ -265,14 +274,14 @@ export default function GitopsView({
                                       });
                                     }}
                                     variation={ButtonVariation.SECONDARY}
-                                    text="Generate New SSH Key"
+                                    text={getString('generateSSH')}
                                   />
                                   <div className={css.textInputContainer}>
                                     <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
-                                      SSH Key
+                                      {getString('sshKey')}
                                     </Text>
                                     <TextInput
-                                      placeholder="SSH Key"
+                                      placeholder={getString('sshKey')}
                                       value={sshPublicKey}
                                       onChange={(e: FormEvent<HTMLInputElement>) => {
                                         setPublicSshKey(e.currentTarget.value);
@@ -291,9 +300,7 @@ export default function GitopsView({
                                     />
                                     <Layout.Horizontal spacing={'xsmall'} flex={{ alignItems: 'center' }}>
                                       <Icon name="info-message" size={15} />
-                                      <Text font={{ variation: FontVariation.SMALL }}>
-                                        Please make sure you copy the SSH key and saved it safely.
-                                      </Text>
+                                      <Text font={{ variation: FontVariation.SMALL }}>{getString('sshKeyHelper')}</Text>
                                     </Layout.Horizontal>
                                   </div>
                                 </Layout.Vertical>
