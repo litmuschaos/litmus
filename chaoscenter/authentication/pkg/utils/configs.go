@@ -26,7 +26,9 @@ var (
 	GrpcPort                     = ":3030"
 	UserCollection               = "users"
 	ProjectCollection            = "project"
+	RevokedTokenCollection       = "revoked-token"
 	UsernameField                = "username"
+	ExpiresAtField               = "expires_at"
 	PasswordEncryptionCost       = 15
 	DefaultLitmusGqlGrpcEndpoint = "localhost"
 	DefaultLitmusGqlGrpcPort     = ":8000"

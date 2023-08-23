@@ -4,7 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
@@ -16,7 +15,7 @@ import (
 
 func (s *ServerGrpc) ValidateRequest(ctx context.Context,
 	inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) {
-	token, err := middleware.ValidateToken(inputRequest.Jwt)
+	token, err := s.ValidateToken(inputRequest.Jwt)
 	if err != nil {
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
 	}

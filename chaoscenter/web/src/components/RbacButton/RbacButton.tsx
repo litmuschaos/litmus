@@ -3,7 +3,7 @@ import { Color, FontVariation } from '@harnessio/design-system';
 import React from 'react';
 import { Classes, PopoverInteractionKind } from '@blueprintjs/core';
 import { useStrings } from '@strings';
-import { isUserAllowed } from '@utils';
+import { usePermissions } from '@utils';
 
 interface RbacButtonProps extends ButtonProps {
   permission: string;
@@ -11,7 +11,9 @@ interface RbacButtonProps extends ButtonProps {
 
 export default function RbacButton({ permission, ...rest }: RbacButtonProps): React.ReactElement {
   const { getString } = useStrings();
-  const disabled = isUserAllowed(permission);
+  const disabled = usePermissions({
+    permission
+  });
 
   const toolTip = (
     <Layout.Vertical padding="small">

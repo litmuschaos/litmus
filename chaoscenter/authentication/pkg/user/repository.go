@@ -236,10 +236,12 @@ func (r repository) UpdateUserState(username string, isDeactivate bool, deactiva
 	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
 			"deactivated_at": deactivateTime,
+			"is_removed":     true,
 		}})
 	} else {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
 			"deactivated_at": nil,
+			"is_removed":     false,
 		}})
 	}
 

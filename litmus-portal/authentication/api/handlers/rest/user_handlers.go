@@ -1,18 +1,21 @@
 package rest
 
 import (
+	"strconv"
+	"time"
+
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
+
+const BearerSchema = "Bearer "
 
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -174,7 +177,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := user.GetSignedJWT()
+		token, err := service.GetSignedJWT(user)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -185,6 +188,28 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			"access_token": token,
 			"expires_in":   expiryTime,
 			"type":         "Bearer",
+		})
+	}
+}
+
+// LogoutUser revokes the token passed in the Authorization header
+func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+		tokenString := authHeader[len(BearerSchema):]
+		// revoke token
+		err := service.RevokeToken(tokenString)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "successfully logged out",
 		})
 	}
 }
