@@ -29,6 +29,7 @@ import type {
 } from '@api/entities/gitops';
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
+import Loader from '@components/Loader';
 import css from './Gitops.module.scss';
 
 enum GitopsValues {
@@ -52,6 +53,7 @@ interface GitopsViewProps {
   updateGitops: MutationFunction<boolean, UpdateGitOpsRequest>;
   disableGitops: MutationFunction<boolean, DisableGitOpsRequest>;
   loading: {
+    getGitOpsDetailsLoading: boolean;
     enableGitopsMutationLoading: boolean;
     updateGitopsMutationLoading: boolean;
     disableGitopsMutationLoading: boolean;
@@ -155,172 +157,182 @@ export default function GitopsView({
       title={getString('gitops')}
       breadcrumbs={[]}
     >
-      <Container
-        padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}
-        height="100%"
-        style={{ overflowY: 'auto' }}
-      >
-        <Formik<GitopsData>
-          initialValues={initialValues}
-          onSubmit={values => handleSubmit(values)}
-          innerRef={formikRef}
+      <Loader loading={loading.getGitOpsDetailsLoading}>
+        <Container
+          padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}
+          height="100%"
+          style={{ overflowY: 'auto' }}
         >
-          {formikProps => {
-            return (
-              <Form className={css.formContainer}>
-                <RadioButtonGroup
-                  name="type"
-                  inline={false}
-                  selectedValue={gitopsType}
-                  className={css.radioButton}
-                  options={[
-                    {
-                      label: (
-                        <Layout.Vertical style={{ gap: '1rem' }}>
-                          <Text font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }} color={Color.BLACK}>
-                            {getString('local')}
-                          </Text>
-                        </Layout.Vertical>
-                      ),
-                      value: GitopsValues.LOCAL
-                    },
-                    {
-                      label: (
-                        <Layout.Vertical style={{ gap: '0.5rem' }} width={'60%'}>
-                          <Layout.Vertical style={{ gap: '0.25rem' }}>
+          <Formik<GitopsData>
+            initialValues={initialValues}
+            onSubmit={values => handleSubmit(values)}
+            innerRef={formikRef}
+          >
+            {formikProps => {
+              return (
+                <Form className={css.formContainer}>
+                  <RadioButtonGroup
+                    name="type"
+                    inline={false}
+                    selectedValue={gitopsType}
+                    className={css.radioButton}
+                    options={[
+                      {
+                        label: (
+                          <Layout.Vertical style={{ gap: '1rem' }}>
                             <Text
                               font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
                               color={Color.BLACK}
                             >
-                              {getString('githubRepo')}
+                              {getString('local')}
                             </Text>
                           </Layout.Vertical>
-                          {gitopsType === GitopsValues.GITHUB && (
-                            <Layout.Vertical
-                              flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
-                              className={css.subCard}
-                            >
-                              <FormInput.Text
-                                name="repoURL"
-                                label={
-                                  <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                                    {getString('hubRepositoryURL')}
-                                  </Text>
-                                }
-                                placeholder={getString('repoURLPlaceholder')}
-                              />
-
-                              <FormInput.Text
-                                name="branch"
-                                label={
-                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('branch')}</Text>
-                                }
-                                placeholder={getString('repoBranchPlaceholder')}
-                              />
-                              <RadioButtonGroup
-                                name="authType"
-                                selectedValue={initialValues.authType ?? AuthType.TOKEN}
-                                label={
-                                  <Text font={{ variation: FontVariation.FORM_LABEL }}>
-                                    {getString('securityKeyType')}
-                                  </Text>
-                                }
-                                inline={true}
-                                className={css.subRadioBtn}
-                                onChange={(e: FormEvent<HTMLInputElement>) => {
-                                  formikProps.setFieldValue('authType', e.currentTarget.value);
-                                }}
-                                options={[
-                                  {
-                                    label: (
-                                      <Text font={{ variation: FontVariation.FORM_LABEL }}>
-                                        {getString('accessToken')}
-                                      </Text>
-                                    ),
-                                    value: AuthType.TOKEN
-                                  },
-                                  {
-                                    label: (
-                                      <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('ssh')}</Text>
-                                    ),
-                                    value: AuthType.SSH
-                                  }
-                                ]}
-                              />
-                              {formikProps.values.authType === AuthType.TOKEN && (
+                        ),
+                        value: GitopsValues.LOCAL
+                      },
+                      {
+                        label: (
+                          <Layout.Vertical style={{ gap: '0.5rem' }} width={'60%'}>
+                            <Layout.Vertical style={{ gap: '0.25rem' }}>
+                              <Text
+                                font={{ variation: FontVariation.BODY2_SEMI, weight: 'semi-bold' }}
+                                color={Color.BLACK}
+                              >
+                                {getString('githubRepo')}
+                              </Text>
+                            </Layout.Vertical>
+                            {gitopsType === GitopsValues.GITHUB && (
+                              <Layout.Vertical
+                                flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
+                                className={css.subCard}
+                              >
                                 <FormInput.Text
-                                  name="token"
+                                  name="repoURL"
                                   label={
                                     <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                                      {getString('accessToken')}
+                                      {getString('hubRepositoryURL')}
                                     </Text>
                                   }
-                                  placeholder={getString('accessTokenPlaceholder')}
+                                  placeholder={getString('repoURLPlaceholder')}
                                 />
-                              )}
-                              {formikProps.values.authType === AuthType.SSH && (
-                                <Layout.Vertical
-                                  spacing={'small'}
-                                  flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
-                                >
-                                  <Button
-                                    onClick={() => {
-                                      generateSSHKeyMutation({
-                                        onCompleted: data => {
-                                          setPublicSshKey(data.generateSSHKey.publicKey);
-                                          formikProps.setFieldValue('sshPrivateKey', data.generateSSHKey.privateKey);
-                                          formikProps.setFieldValue('sshPublicKey', data.generateSSHKey.publicKey);
-                                        }
-                                      });
-                                    }}
-                                    variation={ButtonVariation.SECONDARY}
-                                    text={getString('generateSSH')}
-                                  />
-                                  <div className={css.textInputContainer}>
-                                    <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
-                                      {getString('sshKey')}
+
+                                <FormInput.Text
+                                  name="branch"
+                                  label={
+                                    <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('branch')}</Text>
+                                  }
+                                  placeholder={getString('repoBranchPlaceholder')}
+                                />
+                                <RadioButtonGroup
+                                  name="authType"
+                                  selectedValue={initialValues.authType ?? AuthType.TOKEN}
+                                  label={
+                                    <Text font={{ variation: FontVariation.FORM_LABEL }}>
+                                      {getString('securityKeyType')}
                                     </Text>
-                                    <TextInput
-                                      placeholder={getString('sshKey')}
-                                      value={sshPublicKey}
-                                      onChange={(e: FormEvent<HTMLInputElement>) => {
-                                        setPublicSshKey(e.currentTarget.value);
-                                        formikProps.setFieldValue('sshPublicKey', e.currentTarget.value);
+                                  }
+                                  inline={true}
+                                  className={css.subRadioBtn}
+                                  onChange={(e: FormEvent<HTMLInputElement>) => {
+                                    formikProps.setFieldValue('authType', e.currentTarget.value);
+                                  }}
+                                  options={[
+                                    {
+                                      label: (
+                                        <Text font={{ variation: FontVariation.FORM_LABEL }}>
+                                          {getString('accessToken')}
+                                        </Text>
+                                      ),
+                                      value: AuthType.TOKEN
+                                    },
+                                    {
+                                      label: (
+                                        <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('ssh')}</Text>
+                                      ),
+                                      value: AuthType.SSH
+                                    }
+                                  ]}
+                                />
+                                {formikProps.values.authType === AuthType.TOKEN && (
+                                  <FormInput.Text
+                                    name="token"
+                                    label={
+                                      <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
+                                        {getString('accessToken')}
+                                      </Text>
+                                    }
+                                    placeholder={getString('accessTokenPlaceholder')}
+                                  />
+                                )}
+                                {formikProps.values.authType === AuthType.SSH && (
+                                  <Layout.Vertical
+                                    spacing={'small'}
+                                    flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
+                                  >
+                                    <Button
+                                      onClick={() => {
+                                        generateSSHKeyMutation({
+                                          onCompleted: data => {
+                                            setPublicSshKey(data.generateSSHKey.publicKey);
+                                            formikProps.setFieldValue('sshPrivateKey', data.generateSSHKey.privateKey);
+                                            formikProps.setFieldValue('sshPublicKey', data.generateSSHKey.publicKey);
+                                          }
+                                        });
                                       }}
-                                      rightElement={
-                                        (
-                                          <Container
-                                            flex={{ justifyContent: 'center', alignItems: 'center' }}
-                                            height="100%"
-                                          >
-                                            <CopyButton stringToCopy={sshPublicKey} />
-                                          </Container>
-                                        ) as any
-                                      }
+                                      variation={ButtonVariation.SECONDARY}
+                                      text={getString('generateSSH')}
                                     />
-                                    <Layout.Horizontal spacing={'xsmall'} flex={{ alignItems: 'center' }}>
-                                      <Icon name="info-message" size={15} />
-                                      <Text font={{ variation: FontVariation.SMALL }}>{getString('sshKeyHelper')}</Text>
-                                    </Layout.Horizontal>
-                                  </div>
-                                </Layout.Vertical>
-                              )}
-                            </Layout.Vertical>
-                          )}
-                        </Layout.Vertical>
-                      ),
-                      value: GitopsValues.GITHUB
-                    }
-                  ]}
-                  onChange={(e: FormEvent<HTMLInputElement>) => {
-                    setGitopstype(e.currentTarget.value as GitopsValues);
-                  }}
-                />
-              </Form>
-            );
-          }}
-        </Formik>
-      </Container>
+                                    <div className={css.textInputContainer}>
+                                      <Text
+                                        font={{ variation: FontVariation.FORM_LABEL }}
+                                        margin={{ bottom: 'xsmall' }}
+                                      >
+                                        {getString('sshKey')}
+                                      </Text>
+                                      <TextInput
+                                        placeholder={getString('sshKey')}
+                                        value={sshPublicKey}
+                                        onChange={(e: FormEvent<HTMLInputElement>) => {
+                                          setPublicSshKey(e.currentTarget.value);
+                                          formikProps.setFieldValue('sshPublicKey', e.currentTarget.value);
+                                        }}
+                                        rightElement={
+                                          (
+                                            <Container
+                                              flex={{ justifyContent: 'center', alignItems: 'center' }}
+                                              height="100%"
+                                            >
+                                              <CopyButton stringToCopy={sshPublicKey} />
+                                            </Container>
+                                          ) as any
+                                        }
+                                      />
+                                      <Layout.Horizontal spacing={'xsmall'} flex={{ alignItems: 'center' }}>
+                                        <Icon name="info-message" size={15} />
+                                        <Text font={{ variation: FontVariation.SMALL }}>
+                                          {getString('sshKeyHelper')}
+                                        </Text>
+                                      </Layout.Horizontal>
+                                    </div>
+                                  </Layout.Vertical>
+                                )}
+                              </Layout.Vertical>
+                            )}
+                          </Layout.Vertical>
+                        ),
+                        value: GitopsValues.GITHUB
+                      }
+                    ]}
+                    onChange={(e: FormEvent<HTMLInputElement>) => {
+                      setGitopstype(e.currentTarget.value as GitopsValues);
+                    }}
+                  />
+                </Form>
+              );
+            }}
+          </Formik>
+        </Container>
+      </Loader>
     </DefaultLayout>
   );
 }

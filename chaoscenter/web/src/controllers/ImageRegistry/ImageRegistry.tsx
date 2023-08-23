@@ -5,7 +5,6 @@ import { getImageRegistry } from '@api/core/ImageRegistry';
 import { addImageRegistry } from '@api/core/ImageRegistry/addImageRegistry';
 import { updateImageRegistry } from '@api/core/ImageRegistry/updateImageRegistry';
 import ImageRegistryView from '@views/ImageRegistry';
-import Loader from '@components/Loader';
 
 const ImageRegistryController: React.FC = () => {
   const scope = getScope();
@@ -38,19 +37,17 @@ const ImageRegistryController: React.FC = () => {
     onError: err => showError(err.message)
   });
   return (
-    <Loader loading={getImageRegistryLoading}>
-      <ImageRegistryView
-        listImageRegistryRefetch={listImageRegistryRefetch}
-        getImageRegistryData={getImageRegistryData?.getImageRegistry}
-        loading={{
-          getImageRegistry: getImageRegistryLoading,
-          addImageRegistryMutationLoading: addImageRegistryMutationLoading,
-          updateImageRegistryMutationLoading: updateImageRegistryMutationLoading
-        }}
-        updateImageRegistryMutation={updateImageRegistryMutation}
-        addImageRegistryMutation={addImageRegistryMutation}
-      />
-    </Loader>
+    <ImageRegistryView
+      listImageRegistryRefetch={listImageRegistryRefetch}
+      getImageRegistryData={getImageRegistryData?.getImageRegistry}
+      loading={{
+        getImageRegistry: getImageRegistryLoading,
+        addImageRegistryMutationLoading: addImageRegistryMutationLoading,
+        updateImageRegistryMutationLoading: updateImageRegistryMutationLoading
+      }}
+      updateImageRegistryMutation={updateImageRegistryMutation}
+      addImageRegistryMutation={addImageRegistryMutation}
+    />
   );
 };
 

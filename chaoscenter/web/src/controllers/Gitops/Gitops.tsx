@@ -3,7 +3,6 @@ import { useToaster } from '@harnessio/uicore';
 import GitopsView from '@views/Gitops/Gitops';
 import { enableGitOps, getGitOpsDetails, updateGitOps } from '@api/core/gitops';
 import { getScope } from '@utils';
-import Loader from '@components/Loader';
 import { disableGitOps } from '@api/core/gitops/disableGitops';
 
 export default function GitopsController(): React.ReactElement {
@@ -45,18 +44,17 @@ export default function GitopsController(): React.ReactElement {
     onError: err => showError(err.message)
   });
   return (
-    <Loader loading={getGitOpsDetailsLoading}>
-      <GitopsView
-        gitopsDetails={getGitOpsDetailsData?.getGitOpsDetails}
-        enableGitops={enableGitopsMutation}
-        disableGitops={disableGitopsMutation}
-        updateGitops={updateGitopsMutation}
-        loading={{
-          disableGitopsMutationLoading: disableGitopsMutationLoading,
-          updateGitopsMutationLoading: updateGitopsMutationLoading,
-          enableGitopsMutationLoading: enableGitopsMutationLoading
-        }}
-      />
-    </Loader>
+    <GitopsView
+      gitopsDetails={getGitOpsDetailsData?.getGitOpsDetails}
+      enableGitops={enableGitopsMutation}
+      disableGitops={disableGitopsMutation}
+      updateGitops={updateGitopsMutation}
+      loading={{
+        getGitOpsDetailsLoading: getGitOpsDetailsLoading,
+        disableGitopsMutationLoading: disableGitopsMutationLoading,
+        updateGitopsMutationLoading: updateGitopsMutationLoading,
+        enableGitopsMutationLoading: enableGitopsMutationLoading
+      }}
+    />
   );
 }
