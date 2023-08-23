@@ -3,11 +3,12 @@ package grpc
 import (
 	"context"
 
-	"github.com/golang-jwt/jwt"
-	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/api/presenter/protos"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/validations"
+
+	"github.com/golang-jwt/jwt"
+	log "github.com/sirupsen/logrus"
 )
 
 func (s *ServerGrpc) ValidateRequest(ctx context.Context,

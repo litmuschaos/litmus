@@ -4,9 +4,10 @@ package session
 import (
 	"context"
 
+	"litmus/litmus-portal/authentication/pkg/entities"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"litmus/litmus-portal/authentication/pkg/entities"
 )
 
 // Repository holds the mongo database implementation of the Service

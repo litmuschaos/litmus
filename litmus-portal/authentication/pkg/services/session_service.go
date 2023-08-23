@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt"
-	log "github.com/sirupsen/logrus"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/utils"
+
+	"github.com/golang-jwt/jwt"
+	log "github.com/sirupsen/logrus"
 )
 
 // SessionService is the interface for SessionService
