@@ -28,6 +28,8 @@ type ChaosExperimentRun struct {
 type Probes struct {
 	FaultName  string   `bson:"fault_name" json:"faultName"`
 	ProbeNames []string `bson:"probe_names" json:"probeNames"`
+}
+
 type TotalFilteredData struct {
 	Count int `bson:"count"`
 }

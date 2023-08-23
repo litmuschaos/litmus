@@ -268,6 +268,7 @@ func (m *MongoClient) initAllCollection() {
 			Keys: bson.M{
 				"name": 1,
 			},
+			Options: options.Index().SetUnique(true),
 		},
 		{
 			Keys: bson.D{

@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
@@ -80,10 +81,10 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 	matchIdentifiersStage := bson.D{
 		{
 			"$match", bson.D{
-			{"experiment_run_id", experimentRunID},
-			{"project_id", projectID},
-			{"is_removed", false},
-		},
+				{"experiment_run_id", experimentRunID},
+				{"project_id", projectID},
+				{"is_removed", false},
+			},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifiersStage)
@@ -96,23 +97,23 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 				{"let", bson.D{{"experimentID", "$experiment_id"}, {"revID", "$revision_id"}}},
 				{
 					"pipeline", bson.A{
-					bson.D{{"$match", bson.D{{"$expr", bson.D{{"$eq", bson.A{"$experiment_id", "$$experimentID"}}}}}}},
-					bson.D{
-						{"$project", bson.D{
-							{"name", 1},
-							{"is_custom_experiment", 1},
-							{"revision", bson.D{{
-								"$filter", bson.D{
-									{"input", "$revision"},
-									{"as", "revs"},
-									{"cond", bson.D{{
-										"$eq", bson.A{"$$revs.revision_id", "$$revID"},
-									}}},
-								},
-							}}},
-						}},
+						bson.D{{"$match", bson.D{{"$expr", bson.D{{"$eq", bson.A{"$experiment_id", "$$experimentID"}}}}}}},
+						bson.D{
+							{"$project", bson.D{
+								{"name", 1},
+								{"is_custom_experiment", 1},
+								{"revision", bson.D{{
+									"$filter", bson.D{
+										{"input", "$revision"},
+										{"as", "revs"},
+										{"cond", bson.D{{
+											"$eq", bson.A{"$$revs.revision_id", "$$revID"},
+										}}},
+									},
+								}}},
+							}},
+						},
 					},
-				},
 				},
 				{"as", "experiment"},
 			},
@@ -127,22 +128,22 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
+					bson.D{
+						{"$match", bson.D{
+							{"$expr", bson.D{
+								{"$eq", bson.A{"$infra_id", "$$infraID"}},
+							}},
 						}},
-					}},
+					},
+					bson.D{
+						{"$project", bson.D{
+							{"token", 0},
+							{"infra_ns_exists", 0},
+							{"infra_sa_exists", 0},
+							{"access_key", 0},
+						}},
+					},
 				},
-				bson.D{
-					{"$project", bson.D{
-						{"token", 0},
-						{"infra_ns_exists", 0},
-						{"infra_sa_exists", 0},
-						{"access_key", 0},
-					}},
-				},
-			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -246,12 +247,12 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 	matchIdentifiersStage := bson.D{
 		{
 			"$match", bson.D{{
-			"$and", bson.A{
-				bson.D{
-					{"project_id", projectID},
+				"$and", bson.A{
+					bson.D{
+						{"project_id", projectID},
+					},
 				},
-			},
-		}},
+			}},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifiersStage)
@@ -300,24 +301,24 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 				{"let", bson.D{{"experimentID", "$experiment_id"}, {"revID", "$revision_id"}}},
 				{
 					"pipeline", bson.A{
-					bson.D{{"$match", bson.D{{"$expr", bson.D{{"$eq", bson.A{"$experiment_id", "$$experimentID"}}}}}}},
-					bson.D{
-						{"$project", bson.D{
-							{"name", 1},
-							{"experiment_type", 1},
-							{"is_custom_experiment", 1},
-							{"revision", bson.D{{
-								"$filter", bson.D{
-									{"input", "$revision"},
-									{"as", "revs"},
-									{"cond", bson.D{{
-										"$eq", bson.A{"$$revs.revision_id", "$$revID"},
-									}}},
-								},
-							}}},
-						}},
+						bson.D{{"$match", bson.D{{"$expr", bson.D{{"$eq", bson.A{"$experiment_id", "$$experimentID"}}}}}}},
+						bson.D{
+							{"$project", bson.D{
+								{"name", 1},
+								{"experiment_type", 1},
+								{"is_custom_experiment", 1},
+								{"revision", bson.D{{
+									"$filter", bson.D{
+										{"input", "$revision"},
+										{"as", "revs"},
+										{"cond", bson.D{{
+											"$eq", bson.A{"$$revs.revision_id", "$$revID"},
+										}}},
+									},
+								}}},
+							}},
+						},
 					},
-				},
 				},
 				{"as", "experiment"},
 			},
@@ -452,22 +453,22 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
+					bson.D{
+						{"$match", bson.D{
+							{"$expr", bson.D{
+								{"$eq", bson.A{"$infra_id", "$$infraID"}},
+							}},
 						}},
-					}},
+					},
+					bson.D{
+						{"$project", bson.D{
+							{"token", 0},
+							{"infra_ns_exists", 0},
+							{"infra_sa_exists", 0},
+							{"access_key", 0},
+						}},
+					},
 				},
-				bson.D{
-					{"$project", bson.D{
-						{"token", 0},
-						{"infra_ns_exists", 0},
-						{"infra_sa_exists", 0},
-						{"access_key", 0},
-					}},
-				},
-			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -736,8 +737,8 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	update := bson.D{
 		{
 			"$set", bson.D{
-			{"updated_at", currentTime},
-		},
+				{"updated_at", currentTime},
+			},
 		},
 	}
 	err = c.chaosExperimentOperator.UpdateChaosExperiment(context.Background(), filter, update)
@@ -800,18 +801,18 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		update = bson.D{
 			{
 				"$set", bson.D{
-				{"updated_at", currentTime},
-				{"total_experiment_runs", workflow.TotalExperimentRuns + 1},
-			},
+					{"updated_at", currentTime},
+					{"total_experiment_runs", workflow.TotalExperimentRuns + 1},
+				},
 			},
 			{
 				"$push", bson.D{
-				{"recent_experiment_run_details", bson.D{
-					{"$each", expRunDetail},
-					{"$position", 0},
-					{"$slice", 10},
-				}},
-			},
+					{"recent_experiment_run_details", bson.D{
+						{"$each", expRunDetail},
+						{"$position", 0},
+						{"$slice", 10},
+					}},
+				},
 			},
 		}
 
@@ -972,11 +973,11 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 	groupByPhaseStage := bson.D{
 		{
 			"$group", bson.D{
-			{"_id", "$phase"},
-			{"count", bson.D{
-				{"$sum", 1},
-			}},
-		},
+				{"_id", "$phase"},
+				{"count", bson.D{
+					{"$sum", 1},
+				}},
+			},
 		},
 	}
 	pipeline = append(pipeline, groupByPhaseStage)
@@ -1139,18 +1140,18 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			update := bson.D{
 				{
 					"$set", bson.D{
-					{"updated_at", time.Now().UnixMilli()},
-					{"total_experiment_runs", experiment.TotalExperimentRuns + 1},
-				},
+						{"updated_at", time.Now().UnixMilli()},
+						{"total_experiment_runs", experiment.TotalExperimentRuns + 1},
+					},
 				},
 				{
 					"$push", bson.D{
-					{"recent_experiment_run_details", bson.D{
-						{"$each", expRunDetail},
-						{"$position", 0},
-						{"$slice", 10},
-					}},
-				},
+						{"recent_experiment_run_details", bson.D{
+							{"$each", expRunDetail},
+							{"$position", 0},
+							{"$slice", 10},
+						}},
+					},
 				},
 			}
 
@@ -1176,13 +1177,13 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			update := bson.D{
 				{
 					"$set", bson.D{
-					{"recent_experiment_run_details.$.phase", executionData.Phase},
-					{"recent_experiment_run_details.$.completed", event.Completed},
-					{"recent_experiment_run_details.$.experiment_run_id", event.ExperimentRunID},
-					{"recent_experiment_run_details.$.resiliency_score", workflowRunMetrics.ResiliencyScore},
-					{"recent_experiment_run_details.$.updated_at", currentTime.UnixMilli()},
-					{"recent_experiment_run_details.$.updated_by", string(updatedBy)},
-				},
+						{"recent_experiment_run_details.$.phase", executionData.Phase},
+						{"recent_experiment_run_details.$.completed", event.Completed},
+						{"recent_experiment_run_details.$.experiment_run_id", event.ExperimentRunID},
+						{"recent_experiment_run_details.$.resiliency_score", workflowRunMetrics.ResiliencyScore},
+						{"recent_experiment_run_details.$.updated_at", currentTime.UnixMilli()},
+						{"recent_experiment_run_details.$.updated_by", string(updatedBy)},
+					},
 				},
 			}
 

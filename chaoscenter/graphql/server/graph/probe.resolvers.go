@@ -9,7 +9,6 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
 	"github.com/sirupsen/logrus"
 )
@@ -227,7 +226,7 @@ func (r *queryResolver) GetProbesInExperimentRun(ctx context.Context, projectID 
 		return nil, err
 	}
 
-	response, err := handler.GetProbesInExperimentRun(ctx, projectID, experimentRunID, faultName)
+	response, err := r.chaosExperimentHandler.GetProbesInExperimentRun(ctx, projectID, experimentRunID, faultName)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err

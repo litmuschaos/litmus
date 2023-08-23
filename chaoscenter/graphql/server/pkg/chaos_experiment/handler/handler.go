@@ -7,6 +7,9 @@ import (
 	"strconv"
 	"time"
 
+	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
@@ -34,7 +37,7 @@ import (
 
 // ChaosExperimentHandler is the handler for chaos experiment
 type ChaosExperimentHandler struct {
-	chaosExperimentService     types.Service
+	chaosExperimentService     ops.Service
 	chaosExperimentRunService  chaosExperimentRun.Service
 	infrastructureService      chaos_infrastructure.Service
 	gitOpsService              gitops.Service
@@ -45,7 +48,7 @@ type ChaosExperimentHandler struct {
 
 // NewChaosExperimentHandler returns a new instance of ChaosWorkflowHandler
 func NewChaosExperimentHandler(
-	chaosExperimentService types.Service,
+	chaosExperimentService ops.Service,
 	chaosExperimentRunService chaosExperimentRun.Service,
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
@@ -1187,7 +1190,7 @@ func (c *ChaosExperimentHandler) GetDBExperiment(query bson.D) (dbChaosExperimen
 	return experiment, nil
 }
 
-func GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error) {
+func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error) {
 	var (
 		probeDetails        []*model.GetProbesInExperimentRunResponse
 		probeStatusMap      = make(map[string]model.ProbeVerdict)
@@ -1195,7 +1198,7 @@ func GetProbesInExperimentRun(ctx context.Context, projectID string, experimentR
 		executionData       types.ExecutionData
 	)
 
-	wfRun, err := dbChaosExperimentRun.GetExperimentRun(bson.D{
+	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
 		{"project_id", projectID},
 		{"is_removed", false},
 		{"experiment_run_id", experimentRunID},
