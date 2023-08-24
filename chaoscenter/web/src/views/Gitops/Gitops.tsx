@@ -6,7 +6,6 @@ import {
   Container,
   RadioButtonGroup,
   FormInput,
-  TextInput,
   useToaster
 } from '@harnessio/uicore';
 import React, { FormEvent } from 'react';
@@ -15,9 +14,10 @@ import { Form, Formik, FormikProps } from 'formik';
 import { Icon } from '@harnessio/icons';
 import type { MutationFunction } from '@apollo/client';
 import { useHistory, useParams } from 'react-router-dom';
+import { InputGroup } from '@blueprintjs/core';
 import DefaultLayout from '@components/DefaultLayout';
 import RbacButton from '@components/RbacButton';
-import { PermissionGroup } from '@models';
+import { GitopsValues, PermissionGroup } from '@models';
 import { AuthType } from '@api/entities';
 import CopyButton from '@components/CopyButton';
 import { generateSSHKey } from '@api/core/chaoshubs/generateSSH';
@@ -31,11 +31,6 @@ import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
 import css from './Gitops.module.scss';
-
-enum GitopsValues {
-  LOCAL = 'local',
-  GITHUB = 'github'
-}
 
 interface GitopsData {
   branch: string;
@@ -94,37 +89,39 @@ export default function GitopsView({
       if (gitopsType === GitopsValues.LOCAL) {
         disableGitops({ variables: { projectID: projectID } });
       } else {
-        updateGitops({
-          variables: {
-            projectID: projectID,
-            configurations: {
-              branch: values.branch ?? '',
-              repoURL: values.repoURL ?? '',
-              authType: values.authType,
-              token: values.token ?? '',
-              sshPrivateKey: values.sshPrivateKey ?? '',
-              userName: values.userName ?? '',
-              password: values.password ?? ''
+        values &&
+          updateGitops({
+            variables: {
+              projectID: projectID,
+              configurations: {
+                branch: values.branch,
+                repoURL: values.repoURL,
+                authType: values.authType,
+                token: values.token ?? '',
+                sshPrivateKey: values.sshPrivateKey ?? '',
+                userName: values.userName ?? '',
+                password: values.password ?? ''
+              }
             }
-          }
-        });
+          });
       }
     } else {
       if (gitopsType === GitopsValues.GITHUB) {
-        enableGitops({
-          variables: {
-            projectID: projectID,
-            configurations: {
-              branch: values.branch ?? '',
-              repoURL: values.repoURL ?? '',
-              authType: values.authType,
-              token: values.token ?? '',
-              sshPrivateKey: values.sshPrivateKey ?? '',
-              userName: values.userName ?? '',
-              password: values.password ?? ''
+        values &&
+          enableGitops({
+            variables: {
+              projectID: projectID,
+              configurations: {
+                branch: values.branch,
+                repoURL: values.repoURL,
+                authType: values.authType,
+                token: values.token ?? '',
+                sshPrivateKey: values.sshPrivateKey ?? '',
+                userName: values.userName ?? '',
+                password: values.password ?? ''
+              }
             }
-          }
-        });
+          });
       }
     }
   }
@@ -289,24 +286,27 @@ export default function GitopsView({
                                       >
                                         {getString('sshKey')}
                                       </Text>
-                                      <TextInput
-                                        placeholder={getString('sshKey')}
-                                        value={sshPublicKey}
-                                        onChange={(e: FormEvent<HTMLInputElement>) => {
-                                          setPublicSshKey(e.currentTarget.value);
-                                          formikProps.setFieldValue('sshPublicKey', e.currentTarget.value);
-                                        }}
-                                        rightElement={
-                                          (
+                                      <div className={css.inputGroup}>
+                                        <InputGroup
+                                          type="text"
+                                          placeholder={getString('sshKey')}
+                                          value={sshPublicKey}
+                                          onChange={(e: FormEvent<HTMLInputElement>) => {
+                                            setPublicSshKey(e.currentTarget.value);
+                                            formikProps.setFieldValue('sshPublicKey', e.currentTarget.value);
+                                          }}
+                                          rightElement={
                                             <Container
+                                              margin={{ left: 'small', right: 'xsmall' }}
                                               flex={{ justifyContent: 'center', alignItems: 'center' }}
                                               height="100%"
                                             >
                                               <CopyButton stringToCopy={sshPublicKey} />
                                             </Container>
-                                          ) as any
-                                        }
-                                      />
+                                          }
+                                        />
+                                      </div>
+
                                       <Layout.Horizontal spacing={'xsmall'} flex={{ alignItems: 'center' }}>
                                         <Icon name="info-message" size={15} />
                                         <Text font={{ variation: FontVariation.SMALL }}>

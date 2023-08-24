@@ -15,7 +15,7 @@ aboutChaosCTL: >-
 acceptInvitation: Accept Invitation
 accessToAllNamespaces: Access to all namespaces
 accessToken: Access Token
-accessTokenPlaceholder: Enter your Personal Acess Token
+accessTokenPlaceholder: Enter your Personal Access Token
 accessType: Access Type
 account: Account
 accountURL: Account URL
@@ -203,7 +203,7 @@ currentUTCTime: Current UTC Time
 customImageRegistry: Custom Image Registry
 customLabel: Custom
 customRepo: Custom Repo
-customValueText: All YAML files use the custom values.
+customValueText: All YAML files will use the custom values.
 customValues: Use Custom Values
 daily: Daily
 dailyMessage: Your chaos experiment will run daily at your chosen time.
@@ -214,8 +214,8 @@ declineInvitation: Decline Invitation
 declineInvitationDescription: Are you sure you want to decline the invitation?
 defaultValueOption: Use Default Values
 defaultValueText: >-
-  All YAML files use these default values provided by Litmus. The values cannot
-  be changed.
+  All YAML files use these default values provided by Litmus. These values
+  cannot be changed.
 degelateNotActive: Selected infrastructure is inactive. Please select an active one.
 delete: Delete
 deleteChaosInfrastructure: Are you sure you want to disable this Chaos Infrastructure?
@@ -418,6 +418,7 @@ hubRepositoryURL: Repository URL
 id: ID
 idlowerCase: id
 imageRegistry: Image Registry
+imageRegistryUpdateSuccess: Image Registry added successfully
 imageSecret: Image Secret
 imageSecretPlaceholder: Enter your Image Secret
 improveResilienceOfTheDeployedService: Improve resilience of the deployed service
@@ -903,7 +904,7 @@ source: Source
 specificNamespaceAccess: Specific namespace access
 ssh: SSH
 sshKey: SSH Key
-sshKeyHelper: Please make sure you copy the SSH key and saved it safely.
+sshKeyHelper: Please make sure you copy the SSH key and save it safely.
 stages: Stages
 startBlankCanvasDescription: Start from scratch
 startBlankCanvasTitle: Blank Canvas

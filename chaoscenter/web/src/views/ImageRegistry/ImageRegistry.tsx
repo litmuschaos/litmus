@@ -4,6 +4,7 @@ import { Color, FontVariation } from '@harnessio/design-system';
 import type { ApolloQueryResult, MutationFunction } from '@apollo/client';
 import { useHistory, useParams } from 'react-router-dom';
 import { Form, FormikProps, Formik } from 'formik';
+import { defaultTo } from 'lodash-es';
 import DefaultLayout from '@components/DefaultLayout';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
@@ -21,23 +22,11 @@ import type { UpdateImageRegistryRequest } from '@api/core/ImageRegistry/updateI
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
+import { cleanApolloResponse } from '@utils';
 import css from './ImageRegistry.module.scss';
 
-enum ImageRegistryValues {
-  DEFAULT = 'default',
-  CUSTOM = 'custom'
-}
-
-interface CustomValuesData {
-  isDefault: boolean;
-  imageRegistryName?: string;
-  imageRegistryRepo?: string;
-  registryType?: ImageRegistryType;
-  secretName?: string;
-}
-
 interface ImageRegistryViewProps {
-  getImageRegistryData: ImageRegistry | undefined;
+  imageRegistryData: ImageRegistry | undefined;
   addImageRegistryMutation: MutationFunction<CreateImageRegistryResponse, AddImageRegistryRequest>;
   updateImageRegistryMutation: MutationFunction<UpdateImageRegistryResponse, UpdateImageRegistryRequest>;
   listImageRegistryRefetch: (
@@ -51,78 +40,48 @@ interface ImageRegistryViewProps {
 }
 
 export default function ImageRegistryView({
-  getImageRegistryData,
+  imageRegistryData,
   addImageRegistryMutation,
   updateImageRegistryMutation,
   loading
 }: ImageRegistryViewProps): React.ReactElement {
   const { getString } = useStrings();
-  const initialValues: CustomValuesData = {
-    isDefault: getImageRegistryData?.imageRegistryInfo.isDefault ?? true,
-    imageRegistryName: !getImageRegistryData?.imageRegistryInfo.isDefault
-      ? getImageRegistryData?.imageRegistryInfo.imageRegistryName
-      : '',
-    imageRegistryRepo: !getImageRegistryData?.imageRegistryInfo.isDefault
-      ? getImageRegistryData?.imageRegistryInfo.imageRepoName
-      : '',
-    registryType: !getImageRegistryData?.imageRegistryInfo.isDefault
-      ? (getImageRegistryData?.imageRegistryInfo.imageRegistryType as ImageRegistryType)
-      : ImageRegistryType.PUBLIC,
-    secretName: !getImageRegistryData?.imageRegistryInfo.isDefault
-      ? getImageRegistryData?.imageRegistryInfo.secretName
-      : ''
-  };
   const history = useHistory();
   const paths = useRouteWithBaseUrl();
-  const [imageRegValueType, setImageRegValuetype] = React.useState<ImageRegistryValues>(
-    getImageRegistryData
-      ? getImageRegistryData.imageRegistryInfo.isDefault
-        ? ImageRegistryValues.DEFAULT
-        : ImageRegistryValues.CUSTOM
-      : ImageRegistryValues.DEFAULT
-  );
-
   const { projectID } = useParams<{ projectID: string }>();
-  const formikRef: React.Ref<FormikProps<CustomValuesData>> = React.useRef(null);
 
-  function handleSubmit(values: CustomValuesData): void {
-    const data: ImageRegistryInfo = {
-      imageRegistryName: values.imageRegistryName
-        ? imageRegValueType === ImageRegistryValues.DEFAULT
-          ? 'docker.io'
-          : values.imageRegistryName
-        : '',
-      imageRepoName: values.imageRegistryRepo
-        ? imageRegValueType === ImageRegistryValues.DEFAULT
-          ? 'litmuschaos'
-          : values.imageRegistryRepo
-        : '',
-      imageRegistryType: values.registryType
-        ? imageRegValueType === ImageRegistryValues.DEFAULT
-          ? ImageRegistryType.PRIVATE
-          : values.registryType
-        : ImageRegistryType.PUBLIC,
-      secretName: values.secretName ? (imageRegValueType === ImageRegistryValues.DEFAULT ? '' : values.secretName) : '',
-      secretNamespace: values.imageRegistryName
-        ? imageRegValueType === ImageRegistryValues.DEFAULT
-          ? ''
-          : values.imageRegistryName
-        : '',
-      enableRegistry: imageRegValueType === ImageRegistryValues.DEFAULT ? false : true,
-      isDefault: imageRegValueType === ImageRegistryValues.DEFAULT ? true : false
-    };
-    getImageRegistryData
+  const defaultImageRegistryInfo: ImageRegistryInfo = {
+    isDefault: true,
+    imageRegistryName: 'docker.io',
+    imageRepoName: 'litmuschaos',
+    imageRegistryType: ImageRegistryType.PUBLIC,
+    secretName: '',
+    secretNamespace: '',
+    enableRegistry: false
+  };
+
+  const initialValues: ImageRegistryInfo = cleanApolloResponse(
+    defaultTo(imageRegistryData?.imageRegistryInfo, defaultImageRegistryInfo)
+  ) as ImageRegistryInfo;
+
+  const formikRef: React.Ref<FormikProps<ImageRegistryInfo>> = React.useRef(null);
+
+  function handleSubmit(values: ImageRegistryInfo): void {
+    const payload = values.isDefault
+      ? { ...defaultImageRegistryInfo, enableRegistry: true }
+      : { ...values, enableRegistry: true };
+    imageRegistryData
       ? updateImageRegistryMutation({
           variables: {
             projectID: projectID,
-            imageRegistryID: getImageRegistryData.imageRegistryID,
-            imageRegistryInfo: data
+            imageRegistryID: imageRegistryData.imageRegistryID,
+            imageRegistryInfo: payload
           }
         })
       : addImageRegistryMutation({
           variables: {
             projectID: projectID,
-            imageRegistryInfo: data
+            imageRegistryInfo: payload
           }
         });
   }
@@ -136,9 +95,7 @@ export default function ImageRegistryView({
             iconProps={{ size: 10 }}
             text={getString('save')}
             loading={
-              getImageRegistryData
-                ? loading.updateImageRegistryMutationLoading
-                : loading.addImageRegistryMutationLoading
+              imageRegistryData ? loading.updateImageRegistryMutationLoading : loading.addImageRegistryMutationLoading
             }
             permission={PermissionGroup.EDITOR}
             onClick={() => formikRef.current?.handleSubmit()}
@@ -160,25 +117,21 @@ export default function ImageRegistryView({
           height="100%"
           style={{ overflowY: 'auto' }}
         >
-          <Formik<CustomValuesData>
+          <Formik<ImageRegistryInfo>
             initialValues={initialValues}
             onSubmit={values => handleSubmit(values)}
             innerRef={formikRef}
+            enableReinitialize
           >
             {formikProps => {
               return (
                 <Form className={css.formContainer}>
                   <RadioButtonGroup
                     className={css.radioButton}
-                    name="type"
-                    inline={false}
-                    selectedValue={
-                      getImageRegistryData
-                        ? getImageRegistryData?.imageRegistryInfo.isDefault
-                          ? ImageRegistryValues.DEFAULT
-                          : ImageRegistryValues.CUSTOM
-                        : ImageRegistryValues.DEFAULT
-                    }
+                    selectedValue={formikProps.initialValues.isDefault.toString()}
+                    onChange={(e: FormEvent<HTMLInputElement>) => {
+                      formikProps.setFieldValue('isDefault', e.currentTarget.value === 'true' ? true : false);
+                    }}
                     options={[
                       {
                         label: (
@@ -192,7 +145,7 @@ export default function ImageRegistryView({
                               </Text>
                               <Text font={{ size: 'small' }}>{getString('defaultValueText')}</Text>
                             </Layout.Vertical>
-                            {imageRegValueType === ImageRegistryValues.DEFAULT && (
+                            {formikProps.values.isDefault === true && (
                               <Layout.Horizontal
                                 flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
                                 className={css.subCard}
@@ -202,7 +155,7 @@ export default function ImageRegistryView({
                                     {getString('registry')}:
                                   </Text>
                                   <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>
-                                    {getString('docker')}
+                                    {defaultImageRegistryInfo.imageRegistryName}
                                   </Text>
                                 </Layout.Vertical>
                                 <Layout.Vertical margin={{ right: 'huge' }}>
@@ -210,7 +163,7 @@ export default function ImageRegistryView({
                                     {getString('repository')}:
                                   </Text>
                                   <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>
-                                    {getString('litmusChaos')}
+                                    {defaultImageRegistryInfo.imageRepoName}
                                   </Text>
                                 </Layout.Vertical>
                                 <Layout.Vertical>
@@ -218,14 +171,14 @@ export default function ImageRegistryView({
                                     {getString('registryType')}:
                                   </Text>
                                   <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }}>
-                                    {getString('public')}
+                                    {defaultImageRegistryInfo.imageRegistryType}
                                   </Text>
                                 </Layout.Vertical>
                               </Layout.Horizontal>
                             )}
                           </Layout.Vertical>
                         ),
-                        value: ImageRegistryValues.DEFAULT
+                        value: 'true'
                       },
                       {
                         label: (
@@ -240,7 +193,7 @@ export default function ImageRegistryView({
                               <Text font={{ size: 'small' }}>{getString('customValueText')}</Text>
                             </Layout.Vertical>
 
-                            {imageRegValueType === ImageRegistryValues.CUSTOM && (
+                            {formikProps.values.isDefault === false && (
                               <Layout.Vertical
                                 flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}
                                 className={css.subCard}
@@ -256,7 +209,7 @@ export default function ImageRegistryView({
                                 />
 
                                 <FormInput.Text
-                                  name="imageRegistryRepo"
+                                  name="imageRepoName"
                                   label={
                                     <Text font={{ variation: FontVariation.FORM_LABEL }}>
                                       {getString('customRepo')}
@@ -265,17 +218,17 @@ export default function ImageRegistryView({
                                   placeholder={getString('hubRepositoryURL')}
                                 />
                                 <RadioButtonGroup
-                                  name="registryType"
+                                  name="imageRegistryType"
                                   label={
                                     <Text font={{ variation: FontVariation.FORM_LABEL }}>
                                       {getString('registryType')}
                                     </Text>
                                   }
-                                  selectedValue={initialValues.registryType}
+                                  selectedValue={initialValues.imageRegistryType}
                                   inline={true}
                                   className={css.subRadioBtn}
                                   onChange={(e: FormEvent<HTMLInputElement>) => {
-                                    formikProps.setFieldValue('registryType', e.currentTarget.value);
+                                    formikProps.setFieldValue('imageRegistryType', e.currentTarget.value);
                                   }}
                                   options={[
                                     {
@@ -296,7 +249,7 @@ export default function ImageRegistryView({
                                     }
                                   ]}
                                 />
-                                {formikProps.values.registryType === ImageRegistryType.PRIVATE && (
+                                {formikProps.values.imageRegistryType === ImageRegistryType.PRIVATE && (
                                   <Layout.Vertical width={'100%'}>
                                     <FormInput.Text
                                       name="secretName"
@@ -313,12 +266,9 @@ export default function ImageRegistryView({
                             )}
                           </Layout.Vertical>
                         ),
-                        value: ImageRegistryValues.CUSTOM
+                        value: 'false'
                       }
                     ]}
-                    onChange={(e: FormEvent<HTMLInputElement>) => {
-                      setImageRegValuetype(e.currentTarget.value as ImageRegistryValues);
-                    }}
                   />
                 </Form>
               );

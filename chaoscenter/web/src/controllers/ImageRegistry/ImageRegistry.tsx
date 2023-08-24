@@ -5,9 +5,11 @@ import { getImageRegistry } from '@api/core/ImageRegistry';
 import { addImageRegistry } from '@api/core/ImageRegistry/addImageRegistry';
 import { updateImageRegistry } from '@api/core/ImageRegistry/updateImageRegistry';
 import ImageRegistryView from '@views/ImageRegistry';
+import { useStrings } from '@strings';
 
 const ImageRegistryController: React.FC = () => {
   const scope = getScope();
+  const { getString } = useStrings();
   const { showError, showSuccess } = useToaster();
   const {
     data: getImageRegistryData,
@@ -23,7 +25,7 @@ const ImageRegistryController: React.FC = () => {
 
   const [addImageRegistryMutation, { loading: addImageRegistryMutationLoading }] = addImageRegistry({
     onCompleted: () => {
-      showSuccess('Image Registry added successfully');
+      showSuccess(getString('imageRegistryUpdateSuccess'));
       listImageRegistryRefetch();
     },
     onError: err => showError(err.message)
@@ -31,7 +33,7 @@ const ImageRegistryController: React.FC = () => {
 
   const [updateImageRegistryMutation, { loading: updateImageRegistryMutationLoading }] = updateImageRegistry({
     onCompleted: () => {
-      showSuccess('Image Registry updated successfully');
+      showSuccess(getString('imageRegistryUpdateSuccess'));
       listImageRegistryRefetch();
     },
     onError: err => showError(err.message)
@@ -39,7 +41,7 @@ const ImageRegistryController: React.FC = () => {
   return (
     <ImageRegistryView
       listImageRegistryRefetch={listImageRegistryRefetch}
-      getImageRegistryData={getImageRegistryData?.getImageRegistry}
+      imageRegistryData={getImageRegistryData?.getImageRegistry}
       loading={{
         getImageRegistry: getImageRegistryLoading,
         addImageRegistryMutationLoading: addImageRegistryMutationLoading,
