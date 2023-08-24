@@ -91,6 +91,39 @@
         "produces": ["application/json"]
       }
     },
+    "/logout": {
+      "post": {
+        "description": "This API is used to logout into auth server.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message":"successfully logged out"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/LogoutResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
     "/users": {
       "get": {
         "description": "This API is used to get the list of users",
@@ -988,7 +1021,7 @@
         "produces": ["application/json"]
       }
     },
-    "/list_invitations_with_filters/{invitation-state}": {
+    "/list_invitations_with_filters/{invitation_state}": {
       "get": {
         "description": "This API is used to list all the pending invitations of the user\n",
         "operationId": "listInvitations",
@@ -1170,6 +1203,13 @@
     },
     "LoginResponse": {
       "type": "object",
+      "required": [
+        "accessToken",
+        "expiresIn",
+        "projectID",
+        "projectRole",
+        "type"
+      ],
       "properties": {
         "accessToken": {
           "type": "string"
@@ -1184,6 +1224,17 @@
           "type": "string"
         },
         "type": {
+          "type": "string"
+        }
+      }
+    },
+    "LogoutResponse": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
           "type": "string"
         }
       }
@@ -1204,6 +1255,7 @@
     },
     "User": {
       "type": "object",
+      "required": ["userID", "username", "role", "isRemoved"],
       "properties": {
         "userID": {
           "type": "string"
@@ -1229,7 +1281,7 @@
         "createdBy": {
           "$ref": "#/definitions/ActionBy"
         },
-        "createAt": {
+        "createdAt": {
           "type": "integer"
         },
         "updatedAt": {
@@ -1245,6 +1297,7 @@
     },
     "ProjectMember": {
       "type": "object",
+      "required": ["userID", "username", "invitation", "role"],
       "properties": {
         "userID": {
           "type": "string"
@@ -1273,6 +1326,12 @@
     },
     "GetInvitationResponse": {
       "type": "object",
+      "required": [
+        "projectID",
+        "projectName",
+        "invitationRole",
+        "projectOwner"
+      ],
       "properties": {
         "projectName": {
           "type": "string"
@@ -1291,6 +1350,7 @@
     },
     "Project": {
       "type": "object",
+      "required": ["projectID", "name", "members"],
       "properties": {
         "updatedBy": {
           "$ref": "#/definitions/ActionBy"

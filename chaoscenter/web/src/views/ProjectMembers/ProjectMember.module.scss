@@ -1,0 +1,34 @@
+.tabContainer {
+  :global {
+    .bp3-tabs {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 80px);
+      .bp3-tab-list {
+        width: 100%;
+        height: 40px;
+        border-bottom: 1px solid var(--grey-200);
+        padding: 0 var(--spacing-medium) !important;
+      }
+      .bp3-tab-panel {
+        width: 100%;
+        flex-grow: 1;
+        margin-top: 0 !important;
+      }
+    }
+  }
+}
+
+.toolbar {
+  margin-top: 0 !important;
+  border-bottom: 1px solid var(--grey-200);
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+}
+
+.nameChangeDialog {
+  padding-bottom: 0 !important;
+}
+
+.modalWithHelpPanel {
+  width: auto !important;
+}

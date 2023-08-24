@@ -14,6 +14,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const BearerSchema = "Bearer "
+
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -127,6 +129,12 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 
 func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
 		users, err := service.GetUsers()
 		if err != nil {
 			log.Error(err)
@@ -156,7 +164,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, users)
+		c.JSON(200, gin.H{"data": users})
 	}
 }
 
@@ -197,7 +205,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := user.GetSignedJWT()
+		token, err := service.GetSignedJWT(user)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -216,6 +224,9 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 				UserID:     user.ID,
 				Role:       entities.RoleOwner,
 				Invitation: entities.AcceptedInvitation,
+				Username:   user.Username,
+				Name:       user.Name,
+				Email:      user.Email,
 				JoinedAt:   time.Now().Unix(),
 			}
 			var members []*entities.Member
@@ -259,6 +270,28 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// LogoutUser revokes the token passed in the Authorization header
+func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+		tokenString := authHeader[len(BearerSchema):]
+		// revoke token
+		err := service.RevokeToken(tokenString)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "successfully logged out",
+		})
+	}
+}
+
 func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
@@ -295,6 +328,13 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 
 func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		var userPasswordRequest entities.UserPassword
 		err := c.BindJSON(&userPasswordRequest)
 		if err != nil {
@@ -338,6 +378,14 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 
 func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		userRole := c.MustGet("role").(string)
+
+		if entities.Role(userRole) != entities.RoleAdmin {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		var userRequest entities.UpdateUserState
 		err := c.BindJSON(&userRequest)
 		if err != nil {

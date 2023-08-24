@@ -43,6 +43,24 @@ func CreateIndex(collectionName string, field string, db *mongo.Database) error 
 	return nil
 }
 
+// CreateTTLIndex creates a TTL index for the given field in the collectionName
+func CreateTTLIndex(collectionName string, db *mongo.Database) error {
+	// more info: https://www.mongodb.com/docs/manual/tutorial/expire-data/#expire-documents-at-a-specific-clock-time
+	mod := mongo.IndexModel{
+		Keys:    bson.M{ExpiresAtField: 1},
+		Options: options.Index().SetExpireAfterSeconds(0),
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	collection := db.Collection(collectionName)
+	_, err := collection.Indexes().CreateOne(ctx, mod)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
+
 // CreateCollection creates a new mongo collection if it does not exist
 func CreateCollection(collectionName string, db *mongo.Database) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

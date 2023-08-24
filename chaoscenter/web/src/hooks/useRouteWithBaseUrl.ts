@@ -12,12 +12,25 @@ import { useAppStore } from './useAppStore';
  *
  */
 
-export function useRouteWithBaseUrl(): UseRouteDefinitionsProps {
-  const { renderUrl } = useAppStore();
+type RouteScope = 'account' | 'project';
+
+export function useRouteWithBaseUrl(scope?: RouteScope): UseRouteDefinitionsProps {
+  const { renderUrl, projectID } = useAppStore();
+
+  function withProjectID(route: string): string {
+    return `/project/${projectID}/${route.replace(/^\//, '')}`;
+  }
 
   return React.useMemo(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    () => mapValues(paths, route => (params?: any) => normalizePath(`${renderUrl}/${route(params)}`)),
+    () =>
+      mapValues(
+        paths,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        route => (params?: any) =>
+          normalizePath(`${renderUrl}/${scope === 'account' ? route(params) : withProjectID(route(params))}`)
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [renderUrl]
   );
 }

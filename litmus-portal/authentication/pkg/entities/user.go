@@ -1,12 +1,7 @@
 package entities
 
 import (
-	"litmus/litmus-portal/authentication/pkg/utils"
 	"net/mail"
-	"time"
-
-	"github.com/golang-jwt/jwt"
-	"github.com/sirupsen/logrus"
 )
 
 // Role states the role of the user in the portal
@@ -89,23 +84,4 @@ func (user *User) SanitizedUser() *User {
 func (user *User) IsEmailValid(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
-}
-
-// GetSignedJWT generates the JWT Token for the user object
-func (user *User) GetSignedJWT() (string, error) {
-
-	token := jwt.New(jwt.SigningMethodHS512)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["uid"] = user.ID
-	claims["role"] = user.Role
-	claims["username"] = user.UserName
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
-
-	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
-	if err != nil {
-		logrus.Info(err)
-		return "", err
-	}
-
-	return tokenString, nil
 }

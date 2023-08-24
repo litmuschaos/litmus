@@ -1,0 +1,18 @@
+.leftSideBar {
+  height: 100vh;
+  border-right: 1px solid var(--grey-200);
+}
+.editIcon {
+  position: absolute !important;
+  top: 1rem;
+  right: 1rem;
+  svg {
+    path {
+      color: var(--primary-7) !important;
+    }
+  }
+}
+
+.nameChangeDialog {
+  padding-bottom: 0 !important;
+}
