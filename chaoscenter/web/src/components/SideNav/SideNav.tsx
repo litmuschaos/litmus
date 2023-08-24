@@ -7,7 +7,7 @@ import { Color } from '@harnessio/design-system';
 import { Classes, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
-import ProjectSelectorController from '@controllers/ProjectSelector/ProjectSelector';
+import ProjectSelectorController from '@controllers/ProjectSelector';
 import css from './SideNav.module.scss';
 
 interface SidebarLinkProps extends NavLinkProps {
@@ -96,6 +96,7 @@ export default function SideNav(): ReactElement {
           <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
           <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
           <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
+          <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
         </Layout.Vertical>
       </div>
       <Container className={css.bottomContainer}>

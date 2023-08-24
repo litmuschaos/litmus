@@ -3,6 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net"
+	"runtime"
+	"strconv"
+	"time"
+
 	grpcHandler "litmus/litmus-portal/authentication/api/handlers/grpc"
 	grpcPresenter "litmus/litmus-portal/authentication/api/presenter/protos"
 	"litmus/litmus-portal/authentication/api/routes"
@@ -10,12 +15,9 @@ import (
 	"litmus/litmus-portal/authentication/pkg/misc"
 	"litmus/litmus-portal/authentication/pkg/project"
 	"litmus/litmus-portal/authentication/pkg/services"
+	"litmus/litmus-portal/authentication/pkg/session"
 	"litmus/litmus-portal/authentication/pkg/user"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"net"
-	"runtime"
-	"strconv"
-	"time"
 
 	"google.golang.org/grpc"
 
@@ -64,18 +66,27 @@ func main() {
 	// Creating User Collection
 	err = utils.CreateCollection(utils.UserCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	err = utils.CreateIndex(utils.UserCollection, utils.UsernameField, db)
 	if err != nil {
-		log.Fatalf("failed to create index  %s", err)
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	// Creating Project Collection
 	err = utils.CreateCollection(utils.ProjectCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
+	}
+
+	// Creating Session Collection
+	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
+		log.Errorf("failed to create collection  %s", err)
+	}
+
+	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	userCollection := db.Collection(utils.UserCollection)
@@ -84,9 +95,12 @@ func main() {
 	projectCollection := db.Collection(utils.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
+	revokedTokenCollection := db.Collection(utils.RevokedTokenCollection)
+	sessionRepo := session.NewRepo(revokedTokenCollection)
+
 	miscRepo := misc.NewRepo(db, client)
 
-	applicationService := services.NewService(userRepo, projectRepo, miscRepo, db)
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, sessionRepo, db)
 
 	validatedAdminSetup(applicationService)
 

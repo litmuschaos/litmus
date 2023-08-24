@@ -1,5 +1,5 @@
 import { Color } from '@harnessio/design-system';
-import { ChaosInfrastructureStatus } from '@models';
+import { ChaosInfrastructureStatus, PermissionGroup } from '@models';
 import type { Status, StatusProps } from '@components/StatusBadgeV2';
 import { ExperimentRunFaultStatus, ExperimentRunStatus, FaultProbeStatus } from '@api/entities';
 
@@ -154,6 +154,31 @@ export function getPropsBasedOnProbeStatus(status: Status): StatusProps {
       return {
         color: Color.YELLOW_700,
         bgColor: `var(--yellow-100)`
+      };
+    default:
+      return {
+        color: Color.GREY_700,
+        bgColor: `var(--grey-200)`
+      };
+  }
+}
+
+export function getPropsBasedOnPermissionGroup(status: Status): StatusProps {
+  switch (status) {
+    case PermissionGroup.OWNER:
+      return {
+        color: Color.GREEN_800,
+        bgColor: `var(--green-50)`
+      };
+    case PermissionGroup.EDITOR:
+      return {
+        color: Color.ORANGE_700,
+        bgColor: `var(--orange-50)`
+      };
+    case PermissionGroup.VIEWER:
+      return {
+        color: Color.GREY_700,
+        bgColor: `var(--grey-200)`
       };
     default:
       return {

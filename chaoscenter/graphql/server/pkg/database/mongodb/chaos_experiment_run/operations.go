@@ -14,7 +14,17 @@ var (
 	backgroundContext = context.Background()
 )
 
-func CreateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) error {
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+func NewChaosExperimentRunOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
+func (c *Operator) CreateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) error {
 	err := mongodb.Operator.Create(ctx, mongodb.ChaosExperimentRunsCollection, wfRun)
 	if err != nil {
 		return err
@@ -22,7 +32,7 @@ func CreateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) error {
 	return nil
 }
 
-func GetExperimentRuns(query bson.D) ([]ChaosExperimentRun, error) {
+func (c *Operator) GetExperimentRuns(query bson.D) ([]ChaosExperimentRun, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 	var experiments []ChaosExperimentRun
@@ -39,7 +49,7 @@ func GetExperimentRuns(query bson.D) ([]ChaosExperimentRun, error) {
 	return experiments, nil
 }
 
-func CountExperimentRuns(ctx context.Context, query bson.D) (int64, error) {
+func (c *Operator) CountExperimentRuns(ctx context.Context, query bson.D) (int64, error) {
 	results, err := mongodb.Operator.CountDocuments(ctx, mongodb.ChaosExperimentRunsCollection, query)
 	if err != nil {
 		return 0, err
@@ -47,7 +57,7 @@ func CountExperimentRuns(ctx context.Context, query bson.D) (int64, error) {
 	return results, nil
 }
 
-func GetExperimentRun(query bson.D) (ChaosExperimentRun, error) {
+func (c *Operator) GetExperimentRun(query bson.D) (ChaosExperimentRun, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
@@ -65,7 +75,7 @@ func GetExperimentRun(query bson.D) (ChaosExperimentRun, error) {
 }
 
 // UpdateExperimentRun takes experimentID and wfRun parameters to update the experiment run details in the database
-func UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) (int, error) {
+func (c *Operator) UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) (int, error) {
 	query := bson.D{
 		{"experiment_id", wfRun.ExperimentID},
 		{"experiment_run_id", wfRun.ExperimentRunID},
@@ -134,7 +144,7 @@ func UpdateExperimentRun(ctx context.Context, wfRun ChaosExperimentRun) (int, er
 	return updateCount, nil
 }
 
-func UpdateExperimentRunWithQuery(ctx context.Context, query bson.D, update bson.D) error {
+func (c *Operator) UpdateExperimentRunWithQuery(ctx context.Context, query bson.D, update bson.D) error {
 	_, err := mongodb.Operator.Update(ctx, mongodb.ChaosExperimentRunsCollection, query, update)
 	if err != nil {
 		return err
@@ -143,7 +153,7 @@ func UpdateExperimentRunWithQuery(ctx context.Context, query bson.D, update bson
 	return nil
 }
 
-func UpdateExperimentRunsWithQuery(ctx context.Context, query bson.D, update bson.D) error {
+func (c *Operator) UpdateExperimentRunsWithQuery(ctx context.Context, query bson.D, update bson.D) error {
 
 	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.ChaosExperimentRunsCollection, query, update)
 	if err != nil {
@@ -154,7 +164,7 @@ func UpdateExperimentRunsWithQuery(ctx context.Context, query bson.D, update bso
 }
 
 // GetExperimentRunsByInfraID takes a infraID parameter to retrieve the experiment details from the database
-func GetExperimentRunsByInfraID(infraID string) ([]ChaosExperimentRun, error) {
+func (c *Operator) GetExperimentRunsByInfraID(infraID string) ([]ChaosExperimentRun, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
@@ -173,7 +183,7 @@ func GetExperimentRunsByInfraID(infraID string) ([]ChaosExperimentRun, error) {
 }
 
 // GetAggregateExperimentRuns takes a mongo pipeline to retrieve the experiment details from the database
-func GetAggregateExperimentRuns(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+func (c *Operator) GetAggregateExperimentRuns(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
