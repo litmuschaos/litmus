@@ -12,6 +12,11 @@ type Audit interface {
 	IsAudit()
 }
 
+// Defines the common probe properties shared across different ProbeTypes
+type CommonProbeProperties interface {
+	IsCommonProbeProperties()
+}
+
 type ResourceDetails interface {
 	IsResourceDetails()
 }
@@ -32,6 +37,60 @@ type Annotation struct {
 	Repository       string `json:"repository"`
 	Support          string `json:"support"`
 	ChartDescription string `json:"chartDescription"`
+}
+
+// Defines the CMD probe properties
+type CMDProbe struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Command of the Probe
+	Command string `json:"command"`
+	// Comparator of the Probe
+	Comparator *Comparator `json:"comparator"`
+	// Source of the Probe
+	Source *string `json:"source"`
+}
+
+func (CMDProbe) IsCommonProbeProperties() {}
+
+// Defines the input for CMD probe properties
+type CMDProbeRequest struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Command of the Probe
+	Command string `json:"command"`
+	// Comparator of the Probe
+	Comparator *ComparatorInput `json:"comparator"`
+	// Source of the Probe
+	Source *string `json:"source"`
 }
 
 // Defines the details for a chaos experiment
@@ -218,6 +277,26 @@ type CloningInput struct {
 	IsDefault     bool    `json:"isDefault"`
 }
 
+// Defines the properties of the comparator
+type Comparator struct {
+	// Type of the Comparator
+	Type string `json:"type"`
+	// Value of the Comparator
+	Value string `json:"value"`
+	// Operator of the Comparator
+	Criteria string `json:"criteria"`
+}
+
+// Defines the input properties of the comparator
+type ComparatorInput struct {
+	// Type of the Comparator
+	Type string `json:"type"`
+	// Value of the Comparator
+	Value string `json:"value"`
+	// Operator of the Comparator
+	Criteria string `json:"criteria"`
+}
+
 type ConfirmInfraRegistrationResponse struct {
 	IsInfraConfirmed bool    `json:"isInfraConfirmed"`
 	NewAccessKey     *string `json:"newAccessKey"`
@@ -315,6 +394,26 @@ type EnvironmentSortInput struct {
 	Field EnvironmentSortingField `json:"field"`
 	// Bool value indicating whether the sorting will be done in ascending order
 	Ascending *bool `json:"ascending"`
+}
+
+// Defines the Executed by which experiment details for Probes
+type ExecutedByExperiment struct {
+	// Experiment ID
+	ExperimentID string `json:"experimentID"`
+	// Experiment Name
+	ExperimentName string `json:"experimentName"`
+	// Timestamp at which the experiment was last updated
+	UpdatedAt int `json:"updatedAt"`
+	// User who has updated the experiment
+	UpdatedBy *UserDetails `json:"updatedBy"`
+}
+
+// Defines the Execution History of experiment referenced by the Probe
+type ExecutionHistory struct {
+	// Fault Status
+	Status *Status `json:"status"`
+	// Fault executed by which experiment
+	ExecutedByExperiment *ExecutedByExperiment `json:"executedByExperiment"`
 }
 
 // Defines the details for a experiment
@@ -525,6 +624,22 @@ type FaultList struct {
 	Plan        []string `json:"plan"`
 }
 
+// Details of GET request
+type Get struct {
+	// Criteria of the request
+	Criteria string `json:"criteria"`
+	// Response Code of the request
+	ResponseCode string `json:"responseCode"`
+}
+
+// Details for input of GET request
+type GETRequest struct {
+	// Criteria of the request
+	Criteria string `json:"criteria"`
+	// Response Code of the request
+	ResponseCode string `json:"responseCode"`
+}
+
 type GetChaosHubStatsResponse struct {
 	// Total number of chaoshubs
 	TotalChaosHubs int `json:"totalChaosHubs"`
@@ -573,6 +688,36 @@ type GetInfraStatsResponse struct {
 	TotalNonConfirmedInfrastructures int `json:"totalNonConfirmedInfrastructures"`
 }
 
+// Defines the response of the Probe reference API
+type GetProbeReferenceResponse struct {
+	// Harness identifiers
+	ProjectID string `json:"projectID"`
+	// Name of the Probe
+	Name string `json:"name"`
+	// Total Runs
+	TotalRuns int `json:"totalRuns"`
+	// Recent Executions of the probe
+	RecentExecutions []*RecentExecutions `json:"recentExecutions"`
+}
+
+// Defines the input requests for GetProbeYAML query
+type GetProbeYAMLRequest struct {
+	// Probe name of the probe
+	ProbeName string `json:"probeName"`
+	// Mode of the Probe (SoT, EoT, Edge, Continuous or OnChaos)
+	Mode Mode `json:"mode"`
+}
+
+// Defines the response for Get Probe In Experiment Run Query
+type GetProbesInExperimentRunResponse struct {
+	// Probe Object
+	Probe *Probe `json:"probe"`
+	// Mode of the probe
+	Mode Mode `json:"mode"`
+	// Status of the Probe
+	Status *Status `json:"status"`
+}
+
 // Details of setting a Git repository
 type GitConfig struct {
 	// ID of the project where GitOps is configured
@@ -613,6 +758,60 @@ type GitConfigResponse struct {
 	Password *string `json:"password"`
 	// Private SSH key authenticating into git repository
 	SSHPrivateKey *string `json:"sshPrivateKey"`
+}
+
+// Defines the HTTP probe properties
+type HTTPProbe struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// URL of the Probe
+	URL string `json:"url"`
+	// HTTP method of the Probe
+	Method *Method `json:"method"`
+	// If Insecure HTTP verification should  be skipped
+	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
+}
+
+func (HTTPProbe) IsCommonProbeProperties() {}
+
+// Defines the input for HTTP probe properties
+type HTTPProbeRequest struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// URL of the Probe
+	URL string `json:"url"`
+	// HTTP method of the Probe
+	Method *MethodRequest `json:"method"`
+	// If Insecure HTTP verification should  be skipped
+	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
 }
 
 // Defines details for image registry
@@ -780,6 +979,76 @@ type InfraVersionDetails struct {
 	CompatibleVersions []string `json:"compatibleVersions"`
 }
 
+// Defines the K8S probe properties
+type K8SProbe struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Group of the Probe
+	Group *string `json:"group"`
+	// Version of the Probe
+	Version string `json:"version"`
+	// Resource of the Probe
+	Resource string `json:"resource"`
+	// Namespace of the Probe
+	Namespace *string `json:"namespace"`
+	// Field Selector of the Probe
+	FieldSelector *string `json:"fieldSelector"`
+	// Label Selector of the Probe
+	LabelSelector *string `json:"labelSelector"`
+	// Operation of the Probe
+	Operation string `json:"operation"`
+}
+
+func (K8SProbe) IsCommonProbeProperties() {}
+
+// Defines the input for K8S probe properties
+type K8SProbeRequest struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Group of the Probe
+	Group *string `json:"group"`
+	// Version of the Probe
+	Version string `json:"version"`
+	// Resource of the Probe
+	Resource string `json:"resource"`
+	// Namespace of the Probe
+	Namespace *string `json:"namespace"`
+	// Field Selector of the Probe
+	FieldSelector *string `json:"fieldSelector"`
+	// Label Selector of the Probe
+	LabelSelector *string `json:"labelSelector"`
+	// Operation of the Probe
+	Operation string `json:"operation"`
+}
+
 type KubeGVRRequest struct {
 	Group    string `json:"group"`
 	Version  string `json:"version"`
@@ -927,6 +1196,22 @@ type Metadata struct {
 	Annotations *Annotation `json:"annotations"`
 }
 
+// Defines the methods of the probe properties
+type Method struct {
+	// A GET request
+	Get *Get `json:"get"`
+	// A POST request
+	Post *Post `json:"post"`
+}
+
+// Defines the input for methods of the probe properties
+type MethodRequest struct {
+	// A GET request
+	Get *GETRequest `json:"get"`
+	// A POST request
+	Post *POSTRequest `json:"post"`
+}
+
 type NewInfraEventRequest struct {
 	EventName   string `json:"eventName"`
 	Description string `json:"description"`
@@ -939,6 +1224,92 @@ type ObjectData struct {
 	Labels []string `json:"labels"`
 	// Name of the resource
 	Name string `json:"name"`
+}
+
+// Details of POST request
+type Post struct {
+	// Content Type of the request
+	ContentType *string `json:"contentType"`
+	// Body of the request
+	Body *string `json:"body"`
+	// Body Path of the HTTP body required for the http post request
+	BodyPath *string `json:"bodyPath"`
+	// Criteria of the request
+	Criteria string `json:"criteria"`
+	// Response Code of the request
+	ResponseCode string `json:"responseCode"`
+}
+
+// Details for input of the POST request
+type POSTRequest struct {
+	// Content Type of the request
+	ContentType *string `json:"contentType"`
+	// Body of the request
+	Body *string `json:"body"`
+	// Body Path of the request for Body
+	BodyPath *string `json:"bodyPath"`
+	// Criteria of the request
+	Criteria string `json:"criteria"`
+	// Response Code of the request
+	ResponseCode string `json:"responseCode"`
+}
+
+// Defines the PROM probe properties
+type PROMProbe struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Endpoint of the Probe
+	Endpoint string `json:"endpoint"`
+	// Query of the Probe
+	Query *string `json:"query"`
+	// Query path of the Probe
+	QueryPath *string `json:"queryPath"`
+	// Comparator of the Probe
+	Comparator *Comparator `json:"comparator"`
+}
+
+func (PROMProbe) IsCommonProbeProperties() {}
+
+// Defines the input for PROM probe properties
+type PROMProbeRequest struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Endpoint of the Probe
+	Endpoint string `json:"endpoint"`
+	// Query of the Probe
+	Query *string `json:"query"`
+	// Query path of the Probe
+	QueryPath *string `json:"queryPath"`
+	// Comparator of the Probe
+	Comparator *ComparatorInput `json:"comparator"`
 }
 
 type PackageInformation struct {
@@ -1011,8 +1382,95 @@ type PredefinedExperimentList struct {
 	ExperimentManifest string `json:"experimentManifest"`
 }
 
+// Defines the details of the Probe entity
+type Probe struct {
+	// Harness identifiers
+	ProjectID string `json:"projectID"`
+	// Name of the Probe
+	Name string `json:"name"`
+	// Description of the Probe
+	Description *string `json:"description"`
+	// Tags of the Probe
+	Tags []string `json:"tags"`
+	// Type of the Probe [From list of ProbeType enum]
+	Type ProbeType `json:"type"`
+	// HTTP Properties of the specific type of the Probe
+	HTTPProperties *HTTPProbe `json:"httpProperties"`
+	// CMD Properties of the specific type of the Probe
+	CmdProperties *CMDProbe `json:"cmdProperties"`
+	// K8S Properties of the specific type of the Probe
+	K8sProperties *K8SProbe `json:"k8sProperties"`
+	// PROM Properties of the specific type of the Probe
+	PromProperties *PROMProbe `json:"promProperties"`
+	// All execution histories of the probe
+	RecentExecutions []*ProbeRecentExecutions `json:"recentExecutions"`
+	// Referenced by how many faults
+	ReferencedBy *int `json:"referencedBy"`
+	// Timestamp at which the Probe was last updated
+	UpdatedAt string `json:"updatedAt"`
+	// Timestamp at which the Probe was created
+	CreatedAt string `json:"createdAt"`
+	// User who has updated the Probe
+	UpdatedBy *UserDetails `json:"updatedBy"`
+	// User who has created the Probe
+	CreatedBy *UserDetails `json:"createdBy"`
+}
+
+func (Probe) IsResourceDetails() {}
+func (Probe) IsAudit()           {}
+
+// Defines the input for Probe filter
+type ProbeFilterInput struct {
+	// Name of the Probe
+	Name *string `json:"name"`
+	// Date range for filtering purpose
+	DateRange *DateRange `json:"dateRange"`
+	// Type of the Probe [From list of ProbeType enum]
+	Type []*ProbeType `json:"type"`
+}
+
+// Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
+type ProbeRecentExecutions struct {
+	// Fault name
+	FaultName string `json:"faultName"`
+	// Fault Status
+	Status *Status `json:"status"`
+	// Fault executed by which experiment
+	ExecutedByExperiment *ExecutedByExperiment `json:"executedByExperiment"`
+}
+
+// Defines the details required for creating a Chaos Probe
+type ProbeRequest struct {
+	// Name of the Probe
+	Name string `json:"name"`
+	// Description of the Probe
+	Description *string `json:"description"`
+	// Tags of the Probe
+	Tags []string `json:"tags"`
+	// Type of the Probe [From list of ProbeType enum]
+	Type ProbeType `json:"type"`
+	// HTTP Properties of the specific type of the Probe
+	HTTPProperties *HTTPProbeRequest `json:"httpProperties"`
+	// CMD Properties of the specific type of the Probe
+	CmdProperties *CMDProbeRequest `json:"cmdProperties"`
+	// K8S Properties of the specific type of the Probe
+	K8sProperties *K8SProbeRequest `json:"k8sProperties"`
+	// PROM Properties of the specific type of the Probe
+	PromProperties *PROMProbeRequest `json:"promProperties"`
+}
+
 type Provider struct {
 	Name string `json:"name"`
+}
+
+// Defines the Recent Executions of experiment referenced by the Probe
+type RecentExecutions struct {
+	// Fault name
+	FaultName string `json:"faultName"`
+	// Probe mode
+	Mode Mode `json:"mode"`
+	// Execution History
+	ExecutionHistory []*ExecutionHistory `json:"executionHistory"`
 }
 
 type RecentExperimentRun struct {
@@ -1137,6 +1595,14 @@ type Spec struct {
 	ChaosExpCRDLink     string        `json:"chaosExpCRDLink"`
 	Platforms           []string      `json:"platforms"`
 	ChaosType           *string       `json:"chaosType"`
+}
+
+// Status defines whether a probe is pass or fail
+type Status struct {
+	// Verdict defines the verdict of the probe, range: Passed, Failed, N/A
+	Verdict ProbeVerdict `json:"verdict"`
+	// Description defines the description of probe status
+	Description *string `json:"description"`
 }
 
 // Defines the request for stopping a experiment
@@ -1618,6 +2084,50 @@ func (e InfraScope) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+// Defines the different types of Image Pull Policy
+type ImagePullPolicy string
+
+const (
+	ImagePullPolicyIfNotPresent ImagePullPolicy = "IfNotPresent"
+	ImagePullPolicyAlways       ImagePullPolicy = "Always"
+	ImagePullPolicyNever        ImagePullPolicy = "Never"
+)
+
+var AllImagePullPolicy = []ImagePullPolicy{
+	ImagePullPolicyIfNotPresent,
+	ImagePullPolicyAlways,
+	ImagePullPolicyNever,
+}
+
+func (e ImagePullPolicy) IsValid() bool {
+	switch e {
+	case ImagePullPolicyIfNotPresent, ImagePullPolicyAlways, ImagePullPolicyNever:
+		return true
+	}
+	return false
+}
+
+func (e ImagePullPolicy) String() string {
+	return string(e)
+}
+
+func (e *ImagePullPolicy) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ImagePullPolicy(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ImagePullPolicy", str)
+	}
+	return nil
+}
+
+func (e ImagePullPolicy) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type InfrastructureType string
 
 const (
@@ -1740,6 +2250,196 @@ func (e *MemberRole) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MemberRole) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// Defines the different modes of Probes
+type Mode string
+
+const (
+	ModeSot        Mode = "SOT"
+	ModeEot        Mode = "EOT"
+	ModeEdge       Mode = "Edge"
+	ModeContinuous Mode = "Continuous"
+	ModeOnChaos    Mode = "OnChaos"
+)
+
+var AllMode = []Mode{
+	ModeSot,
+	ModeEot,
+	ModeEdge,
+	ModeContinuous,
+	ModeOnChaos,
+}
+
+func (e Mode) IsValid() bool {
+	switch e {
+	case ModeSot, ModeEot, ModeEdge, ModeContinuous, ModeOnChaos:
+		return true
+	}
+	return false
+}
+
+func (e Mode) String() string {
+	return string(e)
+}
+
+func (e *Mode) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Mode(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Mode", str)
+	}
+	return nil
+}
+
+func (e Mode) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// Defines the different statuses of Probes
+type ProbeStatus string
+
+const (
+	ProbeStatusRunning   ProbeStatus = "Running"
+	ProbeStatusCompleted ProbeStatus = "Completed"
+	ProbeStatusStopped   ProbeStatus = "Stopped"
+	ProbeStatusError     ProbeStatus = "Error"
+	ProbeStatusQueued    ProbeStatus = "Queued"
+	ProbeStatusNa        ProbeStatus = "NA"
+)
+
+var AllProbeStatus = []ProbeStatus{
+	ProbeStatusRunning,
+	ProbeStatusCompleted,
+	ProbeStatusStopped,
+	ProbeStatusError,
+	ProbeStatusQueued,
+	ProbeStatusNa,
+}
+
+func (e ProbeStatus) IsValid() bool {
+	switch e {
+	case ProbeStatusRunning, ProbeStatusCompleted, ProbeStatusStopped, ProbeStatusError, ProbeStatusQueued, ProbeStatusNa:
+		return true
+	}
+	return false
+}
+
+func (e ProbeStatus) String() string {
+	return string(e)
+}
+
+func (e *ProbeStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProbeStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProbeStatus", str)
+	}
+	return nil
+}
+
+func (e ProbeStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// Defines the different types of Probes
+type ProbeType string
+
+const (
+	ProbeTypeHTTPProbe ProbeType = "httpProbe"
+	ProbeTypeCmdProbe  ProbeType = "cmdProbe"
+	ProbeTypePromProbe ProbeType = "promProbe"
+	ProbeTypeK8sProbe  ProbeType = "k8sProbe"
+)
+
+var AllProbeType = []ProbeType{
+	ProbeTypeHTTPProbe,
+	ProbeTypeCmdProbe,
+	ProbeTypePromProbe,
+	ProbeTypeK8sProbe,
+}
+
+func (e ProbeType) IsValid() bool {
+	switch e {
+	case ProbeTypeHTTPProbe, ProbeTypeCmdProbe, ProbeTypePromProbe, ProbeTypeK8sProbe:
+		return true
+	}
+	return false
+}
+
+func (e ProbeType) String() string {
+	return string(e)
+}
+
+func (e *ProbeType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProbeType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProbeType", str)
+	}
+	return nil
+}
+
+func (e ProbeType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+// Defines the older different statuses of Probes
+type ProbeVerdict string
+
+const (
+	ProbeVerdictPassed  ProbeVerdict = "Passed"
+	ProbeVerdictFailed  ProbeVerdict = "Failed"
+	ProbeVerdictNa      ProbeVerdict = "NA"
+	ProbeVerdictAwaited ProbeVerdict = "Awaited"
+)
+
+var AllProbeVerdict = []ProbeVerdict{
+	ProbeVerdictPassed,
+	ProbeVerdictFailed,
+	ProbeVerdictNa,
+	ProbeVerdictAwaited,
+}
+
+func (e ProbeVerdict) IsValid() bool {
+	switch e {
+	case ProbeVerdictPassed, ProbeVerdictFailed, ProbeVerdictNa, ProbeVerdictAwaited:
+		return true
+	}
+	return false
+}
+
+func (e ProbeVerdict) String() string {
+	return string(e)
+}
+
+func (e *ProbeVerdict) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProbeVerdict(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProbeVerdict", str)
+	}
+	return nil
+}
+
+func (e ProbeVerdict) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

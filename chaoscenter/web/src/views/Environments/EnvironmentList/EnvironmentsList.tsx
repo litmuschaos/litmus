@@ -58,13 +58,6 @@ export default function EnvironmentListView({
         accessor: 'name',
         Cell: EnvironmentName
       },
-      // {
-      //   Header: 'Description',
-      //   id: 'description',
-      //   accessor: 'description',
-      //   width: '35%',
-      //   Cell: EnvironmentDescription
-      // },
       {
         Header: 'TYPE',
         id: 'type',
@@ -86,7 +79,7 @@ export default function EnvironmentListView({
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getString]
+    []
   );
 
   return (

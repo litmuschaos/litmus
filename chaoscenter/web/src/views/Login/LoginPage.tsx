@@ -3,8 +3,10 @@ import { FormInput, Formik, Button, Text, Container } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
 import { Form } from 'formik';
+import type { UseMutateFunction } from '@tanstack/react-query';
 import AuthLayout from '@components/AuthLayout/AuthLayout';
 import { useStrings } from '@strings';
+import type { ErrorModel, LoginMutationProps, LoginResponse } from '@api/auth';
 
 interface LoginForm {
   username: string;
@@ -12,11 +14,11 @@ interface LoginForm {
 }
 
 interface LoginPageViewProps {
-  handleSubmit: (data: LoginForm) => void;
+  handleLogin: UseMutateFunction<LoginResponse, ErrorModel, LoginMutationProps<never>, unknown>;
   loading: boolean;
 }
 
-export default function LoginPageView({ handleSubmit, loading }: LoginPageViewProps): React.ReactElement {
+export default function LoginPageView({ handleLogin, loading }: LoginPageViewProps): React.ReactElement {
   const { getString } = useStrings();
 
   return (
@@ -34,7 +36,11 @@ export default function LoginPageView({ handleSubmit, loading }: LoginPageViewPr
           <Formik<LoginForm>
             initialValues={{ username: '', password: '' }}
             formName="loginPageForm"
-            onSubmit={handleSubmit}
+            onSubmit={data =>
+              handleLogin({
+                body: data
+              })
+            }
           >
             <Form>
               <FormInput.Text name="username" label={`Username`} disabled={loading} />

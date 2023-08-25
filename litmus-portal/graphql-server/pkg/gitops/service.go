@@ -493,7 +493,7 @@ func (g *gitOpsService) syncDBToGit(ctx context.Context, config GitConfig) error
 		} else {
 			err = g.updateWorkflow(string(data), wfID, file, config)
 			if err != nil {
-				logrus.Error("Error while creating new workflow db entry : " + file + " | " + err.Error())
+				logrus.Error("Error while updating experiment db entry : " + file + " | " + err.Error())
 				continue
 			}
 		}
