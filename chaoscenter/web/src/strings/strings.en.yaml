@@ -19,6 +19,7 @@ account: Account
 accountURL: Account URL
 actionItems: Action Items
 active: Active
+activeMembers: Active members
 actualResilienceScore: Actual Resilience Score
 add: Add
 addExperimentToChaosHub: Add Experiment to ChaosHub
@@ -425,7 +426,10 @@ intervalOptional: Interval (Optional)
 invalidEmailText: Please enter a valid email address
 invalidSelection: Invalid Selection
 invalidText: Invalid
+invitationRemoveSuccess: Invitation cancelled successfully
+invitationSuccess: Invitation sent successfully
 invitations: Invitations
+inviteAs: Invite as
 invitedBy: Invited By
 isRequired: '{{field}} is required field'
 issueSupport: If the issue still persists, consider reaching out to support!
@@ -490,6 +494,8 @@ manualInterruption: Manual Interruption needed
 markRunAsComplete: Mark Run as Complete
 markRunAsCompleteDescription: This will mark the run as complete and you will no longer be able to re-run.
 meetsExpectations: The resilience score has met the expectation.
+membersNotAvailableMessage: No active project members available
+membersNotAvailableTitle: No members present
 menuItems:
   deleteHub: Delete Hub
   editHub: Edit Hub
@@ -534,6 +540,7 @@ newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
 newExperiment: New Experiment
+newMember: New Member
 newPassword: New Password
 newProbe: New Probe
 newUpdates: New Updates
@@ -644,6 +651,9 @@ passwordResetSuccess: Password reset successfully
 passwordsDoNotMatch: Passwords do not match
 pauseRun: Pause Run
 pending: Pending
+pendingInvitationsNotAvailableMessage: No pending invitations present
+pendingInvitationsNotAvailableTitle: No invitations present
+pendingMembers: Pending members
 pendingTime: >-
   It may take 3-5 minutes after applying the manifest for the infrastructure to
   be connected.
@@ -749,8 +759,12 @@ recurringRun: Recurring Run (Cron)
 recurringSchedule: Recurring Schedule
 referencedBy: Referenced By
 registryName: Registry Name
+remove: Remove
+removeMember: Remove Member
+removeMemberConfirmation: Are you sure you want to remove {{username}}?
 required: Required
 rerun: Rerun
+resend: Resend
 resetFilters: Reset Filters
 resetPassword: Reset Password
 resilienceOverview: Resilience Overview
@@ -963,6 +977,8 @@ userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
+usersNotAvailableMessage: No users available to send invitation
+usersNotAvailableTitle: No users available
 validationError: Validation Error
 value: Value
 valuePlaceholder: Enter a value

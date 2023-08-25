@@ -22,6 +22,7 @@ export interface StringsMap {
   'accountURL': unknown
   'actionItems': unknown
   'active': unknown
+  'activeMembers': unknown
   'actualResilienceScore': unknown
   'add': unknown
   'addExperimentToChaosHub': unknown
@@ -352,7 +353,10 @@ export interface StringsMap {
   'invalidEmailText': unknown
   'invalidSelection': unknown
   'invalidText': unknown
+  'invitationRemoveSuccess': unknown
+  'invitationSuccess': unknown
   'invitations': unknown
+  'inviteAs': unknown
   'invitedBy': unknown
   'isRequired': PrimitiveObject<'field'>
   'issueSupport': unknown
@@ -403,6 +407,8 @@ export interface StringsMap {
   'markRunAsComplete': unknown
   'markRunAsCompleteDescription': unknown
   'meetsExpectations': unknown
+  'membersNotAvailableMessage': unknown
+  'membersNotAvailableTitle': unknown
   'menuItems.deleteHub': unknown
   'menuItems.editHub': unknown
   'menuItems.syncHub': unknown
@@ -441,6 +447,7 @@ export interface StringsMap {
   'newChaosHub': unknown
   'newChaosInfrastructure': unknown
   'newExperiment': unknown
+  'newMember': unknown
   'newPassword': unknown
   'newProbe': unknown
   'newUpdates': unknown
@@ -530,6 +537,9 @@ export interface StringsMap {
   'passwordsDoNotMatch': unknown
   'pauseRun': unknown
   'pending': unknown
+  'pendingInvitationsNotAvailableMessage': unknown
+  'pendingInvitationsNotAvailableTitle': unknown
+  'pendingMembers': unknown
   'pendingTime': unknown
   'phase': unknown
   'platform': unknown
@@ -621,8 +631,12 @@ export interface StringsMap {
   'recurringSchedule': unknown
   'referencedBy': unknown
   'registryName': unknown
+  'remove': unknown
+  'removeMember': unknown
+  'removeMemberConfirmation': PrimitiveObject<'username'>
   'required': unknown
   'rerun': unknown
+  'resend': unknown
   'resetFilters': unknown
   'resetPassword': unknown
   'resilienceOverview': unknown
@@ -819,6 +833,8 @@ export interface StringsMap {
   'userManagement': unknown
   'username': unknown
   'usernameIsRequired': unknown
+  'usersNotAvailableMessage': unknown
+  'usersNotAvailableTitle': unknown
   'validationError': unknown
   'value': unknown
   'valuePlaceholder': unknown
