@@ -36,6 +36,7 @@ const (
 	DeleteDashboard              RoleQuery = "DeleteDashboard"
 	DeleteDataSource             RoleQuery = "DeleteDataSource"
 	ListWorkflowRuns             RoleQuery = "ListWorkflowRuns"
+	GetWorkflowRun               RoleQuery = "GetWorkflowRun"
 	ListInfrastructures          RoleQuery = "ListInfrastructures"
 	GetInfrastructure            RoleQuery = "GetInfrastructure "
 	GetManifest                  RoleQuery = "GetManifest"
@@ -72,6 +73,11 @@ const (
 	DeleteEnvironment            RoleQuery = "DeleteEnvironment"
 	GetEnvironment               RoleQuery = "GetEnvironment"
 	ListEnvironments             RoleQuery = "ListEnvironments"
+	AddProbe                     RoleQuery = "AddProbe"
+	DeleteProbe                  RoleQuery = "DeleteProbe"
+	UpdateProbe                  RoleQuery = "UpdateProbe"
+	GetProbe                     RoleQuery = "GetProbe"
+	ListProbes                   RoleQuery = "ListProbes"
 	MemberRoleOwnerString                  = string(model.MemberRoleOwner)
 	MemberRoleEditorString                 = string(model.MemberRoleEditor)
 	MemberRoleViewerString                 = string(model.MemberRoleViewer)
@@ -106,6 +112,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	DeleteDashboard:        {MemberRoleOwnerString, MemberRoleEditorString},
 	DeleteDataSource:       {MemberRoleOwnerString, MemberRoleEditorString},
 	ListWorkflowRuns:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	GetWorkflowRun:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListInfrastructures: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
 	GetInfrastructure: {MemberRoleOwnerString, MemberRoleEditorString,
@@ -145,4 +152,8 @@ var MutationRbacRules = map[RoleQuery][]string{
 	DeleteEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
 	GetEnvironment:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListEnvironments:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	AddProbe:                     {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateProbe:                  {MemberRoleOwnerString, MemberRoleEditorString},
+	GetProbe:                     {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListProbes:                   {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/misc"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/project"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/session"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/user"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
@@ -37,6 +38,8 @@ type Config struct {
 }
 
 func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetReportCaller(true)
 	printVersion()
 
 	var c Config
@@ -48,7 +51,7 @@ func init() {
 }
 
 func main() {
-	// send logs to stderr so we can use 'kubectl logs'
+	// send logs to stderr, so we can use 'kubectl logs'
 	_ = flag.Set("logtostderr", "true")
 	_ = flag.Set("v", "3")
 
@@ -64,18 +67,27 @@ func main() {
 	// Creating User Collection
 	err = utils.CreateCollection(utils.UserCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	err = utils.CreateIndex(utils.UserCollection, utils.UsernameField, db)
 	if err != nil {
-		log.Fatalf("failed to create index  %s", err)
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	// Creating Project Collection
 	err = utils.CreateCollection(utils.ProjectCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
+	}
+
+	// Creating Session Collection
+	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
+		log.Errorf("failed to create collection  %s", err)
+	}
+
+	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	userCollection := db.Collection(utils.UserCollection)
@@ -84,9 +96,12 @@ func main() {
 	projectCollection := db.Collection(utils.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
+	revokedTokenCollection := db.Collection(utils.RevokedTokenCollection)
+	sessionRepo := session.NewRepo(revokedTokenCollection)
+
 	miscRepo := misc.NewRepo(db, client)
 
-	applicationService := services.NewService(userRepo, projectRepo, miscRepo, db)
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, sessionRepo, db)
 
 	validatedAdminSetup(applicationService)
 
@@ -95,7 +110,6 @@ func main() {
 }
 
 func validatedAdminSetup(service services.ApplicationService) {
-
 	// Assigning UID to admin
 	uID := uuid.Must(uuid.NewRandom()).String()
 
