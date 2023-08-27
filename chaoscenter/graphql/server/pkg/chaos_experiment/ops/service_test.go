@@ -1,4 +1,4 @@
-package chaos_experiment
+package ops
 
 import (
 	"context"
@@ -90,7 +90,7 @@ func Test_chaosExperimentService_ProcessExperiment(t *testing.T) {
 	projectID := uuid.NewString()
 	revID := uuid.NewString()
 
-	commonPath := "./model/mocks/"
+	commonPath := "../model/mocks/"
 	yamlTypeMap := map[string]string{
 		"workflow":       commonPath + "workflow.yaml",
 		"cron_workflow":  commonPath + "cron_workflow.yaml",
