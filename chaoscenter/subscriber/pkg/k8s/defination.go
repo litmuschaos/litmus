@@ -36,17 +36,8 @@ type SubscriberK8s interface {
 }
 
 type k8sSubscriber struct {
-	// KubeConfig *string
-	// RestConfig *rest.Config
 }
 
 func NewKubernetes() SubscriberK8s {
 	return &k8sSubscriber{}
 }
-
-// func NewKubernetes(kubeconfig *string, restConfig) SubscriberK8s {
-// 	return &k8sSubscriber{
-// 		KubeConfig: kubeconfig,
-// 		RestConfig: restConfig,
-// 	}
-// }

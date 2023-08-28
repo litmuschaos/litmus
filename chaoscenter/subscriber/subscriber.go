@@ -135,6 +135,7 @@ func main() {
 	stream := make(chan types.WorkflowEvent, 10)
 
 	subscriberEventOperations := events.NewChaosEngine()
+	subscriberRequests := requests.NewSubscriberRequests()
 	//start events event watcher
 
 	subscriberEventOperations.WorkflowEventWatcher(stopCh, stream, infraData)
@@ -145,7 +146,7 @@ func main() {
 	go subscriberEventOperations.WorkflowUpdates(infraData, stream)
 
 	// listen for agent actions
-	go requests.AgentConnect(infraData)
+	go subscriberRequests.AgentConnect(infraData)
 
 	signal.Notify(sigCh, os.Kill, os.Interrupt)
 	<-sigCh
