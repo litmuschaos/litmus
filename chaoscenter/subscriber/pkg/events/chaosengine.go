@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
@@ -21,13 +20,13 @@ import (
 )
 
 // ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
-func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
+func (ev *events) ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
 	startTime, err := strconv.Atoi(infraData["START_TIME"])
 	if err != nil {
 		logrus.WithError(err).Fatal("failed to parse startTime")
 	}
 
-	cfg, err := k8s.GetKubeConfig()
+	cfg, err := subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get kube config")
 	}
@@ -87,7 +86,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 		return
 	}
 
-	cfg, err := k8s.GetKubeConfig()
+	cfg, err := subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get kube config")
 	}
@@ -155,7 +154,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 }
 
 // StopChaosEngineState is used to patch all the chaosEngines with engineState=stop
-func StopChaosEngineState(namespace string, workflowRunID *string) error {
+func (ev *events) StopChaosEngineState(namespace string, workflowRunID *string) error {
 	ctx := context.TODO()
 
 	//Define the GVR
@@ -166,7 +165,7 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 	}
 
 	//Generate the dynamic client
-	_, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
+	_, dynamicClient, err := subscriberK8s.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return errors.New("failed to get dynamic client, error: " + err.Error())
 	}
@@ -183,7 +182,7 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 		return errors.New("failed to list chaosengines: " + err.Error())
 	}
 
-	//Foe every chaosEngine patch the engineState to Stop
+	//Foe every subscriber patch the engineState to Stop
 	for _, val := range chaosEngines.Items {
 		patch := []byte(`{"spec":{"engineState":"stop"}}`)
 		patched, err := dynamicClient.Resource(resourceType).Namespace(namespace).Patch(ctx, val.GetName(), mergeType.MergePatchType, patch, v1.PatchOptions{})

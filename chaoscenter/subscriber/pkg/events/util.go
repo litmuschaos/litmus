@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
@@ -78,7 +77,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 }
 
 // CheckChaosData util function, checks if event is a chaos-exp event, if so -  extract the chaos data
-func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
+func (ev *events) CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
 	var cd *types.ChaosData = nil
 	// considering chaos events has only 1 artifact with manifest as raw data
@@ -91,7 +90,7 @@ func CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosCli
 		if nodeStatus.Phase != "Pending" {
 			name := obj.GetName()
 			if obj.GetGenerateName() != "" {
-				log, err := k8s.GetLogs(nodeStatus.ID, workflowNS, "main")
+				log, err := subscriberK8s.GetLogs(nodeStatus.ID, workflowNS, "main")
 				if err != nil {
 					return nodeType, nil, err
 				}
@@ -129,9 +128,9 @@ func StrConvTime(time int64) string {
 	}
 }
 
-func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
+func (ev *events) GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 	ctx := context.TODO()
-	conf, err := k8s.GetKubeConfig()
+	conf, err := subscriberK8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -152,9 +151,9 @@ func GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 	return nil, nil
 }
 
-func ListWorkflowObject(wfid string) (*v1alpha1.WorkflowList, error) {
+func (ev *events) ListWorkflowObject(wfid string) (*v1alpha1.WorkflowList, error) {
 	ctx := context.TODO()
-	conf, err := k8s.GetKubeConfig()
+	conf, err := subscriberK8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +169,7 @@ func ListWorkflowObject(wfid string) (*v1alpha1.WorkflowList, error) {
 }
 
 // GenerateWorkflowPayload generate graphql mutation payload for events event
-func GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
+func (ev *events) GenerateWorkflowPayload(cid, accessKey, version, completed string, wfEvent types.WorkflowEvent) ([]byte, error) {
 	infraID := `{infraID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
 	for id, event := range wfEvent.Nodes {
 		event.Message = strings.Replace(event.Message, `"`, ``, -1)
