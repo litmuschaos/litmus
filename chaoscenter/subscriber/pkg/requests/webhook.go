@@ -8,13 +8,12 @@ import (
 	"time"
 
 	"subscriber/pkg/types"
-	"subscriber/pkg/utils"
 
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 )
 
-func AgentConnect(infraData map[string]string) {
+func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 	query := `{"query":"subscription {\n    infraConnect(request: {infraID: \"` + infraData["INFRA_ID"] + `\", version: \"` + infraData["VERSION"] + `\", accessKey: \"` + infraData["ACCESS_KEY"] + `\"}) {\n     action{\n      k8sManifest,\n      externalData,\n      requestID\n requestType\n     username\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(infraData["SERVER_ADDR"])
 	if err != nil {
@@ -91,14 +90,14 @@ func AgentConnect(infraData map[string]string) {
 			continue
 		}
 
-		err = RequestProcessor(infraData, r)
+		err = req.RequestProcessor(infraData, r)
 		if err != nil {
 			logrus.WithError(err).Error("Error on processing request")
 		}
 	}
 }
 
-func RequestProcessor(infraData map[string]string, r types.RawData) error {
+func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r types.RawData) error {
 	if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 		KubeObjRequest := types.KubeObjRequest{
 			RequestID: r.Payload.Data.InfraConnect.Action.RequestID,
@@ -132,7 +131,7 @@ func RequestProcessor(infraData map[string]string, r types.RawData) error {
 		}
 	} else if strings.Index("workflow_delete workflow_run_delete ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 
-		err := utils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
+		err := subscriberUtils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
 		if err != nil {
 			return errors.New("error performing events operation: " + err.Error())
 		}
