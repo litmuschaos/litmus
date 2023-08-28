@@ -11,7 +11,7 @@ import (
 
 var subscriberEventOperations events.SubscriberEvents = events.NewChaosEngine()
 
-func WorkflowRequest(agentData map[string]string, requestType string, externalData string, uuid string) error {
+func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, requestType string, externalData string, uuid string) error {
 	if requestType == "workflow_delete" {
 		wfOb, err := subscriberEventOperations.ListWorkflowObject(externalData)
 		if err != nil {
@@ -23,7 +23,7 @@ func WorkflowRequest(agentData map[string]string, requestType string, externalDa
 			if err != nil {
 				logrus.Info("failed to stop chaosEngine for : ", wfs.Name, " namespace: ", wfs.Namespace)
 			}
-			err = DeleteWorkflow(wfs.Name, agentData)
+			err = utils.DeleteWorkflow(wfs.Name, agentData)
 			if err != nil {
 				logrus.Info("failed to delete workflow: ", wfs.Name, " namespace: ", wfs.Namespace)
 			}
@@ -35,7 +35,7 @@ func WorkflowRequest(agentData map[string]string, requestType string, externalDa
 			return err
 		}
 
-		err = DeleteWorkflow(wfOb.Name, agentData)
+		err = utils.DeleteWorkflow(wfOb.Name, agentData)
 		if err != nil {
 			return err
 		}
@@ -46,7 +46,7 @@ func WorkflowRequest(agentData map[string]string, requestType string, externalDa
 	return nil
 }
 
-func DeleteWorkflow(wfname string, agentData map[string]string) error {
+func (utils *subscriberUtils) DeleteWorkflow(wfname string, agentData map[string]string) error {
 	ctx := context.TODO()
 	conf, err := subscriberK8s.GetKubeConfig()
 	if err != nil {
