@@ -1,0 +1,65 @@
+.modalStepWizard {
+  width: 1160px;
+  height: 687px;
+  position: inherit;
+  margin: 0 !important;
+  padding: 0 !important;
+  :global {
+    .FloatingContainer--floatingContainer {
+      transform: scale(0.85);
+      position: absolute !important;
+      right: 20px !important;
+      bottom: 20px !important;
+    }
+  }
+}
+
+.stepWizardWrapper {
+  height: 100%;
+  :global {
+    .StepWizard--navBarList {
+      background-color: var(--primary-9) !important;
+    }
+  }
+}
+
+.probeTable {
+  width: 100%;
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  border-radius: 4px;
+  padding: 1rem;
+  :global {
+    .TableV2--header {
+      justify-content: space-between;
+    }
+    .TableV2--row {
+      justify-content: space-between;
+      min-width: 100%;
+    }
+  }
+}
+
+.dotMenu {
+  :global {
+    .Card--dots {
+      top: -14px !important;
+    }
+  }
+}
+
+.errorMessage {
+  font-size: var(--font-size-normal) !important;
+  color: var(--red-600) !important;
+  margin-top: var(--spacing-small) !important;
+  word-break: break-word !important;
+}
+
+.fileUploadBox {
+  span {
+    border-radius: 5px;
+    line-height: 30px;
+    height: 32px;
+    box-shadow: none !important;
+    border: 1px solid var(--grey-200) !important;
+  }
+}

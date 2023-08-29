@@ -1,0 +1,3 @@
+import ExperimentBuilderTemplateSelectionView from './ExperimentBuilderTemplateSelection';
+
+export default ExperimentBuilderTemplateSelectionView;
