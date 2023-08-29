@@ -9,6 +9,7 @@ import { DrawerTypes } from '@components/Drawer/Drawer';
 import { useStrings } from '@strings';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import experimentYamlService, { KubernetesYamlService } from 'services/experiment';
+import { InfrastructureType } from '@api/entities';
 import css from './ExperimentAdvancedTuningOptions.module.scss';
 
 interface ExperimentAdvancedTuningOptionsViewProps {
@@ -68,7 +69,7 @@ function ExperimentAdvancedTuningOptionsView({
   ];
 
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   // Setting default value to IDB state
   React.useEffect(() => {

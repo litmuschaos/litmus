@@ -8,6 +8,7 @@ import type { ExperimentManifest } from '@models';
 import Loader from '@components/Loader';
 import experimentYamlService from 'services/experiment';
 import { GetFaultTunablesOperation } from '@services/experiment/ExperimentYamlService';
+import { InfrastructureType } from '@api/entities';
 import css from '../ExperimentRunDetailsPanel.module.scss';
 
 interface FaultConfigurationTabProps {
@@ -37,7 +38,7 @@ const DataRow = ({ label, value }: { label: string; value: string | number | boo
 function FaultConfigurationTab({ loading, manifest, nodeName }: FaultConfigurationTabProps): React.ReactElement {
   const { getString } = useStrings();
   const parsedManifest = manifest ? (JSON.parse(manifest) as ExperimentManifest) : undefined;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const faultData = experimentHandler?.getFaultData(parsedManifest, nodeName);
   const faultTunables = React.useMemo(

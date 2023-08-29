@@ -7,6 +7,7 @@ import { useStrings } from '@strings';
 import { fileUpload } from '@utils';
 import type { ExperimentManifest } from '@models';
 import experimentYamlService from 'services/experiment';
+import { InfrastructureType } from '@api/entities';
 import uploadYAML from './images/uploadYAML.png';
 import css from './ExperimentBuilderTemplateSelection.module.scss';
 
@@ -18,7 +19,7 @@ export default function UploadYAML({ onClose }: UploadYAMLProps): React.ReactEle
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { getString } = useStrings();
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const { showError } = useToaster();
 

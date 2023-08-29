@@ -47,7 +47,7 @@ export default function ExperimentCreationChaosFaultsView({
   const { experimentKey } = useParams<{ experimentKey: string }>();
   const searchParams = useSearchParams();
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   function handleCRs(faultCR: string, engineCR: string): void {
     const parsedFaultCR = parse(faultCR) as FaultData['faultCR'];

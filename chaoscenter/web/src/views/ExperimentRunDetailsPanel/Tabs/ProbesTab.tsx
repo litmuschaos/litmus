@@ -11,7 +11,7 @@ import Loader from '@components/Loader';
 import ProbeInformationCard, { ProbeInformationType } from '@components/ProbeInformationCard';
 import StatusBadgeV2, { StatusBadgeEntity } from '@components/StatusBadgeV2';
 import experimentYamlService from 'services/experiment';
-import { FaultProbeStatus } from '@api/entities';
+import { FaultProbeStatus, InfrastructureType } from '@api/entities';
 import css from '../ExperimentRunDetailsPanel.module.scss';
 
 interface ProbesTabProps {
@@ -114,7 +114,7 @@ function ProbeCard({ probe, probeStatus }: ProbeCardProps): React.ReactElement {
 function ProbesTab({ loading, manifest, nodeName, probeStatuses }: ProbesTabProps): React.ReactElement {
   const { getString } = useStrings();
   const parsedManifest = manifest ? (parse(manifest) as ExperimentManifest) : undefined;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
   const probes = experimentHandler?.extractProbeDetails(parsedManifest, nodeName);
 
   return (

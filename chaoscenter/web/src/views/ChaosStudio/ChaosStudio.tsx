@@ -1,19 +1,24 @@
 import type { MutationFunction } from '@apollo/client';
-import { Intent } from '@harnessio/design-system';
+import { Color, Intent } from '@harnessio/design-system';
 import {
   ConfirmationDialog,
+  ConfirmationDialogProps,
   Container,
   Layout,
+  Page,
   Tab,
   TabNavigation,
   Tabs,
+  Text,
   useToaster,
   useToggleOpen,
-  VisualYamlSelectedView
+  VisualYamlSelectedView,
+  VisualYamlToggle
 } from '@harnessio/uicore';
 import type { FormikProps } from 'formik';
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { isEmpty } from 'lodash-es';
 import { Icon } from '@harnessio/icons';
 import type {
   RunChaosExperimentRequest,
@@ -26,12 +31,16 @@ import type { ExperimentMetadata } from '@db';
 import { KubernetesExperimentManifest, StudioErrorState, StudioMode, StudioTabs } from '@models';
 import { useStrings } from '@strings';
 import { getHash, getScope } from '@utils';
-import ExperimentVisualBuilderView from '@views/ExperimentVisualBuilder';
 import StudioOverviewView from '@views/StudioOverview';
+import { ParentComponentErrorWrapper } from '@errors';
 import experimentYamlService, { KubernetesYamlService } from 'services/experiment';
 import { InfrastructureType } from '@api/entities';
 import StudioScheduleView from '@views/StudioSchedule';
-import DefaultLayoutTemplate from '@components/DefaultLayout';
+import LitmusBreadCrumbs from '@components/LitmusBreadCrumbs';
+import ExperimentYamlBuilderView from '@views/ExperimentYAMLBuilder';
+import ExperimentVisualBuilderView from '@views/ExperimentVisualBuilder/ExperimentVisualBuilder';
+import MainNav from '@components/MainNav';
+import SideNav from '@components/SideNav';
 import StudioActionButtons from './StudioActionButtons';
 import css from './ChaosStudio.module.scss';
 interface ChaosStudioViewProps {
@@ -65,13 +74,19 @@ export default function ChaosStudioView({
   const selectedTabId = searchParams.get('tab') as StudioTabs;
   const experimentName = searchParams.get('experimentName') ?? 'chaos-experiment';
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
-  const [viewFilter, setViewFilter] = React.useState<VisualYamlSelectedView>(VisualYamlSelectedView.VISUAL);
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
+  const viewFilter = (searchParams.get('view') as VisualYamlSelectedView) ?? VisualYamlSelectedView.VISUAL;
+  const setViewFilter = (view: VisualYamlSelectedView): void => updateSearchParams({ view });
   const [error, setError] = React.useState<StudioErrorState>({ OVERVIEW: undefined, BUILDER: undefined });
   const [hasFaults, setHasFaults] = React.useState<boolean>(false);
   const studioOverviewRef = React.useRef<FormikProps<ExperimentMetadata>>();
   const experimentHashKeyForClone = getHash();
-
+  const {
+    isOpen: isOpenDiscardExperimentDialog,
+    open: openDiscardExperimentDialog,
+    close: closeDiscardExperimentDialog
+  } = useToggleOpen();
+  // const safeToNavigate = searchParams.get('unsavedChanges') !== 'true';
   const setSafeToNavigate = (safe: boolean): void => {
     updateSearchParams({ unsavedChanges: (!safe).toString() });
   };
@@ -83,8 +98,10 @@ export default function ChaosStudioView({
         infrastructureType: infrastructureType ?? InfrastructureType.KUBERNETES
       });
     } else if (selectedTabId === StudioTabs.BUILDER || selectedTabId === StudioTabs.SCHEDULE) {
-      experimentHandler?.getExperiment(experimentKey).then(experiment => {
+      experimentHandler?.getExperiment(experimentKey).then(async experiment => {
+        // set safe to navigate based on idb value
         setSafeToNavigate(!experiment?.unsavedChanges);
+        // check if overview screen details are available else set error
         if (experiment?.name && experiment?.chaosInfrastructure?.id) {
           setError(prevErrors => ({
             ...prevErrors,
@@ -119,17 +136,14 @@ export default function ChaosStudioView({
 
   const saveExperimentHandler = async (): Promise<void> => {
     if (loading.saveChaosExperiment) return;
-
     // Check only for last step because on reload error states are not saved
     if (error.BUILDER) {
       showError(getString('validationError'));
       return;
     }
-
     // <!-- if no error then get yaml -->
     const experiment = await experimentHandler?.getExperiment(experimentKey);
     if (!experiment) return showError(getString('noData.message'));
-
     let yaml = experiment.manifest;
     // This step modifies the chaos engine hence only required for Kubernetes experiment
     if (infrastructureType === InfrastructureType.KUBERNETES) {
@@ -137,7 +151,6 @@ export default function ChaosStudioView({
         experiment.manifest as KubernetesExperimentManifest
       );
     }
-
     saveChaosExperimentMutation({
       variables: {
         projectID: scope.projectID,
@@ -172,7 +185,7 @@ export default function ChaosStudioView({
         showSuccess(getString('reRunSuccessful'));
         setSafeToNavigate(true);
         const notifyID = response.runChaosExperiment.notifyID;
-        if (notifyID !== '') {
+        if (!isEmpty(notifyID)) {
           history.push(
             paths.toExperimentRunDetailsViaNotifyID({
               experimentID: experimentKey,
@@ -186,10 +199,8 @@ export default function ChaosStudioView({
     });
   };
 
-  const { isOpen, open: openDiscardDialog, close: closeConfirmationDialog } = useToggleOpen();
-
-  const confirmationDialogProps = {
-    usePortal: true,
+  const discardExperimentDialogProps: ConfirmationDialogProps = {
+    isOpen: isOpenDiscardExperimentDialog,
     contentText: getString('discardExperiment'),
     titleText: getString('confirmText'),
     cancelButtonText: getString('cancel'),
@@ -201,76 +212,124 @@ export default function ChaosStudioView({
         experimentHandler?.deleteExperiment(experimentKey);
         history.push(paths.toExperiments());
       }
-      closeConfirmationDialog();
+      closeDiscardExperimentDialog();
     }
   };
 
-  const confirmationDialog = <ConfirmationDialog isOpen={isOpen} {...confirmationDialogProps} />;
-
-  const breadcrumbs = [
-    {
-      label: 'Chaos Experiments',
-      url: paths.toExperiments()
-    }
-  ];
-
-  const toolbar = (
-    <Layout.Vertical flex={{ alignItems: 'flex-end' }} spacing={'medium'}>
-      {mode === StudioMode.EDIT && (
-        <TabNavigation
-          size={'small'}
-          links={[
-            {
-              label: getString('chaosStudio'),
-              to: paths.toEditExperiment({ experimentKey: experimentKey }) + `?tab=${StudioTabs.BUILDER}`
-            },
-            {
-              label: getString('runHistory'),
-              to: paths.toExperimentRunHistory({ experimentID: experimentKey }),
-              disabled: !allowSwitchToRunHistory
-            }
-          ]}
-        />
-      )}
-      <StudioActionButtons
-        disabled={error.OVERVIEW || error.BUILDER || !hasFaults}
-        loading={loading.saveChaosExperiment || loading.runChaosExperiment}
-        handleDiscard={() => {
-          setSafeToNavigate(true);
-          openDiscardDialog();
-        }}
-        saveExperimentHandler={saveExperimentHandler}
-        runExperimentHandler={runExperimentHandler}
-      />
-    </Layout.Vertical>
-  );
-
-  const title = (
-    <React.Fragment>
-      {experimentName}
-      <div className={css.pipelineStudioTitle}>{getString('chaosStudio')}</div>
-      {/* TODO: Un-comment this when Monaco editor is implemented */}
-      {/* {selectedTabId === StudioTabs.BUILDER && (
-        <VisualYamlToggle
-          className={css.visualYamlToggle}
-          selectedView={viewFilter}
-          onChange={val => !error.BUILDER && setViewFilter(val)}
-        />
-      )} */}
-    </React.Fragment>
-  );
-
-  const rightSideBarForLayout = mode === StudioMode.EDIT ? rightSideBar : undefined;
+  const discardExperimentDialog = <ConfirmationDialog {...discardExperimentDialogProps} />;
 
   return (
-    <DefaultLayoutTemplate
-      breadcrumbs={breadcrumbs}
-      headerToolbar={toolbar}
-      rightSideBar={rightSideBarForLayout}
-      title={title}
-      noPadding
-    >
-      <Container height={'100%'}>
+    <div className={css.mainContainer}>
+      <Container flex className={css.leftSideBar}>
+        <MainNav />
+        <SideNav />
+      </Container>
+      <div className={css.subContainer}>
+        {/* <!-- page header--> */}
+        <Page.Header
+          className={css.pageHeader}
+          size={'small'}
+          title={
+            <Layout.Vertical>
+              <Layout.Horizontal>
+                <ParentComponentErrorWrapper>
+                  <LitmusBreadCrumbs
+                    links={[
+                      {
+                        label: 'Chaos Experiments',
+                        url: paths.toExperiments()
+                      }
+                    ]}
+                  />
+                </ParentComponentErrorWrapper>
+              </Layout.Horizontal>
+              <div className={css.pipelineStudioTitle}>{getString('chaosStudio')}</div>
+            </Layout.Vertical>
+          }
+          toolbar={
+            mode === StudioMode.EDIT ? (
+              <TabNavigation
+                size={'small'}
+                links={[
+                  {
+                    label: getString('chaosStudio'),
+                    to: paths.toEditExperiment({ experimentKey: experimentKey }) + `?tab=${StudioTabs.BUILDER}`
+                  },
+                  {
+                    label: getString('runHistory'),
+                    to: paths.toExperimentRunHistory({ experimentID: experimentKey }),
+                    disabled: !allowSwitchToRunHistory
+                  }
+                ]}
+              />
+            ) : (
+              <></>
+            )
+          }
+        />
+        {/* <!-- experiment title and action buttons --> */}
+        <div className={css.titleBar}>
+          <div className={css.breadcrumbsMenu}>
+            <div className={css.pipelineMetadataContainer}>
+              <Layout.Horizontal className={css.pipelineNameContainer}>
+                <Text
+                  className={css.pipelineName}
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: 340
+                  }}
+                  tooltip={experimentName}
+                >
+                  {experimentName}
+                </Text>
+              </Layout.Horizontal>
+            </div>
+          </div>
+          {/* <!-- visual yaml toggle--> */}
+          {selectedTabId === StudioTabs.BUILDER && (
+            <VisualYamlToggle
+              disableToggle={error.BUILDER}
+              showDisableToggleReason={true}
+              disableToggleReasonContent={
+                <Layout.Vertical>
+                  <Text
+                    color={Color.WHITE}
+                    font={{ size: 'small' }}
+                    padding={{ top: 'small', bottom: 'xsmall', left: 'medium', right: 'medium' }}
+                  >
+                    {getString('invalidYaml')}
+                  </Text>
+                  <Text
+                    color={Color.WHITE}
+                    font={{ size: 'small' }}
+                    padding={{ top: 'xsmall', bottom: 'small', left: 'medium', right: 'medium' }}
+                  >
+                    {getString('fixAllErrors')}
+                  </Text>
+                </Layout.Vertical>
+              }
+              className={css.visualYamlToggle}
+              selectedView={viewFilter}
+              onChange={val => !error.BUILDER && setViewFilter(val)}
+            />
+          )}
+          {/* <!-- studio action buttons--> */}
+          <div className={css.savePublishContainer}>
+            <StudioActionButtons
+              disabled={error.OVERVIEW || error.BUILDER || !hasFaults}
+              loading={loading.saveChaosExperiment || loading.runChaosExperiment}
+              handleDiscard={() => {
+                setSafeToNavigate(true);
+                openDiscardExperimentDialog();
+              }}
+              saveExperimentHandler={saveExperimentHandler}
+              runExperimentHandler={runExperimentHandler}
+            />
+          </div>
+        </div>
+
         {/* <!-- diagram section --> */}
         <section className={css.setupShell}>
           <Tabs id="chaosStudioTabs" onChange={handleTabChange} selectedTabId={selectedTabId}>
@@ -282,7 +341,7 @@ export default function ChaosStudioView({
                   formRef={studioOverviewRef}
                   openDiscardDialog={() => {
                     setSafeToNavigate(true);
-                    openDiscardDialog();
+                    openDiscardExperimentDialog();
                   }}
                   setViewFilter={setViewFilter}
                   setError={setError}
@@ -290,7 +349,7 @@ export default function ChaosStudioView({
               }
               title={
                 <span className={css.tab}>
-                  <Icon size={16} name="advanced" />
+                  <Icon name={'edit'} height={16} size={16} />
                   {getString('overview')}
                 </span>
               }
@@ -308,9 +367,13 @@ export default function ChaosStudioView({
               disabled={selectedTabId !== StudioTabs.SCHEDULE && (error.OVERVIEW === undefined || error.OVERVIEW)}
               panel={
                 viewFilter === VisualYamlSelectedView.YAML ? (
-                  <></>
+                  <ExperimentYamlBuilderView setError={setError} setHasFaults={setHasFaults} />
                 ) : (
-                  <ExperimentVisualBuilderView handleTabChange={handleTabChange} setHasFaults={setHasFaults} />
+                  <ExperimentVisualBuilderView
+                    handleTabChange={handleTabChange}
+                    setHasFaults={setHasFaults}
+                    setViewFilter={setViewFilter}
+                  />
                 )
               }
               title={
@@ -320,7 +383,6 @@ export default function ChaosStudioView({
                 </span>
               }
             />
-            {/* Do not hide Icon and Tab together...trust me bro <(o_o)> */}
             <Icon
               name="chevron-right"
               height={20}
@@ -329,7 +391,6 @@ export default function ChaosStudioView({
               color={'grey400'}
               style={{ alignSelf: 'center' }}
             />
-            {/* )} */}
             <Tab
               id={StudioTabs.SCHEDULE}
               disabled={error.BUILDER || !hasFaults}
@@ -343,8 +404,10 @@ export default function ChaosStudioView({
             />
           </Tabs>
         </section>
-      </Container>
-      {confirmationDialog}
-    </DefaultLayoutTemplate>
+        {discardExperimentDialog}
+      </div>
+      {/* <!-- right sidebar --> */}
+      {rightSideBar && mode === StudioMode.EDIT && <Container className={css.rightSideBar}>{rightSideBar}</Container>}
+    </div>
   );
 }
