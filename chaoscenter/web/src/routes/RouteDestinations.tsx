@@ -109,6 +109,7 @@ export function RoutesWithAuthentication(): React.ReactElement {
         component={KubernetesChaosInfrastructureDetailsController}
       />
       {/* Project */}
+      <Redirect exact from={projectMatchPaths.toProjectSetup()} to={projectRenderPaths.toProjectMembers()} />
       <Route exact path={projectMatchPaths.toProjectMembers()} component={ProjectMembersView} />
     </Switch>
   );

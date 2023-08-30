@@ -32,14 +32,23 @@ export default function ExperimentCreationChaosFaultsController({
     fetchPolicy: 'cache-first'
   });
 
-  const filteredCharts = chaosCharts?.filter(chart => {
-    const deepCopyChart = cloneDeep(chart);
-    deepCopyChart.spec.faults = chart.spec.faults.filter(fault =>
-      replaceHyphen(fault.name).includes(replaceSpace(replaceHyphen(searchParam)).toLocaleLowerCase())
-    );
-
-    if (deepCopyChart.spec.faults.length > 0) return deepCopyChart;
-  });
+  const filteredCharts = React.useMemo(() => {
+    const deepCopyOfCharts = cloneDeep(chaosCharts);
+    const updatedSearchTerm = replaceHyphen(replaceSpace(searchParam)).toLowerCase();
+    const filteredChartsWithFilteredExperiments = deepCopyOfCharts?.map(chart => {
+      const filteredExperiments = chart.spec.faults.filter(fault => {
+        return replaceHyphen(replaceSpace(fault.name)).toLowerCase().includes(updatedSearchTerm);
+      });
+      return {
+        ...chart,
+        spec: {
+          ...chart.spec,
+          faults: filteredExperiments
+        }
+      };
+    });
+    return filteredChartsWithFilteredExperiments;
+  }, [searchParam, chaosCharts]);
 
   return (
     <ExperimentCreationChaosFaultsView
