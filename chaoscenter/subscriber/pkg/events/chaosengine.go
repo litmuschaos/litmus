@@ -26,7 +26,7 @@ func (ev *events) ChaosEventWatcher(stopCh chan struct{}, stream chan types.Work
 		logrus.WithError(err).Fatal("failed to parse startTime")
 	}
 
-	cfg, err := subscriberK8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get kube config")
 	}
@@ -52,17 +52,17 @@ func (ev *events) ChaosEventWatcher(stopCh chan struct{}, stream chan types.Work
 		informer = f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
 	}
 
-	go startWatchEngine(stopCh, informer, stream, int64(startTime))
+	go ev.startWatchEngine(stopCh, informer, stream, int64(startTime))
 }
 
 // handles the different events events - add, update and delete
-func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
+func (ev *events) startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			chaosEventHandler(obj, "ADD", stream, startTime)
+			ev.chaosEventHandler(obj, "ADD", stream, startTime)
 		},
 		UpdateFunc: func(oldObj, obj interface{}) {
-			chaosEventHandler(obj, "UPDATE", stream, startTime)
+			ev.chaosEventHandler(obj, "UPDATE", stream, startTime)
 		},
 	}
 
@@ -71,7 +71,7 @@ func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, strea
 }
 
 // responsible for extracting the required data from the event and streaming
-func chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
+func (ev *events) chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*chaosTypes.ChaosEngine)
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
@@ -86,7 +86,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 		return
 	}
 
-	cfg, err := subscriberK8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get kube config")
 	}
@@ -101,7 +101,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 	var cd *types.ChaosData = nil
 
 	//extracts chaos data
-	cd, err = getChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
+	cd, err = ev.getChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
 	if err != nil {
 		logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 	}
@@ -165,7 +165,7 @@ func (ev *events) StopChaosEngineState(namespace string, workflowRunID *string) 
 	}
 
 	//Generate the dynamic client
-	_, dynamicClient, err := subscriberK8s.GetDynamicAndDiscoveryClient()
+	_, dynamicClient, err := ev.subscriberK8s.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return errors.New("failed to get dynamic client, error: " + err.Error())
 	}

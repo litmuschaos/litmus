@@ -101,7 +101,7 @@ func (k8s *k8sSubscriber) SendPodLogs(infraData map[string]string, podLog types.
 	if err != nil {
 		logrus.WithError(err).Print("Error while retrieving the workflow logs")
 	}
-	body, err := gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
+	body, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
 	if err != nil {
 		logrus.Print(err.Error())
 	}
@@ -116,7 +116,7 @@ func (k8s *k8sSubscriber) GenerateLogPayload(cid, accessKey, version string, pod
 	logDetails, err := k8s.CreatePodLog(podLog)
 	if err == nil {
 		// process log data
-		processed, err = gqlSubscriberServer.MarshalGQLData(logDetails)
+		processed, err = k8s.gqlSubscriberServer.MarshalGQLData(logDetails)
 		if err != nil {
 			processed = " Could not get logs "
 		}

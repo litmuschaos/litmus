@@ -124,7 +124,7 @@ func (k8s *k8sSubscriber) GenerateKubeObject(cid string, accessKey, version stri
 	if err != nil {
 		return nil, err
 	}
-	processed, err := gqlSubscriberServer.MarshalGQLData(kubeObj)
+	processed, err := k8s.gqlSubscriberServer.MarshalGQLData(kubeObj)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func (k8s *k8sSubscriber) SendKubeObjects(infraData map[string]string, kubeobjec
 		return err
 	}
 
-	body, err := gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
+	body, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
 	if err != nil {
 		logrus.Print(err.Error())
 		return err

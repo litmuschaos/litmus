@@ -1,12 +1,9 @@
 package utils
 
 import (
-	"subscriber/pkg/graphql"
+	"subscriber/pkg/events"
 	"subscriber/pkg/k8s"
 )
-
-var gqlSubscriberServer = graphql.NewGqlServer()
-var subscriberK8s = k8s.NewKubernetes()
 
 type SubscriberUtils interface {
 	WorkflowRequest(agentData map[string]string, requestType string, externalData string, uuid string) error
@@ -14,8 +11,13 @@ type SubscriberUtils interface {
 }
 
 type subscriberUtils struct {
+	subscriberEventOperations events.SubscriberEvents
+	subscriberK8s             k8s.SubscriberK8s
 }
 
-func NewSubscriberUtils() SubscriberUtils {
-	return &subscriberUtils{}
+func NewSubscriberUtils(subscriberEventOperations events.SubscriberEvents, subscriberK8s k8s.SubscriberK8s) SubscriberUtils {
+	return &subscriberUtils{
+		subscriberEventOperations: subscriberEventOperations,
+		subscriberK8s:             subscriberK8s,
+	}
 }

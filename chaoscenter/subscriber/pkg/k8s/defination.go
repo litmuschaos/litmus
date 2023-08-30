@@ -13,8 +13,6 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-var gqlSubscriberServer = graphql.NewGqlServer()
-
 type SubscriberK8s interface {
 	GetLogs(podName, namespace, container string) (string, error)
 	CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error)
@@ -36,8 +34,11 @@ type SubscriberK8s interface {
 }
 
 type k8sSubscriber struct {
+	gqlSubscriberServer graphql.SubscriberGql
 }
 
-func NewKubernetes() SubscriberK8s {
-	return &k8sSubscriber{}
+func NewKubernetes(gqlSubscriberServer graphql.SubscriberGql) SubscriberK8s {
+	return &k8sSubscriber{
+		gqlSubscriberServer: gqlSubscriberServer,
+	}
 }

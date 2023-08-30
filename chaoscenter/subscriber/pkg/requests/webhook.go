@@ -108,7 +108,7 @@ func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r t
 			return errors.New("failed to json unmarshal: " + err.Error())
 		}
 
-		err = subscriberK8s.SendKubeObjects(infraData, KubeObjRequest)
+		err = req.subscriberK8s.SendKubeObjects(infraData, KubeObjRequest)
 		if err != nil {
 			return errors.New("error getting kubernetes object data: " + err.Error())
 		}
@@ -123,15 +123,15 @@ func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r t
 		}
 
 		logrus.Print("Log Request: ", r.Payload.Data.InfraConnect.Action.ExternalData)
-		subscriberK8s.SendPodLogs(infraData, podRequest)
+		req.subscriberK8s.SendPodLogs(infraData, podRequest)
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
-		_, err := subscriberK8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
+		_, err := req.subscriberK8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
 		if err != nil {
 			return errors.New("error performing infra operationn: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_run_delete ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 
-		err := subscriberUtils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
+		err := req.subscriberUtils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
 		if err != nil {
 			return errors.New("error performing events operation: " + err.Error())
 		}

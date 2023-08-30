@@ -352,7 +352,7 @@ func (k8s *k8sSubscriber) AgentOperations(infraAction types.Action) (*unstructur
 
 func (k8s *k8sSubscriber) AgentConfirm(infraData map[string]string) ([]byte, error) {
 	payload := `{"query":"mutation{ confirmInfraRegistration(request: {infraID: \"` + infraData["INFRA_ID"] + `\", version: \"` + infraData["VERSION"] + `\", accessKey: \"` + infraData["ACCESS_KEY"] + `\"}){isInfraConfirmed newAccessKey infraID}}"}`
-	resp, err := gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], []byte(payload))
+	resp, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err
 	}

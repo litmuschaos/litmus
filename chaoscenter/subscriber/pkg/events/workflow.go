@@ -36,15 +36,13 @@ var (
 	InfraID        = os.Getenv("INFRA_ID")
 )
 
-var subscriberEventOperations SubscriberEvents = NewChaosEngine()
-
 // WorkflowEventWatcher initializes the Argo Workflow event watcher
 func (ev *events) WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
 	startTime, err := strconv.Atoi(infraData["START_TIME"])
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to parse START_TIME")
 	}
-	cfg, err := subscriberK8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not get kube config")
 	}
@@ -114,7 +112,7 @@ func (ev *events) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType
 		return types.WorkflowEvent{}, errors.New("startTime of subscriber is greater than experiment creation timestamp")
 	}
 
-	cfg, err := subscriberK8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not get kube config")
 	}
@@ -137,7 +135,7 @@ func (ev *events) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType
 		// considering chaos events has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 && nodeStatus.Inputs.Artifacts[0].Raw != nil {
 			//extracts chaos data
-			nodeType, cd, err = subscriberEventOperations.CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
+			nodeType, cd, err = ev.CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
 			if err != nil {
 				logrus.WithError(err).Print("Failed to parse ChaosEngine CRD")
 			}
@@ -229,17 +227,17 @@ func (ev *events) SendWorkflowUpdates(infraData map[string]string, event types.W
 	eventMap[event.UID] = event
 
 	// generate graphql payload
-	payload, err := subscriberEventOperations.GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "false", event)
+	payload, err := ev.GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "false", event)
 	if err != nil {
 		return "", errors.New("Error while generating graphql payload from the workflow event" + err.Error())
 	}
 
 	if event.FinishedAt != "" {
-		payload, err = subscriberEventOperations.GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "true", event)
+		payload, err = ev.GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "true", event)
 		delete(eventMap, event.UID)
 	}
 
-	body, err := gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
+	body, err := ev.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
 	if err != nil {
 		return "", err
 	}

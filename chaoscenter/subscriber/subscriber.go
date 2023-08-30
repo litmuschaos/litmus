@@ -15,7 +15,9 @@ import (
 	"github.com/gorilla/websocket"
 
 	"subscriber/pkg/events"
+	"subscriber/pkg/graphql"
 	"subscriber/pkg/requests"
+	"subscriber/pkg/utils"
 
 	"github.com/kelseyhightower/envconfig"
 
@@ -62,7 +64,8 @@ func init() {
 
 	var c Config
 
-	var subscriberK8s = k8s.NewKubernetes()
+	var subscriberGraphql = graphql.NewGqlServer()
+	var subscriberK8s = k8s.NewKubernetes(subscriberGraphql)
 
 	err := envconfig.Process("", &c)
 	if err != nil {
@@ -134,8 +137,12 @@ func main() {
 	sigCh := make(chan os.Signal)
 	stream := make(chan types.WorkflowEvent, 10)
 
-	subscriberEventOperations := events.NewChaosEngine()
-	subscriberRequests := requests.NewSubscriberRequests()
+	subscriberGraphql := graphql.NewGqlServer()
+	subscriberK8s := k8s.NewKubernetes(subscriberGraphql)
+	subscriberEvents := events.NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
+	subscriberUtils := utils.NewSubscriberUtils(subscriberEvents, subscriberK8s)
+	subscriberEventOperations := events.NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
+	subscriberRequests := requests.NewSubscriberRequests(subscriberK8s, subscriberUtils)
 	//start events event watcher
 
 	subscriberEventOperations.WorkflowEventWatcher(stopCh, stream, infraData)

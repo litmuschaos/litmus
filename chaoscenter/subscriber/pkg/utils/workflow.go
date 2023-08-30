@@ -2,24 +2,21 @@ package utils
 
 import (
 	"context"
-	"subscriber/pkg/events"
 
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var subscriberEventOperations events.SubscriberEvents = events.NewChaosEngine()
-
 func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, requestType string, externalData string, uuid string) error {
 	if requestType == "workflow_delete" {
-		wfOb, err := subscriberEventOperations.ListWorkflowObject(externalData)
+		wfOb, err := utils.subscriberEventOperations.ListWorkflowObject(externalData)
 		if err != nil {
 			return err
 		}
 		for _, wfs := range wfOb.Items {
 			uid := string(wfs.UID)
-			err = subscriberEventOperations.StopChaosEngineState(agentData["AGENT_NAMESPACE"], &uid)
+			err = utils.subscriberEventOperations.StopChaosEngineState(agentData["AGENT_NAMESPACE"], &uid)
 			if err != nil {
 				logrus.Info("failed to stop chaosEngine for : ", wfs.Name, " namespace: ", wfs.Namespace)
 			}
@@ -30,7 +27,7 @@ func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, reque
 			logrus.Info("events delete name: ", wfs.Name, " namespace: ", wfs.Namespace)
 		}
 	} else if requestType == "workflow_run_delete" {
-		wfOb, err := subscriberEventOperations.GetWorkflowObj(externalData)
+		wfOb, err := utils.subscriberEventOperations.GetWorkflowObj(externalData)
 		if err != nil {
 			return err
 		}
@@ -48,7 +45,7 @@ func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, reque
 
 func (utils *subscriberUtils) DeleteWorkflow(wfname string, agentData map[string]string) error {
 	ctx := context.TODO()
-	conf, err := subscriberK8s.GetKubeConfig()
+	conf, err := utils.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		return err
 	}

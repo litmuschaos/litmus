@@ -23,7 +23,7 @@ import (
 )
 
 // util function, extracts the chaos data using the litmus go-client
-func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
+func (ev *events) getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (*types.ChaosData, error) {
 	cd := &types.ChaosData{}
 	cd.EngineName = engineName
 	cd.Namespace = engineNS
@@ -90,7 +90,7 @@ func (ev *events) CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS str
 		if nodeStatus.Phase != "Pending" {
 			name := obj.GetName()
 			if obj.GetGenerateName() != "" {
-				log, err := subscriberK8s.GetLogs(nodeStatus.ID, workflowNS, "main")
+				log, err := ev.subscriberK8s.GetLogs(nodeStatus.ID, workflowNS, "main")
 				if err != nil {
 					return nodeType, nil, err
 				}
@@ -99,7 +99,7 @@ func (ev *events) CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS str
 					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
 				}
 			}
-			cd, err = getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
+			cd, err = ev.getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
 			return nodeType, cd, err
 		}
 	}
@@ -130,7 +130,7 @@ func StrConvTime(time int64) string {
 
 func (ev *events) GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 	ctx := context.TODO()
-	conf, err := subscriberK8s.GetKubeConfig()
+	conf, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func (ev *events) GetWorkflowObj(uid string) (*v1alpha1.Workflow, error) {
 
 func (ev *events) ListWorkflowObject(wfid string) (*v1alpha1.WorkflowList, error) {
 	ctx := context.TODO()
-	conf, err := subscriberK8s.GetKubeConfig()
+	conf, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
