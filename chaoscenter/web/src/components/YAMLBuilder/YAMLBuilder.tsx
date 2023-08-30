@@ -49,7 +49,7 @@ function YAMLBuilder(props: YAMLBuilderProps): React.ReactElement {
       debounce((updatedYaml: string): void => {
         setCurrentYaml(updatedYaml);
         currentYamlRef.current = updatedYaml;
-        onChangeRef.current?.(!(updatedYaml === ''), updatedYaml);
+        onChangeRef.current?.(updatedYaml !== '', updatedYaml);
       }, 500),
     [onChangeRef]
   );

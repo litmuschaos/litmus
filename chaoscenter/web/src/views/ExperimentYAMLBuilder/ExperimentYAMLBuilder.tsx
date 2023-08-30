@@ -46,7 +46,7 @@ function ExperimentYamlBuilderView({ setError, setHasFaults }: ExperimentYamlBui
           params: error.params ?? {}
         };
       });
-      const hasErrors = !(errors === undefined);
+      const hasErrors = errors !== undefined;
       // if errors are there open editor in edit mode
       hasErrors && setIsEditEnabled(true);
       // set errors to disable navigation to visual tab and save button
