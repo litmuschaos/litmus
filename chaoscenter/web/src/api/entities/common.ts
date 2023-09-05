@@ -126,6 +126,7 @@ export enum FaultProbeStatus {
   PASSED = 'Passed',
   FAILED = 'Failed',
   AWAITED = 'Awaited',
+  NA = 'NA',
   'N/A' = 'N/A'
 }
 

@@ -1,18 +1,21 @@
 import { gql, useMutation } from '@apollo/client';
-import type { Identifiers, Probe, ProbeType } from '@api/entities';
+import type { InfrastructureType, Probe, ProbeType } from '@api/entities';
 import type { GqlAPIMutationRequest, GqlAPIMutationResponse } from '@api/types';
 
 export interface AddProbeRequest {
-  identifiers: Identifiers;
+  projectID: string;
   request: {
-    probeId?: string;
     name: string;
     description?: string;
     tags?: Array<string>;
     type: ProbeType;
-    httpProperties?: Probe['httpProperties'];
-    cmdProperties?: Probe['cmdProperties'];
+    infrastructureType: InfrastructureType;
+    kubernetesHTTPProperties?: Probe['kubernetesHTTPProperties'];
+    // CMD
+    kubernetesCMDProperties?: Probe['kubernetesCMDProperties'];
+    // K8S
     k8sProperties?: Probe['k8sProperties'];
+    // PROM
     promProperties?: Probe['promProperties'];
   };
 }
@@ -21,18 +24,17 @@ export interface AddProbeResponse {
   addProbe: Probe;
 }
 
-export function addHTTPProbe(
+export function addKubernetesHTTPProbe(
   options?: GqlAPIMutationRequest<AddProbeResponse, AddProbeRequest>
 ): GqlAPIMutationResponse<AddProbeResponse, AddProbeRequest> {
-  const [addHTTPProbeMutation, result] = useMutation<AddProbeResponse, AddProbeRequest>(
+  const [addKubernetesHTTPProbeMutation, result] = useMutation<AddProbeResponse, AddProbeRequest>(
     gql`
-      mutation addHTTPProbe($request: ProbeRequest!, $identifiers: IdentifiersRequest!) {
-        addProbe(request: $request, identifiers: $identifiers) {
-          probeId
+      mutation addKubernetesHTTPProbe($projectID: ID!, $request: ProbeRequest!) {
+        addProbe(projectID: $projectID, request: $request) {
           name
           description
           type
-          httpProperties {
+          kubernetesHTTPProperties {
             probeTimeout
             interval
             url
@@ -44,21 +46,20 @@ export function addHTTPProbe(
     options
   );
 
-  return [addHTTPProbeMutation, result];
+  return [addKubernetesHTTPProbeMutation, result];
 }
 
-export function addCMDProbe(
+export function addKubernetesCMDProbe(
   options?: GqlAPIMutationRequest<AddProbeResponse, AddProbeRequest>
 ): GqlAPIMutationResponse<AddProbeResponse, AddProbeRequest> {
-  const [addCMDProbeMutation, result] = useMutation<AddProbeResponse, AddProbeRequest>(
+  const [addKubernetesCMDProbeMutation, result] = useMutation<AddProbeResponse, AddProbeRequest>(
     gql`
-      mutation addCMDProbe($request: ProbeRequest!, $identifiers: IdentifiersRequest!) {
-        addProbe(request: $request, identifiers: $identifiers) {
-          probeId
+      mutation addKubernetesCMDProbe($projectID: ID!, $request: ProbeRequest!) {
+        addProbe(projectID: $projectID, request: $request) {
           name
           description
           type
-          cmdProperties {
+          kubernetesCMDProperties {
             probeTimeout
             interval
             command
@@ -73,7 +74,7 @@ export function addCMDProbe(
     options
   );
 
-  return [addCMDProbeMutation, result];
+  return [addKubernetesCMDProbeMutation, result];
 }
 
 export function addPROMProbe(
@@ -81,9 +82,8 @@ export function addPROMProbe(
 ): GqlAPIMutationResponse<AddProbeResponse, AddProbeRequest> {
   const [addPROMProbeMutation, result] = useMutation<AddProbeResponse, AddProbeRequest>(
     gql`
-      mutation addPROMProbe($request: ProbeRequest!, $identifiers: IdentifiersRequest!) {
-        addProbe(request: $request, identifiers: $identifiers) {
-          probeId
+      mutation addPROMProbe($projectID: ID!, $request: ProbeRequest!) {
+        addProbe(projectID: $projectID, request: $request) {
           name
           description
           type
@@ -110,9 +110,8 @@ export function addK8SProbe(
 ): GqlAPIMutationResponse<AddProbeResponse, AddProbeRequest> {
   const [addK8SProbeMutation, result] = useMutation<AddProbeResponse, AddProbeRequest>(
     gql`
-      mutation addK8SProbe($request: ProbeRequest!, $identifiers: IdentifiersRequest!) {
-        addProbe(request: $request, identifiers: $identifiers) {
-          probeId
+      mutation addK8SProbe($projectID: ID!, $request: ProbeRequest!) {
+        addProbe(projectID: $projectID, request: $request) {
           name
           description
           type

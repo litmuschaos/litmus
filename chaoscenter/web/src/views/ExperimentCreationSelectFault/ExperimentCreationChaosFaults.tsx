@@ -57,18 +57,16 @@ export default function ExperimentCreationChaosFaultsView({
     if (infrastructureType === InfrastructureType.KUBERNETES) {
       const parsedEngineCR = parse(engineCR) as ChaosEngine;
       (experimentHandler as KubernetesYamlService)
-        ?.preProcessChaosEngineManifest(
-          experimentKey,
-          parsedEngineCR,
-          (parsedFaultCR as ChaosExperiment)?.spec?.definition.env ?? []
-        )
-        .then(chaosEngine => {
-          onSelect({
-            faultName: generateName,
-            faultCR: parse(faultCR),
-            engineCR: chaosEngine,
-            weight: 10
-          });
+        ?.preProcessChaosEngineAndExperimentManifest(experimentKey, parsedEngineCR, parsedFaultCR as ChaosExperiment)
+        .then(response => {
+          if (response) {
+            onSelect({
+              faultName: generateName,
+              faultCR: response.chaosExperiment,
+              engineCR: response.chaosEngine,
+              weight: 10
+            });
+          }
         });
       return;
     }

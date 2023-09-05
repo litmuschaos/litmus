@@ -1,5 +1,6 @@
 export * from './cron';
 export * from './dates';
+export * from './data';
 export * from './getScope';
 export * from './yamlUtils';
 export * from './getFormattedFileName';
@@ -10,7 +11,6 @@ export * from './userDetails';
 export * from './fileUpload';
 export * from './transformArgoData';
 export * from './colors';
-export * from './destructure';
 export * from './probes';
 export * from './reactTable';
 export * from './getHash';
