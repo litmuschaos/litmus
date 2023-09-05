@@ -2,8 +2,6 @@ package projects
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
@@ -33,7 +31,6 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 		EnableRegistry:    &bl_true,
 	})
 	if err != nil {
-		fmt.Println("err", err)
 		return err
 	}
 

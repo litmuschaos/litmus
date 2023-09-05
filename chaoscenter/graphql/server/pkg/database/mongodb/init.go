@@ -224,7 +224,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection : ", err)
+		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection")
 	}
 	m.ImageRegistryCollection = m.Database.Collection(Collections[ImageRegistryCollection])
 	_, err = m.ImageRegistryCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
@@ -236,7 +236,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection : ", err)
+		logrus.WithError(err).Fatal("Error Creating Index for Image Registry Collection")
 	}
 	m.ServerConfigCollection = m.Database.Collection(Collections[ServerConfigCollection])
 	_, err = m.ServerConfigCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
@@ -248,7 +248,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.WithError(err).Fatal("Error Creating Index for Server Config Collection : ", err)
+		logrus.WithError(err).Fatal("Error Creating Index for Server Config Collection")
 	}
 	m.EnvironmentCollection = m.Database.Collection(Collections[EnvironmentCollection])
 	_, err = m.EnvironmentCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
