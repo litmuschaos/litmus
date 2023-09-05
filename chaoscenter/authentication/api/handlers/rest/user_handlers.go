@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
@@ -80,7 +81,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, userResponse)
+		c.JSON(http.StatusOK, userResponse)
 	}
 }
 func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
@@ -109,7 +110,7 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		}
-		c.JSON(200, gin.H{"message": "User details updated successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "User details updated successfully"})
 	}
 }
 
@@ -123,7 +124,7 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrUserNotFound))
 			return
 		}
-		c.JSON(200, user)
+		c.JSON(http.StatusOK, user)
 	}
 }
 
@@ -141,7 +142,7 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, users)
+		c.JSON(http.StatusOK, users)
 	}
 }
 
@@ -164,7 +165,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, gin.H{"data": users})
+		c.JSON(http.StatusOK, gin.H{"data": users})
 	}
 }
 
@@ -260,7 +261,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			defaultProject = newProject.ID
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"accessToken": token,
 			"projectID":   defaultProject,
 			"projectRole": entities.RoleOwner,
@@ -286,7 +287,7 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "successfully logged out",
 		})
 	}
@@ -320,7 +321,7 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "password has been updated successfully",
 		})
 	}
@@ -370,7 +371,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "password has been reset successfully",
 		})
 	}
@@ -418,7 +419,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "user's state updated successfully",
 		})
 	}
@@ -454,7 +455,7 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		} else {
-			c.JSON(200, gin.H{
+			c.JSON(http.StatusOK, gin.H{
 				"accessToken": token,
 				"type":        "Bearer",
 			})
@@ -472,7 +473,7 @@ func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"apiTokens": apiTokens,
 		})
 	}
@@ -500,7 +501,7 @@ func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		} else {
-			c.JSON(200, gin.H{
+			c.JSON(http.StatusOK, gin.H{
 				"message": "api token deleted successfully",
 			})
 		}
