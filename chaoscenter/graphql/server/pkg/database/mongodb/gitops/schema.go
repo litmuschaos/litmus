@@ -1,6 +1,8 @@
 package gitops
 
-import "github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+import (
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+)
 
 // GitConfigDB ...
 type GitConfigDB struct {
@@ -16,9 +18,9 @@ type GitConfigDB struct {
 }
 
 // GetGitConfigDB ...
-func GetGitConfigDB(config model.GitConfig) GitConfigDB {
+func GetGitConfigDB(projectID string, config model.GitConfig) GitConfigDB {
 	return GitConfigDB{
-		ProjectID:     config.ProjectID,
+		ProjectID:     projectID,
 		RepositoryURL: config.RepoURL,
 		Branch:        config.Branch,
 		LatestCommit:  "",
