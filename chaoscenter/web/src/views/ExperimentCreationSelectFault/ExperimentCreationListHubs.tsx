@@ -49,7 +49,7 @@ export default function ExperimentCreationListHubsView({
   return (
     <Layout.Vertical height={'100%'}>
       <Layout.Horizontal className={css.headContainer} flex={{ justifyContent: 'flex-start' }}>
-        <Icon className={css.spaceRight} name="template-library" size={15} />
+        <Icon color={Color.WHITE} className={css.spaceRight} name="template-library" size={15} />
         <Text color={Color.WHITE} font={{ variation: FontVariation.H5 }}>
           {getString('faultsLibrary')}
         </Text>

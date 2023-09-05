@@ -377,6 +377,7 @@ featureRestriction:
     You have exceeded your resource subscription limit. Consider increasing your
     limits to keep shipping.
 fieldSelector: Field Selector
+fixAllErrors: Fix all the errors indicated in the YAML Editor to resolve the issue.
 generateSSH: Generate New SSH Key
 genericResourceNotFoundError: >-
   {{resource}} [{{resourceID}}] under Project [{{projectID}}] does not exist or
@@ -445,6 +446,7 @@ intervalOptional: Interval (Optional)
 invalidEmailText: Please enter a valid email address
 invalidSelection: Invalid Selection
 invalidText: Invalid
+invalidYaml: The Visual Editor is disabled because of the errors in the YAML file.
 invitationRemoveSuccess: Invitation cancelled successfully
 invitationSuccess: Invitation sent successfully
 invitations: Invitations
@@ -496,6 +498,7 @@ launchExperiment: Launch Experiment
 learnMore: Learn More
 leaveProject: Leave Project
 leaveProjectDescription: Are you sure you want to leave the project?
+leaveThisPage: Leave this Page
 letsGetStarted: Let`s get started
 litmus: Litmus
 litmusChaos: LitmusChaos
@@ -556,6 +559,10 @@ nameVaidText: Name can only contain alphabets.
 namespace: Namespace
 namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
 namespaceWide: Namespace-wide
+navigationCheckText: >-
+  You have unsaved changes. Are you sure you want to leave this page without
+  saving?
+navigationCheckTitle: Close without saving?
 needAttention: Needs Attention
 newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
@@ -917,6 +924,7 @@ status: Status
 statusCheck: >-
   Note: You may check the status of your Chaos Infrastructure in the status
   column of the Chaos Infrastructures screen
+stayOnThisPage: Stay on this Page
 stop: Stop
 stopAllDesc: This will stop all the ongoing and upcoming experiment runs in this project.
 stopAllExp: Stop All Runs
@@ -1040,4 +1048,10 @@ weightAdjustDescription: >-
   modify the weighage. The weights are relative to each other.
 weightAdjustHeader: Adjust the weights of the faults in the Chaos Experiment
 welcomeToLitmus: Welcome to Litmus
+yamlBuilder:
+  enableEditContext: Editor is currently in read-only mode. Do you want to enable edit mode?
+  lineNumberLabel: On line number
+  snippets:
+    noSnippetsFound: No snippets found.
+  yamlError: Invalid or malformed YAML. Please fix the YAML and try again.
 yearlyTabTitle: Yearly

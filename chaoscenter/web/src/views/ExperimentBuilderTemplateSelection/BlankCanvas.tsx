@@ -21,7 +21,7 @@ export default function BlankCanvas({ onClose }: BlankCanvasProps): React.ReactE
   const { experimentKey } = useParams<{ experimentKey: string }>();
   const infrastructureType =
     (searchParams.get('infrastructureType') as InfrastructureType | undefined) ?? InfrastructureType.KUBERNETES;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const handleSelect = (event: React.MouseEvent<Element, MouseEvent>): void => {
     event.preventDefault();

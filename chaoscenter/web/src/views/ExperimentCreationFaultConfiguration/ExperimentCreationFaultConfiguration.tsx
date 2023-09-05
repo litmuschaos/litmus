@@ -64,7 +64,7 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
   const { experimentKey } = useParams<{ experimentKey: string }>();
   const [faultData, setFaultData] = React.useState<FaultData | undefined>(cloneDeep(initialFaultData));
 
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const initialFaultTunables = React.useMemo(
     () => experimentHandler?.getFaultTunables(initialFaultData, faultTuneOperation),

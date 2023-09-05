@@ -113,6 +113,7 @@ export function RoutesWithAuthentication(): React.ReactElement {
       <Route exact path={projectMatchPaths.toImageRegistry()} component={ImageRegistryController} />
       <Route exact path={projectMatchPaths.toGitops()} component={GitopsController} />
       {/* Project */}
+      <Redirect exact from={projectMatchPaths.toProjectSetup()} to={projectRenderPaths.toProjectMembers()} />
       <Route exact path={projectMatchPaths.toProjectMembers()} component={ProjectMembersView} />
     </Switch>
   );

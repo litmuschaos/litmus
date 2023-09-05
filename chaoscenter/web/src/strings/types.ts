@@ -317,6 +317,7 @@ export interface StringsMap {
   'featureRestriction.resourceLevelUpTeam': PrimitiveObject<'resourceLimit'>
   'featureRestriction.resourceOveruseEnterprise': unknown
   'fieldSelector': unknown
+  'fixAllErrors': unknown
   'generateSSH': unknown
   'genericResourceNotFoundError': PrimitiveObject<'resource' | 'resourceID' | 'projectID'>
   'gitConnection': unknown
@@ -370,6 +371,7 @@ export interface StringsMap {
   'invalidEmailText': unknown
   'invalidSelection': unknown
   'invalidText': unknown
+  'invalidYaml': unknown
   'invitationRemoveSuccess': unknown
   'invitationSuccess': unknown
   'invitations': unknown
@@ -407,6 +409,7 @@ export interface StringsMap {
   'learnMore': unknown
   'leaveProject': unknown
   'leaveProjectDescription': unknown
+  'leaveThisPage': unknown
   'letsGetStarted': unknown
   'litmus': unknown
   'litmusChaos': unknown
@@ -461,6 +464,8 @@ export interface StringsMap {
   'namespace': unknown
   'namespaceScopeDescription': unknown
   'namespaceWide': unknown
+  'navigationCheckText': unknown
+  'navigationCheckTitle': unknown
   'needAttention': unknown
   'newChaosExperiment': unknown
   'newChaosHub': unknown
@@ -778,6 +783,7 @@ export interface StringsMap {
   'startingWith': unknown
   'status': unknown
   'statusCheck': unknown
+  'stayOnThisPage': unknown
   'stop': unknown
   'stopAllDesc': unknown
   'stopAllExp': unknown
@@ -890,5 +896,9 @@ export interface StringsMap {
   'weightAdjustDescription': PrimitiveObject<'numberOfFaults' | 'experimentName'>
   'weightAdjustHeader': unknown
   'welcomeToLitmus': unknown
+  'yamlBuilder.enableEditContext': unknown
+  'yamlBuilder.lineNumberLabel': unknown
+  'yamlBuilder.snippets.noSnippetsFound': unknown
+  'yamlBuilder.yamlError': unknown
   'yearlyTabTitle': unknown
 }
