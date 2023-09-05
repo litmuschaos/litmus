@@ -19,6 +19,8 @@ import LoginController from '@controllers/Login';
 import { getUserDetails } from '@utils';
 import EnvironmentController from '@controllers/Environments';
 import { isUserAuthenticated } from 'utils/auth';
+import ImageRegistryController from '@controllers/ImageRegistry';
+import GitopsController from '@controllers/Gitops';
 import AccountSettingsController from '@controllers/AccountSettings';
 import ProjectMembersView from '@views/ProjectMembers';
 
@@ -108,6 +110,8 @@ export function RoutesWithAuthentication(): React.ReactElement {
         path={projectMatchPaths.toKubernetesChaosInfrastructureDetails({ environmentID, chaosInfrastructureID })}
         component={KubernetesChaosInfrastructureDetailsController}
       />
+      <Route exact path={projectMatchPaths.toImageRegistry()} component={ImageRegistryController} />
+      <Route exact path={projectMatchPaths.toGitops()} component={GitopsController} />
       {/* Project */}
       <Route exact path={projectMatchPaths.toProjectMembers()} component={ProjectMembersView} />
     </Switch>

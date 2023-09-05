@@ -14,6 +14,8 @@ aboutChaosCTL: >-
   infrastructure:
 acceptInvitation: Accept Invitation
 accessToAllNamespaces: Access to all namespaces
+accessToken: Access Token
+accessTokenPlaceholder: Enter your Personal Access Token
 accessType: Access Type
 account: Account
 accountURL: Account URL
@@ -64,6 +66,7 @@ blankCanvasDescription: >-
   experiment.
 blankCanvasTitle: Select and arrange faults from ChaosHubs to create your desire sequence.
 blobLogsNotAvailable: Logs are not available for this node.
+branch: Branch
 cancel: Cancel
 cannotPushToDefault: Cannot push experiment to default ChaosHub
 cannotReRun: Cannot re-run an already running experiment
@@ -197,7 +200,11 @@ cronText: >-
   can stop the schedule anytime you want.
 currentRun: Current Run
 currentUTCTime: Current UTC Time
+customImageRegistry: Custom Image Registry
 customLabel: Custom
+customRepo: Custom Repo
+customValueText: All YAML files will use the custom values.
+customValues: Use Custom Values
 daily: Daily
 dailyMessage: Your chaos experiment will run daily at your chosen time.
 dateExecuted: Date Executed
@@ -205,6 +212,10 @@ dayOfMonthLabel: Day of month
 dayOfWeekLabel: Day of week
 declineInvitation: Decline Invitation
 declineInvitationDescription: Are you sure you want to decline the invitation?
+defaultValueOption: Use Default Values
+defaultValueText: >-
+  All YAML files use these default values provided by Litmus. These values
+  cannot be changed.
 degelateNotActive: Selected infrastructure is inactive. Please select an active one.
 delete: Delete
 deleteChaosInfrastructure: Are you sure you want to disable this Chaos Infrastructure?
@@ -237,6 +248,7 @@ discardExperiment: Are you sure you want to discard the current experiment?
 disconnectDescriptionClusterMode: Disable Chaos for this cluster.
 disconnectDescriptionNamespaceMode: Disable Chaos for this namespace.
 disconnected: Disconnected
+docker: docker.io
 done: Done
 download: Download
 downloadChaosInfrastructureManifest: Re-Download the manifest
@@ -365,10 +377,13 @@ featureRestriction:
     You have exceeded your resource subscription limit. Consider increasing your
     limits to keep shipping.
 fieldSelector: Field Selector
+generateSSH: Generate New SSH Key
 genericResourceNotFoundError: >-
   {{resource}} [{{resourceID}}] under Project [{{projectID}}] does not exist or
   has been deleted.
 gitConnection: Repository Connection
+githubRepo: Github Repository
+gitops: Gitops
 goBack: Go back to previous page
 goChaosHome: Go to Home
 greatJob: Great Job
@@ -402,6 +417,10 @@ hubRepositoryBranch: Hub Repository Branch
 hubRepositoryURL: Repository URL
 id: ID
 idlowerCase: id
+imageRegistry: Image Registry
+imageRegistryUpdateSuccess: Image Registry added successfully
+imageSecret: Image Secret
+imageSecretPlaceholder: Enter your Image Secret
 improveResilienceOfTheDeployedService: Improve resilience of the deployed service
 inactive: Inactive
 inactiveTooltip: >-
@@ -480,7 +499,9 @@ leaveProjectDescription: Are you sure you want to leave the project?
 letsGetStarted: Let`s get started
 litmus: Litmus
 litmusChaos: LitmusChaos
+litmuschaos: litmuschaos
 loading: Loading, please wait...
+local: Locally in Litmus
 logErrorMessage: Unable to fetch logs from log service, please try after some time.
 loginDescription: Login to create, orchestrate, analyze and collaborate your Chaos Experiments.
 loginToContinue: login to continue
@@ -758,10 +779,15 @@ recentlyUsed: Recently Used
 recurringRun: Recurring Run (Cron)
 recurringSchedule: Recurring Schedule
 referencedBy: Referenced By
+registry: Registry
 registryName: Registry Name
+registryType: Registry Type
 remove: Remove
 removeMember: Remove Member
 removeMemberConfirmation: Are you sure you want to remove {{username}}?
+repoBranchPlaceholder: Enter repository branch
+repoURLPlaceholder: Enter repository URL
+repository: Repository
 required: Required
 rerun: Rerun
 resend: Resend
@@ -833,6 +859,7 @@ searchForHub: Search for a hub
 searchForMonitoredServices: Search for a monitored service
 searchHub: Search for a Hub
 secret: Secret
+securityKeyType: Select Security Key Type
 seeAllChaosHubs: See All ChaosHubs
 seeAllChaosInfrastructures: See All Infrastructures
 seeAllEnvironments: See All Environments
@@ -875,6 +902,9 @@ signOut: Sign Out
 singleRun: Single Run
 source: Source
 specificNamespaceAccess: Specific namespace access
+ssh: SSH
+sshKey: SSH Key
+sshKeyHelper: Please make sure you copy the SSH key and save it safely.
 stages: Stages
 startBlankCanvasDescription: Start from scratch
 startBlankCanvasTitle: Blank Canvas
