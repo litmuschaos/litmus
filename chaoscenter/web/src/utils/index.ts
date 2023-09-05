@@ -21,3 +21,4 @@ export * from './usePermissions';
 export * from './setForwardedRef';
 export * from './yamlUtils';
 export * from './JSONUtils';
+export * from './data';

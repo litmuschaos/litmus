@@ -99,6 +99,8 @@ export default function SideNav(): ReactElement {
           <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
           <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
             <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
+            <SidebarLink label={'Gitops'} to={paths.toGitops()} />
+            <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
           </NavExpandable>
         </Layout.Vertical>
       </div>

@@ -9,7 +9,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/project"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
 	image_registry2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/image_registry"
-	self_deployer "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/self-deployer"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,8 +19,6 @@ import (
 func ProjectInitializer(ctx context.Context, projectID string, role string, operator mongodb.MongoOperator) error {
 
 	var bl_true = true
-
-	self_deployer.StartDeployer(projectID, operator)
 
 	irOp := image_registry.NewImageRegistryOperator(operator)
 	irService := image_registry2.NewImageRegistryService(irOp)

@@ -43,9 +43,9 @@ var (
 
 type Service interface {
 	GitOpsNotificationHandler(ctx context.Context, infra chaos_infrastructure.ChaosInfra, experimentID string) (string, error)
-	EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, error)
+	EnableGitOpsHandler(ctx context.Context, projectID string, config model.GitConfig) (bool, error)
 	DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error)
-	UpdateGitOpsDetailsHandler(ctx context.Context, config model.GitConfig) (bool, error)
+	UpdateGitOpsDetailsHandler(ctx context.Context, projectID string, config model.GitConfig) (bool, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	UpsertExperimentToGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error
 	DeleteExperimentFromGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error
@@ -108,9 +108,9 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 }
 
 // EnableGitOpsHandler enables gitops for a particular project
-func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
-	gitLock.Lock(config.ProjectID, nil)
-	defer gitLock.Unlock(config.ProjectID, nil)
+func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID string, config model.GitConfig) (bool, error) {
+	gitLock.Lock(projectID, nil)
+	defer gitLock.Unlock(projectID, nil)
 
 	gitLock.Lock(config.RepoURL, &config.Branch)
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
@@ -119,13 +119,13 @@ func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, config model.Gi
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
 	defer conn.Close()
 
-	_, err := grpc.GetProjectById(client, config.ProjectID)
+	_, err := grpc.GetProjectById(client, projectID)
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}
 
 	logrus.Info("Enabling Gitops")
-	gitDB := gitops.GetGitConfigDB(config)
+	gitDB := gitops.GetGitConfigDB(projectID, config)
 
 	commit, err := SetupGitOps(GitUserFromContext(ctx), GetGitOpsConfig(gitDB))
 	if err != nil {
@@ -161,14 +161,14 @@ func (g *gitOpsService) DisableGitOpsHandler(ctx context.Context, projectID stri
 }
 
 // UpdateGitOpsDetailsHandler updates an exiting gitops config for a project
-func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
-	gitLock.Lock(config.ProjectID, nil)
-	defer gitLock.Unlock(config.ProjectID, nil)
+func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectID string, config model.GitConfig) (bool, error) {
+	gitLock.Lock(projectID, nil)
+	defer gitLock.Unlock(projectID, nil)
 
 	gitLock.Lock(config.RepoURL, &config.Branch)
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
 
-	existingConfig, err := g.gitOpsOperator.GetGitConfig(ctx, config.ProjectID)
+	existingConfig, err := g.gitOpsOperator.GetGitConfig(ctx, projectID)
 	if err != nil {
 		return false, errors.New("Cannot get Git Config from DB : " + err.Error())
 	}
@@ -177,7 +177,7 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, config m
 	}
 
 	logrus.Info("Enabling Gitops")
-	gitDB := gitops.GetGitConfigDB(config)
+	gitDB := gitops.GetGitConfigDB(projectID, config)
 
 	gitConfig := GetGitOpsConfig(gitDB)
 	originalPath := gitConfig.LocalPath
@@ -188,7 +188,7 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, config m
 	}
 	gitDB.LatestCommit = commit
 
-	err = g.gitOpsOperator.ReplaceGitConfig(ctx, bson.D{{"project_id", config.ProjectID}}, &gitDB)
+	err = g.gitOpsOperator.ReplaceGitConfig(ctx, bson.D{{"project_id", projectID}}, &gitDB)
 	if err != nil {
 		return false, errors.New("Failed to enable GitOps in DB : " + err.Error())
 	}
