@@ -14,7 +14,7 @@ export const ProbeOverviewStep: React.FC<StepProps<StepData>> = props => {
   const searchParams = useSearchParams();
   const infrastructureType =
     (searchParams.get('infrastructureType') as InfrastructureType | undefined) ?? InfrastructureType.KUBERNETES;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const totalSteps = props.totalSteps?.();
   const currentStep = props.currentStep?.();

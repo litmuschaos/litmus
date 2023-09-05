@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom';
 import { parse } from 'yaml';
 import { useToaster } from '@harnessio/uicore';
-import type { Chart, PredefinedExperiment } from '@api/entities';
+import { Chart, InfrastructureType, PredefinedExperiment } from '@api/entities';
 import type { ExperimentManifest } from '@models';
 import { useStrings } from '@strings';
 import { getHash } from 'utils/getHash';
@@ -20,7 +20,7 @@ export function useLaunchExperimentFromHub(predefinedExperiment: PredefinedExper
   if (!manifest) showError(getString('manifestMissing'));
 
   const infrastructureType = getInfrastructureTypeFromExperimentKind(manifest);
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
   const experimentID = getHash();
 
   return function launchExperiment(): void {

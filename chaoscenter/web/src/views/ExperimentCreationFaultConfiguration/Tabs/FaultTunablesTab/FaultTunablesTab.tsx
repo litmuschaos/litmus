@@ -13,6 +13,7 @@ import {
   getInitialValueFromFaultTunable,
   getYupValidationFromFaultTunable
 } from '@utils';
+import { InfrastructureType } from '@api/entities';
 import { getTypeBasedFaultEnvInput } from './getTypeBasedFaultEnvInput';
 import type { TuneExperimentForm } from './types';
 
@@ -35,7 +36,7 @@ export default function FaultTunablesTab({
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
   const hasUnsavedChangesInURL = searchParams.get('unsavedChanges') === 'true';
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const setUnsavedChanges = (): void => {
     if (!hasUnsavedChangesInURL) updateSearchParams({ unsavedChanges: 'true' });
