@@ -486,7 +486,7 @@ type ComplexityRoot struct {
 		DeleteInfra              func(childComplexity int, projectID string, infraID string) int
 		DeleteProbe              func(childComplexity int, probeName string, projectID string) int
 		DisableGitOps            func(childComplexity int, projectID string) int
-		EnableGitOps             func(childComplexity int, configurations model.GitConfig) int
+		EnableGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
 		GenerateSSHKey           func(childComplexity int) int
 		GetManifestWithInfraID   func(childComplexity int, projectID string, infraID string, accessKey string) int
 		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
@@ -500,7 +500,7 @@ type ComplexityRoot struct {
 		UpdateChaosExperiment    func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
 		UpdateChaosHub           func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
 		UpdateEnvironment        func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
-		UpdateGitOps             func(childComplexity int, configurations model.GitConfig) int
+		UpdateGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
 		UpdateImageRegistry      func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
 		UpdateProbe              func(childComplexity int, request model.ProbeRequest, projectID string) int
 	}
@@ -589,7 +589,7 @@ type ComplexityRoot struct {
 		GetExperimentRunStats     func(childComplexity int, projectID string) int
 		GetExperimentStats        func(childComplexity int, projectID string) int
 		GetGitOpsDetails          func(childComplexity int, projectID string) int
-		GetImageRegistry          func(childComplexity int, imageRegistryID string, projectID string) int
+		GetImageRegistry          func(childComplexity int, projectID string) int
 		GetInfra                  func(childComplexity int, projectID string, infraID string) int
 		GetInfraDetails           func(childComplexity int, infraID string, projectID string) int
 		GetInfraManifest          func(childComplexity int, infraID string, upgrade bool, projectID string) int
@@ -725,9 +725,9 @@ type MutationResolver interface {
 	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error)
 	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
 	GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, experimentID string) (string, error)
-	EnableGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
+	EnableGitOps(ctx context.Context, projectID string, configurations model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
-	UpdateGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
+	UpdateGitOps(ctx context.Context, projectID string, configurations model.GitConfig) (bool, error)
 	CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
@@ -760,7 +760,7 @@ type QueryResolver interface {
 	ListEnvironments(ctx context.Context, projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
-	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
+	GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error)
 	ListProbes(ctx context.Context, projectID string, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error)
 	GetProbe(ctx context.Context, projectID string, probeName string) (*model.Probe, error)
 	GetProbeYaml(ctx context.Context, projectID string, request model.GetProbeYAMLRequest) (string, error)
@@ -2996,7 +2996,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EnableGitOps(childComplexity, args["configurations"].(model.GitConfig)), true
+		return e.complexity.Mutation.EnableGitOps(childComplexity, args["projectID"].(string), args["configurations"].(model.GitConfig)), true
 
 	case "Mutation.generateSSHKey":
 		if e.complexity.Mutation.GenerateSSHKey == nil {
@@ -3159,7 +3159,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGitOps(childComplexity, args["configurations"].(model.GitConfig)), true
+		return e.complexity.Mutation.UpdateGitOps(childComplexity, args["projectID"].(string), args["configurations"].(model.GitConfig)), true
 
 	case "Mutation.updateImageRegistry":
 		if e.complexity.Mutation.UpdateImageRegistry == nil {
@@ -3632,7 +3632,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string)), true
+		return e.complexity.Query.GetImageRegistry(childComplexity, args["projectID"].(string)), true
 
 	case "Query.getInfra":
 		if e.complexity.Query.GetInfra == nil {
@@ -6593,10 +6593,6 @@ Details of setting a Git repository
 """
 input GitConfig {
     """
-    ID of the project where GitOps is configured
-    """
-    projectID: ID!
-    """
     Git branch where the chaos charts will be pushed and synced
     """
     branch: String!
@@ -6687,17 +6683,17 @@ extend type Mutation {
     """
     Enables gitops settings in the project
     """
-    enableGitOps(configurations: GitConfig!): Boolean! @authorized
+    enableGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
 
     """
     Disables gitops settings in the project
     """
-    disableGitOps(projectID: String!): Boolean! @authorized
+    disableGitOps(projectID: ID!): Boolean! @authorized
 
     """
     Updates gitops settings in the project
     """
-    updateGitOps(configurations: GitConfig!): Boolean! @authorized
+    updateGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
 }`, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/image_registry.graphqls", Input: `"""
 Defines details for image registry
@@ -6814,7 +6810,6 @@ extend type Query {
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
   getImageRegistry(
-    imageRegistryID: String!
     projectID: String!
   ): ImageRegistryResponse! @authorized
 }
@@ -8174,7 +8169,7 @@ func (ec *executionContext) field_Mutation_disableGitOps_args(ctx context.Contex
 	args := map[string]interface{}{}
 	var arg0 string
 	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -8186,14 +8181,22 @@ func (ec *executionContext) field_Mutation_disableGitOps_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_enableGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.GitConfig
-	if tmp, ok := rawArgs["configurations"]; ok {
-		arg0, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["configurations"] = arg0
+	args["projectID"] = arg0
+	var arg1 model.GitConfig
+	if tmp, ok := rawArgs["configurations"]; ok {
+		arg1, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["configurations"] = arg1
 	return args, nil
 }
 
@@ -8456,14 +8459,22 @@ func (ec *executionContext) field_Mutation_updateEnvironment_args(ctx context.Co
 func (ec *executionContext) field_Mutation_updateGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.GitConfig
-	if tmp, ok := rawArgs["configurations"]; ok {
-		arg0, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["configurations"] = arg0
+	args["projectID"] = arg0
+	var arg1 model.GitConfig
+	if tmp, ok := rawArgs["configurations"]; ok {
+		arg1, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["configurations"] = arg1
 	return args, nil
 }
 
@@ -8703,21 +8714,13 @@ func (ec *executionContext) field_Query_getImageRegistry_args(ctx context.Contex
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["imageRegistryID"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["imageRegistryID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg1
+	args["projectID"] = arg0
 	return args, nil
 }
 
@@ -19919,7 +19922,7 @@ func (ec *executionContext) _Mutation_enableGitOps(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().EnableGitOps(rctx, args["configurations"].(model.GitConfig))
+			return ec.resolvers.Mutation().EnableGitOps(rctx, args["projectID"].(string), args["configurations"].(model.GitConfig))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -20041,7 +20044,7 @@ func (ec *executionContext) _Mutation_updateGitOps(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateGitOps(rctx, args["configurations"].(model.GitConfig))
+			return ec.resolvers.Mutation().UpdateGitOps(rctx, args["projectID"].(string), args["configurations"].(model.GitConfig))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -23308,7 +23311,7 @@ func (ec *executionContext) _Query_getImageRegistry(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetImageRegistry(rctx, args["imageRegistryID"].(string), args["projectID"].(string))
+			return ec.resolvers.Query().GetImageRegistry(rctx, args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -27391,12 +27394,6 @@ func (ec *executionContext) unmarshalInputGitConfig(ctx context.Context, obj int
 
 	for k, v := range asMap {
 		switch k {
-		case "projectID":
-			var err error
-			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "branch":
 			var err error
 			it.Branch, err = ec.unmarshalNString2string(ctx, v)

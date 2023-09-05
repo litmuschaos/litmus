@@ -47,7 +47,7 @@ export default function ExperimentCreationChaosFaultsView({
   const { experimentKey } = useParams<{ experimentKey: string }>();
   const searchParams = useSearchParams();
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   function handleCRs(faultCR: string, engineCR: string): void {
     const parsedFaultCR = parse(faultCR) as FaultData['faultCR'];
@@ -114,7 +114,7 @@ export default function ExperimentCreationChaosFaultsView({
           {selectedHub?.name}
         </Text>
         <Loader loading={loading.listChaosFaults || loading.listChaosHub}>
-          {filteredCharts
+          {filteredCharts && filteredCharts.some(chart => chart.spec.faults.length > 0) // to handle 0 search results
             ? filteredCharts.map(
                 chart =>
                   // Render only Hub faults which have at least one fault
@@ -126,27 +126,30 @@ export default function ExperimentCreationChaosFaultsView({
                     >
                       <Text color={Color.BLACK} font={{ variation: FontVariation.H5 }}>
                         {/* Convert id based name to normal casing normalize(an-experiment) to An experiment */}
-                        {normalize(chart.metadata.name)}
+                        {normalize(chart.spec.displayName)}
                       </Text>
                       <div className={css.listContainer}>
-                        {chart.spec.faults.map((fault: FaultList) => {
+                        {chart.spec.faults.map((fault: FaultList, index) => {
                           return (
-                            <div
-                              key={fault.name}
-                              className={css.experimentWrapper}
-                              onClick={() => onSelectFault(chart, fault, false)}
-                              onMouseEnter={() => onSelectFault(chart, fault, true)}
-                              onMouseLeave={() => setIsShown(false)}
-                            >
-                              <div className={css.box}>
+                            <div key={fault.name + index} className={css.experimentWrapper}>
+                              <div
+                                className={css.box}
+                                onClick={() => onSelectFault(chart, fault, false)}
+                                onMouseEnter={() => onSelectFault(chart, fault, true)}
+                                onMouseLeave={() => {
+                                  setIsShown(false);
+                                  setFaultData(undefined);
+                                }}
+                              >
                                 <img
                                   loading="lazy"
+                                  key={faultData?.fault.name}
                                   src={
                                     selectedHub?.isDefault
                                       ? `${config.restEndpoints?.chaosManagerUri}/icon/default/${selectedHub?.name}/${chart.metadata.name}/${fault.name}.png`
                                       : `${config.restEndpoints?.chaosManagerUri}/icon/${scope.projectID}/${selectedHub?.name}/${chart.metadata.name}/${fault.name}.png`
                                   }
-                                  alt={`${fault.name} icon`}
+                                  alt={`${fault.name}-icon`}
                                 />
                               </div>
                               <Text className={css.center} font={{ variation: FontVariation.BODY }}>

@@ -41,7 +41,7 @@ export default function ChaosStudioCloneController(): React.ReactElement {
     if (experimentData && showStudio < 2 && !hasUnsavedChangesInURL) {
       const clonedExperimentName = getHash(2, experimentData.name);
       const infrastructureType = InfrastructureType.KUBERNETES;
-      const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+      const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
       updateSearchParams({
         experimentName: clonedExperimentName,
         infrastructureType: infrastructureType,

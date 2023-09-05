@@ -18,7 +18,7 @@ type Service interface {
 	CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
-	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
+	GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error)
 	ListImageRegistries(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
 }
 
@@ -86,7 +86,8 @@ func (i *imageRegistryService) CreateImageRegistry(ctx context.Context, projectI
 func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 
 	var (
-		currentTime = strconv.FormatInt(time.Now().Unix(), 10)
+		currentTime = time.Now().UnixMilli()
+		currTimeStr = strconv.FormatInt(currentTime, 10)
 		bl          = false
 	)
 
@@ -119,7 +120,7 @@ func (i *imageRegistryService) UpdateImageRegistry(ctx context.Context, imageReg
 			EnableRegistry:    imageRegistryInfo.EnableRegistry,
 			IsDefault:         &imageRegistryInfo.IsDefault,
 		},
-		UpdatedAt: &currentTime,
+		UpdatedAt: &currTimeStr,
 		IsRemoved: &bl,
 	}, nil
 }
@@ -136,8 +137,8 @@ func (i *imageRegistryService) DeleteImageRegistry(ctx context.Context, imageReg
 	return "image registry deleted", nil
 }
 
-func (i *imageRegistryService) GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
-	query := bson.D{{"image_registry_id", imageRegistryID}, {"project_id", projectID}}
+func (i *imageRegistryService) GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error) {
+	query := bson.D{{"project_id", projectID}}
 	imageRegistry, err := i.imageRegistryOperator.GetImageRegistry(ctx, query)
 	if err != nil {
 		return nil, err
