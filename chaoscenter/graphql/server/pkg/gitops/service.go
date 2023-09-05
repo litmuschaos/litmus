@@ -12,9 +12,10 @@ import (
 	"sync"
 	"time"
 
+	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
 	chaos_infra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	data_store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -55,11 +56,11 @@ type Service interface {
 type gitOpsService struct {
 	gitOpsOperator         *gitops.Operator
 	chaosExperimentOps     chaos_experiment.Operator
-	chaosExperimentService chaos_experiment2.Service
+	chaosExperimentService chaosExperimentOps.Service
 }
 
 // NewGitOpsService returns a new instance of a gitOpsService
-func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaos_experiment2.Service, chaosExperimentOps chaos_experiment.Operator) Service {
+func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService chaosExperimentOps.Service, chaosExperimentOps chaos_experiment.Operator) Service {
 	return &gitOpsService{
 		gitOpsOperator:         gitOpsOperator,
 		chaosExperimentService: chaosExperimentService,

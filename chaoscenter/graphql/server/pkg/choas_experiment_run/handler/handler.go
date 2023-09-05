@@ -11,6 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
@@ -644,7 +647,6 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 
 	resKind := gjson.Get(workflow.Revision[0].ExperimentManifest, "kind").String()
 	if strings.ToLower(resKind) == "cronworkflow" {
-		//return nil, errors.New("cron-workflows cannot be re-run")
 		return &model.RunChaosExperimentResponse{NotifyID: notifyID}, c.RunCronExperiment(ctx, projectID, workflow, r)
 	}
 	notifyID = uuid.New().String()
@@ -662,6 +664,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	workflowManifest.Labels["notify_id"] = notifyID
 	workflowManifest.Name = workflowManifest.Name + "-" + strconv.FormatInt(currentTime, 10)
 
+	var probes []dbChaosExperimentRun.Probes
 	for i, template := range workflowManifest.Spec.Templates {
 		artifact := template.Inputs.Artifacts
 		if len(artifact) > 0 {
@@ -683,6 +686,23 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 					if meta.Annotations != nil {
 						annotation = meta.Annotations
 					}
+
+					var annotationArray []string
+					for _, key := range annotation {
+						var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
+						err := json.Unmarshal([]byte(key), &manifestAnnotation)
+						if err != nil {
+							return nil, errors.New("failed to unmarshal experiment annotation object")
+						}
+						for _, annotationKey := range manifestAnnotation {
+							annotationArray = append(annotationArray, annotationKey.Name)
+						}
+					}
+					probes = append(probes, dbChaosExperimentRun.Probes{
+						artifact[0].Name,
+						annotationArray,
+					})
+
 					meta.Annotations = annotation
 
 					if meta.Labels == nil {
@@ -697,6 +717,9 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
 					}
 
+					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
+					}
 					res, err := yaml.Marshal(&meta)
 					if err != nil {
 						return nil, errors.New("failed to marshal chaosengine")
@@ -815,6 +838,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			Completed:       false,
 			ResiliencyScore: &resScore,
 			ExecutionData:   string(parsedData),
+			Probes:          probes,
 		})
 		if err != nil {
 			logrus.Error("Failed to create run operation in db")
@@ -856,7 +880,6 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 
 func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, projectID string, workflow dbChaosExperiment.ChaosExperimentRequest, r *store.StateData) error {
 	var (
-		//usrID                = currentUser.Name
 		cronExperimentManifest v1alpha1.CronWorkflow
 	)
 
@@ -867,7 +890,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return workflow.Revision[i].UpdatedAt > workflow.Revision[j].UpdatedAt
 	})
 
-	err := json.Unmarshal([]byte(workflow.Revision[0].ExperimentManifest), &cronExperimentManifest)
+	cronExperimentManifest, err := probe.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
 	if err != nil {
 		return errors.New("failed to unmarshal experiment manifest")
 	}
@@ -902,6 +925,9 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 						meta.Labels["infra_id"] = workflow.InfraID
 						meta.Labels["step_pod_name"] = "{{pod.name}}"
 						meta.Labels["workflow_run_id"] = "{{workflow.uid}}"
+					}
+					if len(meta.Spec.Experiments[0].Spec.Probe) != 0 {
+						meta.Spec.Experiments[0].Spec.Probe = utils.TransformProbe(meta.Spec.Experiments[0].Spec.Probe)
 					}
 					res, err := yaml.Marshal(&meta)
 					if err != nil {
