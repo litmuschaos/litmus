@@ -2,7 +2,7 @@ extend type Query {
   """
   Returns experiment run based on experiment run ID
   """
-  getExperimentRun(projectID: ID!, experimentRunID: String!): ExperimentRun!
+  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID): ExperimentRun!
 
   """
   Returns the list of experiment run based on various filter parameters
