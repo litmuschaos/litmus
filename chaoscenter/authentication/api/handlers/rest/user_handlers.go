@@ -444,12 +444,6 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// Checking if user is deactivated
-		if user.DeactivatedAt != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUserDeactivated], presenter.CreateErrorResponse(utils.ErrUserDeactivated))
-			return
-		}
-
 		if token, err := service.CreateApiToken(user, apiTokenRequest); err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
