@@ -82,7 +82,7 @@ function SelectProbesDetailView({
           flex={{ justifyContent: 'center' }}
         >
           <img src={probeFallback} alt={getString('addOrClick')} />
-          <Text font={{ variation: FontVariation.SMALL_SEMI }} flex color={Color.PRIMARY_10} className={css.title}>
+          <Text font={{ variation: FontVariation.SMALL_SEMI }} flex color={Color.WHITE} className={css.title}>
             {getString('addOrClick')}
           </Text>
         </Layout.Vertical>

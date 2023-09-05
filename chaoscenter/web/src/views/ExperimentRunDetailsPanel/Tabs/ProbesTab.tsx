@@ -122,7 +122,6 @@ function ProbeCardFromManifest({ probe, probeStatus }: ProbeCardFromManifestProp
 
 function ProbeCardFromAPI({ probe, mode, probeStatus }: ProbeCardFromAPIProps): React.ReactElement {
   const { getString } = useStrings();
-
   return (
     <div className={css.probeBox}>
       <NestedAccordionProvider>
@@ -215,7 +214,7 @@ function ProbesTab({ loading, manifest, nodeName, probeData, probeStatuses }: Pr
   const { getString } = useStrings();
   const parsedManifest = manifest ? (parse(manifest) as ExperimentManifest) : undefined;
   const infrastructureType = getInfrastructureTypeFromExperimentKind(parsedManifest);
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   // Backward compatibility for deprecated probes
   let deprecatedProbes: ProbeAttributes[] | undefined;

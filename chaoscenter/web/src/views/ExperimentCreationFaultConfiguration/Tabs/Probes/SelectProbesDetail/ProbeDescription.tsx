@@ -18,9 +18,7 @@ function ProbeDescription({ probeDetail, mode }: ProbeDescriptionProps): React.R
   const { getString } = useStrings();
   function getOverviewProperties(): string[][] {
     const overviewData: string[][] = [];
-
     const description = probeDetail.description === '' ? getString('noDescriptionProvided') : probeDetail.description;
-
     overviewData.push(['Description', description ?? '']);
     overviewData.push(['Probe Type', probeDetail.type]);
     overviewData.push(['Probe Mode', mode ?? getString('toBeDefined')]);
@@ -32,21 +30,21 @@ function ProbeDescription({ probeDetail, mode }: ProbeDescriptionProps): React.R
     <Layout.Vertical height={'60vh'} spacing={'medium'} padding={{ left: 'medium', right: 'medium' }}>
       <Text
         font={{ variation: FontVariation.SMALL_BOLD }}
-        color={Color.BLACK}
+        color={Color.WHITE}
         padding={{ top: 'large', left: 'large', right: 'large' }}
       >
         {getString('overview')}
       </Text>
-      <Layout.Vertical spacing={'medium'} border={{ top: true, color: Color.GREY_200 }}>
+      <Layout.Vertical spacing={'medium'} border={{ top: true, color: Color.WHITE }}>
         {getOverviewProperties().map(value => (
           <Layout.Horizontal key={value[0]} margin={'large'}>
             <Layout.Horizontal spacing={'medium'} width={140}>
-              <Text font={{ variation: FontVariation.TINY, weight: 'semi-bold' }} color={Color.BLACK}>
+              <Text font={{ variation: FontVariation.TINY, weight: 'semi-bold' }} color={Color.WHITE}>
                 {value[0]}:
               </Text>
             </Layout.Horizontal>
             <Layout.Horizontal spacing={'medium'} width={140}>
-              <Text font={{ variation: FontVariation.TINY, weight: 'light' }} color={Color.GREY_800} lineClamp={1}>
+              <Text font={{ variation: FontVariation.TINY, weight: 'light' }} color={Color.WHITE} lineClamp={1}>
                 {value[1]}
               </Text>
             </Layout.Horizontal>
@@ -54,21 +52,9 @@ function ProbeDescription({ probeDetail, mode }: ProbeDescriptionProps): React.R
         ))}
       </Layout.Vertical>
 
-      <ProbeInformationCardFromAPI
-        display={ProbeInformationType.PROPERTIES}
-        hideTopBorder
-        probe={probeDetail}
-        inStudio
-        isVerbose
-      />
+      <ProbeInformationCardFromAPI display={ProbeInformationType.PROPERTIES} hideTopBorder probe={probeDetail} />
 
-      <ProbeInformationCardFromAPI
-        display={ProbeInformationType.DETAILS}
-        hideTopBorder
-        probe={probeDetail}
-        inStudio
-        isVerbose
-      />
+      <ProbeInformationCardFromAPI display={ProbeInformationType.DETAILS} hideTopBorder probe={probeDetail} />
     </Layout.Vertical>
   );
 }

@@ -6,13 +6,18 @@ import { Form, Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';
 import experimentYamlService from 'services/experiment';
+import { InfrastructureType } from '@api/entities';
+import { useSearchParams } from '@hooks';
 import type { StepData, StepProps } from './AddProbeStepWizard';
 
 export const ProbeOverviewStep: React.FC<StepProps<StepData>> = props => {
   const { getString } = useStrings();
   const { experimentKey } = useParams<{ experimentKey: string }>();
 
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const searchParams = useSearchParams();
+  const infrastructureType =
+    (searchParams.get('infrastructureType') as InfrastructureType | undefined) ?? InfrastructureType.KUBERNETES;
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
 
   const totalSteps = props.totalSteps?.();
   const currentStep = props.currentStep?.();

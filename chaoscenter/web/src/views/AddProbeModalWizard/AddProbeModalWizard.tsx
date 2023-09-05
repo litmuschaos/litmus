@@ -34,6 +34,7 @@ import type {
 import { ProbeType, Probe, InfrastructureType } from '@api/entities';
 import type { CmdProbeInputs, HTTPProbeInputs, K8sProbeInputs, PromProbeInputs, RunProperty } from '@models';
 import Loader from '@components/Loader';
+import YAMLBuilder from '@components/YAMLBuilder';
 import css from './AddProbeModalWizard.module.scss';
 
 enum HTTPMethod {
@@ -940,29 +941,29 @@ const TuneDetailsStep: React.FC<
                   onDragOver={preventDefault}
                   onDrop={preventDefault}
                 >
-                  {/* <YAMLBuilder
-                      renderCustomHeader={() => (
-                        <Text
-                          font={{ variation: FontVariation.FORM_LABEL }}
-                          padding={{ top: 'medium', bottom: 'medium' }}
-                          color={Color.GREY_400}
-                        >
-                          {getString('pleaseSpecifyYAMLValues')}
-                        </Text>
-                      )}
-                      fileName=""
-                      onChange={(_, updatedYaml) => {
-                        source.current = updatedYaml;
-                      }}
-                      existingJSON={
-                        props.formData.kubernetesCMDProperties?.source
-                          ? JSON.parse(props.formData.kubernetesCMDProperties?.source)
-                          : ''
-                      }
-                      customCss={css.yamlBuilderBody}
-                      isReadOnlyMode={false}
-                      isEditModeSupported={true}
-                    /> */}
+                  <YAMLBuilder
+                    renderCustomHeader={() => (
+                      <Text
+                        font={{ variation: FontVariation.FORM_LABEL }}
+                        padding={{ top: 'medium', bottom: 'medium' }}
+                        color={Color.GREY_400}
+                      >
+                        {getString('pleaseSpecifyYAMLValues')}
+                      </Text>
+                    )}
+                    fileName=""
+                    onChange={(_, updatedYaml) => {
+                      source.current = updatedYaml;
+                    }}
+                    existingJSON={
+                      props.formData.kubernetesCMDProperties?.source
+                        ? JSON.parse(props.formData.kubernetesCMDProperties?.source)
+                        : ''
+                    }
+                    customCss={css.yamlBuilderBody}
+                    isReadOnlyMode={false}
+                    isEditModeSupported={true}
+                  />
                 </div>
               </Container>
             )}
@@ -1113,7 +1114,7 @@ const TuneDetailsStep: React.FC<
               </Layout.Vertical>
 
               <FlexExpander />
-              <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
+              <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'} margin={{ top: 'large' }}>
                 <Button
                   onClick={() => props.previousStep?.()}
                   icon="chevron-left"

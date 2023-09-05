@@ -8,7 +8,7 @@ import { useStrings } from '@strings';
 import ListChaosHubsTabController from '@controllers/ListChaosHubsTab';
 import { ExperimentManifest, StudioTabs } from '@models';
 import BlankCanvas from './BlankCanvas';
-// import UploadYAML from './UploadYAML';
+import UploadYAML from './UploadYAML';
 import css from './ExperimentBuilderTemplateSelection.module.scss';
 
 interface ExperimentBuilderTemplateSelectionViewProps {
@@ -25,8 +25,8 @@ interface ToggleSelectorProps {
 }
 enum TemplateSelection {
   PREDEFINED_EXPERIMENT = 'PREDEFINED_EXPERIMENT',
-  BLANK_CANVAS = 'BLANK_CANVAS'
-  // UPLOAD_YAML = 'UPLOAD_YAML'
+  BLANK_CANVAS = 'BLANK_CANVAS',
+  UPLOAD_YAML = 'UPLOAD_YAML'
 }
 
 function HighlightedList({
@@ -116,13 +116,13 @@ export default function ExperimentBuilderTemplateSelectionView({
                   icon="chaos-scenario-builder"
                 />
               </>
-              {/* <HighlightedList
+              <HighlightedList
                 selected={templateSelection === TemplateSelection.UPLOAD_YAML}
                 handleSelect={() => setTemplateSelection(TemplateSelection.UPLOAD_YAML)}
                 heading={getString('uploadYAMLTitle')}
                 description={getString('uploadYAMLDescription')}
                 icon="upload-box"
-              /> */}
+              />
             </Container>
           </Container>
           <Container width={583} height={'100%'} padding="xlarge" className={css.rightCont}>
@@ -130,7 +130,7 @@ export default function ExperimentBuilderTemplateSelectionView({
             {templateSelection === TemplateSelection.PREDEFINED_EXPERIMENT && (
               <ListChaosHubsTabController onClose={onClose} />
             )}
-            {/* {templateSelection === TemplateSelection.UPLOAD_YAML && <UploadYAML onClose={onClose} />} */}
+            {templateSelection === TemplateSelection.UPLOAD_YAML && <UploadYAML onClose={onClose} />}
           </Container>
         </Layout.Horizontal>
       </BlueprintJSDrawer>

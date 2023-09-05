@@ -5,6 +5,7 @@ declare namespace ChaosStudioModuleScssNamespace {
     formInputHorizontal: string;
     formInputs: string;
     fullHeight: string;
+    leftSideBar: string;
     mainContainer: string;
     pageHeader: string;
     pipelineIcon: string;

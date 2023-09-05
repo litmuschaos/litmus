@@ -3,7 +3,7 @@ import { Container, Layout, Text, useToaster } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { parse } from 'yaml';
-import { ExecutionData, ExperimentRunFaultStatus, ExperimentRunStatus, Infra } from '@api/entities';
+import { ExecutionData, ExperimentRunFaultStatus, ExperimentRunStatus, Infra, InfrastructureType } from '@api/entities';
 import Loader from '@components/Loader';
 import { useStrings } from '@strings';
 import { useSearchParams, useRouteWithBaseUrl } from '@hooks';
@@ -61,7 +61,7 @@ export default function ExperimentRunDetailsView({
   const { showError } = useToaster();
   const parsedManifest = parse(manifest ?? '') as ExperimentManifest;
 
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
   const experimentSteps = experimentHandler?.getFaultsFromExperimentManifest(parsedManifest, false) ?? [];
   const breadcrumbs = [
     {

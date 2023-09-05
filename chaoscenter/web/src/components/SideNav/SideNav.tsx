@@ -8,6 +8,7 @@ import { Classes, Position, PopoverInteractionKind } from '@blueprintjs/core';
 import { useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import ProjectSelectorController from '@controllers/ProjectSelector';
+import NavExpandable from '@components/NavExpandable';
 import css from './SideNav.module.scss';
 
 interface SidebarLinkProps extends NavLinkProps {
@@ -97,7 +98,11 @@ export default function SideNav(): ReactElement {
           <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
           <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
           <SidebarLink label={'Resilience Probes'} to={paths.toChaosProbes()} />
-          <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
+          <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
+            <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
+            <SidebarLink label={'Gitops'} to={paths.toGitops()} />
+            <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
+          </NavExpandable>
         </Layout.Vertical>
       </div>
       <Container className={css.bottomContainer}>

@@ -24,7 +24,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
 
   const { experimentKey: experimentID } = useParams<{ experimentKey: string }>();
 
-  const { data: experimentListData } = listExperiment({
+  const { data: experimentListData, refetch: listExperimentRefetch } = listExperiment({
     ...scope,
     experimentIDs: [experimentID],
     options: {
@@ -43,7 +43,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
   React.useEffect(() => {
     if (experimentData && showStudio < 2 && !hasUnsavedChangesInURL) {
       const infrastructureType = InfrastructureType.KUBERNETES;
-      const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+      const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
       updateSearchParams({
         experimentName: experimentData.name,
         infrastructureType: infrastructureType,
@@ -70,10 +70,12 @@ export default function ChaosStudioEditController(): React.ReactElement {
   }, [experimentData, experimentID, hasUnsavedChangesInURL]);
 
   const [saveChaosExperimentMutation, { loading: saveChaosExperimentLoading }] = saveChaosExperiment({
-    onError: error => showError(error.message)
+    onError: error => showError(error.message),
+    onCompleted: () => listExperimentRefetch()
   });
   const [runChaosExperimentMutation, { loading: runChaosExperimentLoading }] = runChaosExperiment({
-    onError: error => showError(error.message)
+    onError: error => showError(error.message),
+    onCompleted: () => listExperimentRefetch()
   });
 
   const rightSideBarV2 = <RightSideBarV2 experimentID={experimentID} isEditMode phase={lastExperimentRun?.phase} />;
