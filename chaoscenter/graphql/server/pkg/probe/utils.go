@@ -8,6 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
+	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+
 	argoTypes "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
@@ -17,100 +21,104 @@ import (
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 )
 
-func addHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+func addKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
 
-	newProbe.HTTPProperties = &dbSchemaProbe.HTTPProbe{
+	newProbe.KubernetesHTTPProperties = &dbSchemaProbe.KubernetesHTTPProbe{
 		// Common Probe Properties
-		ProbeTimeout:      request.HTTPProperties.ProbeTimeout,
-		Interval:          request.HTTPProperties.Interval,
-		EvaluationTimeout: request.HTTPProperties.EvaluationTimeout,
+		ProbeTimeout:      request.KubernetesHTTPProperties.ProbeTimeout,
+		Interval:          request.KubernetesHTTPProperties.Interval,
+		EvaluationTimeout: request.KubernetesHTTPProperties.EvaluationTimeout,
 		// Unique Properties for HTTP Probe
-		URL:    request.HTTPProperties.URL,
+		URL:    request.KubernetesHTTPProperties.URL,
 		Method: dbSchemaProbe.Method{},
 	}
 	// HTTP Probe -> Attempt
-	newProbe.HTTPProperties.Attempt = request.HTTPProperties.Attempt
+	newProbe.KubernetesHTTPProperties.Attempt = request.KubernetesHTTPProperties.Attempt
 
 	// HTTP Probe -> Retry
-	newProbe.HTTPProperties.Retry = request.HTTPProperties.Retry
+	newProbe.KubernetesHTTPProperties.Retry = request.KubernetesHTTPProperties.Retry
 
 	// HTTP Probe -> ProbePollingInterval
-	newProbe.HTTPProperties.PollingInterval = request.HTTPProperties.ProbePollingInterval
+	newProbe.KubernetesHTTPProperties.PollingInterval = request.KubernetesHTTPProperties.ProbePollingInterval
 
 	// HTTP Probe -> EvaluationTimeout
-	newProbe.HTTPProperties.EvaluationTimeout = request.HTTPProperties.EvaluationTimeout
+	newProbe.KubernetesHTTPProperties.EvaluationTimeout = request.KubernetesHTTPProperties.EvaluationTimeout
 
 	// HTTP Probe -> InitialDelay
-	newProbe.HTTPProperties.InitialDelay = request.HTTPProperties.InitialDelay
+	newProbe.KubernetesHTTPProperties.InitialDelay = request.KubernetesHTTPProperties.InitialDelay
 
 	// HTTP Probe -> StopOnFailureEnabled
-	newProbe.HTTPProperties.StopOnFailure = request.HTTPProperties.StopOnFailure
+	newProbe.KubernetesHTTPProperties.StopOnFailure = request.KubernetesHTTPProperties.StopOnFailure
 
 	// HTTP Probe -> InsecureSkipVerify
-	newProbe.HTTPProperties.InsecureSkipVerify = request.HTTPProperties.InsecureSkipVerify
+	newProbe.KubernetesHTTPProperties.InsecureSkipVerify = request.KubernetesHTTPProperties.InsecureSkipVerify
 
 	// HTTP Probe -> Method [GET or POST]
-	if request.HTTPProperties.Method.Get != nil {
-		newProbe.HTTPProperties.Method.GET = &dbSchemaProbe.GET{
-			Criteria:     request.HTTPProperties.Method.Get.Criteria,
-			ResponseCode: request.HTTPProperties.Method.Get.ResponseCode,
+	if request.KubernetesHTTPProperties.Method.Get != nil {
+		newProbe.KubernetesHTTPProperties.Method.GET = &dbSchemaProbe.GET{
+			Criteria:     request.KubernetesHTTPProperties.Method.Get.Criteria,
+			ResponseCode: request.KubernetesHTTPProperties.Method.Get.ResponseCode,
 		}
-	} else if request.HTTPProperties.Method.Post != nil {
-		newProbe.HTTPProperties.Method.POST = &dbSchemaProbe.POST{
-			Criteria:     request.HTTPProperties.Method.Post.Criteria,
-			ResponseCode: request.HTTPProperties.Method.Post.ResponseCode,
+	} else if request.KubernetesHTTPProperties.Method.Post != nil {
+		newProbe.KubernetesHTTPProperties.Method.POST = &dbSchemaProbe.POST{
+			Criteria:     request.KubernetesHTTPProperties.Method.Post.Criteria,
+			ResponseCode: request.KubernetesHTTPProperties.Method.Post.ResponseCode,
 		}
 
-		newProbe.HTTPProperties.Method.POST.ContentType = request.HTTPProperties.Method.Post.ContentType
+		newProbe.KubernetesHTTPProperties.Method.POST.ContentType = request.KubernetesHTTPProperties.Method.Post.ContentType
 
-		newProbe.HTTPProperties.Method.POST.Body = request.HTTPProperties.Method.Post.Body
+		newProbe.KubernetesHTTPProperties.Method.POST.Body = request.KubernetesHTTPProperties.Method.Post.Body
 
-		newProbe.HTTPProperties.Method.POST.BodyPath = request.HTTPProperties.Method.Post.BodyPath
+		newProbe.KubernetesHTTPProperties.Method.POST.BodyPath = request.KubernetesHTTPProperties.Method.Post.BodyPath
 
 	}
 
 	return newProbe
 }
 
-func addCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
-	newProbe.CMDProperties = &dbSchemaProbe.CMDProbe{
+func addKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+	newProbe.KubernetesCMDProperties = &dbSchemaProbe.KubernetesCMDProbe{
 		// Common Probe Properties
-		ProbeTimeout: request.CmdProperties.ProbeTimeout,
-		Interval:     request.CmdProperties.Interval,
+		ProbeTimeout: request.KubernetesCMDProperties.ProbeTimeout,
+		Interval:     request.KubernetesCMDProperties.Interval,
 		// Unique Properties for CMD Probe
-		Command: request.CmdProperties.Command,
+		Command: request.KubernetesCMDProperties.Command,
 		Comparator: dbSchemaProbe.Comparator{
-			Type:     request.CmdProperties.Comparator.Type,
-			Value:    request.CmdProperties.Comparator.Value,
-			Criteria: request.CmdProperties.Comparator.Criteria,
+			Type:     request.KubernetesCMDProperties.Comparator.Type,
+			Value:    request.KubernetesCMDProperties.Comparator.Value,
+			Criteria: request.KubernetesCMDProperties.Comparator.Criteria,
 		},
 	}
 	// CMD Probe -> Attempt
-	newProbe.CMDProperties.Attempt = request.CmdProperties.Attempt
+	newProbe.KubernetesCMDProperties.Attempt = request.KubernetesCMDProperties.Attempt
 
 	// CMD Probe -> Retry
-	newProbe.CMDProperties.Retry = request.CmdProperties.Retry
+	newProbe.KubernetesCMDProperties.Retry = request.KubernetesCMDProperties.Retry
 
 	// CMD Probe -> ProbePollingInterval
-	newProbe.CMDProperties.PollingInterval = request.CmdProperties.ProbePollingInterval
+	newProbe.KubernetesCMDProperties.PollingInterval = request.KubernetesCMDProperties.ProbePollingInterval
 
 	// CMD Probe -> EvaluationTimeout
-	newProbe.CMDProperties.EvaluationTimeout = request.CmdProperties.EvaluationTimeout
+	newProbe.KubernetesCMDProperties.EvaluationTimeout = request.KubernetesCMDProperties.EvaluationTimeout
 
 	// CMD Probe -> InitialDelaySeconds
-	newProbe.CMDProperties.InitialDelay = request.CmdProperties.InitialDelay
+	newProbe.KubernetesCMDProperties.InitialDelay = request.KubernetesCMDProperties.InitialDelay
 
 	// CMD Probe -> StopOnFailureEnabled
-	newProbe.CMDProperties.StopOnFailure = request.CmdProperties.StopOnFailure
+	newProbe.KubernetesCMDProperties.StopOnFailure = request.KubernetesCMDProperties.StopOnFailure
 
 	// CMD Probe -> Source
-	if request.CmdProperties.Source != nil {
+	if request.KubernetesCMDProperties.Source != nil {
 		var source *v1alpha1.SourceDetails
-		err := json.Unmarshal([]byte(*request.CmdProperties.Source), &source)
+		fmt.Println("source", []byte(*request.KubernetesCMDProperties.Source), *request.KubernetesCMDProperties.Source)
+
+		err := json.Unmarshal([]byte(*request.KubernetesCMDProperties.Source), &source)
 		if err != nil {
+			logrus.Errorf("error unmarshalling soruce: %s", err.Error())
 			return nil
 		}
-		newProbe.CMDProperties.Source = &v1alpha1.SourceDetails{
+
+		newProbe.KubernetesCMDProperties.Source = &v1alpha1.SourceDetails{
 			Image:            source.Image,
 			HostNetwork:      source.HostNetwork,
 			InheritInputs:    source.InheritInputs,
@@ -216,78 +224,78 @@ func addK8SProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeReq
 func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) {
 	if probe.Type == model.ProbeTypeHTTPProbe {
 
-		httpProbeURL := probe.HTTPProperties.URL
+		httpProbeURL := probe.KubernetesHTTPProperties.URL
 		var _probe HTTPProbeAttributes
 
 		_probe.Name = probe.Name
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(mode)
 
-		if probe.HTTPProperties.InsecureSkipVerify != nil {
+		if probe.KubernetesHTTPProperties.InsecureSkipVerify != nil {
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
-				InsecureSkipVerify: *probe.HTTPProperties.InsecureSkipVerify,
+				InsecureSkipVerify: *probe.KubernetesHTTPProperties.InsecureSkipVerify,
 			}
 
 		}
 
-		if probe.HTTPProperties.Method.Get != nil {
+		if probe.KubernetesHTTPProperties.Method.Get != nil {
 
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				URL: httpProbeURL,
 				Method: v1alpha1.HTTPMethod{
 					Get: &v1alpha1.GetMethod{
-						Criteria:     probe.HTTPProperties.Method.Get.Criteria,
-						ResponseCode: probe.HTTPProperties.Method.Get.ResponseCode,
+						Criteria:     probe.KubernetesHTTPProperties.Method.Get.Criteria,
+						ResponseCode: probe.KubernetesHTTPProperties.Method.Get.ResponseCode,
 					},
 				},
 			}
-		} else if probe.HTTPProperties.Method.Post != nil {
+		} else if probe.KubernetesHTTPProperties.Method.Post != nil {
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				URL: httpProbeURL,
 				Method: v1alpha1.HTTPMethod{
 					Post: &v1alpha1.PostMethod{
-						Criteria:     probe.HTTPProperties.Method.Post.Criteria,
-						ResponseCode: probe.HTTPProperties.Method.Post.ResponseCode,
+						Criteria:     probe.KubernetesHTTPProperties.Method.Post.Criteria,
+						ResponseCode: probe.KubernetesHTTPProperties.Method.Post.ResponseCode,
 					},
 				},
 			}
 
-			if probe.HTTPProperties.Method.Post.ContentType != nil {
-				_probe.HTTPProbeInputs.Method.Post.ContentType = *probe.HTTPProperties.Method.Post.ContentType
+			if probe.KubernetesHTTPProperties.Method.Post.ContentType != nil {
+				_probe.HTTPProbeInputs.Method.Post.ContentType = *probe.KubernetesHTTPProperties.Method.Post.ContentType
 			}
 
-			if probe.HTTPProperties.Method.Post.Body != nil {
-				_probe.HTTPProbeInputs.Method.Post.Body = *probe.HTTPProperties.Method.Post.Body
+			if probe.KubernetesHTTPProperties.Method.Post.Body != nil {
+				_probe.HTTPProbeInputs.Method.Post.Body = *probe.KubernetesHTTPProperties.Method.Post.Body
 			}
 
-			if probe.HTTPProperties.Method.Post.BodyPath != nil {
-				_probe.HTTPProbeInputs.Method.Post.BodyPath = *probe.HTTPProperties.Method.Post.BodyPath
+			if probe.KubernetesHTTPProperties.Method.Post.BodyPath != nil {
+				_probe.HTTPProbeInputs.Method.Post.BodyPath = *probe.KubernetesHTTPProperties.Method.Post.BodyPath
 			}
 		}
 
 		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.HTTPProperties.ProbeTimeout,
-			Interval:     probe.HTTPProperties.Interval,
+			ProbeTimeout: probe.KubernetesHTTPProperties.ProbeTimeout,
+			Interval:     probe.KubernetesHTTPProperties.Interval,
 		}
 
-		if probe.HTTPProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.HTTPProperties.Attempt
+		if probe.KubernetesHTTPProperties.Attempt != nil {
+			_probe.RunProperties.Attempt = *probe.KubernetesHTTPProperties.Attempt
 		}
 
-		if probe.HTTPProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.HTTPProperties.Retry
+		if probe.KubernetesHTTPProperties.Retry != nil {
+			_probe.RunProperties.Retry = *probe.KubernetesHTTPProperties.Retry
 		}
 
-		if probe.HTTPProperties.ProbePollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.HTTPProperties.ProbePollingInterval
+		if probe.KubernetesHTTPProperties.ProbePollingInterval != nil {
+			_probe.RunProperties.ProbePollingInterval = *probe.KubernetesHTTPProperties.ProbePollingInterval
 		}
 
-		if probe.HTTPProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.HTTPProperties.EvaluationTimeout
+		if probe.KubernetesHTTPProperties.EvaluationTimeout != nil {
+			_probe.RunProperties.EvaluationTimeout = *probe.KubernetesHTTPProperties.EvaluationTimeout
 		}
 
-		if probe.HTTPProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.HTTPProperties.StopOnFailure
+		if probe.KubernetesHTTPProperties.StopOnFailure != nil {
+			_probe.RunProperties.StopOnFailure = *probe.KubernetesHTTPProperties.StopOnFailure
 		}
 
 		y, err := json.Marshal(_probe)
@@ -304,41 +312,41 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(mode)
 		_probe.CmdProbeInputs = v1alpha1.CmdProbeInputs{
-			Command: probe.CmdProperties.Command,
+			Command: probe.KubernetesCMDProperties.Command,
 			Comparator: v1alpha1.ComparatorInfo{
-				Type:     probe.CmdProperties.Comparator.Type,
-				Criteria: probe.CmdProperties.Comparator.Criteria,
-				Value:    probe.CmdProperties.Comparator.Value,
+				Type:     probe.KubernetesCMDProperties.Comparator.Type,
+				Criteria: probe.KubernetesCMDProperties.Comparator.Criteria,
+				Value:    probe.KubernetesCMDProperties.Comparator.Value,
 			},
 		}
 
 		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.CmdProperties.ProbeTimeout,
-			Interval:     probe.CmdProperties.Interval,
+			ProbeTimeout: probe.KubernetesCMDProperties.ProbeTimeout,
+			Interval:     probe.KubernetesCMDProperties.Interval,
 		}
 
-		if probe.CmdProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.CmdProperties.Attempt
+		if probe.KubernetesCMDProperties.Attempt != nil {
+			_probe.RunProperties.Attempt = *probe.KubernetesCMDProperties.Attempt
 		}
 
-		if probe.CmdProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.CmdProperties.Retry
+		if probe.KubernetesCMDProperties.Retry != nil {
+			_probe.RunProperties.Retry = *probe.KubernetesCMDProperties.Retry
 		}
 
-		if probe.CmdProperties.ProbePollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.CmdProperties.ProbePollingInterval
+		if probe.KubernetesCMDProperties.ProbePollingInterval != nil {
+			_probe.RunProperties.ProbePollingInterval = *probe.KubernetesCMDProperties.ProbePollingInterval
 		}
 
-		if probe.CmdProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.CmdProperties.EvaluationTimeout
+		if probe.KubernetesCMDProperties.EvaluationTimeout != nil {
+			_probe.RunProperties.EvaluationTimeout = *probe.KubernetesCMDProperties.EvaluationTimeout
 		}
 
-		if probe.CmdProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.CmdProperties.InitialDelay
+		if probe.KubernetesCMDProperties.InitialDelay != nil {
+			_probe.RunProperties.InitialDelay = *probe.KubernetesCMDProperties.InitialDelay
 		}
 
-		if probe.CmdProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.CmdProperties.StopOnFailure
+		if probe.KubernetesCMDProperties.StopOnFailure != nil {
+			_probe.RunProperties.StopOnFailure = *probe.KubernetesCMDProperties.StopOnFailure
 		}
 
 		y, err := json.Marshal(_probe)
@@ -581,6 +589,115 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 	return probes, nil
 }
 
+// ParseProbesFromManifestForRuns - Parses the manifest to return probes which is stored in the DB
+func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentType, manifest string) ([]dbChaosExperimentRun.Probes, error) {
+	var (
+		probes          []dbChaosExperimentRun.Probes
+		nonCronManifest argoTypes.Workflow
+		cronManifest    argoTypes.CronWorkflow
+	)
+
+	if *wfType == "cronexperiment" {
+		err := json.Unmarshal([]byte(manifest), &cronManifest)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err.Error())
+		}
+
+		for _, template := range cronManifest.Spec.WorkflowSpec.Templates {
+			artifact := template.Inputs.Artifacts
+
+			if len(artifact) > 0 {
+				if artifact[0].Raw == nil {
+					continue
+				}
+				data := artifact[0].Raw.Data
+				if len(data) > 0 {
+					var (
+						meta       v1alpha1.ChaosEngine
+						annotation = make(map[string]string)
+					)
+
+					err := yaml.Unmarshal([]byte(data), &meta)
+					if err != nil {
+						return nil, fmt.Errorf("failed to unmarshal chaosengine, error: %v", err.Error())
+					}
+					if strings.ToLower(meta.Kind) == "chaosengine" {
+						if meta.Annotations != nil {
+							annotation = meta.Annotations
+						}
+						var annotationArray []string
+						for _, key := range annotation {
+
+							var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
+							err := json.Unmarshal([]byte(key), &manifestAnnotation)
+							if err != nil {
+								return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %v", err.Error())
+							}
+							for _, annotationKey := range manifestAnnotation {
+								annotationArray = append(annotationArray, annotationKey.Name)
+							}
+						}
+						probes = append(probes, dbChaosExperimentRun.Probes{
+							artifact[0].Name,
+							annotationArray,
+						})
+					}
+				}
+			}
+		}
+	} else {
+		err := json.Unmarshal([]byte(manifest), &nonCronManifest)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err.Error())
+		}
+
+		for _, template := range nonCronManifest.Spec.Templates {
+			artifact := template.Inputs.Artifacts
+
+			if len(artifact) > 0 {
+				if artifact[0].Raw == nil {
+					continue
+				}
+				data := artifact[0].Raw.Data
+				if len(data) > 0 {
+					var (
+						meta       v1alpha1.ChaosEngine
+						annotation = make(map[string]string)
+					)
+
+					err := yaml.Unmarshal([]byte(data), &meta)
+					if err != nil {
+						return nil, fmt.Errorf("failed to unmarshal chaosengine, error: %v", err.Error())
+					}
+					if strings.ToLower(meta.Kind) == "chaosengine" {
+						if meta.Annotations != nil {
+							annotation = meta.Annotations
+						}
+						var annotationArray []string
+						for _, key := range annotation {
+
+							var manifestAnnotation []dbChaosExperiment.ProbeAnnotations
+							err := json.Unmarshal([]byte(key), &manifestAnnotation)
+							if err != nil {
+								return nil, fmt.Errorf("failed to unmarshal experiment annotation object, error: %v", err.Error())
+							}
+							for _, annotationKey := range manifestAnnotation {
+								annotationArray = append(annotationArray, annotationKey.Name)
+							}
+						}
+						probes = append(probes, dbChaosExperimentRun.Probes{
+							FaultName:  artifact[0].Name,
+							ProbeNames: annotationArray,
+						})
+					}
+				}
+			}
+		}
+	}
+
+	return probes, nil
+}
+
 // GenerateExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template for Non Cron Workflow
 func GenerateExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.Workflow, error) {
 
@@ -640,7 +757,7 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 								if err != nil {
 									return argoTypes.Workflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
 								}
-
+								fmt.Println("probes", probes)
 								probeManifestString, err := GenerateProbeManifest(probe.GetOutputProbe(), annotationKey.Mode)
 								if err != nil {
 									return argoTypes.Workflow{}, fmt.Errorf("failed to generate probe manifest, error: %s", err.Error())

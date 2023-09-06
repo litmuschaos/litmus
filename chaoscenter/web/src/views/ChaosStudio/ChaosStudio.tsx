@@ -81,6 +81,8 @@ export default function ChaosStudioView({
   const [hasFaults, setHasFaults] = React.useState<boolean>(false);
   const studioOverviewRef = React.useRef<FormikProps<ExperimentMetadata>>();
   const experimentHashKeyForClone = getHash();
+  const probeWithoutRef = React.useRef<string | undefined>();
+  const { showWarning } = useToaster();
   const {
     isOpen: isOpenDiscardExperimentDialog,
     open: openDiscardExperimentDialog,
@@ -150,6 +152,33 @@ export default function ChaosStudioView({
       yaml = (experimentHandler as KubernetesYamlService)?.postProcessExperimentManifest(
         experiment.manifest as KubernetesExperimentManifest
       );
+
+      /**
+       * If probeRef is not present in the manifest then return the fault name
+       * where the ref is missing otherwise return undefined
+       */
+      const probeWithoutAnnotation = await (
+        experimentHandler as KubernetesYamlService
+      )?.checkProbesInExperimentManifest(experiment?.manifest as KubernetesExperimentManifest);
+      probeWithoutRef.current = probeWithoutAnnotation;
+
+      /**
+       * Checks if probe metadata is already present in the manifest
+       *
+       * Returns true if probe metadata is present
+       */
+      const doesProbeExists = await (experimentHandler as KubernetesYamlService)?.doesProbeMetadataExists(
+        experiment?.manifest as KubernetesExperimentManifest
+      );
+
+      if (doesProbeExists) {
+        showWarning(getString('probeMetadataExists'));
+      }
+    }
+
+    if (probeWithoutRef.current) {
+      showError(`${getString('probeInFault')} ${probeWithoutRef.current} ${getString('probeNotAttachedToRef')}`);
+      return;
     }
     saveChaosExperimentMutation({
       variables: {

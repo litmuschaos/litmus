@@ -29,6 +29,7 @@ function YAMLBuilder(props: YAMLBuilderProps): React.ReactElement {
     onChange,
     theme = 'LIGHT',
     yamlSanityConfig,
+    renderCustomHeader,
     existingJSON,
     schema,
     fileName,
@@ -169,7 +170,18 @@ function YAMLBuilder(props: YAMLBuilderProps): React.ReactElement {
   return (
     <div className={cx(customCss, { [css.main]: displayBorder }, { [css.darkBg]: theme === 'DARK' })}>
       <div className={css.editor}>
-        <Container margin={{ left: 'xxlarge', right: 'xlarge' }}>{renderHeader()}</Container>
+        <Container
+          flex={{ justifyContent: 'space-between' }}
+          className={css.headerBorder}
+          margin={{ left: !renderCustomHeader && 'xlarge', right: !renderCustomHeader && 'xlarge' }}
+          padding={
+            renderCustomHeader
+              ? { top: 'small', right: 'medium', bottom: 'small', left: 'xlarge' }
+              : { right: 'medium' }
+          }
+        >
+          {defaultTo(renderCustomHeader, renderHeader)()}
+        </Container>
         <MonacoEditor
           name={fileName}
           width={width}

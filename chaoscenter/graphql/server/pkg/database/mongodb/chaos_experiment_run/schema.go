@@ -22,6 +22,7 @@ type ChaosExperimentRun struct {
 	FaultsStopped   *int     `bson:"faults_stopped,omitempty"`
 	FaultsNA        *int     `bson:"faults_na,omitempty"`
 	TotalFaults     *int     `bson:"total_faults,omitempty"`
+	RunSequence     int      `bson:"run_sequence"`
 	Completed       bool     `bson:"completed"`
 }
 

@@ -38,6 +38,11 @@ export interface NameDescriptionTagsProps {
   tagsProps?: Partial<ITagInputProps> & {
     isOption?: boolean;
   };
+  disabledFields?: {
+    name?: boolean;
+    description?: boolean;
+    tags?: boolean;
+  };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formikProps: FormikProps<any>;
   className?: string;
@@ -48,6 +53,7 @@ export interface NameDescriptionTagsProps {
 interface NameProps {
   nameLabel?: string; // Strong default preference for "Name" vs. Contextual Name (e.g. "Service Name") unless approved otherwise
   namePlaceholder?: string;
+  isDisabled?: boolean;
   inputGroupProps?: IInputGroupProps;
   dataTooltipId?: string;
   placeholder?: string;
@@ -64,13 +70,13 @@ interface NameIdProps {
 
 export const Name = (props: NameProps): JSX.Element => {
   const { getString } = useStrings();
-  const { nameLabel = getString('name'), inputGroupProps = {} } = props;
+  const { nameLabel = getString('name'), inputGroupProps = {}, isDisabled } = props;
 
   const newInputGroupProps = {
     placeholder: props.namePlaceholder || getString('nameIdDescriptionTags.namePlaceholder'),
     ...inputGroupProps
   };
-  return <FormInput.Text name="name" label={nameLabel} inputGroup={newInputGroupProps} />;
+  return <FormInput.Text disabled={isDisabled} name="name" label={nameLabel} inputGroup={newInputGroupProps} />;
 };
 
 export const NameId = (props: NameIdProps): JSX.Element => {
@@ -129,7 +135,7 @@ export const Description = (props: DescriptionComponentProps): JSX.Element => {
 };
 
 export const Tags = (props: TagsComponentProps): JSX.Element => {
-  const { tagsProps, hasValue, isOptional = true } = props;
+  const { tagsProps, hasValue, isDisabled, isOptional = true } = props;
   const { getString } = useStrings();
   const [isTagsOpen, setTagsOpen] = useState<boolean>(hasValue || false);
 
@@ -152,7 +158,7 @@ export const Tags = (props: TagsComponentProps): JSX.Element => {
           />
         )}
       </Label>
-      {isTagsOpen && <FormInput.KVTagInput name="tags" isArray={true} tagsProps={tagsProps} />}
+      {isTagsOpen && <FormInput.KVTagInput name="tags" disabled={isDisabled} isArray={true} tagsProps={tagsProps} />}
     </Container>
   );
 };
@@ -234,6 +240,7 @@ export default function NameDescriptionTags(props: NameDescriptionTagsProps): JS
     descriptionProps,
     tagsProps,
     formikProps,
+    disabledFields,
     inputGroupProps = {},
     tooltipProps,
     marginBottom
@@ -241,13 +248,15 @@ export default function NameDescriptionTags(props: NameDescriptionTagsProps): JS
   const newInputGroupProps = { placeholder: getString('nameIdDescriptionTags.namePlaceholder'), ...inputGroupProps };
   return (
     <Container className={cx(css.main, { [css.withMargin]: marginBottom }, className)}>
-      <Name inputGroupProps={newInputGroupProps} />
+      <Name isDisabled={disabledFields?.name} inputGroupProps={newInputGroupProps} />
       <Description
+        disabled={disabledFields?.description}
         descriptionProps={descriptionProps}
         hasValue={!!formikProps?.values.description}
         dataTooltipId={tooltipProps?.dataTooltipId ? `${tooltipProps.dataTooltipId}_description` : undefined}
       />
       <Tags
+        isDisabled={disabledFields?.tags}
         tagsProps={tagsProps}
         isOptional={tagsProps?.isOption}
         hasValue={!isEmpty(formikProps?.values.tags)}

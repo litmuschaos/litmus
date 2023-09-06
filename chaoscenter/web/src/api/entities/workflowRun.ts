@@ -66,6 +66,7 @@ export interface ExperimentRun extends Audit {
   experimentType: ExperimentType;
   phase: ExperimentRunStatus;
   resiliencyScore?: number;
+  runSequence?: number;
   faultsPassed?: number;
   faultsFailed?: number;
   faultsAwaited?: number;

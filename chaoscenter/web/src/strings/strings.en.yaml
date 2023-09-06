@@ -26,11 +26,16 @@ actualResilienceScore: Actual Resilience Score
 add: Add
 addExperimentToChaosHub: Add Experiment to ChaosHub
 addNewCluster: Add new cluster (Coming soon!)
+addNewCustomizedProbes: Add new customized probes to the fault
+addNewProbes: Select or Add new probes
 addNodeSelectorAgentDeployment: Add NodeSelector in Chaos Infrastructure deployment
+addOrClick: Add a probe, or click on a probe to view its details
 addProbe: Add Probe
 addResilienceStep: Add Resilience Step
 addRow: Add Row
+addSystemProbe: Add a System Probe
 addToChaosHub: Add to ChaosHub
+addToFault: Add to Fault
 addToTemplate: Add to Template
 addTolerationAgentDeployment: Add Toleration in Chaos Infrastructure deployment
 addViewSummaryNotes: Add/View Summary Notes
@@ -39,6 +44,7 @@ advanced: Advanced (Optional)
 advancedOptions: Advanced Options
 all: All
 allChaosEnabled: All Chaos Enabled Infrastructures
+allExecutions: All Executions
 allFaultsExecuted: All your faults executed without any issue
 allRuns: All Runs
 alreadyExists: '{{value}} already exists'
@@ -51,6 +57,7 @@ apply: Apply
 applyChanges: Apply Changes
 at: At
 atAGlance: At a Glance
+attempt: Attempt
 authentication: Authentication
 authenticationType: Authentication Type
 averageResilienceScore: Average Resilience Score
@@ -116,6 +123,7 @@ checkStatus: Check the status of your Chaos Infrastructure on your cluster
 chooseAccessType: Choose Access Type
 chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
+chooseProbeMode: Choose Mode for probe to be executed
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
   where you have kubectl installed and have access to your Kubernetes cluster.
@@ -245,6 +253,7 @@ disableUser: Disable User
 disableUserDescription: Are you sure you want to disable this user?
 discard: Discard
 discardExperiment: Are you sure you want to discard the current experiment?
+discardProbeConfiguration: Discard all probe configurations which are currently entered?
 disconnectDescriptionClusterMode: Disable Chaos for this cluster.
 disconnectDescriptionNamespaceMode: Disable Chaos for this namespace.
 disconnected: Disconnected
@@ -314,11 +323,13 @@ environments: Environments
 error: Error
 errorApplyChanges: Error in Applying the Changes. Please enter correct input values.
 errorFetchName: Error in fetching the name.
+evaluationTimeout: Evaluation timeout
 executedBy: Executed by
 executedOn: Executed on
 executionDetails: Execution details goes here
 executionError: Execution Error
 executionHistory: Execution History
+executionID: Execution ID
 executionOverview: Execution Overview
 executionStatus: Execution Status
 exhausted: Exhausted
@@ -416,6 +427,7 @@ hubEditedSuccessfully: Hub Edited Successfully
 hubName: Hub Name
 hubRepositoryBranch: Hub Repository Branch
 hubRepositoryURL: Repository URL
+hypothesis: hypothesis
 id: ID
 idlowerCase: id
 imageRegistry: Image Registry
@@ -438,6 +450,7 @@ infrastructureRegistered: >-
   Environment -> Infrastructure list.
 infrastructureStates: Learn more about the states of Infrastructure
 infrastructureType: Infrastructure type
+initialDelay: Initial Delay
 initialDelaySeconds: Initial Delay Seconds
 insecureSkipVerify: Insecure skip verify
 installYaml: Install Chaos Infrastructure using YML
@@ -515,6 +528,7 @@ manifestDownloadUnsuccessful: Manifest download is unavailable!
 manifestMissing: Manifest is missing! Please check your ChaosHub.
 manual: Manual
 manualInterruption: Manual Interruption needed
+manually: '| Manually'
 markRunAsComplete: Mark Run as Complete
 markRunAsCompleteDescription: This will mark the run as complete and you will no longer be able to re-run.
 meetsExpectations: The resilience score has met the expectation.
@@ -593,6 +607,7 @@ noData:
   title: No Data Found
 noDataCV: No Data
 noDataToDisplay: No data to display
+noDescriptionProvided: No description provided
 noExpFound: No Predefined Chaos Experiments found using this Fault.
 noExperimentFoundMatchingSearch: No experiment found matching your search
 noExperimentSelected: No experiment selected
@@ -615,6 +630,12 @@ noProbeDescription: >-
   Chaos Fault. The experiment pods execute these checks based on the mode they
   are defined in &amp; factor their success as necessary conditions in
   determining the verdict of the experiment
+noProbeExecution: No Probe executions found
+noProbeExecutionDetails:
+  subtitle: >-
+    Probes are pluggable checks that can be defined within the ChaosEngine for
+    any Chaos Experiment
+  title: There are no executions for the selected probe in your project
 noProbes: No probes configured
 noProbesAvailable: No Probes available for this node
 noProbesFound:
@@ -647,6 +668,7 @@ notMeetsExpectations: The resilience score didn't meet the expectation.
 notMeetsExpectationsInterventionNeeded: >-
   The resilience score did not meet the expectation. It needs the manual
   intervention.
+notStarted: NOT STARTED
 notes: Notes
 numberOfExperiments: Number of Experiments
 objective: Objective
@@ -689,22 +711,48 @@ phase: Phase
 platform: Platform
 pleaseComplete: Please complete all the steps
 pleaseSelectLeastOneExperiment: Please select at least one experiment
+pleaseSpecifyYAMLValues: Please specify the values in the YAML script
 points: point(s)
 pollingInterval: Polling Interval
 preProd: Pre-Prod
 predefinedExperimentsNotFound: No Predefined Experiments found in this hub
 preview: Preview
 private: Private
+probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
 probeDetails: Probe Details
+probeExecutionPreview: PROBE EXECUTION PREVIEW
+probeInFault: Probe in fault
+probeMetadataExists: >-
+  Probe metadata already exists in the experiment manifest, recommended to use
+  probe annotations instead otherwise you won't get any analytics
 probeMode: Probe Mode
+probeModeAlreadyExists: is already present with the same mode
 probeModes:
   Continuous: Continuous
+  ContinuousDesc: >-
+    The probe is executed continuously, with a specified polling interval during
+    the chaos injection.
   EOT: EOT
+  EOTDesc: >-
+    The probe will check hypothesis at the End of the Test as a as a post-chaos
+    check.
+  EOTVerbose: End of Test (EOT)
   Edge: Edge
+  EdgeDesc: The probe will check hypothesis both before and after the Test.
   OnChaos: OnChaos
+  OnChaosDesc: >-
+    The probe is executed continuously, with a specified polling interval
+    strictly for chaos duration of chaos
   SOT: SOT
+  SOTDesc: >-
+    The probe will check hypothesis at the Start of the Test as a as a pre-chaos
+    check.
+  SOTVerbose: Start of Test (SOT)
 probeName: Probe Name
+probeNotAttachedToRef: >-
+  is not attached to a proper reference, please add it to annotations as
+  probeRef
 probeOverview: Probe Overview
 probePassedSuccessfully: Probe passed successfully
 probeProperties: Probe Properties
@@ -721,9 +769,10 @@ probeTypes:
   k8sProbe: K8S Probe
   promProbe: Prometheus Probe
 probeValidation:
-  body: POST body is a required field
+  accountIdentifier: Account identifier is a required field
+  apiTokenSecret: API Token Secret is a required field
+  apiTokenSecretName: API Token Secret Name is a required field
   command: Probe command is a required field
-  contentType: Content Type is a required field
   criteria: Comparator criteria is a required field
   endpoint: Probe endpoint is a required field
   getCriteria: GET Criteria is a required field
@@ -731,17 +780,19 @@ probeValidation:
   interval: Probe interval is a required field
   method: Probe method is a required field
   name: Probe Name is a required field
-  namespace: Probe namespace is a required field
-  pollingInterval: Probe polling interval is a required field
+  operation: Probe operation is a required field
+  orgIdentifier: Organization identifier is a required field
+  platformEndpoint: Platform endpoint is a required field
   postCriteria: POST Criteria is a required field
   postResponseCode: POST Response Code is a required field
-  query: Probe query is a required field
-  responseTimeout: Probe response timeout is a required field
-  retry: Retry is a required field
+  projectIdentifier: Project identifier is a required field
+  resource: Probe resource is a required field
+  timeFrame: Time Frame is a required field
   timeout: Probe timeout is a required field
   type: Comparator type is a required field
   url: URL is a required field
   value: Comparator value is a required field
+  version: Probe version is a required field
 probes: Probes
 probesArePassed: probes are passed
 prod: Prod
@@ -871,6 +922,7 @@ seeAllChaosHubs: See All ChaosHubs
 seeAllChaosInfrastructures: See All Infrastructures
 seeAllEnvironments: See All Environments
 seeAllFaults: See All Faults
+selectAProbe: Select a Probe
 selectAppKind: Select App Kind
 selectAppLabel: Select App Label
 selectAppNamespace: Select App Namespace
@@ -890,6 +942,7 @@ selectTimeframe: Select time frame
 selectYourProbe: Select your chaos probe
 selectYourProbeType: Select your probe type
 selectedExperiments: Selected Experiments
+selectedProbe: Selected Probe
 sequence: Sequence
 serviceAccount: Service Account
 serviceAccountName: Service Account Name
@@ -908,6 +961,10 @@ showingLastRuns: Showing last 50 runs only
 signOut: Sign Out
 singleRun: Single Run
 source: Source
+sourceModeDesction: >-
+  Source mode is where the command execution is carried out from within a new
+  pod whose image is specified. This is preferred when application-specific
+  binaries are required.
 specificNamespaceAccess: Specific namespace access
 ssh: SSH
 sshKey: SSH Key
@@ -943,6 +1000,7 @@ success: Success
 successSummary: Success Summary
 suggestion1: Here is what you can do
 summary: Summary
+supportedFaultTypes: 'Supported fault types:'
 switchToBarChart: Switch to bar chart
 switchToLineChart: Switch to line chart
 syncLatestRun: Sync Latest Run
@@ -960,9 +1018,12 @@ templateFromProjectDescription: Use experiments available in your Project
 templateFromProjectTitle: Templates from Project
 testConnection: Test Connection
 testSuccess: Chaos Infrastructure connection validated successfully
+testYour1: Test your
+testYour2: of the experiment against the result
 testingConnection: Testing Chaos Infrastructure Connection
 thisExperimentHasNoRuns: This experiment has no runs yet
 timeout: Timeout
+toBeDefined: (To be defined)
 toleration:
   effectPlaceholder: Enter effect
   keyPlaceholder: Enter key

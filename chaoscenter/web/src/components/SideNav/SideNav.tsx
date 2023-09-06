@@ -97,6 +97,7 @@ export default function SideNav(): ReactElement {
           <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
           <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
           <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
+          <SidebarLink label={'Resilience Probes'} to={paths.toChaosProbes()} />
           <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
             <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
             <SidebarLink label={'Gitops'} to={paths.toGitops()} />

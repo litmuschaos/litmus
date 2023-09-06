@@ -20,6 +20,8 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 
 	var bl_true = true
 
+	//self_deployer.StartDeployer(projectID, operator)
+
 	irOp := image_registry.NewImageRegistryOperator(operator)
 	irService := image_registry2.NewImageRegistryService(irOp)
 	_, err := irService.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
