@@ -396,8 +396,9 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 				CreatedBy: &model.UserDetails{
 					UserID: v.CreatedBy,
 				},
-				UpdatedAt: strconv.FormatInt(v.UpdatedAt, 10),
-				CreatedAt: strconv.FormatInt(v.CreatedAt, 10),
+				UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
+				CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
+				RunSequence: v.RunSequence,
 			})
 		}
 	}
@@ -758,8 +759,9 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					CreatedBy: &model.UserDetails{
 						Username: v.UpdatedBy,
 					},
-					UpdatedAt: strconv.FormatInt(v.UpdatedAt, 10),
-					CreatedAt: strconv.FormatInt(v.CreatedAt, 10),
+					UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
+					CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
+					RunSequence: v.RunSequence,
 				})
 			}
 		}

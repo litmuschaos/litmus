@@ -4,3 +4,6 @@ export * from './listProbe';
 export * from './deleteProbe';
 export * from './addProbe';
 export * from './updateProbe';
+export * from './getProbeReference';
+export * from './getProbesInExperimentRun';
+export * from './validateUniqueProbe';

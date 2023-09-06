@@ -1,36 +1,42 @@
 import React from 'react';
 import * as Yup from 'yup';
 import { FontVariation, Color } from '@harnessio/design-system';
-import { Layout, FormInput, ButtonVariation, Text, Container, Button } from '@harnessio/uicore';
+import { Layout, FormInput, ButtonVariation, Text, Container, Button, SelectOption } from '@harnessio/uicore';
 import { Form, Formik } from 'formik';
+import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';
-import { useSearchParams } from '@hooks';
-import experimentYamlService, { KubernetesYamlService } from 'services/experiment';
+import experimentYamlService from 'services/experiment';
 import { InfrastructureType } from '@api/entities';
+import { useSearchParams } from '@hooks';
 import type { StepData, StepProps } from './AddProbeStepWizard';
 
 export const ProbeOverviewStep: React.FC<StepProps<StepData>> = props => {
   const { getString } = useStrings();
+  const { experimentKey } = useParams<{ experimentKey: string }>();
+
   const searchParams = useSearchParams();
   const infrastructureType =
     (searchParams.get('infrastructureType') as InfrastructureType | undefined) ?? InfrastructureType.KUBERNETES;
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
 
   const totalSteps = props.totalSteps?.();
   const currentStep = props.currentStep?.();
   const { formData, name, faultData } = props;
 
+  const probeList: SelectOption[] = [
+    { label: getString('probeTypes.httpProbe'), value: 'httpProbe' },
+    { label: getString('probeTypes.k8sProbe'), value: 'k8sProbe' },
+    { label: getString('probeTypes.promProbe'), value: 'promProbe' },
+    { label: getString('probeTypes.cmdProbe'), value: 'cmdProbe' }
+  ];
+
   Yup.addMethod(Yup.string, 'probeNameExists', function (errorMessage) {
-    return this.test(`test-probe-name-duplicate`, errorMessage, function (value) {
+    return this.test(`test-probe-name-duplicate`, errorMessage, async function (value) {
       const { path, createError } = this;
-      const manifest = faultData?.engineCR;
-      if (infrastructureType === InfrastructureType.KUBERNETES) {
-        return (
-          !(experimentHandler as KubernetesYamlService)?.doesProbeNameExist(manifest, value ?? '') ||
-          createError({ path, message: errorMessage })
-        );
-      }
-      return false;
+
+      return (await experimentHandler?.doesProbeNameExist(experimentKey, faultData?.faultName, value))
+        ? createError({ path, message: errorMessage })
+        : true;
     });
   });
 
@@ -78,12 +84,7 @@ export const ProbeOverviewStep: React.FC<StepProps<StepData>> = props => {
                     label={getString('probeType')}
                     placeholder={formData.type}
                     tooltipProps={{ dataTooltipId: 'chaos_probe_type' }}
-                    items={[
-                      { label: getString('probeTypes.httpProbe'), value: 'httpProbe' },
-                      { label: getString('probeTypes.k8sProbe'), value: 'k8sProbe' },
-                      { label: getString('probeTypes.promProbe'), value: 'promProbe' },
-                      { label: getString('probeTypes.cmdProbe'), value: 'cmdProbe' }
-                    ]}
+                    items={probeList}
                   />
 
                   <FormInput.Select

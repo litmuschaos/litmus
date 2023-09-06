@@ -16,16 +16,19 @@ import { useStrings } from '@strings';
 import type { ErrorOutput, FailureOutput } from '@models';
 import LogsTabController from '@controllers/LogsTab';
 import Duration from '@components/Duration';
+import type { ProbeInRuns } from '@api/core';
 import FaultConfigurationTab from './Tabs/FaultConfigurationTab';
 import ProbesTab from './Tabs/ProbesTab';
 import css from './ExperimentRunDetailsPanel.module.scss';
 
 interface ExperimentRunDetailsPanelProps extends DetailsTabProps {
+  probeData: ProbeInRuns[] | undefined;
   setSelectedNodeID: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface DetailsTabProps {
   node: Node | undefined;
+  probeData: ProbeInRuns[] | undefined;
   experimentRunID: string | undefined;
   infraID: string | undefined;
   namespace: string | undefined;
@@ -43,6 +46,7 @@ const DetailsTabs = ({
   infraID,
   podID,
   manifest,
+  probeData,
   loading
 }: DetailsTabProps): React.ReactElement => {
   const { getString } = useStrings();
@@ -65,6 +69,7 @@ const DetailsTabs = ({
             panel: (
               <ProbesTab
                 loading={loading}
+                probeData={probeData}
                 manifest={manifest}
                 nodeName={node?.name}
                 probeStatuses={chaosResult?.status?.probeStatuses}
@@ -105,6 +110,7 @@ const ExperimentRunDetailsPanel = ({
   phase,
   namespace,
   infraID,
+  probeData,
   podID,
   manifest,
   loading,
@@ -252,6 +258,7 @@ const ExperimentRunDetailsPanel = ({
           node={node}
           manifest={manifest}
           podID={podID}
+          probeData={probeData}
           experimentRunID={experimentRunID}
           infraID={infraID}
           loading={loading}

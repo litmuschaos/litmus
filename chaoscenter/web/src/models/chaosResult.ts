@@ -27,7 +27,7 @@ export type ResultPhase = 'Running' | 'Completed' | 'Stopped';
 // ResultVerdict is typecasted to string for supporting the values below.
 export type ResultVerdict = 'Pass' | 'Fail' | 'Stopped' | 'Awaited';
 
-export type ProbeVerdict = 'Passed' | 'Failed' | 'N/A' | 'Awaited';
+export type ProbeVerdict = 'Passed' | 'Failed' | 'N/A' | 'NA' | 'Awaited';
 
 // ChaosResultStatus defines the observed state of ChaosResult
 export interface ChaosResultStatus {

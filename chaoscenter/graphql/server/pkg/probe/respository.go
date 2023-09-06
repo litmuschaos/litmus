@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
 
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -27,7 +29,7 @@ import (
 type ProbeInterface interface {
 	AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.Probe, error)
 	UpdateProbe(ctx context.Context, probe model.ProbeRequest) (string, error)
-	ListProbes(ctx context.Context, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error)
+	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput) ([]*model.Probe, error)
 	DeleteProbe(ctx context.Context, probeName string) (bool, error)
 	GetProbe(ctx context.Context, probeName string) (*model.Probe, error)
 	GetProbeReference(ctx context.Context, probeName string) (*model.GetProbeReferenceResponse, error)
@@ -85,21 +87,21 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 			CreatedBy: username,
 			UpdatedBy: username,
 		},
-		Type: dbSchemaProbe.ProbeType(probe.Type),
+		Type:               dbSchemaProbe.ProbeType(probe.Type),
+		InfrastructureType: probe.InfrastructureType,
 	}
-
 	// Check the respective probe type and modify the property response based on the type
-	if probe.Type == model.ProbeTypeHTTPProbe && probe.HTTPProperties != nil {
-		addHTTPProbeProperties(newProbe, probe)
-	} else if probe.Type == model.ProbeTypeCmdProbe && probe.CmdProperties != nil {
-		addCMDProbeProperties(newProbe, probe)
+	if probe.Type == model.ProbeTypeHTTPProbe && probe.KubernetesHTTPProperties != nil {
+		addKubernetesHTTPProbeProperties(newProbe, probe)
+	} else if probe.Type == model.ProbeTypeCmdProbe && probe.KubernetesCMDProperties != nil {
+		addKubernetesCMDProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypePromProbe && probe.PromProperties != nil {
 		addPROMProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeK8sProbe && probe.K8sProperties != nil {
 		addK8SProbeProperties(newProbe, probe)
-	} else if probe.Type == model.ProbeTypeHTTPProbe && probe.HTTPProperties == nil {
+	} else if probe.Type == model.ProbeTypeHTTPProbe && probe.KubernetesHTTPProperties == nil {
 		return nil, Error(logFields, "http probe type's properties are empty")
-	} else if probe.Type == model.ProbeTypeCmdProbe && probe.CmdProperties == nil {
+	} else if probe.Type == model.ProbeTypeCmdProbe && probe.KubernetesCMDProperties == nil {
 		return nil, Error(logFields, "cmd probe type's properties are empty")
 	} else if probe.Type == model.ProbeTypePromProbe && probe.PromProperties == nil {
 		return nil, Error(logFields, "prom probe type's properties are empty")
@@ -126,21 +128,6 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 		return "", err
 	}
 
-	logFields := logrus.Fields{
-		"projectId": p.ProjectID,
-		"probeName": pr.Name,
-	}
-	uniqueProbe, err := p.ValidateUniqueProbe(ctx, request.Name)
-	if err != nil {
-		return "", err
-	} else if uniqueProbe == true {
-		return "", Error(logFields, "probe name doesn't exist")
-	}
-
-	if request.Type != model.ProbeType(pr.Type) {
-		return "", Error(logFields, "mismatched probe types")
-	}
-
 	// Shared Properties
 	newProbe := &dbSchemaProbe.Probe{
 		ResourceDetails: mongodb.ResourceDetails{
@@ -156,21 +143,26 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 			CreatedBy: pr.CreatedBy,
 			UpdatedBy: username,
 		},
-		Type: pr.Type,
+		Type:               pr.Type,
+		InfrastructureType: pr.InfrastructureType,
 	}
 
-	// Check the respective probe type and modify the property response based on the type
-	if request.Type == model.ProbeTypeHTTPProbe && request.HTTPProperties != nil {
-		addHTTPProbeProperties(newProbe, request)
-	} else if request.Type == model.ProbeTypeCmdProbe && request.CmdProperties != nil {
-		addCMDProbeProperties(newProbe, request)
-	} else if request.Type == model.ProbeTypePromProbe && request.PromProperties != nil {
-		addPROMProbeProperties(newProbe, request)
-	} else if request.Type == model.ProbeTypeK8sProbe && request.K8sProperties != nil {
-		addK8SProbeProperties(newProbe, request)
-	} else if request.Type == model.ProbeTypeHTTPProbe && request.HTTPProperties == nil {
+	if pr.InfrastructureType == model.InfrastructureTypeKubernetes {
+		switch model.ProbeType(pr.Type) {
+		case model.ProbeTypeHTTPProbe:
+			addKubernetesHTTPProbeProperties(newProbe, request)
+		case model.ProbeTypeCmdProbe:
+			addKubernetesCMDProbeProperties(newProbe, request)
+		case model.ProbeTypePromProbe:
+			addPROMProbeProperties(newProbe, request)
+		case model.ProbeTypeK8sProbe:
+			addK8SProbeProperties(newProbe, request)
+		}
+	}
+
+	if request.Type == model.ProbeTypeHTTPProbe && request.KubernetesHTTPProperties == nil {
 		return "", errors.New("http probe type's properties are empty")
-	} else if request.Type == model.ProbeTypeCmdProbe && request.CmdProperties == nil {
+	} else if request.Type == model.ProbeTypeCmdProbe && request.KubernetesCMDProperties == nil {
 		return "", errors.New("cmd probe type's properties are empty")
 	} else if request.Type == model.ProbeTypePromProbe && request.PromProperties == nil {
 		return "", errors.New("prom probe type's properties are empty")
@@ -224,72 +216,72 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(probeRequest.Mode)
 		_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
-			URL: probe.HTTPProperties.URL,
+			URL: probe.KubernetesHTTPProperties.URL,
 		}
 
-		if probe.HTTPProperties.InsecureSkipVerify != nil {
-			_probe.HTTPProbeInputs.InsecureSkipVerify = *probe.HTTPProperties.InsecureSkipVerify
+		if probe.KubernetesHTTPProperties.InsecureSkipVerify != nil {
+			_probe.HTTPProbeInputs.InsecureSkipVerify = *probe.KubernetesHTTPProperties.InsecureSkipVerify
 		}
 
-		if probe.HTTPProperties.Method.GET != nil {
+		if probe.KubernetesHTTPProperties.Method.GET != nil {
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				Method: v1alpha1.HTTPMethod{
 					Get: &v1alpha1.GetMethod{
-						Criteria:     probe.HTTPProperties.Method.GET.Criteria,
-						ResponseCode: probe.HTTPProperties.Method.GET.ResponseCode,
+						Criteria:     probe.KubernetesHTTPProperties.Method.GET.Criteria,
+						ResponseCode: probe.KubernetesHTTPProperties.Method.GET.ResponseCode,
 					},
 				},
 			}
-		} else if probe.HTTPProperties.Method.POST != nil {
+		} else if probe.KubernetesHTTPProperties.Method.POST != nil {
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				Method: v1alpha1.HTTPMethod{
 					Post: &v1alpha1.PostMethod{
-						Criteria:     probe.HTTPProperties.Method.POST.Criteria,
-						ResponseCode: probe.HTTPProperties.Method.POST.ResponseCode,
+						Criteria:     probe.KubernetesHTTPProperties.Method.POST.Criteria,
+						ResponseCode: probe.KubernetesHTTPProperties.Method.POST.ResponseCode,
 					},
 				},
 			}
 
-			if probe.HTTPProperties.Method.POST.ContentType != nil {
-				_probe.HTTPProbeInputs.Method.Post.ContentType = *probe.HTTPProperties.Method.POST.ContentType
+			if probe.KubernetesHTTPProperties.Method.POST.ContentType != nil {
+				_probe.HTTPProbeInputs.Method.Post.ContentType = *probe.KubernetesHTTPProperties.Method.POST.ContentType
 			}
 
-			if probe.HTTPProperties.Method.POST.Body != nil {
-				_probe.HTTPProbeInputs.Method.Post.Body = *probe.HTTPProperties.Method.POST.Body
+			if probe.KubernetesHTTPProperties.Method.POST.Body != nil {
+				_probe.HTTPProbeInputs.Method.Post.Body = *probe.KubernetesHTTPProperties.Method.POST.Body
 			}
 
-			if probe.HTTPProperties.Method.POST.BodyPath != nil {
-				_probe.HTTPProbeInputs.Method.Post.BodyPath = *probe.HTTPProperties.Method.POST.BodyPath
+			if probe.KubernetesHTTPProperties.Method.POST.BodyPath != nil {
+				_probe.HTTPProbeInputs.Method.Post.BodyPath = *probe.KubernetesHTTPProperties.Method.POST.BodyPath
 			}
 		}
 
 		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.HTTPProperties.ProbeTimeout,
-			Interval:     probe.HTTPProperties.Interval,
+			ProbeTimeout: probe.KubernetesHTTPProperties.ProbeTimeout,
+			Interval:     probe.KubernetesHTTPProperties.Interval,
 		}
 
-		if probe.HTTPProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.HTTPProperties.Retry
+		if probe.KubernetesHTTPProperties.Retry != nil {
+			_probe.RunProperties.Retry = *probe.KubernetesHTTPProperties.Retry
 		}
 
-		if probe.HTTPProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.HTTPProperties.Attempt
+		if probe.KubernetesHTTPProperties.Attempt != nil {
+			_probe.RunProperties.Attempt = *probe.KubernetesHTTPProperties.Attempt
 		}
 
-		if probe.HTTPProperties.PollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.HTTPProperties.PollingInterval
+		if probe.KubernetesHTTPProperties.PollingInterval != nil {
+			_probe.RunProperties.ProbePollingInterval = *probe.KubernetesHTTPProperties.PollingInterval
 		}
 
-		if probe.HTTPProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.HTTPProperties.EvaluationTimeout
+		if probe.KubernetesHTTPProperties.EvaluationTimeout != nil {
+			_probe.RunProperties.EvaluationTimeout = *probe.KubernetesHTTPProperties.EvaluationTimeout
 		}
 
-		if probe.HTTPProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.HTTPProperties.InitialDelay
+		if probe.KubernetesHTTPProperties.InitialDelay != nil {
+			_probe.RunProperties.InitialDelay = *probe.KubernetesHTTPProperties.InitialDelay
 		}
 
-		if probe.HTTPProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.HTTPProperties.StopOnFailure
+		if probe.KubernetesHTTPProperties.StopOnFailure != nil {
+			_probe.RunProperties.StopOnFailure = *probe.KubernetesHTTPProperties.StopOnFailure
 		}
 
 		y, err := yaml.Marshal(_probe)
@@ -306,59 +298,59 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 		_probe.Type = string(probe.Type)
 		_probe.Mode = string(probeRequest.Mode)
 		_probe.CmdProbeInputs = v1alpha1.CmdProbeInputs{
-			Command: probe.CMDProperties.Command,
+			Command: probe.KubernetesCMDProperties.Command,
 			Comparator: v1alpha1.ComparatorInfo{
-				Type:     probe.CMDProperties.Comparator.Type,
-				Criteria: probe.CMDProperties.Comparator.Criteria,
-				Value:    probe.CMDProperties.Comparator.Value,
+				Type:     probe.KubernetesCMDProperties.Comparator.Type,
+				Criteria: probe.KubernetesCMDProperties.Comparator.Criteria,
+				Value:    probe.KubernetesCMDProperties.Comparator.Value,
 			},
 		}
 
-		if probe.CMDProperties.Source != nil {
+		if probe.KubernetesCMDProperties.Source != nil {
 			// TODO: Add source volume and volume mount types
 			_probe.CmdProbeInputs.Source = &v1alpha1.SourceDetails{
-				Image:            probe.CMDProperties.Source.Image,
-				HostNetwork:      probe.CMDProperties.Source.HostNetwork,
-				InheritInputs:    probe.CMDProperties.Source.InheritInputs,
-				Args:             probe.CMDProperties.Source.Args,
-				ENVList:          probe.CMDProperties.Source.ENVList,
-				Labels:           probe.CMDProperties.Source.Labels,
-				Annotations:      probe.CMDProperties.Source.Annotations,
-				Command:          probe.CMDProperties.Source.Command,
-				ImagePullPolicy:  probe.CMDProperties.Source.ImagePullPolicy,
-				Privileged:       probe.CMDProperties.Source.Privileged,
-				NodeSelector:     probe.CMDProperties.Source.NodeSelector,
-				ImagePullSecrets: probe.CMDProperties.Source.ImagePullSecrets,
+				Image:            probe.KubernetesCMDProperties.Source.Image,
+				HostNetwork:      probe.KubernetesCMDProperties.Source.HostNetwork,
+				InheritInputs:    probe.KubernetesCMDProperties.Source.InheritInputs,
+				Args:             probe.KubernetesCMDProperties.Source.Args,
+				ENVList:          probe.KubernetesCMDProperties.Source.ENVList,
+				Labels:           probe.KubernetesCMDProperties.Source.Labels,
+				Annotations:      probe.KubernetesCMDProperties.Source.Annotations,
+				Command:          probe.KubernetesCMDProperties.Source.Command,
+				ImagePullPolicy:  probe.KubernetesCMDProperties.Source.ImagePullPolicy,
+				Privileged:       probe.KubernetesCMDProperties.Source.Privileged,
+				NodeSelector:     probe.KubernetesCMDProperties.Source.NodeSelector,
+				ImagePullSecrets: probe.KubernetesCMDProperties.Source.ImagePullSecrets,
 			}
 		}
 
 		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.CMDProperties.ProbeTimeout,
-			Interval:     probe.CMDProperties.Interval,
+			ProbeTimeout: probe.KubernetesCMDProperties.ProbeTimeout,
+			Interval:     probe.KubernetesCMDProperties.Interval,
 		}
 
-		if probe.CMDProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.CMDProperties.Retry
+		if probe.KubernetesCMDProperties.Retry != nil {
+			_probe.RunProperties.Retry = *probe.KubernetesCMDProperties.Retry
 		}
 
-		if probe.CMDProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.CMDProperties.Attempt
+		if probe.KubernetesCMDProperties.Attempt != nil {
+			_probe.RunProperties.Attempt = *probe.KubernetesCMDProperties.Attempt
 		}
 
-		if probe.CMDProperties.PollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.CMDProperties.PollingInterval
+		if probe.KubernetesCMDProperties.PollingInterval != nil {
+			_probe.RunProperties.ProbePollingInterval = *probe.KubernetesCMDProperties.PollingInterval
 		}
 
-		if probe.CMDProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.CMDProperties.EvaluationTimeout
+		if probe.KubernetesCMDProperties.EvaluationTimeout != nil {
+			_probe.RunProperties.EvaluationTimeout = *probe.KubernetesCMDProperties.EvaluationTimeout
 		}
 
-		if probe.CMDProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.CMDProperties.InitialDelay
+		if probe.KubernetesCMDProperties.InitialDelay != nil {
+			_probe.RunProperties.InitialDelay = *probe.KubernetesCMDProperties.InitialDelay
 		}
 
-		if probe.CMDProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.CMDProperties.StopOnFailure
+		if probe.KubernetesCMDProperties.StopOnFailure != nil {
+			_probe.RunProperties.StopOnFailure = *probe.KubernetesCMDProperties.StopOnFailure
 		}
 
 		y, err := yaml.Marshal(_probe)
@@ -495,7 +487,7 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 }
 
 // ListProbes - List a single/all Probes
-func (p *probe) ListProbes(ctx context.Context, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
+func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
 	var pipeline mongo.Pipeline
 
 	// Match the Probe Names from the input array
@@ -513,6 +505,18 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, filter *mod
 		pipeline = append(pipeline, matchProbeName)
 	}
 
+	// Match the Infra from the input array
+	if infrastructureType != nil {
+		matchProbeInfra := bson.D{
+			{
+				Key: "$match", Value: bson.D{
+					{"infrastructure_type", *infrastructureType},
+				},
+			},
+		}
+
+		pipeline = append(pipeline, matchProbeInfra)
+	}
 	// Match Filter options
 	if filter != nil {
 		// Filtering based on multi-select probe type
@@ -618,8 +622,6 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	var (
 		pipeline         mongo.Pipeline
 		expRuns          []dbChaosExperimentRun.ChaosExperimentRun
-		executionData    chaos_experiment.ExecutionData
-		probeStatusMap   = map[string]model.ProbeVerdict{}
 		recentExecutions []*model.ProbeRecentExecutions
 	)
 
@@ -645,59 +647,56 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 	}
 
 	for _, execution := range expRuns {
-		faultName := execution.Probes[0].FaultName
-
-		probeStatusMap = make(map[string]model.ProbeVerdict)
-
-		if err = json.Unmarshal([]byte(execution.ExecutionData), &executionData); err != nil {
-			return nil, errors.New("failed to unmarshal experiment manifest")
+		var executionData chaos_experiment.ExecutionData
+		if execution.ExecutionData != "" {
+			err = json.Unmarshal([]byte(execution.ExecutionData), &executionData)
+			if err != nil {
+				continue
+			}
 		}
+		for _, fault := range execution.Probes {
+			probeVerdict := model.ProbeVerdictNa
 
-		probeStatusMap[probeName] = model.ProbeVerdictNa
+			if !utils.ContainsString(fault.ProbeNames, probeName) {
+				continue
+			}
 
-		for _, probe := range execution.Probes {
-			if faultName == probe.FaultName {
-				if len(executionData.Nodes) > 0 {
+			if len(executionData.Nodes) > 0 {
+				for _, nodeData := range executionData.Nodes {
+					if fault.FaultName == nodeData.Name {
+						if (nodeData.Type == "ChaosEngine" || nodeData.Type == "LinuxTask") && nodeData.ChaosExp == nil {
+							probeVerdict = model.ProbeVerdictNa
+						} else if (nodeData.Type == "ChaosEngine" || nodeData.Type == "LinuxTask") && nodeData.ChaosExp != nil {
+							probeVerdict = model.ProbeVerdictNa
 
-					for _, nodeData := range executionData.Nodes {
-						if nodeData.Name == faultName {
-							if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp == nil {
-								probeStatusMap[probeName] = model.ProbeVerdictNa
-							} else if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp != nil {
-								probeStatusMap[probeName] = model.ProbeVerdictNa
-
-								if nodeData.ChaosExp.ChaosResult != nil {
-									probeStatusMap[probeName] = model.ProbeVerdictAwaited
-									probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
-
-									for _, probeStatus := range probeStatuses {
-
-										if probeStatus.Name == probeName {
-
-											switch probeStatus.Status.Verdict {
-											case v1alpha1.ProbeVerdictPassed:
-												probeStatusMap[probeName] = model.ProbeVerdictPassed
-											case v1alpha1.ProbeVerdictFailed:
-												probeStatusMap[probeName] = model.ProbeVerdictFailed
-											case v1alpha1.ProbeVerdictAwaited:
-												probeStatusMap[probeName] = model.ProbeVerdictAwaited
-											default:
-												probeStatusMap[probeName] = model.ProbeVerdictNa
-											}
+							if nodeData.ChaosExp.ChaosResult != nil {
+								probeVerdict = model.ProbeVerdictAwaited
+								probeStatuses := nodeData.ChaosExp
+								for _, probeStatus := range probeStatuses.ChaosResult.Status.ProbeStatuses {
+									if probeStatus.Name == probeName {
+										switch probeStatus.Status.Verdict {
+										case v1alpha1.ProbeVerdictPassed:
+											probeVerdict = model.ProbeVerdictPassed
+										case v1alpha1.ProbeVerdictFailed:
+											probeVerdict = model.ProbeVerdictFailed
+										case v1alpha1.ProbeVerdictAwaited:
+											probeVerdict = model.ProbeVerdictAwaited
+										default:
+											probeVerdict = model.ProbeVerdictNa
 										}
-
 									}
 								}
 							}
 						}
 					}
 				}
+				status := &model.Status{
+					Verdict: probeVerdict,
+				}
 
-				recentExecutions = append(recentExecutions, &model.ProbeRecentExecutions{
-					FaultName: faultName,
-					Status: &model.Status{
-						Verdict: probeStatusMap[probeName],
-					},
+				recentExecution := &model.ProbeRecentExecutions{
+					FaultName: fault.FaultName,
+					Status:    status,
 					ExecutedByExperiment: &model.ExecutedByExperiment{
 						ExperimentID:   execution.ExperimentID,
 						ExperimentName: execution.ExperimentName,
@@ -706,8 +705,8 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 							Username: execution.UpdatedBy,
 						},
 					},
-				})
-
+				}
+				recentExecutions = append(recentExecutions, recentExecution)
 			}
 		}
 	}
@@ -785,6 +784,7 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 							{"$project", bson.D{
 								{"experiment_name", 1},
 								{"probes.fault_name", 1},
+								{"probes.probe_names", 1},
 								{"phase", 1},
 								{"updated_at", 1},
 								{"updated_by", 1},
@@ -807,63 +807,59 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 	}
 
 	var (
-		totalRuns           = 0
-		executionData       chaos_experiment.ExecutionData
-		probeRuns           []dbSchemaProbe.ProbeWithExecutionHistory
-		recentExecutions    []*model.RecentExecutions
-		recentExecutionsMap = make(map[string][]*model.RecentExecutions)
+		totalRuns                = 0
+		probeRuns                []dbSchemaProbe.ProbeWithExecutionHistory
+		recentExecutions         []*model.RecentExecutions
+		recentExecutionsMap      = make(map[string][]*model.RecentExecutions)
+		executionHistoryResponse []*model.ExecutionHistory
 	)
 
 	if err = probeCursor.All(context.Background(), &probeRuns); err != nil {
 		return nil, err
 	}
 
-	for _, individualExecution := range probeRuns[0].ExecutionHistory {
-
-		faultName := individualExecution.Probes[0].FaultName
-		mode := "SOT"
-
+	for _, runs := range probeRuns[0].ExecutionHistory {
 		totalRuns++
-		var executionHistoryResponse []*model.ExecutionHistory
+		if len(runs.Probes) != 0 {
+			for _, fault := range runs.Probes {
+				if utils.ContainsString(fault.ProbeNames, probeName) {
+					var executionData chaos_experiment.ExecutionData
+					status := model.ProbeVerdictNa
+					mode := model.ModeSot
+					if runs.ExecutionData != "" {
+						err := json.Unmarshal([]byte(runs.ExecutionData), &executionData)
+						if err != nil {
+							continue
+						}
+						if len(executionData.Nodes) > 0 {
+							for _, nodeData := range executionData.Nodes {
+								if nodeData.Name == fault.FaultName {
+									if (nodeData.Type == "ChaosEngine" || nodeData.Type == "LinuxTask") && nodeData.ChaosExp == nil {
+										status = model.ProbeVerdictNa
+									} else if (nodeData.Type == "ChaosEngine" || nodeData.Type == "LinuxTask") && nodeData.ChaosExp != nil {
+										status = model.ProbeVerdictNa
 
-		for _, execution := range probeRuns[0].ExecutionHistory {
+										if nodeData.ChaosExp.ChaosResult != nil {
+											status = model.ProbeVerdictAwaited
+											probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
 
-			status := model.ProbeVerdictNa
-
-			if err = json.Unmarshal([]byte(execution.ExecutionData), &executionData); err != nil {
-				return nil, errors.New("failed to unmarshal experiment manifest")
-			}
-
-			for _, probe := range execution.Probes {
-				if faultName == probe.FaultName {
-					if len(executionData.Nodes) > 0 {
-						for _, nodeData := range executionData.Nodes {
-							if nodeData.Name == faultName {
-								if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp == nil {
-									status = model.ProbeVerdictNa
-								} else if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp != nil {
-									status = model.ProbeVerdictNa
-
-									if nodeData.ChaosExp.ChaosResult != nil {
-										status = model.ProbeVerdictAwaited
-										probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
-
-										for _, probeStatus := range probeStatuses {
-											if probeStatus.Name == probeRuns[0].Name {
-												mode = probeStatus.Mode
-												switch probeStatus.Status.Verdict {
-												case v1alpha1.ProbeVerdictPassed:
-													status = model.ProbeVerdictPassed
-													break
-												case v1alpha1.ProbeVerdictFailed:
-													status = model.ProbeVerdictFailed
-													break
-												case v1alpha1.ProbeVerdictAwaited:
-													status = model.ProbeVerdictAwaited
-													break
-												default:
-													status = model.ProbeVerdictNa
-													break
+											for _, probeStatus := range probeStatuses {
+												if probeStatus.Name == probeName {
+													mode = model.Mode(probeStatus.Mode)
+													switch probeStatus.Status.Verdict {
+													case v1alpha1.ProbeVerdictPassed:
+														status = model.ProbeVerdictPassed
+														break
+													case v1alpha1.ProbeVerdictFailed:
+														status = model.ProbeVerdictFailed
+														break
+													case v1alpha1.ProbeVerdictAwaited:
+														status = model.ProbeVerdictAwaited
+														break
+													default:
+														status = model.ProbeVerdictNa
+														break
+													}
 												}
 											}
 										}
@@ -871,39 +867,53 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 								}
 							}
 						}
+						executionHistoryResponse = append(executionHistoryResponse, &model.ExecutionHistory{
+							Mode:      mode,
+							FaultName: fault.FaultName,
+							Status: &model.Status{
+								Verdict: status,
+							},
+							ExecutedByExperiment: &model.ExecutedByExperiment{
+								ExperimentID:   runs.ExperimentID,
+								ExperimentName: runs.ExperimentName,
+								UpdatedAt:      runs.UpdatedAt,
+								UpdatedBy: &model.UserDetails{
+									Username: runs.UpdatedBy,
+								},
+							},
+						})
 					}
 
-					executionHistoryResponse = append(executionHistoryResponse, &model.ExecutionHistory{
-						Status: &model.Status{
-							Verdict: status,
-						},
-						ExecutedByExperiment: &model.ExecutedByExperiment{
-							ExperimentID:   execution.ExperimentID,
-							ExperimentName: execution.ExperimentName,
-							UpdatedAt:      execution.UpdatedAt,
-							//UpdatedBy:      harness.FilterUserDetails(execution.UpdatedBy, userDetails),
-						},
-					})
 				}
 			}
 		}
 
-		for i, j := 0, len(executionHistoryResponse)-1; i < j; i, j = i+1, j-1 {
-			j := len(executionHistoryResponse) - i - 1
-			executionHistoryResponse[i], executionHistoryResponse[j] = executionHistoryResponse[j], executionHistoryResponse[i]
-		}
+	}
 
-		recentExecutionsMap[faultName] = append(recentExecutionsMap[faultName], &model.RecentExecutions{
-			FaultName:        faultName,
-			Mode:             model.Mode(mode),
-			ExecutionHistory: executionHistoryResponse,
+	for _, exeHistory := range executionHistoryResponse {
+		recentExecutionsMap[exeHistory.FaultName] = append(recentExecutionsMap[exeHistory.FaultName], &model.RecentExecutions{
+			FaultName: exeHistory.FaultName,
+			Mode:      exeHistory.Mode,
 		})
 	}
 
-	for fault := range recentExecutionsMap {
-		if len(recentExecutionsMap[fault]) != 0 {
-			recentExecutions = append(recentExecutions, recentExecutionsMap[fault][0])
+	for name := range recentExecutionsMap {
+		var lastTenExecutions []*model.ExecutionHistory
+		for _, exeHistory := range executionHistoryResponse {
+			if exeHistory.FaultName == name {
+				lastTenExecutions = append(lastTenExecutions, exeHistory)
+			}
 		}
+
+		// Reverse the order to make the latest execution shift to the right
+		sort.Slice(lastTenExecutions, func(i, j int) bool {
+			return lastTenExecutions[i].ExecutedByExperiment.UpdatedAt > lastTenExecutions[j].ExecutedByExperiment.UpdatedAt
+		})
+		if len(lastTenExecutions) > 10 {
+			lastTenExecutions = lastTenExecutions[:10]
+		}
+		recentExecutionsMap[name][0].ExecutionHistory = lastTenExecutions
+		recentExecutions = append(recentExecutions, recentExecutionsMap[name][0])
 	}
 
 	sort.Slice(recentExecutions, func(i, j int) bool {
@@ -926,7 +936,6 @@ func (p *probe) ValidateUniqueProbe(ctx context.Context, probeName string) (bool
 	query := bson.D{
 		{"name", probeName},
 		{"project_id", p.ProjectID},
-		{"is_removed", false},
 	}
 
 	isUnique, err := dbSchemaProbe.IsProbeUnique(ctx, query)

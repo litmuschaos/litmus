@@ -1,18 +1,22 @@
 import { gql, useMutation } from '@apollo/client';
-import type { Identifiers, Probe, ProbeType } from '@api/entities';
+import type { InfrastructureType, Probe, ProbeType } from '@api/entities';
 import type { GqlAPIMutationRequest, GqlAPIMutationResponse } from '@api/types';
 
 export interface UpdateProbeRequest {
-  identifiers: Identifiers;
+  projectID: string;
   request: {
-    probeId: string;
     name: string;
     description?: string;
     tags?: Array<string>;
     type: ProbeType;
-    httpProperties?: Probe['httpProperties'];
-    cmdProperties?: Probe['cmdProperties'];
+    infrastructureType?: InfrastructureType;
+    // HTTP
+    kubernetesHTTPProperties?: Probe['kubernetesHTTPProperties'];
+    // CMD
+    kubernetesCMDProperties?: Probe['kubernetesCMDProperties'];
+    // K8S
     k8sProperties?: Probe['k8sProperties'];
+    // PROM
     promProperties?: Probe['promProperties'];
   };
 }
@@ -26,8 +30,8 @@ export function updateProbe(
 ): GqlAPIMutationResponse<UpdateProbeResponse, UpdateProbeRequest> {
   const [updateProbeMutation, result] = useMutation<UpdateProbeResponse, UpdateProbeRequest>(
     gql`
-      mutation updateProbe($request: ProbeRequest!, $identifiers: IdentifiersRequest!) {
-        updateProbe(request: $request, identifiers: $identifiers)
+      mutation updateProbe($request: ProbeRequest!, $projectID: ID!) {
+        updateProbe(request: $request, projectID: $projectID)
       }
     `,
     options
