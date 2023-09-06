@@ -118,6 +118,7 @@ export interface StringsMap {
   'chooseAccessType': unknown
   'chooseAuthenticationType': unknown
   'chooseHubAccess': unknown
+  'chooseProbeMode': unknown
   'clickDownload': unknown
   'clone': unknown
   'cloneExperiment': unknown

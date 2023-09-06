@@ -8,11 +8,13 @@ import type { Mode } from '@api/entities';
 interface ProbePropertiesControllerProps {
   probeName: string;
   mode: Mode;
+  isModeSelected: boolean;
 }
 
 export default function ProbePropertiesController({
   probeName,
-  mode
+  mode,
+  isModeSelected
 }: ProbePropertiesControllerProps): React.ReactElement {
   const { showError } = useToaster();
   const scope = getScope();
@@ -25,5 +27,7 @@ export default function ProbePropertiesController({
     }
   });
 
-  return <ProbePropertiesView probeDetails={data?.getProbe} loading={loading} mode={mode} />;
+  return (
+    <ProbePropertiesView probeDetails={data?.getProbe} loading={loading} mode={mode} isModeSelected={isModeSelected} />
+  );
 }

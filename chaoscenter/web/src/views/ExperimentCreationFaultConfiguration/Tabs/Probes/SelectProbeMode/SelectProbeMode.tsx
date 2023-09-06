@@ -1,7 +1,7 @@
 import React from 'react';
 import { withErrorBoundary } from 'react-error-boundary';
 import { Layout, useToaster, Text, ButtonVariation, Button, ButtonSize, Tabs, Container } from '@harnessio/uicore';
-import { Color, FontVariation } from '@harnessio/design-system';
+import { FontVariation } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import { Icon } from '@harnessio/icons';
 import { Fallback } from '@errors';
@@ -9,23 +9,23 @@ import { useStrings } from '@strings';
 import type { FaultProps } from '@models';
 import { getIcon } from '@utils';
 import { Mode, ProbeObj } from '@api/entities';
-import ProbeCheck from '@images/ProbeCheck.png';
 import ProbePropertiesController from '@controllers/ProbeProperties';
 import type { ChaosProbesSelectionProps } from '@controllers/SelectProbesTab/types';
 import ModeCard from './ModeCard';
-import ModeDescription from './ModeDescription';
 import css from './SelectProbeMode.module.scss';
 
 export interface SelectProbeModeViewProps extends FaultProps {
   setIsModeSelected: React.Dispatch<React.SetStateAction<boolean>>;
   probe: ChaosProbesSelectionProps | undefined;
+  isModeSelected: boolean;
 }
 
 function SelectProbeModeView({
   faultData,
   probe,
   onSave,
-  setIsModeSelected
+  setIsModeSelected,
+  isModeSelected
 }: SelectProbeModeViewProps): React.ReactElement {
   const { getString } = useStrings();
   const { showError, showSuccess } = useToaster();
@@ -102,80 +102,46 @@ function SelectProbeModeView({
                     margin={{ bottom: 'large' }}
                     lineClamp={1}
                   >
-                    Choose Mode for probe to be executed
+                    {getString('chooseProbeMode')}
                   </Text>
                   <Layout.Horizontal flex>
                     <Layout.Vertical>
                       <ModeCard
-                        name="Start of Test"
-                        icon="play-circle"
+                        name={getString('probeModes.SOTVerbose')}
+                        description={getString('probeModes.SOTDesc')}
+                        icon="probe-SOT"
                         isSelected={mode === Mode.SoT}
                         onClick={() => setMode(Mode.SoT)}
                       />
                       <ModeCard
-                        name="End of Test"
-                        icon="play-circle"
+                        name={getString('probeModes.EOTVerbose')}
+                        description={getString('probeModes.EOTDesc')}
+                        icon="probe-EOT"
                         isSelected={mode === Mode.EoT}
                         onClick={() => setMode(Mode.EoT)}
                       />
                       <ModeCard
-                        name="Edge"
-                        icon="play-circle"
+                        name={getString('probeModes.Edge')}
+                        description={getString('probeModes.EdgeDesc')}
+                        icon="probe-edge"
                         isSelected={mode === Mode.Edge}
                         onClick={() => setMode(Mode.Edge)}
                       />
                       <ModeCard
-                        name="Continuous"
-                        icon="play-circle"
+                        name={getString('probeModes.Continuous')}
+                        description={getString('probeModes.ContinuousDesc')}
+                        icon="probe-continuos"
                         isSelected={mode === Mode.Continuous}
                         onClick={() => setMode(Mode.Continuous)}
                       />
                       <ModeCard
-                        name="onChaos"
-                        icon="play-circle"
+                        name={getString('probeModes.OnChaos')}
+                        description={getString('probeModes.OnChaosDesc')}
+                        icon="probe-onChaos"
                         isSelected={mode === Mode.OnChaos}
                         onClick={() => setMode(Mode.OnChaos)}
                       />
                     </Layout.Vertical>
-                    <Container className={css.preview}>
-                      <Text
-                        font={{ variation: FontVariation.BODY2, weight: 'bold' }}
-                        margin={{ bottom: 'large' }}
-                        color={Color.GREY_500}
-                        lineClamp={1}
-                      >
-                        {getString('probeExecutionPreview')}
-                      </Text>
-
-                      {mode === Mode.SoT ? (
-                        <ModeDescription
-                          mode={getString('probeModes.SOTVerbose')}
-                          description={getString('probeModes.SOTDesc')}
-                        />
-                      ) : mode === Mode.EoT ? (
-                        <ModeDescription
-                          mode={getString('probeModes.EOTVerbose')}
-                          description={getString('probeModes.EOTDesc')}
-                        />
-                      ) : mode === Mode.Edge ? (
-                        <ModeDescription
-                          mode={getString('probeModes.Edge')}
-                          description={getString('probeModes.EdgeDesc')}
-                        />
-                      ) : mode === Mode.Continuous ? (
-                        <ModeDescription
-                          mode={getString('probeModes.Continuous')}
-                          description={getString('probeModes.ContinuousDesc')}
-                        />
-                      ) : (
-                        <ModeDescription
-                          mode={getString('probeModes.OnChaos')}
-                          description={getString('probeModes.OnChaosDesc')}
-                        />
-                      )}
-
-                      <img src={ProbeCheck} className={css.image} alt="Probe Check" />
-                    </Container>
                   </Layout.Horizontal>
                 </Layout.Vertical>
               )
@@ -183,7 +149,9 @@ function SelectProbeModeView({
             {
               id: 'properties',
               title: 'Properties',
-              panel: probe && <ProbePropertiesController probeName={probe.probeName} mode={mode} />
+              panel: probe && (
+                <ProbePropertiesController probeName={probe.probeName} mode={mode} isModeSelected={isModeSelected} />
+              )
             }
           ]}
         />

@@ -1,6 +1,6 @@
 declare namespace SelectProbeModeModuleScssNamespace {
   export interface ISelectProbeModeModuleScss {
-    center: string;
+    flex: string;
     icon: string;
     image: string;
     modeCard: string;

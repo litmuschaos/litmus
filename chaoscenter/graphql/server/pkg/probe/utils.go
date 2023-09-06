@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
 
@@ -108,10 +109,14 @@ func addKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request mode
 	// CMD Probe -> Source
 	if request.KubernetesCMDProperties.Source != nil {
 		var source *v1alpha1.SourceDetails
+		fmt.Println("source", []byte(*request.KubernetesCMDProperties.Source), *request.KubernetesCMDProperties.Source)
+
 		err := json.Unmarshal([]byte(*request.KubernetesCMDProperties.Source), &source)
 		if err != nil {
+			logrus.Errorf("error unmarshalling soruce: %s", err.Error())
 			return nil
 		}
+
 		newProbe.KubernetesCMDProperties.Source = &v1alpha1.SourceDetails{
 			Image:            source.Image,
 			HostNetwork:      source.HostNetwork,

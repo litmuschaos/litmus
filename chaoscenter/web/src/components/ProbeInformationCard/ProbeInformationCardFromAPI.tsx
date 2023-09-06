@@ -14,13 +14,15 @@ const ProbeInformationCardFromAPI = ({
   probe,
   isVerbose = true,
   hideTopBorder = false,
+  display,
   inStudio,
-  display
+  inProbeSelectMode
 }: {
   probe: Probe;
   isVerbose?: boolean;
   hideTopBorder?: boolean;
   display: ProbeInformationType;
+  inProbeSelectMode?: boolean;
   inStudio?: boolean;
 }): JSX.Element => {
   const { getString } = useStrings();
@@ -40,7 +42,6 @@ const ProbeInformationCardFromAPI = ({
       }
     })
   );
-
   const displayData =
     display === ProbeInformationType.PROPERTIES
       ? getProbePropertiesFromParsedProbe(probe)
@@ -50,7 +51,7 @@ const ProbeInformationCardFromAPI = ({
       {isVerbose && (
         <Text
           font={{ variation: inStudio ? FontVariation.SMALL_BOLD : FontVariation.H4 }}
-          color={inStudio ? Color.BLACK : Color.WHITE}
+          color={inProbeSelectMode ? Color.BLACK : Color.WHITE}
           padding={{ top: 'large', left: 'large', right: 'large' }}
         >
           {display === ProbeInformationType.PROPERTIES ? getString('probeProperties') : getString('probeDetails')}
@@ -65,7 +66,15 @@ const ProbeInformationCardFromAPI = ({
             <Layout.Horizontal spacing={'medium'} width={isVerbose ? 140 : 200}>
               <Text
                 font={{ variation: inStudio ? FontVariation.TINY : FontVariation.BODY2, weight: 'semi-bold' }}
-                color={inStudio ? Color.BLACK : !inStudio && isVerbose ? Color.GREY_200 : Color.GREY_500}
+                color={
+                  inStudio
+                    ? inProbeSelectMode
+                      ? Color.GREY_800
+                      : Color.WHITE
+                    : !inStudio && isVerbose
+                    ? Color.GREY_200
+                    : Color.GREY_500
+                }
               >
                 {value[0]}:
               </Text>
@@ -73,7 +82,15 @@ const ProbeInformationCardFromAPI = ({
             <Layout.Horizontal spacing={'medium'} width={isVerbose ? 140 : 200}>
               <Text
                 font={{ variation: inStudio ? FontVariation.TINY : FontVariation.BODY2, weight: 'light' }}
-                color={inStudio ? Color.GREY_800 : !inStudio && isVerbose ? Color.GREY_200 : Color.GREY_500}
+                color={
+                  inStudio
+                    ? inProbeSelectMode
+                      ? Color.GREY_800
+                      : Color.WHITE
+                    : !inStudio && isVerbose
+                    ? Color.GREY_200
+                    : Color.GREY_500
+                }
                 lineClamp={1}
               >
                 {value[1]}

@@ -22,7 +22,8 @@ function SelectProbesDetailView({
   probe,
   setIsAddProbeSelected,
   setIsModeSelected,
-  getLazyProbeQuery
+  getLazyProbeQuery,
+  isModeSelected
 }: SelectProbesDetailViewProps): React.ReactElement {
   const scope = getScope();
   const { getString } = useStrings();
@@ -52,14 +53,14 @@ function SelectProbesDetailView({
       {probe ? (
         <Layout.Horizontal padding={{ top: 'large', left: 'medium', right: 'medium', bottom: 'large' }} flex>
           <Layout.Vertical padding={{ left: 'large', right: 'large' }}>
-            <Text lineClamp={1} font={{ variation: FontVariation.H5, weight: 'bold' }}>
+            <Text lineClamp={1} font={{ variation: FontVariation.H5, weight: 'bold' }} color={Color.WHITE}>
               {probe.probeName}
             </Text>
             <Text
               lineClamp={1}
               font={{ variation: FontVariation.TINY_SEMI, weight: 'light' }}
               margin={{ top: 'xsmall' }}
-              color={Color.GREY_600}
+              color={Color.WHITE}
             >
               {`ID: ${probe.probeName}`}
             </Text>
@@ -88,7 +89,7 @@ function SelectProbesDetailView({
         </Layout.Vertical>
       )}
 
-      {probeDetail && <ProbeDescription probeDetail={probeDetail} />}
+      {probeDetail && <ProbeDescription probeDetail={probeDetail} isModeSelected={isModeSelected} />}
     </Loader>
   );
 }

@@ -123,6 +123,7 @@ checkStatus: Check the status of your Chaos Infrastructure on your cluster
 chooseAccessType: Choose Access Type
 chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
+chooseProbeMode: Choose Mode for probe to be executed
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
   where you have kubectl installed and have access to your Kubernetes cluster.
@@ -734,8 +735,8 @@ probeModes:
     the chaos injection.
   EOT: EOT
   EOTDesc: >-
-    The probe will check hypothesis at the Start of the Test as a as a
-    post-chaos check.
+    The probe will check hypothesis at the End of the Test as a as a post-chaos
+    check.
   EOTVerbose: End of Test (EOT)
   Edge: Edge
   EdgeDesc: The probe will check hypothesis both before and after the Test.

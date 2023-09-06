@@ -241,6 +241,7 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
             probe={probe}
             setIsAddProbeSelected={setIsAddProbeSelected}
             setIsModeSelected={setIsModeSelected}
+            isModeSelected={isModeSelected}
           />
         }
         handleClose={() => {
@@ -257,6 +258,7 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
             probe={probe}
             setIsModeSelected={setIsModeSelected}
             faultData={faultData}
+            isModeSelected={isModeSelected}
             onSave={data => setFaultData({ ...faultData, ...data })}
           />
         }

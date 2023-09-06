@@ -9,9 +9,15 @@ export interface ProbePropertiesViewProps {
   probeDetails: Probe | undefined;
   mode: Mode;
   loading: boolean;
+  isModeSelected: boolean;
 }
 
-function ProbePropertiesView({ loading, probeDetails, mode }: ProbePropertiesViewProps): React.ReactElement {
+function ProbePropertiesView({
+  loading,
+  probeDetails,
+  mode,
+  isModeSelected
+}: ProbePropertiesViewProps): React.ReactElement {
   return (
     <Loader
       loading={loading}
@@ -20,7 +26,9 @@ function ProbePropertiesView({ loading, probeDetails, mode }: ProbePropertiesVie
         minHeight: loading ? 'calc(var(--page-min-height) - var(--spacing-xxlarge))' : 'initial'
       }}
     >
-      {probeDetails && <ProbeDescription probeDetail={probeDetails} mode={mode} />}
+      {probeDetails && (
+        <ProbeDescription probeDetail={probeDetails} mode={mode} inStudio={false} isModeSelected={isModeSelected} />
+      )}
     </Loader>
   );
 }

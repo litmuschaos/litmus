@@ -9,16 +9,20 @@ import css from './SelectProbeMode.module.scss';
 interface ModeCardProps {
   name: string;
   icon: IconName;
+  description: string;
   isSelected: boolean;
   onClick: () => void;
 }
 
-function ModeCard({ name, icon, isSelected, onClick }: ModeCardProps): React.ReactElement {
+function ModeCard({ name, icon, description, isSelected, onClick }: ModeCardProps): React.ReactElement {
   return (
     <div className={isSelected ? css.modeCardSelected : css.modeCard} onClick={onClick}>
-      <div className={css.center}>
+      <div className={css.flex}>
         <Icon name={icon} size={25} className={css.icon} />
-        <Text font={{ variation: FontVariation.BODY2 }}>{name}</Text>
+        <div>
+          <Text font={{ variation: FontVariation.BODY2 }}>{name}</Text>
+          <Text font={{ variation: FontVariation.BODY }}>{description}</Text>
+        </div>
       </div>
     </div>
   );

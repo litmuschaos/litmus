@@ -8,11 +8,13 @@ export interface SelectProbesDetailControllerProps {
   setIsAddProbeSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setIsModeSelected: React.Dispatch<React.SetStateAction<boolean>>;
   probe: ChaosProbesSelectionProps | undefined;
+  isModeSelected: boolean;
 }
 
 export default function SelectProbesDetailController({
   setIsAddProbeSelected,
   setIsModeSelected,
+  isModeSelected,
   probe
 }: SelectProbesDetailControllerProps): React.ReactElement {
   const { showError } = useToaster();
@@ -28,6 +30,7 @@ export default function SelectProbesDetailController({
       setIsAddProbeSelected={setIsAddProbeSelected}
       setIsModeSelected={setIsModeSelected}
       getLazyProbeQuery={getLazyProbeQuery}
+      isModeSelected={isModeSelected}
     />
   );
 }
