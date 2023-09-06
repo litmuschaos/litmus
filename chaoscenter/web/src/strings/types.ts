@@ -546,6 +546,7 @@ export interface StringsMap {
   'nonProd': unknown
   'notMeetsExpectations': unknown
   'notMeetsExpectationsInterventionNeeded': unknown
+  'notStarted': unknown
   'notes': unknown
   'numberOfExperiments': unknown
   'objective': unknown

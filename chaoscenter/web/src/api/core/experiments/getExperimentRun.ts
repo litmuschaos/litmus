@@ -85,15 +85,14 @@ export function getExperimentRunManifest({
   notifyID,
   // Options
   options = {}
-}: GqlAPIQueryRequest<
+}: GqlAPIQueryRequest<GetExperimentRunResponse, GetExperimentRunRequest>): GqlAPIQueryResponse<
   GetExperimentRunResponse,
-  GetExperimentRunRequest,
-  Omit<GetExperimentRunRequest, 'identifiers'>
->): GqlAPIQueryResponse<GetExperimentRunResponse, GetExperimentRunRequest> {
+  GetExperimentRunRequest
+> {
   const { data, loading, ...rest } = useQuery<GetExperimentRunResponse, GetExperimentRunRequest>(
     gql`
-      query getExperimentRun($identifiers: IdentifiersRequest!, $experimentRunID: String, $notifyID: String) {
-        getExperimentRun(identifiers: $identifiers, experimentRunID: $experimentRunID, notifyID: $notifyID) {
+      query getExperimentRun($projectID: ID!, $experimentRunID: String, $notifyID: String) {
+        getExperimentRun(projectID: $projectID, experimentRunID: $experimentRunID, notifyID: $notifyID) {
           experimentID
           experimentRunID
           notifyID

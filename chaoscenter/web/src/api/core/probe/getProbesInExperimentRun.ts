@@ -58,6 +58,8 @@ export function getProbesInExperimentRun({
                 }
               }
               insecureSkipVerify
+              attempt
+              evaluationTimeout
             }
             promProperties {
               probeTimeout
@@ -74,6 +76,8 @@ export function getProbesInExperimentRun({
                 value
                 criteria
               }
+              attempt
+              evaluationTimeout
             }
             k8sProperties {
               probeTimeout
@@ -89,6 +93,8 @@ export function getProbesInExperimentRun({
               fieldSelector
               labelSelector
               operation
+              attempt
+              evaluationTimeout
             }
             kubernetesCMDProperties {
               probeTimeout
@@ -105,6 +111,7 @@ export function getProbesInExperimentRun({
                 criteria
               }
               source
+              evaluationTimeout
             }
           }
           mode

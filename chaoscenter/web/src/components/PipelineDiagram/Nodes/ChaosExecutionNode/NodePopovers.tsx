@@ -37,7 +37,7 @@ export const RenderNotStartedPopover = ({ nodeName }: ToolTipData): JSX.Element 
               margin={{ right: 'xsmall' }}
             />
             <Text font={{ variation: FontVariation.H6 }} color={Color.WHITE}>
-              NOT STARTED
+              {getString('notStarted')}
             </Text>
           </Container>
         </Layout.Horizontal>

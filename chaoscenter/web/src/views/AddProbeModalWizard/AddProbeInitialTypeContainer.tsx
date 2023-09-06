@@ -70,11 +70,11 @@ function AddProbeInitialTypeContainer({
           <Text font={{ variation: FontVariation.H3 }} margin={{ bottom: 'xlarge' }} color={Color.WHITE}>
             {getString(`selectYourProbeType`)}
           </Text>
-          <Layout.Vertical spacing={'small'}>
+          {/* <Layout.Vertical spacing={'small'}>
             <Text font={{ variation: FontVariation.FORM_LABEL }} color={Color.WHITE}>
               {getString('selectChaosInfrastructureType')}
             </Text>
-            {/* <CardSelect<InfrastructureSelectProps>
+            <CardSelect<InfrastructureSelectProps>
               data={infrastructureList}
               cornerSelected
               className={css.cardSelect}
@@ -102,8 +102,8 @@ function AddProbeInitialTypeContainer({
               )}
               selected={infrastructureList.find(item => item.type === infrastructureType)}
               onChange={selectedInfra => setInfrastructureType(selectedInfra.type)}
-            /> */}
-          </Layout.Vertical>
+            />
+          </Layout.Vertical> */}
           <Layout.Vertical spacing={'small'} margin={{ top: 'medium' }}>
             <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'large' }} color={Color.WHITE}>
               {getString(`selectYourProbe`)}

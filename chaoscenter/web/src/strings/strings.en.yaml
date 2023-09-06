@@ -667,6 +667,7 @@ notMeetsExpectations: The resilience score didn't meet the expectation.
 notMeetsExpectationsInterventionNeeded: >-
   The resilience score did not meet the expectation. It needs the manual
   intervention.
+notStarted: NOT STARTED
 notes: Notes
 numberOfExperiments: Number of Experiments
 objective: Objective

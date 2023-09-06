@@ -161,7 +161,7 @@ export function listLazyProbes({
             username
             email
           }
-          httpProperties {
+          kubernetesHTTPProperties {
             probeTimeout
             interval
             retry
@@ -221,7 +221,7 @@ export function listLazyProbes({
             labelSelector
             operation
           }
-          cmdProperties {
+          kubernetesCMDProperties {
             probeTimeout
             interval
             retry
