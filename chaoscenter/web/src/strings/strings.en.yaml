@@ -48,6 +48,7 @@ allExecutions: All Executions
 allFaultsExecuted: All your faults executed without any issue
 allRuns: All Runs
 alreadyExists: '{{value}} already exists'
+apiTokens: API Tokens
 appKind: App Kind
 appKindName: app_kind
 appLabel: App Label
@@ -184,6 +185,7 @@ connectionModal:
 connectionStatus: Connection Status
 consoleLogs: Console Logs
 continue: Continue
+copiedToClipboard: Copied to clipboard
 copyPrompt: >-
   Copy the downloaded YML to a machine where you have kubectl installed and have
   access to your Kubernetes cluster.
@@ -194,9 +196,11 @@ copyPrompt2: >-
 crdCopyPrompt: Apply the Chaos CRDs manually
 createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
+createNewToken: Create New Token
 createNewUser: Create New User
 createRecurringSchedule: Create recurring schedule
 created: Created
+createdAt: Created At
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
@@ -218,6 +222,7 @@ dailyMessage: Your chaos experiment will run daily at your chosen time.
 dateExecuted: Date Executed
 dayOfMonthLabel: Day of month
 dayOfWeekLabel: Day of week
+days: '{{count}} days'
 declineInvitation: Decline Invitation
 declineInvitationDescription: Are you sure you want to decline the invitation?
 defaultValueOption: Use Default Values
@@ -226,6 +231,7 @@ defaultValueText: >-
   cannot be changed.
 degelateNotActive: Selected infrastructure is inactive. Please select an active one.
 delete: Delete
+deleteApiTokenDescription: Are you sure you want to delete this API Token?
 deleteChaosInfrastructure: Are you sure you want to disable this Chaos Infrastructure?
 deleteExperiment: Delete Experiment
 deleteExperimentDesc: >-
@@ -356,6 +362,8 @@ experimentRuns: Experiment Runs
 experimentStopSuccessMessage: Experiment successfully stopped
 experimentType: Experiment Type
 experiments: Experiments
+expiresAt: Expires At
+expiresIn: Expires In
 expressionBreakdown: Expression Breakdown
 failStep: Fail Step
 failed: Failed
@@ -585,6 +593,7 @@ newExperiment: New Experiment
 newMember: New Member
 newPassword: New Password
 newProbe: New Probe
+newToken: New Token
 newUpdates: New Updates
 newUser: New User
 newUserNoExperiments:
@@ -598,6 +607,7 @@ next: Next
 nextRun: Next Run
 nextSelectChaosExperiments: Next -> Select Chaos Experiments
 noAnalysis: No Analysis
+noApiTokensFound: No API Tokens found
 noChaosHubSelected: No ChaosHubs selected
 noChaosInfrastructure: There are no Kubernetes Chaos Infrastructures in this Environment
 noChaosInfrastructureFound: No Kuberenetes chaos infrastructure found!
@@ -613,6 +623,7 @@ noExperimentFoundMatchingSearch: No experiment found matching your search
 noExperimentSelected: No experiment selected
 noExperiments: No Experiments found
 noExperimentsAdded: No experiments added
+noExpiration: No Expiration
 noFaults: No Faults found in selected hub
 noFilteredActiveInfra: No active Chaos Infrastructures found for the search term
 noFilteredData:
@@ -1024,6 +1035,7 @@ testingConnection: Testing Chaos Infrastructure Connection
 thisExperimentHasNoRuns: This experiment has no runs yet
 timeout: Timeout
 toBeDefined: (To be defined)
+tokenCreateSuccessMessage: Token created successfully
 toleration:
   effectPlaceholder: Enter effect
   keyPlaceholder: Enter key

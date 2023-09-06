@@ -44,7 +44,7 @@ function createApolloClient({ config }: LitmusAPIProviderProps): ApolloClient<No
     operation.setContext(({ headers = {} }) => ({
       headers: {
         ...headers,
-        authorization: `${accessToken}`
+        authorization: `Bearer ${accessToken}`
       }
     }));
 

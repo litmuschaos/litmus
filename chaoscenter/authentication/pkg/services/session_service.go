@@ -15,6 +15,9 @@ type sessionService interface {
 	RevokeToken(tokenString string) error
 	ValidateToken(encodedToken string) (*jwt.Token, error)
 	GetSignedJWT(user *entities.User) (string, error)
+	CreateApiToken(user *entities.User, request entities.ApiTokenInput) (string, error)
+	GetApiTokensByUserID(userID string) ([]entities.ApiToken, error)
+	DeleteApiToken(token string) error
 }
 
 // RevokeToken revokes the given JWT Token
@@ -29,7 +32,7 @@ func (a applicationService) RevokeToken(tokenString string) error {
 		ExpiresAt: int64(claims["exp"].(float64)),
 		CreatedAt: time.Now().Unix(),
 	}
-	return a.sessionRepository.RevokeToken(revokedToken)
+	return a.revokedTokenRepository.RevokeToken(revokedToken)
 }
 
 // ValidateToken validates the given JWT Token
@@ -46,7 +49,7 @@ func (a applicationService) ValidateToken(encodedToken string) (*jwt.Token, erro
 
 // isTokenRevoked checks if the given JWT Token is revoked
 func (a applicationService) isTokenRevoked(encodedToken string) bool {
-	return a.sessionRepository.IsTokenRevoked(encodedToken)
+	return a.revokedTokenRepository.IsTokenRevoked(encodedToken)
 }
 
 // parseToken parses the given JWT Token
@@ -70,9 +73,50 @@ func (a applicationService) GetSignedJWT(user *entities.User) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
-		log.Info(err)
+		log.Error(err)
 		return "", err
 	}
 
 	return tokenString, nil
+}
+
+// CreateApiToken creates a new API Token for the user
+func (a applicationService) CreateApiToken(user *entities.User, request entities.ApiTokenInput) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS512)
+	expiresAt := time.Now().AddDate(0, 0, request.DaysUntilExpiration).Unix()
+	claims := token.Claims.(jwt.MapClaims)
+	claims["uid"] = user.ID
+	claims["role"] = user.Role
+	claims["username"] = user.Username
+	claims["exp"] = expiresAt
+
+	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
+	if err != nil {
+		log.Error(err)
+		return "", err
+	}
+
+	apiToken := &entities.ApiToken{
+		UserID:    user.ID,
+		Name:      request.Name,
+		Token:     tokenString,
+		ExpiresAt: expiresAt,
+		CreatedAt: time.Now().Unix(),
+	}
+
+	if err = a.apiTokenRepository.CreateApiToken(apiToken); err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
+// GetApiTokensByUserID returns all the API Tokens for the user
+func (a applicationService) GetApiTokensByUserID(userID string) ([]entities.ApiToken, error) {
+	return a.apiTokenRepository.GetApiTokensByUserID(userID)
+}
+
+// DeleteApiToken deletes the given API Token
+func (a applicationService) DeleteApiToken(token string) error {
+	return a.apiTokenRepository.DeleteApiToken(token)
 }

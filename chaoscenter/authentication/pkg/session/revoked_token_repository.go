@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Repository holds the mongo database implementation of the Service
-type Repository interface {
+// RevokedTokenRepository holds the mongo database implementation of the Service
+type RevokedTokenRepository interface {
 	RevokeToken(token *entities.RevokedToken) error
 	IsTokenRevoked(encodedToken string) bool
 }
@@ -21,14 +21,14 @@ type repository struct {
 
 // RevokeToken revokes the given JWT Token
 func (r repository) RevokeToken(token *entities.RevokedToken) error {
-	_, err := r.Collection.InsertOne(context.Background(), token)
+	_, err := r.Collection.InsertOne(context.TODO(), token)
 	return err
 }
 
 // IsTokenRevoked checks if the given JWT Token is revoked
 func (r repository) IsTokenRevoked(encodedToken string) bool {
 	var result = entities.RevokedToken{}
-	err := r.Collection.FindOne(context.Background(), bson.M{
+	err := r.Collection.FindOne(context.TODO(), bson.M{
 		"token": encodedToken,
 	}).Decode(&result)
 	if err != nil {
@@ -37,8 +37,8 @@ func (r repository) IsTokenRevoked(encodedToken string) bool {
 	return true
 }
 
-// NewRepo creates a new instance of this repository
-func NewRepo(collection *mongo.Collection) Repository {
+// NewRevokedTokenRepo creates a new instance of this repository
+func NewRevokedTokenRepo(collection *mongo.Collection) RevokedTokenRepository {
 	return &repository{
 		Collection: collection,
 	}

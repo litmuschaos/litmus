@@ -36,16 +36,16 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
   } = useToggleOpen();
 
   return (
-    <Layout.Horizontal width={'100%'} height={'100%'}>
+    <Container>
       <Loader loading={loading}>
-        <Container flex className={css.leftSideBar}>
+        <Container className={css.leftSideBar}>
           <MainNav />
         </Container>
-        <Layout.Horizontal style={{ flexGrow: 1 }} height={'100%'}>
+        <Container style={{ paddingLeft: '88px' }} height={'100%'}>
           <Container
-            width={'30%'}
-            style={{ minWidth: 420, position: 'relative' }}
-            height={'100%'}
+            width={'420px'}
+            style={{ position: 'fixed' }}
+            height={'100vh'}
             background={Color.PRIMARY_1}
             padding={{ top: 'xxlarge', right: 'medium', bottom: 'xxlarge', left: 'medium' }}
           >
@@ -99,10 +99,10 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
               </Layout.Vertical>
             </Layout.Vertical>
           </Container>
-          <Container width={'100%'} height={'100%'}>
+          <Container width={'100%'} height={'100%'} style={{ paddingLeft: '420px' }}>
             {children}
           </Container>
-        </Layout.Horizontal>
+        </Container>
       </Loader>
       {isUserDetailsUpdateModalOpen && (
         <Dialog
@@ -133,6 +133,6 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
           />
         </Dialog>
       )}
-    </Layout.Horizontal>
+    </Container>
   );
 }
