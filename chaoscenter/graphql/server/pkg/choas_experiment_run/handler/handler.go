@@ -74,20 +74,39 @@ func NewChaosExperimentRunHandler(
 }
 
 // GetExperimentRun returns details of a requested experiment run
-func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projectID string, experimentRunID string) (*model.ExperimentRun, error) {
+func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error) {
 	var pipeline mongo.Pipeline
 
-	// Matching with identifiers
-	matchIdentifiersStage := bson.D{
-		{
-			"$match", bson.D{
-				{"experiment_run_id", experimentRunID},
-				{"project_id", projectID},
-				{"is_removed", false},
-			},
-		},
+	if experimentRunID == nil && notifyID == nil {
+		return nil, errors.New("experimentRunID or notifyID not provided")
 	}
-	pipeline = append(pipeline, matchIdentifiersStage)
+
+	// Matching with identifiers
+	if experimentRunID != nil && *experimentRunID != "" {
+		matchIdentifiersStage := bson.D{
+			{
+				"$match", bson.D{
+					{"experiment_run_id", experimentRunID},
+					{"project_id", projectID},
+					{"is_removed", false},
+				},
+			},
+		}
+		pipeline = append(pipeline, matchIdentifiersStage)
+	}
+
+	if notifyID != nil && *notifyID != "" {
+		matchIdentifiersStage := bson.D{
+			{
+				"$match", bson.D{
+					{"notify_id", notifyID},
+					{"project_id", projectID},
+					{"is_removed", false},
+				},
+			},
+		}
+		pipeline = append(pipeline, matchIdentifiersStage)
+	}
 
 	// Adds details of experiment
 	addExperimentDetails := bson.D{
@@ -214,6 +233,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			ExperimentName:     wfRun.ExperimentDetails[0].ExperimentName,
 			ExperimentID:       wfRun.ExperimentID,
 			ExperimentRunID:    wfRun.ExperimentRunID,
+			NotifyID:           wfRun.NotifyID,
 			Weightages:         weightages,
 			ExperimentManifest: workflowRunManifest,
 			ProjectID:          wfRun.ProjectID,
@@ -228,6 +248,8 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			TotalFaults:        wfRun.TotalFaults,
 			ExecutionData:      wfRun.ExecutionData,
 			IsRemoved:          &wfRun.IsRemoved,
+			RunSequence:        int(wfRun.RunSequence),
+
 			UpdatedBy: &model.UserDetails{
 				Username: wfRun.UpdatedBy,
 			},
@@ -601,8 +623,9 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			UpdatedBy: &model.UserDetails{
 				Username: workflow.UpdatedBy,
 			},
-			UpdatedAt: strconv.FormatInt(workflow.UpdatedAt, 10),
-			CreatedAt: strconv.FormatInt(workflow.CreatedAt, 10),
+			UpdatedAt:   strconv.FormatInt(workflow.UpdatedAt, 10),
+			CreatedAt:   strconv.FormatInt(workflow.CreatedAt, 10),
+			RunSequence: int(workflow.RunSequence),
 		}
 		result = append(result, &newExperimentRun)
 	}
@@ -778,13 +801,13 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			logrus.Errorf("failed to start mongo session transaction %v", err)
 			return err
 		}
-
 		expRunDetail := []dbChaosExperiment.ExperimentRunDetail{
 			{
-				Phase:     executionData.Phase,
-				Completed: false,
-				ProjectID: projectID,
-				NotifyID:  &notifyID,
+				Phase:       executionData.Phase,
+				Completed:   false,
+				ProjectID:   projectID,
+				NotifyID:    &notifyID,
+				RunSequence: workflow.TotalExperimentRuns + 1,
 				Audit: mongodb.Audit{
 					IsRemoved: false,
 					CreatedAt: currentTime,
@@ -838,6 +861,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			Completed:       false,
 			ResiliencyScore: &resScore,
 			ExecutionData:   string(parsedData),
+			RunSequence:     workflow.TotalExperimentRuns + 1,
 			Probes:          probes,
 		})
 		if err != nil {
@@ -861,6 +885,18 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	session.EndSession(ctx)
+
+	// Convert updated manifest to string
+	manifestString, err := json.Marshal(workflowManifest)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal experiment manifest, err: %v", err)
+	}
+
+	// Generate Probe in the manifest
+	workflowManifest, err = probe.GenerateExperimentManifestWithProbes(string(manifestString), projectID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate probes in workflow manifest, err: %v", err)
+	}
 
 	manifest, err := yaml.Marshal(workflowManifest)
 	if err != nil {
@@ -1041,6 +1077,12 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 
 	logrus.WithFields(logFields).Info("new workflow event received")
 
+	expType := experiment.ExperimentType
+	probes, err := probe.ParseProbesFromManifestForRuns(&expType, experiment.Revision[len(experiment.Revision)-1].ExperimentManifest)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse probes %v", err.Error())
+	}
+
 	var (
 		executionData types.ExecutionData
 		exeData       []byte
@@ -1114,7 +1156,6 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 		if err != nil {
 			return err
 		}
-		fmt.Println("event", event.UpdatedBy)
 		updatedBy, err := base64.RawURLEncoding.DecodeString(event.UpdatedBy)
 		if err != nil {
 			logrus.Fatalf("Failed to parse updated by field %v", err)
@@ -1125,6 +1166,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 				ResiliencyScore: &workflowRunMetrics.ResiliencyScore,
 				ExperimentRunID: event.ExperimentRunID,
 				Completed:       false,
+				RunSequence:     experiment.TotalExperimentRuns + 1,
 				Audit: mongodb.Audit{
 					IsRemoved: false,
 					CreatedAt: time.Now().UnixMilli(),
@@ -1211,6 +1253,8 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			ExecutionData:   string(exeData),
 			RevisionID:      event.RevisionID,
 			Completed:       event.Completed,
+			Probes:          probes,
+			RunSequence:     experiment.TotalExperimentRuns + 1,
 			Audit: mongodb.Audit{
 				IsRemoved: isRemoved,
 				UpdatedAt: currentTime.UnixMilli(),

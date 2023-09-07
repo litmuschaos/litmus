@@ -23,6 +23,7 @@ type ExperimentRunDetail struct {
 	NotifyID        *string  `bson:"notify_id"`
 	ResiliencyScore *float64 `bson:"resiliency_score,omitempty"`
 	Completed       bool     `bson:"completed"`
+	RunSequence     int      `bson:"run_sequence"`
 }
 
 // ChaosExperimentRequest contains the required fields to be stored in the database for a chaos experiment input
@@ -125,6 +126,7 @@ type FlattenedExperimentRun struct {
 	RevisionID             string                            `bson:"revision_id"`
 	InfraID                string                            `bson:"infra_id"`
 	Phase                  string                            `bson:"phase"`
+	NotifyID               *string                           `bson:"notify_id"`
 	KubernetesInfraDetails []chaos_infrastructure.ChaosInfra `bson:"kubernetesInfraDetails,omitempty"`
 	ExperimentDetails      []ExperimentDetails               `bson:"experiment"`
 	ResiliencyScore        *float64                          `bson:"resiliency_score,string,omitempty"`
@@ -137,6 +139,7 @@ type FlattenedExperimentRun struct {
 	IsCustomExperiment     bool                              `bson:"is_custom_experiment"`
 	Completed              bool                              `bson:"completed"`
 	IsRemoved              bool                              `bson:"is_removed"`
+	RunSequence            int64                             `bson:"run_sequence"`
 }
 
 type ExperimentDetails struct {

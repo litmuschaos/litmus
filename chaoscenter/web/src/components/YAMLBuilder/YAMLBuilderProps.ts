@@ -17,6 +17,7 @@ export interface YAMLBuilderProps {
   comparableYaml?: string;
   yamlSanityConfig?: YamlSanityConfig;
   displayBorder?: boolean;
+  renderCustomHeader?: () => React.ReactElement | null;
   customCss?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 export type CompletionItemInterface = Optional<monaco.languages.CompletionItem, 'range'>;

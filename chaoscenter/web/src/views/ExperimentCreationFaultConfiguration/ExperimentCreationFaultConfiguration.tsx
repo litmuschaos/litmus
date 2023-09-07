@@ -27,8 +27,12 @@ import { InfrastructureType } from '@api/entities';
 import experimentYamlService from '@services/experiment';
 import type { GetFaultTunablesOperation } from '@services/experiment/ExperimentYamlService';
 import type { ServiceIdentifiers } from '@db';
-import { ProbesTab, FaultTunablesTab } from './Tabs';
+import SelectProbesTabController from '@controllers/SelectProbesTab';
+import SelectProbesDetailController from '@controllers/SelectProbesDetail';
+import type { ChaosProbesSelectionProps } from '@controllers/SelectProbesTab/types';
+import { ProbesTab as NewProbes, FaultTunablesTab } from './Tabs';
 import type { TuneExperimentForm } from './Tabs';
+import SelectProbeModeView from './Tabs/Probes/SelectProbeMode';
 import css from './ExperimentCreationFaultConfiguration.module.scss';
 
 interface ExperimentCreationTuneFaultProps {
@@ -63,6 +67,7 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
   const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
   const { experimentKey } = useParams<{ experimentKey: string }>();
   const [faultData, setFaultData] = React.useState<FaultData | undefined>(cloneDeep(initialFaultData));
+  const [isModeSelected, setIsModeSelected] = React.useState<boolean>(false);
 
   const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
@@ -73,14 +78,12 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
 
   const tuneExperimentRef = React.useRef<FormikProps<TuneExperimentForm>>();
   const [faultWeight, setFaultWeight] = React.useState<number>(faultData?.weight ?? 10);
-  // const [serviceIdentifiers, setServiceIdentifiers] = React.useState<ServiceIdentifiers | undefined>(
-  //   initialServiceIdentifiers
-  // );
+  const [isAddProbeSelected, setIsAddProbeSelected] = React.useState<boolean>(false);
 
   const {
-    isOpen: isOpenConfirmationModal,
-    open: openConfirmationModal,
-    close: closeConfirmationModal
+    isOpen: isOpenTuneConfirmDialog,
+    open: openTuneConfirmDialog,
+    close: closeTuneConfirmDialog
   } = useToggleOpen();
 
   const customButtonContainer = (
@@ -97,10 +100,12 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
         text={getString('cancel')}
         variation={ButtonVariation.TERTIARY}
         size={ButtonSize.MEDIUM}
-        onClick={closeConfirmationModal}
+        onClick={closeTuneConfirmDialog}
       />
     </Container>
   );
+
+  const [probe, setProbe] = React.useState<ChaosProbesSelectionProps>();
 
   const confirmationDialogProps = {
     usePortal: true,
@@ -114,12 +119,12 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
       if (isConfirmed) {
         applyChanges();
       }
-      closeConfirmationModal();
+      closeTuneConfirmDialog();
     },
     className: css.dialogWrapper
   };
 
-  const confirmationDialog = <ConfirmationDialog isOpen={isOpenConfirmationModal} {...confirmationDialogProps} />;
+  const confirmationDialog = <ConfirmationDialog isOpen={isOpenTuneConfirmDialog} {...confirmationDialogProps} />;
 
   const applyChanges = (): void => {
     // Submit the env tuning form
@@ -162,8 +167,6 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
     </Layout.Horizontal>
   );
 
-  // const [helpTab, setHelpTab] = React.useState<TabId>();
-
   const showTargetApplicationTab =
     infraID && faultData?.engineCR?.spec?.appinfo && infrastructureType === InfrastructureType.KUBERNETES;
 
@@ -197,32 +200,12 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
     {
       id: TuneFaultTab.Probes,
       title: getString('probes'),
-      panel: <ProbesTab faultData={faultData} onSave={data => setFaultData({ ...faultData, ...data })} />
+      panel: <NewProbes faultData={faultData} setIsAddProbeSelected={setIsAddProbeSelected} />
     }
-    // {
-    //   id: TuneFaultTab.SelectProbes,
-    //   title: getString('selectProbes'),
-    //   panel: (
-    //     <SelectProbesTabController faultData={faultData} onSave={data => setFaultData({ ...faultData, ...data })} />
-    //   ),
-    //   hidden: !CHAOS_PROBE_ENABLED
-    // }
-    // {
-    //   id: 'select_srm_events_tab',
-    //   title: getString('srmEvents'),
-    //   panel: (
-    //     <SRMEventsTabController
-    //       environmentIdentifier={environmentID}
-    //       serviceIdentifiers={serviceIdentifiers}
-    //       setServiceIdentifiers={setServiceIdentifiers}
-    //     />
-    //   ),
-    //   hidden: !CHAOS_SRM_EVENT || infrastructureType === InfrastructureType.LINUX
-    // }
   ];
 
   return (
-    <React.Fragment>
+    <>
       <Drawer
         isOpen={isOpen}
         leftPanel={
@@ -230,7 +213,6 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
             <Tabs
               id={'tuneFaultTabs'}
               defaultSelectedTabId={showTargetApplicationTab ? TuneFaultTab.TargetApplication : TuneFaultTab.TuneFault}
-              // onChange={tab => setHelpTab(tab)}
               renderAllTabPanels
               tabList={tabList}
             />
@@ -242,7 +224,7 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
             faultWeight !== faultData?.weight ||
             tuneExperimentRef.current?.dirty
           ) {
-            openConfirmationModal();
+            openTuneConfirmDialog();
             return;
           }
           onClose();
@@ -250,7 +232,43 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
         title={header}
         type={DrawerTypes.TuneFault}
       />
+
+      <Drawer
+        isOpen={isAddProbeSelected}
+        leftPanel={<SelectProbesTabController setProbe={setProbe} />}
+        rightPanel={
+          <SelectProbesDetailController
+            probe={probe}
+            setIsAddProbeSelected={setIsAddProbeSelected}
+            setIsModeSelected={setIsModeSelected}
+            isModeSelected={isModeSelected}
+          />
+        }
+        handleClose={() => {
+          setIsAddProbeSelected(false);
+        }}
+        title={<Text font={{ variation: FontVariation.H5 }}>{getString('selectAProbe')}</Text>}
+        type={DrawerTypes.AddProbe}
+      />
+
+      <Drawer
+        isOpen={isModeSelected}
+        leftPanel={
+          <SelectProbeModeView
+            probe={probe}
+            setIsModeSelected={setIsModeSelected}
+            faultData={faultData}
+            isModeSelected={isModeSelected}
+            onSave={data => setFaultData({ ...faultData, ...data })}
+          />
+        }
+        handleClose={() => {
+          setIsModeSelected(false);
+        }}
+        title={<Text font={{ variation: FontVariation.H5 }}>{'Select a mode'}</Text>}
+        type={DrawerTypes.SelectMode}
+      />
       {confirmationDialog}
-    </React.Fragment>
+    </>
   );
 }

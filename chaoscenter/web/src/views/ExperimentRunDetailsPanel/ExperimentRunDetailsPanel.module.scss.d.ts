@@ -9,6 +9,7 @@ declare namespace ExperimentRunDetailsPanelModuleScssNamespace {
     errorBox: string;
     gridGroup: string;
     logSectionContainer: string;
+    naBox: string;
     probeBox: string;
     probeResults: string;
     probeTab: string;

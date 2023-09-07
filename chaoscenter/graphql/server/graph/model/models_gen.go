@@ -39,34 +39,6 @@ type Annotation struct {
 	ChartDescription string `json:"chartDescription"`
 }
 
-// Defines the CMD probe properties
-type CMDProbe struct {
-	// Timeout of the Probe
-	ProbeTimeout string `json:"probeTimeout"`
-	// Interval of the Probe
-	Interval string `json:"interval"`
-	// Retry interval of the Probe
-	Retry *int `json:"retry"`
-	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
-	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
-	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
-	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
-	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
-	// Command of the Probe
-	Command string `json:"command"`
-	// Comparator of the Probe
-	Comparator *Comparator `json:"comparator"`
-	// Source of the Probe
-	Source *string `json:"source"`
-}
-
-func (CMDProbe) IsCommonProbeProperties() {}
-
 // Defines the input for CMD probe properties
 type CMDProbeRequest struct {
 	// Timeout of the Probe
@@ -410,6 +382,10 @@ type ExecutedByExperiment struct {
 
 // Defines the Execution History of experiment referenced by the Probe
 type ExecutionHistory struct {
+	// Probe Mode
+	Mode Mode `json:"mode"`
+	// Fault Name
+	FaultName string `json:"faultName"`
 	// Fault Status
 	Status *Status `json:"status"`
 	// Fault executed by which experiment
@@ -537,6 +513,10 @@ type ExperimentRun struct {
 	UpdatedBy *UserDetails `json:"updatedBy"`
 	// User who has created the experiment run
 	CreatedBy *UserDetails `json:"createdBy"`
+	// Notify ID of the experiment run
+	NotifyID *string `json:"notifyID"`
+	// runSequence is the sequence number of experiment run
+	RunSequence int `json:"runSequence"`
 }
 
 func (ExperimentRun) IsAudit() {}
@@ -757,34 +737,6 @@ type GitConfigResponse struct {
 	// Private SSH key authenticating into git repository
 	SSHPrivateKey *string `json:"sshPrivateKey"`
 }
-
-// Defines the HTTP probe properties
-type HTTPProbe struct {
-	// Timeout of the Probe
-	ProbeTimeout string `json:"probeTimeout"`
-	// Interval of the Probe
-	Interval string `json:"interval"`
-	// Retry interval of the Probe
-	Retry *int `json:"retry"`
-	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
-	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
-	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
-	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
-	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
-	// URL of the Probe
-	URL string `json:"url"`
-	// HTTP method of the Probe
-	Method *Method `json:"method"`
-	// If Insecure HTTP verification should  be skipped
-	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
-}
-
-func (HTTPProbe) IsCommonProbeProperties() {}
 
 // Defines the input for HTTP probe properties
 type HTTPProbeRequest struct {
@@ -1087,6 +1039,114 @@ type KubeObjectResponse struct {
 	InfraID string `json:"infraID"`
 	// Type of the Kubernetes object
 	KubeObj []*KubeObject `json:"kubeObj"`
+}
+
+// Defines the CMD probe properties
+type KubernetesCMDProbe struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Command of the Probe
+	Command string `json:"command"`
+	// Comparator of the Probe
+	Comparator *Comparator `json:"comparator"`
+	// Source of the Probe
+	Source *string `json:"source"`
+}
+
+func (KubernetesCMDProbe) IsCommonProbeProperties() {}
+
+// Defines the input for Kubernetes CMD probe properties
+type KubernetesCMDProbeRequest struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// Command of the Probe
+	Command string `json:"command"`
+	// Comparator of the Probe
+	Comparator *ComparatorInput `json:"comparator"`
+	// Source of the Probe
+	Source *string `json:"source"`
+}
+
+// Defines the Kubernetes HTTP probe properties
+type KubernetesHTTPProbe struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// URL of the Probe
+	URL string `json:"url"`
+	// HTTP method of the Probe
+	Method *Method `json:"method"`
+	// If Insecure HTTP verification should  be skipped
+	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
+}
+
+func (KubernetesHTTPProbe) IsCommonProbeProperties() {}
+
+// Defines the input for Kubernetes HTTP probe properties
+type KubernetesHTTPProbeRequest struct {
+	// Timeout of the Probe
+	ProbeTimeout string `json:"probeTimeout"`
+	// Interval of the Probe
+	Interval string `json:"interval"`
+	// Retry interval of the Probe
+	Retry *int `json:"retry"`
+	// Attempt contains the total attempt count for the probe
+	Attempt *int `json:"attempt"`
+	// Polling interval of the Probe
+	ProbePollingInterval *string `json:"probePollingInterval"`
+	// Initial delay interval of the Probe in seconds
+	InitialDelay *string `json:"initialDelay"`
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	EvaluationTimeout *string `json:"evaluationTimeout"`
+	// Is stop on failure enabled in the Probe
+	StopOnFailure *bool `json:"stopOnFailure"`
+	// URL of the Probe
+	URL string `json:"url"`
+	// HTTP method of the Probe
+	Method *MethodRequest `json:"method"`
+	// If Insecure HTTP verification should  be skipped
+	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
 }
 
 type Link struct {
@@ -1392,10 +1452,12 @@ type Probe struct {
 	Tags []string `json:"tags"`
 	// Type of the Probe [From list of ProbeType enum]
 	Type ProbeType `json:"type"`
-	// HTTP Properties of the specific type of the Probe
-	HTTPProperties *HTTPProbe `json:"httpProperties"`
-	// CMD Properties of the specific type of the Probe
-	CmdProperties *CMDProbe `json:"cmdProperties"`
+	// Infrastructure type of the Probe
+	InfrastructureType InfrastructureType `json:"infrastructureType"`
+	// Kubernetes HTTP Properties of the specific type of the Probe
+	KubernetesHTTPProperties *KubernetesHTTPProbe `json:"kubernetesHTTPProperties"`
+	// Kubernetes CMD Properties of the specific type of the Probe
+	KubernetesCMDProperties *KubernetesCMDProbe `json:"kubernetesCMDProperties"`
 	// K8S Properties of the specific type of the Probe
 	K8sProperties *K8SProbe `json:"k8sProperties"`
 	// PROM Properties of the specific type of the Probe
@@ -1447,10 +1509,12 @@ type ProbeRequest struct {
 	Tags []string `json:"tags"`
 	// Type of the Probe [From list of ProbeType enum]
 	Type ProbeType `json:"type"`
+	// Infrastructure type of the Probe
+	InfrastructureType InfrastructureType `json:"infrastructureType"`
 	// HTTP Properties of the specific type of the Probe
-	HTTPProperties *HTTPProbeRequest `json:"httpProperties"`
+	KubernetesHTTPProperties *KubernetesHTTPProbeRequest `json:"kubernetesHTTPProperties"`
 	// CMD Properties of the specific type of the Probe
-	CmdProperties *CMDProbeRequest `json:"cmdProperties"`
+	KubernetesCMDProperties *KubernetesCMDProbeRequest `json:"kubernetesCMDProperties"`
 	// K8S Properties of the specific type of the Probe
 	K8sProperties *K8SProbeRequest `json:"k8sProperties"`
 	// PROM Properties of the specific type of the Probe
@@ -1486,6 +1550,8 @@ type RecentExperimentRun struct {
 	CreatedBy *UserDetails `json:"createdBy"`
 	// User who updated the experiment run
 	UpdatedBy *UserDetails `json:"updatedBy"`
+	// runSequence is the sequence number of experiment run
+	RunSequence int `json:"runSequence"`
 }
 
 func (RecentExperimentRun) IsAudit() {}
@@ -2129,18 +2195,16 @@ func (e ImagePullPolicy) MarshalGQL(w io.Writer) {
 type InfrastructureType string
 
 const (
-	InfrastructureTypeInternal InfrastructureType = "INTERNAL"
-	InfrastructureTypeExternal InfrastructureType = "EXTERNAL"
+	InfrastructureTypeKubernetes InfrastructureType = "Kubernetes"
 )
 
 var AllInfrastructureType = []InfrastructureType{
-	InfrastructureTypeInternal,
-	InfrastructureTypeExternal,
+	InfrastructureTypeKubernetes,
 }
 
 func (e InfrastructureType) IsValid() bool {
 	switch e {
-	case InfrastructureTypeInternal, InfrastructureTypeExternal:
+	case InfrastructureTypeKubernetes:
 		return true
 	}
 	return false

@@ -12,4 +12,5 @@ export * from './user';
 export * from './projectMembers';
 export * from './token';
 export * from './projects';
+export * from './chaosProbe';
 export * from './gitops';

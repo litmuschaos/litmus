@@ -135,7 +135,7 @@ export interface ProbeAttributes {
   // Name of probe
   name: string;
   // Type of probe
-  type: string;
+  type?: string;
   // inputs needed for the k8s probe
   'k8sProbe/inputs'?: K8sProbeInputs;
   // inputs needed for the http probe
@@ -159,9 +159,9 @@ export interface K8sProbeInputs {
   // group of the resource
   group?: string;
   // apiversion of the resource
-  version?: string;
+  version: string;
   // kind of resource
-  resource?: string;
+  resource: string;
   // ResourceNames to get the resources using their list of comma separated names
   resourceNames?: string;
   // namespace of the resource
@@ -172,7 +172,18 @@ export interface K8sProbeInputs {
   labelSelector?: string;
   // Operation performed by the k8s probe
   // it can be create, delete, present, absent
-  operation?: string;
+  operation: string;
+}
+
+//CmdProbeInputs contains all the inputs required for cmd probe
+export interface NewCmdProbeInputs {
+  // Command need to be executed for the probe
+  command: string;
+  // Comparator check for the correctness of the probe output
+  comparator: ComparatorInfo;
+  // The source where we have to run the command
+  // It will run in inline(inside experiment itself) mode if source is nil
+  source?: string;
 }
 
 //CmdProbeInputs contains all the inputs required for cmd probe
@@ -230,6 +241,16 @@ export interface PromProbeInputs {
   queryPath?: string;
   // Comparator check for the correctness of the probe output
   comparator?: ComparatorInfo;
+}
+
+// Identifier required for fetching details from the Platform APIs
+export interface Identifier {
+  // AccountIdentifier for account ID
+  accountIdentifier?: string;
+  // OrgIdentifier for organization ID
+  orgIdentifier?: string;
+  // ProjectIdentifier for project ID
+  projectIdentifier?: string;
 }
 
 // ComparatorInfo contains the comparator details
@@ -290,18 +311,20 @@ export interface PostMethod {
 //RunProperty contains timeout, retry and interval for the probe
 export interface RunProperty {
   //ProbeTimeout contains timeout for the probe
-  probeTimeout?: number;
+  probeTimeout?: string;
   // Interval contains the interval for the probe
-  interval?: number;
+  interval?: string;
   // Attempt contains the attempt count for the probe
   attempt?: number;
   // Retry contains the retry count for the probe
   retry?: number;
-  //ProbePollingInterval contains time interval, for which continuous probe should be sleep
+  // ProbePollingInterval contains time interval, for which continuous probe should be sleep
   // after each iteration
-  probePollingInterval?: number;
-  //InitialDelaySeconds time interval for which probe will wait before run
-  initialDelaySeconds?: number;
+  probePollingInterval?: string;
+  // InitialDelaySeconds time interval for which probe will wait before run
+  initialDelay?: string;
+  // EvaluationTimeout is the timeout window in which the SLO metrics
+  evaluationTimeout?: string;
   // StopOnFailure contains flag to stop/continue experiment execution, if probe fails
   // it will stop the experiment execution, if provided true
   // it will continue the experiment execution, if provided false or not provided(default case)

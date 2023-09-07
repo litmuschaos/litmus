@@ -2,6 +2,7 @@ package probe
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -17,8 +18,9 @@ type Probe struct {
 	mongodb.ResourceDetails  `bson:",inline"`
 	mongodb.Audit            `bson:",inline"`
 	Type                     ProbeType                      `bson:"type"`
-	HTTPProperties           *HTTPProbe                     `bson:"http_properties,omitempty"`
-	CMDProperties            *CMDProbe                      `bson:"cmd_properties,omitempty"`
+	InfrastructureType       model.InfrastructureType       `bson:"infrastructure_type"`
+	KubernetesHTTPProperties *KubernetesHTTPProbe           `bson:"kubernetes_http_properties,omitempty"`
+	KubernetesCMDProperties  *KubernetesCMDProbe            `bson:"kubernetes_cmd_properties,omitempty"`
 	PROMProperties           *PROMProbe                     `bson:"prom_properties,omitempty"`
 	K8SProperties            *K8SProbe                      `bson:"k8s_properties,omitempty"`
 	RecentExecutions         []*model.ProbeRecentExecutions `bson:"recent_executions"`
@@ -30,7 +32,8 @@ type ProbeResponseDetails struct {
 }
 
 type Probes struct {
-	FaultName string `bson:"fault_name"`
+	FaultName  string   `bson:"fault_name"`
+	ProbeNames []string `bson:"probe_names"`
 }
 
 type ExecutionHistory struct {
@@ -44,16 +47,8 @@ type ExecutionHistory struct {
 }
 
 type ProbeWithExecutionHistory struct {
-	ProjectID                string `bson:"project_id"`
-	mongodb.ResourceDetails  `bson:",inline"`
-	mongodb.Audit            `bson:",inline"`
-	Type                     ProbeType          `bson:"type"`
-	HTTPProperties           *HTTPProbe         `bson:"http_properties,omitempty"`
-	CMDProperties            *CMDProbe          `bson:"cmd_properties,omitempty"`
-	PROMProperties           *PROMProbe         `bson:"prom_properties,omitempty"`
-	K8SProperties            *K8SProbe          `bson:"k8s_properties,omitempty"`
-	AverageSuccessPercentage float64            `bson:"average_success_percentage"`
-	ExecutionHistory         []ExecutionHistory `bson:"execution_history"`
+	Probe            `bson:",inline"`
+	ExecutionHistory []ExecutionHistory `bson:"execution_history"`
 }
 
 type CommonProbeProperties struct {
@@ -67,7 +62,7 @@ type CommonProbeProperties struct {
 	StopOnFailure     *bool   `bson:"stop_on_failure,omitempty"`
 }
 
-type HTTPProbe struct {
+type KubernetesHTTPProbe struct {
 	URL                string  `bson:"url"`
 	ProbeTimeout       string  `bson:"probe_timeout"`
 	Interval           string  `bson:"interval"`
@@ -96,7 +91,7 @@ type PROMProbe struct {
 	StopOnFailure     *bool      `bson:"stop_on_failure,omitempty"`
 }
 
-type CMDProbe struct {
+type KubernetesCMDProbe struct {
 	Command           string                  `bson:"command"`
 	ProbeTimeout      string                  `bson:"probe_timeout"`
 	Interval          string                  `bson:"interval"`
@@ -156,124 +151,127 @@ type Comparator struct {
 // GetOutputProbe
 func (probe *Probe) GetOutputProbe() *model.Probe {
 	probeResponse := &model.Probe{
-		ProjectID:        probe.ProjectID,
-		Name:             probe.Name,
-		Description:      &probe.Description,
-		Tags:             probe.Tags,
-		RecentExecutions: probe.RecentExecutions,
-		CreatedAt:        strconv.Itoa(int(probe.CreatedAt)),
-		UpdatedAt:        strconv.Itoa(int(probe.UpdatedAt)),
-		Type:             model.ProbeType(probe.Type),
+		ProjectID:          probe.ProjectID,
+		Name:               probe.Name,
+		Description:        &probe.Description,
+		Tags:               probe.Tags,
+		RecentExecutions:   probe.RecentExecutions,
+		CreatedAt:          strconv.Itoa(int(probe.CreatedAt)),
+		UpdatedAt:          strconv.Itoa(int(probe.UpdatedAt)),
+		Type:               model.ProbeType(probe.Type),
+		InfrastructureType: probe.InfrastructureType,
 		CreatedBy: &model.UserDetails{
-			UserID: probe.CreatedBy,
+			Username: probe.CreatedBy,
 		},
 		UpdatedBy: &model.UserDetails{
-			UserID: probe.UpdatedBy,
+			Username: probe.UpdatedBy,
 		},
 	}
-
-	if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
-		probeResponse.HTTPProperties = &model.HTTPProbe{
-			ProbeTimeout:         probe.HTTPProperties.ProbeTimeout,
-			Interval:             probe.HTTPProperties.Interval,
-			Attempt:              probe.HTTPProperties.Attempt,
-			Retry:                probe.HTTPProperties.Retry,
-			ProbePollingInterval: probe.HTTPProperties.PollingInterval,
-			InitialDelay:         probe.HTTPProperties.InitialDelay,
-			EvaluationTimeout:    probe.HTTPProperties.EvaluationTimeout,
-			StopOnFailure:        probe.HTTPProperties.StopOnFailure,
-			URL:                  probe.HTTPProperties.URL,
-			Method:               &model.Method{},
-		}
-
-		if probeResponse.HTTPProperties.InsecureSkipVerify != nil {
-			probeResponse.HTTPProperties.InsecureSkipVerify = probe.HTTPProperties.InsecureSkipVerify
-		}
-
-		if probe.HTTPProperties.Method.GET != nil {
-			probeResponse.HTTPProperties.Method.Get = &model.Get{
-				Criteria:     probe.HTTPProperties.Method.GET.Criteria,
-				ResponseCode: probe.HTTPProperties.Method.GET.ResponseCode,
-			}
-		} else if probe.HTTPProperties.Method.POST != nil {
-			probeResponse.HTTPProperties.Method.Post = &model.Post{
-				Criteria:     probe.HTTPProperties.Method.POST.Criteria,
-				ResponseCode: probe.HTTPProperties.Method.POST.ResponseCode,
+	if probe.InfrastructureType == model.InfrastructureTypeKubernetes {
+		if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
+			probeResponse.KubernetesHTTPProperties = &model.KubernetesHTTPProbe{
+				ProbeTimeout:         probe.KubernetesHTTPProperties.ProbeTimeout,
+				Interval:             probe.KubernetesHTTPProperties.Interval,
+				Attempt:              probe.KubernetesHTTPProperties.Attempt,
+				Retry:                probe.KubernetesHTTPProperties.Retry,
+				ProbePollingInterval: probe.KubernetesHTTPProperties.PollingInterval,
+				InitialDelay:         probe.KubernetesHTTPProperties.InitialDelay,
+				EvaluationTimeout:    probe.KubernetesHTTPProperties.EvaluationTimeout,
+				StopOnFailure:        probe.KubernetesHTTPProperties.StopOnFailure,
+				URL:                  probe.KubernetesHTTPProperties.URL,
+				Method:               &model.Method{},
 			}
 
-			if probeResponse.HTTPProperties.Method.Post.ContentType != nil {
-				probeResponse.HTTPProperties.Method.Post.ContentType = probe.HTTPProperties.Method.POST.ContentType
+			if probeResponse.KubernetesHTTPProperties.InsecureSkipVerify != nil {
+				probeResponse.KubernetesHTTPProperties.InsecureSkipVerify = probe.KubernetesHTTPProperties.InsecureSkipVerify
 			}
 
-			if probeResponse.HTTPProperties.Method.Post.Body != nil {
-				probeResponse.HTTPProperties.Method.Post.Body = probe.HTTPProperties.Method.POST.Body
+			if probe.KubernetesHTTPProperties.Method.GET != nil {
+				probeResponse.KubernetesHTTPProperties.Method.Get = &model.Get{
+					Criteria:     probe.KubernetesHTTPProperties.Method.GET.Criteria,
+					ResponseCode: probe.KubernetesHTTPProperties.Method.GET.ResponseCode,
+				}
+			} else if probe.KubernetesHTTPProperties.Method.POST != nil {
+				probeResponse.KubernetesHTTPProperties.Method.Post = &model.Post{
+					Criteria:     probe.KubernetesHTTPProperties.Method.POST.Criteria,
+					ResponseCode: probe.KubernetesHTTPProperties.Method.POST.ResponseCode,
+				}
+
+				if probeResponse.KubernetesHTTPProperties.Method.Post.ContentType != nil {
+					probeResponse.KubernetesHTTPProperties.Method.Post.ContentType = probe.KubernetesHTTPProperties.Method.POST.ContentType
+				}
+
+				if probeResponse.KubernetesHTTPProperties.Method.Post.Body != nil {
+					probeResponse.KubernetesHTTPProperties.Method.Post.Body = probe.KubernetesHTTPProperties.Method.POST.Body
+				}
+
+				if probeResponse.KubernetesHTTPProperties.Method.Post.BodyPath != nil {
+					probeResponse.KubernetesHTTPProperties.Method.Post.BodyPath = probe.KubernetesHTTPProperties.Method.POST.BodyPath
+				}
+			}
+		} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
+			probeResponse.KubernetesCMDProperties = &model.KubernetesCMDProbe{
+				ProbeTimeout:         probe.KubernetesCMDProperties.ProbeTimeout,
+				Interval:             probe.KubernetesCMDProperties.Interval,
+				Attempt:              probe.KubernetesCMDProperties.Attempt,
+				Retry:                probe.KubernetesCMDProperties.Retry,
+				ProbePollingInterval: probe.KubernetesCMDProperties.PollingInterval,
+				InitialDelay:         probe.KubernetesCMDProperties.InitialDelay,
+				EvaluationTimeout:    probe.KubernetesCMDProperties.EvaluationTimeout,
+				StopOnFailure:        probe.KubernetesCMDProperties.StopOnFailure,
+				Command:              probe.KubernetesCMDProperties.Command,
+				Comparator: &model.Comparator{
+					Type:     probe.KubernetesCMDProperties.Comparator.Type,
+					Value:    probe.KubernetesCMDProperties.Comparator.Value,
+					Criteria: probe.KubernetesCMDProperties.Comparator.Criteria,
+				},
 			}
 
-			if probeResponse.HTTPProperties.Method.Post.BodyPath != nil {
-				probeResponse.HTTPProperties.Method.Post.BodyPath = probe.HTTPProperties.Method.POST.BodyPath
+			// CMD Probe -> Source
+			if probe.KubernetesCMDProperties.Source != nil {
+				jsonSource, _ := json.Marshal(probe.KubernetesCMDProperties.Source)
+				source := string(jsonSource)
+				fmt.Println("string source", source)
+				probeResponse.KubernetesCMDProperties.Source = &source
 			}
-		}
-	} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
-		probeResponse.CmdProperties = &model.CMDProbe{
-			ProbeTimeout:         probe.CMDProperties.ProbeTimeout,
-			Interval:             probe.CMDProperties.Interval,
-			Attempt:              probe.CMDProperties.Attempt,
-			Retry:                probe.CMDProperties.Retry,
-			ProbePollingInterval: probe.CMDProperties.PollingInterval,
-			InitialDelay:         probe.CMDProperties.InitialDelay,
-			EvaluationTimeout:    probe.CMDProperties.EvaluationTimeout,
-			StopOnFailure:        probe.CMDProperties.StopOnFailure,
-			Command:              probe.CMDProperties.Command,
-			Comparator: &model.Comparator{
-				Type:     probe.CMDProperties.Comparator.Type,
-				Value:    probe.CMDProperties.Comparator.Value,
-				Criteria: probe.CMDProperties.Comparator.Criteria,
-			},
-		}
 
-		// CMD Probe -> Source
-		if probe.CMDProperties.Source != nil {
-			jsonSource, _ := json.Marshal(probe.CMDProperties.Source)
-			source := string(jsonSource)
-			probeResponse.CmdProperties.Source = &source
-		}
-
-	} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
-		probeResponse.PromProperties = &model.PROMProbe{
-			ProbeTimeout:         probe.PROMProperties.ProbeTimeout,
-			Interval:             probe.PROMProperties.Interval,
-			Attempt:              probe.PROMProperties.Attempt,
-			Retry:                probe.PROMProperties.Retry,
-			ProbePollingInterval: probe.PROMProperties.PollingInterval,
-			InitialDelay:         probe.PROMProperties.InitialDelay,
-			EvaluationTimeout:    probe.PROMProperties.EvaluationTimeout,
-			StopOnFailure:        probe.PROMProperties.StopOnFailure,
-			Endpoint:             probe.PROMProperties.Endpoint,
-			Query:                &probe.PROMProperties.Query,
-			QueryPath:            probe.PROMProperties.QueryPath,
-			Comparator: &model.Comparator{
-				Type:     probe.PROMProperties.Comparator.Type,
-				Value:    probe.PROMProperties.Comparator.Value,
-				Criteria: probe.PROMProperties.Comparator.Criteria,
-			},
-		}
-	} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
-		probeResponse.K8sProperties = &model.K8SProbe{
-			ProbeTimeout:         probe.K8SProperties.ProbeTimeout,
-			Interval:             probe.K8SProperties.Interval,
-			Attempt:              probe.K8SProperties.Attempt,
-			Retry:                probe.K8SProperties.Retry,
-			ProbePollingInterval: probe.K8SProperties.PollingInterval,
-			InitialDelay:         probe.K8SProperties.InitialDelay,
-			EvaluationTimeout:    probe.K8SProperties.EvaluationTimeout,
-			StopOnFailure:        probe.K8SProperties.StopOnFailure,
-			Group:                probe.K8SProperties.Group,
-			Version:              probe.K8SProperties.Version,
-			Resource:             probe.K8SProperties.Resource,
-			Namespace:            probe.K8SProperties.Namespace,
-			FieldSelector:        probe.K8SProperties.FieldSelector,
-			LabelSelector:        probe.K8SProperties.LabelSelector,
-			Operation:            probe.K8SProperties.Operation,
+		} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
+			probeResponse.PromProperties = &model.PROMProbe{
+				ProbeTimeout:         probe.PROMProperties.ProbeTimeout,
+				Interval:             probe.PROMProperties.Interval,
+				Attempt:              probe.PROMProperties.Attempt,
+				Retry:                probe.PROMProperties.Retry,
+				ProbePollingInterval: probe.PROMProperties.PollingInterval,
+				InitialDelay:         probe.PROMProperties.InitialDelay,
+				EvaluationTimeout:    probe.PROMProperties.EvaluationTimeout,
+				StopOnFailure:        probe.PROMProperties.StopOnFailure,
+				Endpoint:             probe.PROMProperties.Endpoint,
+				Query:                &probe.PROMProperties.Query,
+				QueryPath:            probe.PROMProperties.QueryPath,
+				Comparator: &model.Comparator{
+					Type:     probe.PROMProperties.Comparator.Type,
+					Value:    probe.PROMProperties.Comparator.Value,
+					Criteria: probe.PROMProperties.Comparator.Criteria,
+				},
+			}
+		} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
+			probeResponse.K8sProperties = &model.K8SProbe{
+				ProbeTimeout:         probe.K8SProperties.ProbeTimeout,
+				Interval:             probe.K8SProperties.Interval,
+				Attempt:              probe.K8SProperties.Attempt,
+				Retry:                probe.K8SProperties.Retry,
+				ProbePollingInterval: probe.K8SProperties.PollingInterval,
+				InitialDelay:         probe.K8SProperties.InitialDelay,
+				EvaluationTimeout:    probe.K8SProperties.EvaluationTimeout,
+				StopOnFailure:        probe.K8SProperties.StopOnFailure,
+				Group:                probe.K8SProperties.Group,
+				Version:              probe.K8SProperties.Version,
+				Resource:             probe.K8SProperties.Resource,
+				Namespace:            probe.K8SProperties.Namespace,
+				FieldSelector:        probe.K8SProperties.FieldSelector,
+				LabelSelector:        probe.K8SProperties.LabelSelector,
+				Operation:            probe.K8SProperties.Operation,
+			}
 		}
 	}
 

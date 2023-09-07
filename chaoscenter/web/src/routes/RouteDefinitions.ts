@@ -16,7 +16,7 @@ export interface UseRouteDefinitionsProps {
   toChaosHubs(): string;
   toChaosHub(params: { hubID: string }): string;
   toChaosProbes(): string;
-  toChaosProbe(params: { probeID: string }): string;
+  toChaosProbe(params: { probeName: string }): string;
   toPredefinedExperiment(params: { hubID: string; experimentName: string }): string;
   toChaosFault(params: { hubID: string; faultName: string }): string;
   toEnvironments(): string;
@@ -51,7 +51,7 @@ export const paths: UseRouteDefinitionsProps = {
   toChaosFault: ({ hubID, faultName }) => `/chaos-hubs/${hubID}/fault/${faultName}`,
   // Chaos Probe Routes
   toChaosProbes: () => '/probes',
-  toChaosProbe: ({ probeID }) => `/probes/${probeID}`,
+  toChaosProbe: ({ probeName }) => `/probes/${probeName}`,
   toEnvironments: () => '/environments',
   // Chaos Infrastructures Routes
   toChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}`,

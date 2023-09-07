@@ -4,12 +4,15 @@ import {
   useGetOwnerProjectsQuery,
   useListInvitationsQuery,
   useAcceptInvitationMutation,
-  GetUserWithProjectOkResponse
+  GetUserWithProjectOkResponse,
+  useGetApiTokensQuery
 } from '@api/auth';
 import UserCreatedProjectsView from '@views/UserCreatedProjects';
 import ProjectsJoinedView from '@views/ProjectsJoined';
 import ProjectInvitationsView from '@views/ProjectInvitations';
 import { InvitationState } from '@models';
+import { useAppStore } from '@context';
+import ApiTokensView from '@views/ApiTokens';
 
 interface AccountSettingsOverviewProjectsControllerProps {
   getUserWithProjectsRefetch: <TPageData>(
@@ -20,11 +23,17 @@ interface AccountSettingsOverviewProjectsControllerProps {
 export default function AccountSettingsOverviewProjectsController({
   getUserWithProjectsRefetch
 }: AccountSettingsOverviewProjectsControllerProps): React.ReactElement {
+  const { currentUserInfo } = useAppStore();
   const {
     data: ownerProjectsData,
     isLoading: getOwnerProjectsLoading,
     refetch: getProjectDataRefetch
   } = useGetOwnerProjectsQuery({});
+  const {
+    data: apiTokensData,
+    isLoading: apiTokensLoading,
+    refetch: apiTokensRefetch
+  } = useGetApiTokensQuery({ user_id: currentUserInfo?.ID ?? '' });
   const {
     data: projectsJoinedData,
     isLoading: projectsJoinedLoading,
@@ -52,6 +61,11 @@ export default function AccountSettingsOverviewProjectsController({
         projectData={ownerProjectsData?.data}
         useGetOwnerProjectsQuery={getOwnerProjectsLoading}
         getProjectDataRefetch={getProjectDataRefetch}
+      />
+      <ApiTokensView
+        apiTokensData={apiTokensData}
+        useGetApiTokensQuery={apiTokensLoading}
+        apiTokensRefetch={apiTokensRefetch}
       />
       <ProjectsJoinedView
         joinedProjects={projectsJoinedData}
