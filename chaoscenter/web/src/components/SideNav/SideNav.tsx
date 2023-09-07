@@ -3,9 +3,9 @@ import cx from 'classnames';
 import { NavLink as Link, NavLinkProps } from 'react-router-dom';
 import { Text, Layout, Container, TextProps, Popover } from '@harnessio/uicore';
 import { Icon, IconName } from '@harnessio/icons';
-import { Color } from '@harnessio/design-system';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { Classes, Position, PopoverInteractionKind } from '@blueprintjs/core';
-import { useRouteWithBaseUrl } from '@hooks';
+import { useLogout, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import ProjectSelectorController from '@controllers/ProjectSelector';
 import NavExpandable from '@components/NavExpandable';
@@ -25,8 +25,8 @@ const SideNavCollapseButton: React.FC<{ isExpanded: boolean; onClick: () => void
         [css.collapse]: isExpanded,
         [css.expand]: !isExpanded
       })}
-      onMouseEnter={/* istanbul ignore next */ e => e.stopPropagation()}
-      onMouseLeave={/* istanbul ignore next */ e => e.stopPropagation()}
+      onMouseEnter={e => e.stopPropagation()}
+      onMouseLeave={e => e.stopPropagation()}
       onClick={onClick}
     >
       <Popover
@@ -57,11 +57,13 @@ export const SidebarLink: React.FC<SidebarLinkProps> = ({ label, icon, className
 export const SIDE_NAV_EXPAND_TIMER = 500;
 
 export default function SideNav(): ReactElement {
+  const { getString } = useStrings();
+  const paths = useRouteWithBaseUrl();
+  const accountScopedPaths = useRouteWithBaseUrl('account');
+  const { forceLogout } = useLogout();
   const collapseByDefault = false;
   const [sideNavHovered, setSideNavhovered] = useState<boolean>(false);
   const [sideNavExpanded, setSideNavExpanded] = useState<boolean>(!collapseByDefault);
-  const paths = useRouteWithBaseUrl();
-  const { getString } = useStrings();
 
   useEffect(() => {
     const timer =
@@ -74,6 +76,10 @@ export default function SideNav(): ReactElement {
       timer && clearTimeout(timer);
     };
   }, [sideNavHovered]);
+
+  const isPathPresent = (path: string): boolean => {
+    return window.location.pathname.includes(path);
+  };
 
   return (
     <div
@@ -91,30 +97,51 @@ export default function SideNav(): ReactElement {
       }}
     >
       <div>
-        <Layout.Vertical spacing="small">
-          <ProjectSelectorController />
-          <SidebarLink label={'Overview'} to={paths.toDashboard()} />
-          <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
-          <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
-          <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
-          <SidebarLink label={'Resilience Probes'} to={paths.toChaosProbes()} />
-          <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
-            <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
-            <SidebarLink label={'Gitops'} to={paths.toGitops()} />
-            <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
-          </NavExpandable>
-        </Layout.Vertical>
-      </div>
-      <Container className={css.bottomContainer}>
-        <div className={css.iconContainer}>
-          <Icon className={css.icon} name={'chaos-litmuschaos'} size={200} />
-        </div>
-        <div className={css.titleContainer}>
-          <Layout.Vertical>
-            <Text color={Color.WHITE} className={css.title}>
-              {getString('litmus')} 3.0
-            </Text>
+        {isPathPresent('settings') ? (
+          <Layout.Vertical spacing="small" padding={{ top: 'large' }}>
+            <SidebarLink label={'Settings'} to={accountScopedPaths.toAccountSettingsOverview()} />
           </Layout.Vertical>
+        ) : (
+          <Layout.Vertical spacing="small">
+            <ProjectSelectorController />
+            <SidebarLink label={'Overview'} to={paths.toDashboard()} />
+            <SidebarLink label={'Chaos Experiments'} to={paths.toExperiments()} />
+            <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
+            <SidebarLink label={'Resilience Probes'} to={paths.toChaosProbes()} />
+            <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
+            <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
+              <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
+              <SidebarLink label={'Gitops'} to={paths.toGitops()} />
+              <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
+            </NavExpandable>
+          </Layout.Vertical>
+        )}
+      </div>
+      <Container className={css.bottomContainer} data-isRoutePresent={isPathPresent('settings')}>
+        {!isPathPresent('settings') && (
+          <div className={css.iconContainer}>
+            <Icon className={css.icon} name={'chaos-litmuschaos'} size={200} />
+          </div>
+        )}
+        <div className={css.titleContainer}>
+          {isPathPresent('settings') ? (
+            <Layout.Horizontal
+              flex={{ alignItems: 'center', justifyContent: 'flex-start' }}
+              className={css.logOutContainer}
+              onClick={forceLogout}
+            >
+              <Icon name="log-out" color={Color.WHITE} />
+              <Text font={{ variation: FontVariation.BODY }} color={Color.WHITE}>
+                Sign Out
+              </Text>
+            </Layout.Horizontal>
+          ) : (
+            <Layout.Vertical>
+              <Text color={Color.WHITE} className={css.title}>
+                {getString('litmus')} 3.0
+              </Text>
+            </Layout.Vertical>
+          )}
         </div>
       </Container>
 

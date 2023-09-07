@@ -160,16 +160,6 @@
     }
   }
 
-  .hoverNavLink:hover .hiddenText,
-  .hoverNavLink.active .hiddenText {
-    display: block;
-    text-transform: uppercase;
-  }
-
-  .hiddenText {
-    display: none;
-  }
-
   .hoverText {
     opacity: 0.65;
     text-transform: uppercase;
