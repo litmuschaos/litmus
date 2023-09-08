@@ -52,7 +52,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 	// considering chaosengine will only have 1 experiment
 	cd.ExperimentPod = crd.Status.Experiments[0].ExpPod
 	cd.RunnerPod = crd.Status.Experiments[0].Runner
-	cd.ExperimentStatus = string(crd.Status.Experiments[0].Status)
+	cd.ExperimentStatus = string(crd.Status.EngineStatus)
 	cd.ExperimentName = crd.Status.Experiments[0].Name
 	cd.LastUpdatedAt = strconv.FormatInt(crd.Status.Experiments[0].LastUpdateTime.Unix(), 10)
 	cd.ExperimentVerdict = crd.Status.Experiments[0].Verdict
@@ -73,6 +73,7 @@ func getChaosData(nodeStatus v1alpha13.NodeStatus, engineName, engineNS string, 
 		if expRes.Status.ExperimentStatus.ErrorOutput != nil {
 			cd.FailStep = fmt.Sprintf("%s : %s", expRes.Status.ExperimentStatus.ErrorOutput.ErrorCode, expRes.Status.ExperimentStatus.ErrorOutput.Reason)
 		}
+		cd.ExperimentStatus = string(expRes.Status.ExperimentStatus.Phase)
 	}
 	return cd, nil
 }

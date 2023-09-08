@@ -35,7 +35,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
+	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
@@ -1222,6 +1222,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 						{"recent_experiment_run_details.$.phase", executionData.Phase},
 						{"recent_experiment_run_details.$.completed", event.Completed},
 						{"recent_experiment_run_details.$.experiment_run_id", event.ExperimentRunID},
+						{"recent_experiment_run_details.$.probes", probes},
 						{"recent_experiment_run_details.$.resiliency_score", workflowRunMetrics.ResiliencyScore},
 						{"recent_experiment_run_details.$.updated_at", currentTime.UnixMilli()},
 						{"recent_experiment_run_details.$.updated_by", string(updatedBy)},
@@ -1244,11 +1245,11 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			NotifyID:        event.NotifyID,
 			Phase:           executionData.Phase,
 			ResiliencyScore: &workflowRunMetrics.ResiliencyScore,
-			FaultsPassed:    &workflowRunMetrics.FaultsPassed,
-			FaultsFailed:    &workflowRunMetrics.FaultsFailed,
-			FaultsAwaited:   &workflowRunMetrics.FaultsAwaited,
-			FaultsStopped:   &workflowRunMetrics.FaultsStopped,
-			FaultsNA:        &workflowRunMetrics.FaultsNA,
+			FaultsPassed:    &workflowRunMetrics.ExperimentsPassed,
+			FaultsFailed:    &workflowRunMetrics.ExperimentsFailed,
+			FaultsAwaited:   &workflowRunMetrics.ExperimentsAwaited,
+			FaultsStopped:   &workflowRunMetrics.ExperimentsStopped,
+			FaultsNA:        &workflowRunMetrics.ExperimentsNA,
 			TotalFaults:     &workflowRunMetrics.TotalExperiments,
 			ExecutionData:   string(exeData),
 			RevisionID:      event.RevisionID,
