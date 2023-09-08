@@ -24,6 +24,7 @@ type ExperimentRunDetail struct {
 	ResiliencyScore *float64 `bson:"resiliency_score,omitempty"`
 	Completed       bool     `bson:"completed"`
 	RunSequence     int      `bson:"run_sequence"`
+	Probe           []Probes `bson:"probes"`
 }
 
 // ChaosExperimentRequest contains the required fields to be stored in the database for a chaos experiment input
