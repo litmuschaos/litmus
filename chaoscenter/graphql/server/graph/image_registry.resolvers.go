@@ -74,7 +74,7 @@ func (r *queryResolver) ListImageRegistry(ctx context.Context, projectID string)
 	return imageRegistries, err
 }
 
-func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error) {
+func (r *queryResolver) GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error) {
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.GetImageRegistry],
 		model.InvitationAccepted.String())
@@ -82,7 +82,7 @@ func (r *queryResolver) GetImageRegistry(ctx context.Context, imageRegistryID st
 		return nil, err
 	}
 
-	imageRegistry, err := r.imageRegistryService.GetImageRegistry(ctx, imageRegistryID, projectID)
+	imageRegistry, err := r.imageRegistryService.GetImageRegistry(ctx, projectID)
 	if err != nil {
 		logrus.Error(err)
 	}

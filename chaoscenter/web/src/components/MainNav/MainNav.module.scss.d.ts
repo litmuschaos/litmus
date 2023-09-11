@@ -8,7 +8,6 @@ declare namespace MainNavModuleScssNamespace {
     darkBackground: string;
     disabled: string;
     disabledContainer: string;
-    hiddenText: string;
     hoverNavLink: string;
     hoverText: string;
     logOutButton: string;

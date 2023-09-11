@@ -1,6 +1,5 @@
 import React from 'react';
-
-import { Layout, Switch, Text } from '@harnessio/uicore';
+import { Layout, Switch, Text, VisualYamlSelectedView } from '@harnessio/uicore';
 import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
 import { DiagramFactory } from '@components/PipelineDiagram/DiagramFactory';
@@ -20,16 +19,19 @@ import { useUpdateSearchParams, useSearchParams } from '@hooks';
 import experimentYamlService from 'services/experiment';
 import { GetFaultTunablesOperation } from '@services/experiment/ExperimentYamlService';
 import type { ServiceIdentifiers } from '@db';
+import type { InfrastructureType } from '@api/entities';
 import css from './ExperimentVisualBuilder.module.scss';
 
 interface ExperimentVisualBuilderViewProps {
   setHasFaults: React.Dispatch<React.SetStateAction<boolean>>;
   handleTabChange: (tabID: StudioTabs) => void;
+  setViewFilter: (view: VisualYamlSelectedView) => void;
 }
 
 export default function ExperimentVisualBuilderView({
   setHasFaults,
-  handleTabChange
+  handleTabChange,
+  setViewFilter
 }: ExperimentVisualBuilderViewProps): React.ReactElement {
   const { getString } = useStrings();
   const searchParams = useSearchParams();
@@ -60,7 +62,8 @@ export default function ExperimentVisualBuilderView({
   const [isEditMode, setIsEditMode] = React.useState<boolean>(true);
   const [infraDetails, setInfraDetails] = React.useState<InfraDetails | undefined>();
 
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
 
   const handleFaultSelection = (faultData: FaultData): void => {
     experimentHandler
@@ -83,12 +86,13 @@ export default function ExperimentVisualBuilderView({
     setTuneFaultDrawerOpen({ open: true, operation: GetFaultTunablesOperation.InitialEnvs });
   };
 
-  const handleSelectTemplateDrawerClose = (manifest: ExperimentManifest): void => {
+  const handleSelectTemplateDrawerClose = (manifest: ExperimentManifest, yamlUploaded?: boolean): void => {
     setIsSelectTemplateDrawerOpen(false);
     const steps = experimentHandler?.getFaultsFromExperimentManifest(manifest, isEditMode) ?? [];
     setExperimentSteps(steps);
     const hasFaults = experimentHandler?.doesExperimentHaveFaults(manifest) ?? false;
     setHasFaults(hasFaults);
+    if (yamlUploaded) setViewFilter(VisualYamlSelectedView.YAML);
   };
 
   const handleRemoveFault = (faultName: string): void => {
@@ -110,19 +114,11 @@ export default function ExperimentVisualBuilderView({
         infraID: experiment?.chaosInfrastructure?.id ?? '',
         environmentID: experiment?.chaosInfrastructure?.environmentID ?? ''
       });
-      let expManifest = experiment?.manifest;
-      if (!expManifest) {
+
+      if (!experiment?.manifest) {
         setIsSelectTemplateDrawerOpen(true);
-      } else {
-        expManifest = experimentHandler.preProcessExperimentManifest({
-          manifest: expManifest,
-          experimentName: experiment?.name ?? 'chaos-experiment',
-          chaosInfrastructureID: experiment?.chaosInfrastructure?.id,
-          chaosInfrastructureNamespace: experiment?.chaosInfrastructure?.namespace
-        });
-        experimentHandler.updateExperimentManifest(experimentKey, expManifest);
       }
-      const steps = experimentHandler.getFaultsFromExperimentManifest(expManifest, isEditMode);
+      const steps = experimentHandler.getFaultsFromExperimentManifest(experiment?.manifest, isEditMode);
       setExperimentSteps(steps);
     });
   }, [isEditMode, experimentKey, experimentHandler]);

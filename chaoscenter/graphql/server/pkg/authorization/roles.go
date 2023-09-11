@@ -156,4 +156,5 @@ var MutationRbacRules = map[RoleQuery][]string{
 	UpdateProbe:                  {MemberRoleOwnerString, MemberRoleEditorString},
 	GetProbe:                     {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	ListProbes:                   {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	DeleteProbe:                  {MemberRoleOwnerString, MemberRoleEditorString},
 }

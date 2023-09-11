@@ -4,21 +4,25 @@ import { parse } from 'yaml';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';
+import { useSearchParams } from '@hooks';
 import { fileUpload } from '@utils';
 import type { ExperimentManifest } from '@models';
 import experimentYamlService from 'services/experiment';
+import type { InfrastructureType } from '@api/entities';
 import uploadYAML from './images/uploadYAML.png';
 import css from './ExperimentBuilderTemplateSelection.module.scss';
 
 interface UploadYAMLProps {
-  onClose: (manifest: ExperimentManifest) => void;
+  onClose: (manifest: ExperimentManifest, yamlUploaded?: boolean) => void;
 }
 
 export default function UploadYAML({ onClose }: UploadYAMLProps): React.ReactElement {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const { getString } = useStrings();
+  const searchParams = useSearchParams();
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const infrastructureType = searchParams.get('infrastructureType') as InfrastructureType | undefined;
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
 
   const { showError } = useToaster();
 
@@ -32,7 +36,7 @@ export default function UploadYAML({ onClose }: UploadYAMLProps): React.ReactEle
         imageRegistry: experiment?.imageRegistry
       });
       experimentHandler?.updateExperimentManifest(experimentKey, processedManifest);
-      onClose(processedManifest);
+      onClose(processedManifest, true);
     });
   };
 

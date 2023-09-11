@@ -413,6 +413,14 @@ type ExperimentRun implements Audit {
   User who has created the experiment run
   """
   createdBy: UserDetails
+  """
+  Notify ID of the experiment run
+  """
+  notifyID: ID
+  """
+  runSequence is the sequence number of experiment run
+  """
+  runSequence: Int!
 }
 
 """
@@ -532,6 +540,10 @@ type RecentExperimentRun implements Audit {
   User who updated the experiment run
   """
   updatedBy: UserDetails
+  """
+  runSequence is the sequence number of experiment run
+  """
+  runSequence: Int!
 }
 
 """

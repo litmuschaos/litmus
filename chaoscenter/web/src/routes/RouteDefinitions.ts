@@ -16,17 +16,18 @@ export interface UseRouteDefinitionsProps {
   toChaosHubs(): string;
   toChaosHub(params: { hubID: string }): string;
   toChaosProbes(): string;
-  toChaosProbe(params: { probeID: string }): string;
+  toChaosProbe(params: { probeName: string }): string;
   toPredefinedExperiment(params: { hubID: string; experimentName: string }): string;
   toChaosFault(params: { hubID: string; faultName: string }): string;
   toEnvironments(): string;
   toChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructures(params: { environmentID: string }): string;
   toKubernetesChaosInfrastructureDetails(params: { chaosInfrastructureID: string; environmentID: string }): string;
-  // Project scoped
-  toProjectMembers(): string;
-  // Account Scoped Routes
   toAccountSettingsOverview(): string;
+  toProjectSetup(): string;
+  toProjectMembers(): string;
+  toImageRegistry(): string;
+  toGitops(): string;
 }
 
 export const paths: UseRouteDefinitionsProps = {
@@ -34,31 +35,35 @@ export const paths: UseRouteDefinitionsProps = {
   toLogin: () => '/login',
   toDashboard: () => '/dashboard',
   toExperiments: () => '/experiments',
-  // chaos studio routes
+  // Chaos Studio Routes
   toNewExperiment: ({ experimentKey }) => `/experiments/new/${experimentKey}/chaos-studio`,
   toCloneExperiment: ({ experimentKey }) => `/experiments/clone/${experimentKey}/chaos-studio`,
   toEditExperiment: ({ experimentKey }) => `/experiments/${experimentKey}/chaos-studio`,
-  // experiment details route
+  // Experiment Details Route
   toExperimentRunHistory: ({ experimentID }) => `/experiments/${experimentID}/runs`,
   toExperimentRunDetails: ({ experimentID, runID }) => `/experiments/${experimentID}/runs/${runID}`,
   toExperimentRunDetailsViaNotifyID: ({ experimentID, notifyID }) =>
     `/experiments/${experimentID}/notifyID/${notifyID}`,
-  // chaoshub routes
+  // Chaoshub Routes
   toChaosHubs: () => '/chaos-hubs',
   toChaosHub: ({ hubID }) => `/chaos-hubs/${hubID}`,
   toPredefinedExperiment: ({ hubID, experimentName }) => `/chaos-hubs/${hubID}/experiment/${experimentName}`,
   toChaosFault: ({ hubID, faultName }) => `/chaos-hubs/${hubID}/fault/${faultName}`,
-  // chaos probe routes
+  // Chaos Probe Routes
   toChaosProbes: () => '/probes',
-  toChaosProbe: ({ probeID }) => `/probes/${probeID}`,
+  toChaosProbe: ({ probeName }) => `/probes/${probeName}`,
   toEnvironments: () => '/environments',
-  // chaos infrastructures routes
+  // Chaos Infrastructures Routes
   toChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}`,
   toKubernetesChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}/kubernetes`,
   toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
     `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
+  // chaos image registry routes
+  toImageRegistry: () => `/image-registry`,
+  toGitops: () => `/gitops`,
   // Account Scoped Routes
   toAccountSettingsOverview: () => '/settings/overview',
-  // user route
-  toProjectMembers: () => '/members'
+  // Project Setup Routes
+  toProjectSetup: () => '/setup',
+  toProjectMembers: () => '/setup/members'
 };

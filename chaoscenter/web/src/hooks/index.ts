@@ -6,3 +6,4 @@ export * from './useUpdateSearchParams';
 export * from './useRouteDefinitionsMatch';
 export * from './useRouteWithBaseUrl';
 export * from './useLogout';
+export * from './useTrackedRef';

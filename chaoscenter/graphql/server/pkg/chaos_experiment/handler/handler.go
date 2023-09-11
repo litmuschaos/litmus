@@ -28,7 +28,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
-	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
+	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
@@ -396,8 +396,9 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 				CreatedBy: &model.UserDetails{
 					UserID: v.CreatedBy,
 				},
-				UpdatedAt: strconv.FormatInt(v.UpdatedAt, 10),
-				CreatedAt: strconv.FormatInt(v.CreatedAt, 10),
+				UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
+				CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
+				RunSequence: v.RunSequence,
 			})
 		}
 	}
@@ -758,8 +759,9 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					CreatedBy: &model.UserDetails{
 						Username: v.UpdatedBy,
 					},
-					UpdatedAt: strconv.FormatInt(v.UpdatedAt, 10),
-					CreatedAt: strconv.FormatInt(v.CreatedAt, 10),
+					UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
+					CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
+					RunSequence: v.RunSequence,
 				})
 			}
 		}

@@ -33,3 +33,5 @@ declare module '*.gif' {
   const value: string;
   export default value;
 }
+
+declare type Optional<T, K extends keyof T = keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
