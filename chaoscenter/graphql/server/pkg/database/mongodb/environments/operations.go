@@ -14,9 +14,20 @@ var (
 	backgroundContext = context.Background()
 )
 
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewEnvironmentOperator retuurns a new instance of operator
+func NewEnvironmentOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // InsertEnvironment takes details of a chaos_environment and inserts into the database collection
-func InsertEnvironment(ctx context.Context, environment Environment) error {
-	err := mongodb.Operator.Create(ctx, mongodb.EnvironmentCollection, environment)
+func (e *Operator) InsertEnvironment(ctx context.Context, environment Environment) error {
+	err := e.operator.Create(ctx, mongodb.EnvironmentCollection, environment)
 	if err != nil {
 		return err
 	}
@@ -25,12 +36,12 @@ func InsertEnvironment(ctx context.Context, environment Environment) error {
 }
 
 // GetEnvironment takes a environmentID to retrieve the chaos_environment details from the database
-func GetEnvironment(query bson.D) (Environment, error) {
+func (e *Operator) GetEnvironment(query bson.D) (Environment, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
 	var environment Environment
-	result, err := mongodb.Operator.Get(ctx, mongodb.EnvironmentCollection, query)
+	result, err := e.operator.Get(ctx, mongodb.EnvironmentCollection, query)
 	err = result.Decode(&environment)
 	if err != nil {
 		return Environment{}, err
@@ -40,14 +51,14 @@ func GetEnvironment(query bson.D) (Environment, error) {
 }
 
 // GetEnvironmentDetails takes a environmentName and projectID to retrieve the chaos_environment details from the database
-func GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error) {
+func (e *Operator) GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error) {
 	query := bson.D{
 		{"project_id", projectID},
 		{"environment_id", environmentID},
 	}
 
 	var environment Environment
-	result, err := mongodb.Operator.Get(ctx, mongodb.EnvironmentCollection, query)
+	result, err := e.operator.Get(ctx, mongodb.EnvironmentCollection, query)
 	err = result.Decode(&environment)
 	if err != nil {
 		return Environment{}, err
@@ -57,8 +68,8 @@ func GetEnvironmentDetails(ctx context.Context, environmentID string, projectID 
 }
 
 // UpdateEnvironment takes query and update parameters to update the chaos_environment details in the database
-func UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
-	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.EnvironmentCollection, query, update)
+func (e *Operator) UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
+	_, err := e.operator.UpdateMany(ctx, mongodb.EnvironmentCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -67,7 +78,7 @@ func UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
 }
 
 // GetEnvironmentWithProjectID takes projectID parameters to retrieve the chaos_environment details
-func GetEnvironmentWithProjectID(projectID string) ([]*Environment, error) {
+func (e *Operator) GetEnvironmentWithProjectID(projectID string) ([]*Environment, error) {
 	var query bson.D
 	query = bson.D{
 
@@ -93,9 +104,9 @@ func GetEnvironmentWithProjectID(projectID string) ([]*Environment, error) {
 }
 
 // GetEnvironments returns all the environments matching the query
-func GetEnvironments(ctx context.Context, query bson.D) ([]Environment, error) {
+func (e *Operator) GetEnvironments(ctx context.Context, query bson.D) ([]Environment, error) {
 	var environments []Environment
-	results, err := mongodb.Operator.List(ctx, mongodb.EnvironmentCollection, query)
+	results, err := e.operator.List(ctx, mongodb.EnvironmentCollection, query)
 	if err != nil {
 		return []Environment{}, err
 	}
@@ -107,11 +118,11 @@ func GetEnvironments(ctx context.Context, query bson.D) ([]Environment, error) {
 }
 
 // GetAggregateEnvironments takes a mongo pipeline to retrieve the details from the database
-func GetAggregateEnvironments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+func (e *Operator) GetAggregateEnvironments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.EnvironmentCollection, pipeline)
+	results, err := e.operator.Aggregate(ctx, mongodb.EnvironmentCollection, pipeline)
 	if err != nil {
 		return nil, err
 	}
