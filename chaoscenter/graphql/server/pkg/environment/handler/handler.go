@@ -21,7 +21,6 @@ type EnvironmentHandler interface {
 	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
 	GetEnvironment(projectID string, environmentID string) (*model.Environment, error)
 	ListEnvironments(projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error)
-
 }
 
 type EnvironmentService struct {
