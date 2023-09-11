@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Layout, Tabs, useToggleOpen } from '@harnessio/uicore';
 import { Dialog, TabId } from '@blueprintjs/core';
 import DefaultLayout from '@components/DefaultLayout';
-import { useSearchParams, useUpdateSearchParams } from '@hooks';
+import { useDocumentTitle, useSearchParams, useUpdateSearchParams } from '@hooks';
 import { MembersTabs, PermissionGroup } from '@models';
 import RbacButton from '@components/RbacButton';
 import ActiveProjectMembersController from '@controllers/ActiveProjectMemberList/ActiveProjectMembers';
@@ -18,6 +18,8 @@ export default function ProjectMembersView(): React.ReactElement {
   const { isOpen, close, open } = useToggleOpen();
   const [activeTab, setActiveTab] = React.useState<TabId | undefined>('overview');
   const { getString } = useStrings();
+
+  useDocumentTitle(getString('members'));
 
   React.useEffect(() => {
     if (!selectedTabId) {

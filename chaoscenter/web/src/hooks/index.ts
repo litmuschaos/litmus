@@ -7,3 +7,5 @@ export * from './useRouteDefinitionsMatch';
 export * from './useRouteWithBaseUrl';
 export * from './useLogout';
 export * from './useTrackedRef';
+export * from './useDocumentTitle';
+export * from './useDeepCompareEffect';

@@ -402,6 +402,7 @@ genericResourceNotFoundError: >-
   {{resource}} [{{resourceID}}] under Project [{{projectID}}] does not exist or
   has been deleted.
 gitConnection: Repository Connection
+gitOps: GitOps
 githubRepo: Github Repository
 gitops: Gitops
 goBack: Go back to previous page
@@ -540,6 +541,7 @@ manually: '| Manually'
 markRunAsComplete: Mark Run as Complete
 markRunAsCompleteDescription: This will mark the run as complete and you will no longer be able to re-run.
 meetsExpectations: The resilience score has met the expectation.
+members: Members
 membersNotAvailableMessage: No active project members available
 membersNotAvailableTitle: No members present
 menuItems:
@@ -618,6 +620,10 @@ noData:
 noDataCV: No Data
 noDataToDisplay: No data to display
 noDescriptionProvided: No description provided
+noEnvironmentFound: No Environments found
+noEnvironmentFoundMessage: >-
+  No Environments found in this project, click on 'New Environment' to add
+  environments.
 noExpFound: No Predefined Chaos Experiments found using this Fault.
 noExperimentFoundMatchingSearch: No experiment found matching your search
 noExperimentSelected: No experiment selected
@@ -1082,7 +1088,6 @@ uploadYaml: Upload Yaml
 url: URL
 useIntegerValue: Please enter an integer value
 useThisTemplate: Use this template
-userCreateModalBottomText: By creating user an invitation will be send to the provided email address
 userCreateSuccessMessage: User '{{name}}' created successfully
 userCreatedOn: User Created On
 userManagement: User Management

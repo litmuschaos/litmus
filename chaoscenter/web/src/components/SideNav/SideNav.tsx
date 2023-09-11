@@ -111,13 +111,13 @@ export default function SideNav(): ReactElement {
             <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
             <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
               <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
-              <SidebarLink label={'Gitops'} to={paths.toGitops()} />
+              <SidebarLink label={'GitOps'} to={paths.toGitops()} />
               <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
             </NavExpandable>
           </Layout.Vertical>
         )}
       </div>
-      <Container className={css.bottomContainer} data-isRoutePresent={isPathPresent('settings')}>
+      <Container className={css.bottomContainer} data-isroutepresent={isPathPresent('settings')}>
         {!isPathPresent('settings') && (
           <div className={css.iconContainer}>
             <Icon className={css.icon} name={'chaos-litmuschaos'} size={200} />

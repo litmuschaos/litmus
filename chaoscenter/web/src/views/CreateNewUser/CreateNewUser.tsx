@@ -1,6 +1,6 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
 import React from 'react';
-import { Color, FontVariation } from '@harnessio/design-system';
+import { FontVariation } from '@harnessio/design-system';
 import { Layout, Container, FormInput, ButtonVariation, Text, Button } from '@harnessio/uicore';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
@@ -107,25 +107,20 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                       label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('confirmPassword')}</Text>}
                     />
                   </Container>
-                  <Layout.Vertical style={{ gap: '0.5rem' }}>
-                    <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_700}>
-                      {getString('userCreateModalBottomText')}
-                    </Text>
-                    <Layout.Horizontal style={{ gap: '1rem' }}>
-                      <Button
-                        type="submit"
-                        variation={ButtonVariation.PRIMARY}
-                        text={getString('confirm')}
-                        loading={createNewUserMutationLoading || formikProps.isSubmitting}
-                        disabled={Object.keys(formikProps.errors).length > 0}
-                      />
-                      <Button
-                        variation={ButtonVariation.TERTIARY}
-                        text={getString('cancel')}
-                        onClick={() => handleClose()}
-                      />
-                    </Layout.Horizontal>
-                  </Layout.Vertical>
+                  <Layout.Horizontal style={{ gap: '1rem' }}>
+                    <Button
+                      type="submit"
+                      variation={ButtonVariation.PRIMARY}
+                      text={getString('confirm')}
+                      loading={createNewUserMutationLoading || formikProps.isSubmitting}
+                      disabled={Object.keys(formikProps.errors).length > 0}
+                    />
+                    <Button
+                      variation={ButtonVariation.TERTIARY}
+                      text={getString('cancel')}
+                      onClick={() => handleClose()}
+                    />
+                  </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>
             );

@@ -12,7 +12,7 @@ import DefaultLayoutTemplate from '@components/DefaultLayout';
 import type { ChaosHub } from '@api/entities';
 import type { ListChaosHubRequest, ListChaosHubResponse, SyncChaosHubRequest, SyncChaosHubResponse } from '@api/core';
 import CustomTagsPopover from '@components/CustomTagsPopover';
-import { useRouteWithBaseUrl } from '@hooks';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import NoFilteredData from '@components/NoFilteredData';
 import enterpriseHubLogo from '../../images/enterpriseHub.svg';
 import privateHubLogo from '../../images/privateHub.svg';
@@ -62,6 +62,8 @@ export const ChaosHubsView: React.FC<ChaosHubParams> = ({
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
   const { showWarning } = useToaster();
+
+  useDocumentTitle(getString('chaoshubs'));
 
   const subHeader = (
     <Layout.Horizontal flex={{ justifyContent: 'space-between' }} width={'100%'}>

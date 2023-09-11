@@ -5,7 +5,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { isEmpty } from 'lodash-es';
 import DefaultLayoutTemplate from '@components/DefaultLayout';
-import { useRouteWithBaseUrl } from '@hooks';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import Environment from '@images/Environment.svg';
 import { useStrings } from '@strings';
 import type { ChaosHubStatsData, ExperimentStatsData, InfraStatsData } from '@api/entities';
@@ -42,10 +42,12 @@ export default function OverviewView({
   experimentStats,
   refetchExperiments
 }: OverviewViewProps & RefetchExperiments): React.ReactElement {
+  const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
-  const { getString } = useStrings();
   const [isEnableChaosModalOpen, setIsEnableChaosModalOpen] = React.useState(false);
+
+  useDocumentTitle(getString('overview'));
 
   const modalProps: IDialogProps = {
     isOpen: isEnableChaosModalOpen,
