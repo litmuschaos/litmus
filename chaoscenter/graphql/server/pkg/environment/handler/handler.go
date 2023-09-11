@@ -47,8 +47,12 @@ func CreateEnvironment(ctx context.Context, projectID string, input *model.Creat
 			CreatedAt: currentTime.UnixMilli(),
 			UpdatedAt: currentTime.UnixMilli(),
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 	}
 
@@ -184,8 +188,8 @@ func GetEnvironment(projectID string, environmentID string) (*model.Environment,
 		Type:          model.EnvironmentType(env.Type),
 		CreatedAt:     strconv.FormatInt(env.CreatedAt, 10),
 		UpdatedAt:     strconv.FormatInt(env.UpdatedAt, 10),
-		CreatedBy:     &model.UserDetails{Username: env.CreatedBy},
-		UpdatedBy:     &model.UserDetails{Username: env.UpdatedBy},
+		CreatedBy:     &model.UserDetails{Username: env.CreatedBy.Username},
+		UpdatedBy:     &model.UserDetails{Username: env.UpdatedBy.Username},
 		InfraIDs:      env.InfraIDs,
 		IsRemoved:     &env.IsRemoved,
 	}, nil
@@ -375,8 +379,8 @@ func ListEnvironments(projectID string, request *model.ListEnvironmentRequest) (
 			Type:          model.EnvironmentType(env.Type),
 			CreatedAt:     strconv.FormatInt(env.CreatedAt, 10),
 			UpdatedAt:     strconv.FormatInt(env.UpdatedAt, 10),
-			CreatedBy:     &model.UserDetails{Username: env.CreatedBy},
-			UpdatedBy:     &model.UserDetails{Username: env.UpdatedBy},
+			CreatedBy:     &model.UserDetails{Username: env.CreatedBy.Username},
+			UpdatedBy:     &model.UserDetails{Username: env.UpdatedBy.Username},
 			InfraIDs:      env.InfraIDs,
 			IsRemoved:     &env.IsRemoved,
 		})

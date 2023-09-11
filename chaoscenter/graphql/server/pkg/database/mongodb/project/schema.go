@@ -16,7 +16,7 @@ type Member struct {
 	UserID     string     `bson:"user_id"`
 	Role       MemberRole `bson:"role"`
 	Invitation Invitation `bson:"invitation"`
-	JoinedAt   string     `bson:"joined_at"`
+	JoinedAt   int64      `bson:"joined_at"`
 }
 
 // MemberRole defines the project role a member has in the project
