@@ -2,8 +2,6 @@ package project
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -24,7 +22,6 @@ func NewProjectOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 func (c *Operator) WatchProjectEvents(ctx context.Context, pipeline mongo.Pipeline, client *mongo.Client) (*mongo.ChangeStream, error) {
 	experimentEvents, err := c.operator.WatchEvents(ctx, client, mongodb.EnvironmentCollection, pipeline, options.ChangeStream().SetFullDocument(options.UpdateLookup))
 	if err != nil {
-		fmt.Println("error in watch", err)
 		return nil, err
 	}
 	return experimentEvents, nil

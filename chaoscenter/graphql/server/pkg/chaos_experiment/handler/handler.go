@@ -391,10 +391,12 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 				Phase:           v.Phase,
 				ResiliencyScore: v.ResiliencyScore,
 				UpdatedBy: &model.UserDetails{
-					UserID: v.UpdatedBy.Username,
+					Username: v.UpdatedBy.Username,
+					UserID:   v.UpdatedBy.UserID,
 				},
 				CreatedBy: &model.UserDetails{
-					UserID: v.CreatedBy.Username,
+					Username: v.CreatedBy.Username,
+					UserID:   v.CreatedBy.UserID,
 				},
 				UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
 				CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),

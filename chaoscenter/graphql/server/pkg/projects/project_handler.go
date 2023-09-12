@@ -10,7 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/project"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	grpc2 "google.golang.org/grpc"
@@ -57,7 +57,7 @@ func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, m
 	}
 	projectDetails, err := project.NewProjectOperator(mongoOp).WatchProjectEvents(context.Background(), pipeline, mongoClient)
 	if err != nil {
-		logrus.Error(err.Error())
+		log.Error(err.Error())
 	}
 	var conn *grpc2.ClientConn
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
@@ -66,16 +66,16 @@ func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, m
 	for projectDetails.Next(context.Background()) {
 		var DbEvent project.ProjectCreationEvent
 		if err := projectDetails.Decode(&DbEvent); err != nil {
-			logrus.Error(err.Error())
+			log.Error(err.Error())
 		}
 		if DbEvent.OperationType == "insert" {
 			user, err := grpc.GetUserById(client, DbEvent.FullDocument.CreatedBy.UserID)
 			if err != nil {
-				logrus.Error(err)
+				log.Error(err)
 			}
 			err = ProjectInitializer(context.Background(), DbEvent.FullDocument, user.Role, mongoOp)
 			if err != nil {
-				logrus.Error(err)
+				log.Error(err)
 			}
 			//projectEventChannel <- DbEvent.OperationType
 		}
