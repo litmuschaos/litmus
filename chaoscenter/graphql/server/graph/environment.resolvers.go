@@ -8,7 +8,6 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +22,7 @@ func (r *mutationResolver) CreateEnvironment(ctx context.Context, projectID stri
 	if err != nil {
 		return nil, err
 	}
-	return handler.CreateEnvironment(ctx, projectID, request)
+	return r.environmentService.CreateEnvironment(ctx, projectID, request)
 }
 
 func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error) {
@@ -38,7 +37,7 @@ func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID stri
 	if err != nil {
 		return "", err
 	}
-	return handler.UpdateEnvironment(ctx, projectID, request)
+	return r.environmentService.UpdateEnvironment(ctx, projectID, request)
 }
 
 func (r *mutationResolver) DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error) {
@@ -53,7 +52,7 @@ func (r *mutationResolver) DeleteEnvironment(ctx context.Context, projectID stri
 	if err != nil {
 		return "", err
 	}
-	return handler.DeleteEnvironment(ctx, projectID, environmentID)
+	return r.environmentService.DeleteEnvironment(ctx, projectID, environmentID)
 }
 
 func (r *queryResolver) GetEnvironment(ctx context.Context, projectID string, environmentID string) (*model.Environment, error) {
@@ -68,7 +67,7 @@ func (r *queryResolver) GetEnvironment(ctx context.Context, projectID string, en
 	if err != nil {
 		return nil, err
 	}
-	return handler.GetEnvironment(projectID, environmentID)
+	return r.environmentService.GetEnvironment(projectID, environmentID)
 }
 
 func (r *queryResolver) ListEnvironments(ctx context.Context, projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error) {
@@ -82,5 +81,5 @@ func (r *queryResolver) ListEnvironments(ctx context.Context, projectID string, 
 	if err != nil {
 		return nil, err
 	}
-	return handler.ListEnvironments(projectID, request)
+	return r.environmentService.ListEnvironments(projectID, request)
 }

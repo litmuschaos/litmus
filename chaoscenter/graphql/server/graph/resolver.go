@@ -18,8 +18,10 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	gitops2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	image_registry2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
+	envHandler "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	gitops3 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/image_registry"
 )
@@ -37,6 +39,7 @@ type Resolver struct {
 	gitopsService              gitops3.Service
 	chaosExperimentHandler     handler.ChaosExperimentHandler
 	chaosExperimentRunHandler  runHandler.ChaosExperimentRunHandler
+	environmentService         envHandler.EnvironmentHandler
 }
 
 func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
@@ -47,14 +50,16 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 	chaosExperimentRunOperator := chaos_experiment_run.NewChaosExperimentRunOperator(mongodbOperator)
 	gitopsOperator := gitops2.NewGitOpsOperator(mongodbOperator)
 	imageRegistryOperator := image_registry2.NewImageRegistryOperator(mongodbOperator)
+	EnvironmentOperator := environments.NewEnvironmentOperator(mongodbOperator)
 
 	//service
 	chaosHubService := chaoshub.NewService(chaosHubOperator)
-	chaosInfrastructureService := chaos_infrastructure.NewChaosInfrastructureService(chaosInfraOperator)
+	chaosInfrastructureService := chaos_infrastructure.NewChaosInfrastructureService(chaosInfraOperator, EnvironmentOperator)
 	chaosExperimentService := chaos_experiment2.NewChaosExperimentService(chaosExperimentOperator, chaosInfraOperator)
 	chaosExperimentRunService := chaos_experiment_run2.NewChaosExperimentRunService(chaosExperimentOperator, chaosInfraOperator, chaosExperimentRunOperator)
 	gitOpsService := gitops3.NewGitOpsService(gitopsOperator, chaosExperimentService, *chaosExperimentOperator)
 	imageRegistryService := image_registry.NewImageRegistryService(imageRegistryOperator)
+	environmentService := envHandler.NewEnvironmentService(EnvironmentOperator)
 
 	//handler
 	chaosExperimentHandler := handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, chaosInfrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbOperator)
@@ -67,6 +72,7 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 			chaosExperimentService:     chaosExperimentService,
 			choasExperimentRunService:  chaosExperimentRunService,
 			imageRegistryService:       imageRegistryService,
+			environmentService:         environmentService,
 			gitopsService:              gitOpsService,
 			chaosExperimentHandler:     *chaosExperimentHandler,
 			chaosExperimentRunHandler:  *choasExperimentRunHandler,
