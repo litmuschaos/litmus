@@ -5,7 +5,7 @@ import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@
 import type { Column, Row } from 'react-table';
 import { Icon } from '@harnessio/icons';
 import { Dialog } from '@blueprintjs/core';
-import type { ApiToken, GetApiTokensOkResponse, GetApiTokensResponse } from '@api/auth';
+import type { ApiToken, ErrorModel, GetApiTokensResponse } from '@api/auth';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
 import { getFormattedTime, killEvent } from '@utils';
@@ -15,13 +15,13 @@ import css from './ApiTokens.module.scss';
 
 interface ApiTokensViewProps {
   apiTokensData: GetApiTokensResponse | undefined;
-  useGetApiTokensQuery: boolean;
+  getApiTokensQueryLoading: boolean;
   apiTokensRefetch: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<GetApiTokensOkResponse, unknown>>;
+  ) => Promise<QueryObserverResult<GetApiTokensResponse, ErrorModel>>;
 }
 
-interface MemoizedApiTokensTableProps extends Omit<ApiTokensViewProps, 'apiTokensData' | 'useGetApiTokensQuery'> {
+interface MemoizedApiTokensTableProps extends Omit<ApiTokensViewProps, 'apiTokensData' | 'getApiTokensQueryLoading'> {
   apiTokens: ApiToken[];
 }
 
@@ -117,7 +117,7 @@ function MemoizedApiTokensTable({ apiTokens, apiTokensRefetch }: MemoizedApiToke
 }
 
 export default function ApiTokensView(props: ApiTokensViewProps): React.ReactElement {
-  const { apiTokensData, useGetApiTokensQuery, apiTokensRefetch } = props;
+  const { apiTokensData, getApiTokensQueryLoading, apiTokensRefetch } = props;
   const apiTokens = apiTokensData?.apiTokens ?? [];
   const { getString } = useStrings();
   const { isOpen, open, close } = useToggleOpen();
@@ -143,7 +143,7 @@ export default function ApiTokensView(props: ApiTokensViewProps): React.ReactEle
       </Layout.Horizontal>
       <Loader
         small
-        loading={useGetApiTokensQuery}
+        loading={getApiTokensQueryLoading}
         noData={{
           when: () => !apiTokens.length,
           message: getString('noApiTokensFound')

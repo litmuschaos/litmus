@@ -6,6 +6,7 @@ import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@
 import { useStrings } from '@strings';
 import type { GetUserWithProjectOkResponse } from '@api/auth';
 import AccountSettingsOverviewProjectsController from '@controllers/AccountSettingsOverviewProjects';
+import APITokensController from '@controllers/APITokens';
 import css from './AccountSettingsOverview.module.scss';
 
 interface AccountSettingsOverviewViewProps {
@@ -22,6 +23,7 @@ interface AccountSettingsOverviewViewProps {
 export default function AccountSettingsOverviewView(props: AccountSettingsOverviewViewProps): React.ReactElement {
   const { userProjectData, projectCount, getUserWithProjectsRefetch } = props;
   const { getString } = useStrings();
+  const [apiTokensCount, setApiTokensCount] = React.useState<number>(0);
 
   return (
     <Layout.Vertical padding={'medium'} height={'100%'}>
@@ -46,7 +48,7 @@ export default function AccountSettingsOverviewView(props: AccountSettingsOvervi
                 style={{ gap: '0.25rem' }}
               >
                 <Text font={{ variation: FontVariation.H4 }} style={{ lineHeight: 1 }}>
-                  {projectCount.userCreatedProjects ?? 0}
+                  {apiTokensCount}
                 </Text>
                 <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600} style={{ lineHeight: 1 }}>
                   {getString('apiTokens')}
@@ -78,6 +80,7 @@ export default function AccountSettingsOverviewView(props: AccountSettingsOvervi
           </Layout.Horizontal>
         </Card>
       </Container>
+      <APITokensController setApiTokensCount={setApiTokensCount} />
       <AccountSettingsOverviewProjectsController getUserWithProjectsRefetch={getUserWithProjectsRefetch} />
     </Layout.Vertical>
   );
