@@ -7,10 +7,28 @@ import { useLoginMutation } from '@api/auth';
 import { setUserDetails } from '@utils';
 import { normalizePath } from '@routes/RouteDefinitions';
 import type { DecodedTokenType } from '@models';
+import { useSearchParams } from '@hooks';
 
 const LoginController: React.FC = () => {
   const history = useHistory();
   const { showError } = useToaster();
+  const searchParams = useSearchParams();
+  const dexToken = searchParams.get('jwtToken');
+  const dexProjectID = searchParams.get('projectID');
+  const dexProjectRole = searchParams.get('projectRole');
+
+  React.useEffect(() => {
+    if (dexToken && dexProjectID) {
+      const accountID = (jwtDecode(dexToken) as DecodedTokenType).uid;
+      setUserDetails({
+        accessToken: dexToken,
+        projectID: dexProjectID,
+        projectRole: dexProjectRole ?? ''
+      });
+      history.push(normalizePath(`/account/${accountID}/project/${dexProjectID ?? ''}/dashboard`));
+    }
+  }, []);
+
   const { isLoading, mutate: handleLogin } = useLoginMutation(
     {},
     {
