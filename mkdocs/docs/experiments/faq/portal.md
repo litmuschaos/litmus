@@ -26,6 +26,7 @@ Yes we can host Mongodb outside the cluster, the mongo string can be updated acc
 We use the same connection string for both authentication server and graphql server containers in litmus portal-server deployment, also there are the db user and db password keys that can be tuned in the configmap like DB_USER: "admin" and DB_PASSWORD: "1234". 
 We can connect with SSL if the certificate is optional. If our requirement is ca.cert auth for the SSL connection, then this is not available on the portal
 
+Be aware that DB_USER and DB_PASSWORD can be defined in secrets, those values are going to override the ones defined in configmap.
 ### What does failed status of workflow means in LitmusPortal?
 
 Failed status indicates that either there is some misconfiguration in the workflow or the default hypothesis of the experiment was disproved and some of the experiments in the workflow failed, In such case, the resiliency score will be less than 100.
