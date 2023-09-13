@@ -15,7 +15,7 @@ interface ProjectCardProps {
 export default function ProjectCard({ data }: ProjectCardProps): React.ReactElement {
   const { getString } = useStrings();
   const history = useHistory();
-  const { projectID, currentUserInfo } = useAppStore();
+  const { projectID, currentUserInfo, updateAppStore } = useAppStore();
 
   const isSelected = projectID === data.projectID;
   const collaborators = data.members?.map(member => {
@@ -27,6 +27,7 @@ export default function ProjectCard({ data }: ProjectCardProps): React.ReactElem
 
   const handleProjectSelect = (): void => {
     const projectRole = data.members?.find(member => member.userID === currentUserInfo?.ID)?.role;
+    updateAppStore({ projectID: data.projectID, projectName: data.name });
     setUserDetails({
       projectRole,
       projectID: data.projectID
