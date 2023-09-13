@@ -2,9 +2,10 @@ package rest
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
