@@ -14,7 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
+	dbEnvironments "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/sirupsen/logrus"
 
@@ -59,12 +59,14 @@ type Service interface {
 
 type infraService struct {
 	infraOperator *dbChaosInfra.Operator
+	envOperator   *dbEnvironments.Operator
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
-func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator) Service {
+func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator) Service {
 	return &infraService{
 		infraOperator: infraOperator,
+		envOperator:   envOperator,
 	}
 }
 
@@ -171,7 +173,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 			{"infra_ids", infraID},
 		}},
 	}
-	err = environments.UpdateEnvironment(context.TODO(), envQuery, update)
+	err = in.envOperator.UpdateEnvironment(context.TODO(), envQuery, update)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +227,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 			{"infra_ids", infra.InfraID},
 		}},
 	}
-	err = environments.UpdateEnvironment(context.TODO(), envQuery, updateQuery)
+	err = in.envOperator.UpdateEnvironment(context.TODO(), envQuery, updateQuery)
 	if err != nil {
 		return "", err
 	}
