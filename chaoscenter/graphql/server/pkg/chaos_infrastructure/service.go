@@ -140,8 +140,12 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 			CreatedAt: currentTime.UnixMilli(),
 			UpdatedAt: currentTime.UnixMilli(),
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		EnvironmentID:  input.EnvironmentID,
 		AccessKey:      utils.RandomString(32),
@@ -685,9 +689,9 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 			newInfra.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
 		}
 
-		newInfra.CreatedBy = &model.UserDetails{Username: infra.CreatedBy}
+		newInfra.CreatedBy = &model.UserDetails{Username: infra.CreatedBy.Username}
 		newInfra.UpdatedBy = &model.UserDetails{
-			Username: infra.UpdatedBy,
+			Username: infra.UpdatedBy.Username,
 		}
 		newInfras = append(newInfras, &newInfra)
 

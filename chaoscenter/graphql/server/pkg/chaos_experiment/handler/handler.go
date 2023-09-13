@@ -391,10 +391,12 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 				Phase:           v.Phase,
 				ResiliencyScore: v.ResiliencyScore,
 				UpdatedBy: &model.UserDetails{
-					UserID: v.UpdatedBy,
+					Username: v.UpdatedBy.Username,
+					UserID:   v.UpdatedBy.UserID,
 				},
 				CreatedBy: &model.UserDetails{
-					UserID: v.CreatedBy,
+					Username: v.CreatedBy.Username,
+					UserID:   v.CreatedBy.UserID,
 				},
 				UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
 				CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
@@ -424,10 +426,10 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 			IsRemoved:          exp.IsRemoved,
 			Infra:              chaosInfrastructure,
 			UpdatedBy: &model.UserDetails{
-				Username: exp.UpdatedBy,
+				Username: exp.UpdatedBy.Username,
 			},
 			CreatedBy: &model.UserDetails{
-				Username: exp.UpdatedBy,
+				Username: exp.UpdatedBy.Username,
 			},
 			RecentExperimentRunDetails: recentExpRuns,
 		},
@@ -754,10 +756,10 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					Phase:           v.Phase,
 					ResiliencyScore: v.ResiliencyScore,
 					UpdatedBy: &model.UserDetails{
-						Username: v.UpdatedBy,
+						Username: v.UpdatedBy.Username,
 					},
 					CreatedBy: &model.UserDetails{
-						Username: v.UpdatedBy,
+						Username: v.UpdatedBy.Username,
 					},
 					UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
 					CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
@@ -781,10 +783,10 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			IsRemoved:          workflow.IsRemoved,
 			Infra:              chaosInfrastructure,
 			UpdatedBy: &model.UserDetails{
-				Username: workflow.UpdatedBy,
+				Username: workflow.UpdatedBy.Username,
 			},
 			CreatedBy: &model.UserDetails{
-				Username: workflow.UpdatedBy,
+				Username: workflow.UpdatedBy.Username,
 			},
 			RecentExperimentRunDetails: recentExpRuns,
 		}
