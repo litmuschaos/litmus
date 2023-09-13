@@ -1,6 +1,6 @@
 export interface InviteUserDetails {
   username: string;
-  id: string;
+  userID: string;
   email: string;
   name: string;
 }

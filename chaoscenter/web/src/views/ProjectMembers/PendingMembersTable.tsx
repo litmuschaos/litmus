@@ -89,6 +89,7 @@ export default function PendingMembersTableView({
             <Layout.Horizontal flex={{ justifyContent: 'space-between' }} spacing="medium">
               <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
                 <DropDown
+                  filterable={false}
                   value={memberRole}
                   items={rolesDropDown}
                   onChange={option => setMemberRole(option.label as 'Editor' | 'Owner' | 'Viewer')}
