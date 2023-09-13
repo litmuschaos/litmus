@@ -84,8 +84,12 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 			CreatedAt: currTime,
 			UpdatedAt: currTime,
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		Type:               dbSchemaProbe.ProbeType(probe.Type),
 		InfrastructureType: probe.InfrastructureType,
@@ -141,7 +145,9 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 			UpdatedAt: time.Now().UnixMilli(),
 			IsRemoved: false,
 			CreatedBy: pr.CreatedBy,
-			UpdatedBy: username,
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		Type:               pr.Type,
 		InfrastructureType: pr.InfrastructureType,
@@ -702,7 +708,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 						ExperimentName: execution.ExperimentName,
 						UpdatedAt:      int(execution.UpdatedAt),
 						UpdatedBy: &model.UserDetails{
-							Username: execution.UpdatedBy,
+							Username: execution.UpdatedBy.Username,
 						},
 					},
 				}
