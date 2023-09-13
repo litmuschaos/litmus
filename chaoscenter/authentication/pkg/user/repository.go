@@ -25,7 +25,7 @@ type Repository interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
-	UpdateUserState(username string, isDeactivate bool, deactivateTime string) error
+	UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
@@ -231,7 +231,7 @@ func (r repository) IsAdministrator(user *entities.User) error {
 }
 
 // UpdateUserState updates the deactivated_at state of the user
-func (r repository) UpdateUserState(username string, isDeactivate bool, deactivateTime string) error {
+func (r repository) UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error {
 	var err error
 	if isDeactivate {
 		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
