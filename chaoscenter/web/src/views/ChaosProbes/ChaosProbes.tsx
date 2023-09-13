@@ -4,7 +4,7 @@ import { Layout } from '@harnessio/uicore';
 import { isEmpty } from 'lodash-es';
 import { Fallback } from '@errors';
 import { useStrings } from '@strings';
-import { useRouteWithBaseUrl } from '@hooks';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import DefaultLayoutTemplate from '@components/DefaultLayout';
 import type { ChaosProbesTableProps, RefetchProbes } from '@controllers/ChaosProbes';
 import NoFilteredData from '@components/NoFilteredData';
@@ -34,6 +34,8 @@ function ChaosProbesView({
 }: ChaosProbeViewProps & RefetchProbes): React.ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
+
+  useDocumentTitle(getString('resilienceProbes'));
 
   const headerTitle = getString('resilienceProbes');
 

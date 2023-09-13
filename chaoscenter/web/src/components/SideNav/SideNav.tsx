@@ -9,6 +9,8 @@ import { useLogout, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import ProjectSelectorController from '@controllers/ProjectSelector';
 import NavExpandable from '@components/NavExpandable';
+import { getUserDetails } from '@utils';
+import { PermissionGroup } from '@models';
 import css from './SideNav.module.scss';
 
 interface SidebarLinkProps extends NavLinkProps {
@@ -59,8 +61,9 @@ export const SIDE_NAV_EXPAND_TIMER = 500;
 export default function SideNav(): ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
-  const accountScopedPaths = useRouteWithBaseUrl('account');
   const { forceLogout } = useLogout();
+  const { projectRole } = getUserDetails();
+  const accountScopedPaths = useRouteWithBaseUrl('account');
   const collapseByDefault = false;
   const [sideNavHovered, setSideNavhovered] = useState<boolean>(false);
   const [sideNavExpanded, setSideNavExpanded] = useState<boolean>(!collapseByDefault);
@@ -109,15 +112,17 @@ export default function SideNav(): ReactElement {
             <SidebarLink label={'Environments'} to={paths.toEnvironments()} />
             <SidebarLink label={'Resilience Probes'} to={paths.toChaosProbes()} />
             <SidebarLink label={'ChaosHubs'} to={paths.toChaosHubs()} />
-            <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
-              <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
-              <SidebarLink label={'Gitops'} to={paths.toGitops()} />
-              <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
-            </NavExpandable>
+            {projectRole === PermissionGroup.OWNER && (
+              <NavExpandable title="Project Setup" route={paths.toProjectSetup()}>
+                <SidebarLink label={'Members'} to={paths.toProjectMembers()} />
+                <SidebarLink label={'GitOps'} to={paths.toGitops()} />
+                <SidebarLink label={'Image Registry'} to={paths.toImageRegistry()} />
+              </NavExpandable>
+            )}
           </Layout.Vertical>
         )}
       </div>
-      <Container className={css.bottomContainer} data-isRoutePresent={isPathPresent('settings')}>
+      <Container className={css.bottomContainer} data-isroutepresent={isPathPresent('settings')}>
         {!isPathPresent('settings') && (
           <div className={css.iconContainer}>
             <Icon className={css.icon} name={'chaos-litmuschaos'} size={200} />

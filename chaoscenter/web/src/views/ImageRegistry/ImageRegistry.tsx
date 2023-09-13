@@ -19,7 +19,7 @@ import {
 } from '@api/entities';
 import type { GetImageRegistryRequest } from '@api/core/ImageRegistry';
 import type { UpdateImageRegistryRequest } from '@api/core/ImageRegistry/updateImageRegistry';
-import { useRouteWithBaseUrl } from '@hooks';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
 import { cleanApolloResponse } from '@utils';
@@ -49,6 +49,8 @@ export default function ImageRegistryView({
   const history = useHistory();
   const paths = useRouteWithBaseUrl();
   const { projectID } = useParams<{ projectID: string }>();
+
+  useDocumentTitle(getString('imageRegistry'));
 
   const defaultImageRegistryInfo: ImageRegistryInfo = {
     isDefault: true,

@@ -340,6 +340,7 @@ export interface StringsMap {
   'generateSSH': unknown
   'genericResourceNotFoundError': PrimitiveObject<'resource' | 'resourceID' | 'projectID'>
   'gitConnection': unknown
+  'gitOps': unknown
   'githubRepo': unknown
   'gitops': unknown
   'goBack': unknown
@@ -451,6 +452,7 @@ export interface StringsMap {
   'markRunAsComplete': unknown
   'markRunAsCompleteDescription': unknown
   'meetsExpectations': unknown
+  'members': unknown
   'membersNotAvailableMessage': unknown
   'membersNotAvailableTitle': unknown
   'menuItems.deleteHub': unknown
@@ -516,6 +518,8 @@ export interface StringsMap {
   'noDataCV': unknown
   'noDataToDisplay': unknown
   'noDescriptionProvided': unknown
+  'noEnvironmentFound': unknown
+  'noEnvironmentFoundMessage': unknown
   'noExpFound': unknown
   'noExperimentFoundMatchingSearch': unknown
   'noExperimentSelected': unknown
@@ -916,7 +920,6 @@ export interface StringsMap {
   'url': unknown
   'useIntegerValue': unknown
   'useThisTemplate': unknown
-  'userCreateModalBottomText': unknown
   'userCreateSuccessMessage': PrimitiveObject<'name'>
   'userCreatedOn': unknown
   'userManagement': unknown
