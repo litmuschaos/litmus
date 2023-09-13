@@ -26,7 +26,7 @@ export default function AccountSettingsOverviewView(props: AccountSettingsOvervi
   const [apiTokensCount, setApiTokensCount] = React.useState<number>(0);
 
   return (
-    <Layout.Vertical padding={'medium'} height={'100%'}>
+    <Layout.Vertical padding={'medium'} height={'100%'} style={{ overflowY: 'auto' }}>
       <Container border={{ bottom: true }}>
         <Text font={{ variation: FontVariation.H3 }}>{getString('overview')}</Text>
         <Card className={css.overviewCard}>
