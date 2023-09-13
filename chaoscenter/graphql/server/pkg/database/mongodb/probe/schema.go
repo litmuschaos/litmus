@@ -161,10 +161,10 @@ func (probe *Probe) GetOutputProbe() *model.Probe {
 		Type:               model.ProbeType(probe.Type),
 		InfrastructureType: probe.InfrastructureType,
 		CreatedBy: &model.UserDetails{
-			Username: probe.CreatedBy,
+			Username: probe.CreatedBy.Username,
 		},
 		UpdatedBy: &model.UserDetails{
-			Username: probe.UpdatedBy,
+			Username: probe.UpdatedBy.Username,
 		},
 	}
 	if probe.InfrastructureType == model.InfrastructureTypeKubernetes {

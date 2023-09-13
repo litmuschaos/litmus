@@ -27,7 +27,7 @@ import type {
   GitOpsConfig,
   UpdateGitOpsRequest
 } from '@api/entities/gitops';
-import { useRouteWithBaseUrl } from '@hooks';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
 import css from './Gitops.module.scss';
@@ -62,11 +62,18 @@ export default function GitopsView({
   updateGitops,
   loading
 }: GitopsViewProps): React.ReactElement {
+  const { showError } = useToaster();
+  const { getString } = useStrings();
+  const history = useHistory();
+  const paths = useRouteWithBaseUrl();
+  const { projectID } = useParams<{ projectID: string }>();
   const [sshPublicKey, setPublicSshKey] = React.useState<string>('');
   const [gitopsType, setGitopstype] = React.useState<GitopsValues>(
     gitopsDetails?.enabled ? GitopsValues.GITHUB : GitopsValues.LOCAL
   );
-  const { getString } = useStrings();
+
+  useDocumentTitle(getString('gitOps'));
+
   const initialValues: GitopsData = {
     branch: gitopsDetails?.branch ?? '',
     repoURL: gitopsDetails?.repoURL ?? '',
@@ -75,14 +82,10 @@ export default function GitopsView({
     sshPrivateKey: gitopsDetails?.sshPrivateKey ?? ''
   };
 
-  const { showError } = useToaster();
   const [generateSSHKeyMutation] = generateSSHKey({
     onError: error => showError(error.message)
   });
 
-  const { projectID } = useParams<{ projectID: string }>();
-  const history = useHistory();
-  const paths = useRouteWithBaseUrl();
   const formikRef: React.Ref<FormikProps<GitopsData>> = React.useRef(null);
   function handleSubmit(values: GitopsData): void {
     if (gitopsDetails?.enabled) {

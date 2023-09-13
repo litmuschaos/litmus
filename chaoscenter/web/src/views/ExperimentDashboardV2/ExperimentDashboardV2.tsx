@@ -7,6 +7,7 @@ import NewExperimentButton from '@components/NewExperimentButton';
 import NoFilteredData from '@components/NoFilteredData';
 import NewUserLanding from '@components/NewUserLanding';
 import type { ExperimentDashboardTableProps, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
+import { useDocumentTitle } from '@hooks';
 import { MemoisedExperimentDashboardV2Table } from './ExperimentDashboardV2Table';
 
 interface ExperimentRunHistoryViewProps {
@@ -35,6 +36,8 @@ const ExperimentDashboardV2View = ({
   loading
 }: ExperimentRunHistoryViewProps & RefetchExperiments): React.ReactElement => {
   const { getString } = useStrings();
+
+  useDocumentTitle(getString('chaosExperiments'));
 
   const headerTitle = getString('chaosExperiments');
 

@@ -58,12 +58,11 @@ export const paths: UseRouteDefinitionsProps = {
   toKubernetesChaosInfrastructures: ({ environmentID }) => `/environments/${environmentID}/kubernetes`,
   toKubernetesChaosInfrastructureDetails: ({ chaosInfrastructureID, environmentID }) =>
     `/environments/${environmentID}/kubernetes/${chaosInfrastructureID}`,
-  // chaos image registry routes
-  toImageRegistry: () => `/image-registry`,
-  toGitops: () => `/gitops`,
   // Account Scoped Routes
   toAccountSettingsOverview: () => '/settings/overview',
   // Project Setup Routes
   toProjectSetup: () => '/setup',
-  toProjectMembers: () => '/setup/members'
+  toProjectMembers: () => '/setup/members',
+  toImageRegistry: () => `/setup/image-registry`,
+  toGitops: () => `/setup/gitops`
 };
