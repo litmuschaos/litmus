@@ -66,7 +66,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 			}
 		}
 
-		createdAt := time.Now().Unix()
+		createdAt := time.Now().UnixMilli()
 		userRequest.CreatedAt = createdAt
 
 		userResponse, err := service.CreateUser(&userRequest)
@@ -228,25 +228,25 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 				Username:   user.Username,
 				Name:       user.Name,
 				Email:      user.Email,
-				JoinedAt:   time.Now().Unix(),
+				JoinedAt:   time.Now().UnixMilli(),
 			}
 			var members []*entities.Member
 			members = append(members, newMember)
 			state := "active"
 			newProject := &entities.Project{
 				ID:      uuid.Must(uuid.NewRandom()).String(),
-				Name:    user.Username + "'s project",
+				Name:    user.Username + "-project",
 				Members: members,
 				State:   &state,
 				Audit: entities.Audit{
 					IsRemoved: false,
-					CreatedAt: time.Now().Unix(),
+					CreatedAt: time.Now().UnixMilli(),
 					CreatedBy: entities.UserDetailResponse{
 						Username: user.Username,
 						UserID:   user.ID,
 						Email:    user.Email,
 					},
-					UpdatedAt: time.Now().Unix(),
+					UpdatedAt: time.Now().UnixMilli(),
 					UpdatedBy: entities.UserDetailResponse{
 						Username: user.Username,
 						UserID:   user.ID,

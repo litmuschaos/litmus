@@ -244,7 +244,7 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 		update = bson.D{
 			{"$set", bson.D{
 				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", time.Now().Unix()},
+				{"members.$[elem].joined_at", time.Now().UnixMilli()},
 			}}}
 	case entities.ExitedProject:
 		update = bson.D{

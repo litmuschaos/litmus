@@ -40,7 +40,7 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 		var deactivateTime string
 
 		if *userRequest.IsDeactivate {
-			deactivateTime = strconv.FormatInt(time.Now().Unix(), 10)
+			deactivateTime = strconv.FormatInt(time.Now().UnixMilli(), 10)
 
 			// Checking if user is already deactivated
 			if user.DeactivatedAt != nil {

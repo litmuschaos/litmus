@@ -98,7 +98,7 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		createdAt := time.Now().Unix()
+		createdAt := time.Now().UnixMilli()
 
 		var userData = entities.User{
 			Name:     claims.Name,
@@ -138,25 +138,25 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 				Username:   signedInUser.Username,
 				Name:       signedInUser.Name,
 				Email:      signedInUser.Email,
-				JoinedAt:   time.Now().Unix(),
+				JoinedAt:   time.Now().UnixMilli(),
 			}
 			var members []*entities.Member
 			members = append(members, newMember)
 			state := "active"
 			newProject := &entities.Project{
 				ID:      uuid.Must(uuid.NewRandom()).String(),
-				Name:    signedInUser.Username + "'s project",
+				Name:    signedInUser.Username + "-project",
 				Members: members,
 				State:   &state,
 				Audit: entities.Audit{
 					IsRemoved: false,
-					CreatedAt: time.Now().Unix(),
+					CreatedAt: time.Now().UnixMilli(),
 					CreatedBy: entities.UserDetailResponse{
 						Username: signedInUser.Username,
 						UserID:   signedInUser.ID,
 						Email:    signedInUser.Email,
 					},
-					UpdatedAt: time.Now().Unix(),
+					UpdatedAt: time.Now().UnixMilli(),
 					UpdatedBy: entities.UserDetailResponse{
 						Username: signedInUser.Username,
 						UserID:   signedInUser.ID,
