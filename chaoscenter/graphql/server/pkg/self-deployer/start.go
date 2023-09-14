@@ -49,7 +49,7 @@ func StartDeployer(projectID string, mongoOp mongodb.MongoOperator) {
 
 	infraInput := model.RegisterInfraRequest{
 		Name:               "Self-Infrastructure",
-		InfrastructureType: model.InfrastructureTypeInternal,
+		InfrastructureType: model.InfrastructureTypeKubernetes,
 		PlatformName:       "others",
 		InfraScope:         agentScope,
 		InfraNamespace:     &deployerNamespace,

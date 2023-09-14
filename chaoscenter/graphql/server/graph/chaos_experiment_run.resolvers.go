@@ -53,7 +53,7 @@ func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID 
 	return &model.RunChaosExperimentResponse{NotifyID: uiResponse.NotifyID}, err
 }
 
-func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID string) (*model.ExperimentRun, error) {
+func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error) {
 	logFields := logrus.Fields{
 		"projectId":            projectID,
 		"chaosExperimentRunId": experimentRunID,
@@ -66,7 +66,7 @@ func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, 
 		return nil, err
 	}
 
-	expRunResponse, err := r.chaosExperimentRunHandler.GetExperimentRun(ctx, projectID, experimentRunID)
+	expRunResponse, err := r.chaosExperimentRunHandler.GetExperimentRun(ctx, projectID, experimentRunID, notifyID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err

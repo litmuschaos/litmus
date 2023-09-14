@@ -8,7 +8,7 @@ import {
   ImageRegistry
 } from '@db';
 import type { ExperimentManifest, FaultData, FaultTunables, ProbeAttributes } from '@models';
-import { ExecutionData, Weightages, Node, ExperimentType } from '@api/entities';
+import { ExecutionData, Weightages, Node, ExperimentType, ProbeObj } from '@api/entities';
 import type { PipelineGraphState } from '@components/PipelineDiagram/types';
 
 export interface PreProcessChaosExperiment<T> {
@@ -171,7 +171,12 @@ export abstract class ExperimentYamlService extends ChaosIDB {
     preProcessExperimentManifestDetails: PreProcessChaosExperiment<ExperimentManifest>
   ): ExperimentManifest;
 
-  abstract extractProbeDetails(
+  abstract extractResilienceProbeDetails(
+    manifest: ExperimentManifest | undefined,
+    faultName: string
+  ): ProbeObj[] | undefined;
+
+  abstract extractDeprecatedProbeDetails(
     manifest: ExperimentManifest | undefined,
     faultName: string
   ): ProbeAttributes[] | undefined;
@@ -198,4 +203,10 @@ export abstract class ExperimentYamlService extends ChaosIDB {
     faultData: FaultData | undefined,
     faultTunables: FaultTunables | undefined
   ): FaultData | undefined;
+
+  abstract doesProbeNameExist(
+    key: ChaosObjectStoresPrimaryKeys['experiments'],
+    faultName: string | undefined,
+    probeName: string | undefined
+  ): Promise<boolean>;
 }

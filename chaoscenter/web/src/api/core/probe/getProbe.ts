@@ -1,10 +1,15 @@
 import { gql, useQuery, useLazyQuery } from '@apollo/client';
-import type { GqlAPIQueryResponse, GqlAPIQueryRequest, GqlAPILazyQueryResponse } from '@api/types';
-import type { Identifiers, Probe } from '@api/entities';
+import type {
+  GqlAPIQueryResponse,
+  GqlAPIQueryRequest,
+  GqlAPILazyQueryResponse,
+  GqlAPILazyQueryRequest
+} from '@api/types';
+import type { Probe } from '@api/entities';
 
 export interface GetProbeRequest {
-  identifiers: Identifiers;
-  probeID: string;
+  projectID: string;
+  probeName: string;
 }
 
 export interface GetProbeResponse {
@@ -15,21 +20,18 @@ export function getProbe({
   // Identifiers
   projectID,
   // Params
-  probeID,
+  probeName,
   // Options
   options = {}
-}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest, Omit<GetProbeRequest, 'identifiers'>>): GqlAPIQueryResponse<
-  GetProbeResponse,
-  GetProbeRequest
-> {
+}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPIQueryResponse<GetProbeResponse, GetProbeRequest> {
   const { data, loading, ...rest } = useQuery<GetProbeResponse, GetProbeRequest>(
     gql`
-      query getProbe($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        getProbe(probeID: $probeID, identifiers: $identifiers) {
-          probeId
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
           name
           description
           type
+          infrastructureType
           createdAt
           updatedAt
         }
@@ -37,10 +39,8 @@ export function getProbe({
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
-        probeID
+        projectID,
+        probeName
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options
@@ -54,29 +54,31 @@ export function getProbe({
   };
 }
 
-export function getHTTPProbeProperties({
-  // Identifiers
-  projectID,
-  // Params
-  probeID,
-  // Options
-  options = {}
-}: GqlAPIQueryRequest<
+export function getLazyProbe({
+  ...options
+}: GqlAPILazyQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPILazyQueryResponse<
   GetProbeResponse,
-  GetProbeRequest,
-  Omit<GetProbeRequest, 'identifiers'>
->): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
-  const [getHTTPProbePropertiesQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
+  GetProbeRequest
+> {
+  // Query to get probe YAML
+  const [getLazyProbeQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
     gql`
-      query getProbe($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        getProbe(probeID: $probeID, identifiers: $identifiers) {
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
+          name
+          description
           type
-          httpProperties {
+          tags
+          type
+          infrastructureType
+          kubernetesHTTPProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             url
             method {
@@ -92,7 +94,109 @@ export function getHTTPProbeProperties({
                 responseCode
               }
             }
-            responseTimeout
+            insecureSkipVerify
+          }
+
+          promProperties {
+            probeTimeout
+            interval
+            retry
+            attempt
+            evaluationTimeout
+            probePollingInterval
+            initialDelay
+            stopOnFailure
+            endpoint
+            query
+            queryPath
+            comparator {
+              type
+              value
+              criteria
+            }
+          }
+          k8sProperties {
+            probeTimeout
+            interval
+            retry
+            attempt
+            evaluationTimeout
+            probePollingInterval
+            initialDelay
+            stopOnFailure
+            group
+            version
+            resource
+            namespace
+            fieldSelector
+            labelSelector
+            operation
+          }
+          kubernetesCMDProperties {
+            probeTimeout
+            interval
+            retry
+            attempt
+            evaluationTimeout
+            probePollingInterval
+            initialDelay
+            stopOnFailure
+            command
+            comparator {
+              type
+              value
+              criteria
+            }
+            source
+          }
+        }
+      }
+    `,
+    {
+      ...options
+    }
+  );
+
+  return [getLazyProbeQuery, result];
+}
+
+export function getKubernetesHTTPProbeProperties({
+  // Identifiers
+  projectID,
+  // Params
+  probeName,
+  // Options
+  options = {}
+}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
+  const [getKubernetesHTTPProbePropertiesQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
+    gql`
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
+          type
+          infrastructureType
+          kubernetesHTTPProperties {
+            probeTimeout
+            interval
+            retry
+            attempt
+            evaluationTimeout
+            probePollingInterval
+            initialDelay
+            stopOnFailure
+            url
+            method {
+              get {
+                criteria
+                responseCode
+              }
+              post {
+                contentType
+                body
+                bodyPath
+                criteria
+                responseCode
+              }
+            }
             insecureSkipVerify
           }
         }
@@ -100,42 +204,39 @@ export function getHTTPProbeProperties({
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
-        probeID
+        projectID,
+        probeName
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options
     }
   );
 
-  return [getHTTPProbePropertiesQuery, result];
+  return [getKubernetesHTTPProbePropertiesQuery, result];
 }
 
 export function getPROMProbeProperties({
   // Identifiers
   projectID,
   // Params
-  probeID,
+  probeName,
   // Options
   options = {}
-}: GqlAPIQueryRequest<
-  GetProbeResponse,
-  GetProbeRequest,
-  Omit<GetProbeRequest, 'identifiers'>
->): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
+}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
   const [getPROMProbePropertiesQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
     gql`
-      query getProbe($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        getProbe(probeID: $probeID, identifiers: $identifiers) {
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
           type
+          infrastructureType
           promProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             endpoint
             query
@@ -151,10 +252,8 @@ export function getPROMProbeProperties({
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
-        probeID
+        projectID,
+        probeName
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options
@@ -168,25 +267,24 @@ export function getK8SProbeProperties({
   // Identifiers
   projectID,
   // Params
-  probeID,
+  probeName,
   // Options
   options = {}
-}: GqlAPIQueryRequest<
-  GetProbeResponse,
-  GetProbeRequest,
-  Omit<GetProbeRequest, 'identifiers'>
->): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
+}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
   const [getK8SProbePropertiesQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
     gql`
-      query getProbe($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        getProbe(probeID: $probeID, identifiers: $identifiers) {
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
           type
+          infrastructureType
           k8sProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             group
             version
@@ -195,17 +293,14 @@ export function getK8SProbeProperties({
             fieldSelector
             labelSelector
             operation
-            data
           }
         }
       }
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
-        probeID
+        projectID,
+        probeName
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options
@@ -215,29 +310,28 @@ export function getK8SProbeProperties({
   return [getK8SProbePropertiesQuery, result];
 }
 
-export function getCMDProbeProperties({
+export function getKubernetesCMDProbeProperties({
   // Identifiers
   projectID,
   // Params
-  probeID,
+  probeName,
   // Options
   options = {}
-}: GqlAPIQueryRequest<
-  GetProbeResponse,
-  GetProbeRequest,
-  Omit<GetProbeRequest, 'identifiers'>
->): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
-  const [getCMDProbePropertiesQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
+}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPILazyQueryResponse<GetProbeResponse, GetProbeRequest> {
+  const [getKubernetesCMDProbePropertiesQuery, result] = useLazyQuery<GetProbeResponse, GetProbeRequest>(
     gql`
-      query getProbe($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        getProbe(probeID: $probeID, identifiers: $identifiers) {
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
           type
-          cmdProperties {
+          infrastructureType
+          kubernetesCMDProperties {
             probeTimeout
             interval
+            attempt
+            evaluationTimeout
             retry
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             command
             comparator {
@@ -245,98 +339,51 @@ export function getCMDProbeProperties({
               value
               criteria
             }
-            source {
-              image
-              hostNetwork
-              inheritInputs
-              args
-              envList {
-                name
-                value
-                valueFrom {
-                  fieldRef {
-                    apiVersion
-                    fieldPath
-                  }
-                  resourceFieldRef {
-                    containerName
-                    resource
-                    divisor
-                  }
-                  configMapKeyRef {
-                    name {
-                      name
-                    }
-                    key
-                    optional
-                  }
-                  secretKeyRef {
-                    name {
-                      name
-                    }
-                    key
-                    optional
-                  }
-                }
-              }
-              labels
-              command
-              imagePullPolicy
-              privileged
-              nodeSelector
-              # volumes
-              # volumesMount
-              imagePullSecrets {
-                name
-              }
-            }
+            source
           }
         }
       }
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
-        probeID
+        projectID,
+        probeName
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options
     }
   );
 
-  return [getCMDProbePropertiesQuery, result];
+  return [getKubernetesCMDProbePropertiesQuery, result];
 }
 
 export function getProbeAllProperties({
   // Identifiers
   projectID,
   // Params
-  probeID,
+  probeName,
   // Options
   options = {}
-}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest, Omit<GetProbeRequest, 'identifiers'>>): GqlAPIQueryResponse<
-  GetProbeResponse,
-  GetProbeRequest
-> {
+}: GqlAPIQueryRequest<GetProbeResponse, GetProbeRequest>): GqlAPIQueryResponse<GetProbeResponse, GetProbeRequest> {
   // Query to list probes
   const { data, loading, ...rest } = useQuery<GetProbeResponse, GetProbeRequest>(
     gql`
-      query getProbe($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        getProbe(probeID: $probeID, identifiers: $identifiers) {
+      query getProbe($probeName: ID!, $projectID: ID!) {
+        getProbe(probeName: $probeName, projectID: $projectID) {
           name
           description
           type
           tags
           type
-          probeId
-          httpProperties {
+          infrastructureType
+          kubernetesHTTPProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             url
             method {
@@ -352,15 +399,17 @@ export function getProbeAllProperties({
                 responseCode
               }
             }
-            responseTimeout
             insecureSkipVerify
           }
+
           promProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             endpoint
             query
@@ -371,12 +420,15 @@ export function getProbeAllProperties({
               criteria
             }
           }
+
           k8sProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             group
             version
@@ -385,14 +437,15 @@ export function getProbeAllProperties({
             fieldSelector
             labelSelector
             operation
-            data
           }
-          cmdProperties {
+          kubernetesCMDProperties {
             probeTimeout
             interval
             retry
+            attempt
+            evaluationTimeout
             probePollingInterval
-            initialDelaySeconds
+            initialDelay
             stopOnFailure
             command
             comparator {
@@ -400,61 +453,15 @@ export function getProbeAllProperties({
               value
               criteria
             }
-            source {
-              image
-              hostNetwork
-              inheritInputs
-              args
-              envList {
-                name
-                value
-                valueFrom {
-                  fieldRef {
-                    apiVersion
-                    fieldPath
-                  }
-                  resourceFieldRef {
-                    containerName
-                    resource
-                    divisor
-                  }
-                  configMapKeyRef {
-                    name {
-                      name
-                    }
-                    key
-                    optional
-                  }
-                  secretKeyRef {
-                    name {
-                      name
-                    }
-                    key
-                    optional
-                  }
-                }
-              }
-              labels
-              command
-              imagePullPolicy
-              privileged
-              nodeSelector
-              # volumes
-              # volumesMount
-              imagePullSecrets {
-                name
-              }
-            }
+            source
           }
         }
       }
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
-        probeID
+        projectID,
+        probeName
       },
       fetchPolicy: options.fetchPolicy ?? 'cache-and-network',
       ...options

@@ -1,9 +1,9 @@
 import { gql, useLazyQuery } from '@apollo/client';
-import type { Identifiers, Mode } from '@api/entities';
+import type { Mode } from '@api/entities';
 import type { GqlAPIQueryRequest, GqlAPILazyQueryResponse } from '@api/types';
 
 export interface GetProbeYAMLRequest {
-  identifiers: Identifiers;
+  projectID: string;
   request: {
     probeID: string;
     mode: Mode;
@@ -30,15 +30,13 @@ export function getProbeYAML({
   // Query to get probe YAML
   const [getProbeYAMLQuery, result] = useLazyQuery<GetProbeYAMLResponse, GetProbeYAMLRequest>(
     gql`
-      query getProbeYAML($request: GetProbeYAMLRequest!, $identifiers: IdentifiersRequest!) {
-        getProbeYAML(request: $request, identifiers: $identifiers)
+      query getProbeYAML($request: GetProbeYAMLRequest!, $projectID: ID!) {
+        getProbeYAML(request: $request, projectID: $projectID)
       }
     `,
     {
       variables: {
-        identifiers: {
-          projectID
-        },
+        projectID,
         request: {
           probeID,
           mode

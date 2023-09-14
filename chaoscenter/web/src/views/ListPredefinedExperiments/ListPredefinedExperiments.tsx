@@ -6,7 +6,7 @@ import { parse } from 'yaml';
 import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';
 import VisualizeExperimentManifestView from '@views/VisualizeExperimentManifest';
-import type { FaultList, PredefinedExperiment } from '@api/entities';
+import { FaultList, InfrastructureType, PredefinedExperiment } from '@api/entities';
 import type { ExperimentManifest } from '@models';
 import experimentYamlService from 'services/experiment';
 import type { CustomizedMultiSelectOption } from '@controllers/ListChaosHubsTab';
@@ -34,7 +34,7 @@ export function PredefinedExperimentCard({ manifest, csv, onClose, hub }: HubCar
   const parsedManifest = parse(manifest) as ExperimentManifest;
   const { showError } = useToaster();
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const handleSelect = (event: React.MouseEvent<Element, MouseEvent>): void => {
     event.preventDefault();

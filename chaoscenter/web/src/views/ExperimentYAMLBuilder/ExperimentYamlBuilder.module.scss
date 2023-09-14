@@ -1,0 +1,14 @@
+.yamlBuilder {
+  max-height: calc(100vh - 128px);
+  padding: var(--spacing-large);
+  position: relative;
+
+  .buttonsWrapper {
+    position: absolute;
+    right: 2.7rem;
+    top: 1.85rem;
+    display: flex;
+    column-gap: var(--spacing-large);
+    align-items: center;
+  }
+}

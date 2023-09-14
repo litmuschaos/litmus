@@ -7,6 +7,11 @@ import (
 	"strconv"
 	"time"
 
+	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
@@ -23,7 +28,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
-	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
+	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
@@ -32,7 +37,7 @@ import (
 
 // ChaosExperimentHandler is the handler for chaos experiment
 type ChaosExperimentHandler struct {
-	chaosExperimentService     types.Service
+	chaosExperimentService     ops.Service
 	chaosExperimentRunService  chaosExperimentRun.Service
 	infrastructureService      chaos_infrastructure.Service
 	gitOpsService              gitops.Service
@@ -43,7 +48,7 @@ type ChaosExperimentHandler struct {
 
 // NewChaosExperimentHandler returns a new instance of ChaosWorkflowHandler
 func NewChaosExperimentHandler(
-	chaosExperimentService types.Service,
+	chaosExperimentService ops.Service,
 	chaosExperimentRunService chaosExperimentRun.Service,
 	infrastructureService chaos_infrastructure.Service,
 	gitOpsService gitops.Service,
@@ -386,13 +391,16 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 				Phase:           v.Phase,
 				ResiliencyScore: v.ResiliencyScore,
 				UpdatedBy: &model.UserDetails{
-					UserID: v.UpdatedBy,
+					Username: v.UpdatedBy.Username,
+					UserID:   v.UpdatedBy.UserID,
 				},
 				CreatedBy: &model.UserDetails{
-					UserID: v.CreatedBy,
+					Username: v.CreatedBy.Username,
+					UserID:   v.CreatedBy.UserID,
 				},
-				UpdatedAt: strconv.FormatInt(v.UpdatedAt, 10),
-				CreatedAt: strconv.FormatInt(v.CreatedAt, 10),
+				UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
+				CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
+				RunSequence: v.RunSequence,
 			})
 		}
 	}
@@ -418,10 +426,10 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 			IsRemoved:          exp.IsRemoved,
 			Infra:              chaosInfrastructure,
 			UpdatedBy: &model.UserDetails{
-				Username: exp.UpdatedBy,
+				Username: exp.UpdatedBy.Username,
 			},
 			CreatedBy: &model.UserDetails{
-				Username: exp.UpdatedBy,
+				Username: exp.UpdatedBy.Username,
 			},
 			RecentExperimentRunDetails: recentExpRuns,
 		},
@@ -748,13 +756,14 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 					Phase:           v.Phase,
 					ResiliencyScore: v.ResiliencyScore,
 					UpdatedBy: &model.UserDetails{
-						Username: v.UpdatedBy,
+						Username: v.UpdatedBy.Username,
 					},
 					CreatedBy: &model.UserDetails{
-						Username: v.UpdatedBy,
+						Username: v.UpdatedBy.Username,
 					},
-					UpdatedAt: strconv.FormatInt(v.UpdatedAt, 10),
-					CreatedAt: strconv.FormatInt(v.CreatedAt, 10),
+					UpdatedAt:   strconv.FormatInt(v.UpdatedAt, 10),
+					CreatedAt:   strconv.FormatInt(v.CreatedAt, 10),
+					RunSequence: v.RunSequence,
 				})
 			}
 		}
@@ -774,10 +783,10 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			IsRemoved:          workflow.IsRemoved,
 			Infra:              chaosInfrastructure,
 			UpdatedBy: &model.UserDetails{
-				Username: workflow.UpdatedBy,
+				Username: workflow.UpdatedBy.Username,
 			},
 			CreatedBy: &model.UserDetails{
-				Username: workflow.UpdatedBy,
+				Username: workflow.UpdatedBy.Username,
 			},
 			RecentExperimentRunDetails: recentExpRuns,
 		}
@@ -1183,4 +1192,101 @@ func (c *ChaosExperimentHandler) GetDBExperiment(query bson.D) (dbChaosExperimen
 		return dbChaosExperiment.ChaosExperimentRequest{}, err
 	}
 	return experiment, nil
+}
+
+func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error) {
+	var (
+		probeDetails        []*model.GetProbesInExperimentRunResponse
+		probeStatusMap      = make(map[string]model.ProbeVerdict)
+		probeDescriptionMap = make(map[string]*string)
+		executionData       types.ExecutionData
+	)
+
+	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
+		{"project_id", projectID},
+		{"is_removed", false},
+		{"experiment_run_id", experimentRunID},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
+		return nil, errors.New("failed to unmarshal workflow manifest")
+	}
+
+	for _, _probe := range wfRun.Probes {
+		if _probe.FaultName == faultName {
+
+			mode := "SOT"
+			for _, probeName := range _probe.ProbeNames {
+				probeStatusMap[probeName] = model.ProbeVerdictNa
+				description := "Either probe is not executed or not evaluated"
+				probeDescriptionMap[probeName] = &description
+
+				if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
+					return nil, errors.New("failed to unmarshal workflow manifest")
+				}
+
+				if len(executionData.Nodes) > 0 {
+					for _, nodeData := range executionData.Nodes {
+						if nodeData.Name == faultName {
+							if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp == nil {
+								probeStatusMap[probeName] = model.ProbeVerdictNa
+							} else if nodeData.Type == "ChaosEngine" && nodeData.ChaosExp != nil {
+								probeStatusMap[probeName] = model.ProbeVerdictNa
+								if nodeData.ChaosExp.ChaosResult != nil {
+									probeStatusMap[probeName] = model.ProbeVerdictAwaited
+									probeStatuses := nodeData.ChaosExp.ChaosResult.Status.ProbeStatuses
+
+									for _, probeStatus := range probeStatuses {
+										if probeStatus.Name == probeName {
+											mode = probeStatus.Mode
+
+											description := probeStatus.Status.Description
+											probeDescriptionMap[probeStatus.Name] = &description
+
+											switch probeStatus.Status.Verdict {
+											case chaosTypes.ProbeVerdictPassed:
+												probeStatusMap[probeName] = model.ProbeVerdictPassed
+												break
+											case chaosTypes.ProbeVerdictFailed:
+												probeStatusMap[probeName] = model.ProbeVerdictFailed
+												break
+											case chaosTypes.ProbeVerdictAwaited:
+												probeStatusMap[probeName] = model.ProbeVerdictAwaited
+												break
+											default:
+												probeStatusMap[probeName] = model.ProbeVerdictNa
+												break
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			for _, probeName := range _probe.ProbeNames {
+				singleProbe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
+				if err != nil {
+					return nil, err
+				}
+
+				probeDetails = append(probeDetails, &model.GetProbesInExperimentRunResponse{
+					Probe: singleProbe.GetOutputProbe(),
+					Mode:  model.Mode(mode),
+					Status: &model.Status{
+						Verdict:     probeStatusMap[probeName],
+						Description: probeDescriptionMap[probeName],
+					},
+				})
+			}
+
+		}
+	}
+
+	return probeDetails, nil
 }

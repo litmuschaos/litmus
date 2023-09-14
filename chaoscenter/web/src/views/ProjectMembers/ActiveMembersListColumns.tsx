@@ -1,6 +1,6 @@
 import type { Row } from 'react-table';
 import React from 'react';
-import { Color } from '@harnessio/design-system';
+import { Color, FontVariation } from '@harnessio/design-system';
 import { Button, ButtonVariation, DropDown, Layout, SelectOption, Text, useToaster } from '@harnessio/uicore';
 import { useParams } from 'react-router-dom';
 import { useStrings } from '@strings';
@@ -14,11 +14,12 @@ const MemberName = ({ row: { original: data } }: MemberRow): React.ReactElement 
   const { getString } = useStrings();
   return (
     <Layout.Vertical>
-      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <Text color={Color.BLACK}>{name ?? username}</Text>
+      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small">
+        <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.BLACK}>
+          {name === '' ? username : name}
+        </Text>
       </Layout.Horizontal>
-
-      <Text color={Color.GREY_500} font={{ size: 'small' }} lineClamp={1}>
+      <Text color={Color.GREY_500} font={{ variation: FontVariation.SMALL }} lineClamp={1}>
         {getString('id')}: {userID}
       </Text>
     </Layout.Vertical>
@@ -27,23 +28,21 @@ const MemberName = ({ row: { original: data } }: MemberRow): React.ReactElement 
 
 const MemberEmail = ({ row: { original: data } }: MemberRow): React.ReactElement => {
   const { email } = data;
+  const { getString } = useStrings();
   return (
-    <Layout.Vertical>
-      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <Text color={Color.BLACK}>{email}</Text>
-      </Layout.Horizontal>
-    </Layout.Vertical>
+    <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
+      {email === '' ? getString('NASlash') : email}
+    </Text>
   );
 };
 
 const MemberPermission = ({ row: { original: data } }: MemberRow): React.ReactElement => {
   const { role } = data;
+  const { getString } = useStrings();
   return (
-    <Layout.Vertical>
-      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <Text color={Color.BLACK}>{role}</Text>
-      </Layout.Horizontal>
-    </Layout.Vertical>
+    <Text font={{ variation: FontVariation.BODY }} color={Color.BLACK}>
+      {role ?? getString('NASlash')}
+    </Text>
   );
 };
 
@@ -60,13 +59,7 @@ const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React
       value: 'Viewer'
     }
   ];
-  return (
-    <Layout.Vertical>
-      <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-        <DropDown value={memberRole} items={rolesDropDown} onChange={option => setMemberRole(option.label)} />
-      </Layout.Horizontal>
-    </Layout.Vertical>
-  );
+  return <DropDown value={memberRole} items={rolesDropDown} onChange={option => setMemberRole(option.label)} />;
 };
 
 const InvitationOperation = ({ row: { original: data } }: MemberRow): React.ReactElement => {

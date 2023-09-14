@@ -124,6 +124,166 @@
         "produces": ["application/json"]
       }
     },
+    "/token/{user_id}": {
+      "get": {
+        "description": "This API is used to get the api-tokens of a user by passing uid",
+        "operationId": "getApiTokens",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "apiTokens": [
+                  {
+                    "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
+                    "name": "test-api-token",
+                    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                    "expires_at": 1627040198,
+                    "created_at": 1627040098
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/GetApiTokensResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "required": true,
+            "description": "ID of the user",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/create_token": {
+      "post": {
+        "description": "This API is used to create api-token for a user",
+        "operationId": "createApiToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "accessToken": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                "type":        "Bearer"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/CreateApiTokenResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["user_id", "name", "days_until_expiration"],
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "days_until_expiration": {
+                  "type": "integer"
+                }
+              },
+              "example": {
+                "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
+                "name": "test api token",
+                "days_until_expiration": 30
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/remove_token": {
+      "post": {
+        "description": "This API is used to delete api-token for a user",
+        "operationId": "removeApiToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "api token deleted successfully"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RemoveApiTokenResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["token"],
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
     "/users": {
       "get": {
         "description": "This API is used to get the list of users",
@@ -1238,6 +1398,59 @@
           "type": "string"
         }
       }
+    },
+    "GetApiTokensResponse": {
+      "type": "object",
+      "required": [
+        "apiTokens"
+      ],
+      "properties": {
+        "apiTokens": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApiToken"
+          }
+        }
+      }
+    },
+    "ApiToken": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "expires_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "CreateApiTokenResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "RemoveApiTokenResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
     },
     "ActionBy": {
       "type": "object",

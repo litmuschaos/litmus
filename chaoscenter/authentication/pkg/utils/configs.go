@@ -27,6 +27,7 @@ var (
 	UserCollection               = "users"
 	ProjectCollection            = "project"
 	RevokedTokenCollection       = "revoked-token"
+	ApiTokenCollection           = "api-token"
 	UsernameField                = "username"
 	ExpiresAtField               = "expires_at"
 	PasswordEncryptionCost       = 15

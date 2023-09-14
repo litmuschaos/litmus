@@ -10,6 +10,7 @@ import { useStrings } from '@strings';
 import type { User } from '@api/auth';
 import AccountDetailsChangeController from '@controllers/AccountDetailsChange';
 import AccountPasswordChangeController from '@controllers/AccountPasswordChange';
+import SideNav from '@components/SideNav';
 import css from './SettingsWrapper.module.scss';
 
 interface SettingsWrapperProps {
@@ -40,6 +41,7 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
       <Loader loading={loading}>
         <Container flex className={css.leftSideBar}>
           <MainNav />
+          <SideNav />
         </Container>
         <Layout.Horizontal style={{ flexGrow: 1 }} height={'100%'}>
           <Container

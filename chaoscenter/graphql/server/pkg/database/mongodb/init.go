@@ -25,6 +25,7 @@ const (
 	UserCollection
 	ProjectCollection
 	EnvironmentCollection
+	ChaosProbeCollection
 )
 
 // MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
@@ -48,6 +49,7 @@ type MongoClient struct {
 	UserCollection                *mongo.Collection
 	ProjectCollection             *mongo.Collection
 	EnvironmentCollection         *mongo.Collection
+	ChaosProbeCollection          *mongo.Collection
 }
 
 var (
@@ -57,9 +59,10 @@ var (
 		ChaosInfraCollection:          "chaosInfrastructures",
 		ChaosExperimentCollection:     "chaosExperiments",
 		ChaosExperimentRunsCollection: "chaosExperimentRuns",
+		ChaosProbeCollection:          "chaosProbes",
 		ChaosHubCollection:            "chaosHubs",
-		ImageRegistryCollection:       "image-registry",
-		ServerConfigCollection:        "server-config",
+		ImageRegistryCollection:       "imageRegistry",
+		ServerConfigCollection:        "serverConfig",
 		GitOpsCollection:              "gitops",
 		UserCollection:                "user",
 		ProjectCollection:             "project",
@@ -221,9 +224,20 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection : ", err)
+		logrus.WithError(err).Fatal("Error Creating Index for GitOps Collection")
 	}
 	m.ImageRegistryCollection = m.Database.Collection(Collections[ImageRegistryCollection])
+	_, err = m.ImageRegistryCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"project_id": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	})
+	if err != nil {
+		logrus.WithError(err).Fatal("Error Creating Index for Image Registry Collection")
+	}
 	m.ServerConfigCollection = m.Database.Collection(Collections[ServerConfigCollection])
 	_, err = m.ServerConfigCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
 		{
@@ -234,7 +248,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.WithError(err).Fatal("Error Creating Index for Server Config Collection : ", err)
+		logrus.WithError(err).Fatal("Error Creating Index for Server Config Collection")
 	}
 	m.EnvironmentCollection = m.Database.Collection(Collections[EnvironmentCollection])
 	_, err = m.EnvironmentCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
@@ -252,5 +266,28 @@ func (m *MongoClient) initAllCollection() {
 	})
 	if err != nil {
 		logrus.WithError(err).Fatal("failed to create indexes for environments collection")
+	}
+	// Initialize chaos probes collection
+	err = m.Database.CreateCollection(context.TODO(), Collections[ChaosProbeCollection], nil)
+	if err != nil {
+		logrus.WithError(err).Error("failed to create chaosProbes collection")
+	}
+
+	m.ChaosProbeCollection = m.Database.Collection(Collections[ChaosProbeCollection])
+	_, err = m.ChaosProbeCollection.Indexes().CreateMany(backgroundContext, []mongo.IndexModel{
+		{
+			Keys: bson.M{
+				"name": 1,
+			},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys: bson.D{
+				{"project_id", 1},
+			},
+		},
+	})
+	if err != nil {
+		logrus.WithError(err).Error("failed to create indexes for chaosProbes collection")
 	}
 }

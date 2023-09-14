@@ -1,6 +1,7 @@
 package chaos_experiment
 
 import (
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
@@ -22,6 +23,8 @@ type ExperimentRunDetail struct {
 	NotifyID        *string  `bson:"notify_id"`
 	ResiliencyScore *float64 `bson:"resiliency_score,omitempty"`
 	Completed       bool     `bson:"completed"`
+	RunSequence     int      `bson:"run_sequence"`
+	Probe           []Probes `bson:"probes"`
 }
 
 // ChaosExperimentRequest contains the required fields to be stored in the database for a chaos experiment input
@@ -37,6 +40,22 @@ type ChaosExperimentRequest struct {
 	IsCustomExperiment         bool                  `bson:"is_custom_experiment"`
 	RecentExperimentRunDetails []ExperimentRunDetail `bson:"recent_experiment_run_details"` // stores the details of last 10 experiment runs
 	TotalExperimentRuns        int                   `bson:"total_experiment_runs"`
+}
+
+// Probes details containing fault name and the probe name which it was mapped to
+type Probes struct {
+	FaultName  string   `bson:"fault_name" json:"faultName"`
+	ProbeNames []string `bson:"probe_names" json:"probeNames"`
+}
+
+type ProbeAnnotations struct {
+	Name string     `json:"name"`
+	Mode model.Mode `json:"mode"`
+}
+
+type ProbesMatched struct {
+	FaultName  string   `bson:"fault_name"`
+	ProbeNames []string `bson:"probe_names"`
 }
 
 // ChaosExperimentsWithRunDetails contains the required fields to be stored in the database for a chaos experiment input
@@ -74,6 +93,7 @@ type ExperimentRevision struct {
 	ExperimentManifest string             `bson:"experiment_manifest"`
 	UpdatedAt          int64              `bson:"updated_at"`
 	Weightages         []*WeightagesInput `bson:"weightages"`
+	Probes             []Probes           `bson:"probes"`
 }
 
 // WeightagesInput contains the required fields to be stored in the database for a weightages input
@@ -107,6 +127,7 @@ type FlattenedExperimentRun struct {
 	RevisionID             string                            `bson:"revision_id"`
 	InfraID                string                            `bson:"infra_id"`
 	Phase                  string                            `bson:"phase"`
+	NotifyID               *string                           `bson:"notify_id"`
 	KubernetesInfraDetails []chaos_infrastructure.ChaosInfra `bson:"kubernetesInfraDetails,omitempty"`
 	ExperimentDetails      []ExperimentDetails               `bson:"experiment"`
 	ResiliencyScore        *float64                          `bson:"resiliency_score,string,omitempty"`
@@ -119,6 +140,7 @@ type FlattenedExperimentRun struct {
 	IsCustomExperiment     bool                              `bson:"is_custom_experiment"`
 	Completed              bool                              `bson:"completed"`
 	IsRemoved              bool                              `bson:"is_removed"`
+	RunSequence            int64                             `bson:"run_sequence"`
 }
 
 type ExperimentDetails struct {
@@ -146,4 +168,10 @@ type CategorizedExperimentRunStats struct {
 type AggregatedExperimentStats struct {
 	TotalExperiments         []TotalFilteredData             `bson:"total_experiments"`
 	TotalFilteredExperiments []CategorizedExperimentRunStats `bson:"categorized_by_resiliency_score"`
+}
+
+type AggregatedExperimentsWithProbes struct {
+	TotalFilteredExperiments []TotalFilteredData              `bson:"total_filtered_experiments"`
+	ScheduledExperiments     []ChaosExperimentsWithRunDetails `bson:"scheduled_experiments"`
+	ProbesMatched            []ProbesMatched                  `bson:"probes_matched"`
 }

@@ -6,7 +6,7 @@ import cx from 'classnames';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
 import SettingsWrapper from '@components/SettingsWrapper';
 import { useStrings } from '@strings';
-import { useSearchParams, useUpdateSearchParams } from '@hooks';
+import { useDocumentTitle, useSearchParams, useUpdateSearchParams } from '@hooks';
 import AccountSettingsOverviewController from '@controllers/AccountSettingsOverview';
 import AccountSettingsUserManagementController from '@controllers/AccountSettingsUserManagement';
 import type { User } from '@api/auth';
@@ -37,6 +37,8 @@ export default function AccountSettingsView(props: AccountSettingsViewProps): Re
   const selectedTabId = searchParams.get('tab') as AccountSettingsTabTypes;
   const [activeTab, setActiveTab] = React.useState<TabId | undefined>('overview');
   const { currentUserInfo } = useAppStore();
+
+  useDocumentTitle(getString('settings'));
 
   React.useEffect(() => {
     if (!selectedTabId) {

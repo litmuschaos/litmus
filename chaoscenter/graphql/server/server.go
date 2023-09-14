@@ -110,12 +110,7 @@ func main() {
 	router.GET("/readiness", handlers.ReadinessHandler())
 
 	projectEventChannel := make(chan string)
-	go func() {
-		err := projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
-		if err != nil {
-			log.Error(err.Error())
-		}
-	}()
+	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
 	log.Infof("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
 	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
