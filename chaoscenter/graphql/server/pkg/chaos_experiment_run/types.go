@@ -5,13 +5,13 @@ import (
 )
 
 type ExperimentRunMetrics struct {
-	ResiliencyScore  float64 `json:"resiliency_score"`
-	FaultsPassed     int     `json:"faults_passed"`
-	FaultsFailed     int     `json:"faults_failed"`
-	FaultsAwaited    int     `json:"faults_awaited"`
-	FaultsStopped    int     `json:"faults_stopped"`
-	FaultsNA         int     `json:"experiments_na"`
-	TotalExperiments int     `json:"total_faults"`
+	ResiliencyScore    float64 `json:"resiliency_score"`
+	ExperimentsPassed  int     `json:"experiments_passed"`
+	ExperimentsFailed  int     `json:"experiments_failed"`
+	ExperimentsAwaited int     `json:"experiments_awaited"`
+	ExperimentsStopped int     `json:"experiments_stopped"`
+	ExperimentsNA      int     `json:"experiments_na"`
+	TotalExperiments   int     `json:"total_experiments"`
 }
 
 type ExecutionData struct {
@@ -39,19 +39,19 @@ type Node struct {
 	FinishedAt string     `json:"finishedAt"`
 	Children   []string   `json:"children"`
 	Type       string     `json:"type"`
-	ChaosExp   *ChaosData `json:"chaos_data,omitempty"`
+	ChaosExp   *ChaosData `json:"chaosData,omitempty"`
 }
 
 // ChaosData is the data we get from chaos exporter
 type ChaosData struct {
 	EngineUID              string                  `json:"engineUID"`
-	EngineContext          string                  `json:"engineContext"`
+	EngineContext          string                  `json:"engine_context"`
 	EngineName             string                  `json:"engineName"`
 	Namespace              string                  `json:"namespace"`
-	FaultName              string                  `json:"faultName"`
-	FaultStatus            string                  `json:"faultStatus"`
+	ExperimentName         string                  `json:"experimentName"`
+	ExperimentStatus       string                  `json:"experimentStatus"`
 	LastUpdatedAt          string                  `json:"lastUpdatedAt"`
-	FaultVerdict           string                  `json:"faultVerdict"`
+	ExperimentVerdict      string                  `json:"experimentVerdict"`
 	ExperimentPod          string                  `json:"experimentPod"`
 	RunnerPod              string                  `json:"runnerPod"`
 	ProbeSuccessPercentage string                  `json:"probeSuccessPercentage"`

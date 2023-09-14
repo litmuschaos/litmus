@@ -13,7 +13,7 @@
     }
     .bp3-tab-panel {
       margin-top: 0 !important;
-      flex-grow: 1;
+      height: calc(100% - 59px);
     }
   }
 }

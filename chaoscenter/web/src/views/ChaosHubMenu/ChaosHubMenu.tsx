@@ -111,7 +111,7 @@ export const ChaosHubMenuView: React.FC<ChaosHubMenuViewProps> = ({
                     search: `?hubName=${chaosHub.name}&isDefault=${chaosHub.isDefault}`
                   })
                 }
-                permission={PermissionGroup.EDITOR}
+                permission={PermissionGroup.VIEWER}
               />
             </ParentComponentErrorWrapper>
             {!isDefault && (

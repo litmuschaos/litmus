@@ -68,17 +68,17 @@ func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Conte
 
 // ProcessCompletedExperimentRun calculates the Resiliency Score and returns the updated ExecutionData
 func (c *chaosExperimentRunService) ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error) {
-	var weightSum, totalTestResult = 0, 0
+	weightSum, totalTestResult := 0, 0
 	var result ExperimentRunMetrics
 	weightMap := map[string]int{}
 
-	chaosExperiments, err := c.chaosExperimentOperator.GetExperiment(context.TODO(), bson.D{
+	chaosWorkflows, err := c.chaosExperimentOperator.GetExperiment(context.TODO(), bson.D{
 		{"experiment_id", wfID},
 	})
 	if err != nil {
 		return result, fmt.Errorf("failed to get experiment from db on complete, error: %w", err)
 	}
-	for _, rev := range chaosExperiments.Revision {
+	for _, rev := range chaosWorkflows.Revision {
 		if rev.RevisionID == execData.RevisionID {
 			for _, weights := range rev.Weightages {
 				weightMap[weights.FaultName] = weights.Weightage
@@ -89,7 +89,6 @@ func (c *chaosExperimentRunService) ProcessCompletedExperimentRun(execData Execu
 	}
 
 	result.TotalExperiments = len(weightMap)
-
 	for _, value := range execData.Nodes {
 		if value.Type == "ChaosEngine" {
 			experimentName := ""
@@ -108,20 +107,20 @@ func (c *chaosExperimentRunService) ProcessCompletedExperimentRun(execData Execu
 				x, _ := strconv.Atoi(value.ChaosExp.ProbeSuccessPercentage)
 				totalTestResult += weight * x
 			}
-			if value.ChaosExp.FaultVerdict == "Pass" {
-				result.FaultsPassed += 1
+			if value.ChaosExp.ExperimentVerdict == "Pass" {
+				result.ExperimentsPassed += 1
 			}
-			if value.ChaosExp.FaultVerdict == "Fail" {
-				result.FaultsFailed += 1
+			if value.ChaosExp.ExperimentVerdict == "Fail" {
+				result.ExperimentsFailed += 1
 			}
-			if value.ChaosExp.FaultVerdict == "Awaited" {
-				result.FaultsAwaited += 1
+			if value.ChaosExp.ExperimentVerdict == "Awaited" {
+				result.ExperimentsAwaited += 1
 			}
-			if value.ChaosExp.FaultVerdict == "Stopped" {
-				result.FaultsStopped += 1
+			if value.ChaosExp.ExperimentVerdict == "Stopped" {
+				result.ExperimentsStopped += 1
 			}
-			if value.ChaosExp.FaultVerdict == "N/A" || value.ChaosExp.FaultVerdict == "" {
-				result.FaultsNA += 1
+			if value.ChaosExp.ExperimentVerdict == "N/A" || value.ChaosExp.ExperimentVerdict == "" {
+				result.ExperimentsNA += 1
 			}
 		}
 	}

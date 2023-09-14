@@ -49,3 +49,12 @@ type ChaosData struct {
 	FailStep               string                `json:"failStep"`
 	ChaosResult            *v1alpha1.ChaosResult `json:"chaosResult"`
 }
+
+type FaultStatus string
+
+const (
+	FaultCompleted                 FaultStatus = "Completed"
+	FaultCompletedWithProbeFailure FaultStatus = "Completed_With_Probe_Failure"
+	Error                          FaultStatus = "Error"
+	Stopped                        FaultStatus = "Stopped"
+)

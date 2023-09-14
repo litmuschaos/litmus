@@ -35,7 +35,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
+	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 
@@ -251,7 +251,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			RunSequence:        int(wfRun.RunSequence),
 
 			UpdatedBy: &model.UserDetails{
-				Username: wfRun.UpdatedBy,
+				Username: wfRun.UpdatedBy.Username,
 			},
 			UpdatedAt: strconv.FormatInt(wfRun.UpdatedAt, 10),
 			CreatedAt: strconv.FormatInt(wfRun.CreatedAt, 10),
@@ -621,7 +621,7 @@ func (c *ChaosExperimentRunHandler) ListExperimentRun(projectID string, request 
 			ExecutionData:      workflow.ExecutionData,
 			IsRemoved:          &workflow.IsRemoved,
 			UpdatedBy: &model.UserDetails{
-				Username: workflow.UpdatedBy,
+				Username: workflow.UpdatedBy.Username,
 			},
 			UpdatedAt:   strconv.FormatInt(workflow.UpdatedAt, 10),
 			CreatedAt:   strconv.FormatInt(workflow.CreatedAt, 10),
@@ -811,9 +811,13 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 				Audit: mongodb.Audit{
 					IsRemoved: false,
 					CreatedAt: currentTime,
-					CreatedBy: username,
+					CreatedBy: mongodb.UserDetailResponse{
+						Username: username,
+					},
 					UpdatedAt: currentTime,
-					UpdatedBy: username,
+					UpdatedBy: mongodb.UserDetailResponse{
+						Username: username,
+					},
 				},
 			},
 		}
@@ -853,9 +857,13 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 			Audit: mongodb.Audit{
 				IsRemoved: false,
 				CreatedAt: currentTime,
-				CreatedBy: username,
+				CreatedBy: mongodb.UserDetailResponse{
+					Username: username,
+				},
 				UpdatedAt: currentTime,
-				UpdatedBy: username,
+				UpdatedBy: mongodb.UserDetailResponse{
+					Username: username,
+				},
 			},
 			NotifyID:        &notifyID,
 			Completed:       false,
@@ -1171,7 +1179,9 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 					IsRemoved: false,
 					CreatedAt: time.Now().UnixMilli(),
 					UpdatedAt: time.Now().UnixMilli(),
-					UpdatedBy: string(updatedBy),
+					UpdatedBy: mongodb.UserDetailResponse{
+						Username: string(updatedBy),
+					},
 				},
 			},
 		}
@@ -1222,6 +1232,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 						{"recent_experiment_run_details.$.phase", executionData.Phase},
 						{"recent_experiment_run_details.$.completed", event.Completed},
 						{"recent_experiment_run_details.$.experiment_run_id", event.ExperimentRunID},
+						{"recent_experiment_run_details.$.probes", probes},
 						{"recent_experiment_run_details.$.resiliency_score", workflowRunMetrics.ResiliencyScore},
 						{"recent_experiment_run_details.$.updated_at", currentTime.UnixMilli()},
 						{"recent_experiment_run_details.$.updated_by", string(updatedBy)},
@@ -1244,11 +1255,11 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			NotifyID:        event.NotifyID,
 			Phase:           executionData.Phase,
 			ResiliencyScore: &workflowRunMetrics.ResiliencyScore,
-			FaultsPassed:    &workflowRunMetrics.FaultsPassed,
-			FaultsFailed:    &workflowRunMetrics.FaultsFailed,
-			FaultsAwaited:   &workflowRunMetrics.FaultsAwaited,
-			FaultsStopped:   &workflowRunMetrics.FaultsStopped,
-			FaultsNA:        &workflowRunMetrics.FaultsNA,
+			FaultsPassed:    &workflowRunMetrics.ExperimentsPassed,
+			FaultsFailed:    &workflowRunMetrics.ExperimentsFailed,
+			FaultsAwaited:   &workflowRunMetrics.ExperimentsAwaited,
+			FaultsStopped:   &workflowRunMetrics.ExperimentsStopped,
+			FaultsNA:        &workflowRunMetrics.ExperimentsNA,
 			TotalFaults:     &workflowRunMetrics.TotalExperiments,
 			ExecutionData:   string(exeData),
 			RevisionID:      event.RevisionID,
@@ -1258,8 +1269,12 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 			Audit: mongodb.Audit{
 				IsRemoved: isRemoved,
 				UpdatedAt: currentTime.UnixMilli(),
-				UpdatedBy: string(updatedBy),
-				CreatedBy: string(updatedBy),
+				UpdatedBy: mongodb.UserDetailResponse{
+					Username: string(updatedBy),
+				},
+				CreatedBy: mongodb.UserDetailResponse{
+					Username: string(updatedBy),
+				},
 			},
 		})
 		if err != nil {

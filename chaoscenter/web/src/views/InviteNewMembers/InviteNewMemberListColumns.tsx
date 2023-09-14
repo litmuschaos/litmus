@@ -10,7 +10,7 @@ interface MemberRow {
 }
 
 const UserName = ({ row: { original: data } }: MemberRow): React.ReactElement => {
-  const { username, id, name } = data;
+  const { username, userID, name } = data;
   const { getString } = useStrings();
   return (
     <Layout.Vertical>
@@ -20,7 +20,7 @@ const UserName = ({ row: { original: data } }: MemberRow): React.ReactElement =>
           {getString('id')}:
         </Text>
         <Text color={Color.GREY_500} font={{ size: 'small' }} lineClamp={1} width={100}>
-          {id}
+          {userID}
         </Text>
       </Layout.Horizontal>
     </Layout.Vertical>

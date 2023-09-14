@@ -10,6 +10,7 @@ import { useStrings } from '@strings';
 import type { User } from '@api/auth';
 import AccountDetailsChangeController from '@controllers/AccountDetailsChange';
 import AccountPasswordChangeController from '@controllers/AccountPasswordChange';
+import SideNav from '@components/SideNav';
 import css from './SettingsWrapper.module.scss';
 
 interface SettingsWrapperProps {
@@ -36,16 +37,17 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
   } = useToggleOpen();
 
   return (
-    <Container>
+    <Layout.Horizontal width={'100%'} height={'100%'}>
       <Loader loading={loading}>
-        <Container className={css.leftSideBar}>
+        <Container flex className={css.leftSideBar}>
           <MainNav />
+          <SideNav />
         </Container>
-        <Container style={{ paddingLeft: '88px' }} height={'100%'}>
+        <Layout.Horizontal style={{ flexGrow: 1 }} height={'100%'}>
           <Container
-            width={'420px'}
-            style={{ position: 'fixed' }}
-            height={'100vh'}
+            width={'30%'}
+            style={{ minWidth: 420, position: 'relative' }}
+            height={'100%'}
             background={Color.PRIMARY_1}
             padding={{ top: 'xxlarge', right: 'medium', bottom: 'xxlarge', left: 'medium' }}
           >
@@ -99,10 +101,10 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
               </Layout.Vertical>
             </Layout.Vertical>
           </Container>
-          <Container width={'100%'} height={'100%'} style={{ paddingLeft: '420px' }}>
+          <Container width={'100%'} height={'100%'}>
             {children}
           </Container>
-        </Container>
+        </Layout.Horizontal>
       </Loader>
       {isUserDetailsUpdateModalOpen && (
         <Dialog
@@ -133,6 +135,6 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
           />
         </Dialog>
       )}
-    </Container>
+    </Layout.Horizontal>
   );
 }
