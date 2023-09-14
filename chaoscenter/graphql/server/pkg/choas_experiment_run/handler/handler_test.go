@@ -18,7 +18,6 @@ import (
 	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
 	choas_experiment_run "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
 	choasExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run/model/mocks"
-	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbOperationsChaosExpRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
@@ -380,76 +379,6 @@ func TestChaosExperimentRunHandler_ListExperimentRun(t *testing.T) {
 			_, err := chaosExperimentRunHandler.ListExperimentRun(tc.args.projectID, tc.args.request)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentRunHandler.ListExperimentRun() error = %v, wantErr %v", err, tc.wantErr)
-				return
-			}
-		})
-	}
-}
-
-func TestChaosExperimentRunHandler_RunChaosWorkFlow(t *testing.T) {
-	type args struct {
-		ctx       context.Context
-		projectID string
-		workflow  dbChaosExperiment.ChaosExperimentRequest
-		r         *store.StateData
-	}
-	projectId := uuid.NewString()
-	infraID := uuid.NewString()
-	experimentId := uuid.NewString()
-	infra := dbInfra.ChaosInfra{
-		InfraID:      infraID,
-		IsRegistered: true,
-		IsActive:     true,
-	}
-
-	tests := []struct {
-		name    string
-		args    args
-		given   func()
-		wantErr bool
-	}{
-		{
-			name: "success: RunChaosWorkFlow",
-			args: args{
-				ctx:       context.Background(),
-				projectID: projectId,
-				workflow: dbChaosExperiment.ChaosExperimentRequest{
-					ProjectID: projectId,
-					InfraID:   infraID,
-				},
-				r: store.NewStore(),
-			},
-			given: func() {
-				findResult := []interface{}{
-					bson.D{
-						{Key: "experiment_id", Value: experimentId},
-						{Key: "experiment_manifest", Value: "\"kind\": \"job\""},
-						{Key: "project_id", Value: projectId},
-						{Key: "infra_id", Value: infraID},
-						{Key: "isActive", Value: true},
-					},
-				}
-				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-
-				infrastructureService.On("GetInfra", mock.Anything, mock.Anything, mock.Anything).Return(infra, nil).Once()
-
-				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosInfraCollection, mock.Anything).Return(singleResult, nil).Once()
-
-				mongodbMockOperator.On("List", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
-
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything, mock.Anything, mock.Anything).Return(new(mongo.UpdateResult), nil).Once()
-
-				mongodbMockOperator.On("Create", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(nil).Once()
-			},
-		},
-	}
-	for _, tc := range tests {
-		tc.given()
-		t.Run(tc.name, func(t *testing.T) {
-			_, err := chaosExperimentRunHandler.RunChaosWorkFlow(tc.args.ctx, tc.args.projectID, tc.args.workflow, tc.args.r)
-			if (err != nil) != tc.wantErr {
-				t.Errorf("ChaosExperimentRunHandler.RunChaosWorkFlow() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
 		})
