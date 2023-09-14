@@ -17,7 +17,7 @@ import {
   WorkflowToleration
 } from '@models';
 import { yamlStringify } from '@utils';
-import { Weightages, InfrastructureType } from '@api/entities';
+import { Weightages, InfrastructureType, ProbeObj } from '@api/entities';
 import type { PipelineGraphState } from '@components/PipelineDiagram/types';
 import ExperimentFactory from './ExperimentFactory';
 import { ExperimentYamlService, GetFaultTunablesOperation, PreProcessChaosExperiment } from './ExperimentYamlService';
@@ -74,7 +74,6 @@ export class KubernetesYamlService extends ExperimentYamlService {
       });
 
       const [updatedChaosEngine] = this.postProcessChaosEngineManifest(engineCR, faultName);
-      const imageRegistry = experiment?.imageRegistry?.repo ?? 'chaosnative';
 
       // Add engine to the templates
       templates?.push({
@@ -97,7 +96,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `${imageRegistry}/litmus-checker:2.11.0`,
+          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -177,7 +176,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
 
   async updateExperimentManifestWithFaultData(
     key: ChaosObjectStoresPrimaryKeys['experiments'],
-    { faultName, engineCR }: FaultData
+    { faultName, faultCR, engineCR, probes }: FaultData
   ): Promise<void> {
     try {
       const tx = (await this.db).transaction(ChaosObjectStoreNameMap.EXPERIMENTS, 'readwrite');
@@ -187,17 +186,29 @@ export class KubernetesYamlService extends ExperimentYamlService {
 
       experiment.unsavedChanges = true;
       const [templates] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
-      const imageRegistry = experiment?.imageRegistry?.repo ?? 'chaosnative';
-
       // Remove engine from the templates
       let index = 0;
       let expWeight = '10';
       templates?.map((template, i) => {
+        if (template.name === 'install-chaos-faults') {
+          template.inputs?.artifacts?.map(artifact => {
+            if (artifact.name === faultName) {
+              artifact.raw = {
+                data: yamlStringify(faultCR)
+              };
+            }
+          });
+        }
         if (template.name === faultName) {
           index = i;
           expWeight = template.metadata?.labels?.weight ?? '10';
         }
       });
+
+      if (engineCR?.metadata?.annotations) {
+        engineCR.metadata.annotations.probeRef = JSON.stringify(probes);
+      }
+
       // Add engine to the templates
       templates?.splice(index, 1, {
         name: faultName,
@@ -219,7 +230,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
         },
         container: {
           name: '',
-          image: `${imageRegistry}/litmus-checker:2.11.0`,
+          image: `docker.io/litmuschaos/litmus-checker:2.11.0`,
           args: [`-file=/tmp/chaosengine-${faultName}.yaml`, '-saveName=/tmp/engine-name']
         }
       });
@@ -515,6 +526,65 @@ export class KubernetesYamlService extends ExperimentYamlService {
     return [manifest];
   }
 
+  checkProbesInExperimentManifest(manifest: KubernetesExperimentManifest | undefined): string | undefined {
+    const [templates] = this.getTemplatesAndSteps(manifest);
+    let name = undefined;
+
+    templates?.map(template => {
+      if (template.inputs?.artifacts?.[0].raw?.data) {
+        const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+        if (chaosEngineCR.kind === 'ChaosEngine') {
+          if (chaosEngineCR.metadata?.annotations === undefined) {
+            name = template.inputs.artifacts[0].name;
+          } else if (
+            chaosEngineCR.metadata?.annotations &&
+            chaosEngineCR.metadata?.annotations.probeRef === undefined
+          ) {
+            name = template.inputs.artifacts[0].name;
+          }
+        }
+      }
+    });
+
+    return name;
+  }
+
+  doesProbeMetadataExists(manifest: KubernetesExperimentManifest | undefined): boolean {
+    const [templates] = this.getTemplatesAndSteps(manifest);
+    let doesProbeExists = false;
+
+    templates?.map(template => {
+      if (template.inputs?.artifacts?.[0].raw?.data) {
+        const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+        if (chaosEngineCR.kind === 'ChaosEngine') {
+          if (chaosEngineCR.spec?.experiments[0].spec.probe !== undefined) {
+            doesProbeExists = true;
+          }
+        }
+      }
+    });
+
+    return doesProbeExists;
+  }
+
+  _probesInExperimentManifest(manifest: KubernetesExperimentManifest | undefined): string[] | undefined {
+    const [templates] = this.getTemplatesAndSteps(manifest);
+    const probes: string[] = [];
+
+    templates?.map(template => {
+      if (template.inputs?.artifacts?.[0].raw?.data) {
+        const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+        if (chaosEngineCR.kind === 'ChaosEngine') {
+          JSON.parse(chaosEngineCR.metadata!.annotations!.probeRef).map((probeObj: ProbeObj) =>
+            probes.push(probeObj.name)
+          );
+        }
+      }
+    });
+
+    return probes;
+  }
+
   extractChaosFaultsWithWeights(manifest: KubernetesExperimentManifest | undefined): Weightages[] {
     const allFaults: Weightages[] = [];
 
@@ -583,6 +653,26 @@ export class KubernetesYamlService extends ExperimentYamlService {
     return graphData;
   }
 
+  extractDeprecatedProbeDetails(
+    manifest: KubernetesExperimentManifest | undefined,
+    faultName: string
+  ): ProbeAttributes[] | undefined {
+    const [templates] = this.getTemplatesAndSteps(manifest);
+
+    let probes: ProbeAttributes[] | undefined;
+
+    templates?.map(template => {
+      if (template.name === faultName) {
+        if (!template.inputs?.artifacts?.[0].raw?.data) return;
+
+        const chaosEngine = parse(template.inputs.artifacts[0].raw.data) as ChaosEngine;
+        probes = chaosEngine.spec?.experiments?.[0].spec.probe;
+      }
+    });
+
+    return probes;
+  }
+
   getFaultData(manifest: KubernetesExperimentManifest | undefined, faultName: string): FaultData | undefined {
     if (!manifest) return;
 
@@ -606,8 +696,17 @@ export class KubernetesYamlService extends ExperimentYamlService {
     // Get ChaosEngine CR form template
     templates?.map(template => {
       if (template.name === faultName) {
-        if (template.inputs?.artifacts?.[0].raw?.data)
-          faultData['engineCR'] = parse(template.inputs.artifacts[0].raw.data) as ChaosEngine;
+        if (template.inputs?.artifacts?.[0].raw?.data) {
+          const chaosEngine = parse(template.inputs.artifacts[0].raw.data) as ChaosEngine;
+          faultData['engineCR'] = chaosEngine;
+
+          // Get probe details from manifest
+          const probeRef = chaosEngine.metadata?.annotations?.probeRef;
+          if (probeRef && probeRef !== '') {
+            faultData.probes = JSON.parse(probeRef) as ProbeObj[];
+          }
+        }
+
         //Get Fault Weight from template
         if (template.metadata?.labels?.['weight']) faultData['weight'] = parseInt(template.metadata.labels['weight']);
       }
@@ -648,37 +747,58 @@ export class KubernetesYamlService extends ExperimentYamlService {
     return faultTunables;
   }
 
-  extractProbeDetails(
+  extractResilienceProbeDetails(
     manifest: KubernetesExperimentManifest | undefined,
     faultName: string
-  ): ProbeAttributes[] | undefined {
+  ): ProbeObj[] | undefined {
     const [templates] = this.getTemplatesAndSteps(manifest);
 
-    let probes;
+    let probes: ProbeObj[] | undefined;
 
     templates?.map(template => {
       if (template.name === faultName) {
         if (!template.inputs?.artifacts?.[0].raw?.data) return;
 
         const chaosEngine = parse(template.inputs.artifacts[0].raw.data) as ChaosEngine;
-        probes = chaosEngine.spec?.experiments?.[0].spec.probe;
+
+        if (chaosEngine.metadata?.annotations?.probeRef)
+          probes = JSON.parse(chaosEngine.metadata?.annotations?.probeRef) as ProbeObj[];
       }
     });
 
     return probes;
   }
 
-  doesProbeNameExist(manifest: ChaosEngine | undefined, probeName: string): boolean {
-    if (!manifest) return false;
+  async doesProbeNameExist(
+    key: ChaosObjectStoresPrimaryKeys['experiments'],
+    faultName: string | undefined,
+    probeName: string | undefined
+  ): Promise<boolean> {
+    try {
+      const tx = (await this.db).transaction(ChaosObjectStoreNameMap.EXPERIMENTS, 'readwrite');
+      const store = tx.objectStore(ChaosObjectStoreNameMap.EXPERIMENTS);
+      const experiment = await store.get(key);
+      if (!experiment || !probeName || !faultName) return false;
 
-    let exists = false;
-    manifest.spec?.experiments?.[0].spec.probe?.map(probe => {
-      if (probe.name === probeName) exists = true;
-    });
+      const manifest = experiment?.manifest as KubernetesExperimentManifest;
+      const [templates, ,] = this.getTemplatesAndSteps(manifest);
 
-    return exists;
+      templates?.map(template => {
+        if (template.name === faultName) {
+          const engineManifest = parse(template.inputs?.artifacts?.[0].raw?.data ?? '') as ChaosEngine;
+          engineManifest.spec?.experiments?.[0].spec.probe?.map(probe => {
+            if (probe.name === probeName) return true;
+          });
+        }
+      });
+
+      await tx.done;
+      return false;
+    } catch (_) {
+      this.handleIDBFailure();
+      return false;
+    }
   }
-
   doesNodeSelectorExist(manifest: KubernetesExperimentManifest | undefined): [boolean, { key: string; value: string }] {
     if (!manifest) return [false, { key: '', value: '' }];
 
@@ -735,6 +855,124 @@ export class KubernetesYamlService extends ExperimentYamlService {
       chaosEngine.spec.experiments[0].spec.components.env = envs;
 
     return faultData;
+  }
+
+  async preProcessChaosEngineAndExperimentManifest(
+    key: ChaosObjectStoresPrimaryKeys['experiments'],
+    chaosEngine: ChaosEngine,
+    chaosExperiment: ChaosExperiment
+  ): Promise<{ chaosEngine: ChaosEngine; chaosExperiment: ChaosExperiment } | undefined> {
+    try {
+      const experiment = await (await this.db).get(ChaosObjectStoreNameMap.EXPERIMENTS, key);
+      const experimentImagePullSecrets = experiment?.imageRegistry?.secret
+        ? {
+            experimentImagePullSecrets: [{ name: experiment.imageRegistry.secret }]
+          }
+        : undefined;
+
+      const metadata = chaosEngine.metadata;
+      if (metadata) {
+        metadata.namespace = '{{workflow.parameters.adminModeNamespace}}';
+        metadata['labels'] = {
+          workflow_run_id: '{{ workflow.uid }}'
+        };
+        metadata.annotations = {
+          probeRef: ''
+        };
+      }
+
+      const engineSpec = chaosEngine.spec;
+      const experimentSpec = chaosExperiment.spec;
+
+      if (engineSpec) {
+        engineSpec['chaosServiceAccount'] = 'litmus-admin';
+
+        engineSpec.experiments[0].spec.components = {
+          ...engineSpec.experiments[0].spec.components,
+
+          env: [...(experimentSpec?.definition.env ?? [])],
+          ...experimentImagePullSecrets
+        };
+
+        if (experiment?.imageRegistry?.secret) {
+          engineSpec.components = {
+            runner: {
+              ...engineSpec.components?.runner,
+              imagePullSecrets: [{ name: experiment.imageRegistry.secret }]
+            }
+          };
+        }
+
+        const annotationDetails = this.doesAnnotationExist(experiment?.manifest as KubernetesExperimentManifest);
+
+        if (annotationDetails[0]) {
+          const updatedEngineCR = this.updateAnnotationsInChaosEngine(chaosEngine, annotationDetails[1], false);
+          if (updatedEngineCR) {
+            chaosEngine = updatedEngineCR;
+          }
+        }
+      }
+
+      // if (experimentSpec) {
+      //   experimentSpec.definition = {
+      //     ...experimentSpec.definition,
+      //     image: imageName
+      //   };
+      // }
+
+      return { chaosEngine, chaosExperiment };
+    } catch (_) {
+      this.handleIDBFailure();
+    }
+  }
+
+  private updateAnnotationsInChaosEngine(
+    manifest: ChaosEngine | undefined,
+    annotations: { [key: string]: string },
+    remove: boolean
+  ): ChaosEngine | undefined {
+    if (!manifest?.spec) return;
+
+    if (remove) {
+      Object.entries(annotations).forEach(([key, _]) => {
+        if (manifest.spec?.components?.runner?.runnerAnnotation)
+          delete manifest.spec?.components?.runner?.runnerAnnotation[key];
+        if (manifest.spec?.experiments[0].spec.components?.experimentAnnotations)
+          delete manifest.spec.experiments[0].spec.components?.experimentAnnotations[key];
+      });
+      return manifest;
+    }
+
+    manifest.spec.components = {
+      ...manifest.spec.components,
+      runner: {
+        runnerAnnotation: {
+          ...annotations
+        }
+      }
+    };
+    manifest.spec.experiments[0].spec.components = {
+      ...manifest.spec.experiments[0].spec.components,
+      experimentAnnotations: {
+        ...annotations
+      }
+    };
+
+    return manifest;
+  }
+
+  doesAnnotationExist(manifest: KubernetesExperimentManifest | undefined): [boolean, { [key: string]: string }] {
+    let annotations: { [key: string]: string } = {};
+    if (!manifest) return [false, {}];
+
+    let exists = false;
+    const [, , spec] = this.getTemplatesAndSteps(manifest);
+
+    if (spec && spec.podMetadata?.annotations && Object.keys(spec.podMetadata?.annotations).length) {
+      exists = true;
+      annotations = spec.podMetadata.annotations;
+    }
+    return [exists, annotations];
   }
 
   async preProcessChaosEngineManifest(

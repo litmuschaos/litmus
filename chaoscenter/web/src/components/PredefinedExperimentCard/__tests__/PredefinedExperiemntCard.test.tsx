@@ -59,7 +59,7 @@ describe('Predefined Experiment Card', () => {
   });
 
   test('should navigate to Chaos Studio on launching experiment', async () => {
-    Object.assign(location, { host: 'www.harness.com', pathname: 'chaos' });
+    Object.assign(location, { host: 'www.litmuschaos.io', pathname: 'chaos' });
 
     const { getByTestId } = render(
       <TestWrapper>

@@ -29,7 +29,7 @@ func (r *mutationResolver) AddProbe(ctx context.Context, request model.ProbeRequ
 
 	// Validate if probe type and probe properties match for the selected probe
 	// HTTP Probe type and Property validation
-	if request.Type == model.ProbeTypeHTTPProbe && request.HTTPProperties == nil {
+	if request.Type == model.ProbeTypeHTTPProbe && request.KubernetesHTTPProperties == nil {
 		err := "probe type and properties don't match, selected http Probe but http properties are empty"
 		logrus.WithFields(logFields).Error(err)
 		return nil, errors.New(err)
@@ -41,7 +41,7 @@ func (r *mutationResolver) AddProbe(ctx context.Context, request model.ProbeRequ
 		return nil, errors.New(err)
 	}
 	// CMD Probe type and Property validation
-	if request.Type == model.ProbeTypeCmdProbe && request.CmdProperties == nil {
+	if request.Type == model.ProbeTypeCmdProbe && request.KubernetesCMDProperties == nil {
 		err := "probe type and properties don't match, selected cmd Probe but cmd properties are empty"
 		logrus.WithFields(logFields).Error(err)
 		return nil, errors.New(err)
@@ -112,7 +112,7 @@ func (r *mutationResolver) DeleteProbe(ctx context.Context, probeName string, pr
 	return response, err
 }
 
-func (r *queryResolver) ListProbes(ctx context.Context, projectID string, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
+func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
 	logFields := logrus.Fields{
 		"projectId":  projectID,
 		"probeNames": probeNames,
@@ -127,7 +127,7 @@ func (r *queryResolver) ListProbes(ctx context.Context, projectID string, probeN
 	}
 
 	p := probe.NewProbeRepository(projectID)
-	response, err := p.ListProbes(ctx, probeNames, filter)
+	response, err := p.ListProbes(ctx, probeNames, infrastructureType, filter)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err

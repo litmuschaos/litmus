@@ -113,7 +113,6 @@ extend type Query {
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
   getImageRegistry(
-    imageRegistryID: String!
     projectID: String!
   ): ImageRegistryResponse! @authorized
 }

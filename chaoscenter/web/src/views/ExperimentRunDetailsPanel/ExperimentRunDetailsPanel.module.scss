@@ -17,7 +17,14 @@
   display: grid;
   grid-template-columns: 120px auto;
 }
-
+.naBox {
+  background-color: var(--grey-100);
+  .boxHeading {
+    color: var(--grey-600);
+    font-weight: 500;
+    font-size: 13px;
+  }
+}
 .tabsMainContainer {
   height: 100%;
   .simpleLogViewerContainer {

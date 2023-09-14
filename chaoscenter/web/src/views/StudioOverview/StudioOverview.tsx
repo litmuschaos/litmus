@@ -30,7 +30,7 @@ interface StudioOverviewViewProps {
   openDiscardDialog: () => void;
   setError: React.Dispatch<React.SetStateAction<StudioErrorState>>;
   disabledExperimentTypeSwitching: boolean;
-  setViewFilter: React.Dispatch<React.SetStateAction<VisualYamlSelectedView>>;
+  setViewFilter: (view: VisualYamlSelectedView) => void;
 }
 
 function getChaosInfrastructureReferenceField(
@@ -43,13 +43,12 @@ export default function StudioOverviewView({
   formRef,
   openDiscardDialog,
   setError
-}: // setViewFilter
-StudioOverviewViewProps): React.ReactElement {
+}: StudioOverviewViewProps): React.ReactElement {
   const { getString } = useStrings();
   const updateSearchParams = useUpdateSearchParams();
   // const searchParams = useSearchParams();
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const [currentExperiment, setCurrentExperiment] = React.useState<ExperimentMetadata | undefined>();
 
@@ -126,21 +125,7 @@ StudioOverviewViewProps): React.ReactElement {
                       <Container background={Color.WHITE} width="100%" padding="medium">
                         <NameDescriptionTags className={css.nameDescriptionField} formikProps={formikProps} />
                       </Container>
-                      {/* </Layout.Vertical>
-                    <Layout.Vertical className={css.gap2}> */}
-                      {/* <Text font={{ variation: FontVariation.H6 }}>{getString('selectChaosInfrastructure')}</Text> */}
                       <Layout.Vertical background={Color.WHITE} padding="medium" spacing="large">
-                        {/* <Layout.Vertical spacing={'small'}>
-                          <Text font={{ variation: FontVariation.SMALL_SEMI }}>
-                            {getString('selectChaosInfrastructureType')}
-                          </Text>
-                          <ChaosInfrastructureTypeThumbnail
-                            disabled={disabledExperimentTypeSwitching}
-                            setFieldValue={formikProps.setFieldValue}
-                            infrastructureType={formikProps.values.chaosInfrastructure.type}
-                            setViewFilter={setViewFilter}
-                          />
-                        </Layout.Vertical> */}
                         {getChaosInfrastructureReferenceField({
                           initialInfrastructureID: formikProps.values.chaosInfrastructure.id,
                           setFieldValue: formikProps.setFieldValue

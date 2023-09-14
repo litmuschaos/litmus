@@ -22,6 +22,7 @@ export interface TagsProps {
 export interface TagsComponentProps {
   tagsProps?: Partial<ITagInputProps>;
   hasValue?: boolean;
+  isDisabled?: boolean;
   isOptional?: boolean;
   dataTooltipId?: string;
 }

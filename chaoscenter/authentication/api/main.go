@@ -81,13 +81,18 @@ func main() {
 		log.Errorf("failed to create collection  %s", err)
 	}
 
-	// Creating Session Collection
+	// Creating RevokedToken Collection
 	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
 		log.Errorf("failed to create collection  %s", err)
 	}
 
 	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
 		log.Errorf("failed to create index  %s", err)
+	}
+
+	// Creating ApiToken Collection
+	if err = utils.CreateCollection(utils.ApiTokenCollection, db); err != nil {
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	userCollection := db.Collection(utils.UserCollection)
@@ -97,11 +102,14 @@ func main() {
 	projectRepo := project.NewRepo(projectCollection)
 
 	revokedTokenCollection := db.Collection(utils.RevokedTokenCollection)
-	sessionRepo := session.NewRepo(revokedTokenCollection)
+	revokedTokenRepo := session.NewRevokedTokenRepo(revokedTokenCollection)
+
+	apiTokenCollection := db.Collection(utils.ApiTokenCollection)
+	apiTokenRepo := session.NewApiTokenRepo(apiTokenCollection)
 
 	miscRepo := misc.NewRepo(db, client)
 
-	applicationService := services.NewService(userRepo, projectRepo, miscRepo, sessionRepo, db)
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, revokedTokenRepo, apiTokenRepo, db)
 
 	validatedAdminSetup(applicationService)
 

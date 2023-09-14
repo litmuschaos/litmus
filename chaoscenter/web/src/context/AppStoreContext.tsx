@@ -5,13 +5,17 @@ import { getUserDetails } from '../utils/userDetails';
 
 export interface AppStoreContextProps {
   readonly projectID?: string;
+  readonly projectName?: string;
   readonly projectRole?: string;
   readonly currentUserInfo?: UserInfo;
   readonly matchPath?: string;
   readonly renderUrl?: string;
-  updateAppStore?(
+  updateAppStore(
     data: Partial<
-      Pick<AppStoreContextProps, 'projectID' | 'projectRole' | 'currentUserInfo' | 'matchPath' | 'renderUrl'>
+      Pick<
+        AppStoreContextProps,
+        'projectID' | 'projectName' | 'projectRole' | 'currentUserInfo' | 'matchPath' | 'renderUrl'
+      >
     >
   ): void;
 }

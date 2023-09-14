@@ -68,7 +68,7 @@ export default function ExperimentCreationSelectFaultView({
       }
       handleClose={onClose}
       title={
-        <Layout.Horizontal flex width="calc(100% - 280px)">
+        <Layout.Horizontal flex width="calc(100% - 356px)">
           <Text font={{ variation: FontVariation.H5 }}>{getString('chaosFaults')}</Text>
           <ExpandingSearchInput
             placeholder={getString('searchForChaosFaults')}
