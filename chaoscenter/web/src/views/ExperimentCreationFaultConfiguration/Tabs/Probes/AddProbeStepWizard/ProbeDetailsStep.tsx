@@ -1,7 +1,7 @@
-import { ErrorMessage, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { Button, ButtonVariation, Container, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, FormError, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { FileInput, FormGroup } from '@blueprintjs/core';
 import type { CmdProbeInputs, HTTPProbeInputs, K8sProbeInputs, PromProbeInputs } from '@models';
@@ -331,7 +331,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                             fileUpload(e as React.ChangeEvent<HTMLInputElement>, onUpload, onUploadError);
                           }}
                         />
-                        <ErrorMessage name="data">{err => <div className={css.errorMessage}>{err}</div>}</ErrorMessage>
+                        <FormError name="data" errorMessage={formikProps.errors.data} />
                       </FormGroup>
                     )}
                   </Container>

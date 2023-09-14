@@ -26,7 +26,7 @@ jobs:
         id: getcommit
         run: |
           prsha=$(echo $response | jq '.[-1].sha'  | tr -d '"')
-          echo "::set-output name=sha::$prsha"
+          echo "sha=$prsha" >> $GITHUB_OUTPUT
         env:
           response: ${{ steps.get_PR_commits.outputs.data }}
 

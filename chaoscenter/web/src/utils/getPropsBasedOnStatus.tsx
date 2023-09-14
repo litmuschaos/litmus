@@ -143,16 +143,22 @@ export function getPropsBasedOnProbeStatus(status: Status): StatusProps {
     case FaultProbeStatus.PASSED:
       return {
         color: Color.GREEN_700,
+        iconName: 'execution-success',
+        iconSize: 14,
         bgColor: `var(--green-50)`
       };
     case FaultProbeStatus.FAILED:
       return {
         color: Color.RED_700,
+        iconName: 'execution-warning',
+        iconSize: 14,
         bgColor: `var(--red-50)`
       };
     case FaultProbeStatus.AWAITED:
       return {
         color: Color.YELLOW_700,
+        iconSize: 14,
+        iconColor: 'execution-waiting',
         bgColor: `var(--yellow-100)`
       };
     default:

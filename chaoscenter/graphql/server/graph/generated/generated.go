@@ -134,6 +134,12 @@ type ComplexityRoot struct {
 		Spec        func(childComplexity int) int
 	}
 
+	Comparator struct {
+		Criteria func(childComplexity int) int
+		Type     func(childComplexity int) int
+		Value    func(childComplexity int) int
+	}
+
 	ConfirmInfraRegistrationResponse struct {
 		InfraID          func(childComplexity int) int
 		IsInfraConfirmed func(childComplexity int) int
@@ -153,6 +159,20 @@ type ComplexityRoot struct {
 		Type          func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 		UpdatedBy     func(childComplexity int) int
+	}
+
+	ExecutedByExperiment struct {
+		ExperimentID   func(childComplexity int) int
+		ExperimentName func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UpdatedBy      func(childComplexity int) int
+	}
+
+	ExecutionHistory struct {
+		ExecutedByExperiment func(childComplexity int) int
+		FaultName            func(childComplexity int) int
+		Mode                 func(childComplexity int) int
+		Status               func(childComplexity int) int
 	}
 
 	Experiment struct {
@@ -196,9 +216,11 @@ type ComplexityRoot struct {
 		FaultsStopped      func(childComplexity int) int
 		Infra              func(childComplexity int) int
 		IsRemoved          func(childComplexity int) int
+		NotifyID           func(childComplexity int) int
 		Phase              func(childComplexity int) int
 		ProjectID          func(childComplexity int) int
 		ResiliencyScore    func(childComplexity int) int
+		RunSequence        func(childComplexity int) int
 		TotalFaults        func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
 		UpdatedBy          func(childComplexity int) int
@@ -222,6 +244,11 @@ type ComplexityRoot struct {
 		DisplayName func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Plan        func(childComplexity int) int
+	}
+
+	Get struct {
+		Criteria     func(childComplexity int) int
+		ResponseCode func(childComplexity int) int
 	}
 
 	GetChaosHubStatsResponse struct {
@@ -253,6 +280,19 @@ type ComplexityRoot struct {
 		TotalInactiveInfrastructures     func(childComplexity int) int
 		TotalInfrastructures             func(childComplexity int) int
 		TotalNonConfirmedInfrastructures func(childComplexity int) int
+	}
+
+	GetProbeReferenceResponse struct {
+		Name             func(childComplexity int) int
+		ProjectID        func(childComplexity int) int
+		RecentExecutions func(childComplexity int) int
+		TotalRuns        func(childComplexity int) int
+	}
+
+	GetProbesInExperimentRunResponse struct {
+		Mode   func(childComplexity int) int
+		Probe  func(childComplexity int) int
+		Status func(childComplexity int) int
 	}
 
 	GitConfigResponse struct {
@@ -337,6 +377,24 @@ type ComplexityRoot struct {
 		LatestVersion      func(childComplexity int) int
 	}
 
+	K8SProbe struct {
+		Attempt              func(childComplexity int) int
+		EvaluationTimeout    func(childComplexity int) int
+		FieldSelector        func(childComplexity int) int
+		Group                func(childComplexity int) int
+		InitialDelay         func(childComplexity int) int
+		Interval             func(childComplexity int) int
+		LabelSelector        func(childComplexity int) int
+		Namespace            func(childComplexity int) int
+		Operation            func(childComplexity int) int
+		ProbePollingInterval func(childComplexity int) int
+		ProbeTimeout         func(childComplexity int) int
+		Resource             func(childComplexity int) int
+		Retry                func(childComplexity int) int
+		StopOnFailure        func(childComplexity int) int
+		Version              func(childComplexity int) int
+	}
+
 	KubeObject struct {
 		Data      func(childComplexity int) int
 		Namespace func(childComplexity int) int
@@ -345,6 +403,34 @@ type ComplexityRoot struct {
 	KubeObjectResponse struct {
 		InfraID func(childComplexity int) int
 		KubeObj func(childComplexity int) int
+	}
+
+	KubernetesCMDProbe struct {
+		Attempt              func(childComplexity int) int
+		Command              func(childComplexity int) int
+		Comparator           func(childComplexity int) int
+		EvaluationTimeout    func(childComplexity int) int
+		InitialDelay         func(childComplexity int) int
+		Interval             func(childComplexity int) int
+		ProbePollingInterval func(childComplexity int) int
+		ProbeTimeout         func(childComplexity int) int
+		Retry                func(childComplexity int) int
+		Source               func(childComplexity int) int
+		StopOnFailure        func(childComplexity int) int
+	}
+
+	KubernetesHTTPProbe struct {
+		Attempt              func(childComplexity int) int
+		EvaluationTimeout    func(childComplexity int) int
+		InitialDelay         func(childComplexity int) int
+		InsecureSkipVerify   func(childComplexity int) int
+		Interval             func(childComplexity int) int
+		Method               func(childComplexity int) int
+		ProbePollingInterval func(childComplexity int) int
+		ProbeTimeout         func(childComplexity int) int
+		Retry                func(childComplexity int) int
+		StopOnFailure        func(childComplexity int) int
+		URL                  func(childComplexity int) int
 	}
 
 	Link struct {
@@ -383,8 +469,14 @@ type ComplexityRoot struct {
 		Version     func(childComplexity int) int
 	}
 
+	Method struct {
+		Get  func(childComplexity int) int
+		Post func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AddChaosHub              func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
+		AddProbe                 func(childComplexity int, request model.ProbeRequest, projectID string) int
 		AddRemoteChaosHub        func(childComplexity int, projectID string, request model.CreateRemoteChaosHub) int
 		ChaosExperimentRun       func(childComplexity int, request model.ExperimentRunRequest) int
 		ConfirmInfraRegistration func(childComplexity int, request model.InfraIdentity) int
@@ -396,8 +488,9 @@ type ComplexityRoot struct {
 		DeleteEnvironment        func(childComplexity int, projectID string, environmentID string) int
 		DeleteImageRegistry      func(childComplexity int, imageRegistryID string, projectID string) int
 		DeleteInfra              func(childComplexity int, projectID string, infraID string) int
+		DeleteProbe              func(childComplexity int, probeName string, projectID string) int
 		DisableGitOps            func(childComplexity int, projectID string) int
-		EnableGitOps             func(childComplexity int, configurations model.GitConfig) int
+		EnableGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
 		GenerateSSHKey           func(childComplexity int) int
 		GetManifestWithInfraID   func(childComplexity int, projectID string, infraID string, accessKey string) int
 		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
@@ -411,13 +504,37 @@ type ComplexityRoot struct {
 		UpdateChaosExperiment    func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
 		UpdateChaosHub           func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
 		UpdateEnvironment        func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
-		UpdateGitOps             func(childComplexity int, configurations model.GitConfig) int
+		UpdateGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
 		UpdateImageRegistry      func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		UpdateProbe              func(childComplexity int, request model.ProbeRequest, projectID string) int
 	}
 
 	ObjectData struct {
 		Labels func(childComplexity int) int
 		Name   func(childComplexity int) int
+	}
+
+	Post struct {
+		Body         func(childComplexity int) int
+		BodyPath     func(childComplexity int) int
+		ContentType  func(childComplexity int) int
+		Criteria     func(childComplexity int) int
+		ResponseCode func(childComplexity int) int
+	}
+
+	PROMProbe struct {
+		Attempt              func(childComplexity int) int
+		Comparator           func(childComplexity int) int
+		Endpoint             func(childComplexity int) int
+		EvaluationTimeout    func(childComplexity int) int
+		InitialDelay         func(childComplexity int) int
+		Interval             func(childComplexity int) int
+		ProbePollingInterval func(childComplexity int) int
+		ProbeTimeout         func(childComplexity int) int
+		Query                func(childComplexity int) int
+		QueryPath            func(childComplexity int) int
+		Retry                func(childComplexity int) int
+		StopOnFailure        func(childComplexity int) int
 	}
 
 	PackageInformation struct {
@@ -438,6 +555,31 @@ type ComplexityRoot struct {
 		ExperimentName     func(childComplexity int) int
 	}
 
+	Probe struct {
+		CreatedAt                func(childComplexity int) int
+		CreatedBy                func(childComplexity int) int
+		Description              func(childComplexity int) int
+		InfrastructureType       func(childComplexity int) int
+		K8sProperties            func(childComplexity int) int
+		KubernetesCMDProperties  func(childComplexity int) int
+		KubernetesHTTPProperties func(childComplexity int) int
+		Name                     func(childComplexity int) int
+		ProjectID                func(childComplexity int) int
+		PromProperties           func(childComplexity int) int
+		RecentExecutions         func(childComplexity int) int
+		ReferencedBy             func(childComplexity int) int
+		Tags                     func(childComplexity int) int
+		Type                     func(childComplexity int) int
+		UpdatedAt                func(childComplexity int) int
+		UpdatedBy                func(childComplexity int) int
+	}
+
+	ProbeRecentExecutions struct {
+		ExecutedByExperiment func(childComplexity int) int
+		FaultName            func(childComplexity int) int
+		Status               func(childComplexity int) int
+	}
+
 	Provider struct {
 		Name func(childComplexity int) int
 	}
@@ -448,16 +590,20 @@ type ComplexityRoot struct {
 		GetChaosHubStats          func(childComplexity int, projectID string) int
 		GetEnvironment            func(childComplexity int, projectID string, environmentID string) int
 		GetExperiment             func(childComplexity int, projectID string, experimentID string) int
-		GetExperimentRun          func(childComplexity int, projectID string, experimentRunID string) int
+		GetExperimentRun          func(childComplexity int, projectID string, experimentRunID *string, notifyID *string) int
 		GetExperimentRunStats     func(childComplexity int, projectID string) int
 		GetExperimentStats        func(childComplexity int, projectID string) int
 		GetGitOpsDetails          func(childComplexity int, projectID string) int
-		GetImageRegistry          func(childComplexity int, imageRegistryID string, projectID string) int
+		GetImageRegistry          func(childComplexity int, projectID string) int
 		GetInfra                  func(childComplexity int, projectID string, infraID string) int
 		GetInfraDetails           func(childComplexity int, infraID string, projectID string) int
 		GetInfraManifest          func(childComplexity int, infraID string, upgrade bool, projectID string) int
 		GetInfraStats             func(childComplexity int, projectID string) int
 		GetPredefinedExperiment   func(childComplexity int, hubID string, experimentName []string, projectID string) int
+		GetProbe                  func(childComplexity int, projectID string, probeName string) int
+		GetProbeReference         func(childComplexity int, projectID string, probeName string) int
+		GetProbeYaml              func(childComplexity int, projectID string, request model.GetProbeYAMLRequest) int
+		GetProbesInExperimentRun  func(childComplexity int, projectID string, experimentRunID string, faultName string) int
 		GetServerVersion          func(childComplexity int) int
 		GetVersionDetails         func(childComplexity int, projectID string) int
 		ListChaosFaults           func(childComplexity int, hubID string, projectID string) int
@@ -468,6 +614,14 @@ type ComplexityRoot struct {
 		ListImageRegistry         func(childComplexity int, projectID string) int
 		ListInfras                func(childComplexity int, projectID string, request *model.ListInfraRequest) int
 		ListPredefinedExperiments func(childComplexity int, hubID string, projectID string) int
+		ListProbes                func(childComplexity int, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) int
+		ValidateUniqueProbe       func(childComplexity int, projectID string, probeName string) int
+	}
+
+	RecentExecutions struct {
+		ExecutionHistory func(childComplexity int) int
+		FaultName        func(childComplexity int) int
+		Mode             func(childComplexity int) int
 	}
 
 	RecentExperimentRun struct {
@@ -476,6 +630,7 @@ type ComplexityRoot struct {
 		ExperimentRunID func(childComplexity int) int
 		Phase           func(childComplexity int) int
 		ResiliencyScore func(childComplexity int) int
+		RunSequence     func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
 		UpdatedBy       func(childComplexity int) int
 	}
@@ -520,6 +675,11 @@ type ComplexityRoot struct {
 		MinKubeVersion      func(childComplexity int) int
 		Platforms           func(childComplexity int) int
 		Provider            func(childComplexity int) int
+	}
+
+	Status struct {
+		Description func(childComplexity int) int
+		Verdict     func(childComplexity int) int
 	}
 
 	StopExperimentRunsRequest struct {
@@ -571,18 +731,21 @@ type MutationResolver interface {
 	UpdateEnvironment(ctx context.Context, projectID string, request *model.UpdateEnvironmentRequest) (string, error)
 	DeleteEnvironment(ctx context.Context, projectID string, environmentID string) (string, error)
 	GitopsNotifier(ctx context.Context, clusterInfo model.InfraIdentity, experimentID string) (string, error)
-	EnableGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
+	EnableGitOps(ctx context.Context, projectID string, configurations model.GitConfig) (bool, error)
 	DisableGitOps(ctx context.Context, projectID string) (bool, error)
-	UpdateGitOps(ctx context.Context, configurations model.GitConfig) (bool, error)
+	UpdateGitOps(ctx context.Context, projectID string, configurations model.GitConfig) (bool, error)
 	CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	UpdateImageRegistry(ctx context.Context, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error)
 	DeleteImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (string, error)
+	AddProbe(ctx context.Context, request model.ProbeRequest, projectID string) (*model.Probe, error)
+	UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error)
+	DeleteProbe(ctx context.Context, probeName string, projectID string) (bool, error)
 }
 type QueryResolver interface {
 	GetExperiment(ctx context.Context, projectID string, experimentID string) (*model.GetExperimentResponse, error)
 	ListExperiment(ctx context.Context, projectID string, request model.ListExperimentRequest) (*model.ListExperimentResponse, error)
 	GetExperimentStats(ctx context.Context, projectID string) (*model.GetExperimentStatsResponse, error)
-	GetExperimentRun(ctx context.Context, projectID string, experimentRunID string) (*model.ExperimentRun, error)
+	GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error)
 	ListExperimentRun(ctx context.Context, projectID string, request model.ListExperimentRunRequest) (*model.ListExperimentRunResponse, error)
 	GetExperimentRunStats(ctx context.Context, projectID string) (*model.GetExperimentRunStatsResponse, error)
 	GetInfra(ctx context.Context, projectID string, infraID string) (*model.Infra, error)
@@ -603,7 +766,13 @@ type QueryResolver interface {
 	ListEnvironments(ctx context.Context, projectID string, request *model.ListEnvironmentRequest) (*model.ListEnvironmentResponse, error)
 	GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error)
 	ListImageRegistry(ctx context.Context, projectID string) ([]*model.ImageRegistryResponse, error)
-	GetImageRegistry(ctx context.Context, imageRegistryID string, projectID string) (*model.ImageRegistryResponse, error)
+	GetImageRegistry(ctx context.Context, projectID string) (*model.ImageRegistryResponse, error)
+	ListProbes(ctx context.Context, projectID string, infrastructureType *model.InfrastructureType, probeNames []string, filter *model.ProbeFilterInput) ([]*model.Probe, error)
+	GetProbe(ctx context.Context, projectID string, probeName string) (*model.Probe, error)
+	GetProbeYaml(ctx context.Context, projectID string, request model.GetProbeYAMLRequest) (string, error)
+	GetProbeReference(ctx context.Context, projectID string, probeName string) (*model.GetProbeReferenceResponse, error)
+	GetProbesInExperimentRun(ctx context.Context, projectID string, experimentRunID string, faultName string) ([]*model.GetProbesInExperimentRunResponse, error)
+	ValidateUniqueProbe(ctx context.Context, projectID string, probeName string) (bool, error)
 }
 type SubscriptionResolver interface {
 	GetInfraEvents(ctx context.Context, projectID string) (<-chan *model.InfraEventResponse, error)
@@ -1110,6 +1279,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Chart.Spec(childComplexity), true
 
+	case "Comparator.criteria":
+		if e.complexity.Comparator.Criteria == nil {
+			break
+		}
+
+		return e.complexity.Comparator.Criteria(childComplexity), true
+
+	case "Comparator.type":
+		if e.complexity.Comparator.Type == nil {
+			break
+		}
+
+		return e.complexity.Comparator.Type(childComplexity), true
+
+	case "Comparator.value":
+		if e.complexity.Comparator.Value == nil {
+			break
+		}
+
+		return e.complexity.Comparator.Value(childComplexity), true
+
 	case "ConfirmInfraRegistrationResponse.infraID":
 		if e.complexity.ConfirmInfraRegistrationResponse.InfraID == nil {
 			break
@@ -1214,6 +1404,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Environment.UpdatedBy(childComplexity), true
+
+	case "ExecutedByExperiment.experimentID":
+		if e.complexity.ExecutedByExperiment.ExperimentID == nil {
+			break
+		}
+
+		return e.complexity.ExecutedByExperiment.ExperimentID(childComplexity), true
+
+	case "ExecutedByExperiment.experimentName":
+		if e.complexity.ExecutedByExperiment.ExperimentName == nil {
+			break
+		}
+
+		return e.complexity.ExecutedByExperiment.ExperimentName(childComplexity), true
+
+	case "ExecutedByExperiment.updatedAt":
+		if e.complexity.ExecutedByExperiment.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ExecutedByExperiment.UpdatedAt(childComplexity), true
+
+	case "ExecutedByExperiment.updatedBy":
+		if e.complexity.ExecutedByExperiment.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.ExecutedByExperiment.UpdatedBy(childComplexity), true
+
+	case "ExecutionHistory.executedByExperiment":
+		if e.complexity.ExecutionHistory.ExecutedByExperiment == nil {
+			break
+		}
+
+		return e.complexity.ExecutionHistory.ExecutedByExperiment(childComplexity), true
+
+	case "ExecutionHistory.faultName":
+		if e.complexity.ExecutionHistory.FaultName == nil {
+			break
+		}
+
+		return e.complexity.ExecutionHistory.FaultName(childComplexity), true
+
+	case "ExecutionHistory.mode":
+		if e.complexity.ExecutionHistory.Mode == nil {
+			break
+		}
+
+		return e.complexity.ExecutionHistory.Mode(childComplexity), true
+
+	case "ExecutionHistory.status":
+		if e.complexity.ExecutionHistory.Status == nil {
+			break
+		}
+
+		return e.complexity.ExecutionHistory.Status(childComplexity), true
 
 	case "Experiment.createdAt":
 		if e.complexity.Experiment.CreatedAt == nil {
@@ -1453,6 +1699,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ExperimentRun.IsRemoved(childComplexity), true
 
+	case "ExperimentRun.notifyID":
+		if e.complexity.ExperimentRun.NotifyID == nil {
+			break
+		}
+
+		return e.complexity.ExperimentRun.NotifyID(childComplexity), true
+
 	case "ExperimentRun.phase":
 		if e.complexity.ExperimentRun.Phase == nil {
 			break
@@ -1473,6 +1726,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExperimentRun.ResiliencyScore(childComplexity), true
+
+	case "ExperimentRun.runSequence":
+		if e.complexity.ExperimentRun.RunSequence == nil {
+			break
+		}
+
+		return e.complexity.ExperimentRun.RunSequence(childComplexity), true
 
 	case "ExperimentRun.totalFaults":
 		if e.complexity.ExperimentRun.TotalFaults == nil {
@@ -1571,6 +1831,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FaultList.Plan(childComplexity), true
+
+	case "GET.criteria":
+		if e.complexity.Get.Criteria == nil {
+			break
+		}
+
+		return e.complexity.Get.Criteria(childComplexity), true
+
+	case "GET.responseCode":
+		if e.complexity.Get.ResponseCode == nil {
+			break
+		}
+
+		return e.complexity.Get.ResponseCode(childComplexity), true
 
 	case "GetChaosHubStatsResponse.totalChaosHubs":
 		if e.complexity.GetChaosHubStatsResponse.TotalChaosHubs == nil {
@@ -1683,6 +1957,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GetInfraStatsResponse.TotalNonConfirmedInfrastructures(childComplexity), true
+
+	case "GetProbeReferenceResponse.name":
+		if e.complexity.GetProbeReferenceResponse.Name == nil {
+			break
+		}
+
+		return e.complexity.GetProbeReferenceResponse.Name(childComplexity), true
+
+	case "GetProbeReferenceResponse.projectID":
+		if e.complexity.GetProbeReferenceResponse.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.GetProbeReferenceResponse.ProjectID(childComplexity), true
+
+	case "GetProbeReferenceResponse.recentExecutions":
+		if e.complexity.GetProbeReferenceResponse.RecentExecutions == nil {
+			break
+		}
+
+		return e.complexity.GetProbeReferenceResponse.RecentExecutions(childComplexity), true
+
+	case "GetProbeReferenceResponse.totalRuns":
+		if e.complexity.GetProbeReferenceResponse.TotalRuns == nil {
+			break
+		}
+
+		return e.complexity.GetProbeReferenceResponse.TotalRuns(childComplexity), true
+
+	case "GetProbesInExperimentRunResponse.mode":
+		if e.complexity.GetProbesInExperimentRunResponse.Mode == nil {
+			break
+		}
+
+		return e.complexity.GetProbesInExperimentRunResponse.Mode(childComplexity), true
+
+	case "GetProbesInExperimentRunResponse.probe":
+		if e.complexity.GetProbesInExperimentRunResponse.Probe == nil {
+			break
+		}
+
+		return e.complexity.GetProbesInExperimentRunResponse.Probe(childComplexity), true
+
+	case "GetProbesInExperimentRunResponse.status":
+		if e.complexity.GetProbesInExperimentRunResponse.Status == nil {
+			break
+		}
+
+		return e.complexity.GetProbesInExperimentRunResponse.Status(childComplexity), true
 
 	case "GitConfigResponse.authType":
 		if e.complexity.GitConfigResponse.AuthType == nil {
@@ -2111,6 +2434,111 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.InfraVersionDetails.LatestVersion(childComplexity), true
 
+	case "K8SProbe.attempt":
+		if e.complexity.K8SProbe.Attempt == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Attempt(childComplexity), true
+
+	case "K8SProbe.evaluationTimeout":
+		if e.complexity.K8SProbe.EvaluationTimeout == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.EvaluationTimeout(childComplexity), true
+
+	case "K8SProbe.fieldSelector":
+		if e.complexity.K8SProbe.FieldSelector == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.FieldSelector(childComplexity), true
+
+	case "K8SProbe.group":
+		if e.complexity.K8SProbe.Group == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Group(childComplexity), true
+
+	case "K8SProbe.initialDelay":
+		if e.complexity.K8SProbe.InitialDelay == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.InitialDelay(childComplexity), true
+
+	case "K8SProbe.interval":
+		if e.complexity.K8SProbe.Interval == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Interval(childComplexity), true
+
+	case "K8SProbe.labelSelector":
+		if e.complexity.K8SProbe.LabelSelector == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.LabelSelector(childComplexity), true
+
+	case "K8SProbe.namespace":
+		if e.complexity.K8SProbe.Namespace == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Namespace(childComplexity), true
+
+	case "K8SProbe.operation":
+		if e.complexity.K8SProbe.Operation == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Operation(childComplexity), true
+
+	case "K8SProbe.probePollingInterval":
+		if e.complexity.K8SProbe.ProbePollingInterval == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.ProbePollingInterval(childComplexity), true
+
+	case "K8SProbe.probeTimeout":
+		if e.complexity.K8SProbe.ProbeTimeout == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.ProbeTimeout(childComplexity), true
+
+	case "K8SProbe.resource":
+		if e.complexity.K8SProbe.Resource == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Resource(childComplexity), true
+
+	case "K8SProbe.retry":
+		if e.complexity.K8SProbe.Retry == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Retry(childComplexity), true
+
+	case "K8SProbe.stopOnFailure":
+		if e.complexity.K8SProbe.StopOnFailure == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.StopOnFailure(childComplexity), true
+
+	case "K8SProbe.version":
+		if e.complexity.K8SProbe.Version == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.Version(childComplexity), true
+
 	case "KubeObject.data":
 		if e.complexity.KubeObject.Data == nil {
 			break
@@ -2138,6 +2566,160 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.KubeObjectResponse.KubeObj(childComplexity), true
+
+	case "KubernetesCMDProbe.attempt":
+		if e.complexity.KubernetesCMDProbe.Attempt == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.Attempt(childComplexity), true
+
+	case "KubernetesCMDProbe.command":
+		if e.complexity.KubernetesCMDProbe.Command == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.Command(childComplexity), true
+
+	case "KubernetesCMDProbe.comparator":
+		if e.complexity.KubernetesCMDProbe.Comparator == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.Comparator(childComplexity), true
+
+	case "KubernetesCMDProbe.evaluationTimeout":
+		if e.complexity.KubernetesCMDProbe.EvaluationTimeout == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.EvaluationTimeout(childComplexity), true
+
+	case "KubernetesCMDProbe.initialDelay":
+		if e.complexity.KubernetesCMDProbe.InitialDelay == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.InitialDelay(childComplexity), true
+
+	case "KubernetesCMDProbe.interval":
+		if e.complexity.KubernetesCMDProbe.Interval == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.Interval(childComplexity), true
+
+	case "KubernetesCMDProbe.probePollingInterval":
+		if e.complexity.KubernetesCMDProbe.ProbePollingInterval == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.ProbePollingInterval(childComplexity), true
+
+	case "KubernetesCMDProbe.probeTimeout":
+		if e.complexity.KubernetesCMDProbe.ProbeTimeout == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.ProbeTimeout(childComplexity), true
+
+	case "KubernetesCMDProbe.retry":
+		if e.complexity.KubernetesCMDProbe.Retry == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.Retry(childComplexity), true
+
+	case "KubernetesCMDProbe.source":
+		if e.complexity.KubernetesCMDProbe.Source == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.Source(childComplexity), true
+
+	case "KubernetesCMDProbe.stopOnFailure":
+		if e.complexity.KubernetesCMDProbe.StopOnFailure == nil {
+			break
+		}
+
+		return e.complexity.KubernetesCMDProbe.StopOnFailure(childComplexity), true
+
+	case "KubernetesHTTPProbe.attempt":
+		if e.complexity.KubernetesHTTPProbe.Attempt == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.Attempt(childComplexity), true
+
+	case "KubernetesHTTPProbe.evaluationTimeout":
+		if e.complexity.KubernetesHTTPProbe.EvaluationTimeout == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.EvaluationTimeout(childComplexity), true
+
+	case "KubernetesHTTPProbe.initialDelay":
+		if e.complexity.KubernetesHTTPProbe.InitialDelay == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.InitialDelay(childComplexity), true
+
+	case "KubernetesHTTPProbe.insecureSkipVerify":
+		if e.complexity.KubernetesHTTPProbe.InsecureSkipVerify == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.InsecureSkipVerify(childComplexity), true
+
+	case "KubernetesHTTPProbe.interval":
+		if e.complexity.KubernetesHTTPProbe.Interval == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.Interval(childComplexity), true
+
+	case "KubernetesHTTPProbe.method":
+		if e.complexity.KubernetesHTTPProbe.Method == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.Method(childComplexity), true
+
+	case "KubernetesHTTPProbe.probePollingInterval":
+		if e.complexity.KubernetesHTTPProbe.ProbePollingInterval == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.ProbePollingInterval(childComplexity), true
+
+	case "KubernetesHTTPProbe.probeTimeout":
+		if e.complexity.KubernetesHTTPProbe.ProbeTimeout == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.ProbeTimeout(childComplexity), true
+
+	case "KubernetesHTTPProbe.retry":
+		if e.complexity.KubernetesHTTPProbe.Retry == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.Retry(childComplexity), true
+
+	case "KubernetesHTTPProbe.stopOnFailure":
+		if e.complexity.KubernetesHTTPProbe.StopOnFailure == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.StopOnFailure(childComplexity), true
+
+	case "KubernetesHTTPProbe.url":
+		if e.complexity.KubernetesHTTPProbe.URL == nil {
+			break
+		}
+
+		return e.complexity.KubernetesHTTPProbe.URL(childComplexity), true
 
 	case "Link.name":
 		if e.complexity.Link.Name == nil {
@@ -2244,6 +2826,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Metadata.Version(childComplexity), true
 
+	case "Method.get":
+		if e.complexity.Method.Get == nil {
+			break
+		}
+
+		return e.complexity.Method.Get(childComplexity), true
+
+	case "Method.post":
+		if e.complexity.Method.Post == nil {
+			break
+		}
+
+		return e.complexity.Method.Post(childComplexity), true
+
 	case "Mutation.addChaosHub":
 		if e.complexity.Mutation.AddChaosHub == nil {
 			break
@@ -2255,6 +2851,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddChaosHub(childComplexity, args["projectID"].(string), args["request"].(model.CreateChaosHubRequest)), true
+
+	case "Mutation.addProbe":
+		if e.complexity.Mutation.AddProbe == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addProbe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddProbe(childComplexity, args["request"].(model.ProbeRequest), args["projectID"].(string)), true
 
 	case "Mutation.addRemoteChaosHub":
 		if e.complexity.Mutation.AddRemoteChaosHub == nil {
@@ -2388,6 +2996,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteInfra(childComplexity, args["projectID"].(string), args["infraID"].(string)), true
 
+	case "Mutation.deleteProbe":
+		if e.complexity.Mutation.DeleteProbe == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteProbe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteProbe(childComplexity, args["probeName"].(string), args["projectID"].(string)), true
+
 	case "Mutation.disableGitOps":
 		if e.complexity.Mutation.DisableGitOps == nil {
 			break
@@ -2410,7 +3030,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EnableGitOps(childComplexity, args["configurations"].(model.GitConfig)), true
+		return e.complexity.Mutation.EnableGitOps(childComplexity, args["projectID"].(string), args["configurations"].(model.GitConfig)), true
 
 	case "Mutation.generateSSHKey":
 		if e.complexity.Mutation.GenerateSSHKey == nil {
@@ -2573,7 +3193,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateGitOps(childComplexity, args["configurations"].(model.GitConfig)), true
+		return e.complexity.Mutation.UpdateGitOps(childComplexity, args["projectID"].(string), args["configurations"].(model.GitConfig)), true
 
 	case "Mutation.updateImageRegistry":
 		if e.complexity.Mutation.UpdateImageRegistry == nil {
@@ -2586,6 +3206,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string), args["imageRegistryInfo"].(model.ImageRegistryInput)), true
+
+	case "Mutation.updateProbe":
+		if e.complexity.Mutation.UpdateProbe == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProbe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProbe(childComplexity, args["request"].(model.ProbeRequest), args["projectID"].(string)), true
 
 	case "ObjectData.labels":
 		if e.complexity.ObjectData.Labels == nil {
@@ -2600,6 +3232,125 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ObjectData.Name(childComplexity), true
+
+	case "POST.body":
+		if e.complexity.Post.Body == nil {
+			break
+		}
+
+		return e.complexity.Post.Body(childComplexity), true
+
+	case "POST.bodyPath":
+		if e.complexity.Post.BodyPath == nil {
+			break
+		}
+
+		return e.complexity.Post.BodyPath(childComplexity), true
+
+	case "POST.contentType":
+		if e.complexity.Post.ContentType == nil {
+			break
+		}
+
+		return e.complexity.Post.ContentType(childComplexity), true
+
+	case "POST.criteria":
+		if e.complexity.Post.Criteria == nil {
+			break
+		}
+
+		return e.complexity.Post.Criteria(childComplexity), true
+
+	case "POST.responseCode":
+		if e.complexity.Post.ResponseCode == nil {
+			break
+		}
+
+		return e.complexity.Post.ResponseCode(childComplexity), true
+
+	case "PROMProbe.attempt":
+		if e.complexity.PROMProbe.Attempt == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.Attempt(childComplexity), true
+
+	case "PROMProbe.comparator":
+		if e.complexity.PROMProbe.Comparator == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.Comparator(childComplexity), true
+
+	case "PROMProbe.endpoint":
+		if e.complexity.PROMProbe.Endpoint == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.Endpoint(childComplexity), true
+
+	case "PROMProbe.evaluationTimeout":
+		if e.complexity.PROMProbe.EvaluationTimeout == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.EvaluationTimeout(childComplexity), true
+
+	case "PROMProbe.initialDelay":
+		if e.complexity.PROMProbe.InitialDelay == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.InitialDelay(childComplexity), true
+
+	case "PROMProbe.interval":
+		if e.complexity.PROMProbe.Interval == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.Interval(childComplexity), true
+
+	case "PROMProbe.probePollingInterval":
+		if e.complexity.PROMProbe.ProbePollingInterval == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.ProbePollingInterval(childComplexity), true
+
+	case "PROMProbe.probeTimeout":
+		if e.complexity.PROMProbe.ProbeTimeout == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.ProbeTimeout(childComplexity), true
+
+	case "PROMProbe.query":
+		if e.complexity.PROMProbe.Query == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.Query(childComplexity), true
+
+	case "PROMProbe.queryPath":
+		if e.complexity.PROMProbe.QueryPath == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.QueryPath(childComplexity), true
+
+	case "PROMProbe.retry":
+		if e.complexity.PROMProbe.Retry == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.Retry(childComplexity), true
+
+	case "PROMProbe.stopOnFailure":
+		if e.complexity.PROMProbe.StopOnFailure == nil {
+			break
+		}
+
+		return e.complexity.PROMProbe.StopOnFailure(childComplexity), true
 
 	case "PackageInformation.experiments":
 		if e.complexity.PackageInformation.Experiments == nil {
@@ -2663,6 +3414,139 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PredefinedExperimentList.ExperimentName(childComplexity), true
+
+	case "Probe.createdAt":
+		if e.complexity.Probe.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Probe.CreatedAt(childComplexity), true
+
+	case "Probe.createdBy":
+		if e.complexity.Probe.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Probe.CreatedBy(childComplexity), true
+
+	case "Probe.description":
+		if e.complexity.Probe.Description == nil {
+			break
+		}
+
+		return e.complexity.Probe.Description(childComplexity), true
+
+	case "Probe.infrastructureType":
+		if e.complexity.Probe.InfrastructureType == nil {
+			break
+		}
+
+		return e.complexity.Probe.InfrastructureType(childComplexity), true
+
+	case "Probe.k8sProperties":
+		if e.complexity.Probe.K8sProperties == nil {
+			break
+		}
+
+		return e.complexity.Probe.K8sProperties(childComplexity), true
+
+	case "Probe.kubernetesCMDProperties":
+		if e.complexity.Probe.KubernetesCMDProperties == nil {
+			break
+		}
+
+		return e.complexity.Probe.KubernetesCMDProperties(childComplexity), true
+
+	case "Probe.kubernetesHTTPProperties":
+		if e.complexity.Probe.KubernetesHTTPProperties == nil {
+			break
+		}
+
+		return e.complexity.Probe.KubernetesHTTPProperties(childComplexity), true
+
+	case "Probe.name":
+		if e.complexity.Probe.Name == nil {
+			break
+		}
+
+		return e.complexity.Probe.Name(childComplexity), true
+
+	case "Probe.projectID":
+		if e.complexity.Probe.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.Probe.ProjectID(childComplexity), true
+
+	case "Probe.promProperties":
+		if e.complexity.Probe.PromProperties == nil {
+			break
+		}
+
+		return e.complexity.Probe.PromProperties(childComplexity), true
+
+	case "Probe.recentExecutions":
+		if e.complexity.Probe.RecentExecutions == nil {
+			break
+		}
+
+		return e.complexity.Probe.RecentExecutions(childComplexity), true
+
+	case "Probe.referencedBy":
+		if e.complexity.Probe.ReferencedBy == nil {
+			break
+		}
+
+		return e.complexity.Probe.ReferencedBy(childComplexity), true
+
+	case "Probe.tags":
+		if e.complexity.Probe.Tags == nil {
+			break
+		}
+
+		return e.complexity.Probe.Tags(childComplexity), true
+
+	case "Probe.type":
+		if e.complexity.Probe.Type == nil {
+			break
+		}
+
+		return e.complexity.Probe.Type(childComplexity), true
+
+	case "Probe.updatedAt":
+		if e.complexity.Probe.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Probe.UpdatedAt(childComplexity), true
+
+	case "Probe.updatedBy":
+		if e.complexity.Probe.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Probe.UpdatedBy(childComplexity), true
+
+	case "ProbeRecentExecutions.executedByExperiment":
+		if e.complexity.ProbeRecentExecutions.ExecutedByExperiment == nil {
+			break
+		}
+
+		return e.complexity.ProbeRecentExecutions.ExecutedByExperiment(childComplexity), true
+
+	case "ProbeRecentExecutions.faultName":
+		if e.complexity.ProbeRecentExecutions.FaultName == nil {
+			break
+		}
+
+		return e.complexity.ProbeRecentExecutions.FaultName(childComplexity), true
+
+	case "ProbeRecentExecutions.status":
+		if e.complexity.ProbeRecentExecutions.Status == nil {
+			break
+		}
+
+		return e.complexity.ProbeRecentExecutions.Status(childComplexity), true
 
 	case "Provider.name":
 		if e.complexity.Provider.Name == nil {
@@ -2741,7 +3625,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetExperimentRun(childComplexity, args["projectID"].(string), args["experimentRunID"].(string)), true
+		return e.complexity.Query.GetExperimentRun(childComplexity, args["projectID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string)), true
 
 	case "Query.getExperimentRunStats":
 		if e.complexity.Query.GetExperimentRunStats == nil {
@@ -2789,7 +3673,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetImageRegistry(childComplexity, args["imageRegistryID"].(string), args["projectID"].(string)), true
+		return e.complexity.Query.GetImageRegistry(childComplexity, args["projectID"].(string)), true
 
 	case "Query.getInfra":
 		if e.complexity.Query.GetInfra == nil {
@@ -2850,6 +3734,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetPredefinedExperiment(childComplexity, args["hubID"].(string), args["experimentName"].([]string), args["projectID"].(string)), true
+
+	case "Query.getProbe":
+		if e.complexity.Query.GetProbe == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getProbe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetProbe(childComplexity, args["projectID"].(string), args["probeName"].(string)), true
+
+	case "Query.getProbeReference":
+		if e.complexity.Query.GetProbeReference == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getProbeReference_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetProbeReference(childComplexity, args["projectID"].(string), args["probeName"].(string)), true
+
+	case "Query.getProbeYAML":
+		if e.complexity.Query.GetProbeYaml == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getProbeYAML_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetProbeYaml(childComplexity, args["projectID"].(string), args["request"].(model.GetProbeYAMLRequest)), true
+
+	case "Query.getProbesInExperimentRun":
+		if e.complexity.Query.GetProbesInExperimentRun == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getProbesInExperimentRun_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetProbesInExperimentRun(childComplexity, args["projectID"].(string), args["experimentRunID"].(string), args["faultName"].(string)), true
 
 	case "Query.getServerVersion":
 		if e.complexity.Query.GetServerVersion == nil {
@@ -2966,6 +3898,51 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.ListPredefinedExperiments(childComplexity, args["hubID"].(string), args["projectID"].(string)), true
 
+	case "Query.listProbes":
+		if e.complexity.Query.ListProbes == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listProbes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListProbes(childComplexity, args["projectID"].(string), args["infrastructureType"].(*model.InfrastructureType), args["probeNames"].([]string), args["filter"].(*model.ProbeFilterInput)), true
+
+	case "Query.validateUniqueProbe":
+		if e.complexity.Query.ValidateUniqueProbe == nil {
+			break
+		}
+
+		args, err := ec.field_Query_validateUniqueProbe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ValidateUniqueProbe(childComplexity, args["projectID"].(string), args["probeName"].(string)), true
+
+	case "RecentExecutions.executionHistory":
+		if e.complexity.RecentExecutions.ExecutionHistory == nil {
+			break
+		}
+
+		return e.complexity.RecentExecutions.ExecutionHistory(childComplexity), true
+
+	case "RecentExecutions.faultName":
+		if e.complexity.RecentExecutions.FaultName == nil {
+			break
+		}
+
+		return e.complexity.RecentExecutions.FaultName(childComplexity), true
+
+	case "RecentExecutions.mode":
+		if e.complexity.RecentExecutions.Mode == nil {
+			break
+		}
+
+		return e.complexity.RecentExecutions.Mode(childComplexity), true
+
 	case "RecentExperimentRun.createdAt":
 		if e.complexity.RecentExperimentRun.CreatedAt == nil {
 			break
@@ -3000,6 +3977,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RecentExperimentRun.ResiliencyScore(childComplexity), true
+
+	case "RecentExperimentRun.runSequence":
+		if e.complexity.RecentExperimentRun.RunSequence == nil {
+			break
+		}
+
+		return e.complexity.RecentExperimentRun.RunSequence(childComplexity), true
 
 	case "RecentExperimentRun.updatedAt":
 		if e.complexity.RecentExperimentRun.UpdatedAt == nil {
@@ -3182,6 +4166,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Spec.Provider(childComplexity), true
+
+	case "Status.description":
+		if e.complexity.Status.Description == nil {
+			break
+		}
+
+		return e.complexity.Status.Description(childComplexity), true
+
+	case "Status.verdict":
+		if e.complexity.Status.Verdict == nil {
+			break
+		}
+
+		return e.complexity.Status.Verdict(childComplexity), true
 
 	case "StopExperimentRunsRequest.experimentID":
 		if e.complexity.StopExperimentRunsRequest.ExperimentID == nil {
@@ -3783,6 +4781,14 @@ type ExperimentRun implements Audit {
   User who has created the experiment run
   """
   createdBy: UserDetails
+  """
+  Notify ID of the experiment run
+  """
+  notifyID: ID
+  """
+  runSequence is the sequence number of experiment run
+  """
+  runSequence: Int!
 }
 
 """
@@ -3902,6 +4908,10 @@ type RecentExperimentRun implements Audit {
   User who updated the experiment run
   """
   updatedBy: UserDetails
+  """
+  runSequence is the sequence number of experiment run
+  """
+  runSequence: Int!
 }
 
 """
@@ -4132,7 +5142,7 @@ extend type Mutation {
   """
   Returns experiment run based on experiment run ID
   """
-  getExperimentRun(projectID: ID!, experimentRunID: String!): ExperimentRun!
+  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID): ExperimentRun!
 
   """
   Returns the list of experiment run based on various filter parameters
@@ -4286,8 +5296,7 @@ type Infra implements ResourceDetails & Audit {
 }
 
 enum InfrastructureType {
-  INTERNAL
-  EXTERNAL
+  Kubernetes
 }
 
 """
@@ -5643,10 +6652,6 @@ Details of setting a Git repository
 """
 input GitConfig {
     """
-    ID of the project where GitOps is configured
-    """
-    projectID: ID!
-    """
     Git branch where the chaos charts will be pushed and synced
     """
     branch: String!
@@ -5737,17 +6742,17 @@ extend type Mutation {
     """
     Enables gitops settings in the project
     """
-    enableGitOps(configurations: GitConfig!): Boolean! @authorized
+    enableGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
 
     """
     Disables gitops settings in the project
     """
-    disableGitOps(projectID: String!): Boolean! @authorized
+    disableGitOps(projectID: ID!): Boolean! @authorized
 
     """
     Updates gitops settings in the project
     """
-    updateGitOps(configurations: GitConfig!): Boolean! @authorized
+    updateGitOps(projectID: ID!,configurations: GitConfig!): Boolean! @authorized
 }`, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/image_registry.graphqls", Input: `"""
 Defines details for image registry
@@ -5864,7 +6869,6 @@ extend type Query {
   listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
 
   getImageRegistry(
-    imageRegistryID: String!
     projectID: String!
   ): ImageRegistryResponse! @authorized
 }
@@ -5894,6 +6898,1132 @@ extend type Mutation {
   deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
   @authorized
 }`, BuiltIn: false},
+	&ast.Source{Name: "../definitions/shared/probe.graphqls", Input: `"""
+Defines the different types of Probes
+"""
+enum ProbeType {
+  httpProbe
+  cmdProbe
+  promProbe
+  k8sProbe
+}
+
+"""
+Defines the different types of Image Pull Policy
+"""
+enum ImagePullPolicy {
+  IfNotPresent
+  Always
+  Never
+}
+
+"""
+Defines the different modes of Probes
+"""
+enum Mode {
+  SOT
+  EOT
+  Edge
+  Continuous
+  OnChaos
+}
+
+"""
+Defines the different statuses of Probes
+"""
+enum ProbeStatus {
+  Running
+  Completed
+  Stopped
+  Error
+  Queued
+  NA
+}
+
+"""
+Defines the older different statuses of Probes
+"""
+enum ProbeVerdict {
+  Passed
+  Failed
+  NA
+  Awaited
+}
+
+"""
+Defines the methods of the probe properties
+"""
+type Method {
+  """
+  A GET request
+  """
+  get: GET
+  """
+  A POST request
+  """
+  post: POST
+}
+
+"""
+Details of GET request
+"""
+type GET {
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Details of POST request
+"""
+type POST {
+  """
+  Content Type of the request
+  """
+  contentType: String
+  """
+  Body of the request
+  """
+  body: String
+  """
+  Body Path of the HTTP body required for the http post request
+  """
+  bodyPath: String
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Defines the input for methods of the probe properties
+"""
+input MethodRequest {
+  """
+  A GET request
+  """
+  get: GETRequest
+  """
+  A POST request
+  """
+  post: POSTRequest
+}
+
+"""
+Details for input of GET request
+"""
+input GETRequest {
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Details for input of the POST request
+"""
+input POSTRequest {
+  """
+  Content Type of the request
+  """
+  contentType: String
+  """
+  Body of the request
+  """
+  body: String
+  """
+  Body Path of the request for Body
+  """
+  bodyPath: String
+  """
+  Criteria of the request
+  """
+  criteria: String!
+  """
+  Response Code of the request
+  """
+  responseCode: String!
+}
+
+"""
+Defines the common probe properties shared across different ProbeTypes
+"""
+interface CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+}
+
+"""
+Defines the details required for creating a Chaos Probe
+"""
+input ProbeRequest {
+  """
+  Name of the Probe
+  """
+  name: ID!
+  """
+  Description of the Probe
+  """
+  description: String
+  """
+  Tags of the Probe
+  """
+  tags: [String!]
+  """
+  Type of the Probe [From list of ProbeType enum]
+  """
+  type: ProbeType!
+  """
+  Infrastructure type of the Probe
+  """
+  infrastructureType: InfrastructureType!
+  """
+  HTTP Properties of the specific type of the Probe
+  """
+  kubernetesHTTPProperties: KubernetesHTTPProbeRequest
+  """
+  CMD Properties of the specific type of the Probe
+  """
+  kubernetesCMDProperties: KubernetesCMDProbeRequest
+  """
+  K8S Properties of the specific type of the Probe
+  """
+  k8sProperties: K8SProbeRequest
+  """
+  PROM Properties of the specific type of the Probe
+  """
+  promProperties: PROMProbeRequest
+}
+
+"""
+Defines the input for Kubernetes HTTP probe properties
+"""
+input KubernetesHTTPProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  URL of the Probe
+  """
+  url: String!
+  """
+  HTTP method of the Probe
+  """
+  method: MethodRequest!
+  """
+  If Insecure HTTP verification should  be skipped
+  """
+  insecureSkipVerify: Boolean
+}
+
+
+"""
+Defines the properties of the comparator
+"""
+type Comparator {
+  """
+  Type of the Comparator
+  """
+  type: String!
+  """
+  Value of the Comparator
+  """
+  value: String!
+  """
+  Operator of the Comparator
+  """
+  criteria: String!
+}
+
+"""
+Defines the input properties of the comparator
+"""
+input ComparatorInput {
+  """
+  Type of the Comparator
+  """
+  type: String!
+  """
+  Value of the Comparator
+  """
+  value: String!
+  """
+  Operator of the Comparator
+  """
+  criteria: String!
+}
+
+
+
+"""
+Defines the Executed by which experiment details for Probes
+"""
+type ExecutedByExperiment {
+  """
+  Experiment ID
+  """
+  experimentID: String!
+  """
+  Experiment Name
+  """
+  experimentName: String!
+  """
+  Timestamp at which the experiment was last updated
+  """
+  updatedAt: Int!
+  """
+  User who has updated the experiment
+  """
+  updatedBy: UserDetails
+}
+
+
+"""
+Defines the Execution History of experiment referenced by the Probe
+"""
+type ExecutionHistory {
+"""
+Probe Mode
+"""
+mode: Mode!
+"""
+Fault Name
+"""
+faultName: String!
+"""
+Fault Status
+"""
+status: Status!
+"""
+Fault executed by which experiment
+"""
+executedByExperiment: ExecutedByExperiment!
+}
+"""
+Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
+"""
+type ProbeRecentExecutions {
+  """
+  Fault name
+  """
+  faultName: String!
+  """
+  Fault Status
+  """
+  status: Status!
+  """
+  Fault executed by which experiment
+  """
+  executedByExperiment: ExecutedByExperiment!
+}
+
+"""
+Defines the Recent Executions of experiment referenced by the Probe
+"""
+type RecentExecutions {
+  """
+  Fault name
+  """
+  faultName: String!
+  """
+  Probe mode
+  """
+  mode: Mode!
+  """
+  Execution History
+  """
+  executionHistory: [ExecutionHistory!]!
+}
+
+"""
+Defines the response of the Probe reference API
+"""
+type GetProbeReferenceResponse {
+  """
+  Harness identifiers
+  """
+  projectID: ID!
+  """
+  Name of the Probe
+  """
+  name: String!
+  """
+  Total Runs
+  """
+  totalRuns: Int!
+  """
+  Recent Executions of the probe
+  """
+  recentExecutions: [RecentExecutions]!
+}
+
+"""
+Defines the CMD probe properties
+"""
+type KubernetesCMDProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Command of the Probe
+  """
+  command: String!
+  """
+  Comparator of the Probe
+  """
+  comparator: Comparator!
+  """
+  Source of the Probe
+  """
+  source: String
+}
+
+"""
+Defines the details of the Probe entity
+"""
+type Probe implements ResourceDetails & Audit {
+  """
+  Harness identifiers
+  """
+  projectID: ID!
+  """
+  Name of the Probe
+  """
+  name: String!
+  """
+  Description of the Probe
+  """
+  description: String
+  """
+  Tags of the Probe
+  """
+  tags: [String!]
+  """
+  Type of the Probe [From list of ProbeType enum]
+  """
+  type: ProbeType!
+  """
+  Infrastructure type of the Probe
+  """
+  infrastructureType: InfrastructureType!
+  """
+  Kubernetes HTTP Properties of the specific type of the Probe
+  """
+  kubernetesHTTPProperties: KubernetesHTTPProbe
+  """
+  Kubernetes CMD Properties of the specific type of the Probe
+  """
+  kubernetesCMDProperties: KubernetesCMDProbe
+  """
+  K8S Properties of the specific type of the Probe
+  """
+  k8sProperties: K8SProbe
+  """
+  PROM Properties of the specific type of the Probe
+  """
+  promProperties: PROMProbe
+  """
+  All execution histories of the probe
+  """
+  recentExecutions: [ProbeRecentExecutions!]
+  """
+  Referenced by how many faults
+  """
+  referencedBy: Int
+  """
+  Timestamp at which the Probe was last updated
+  """
+  updatedAt: String!
+  """
+  Timestamp at which the Probe was created
+  """
+  createdAt: String!
+  """
+  User who has updated the Probe
+  """
+  updatedBy: UserDetails
+  """
+  User who has created the Probe
+  """
+  createdBy: UserDetails
+}
+
+"""
+Defines the input for Probe filter
+"""
+input ProbeFilterInput {
+  """
+  Name of the Probe
+  """
+  name: String
+  """
+  Date range for filtering purpose
+  """
+  dateRange: DateRange
+  """
+  Type of the Probe [From list of ProbeType enum]
+  """
+  type: [ProbeType]
+}
+
+"""
+Defines the input for PROM probe properties
+"""
+input PROMProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Endpoint of the Probe
+  """
+  endpoint: String!
+  """
+  Query of the Probe
+  """
+  query: String
+  """
+  Query path of the Probe
+  """
+  queryPath: String
+  """
+  Comparator of the Probe
+  """
+  comparator: ComparatorInput!
+}
+
+"""
+Defines the input for HTTP probe properties
+"""
+input HTTPProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  URL of the Probe
+  """
+  url: String!
+  """
+  HTTP method of the Probe
+  """
+  method: MethodRequest!
+  """
+  If Insecure HTTP verification should  be skipped
+  """
+  insecureSkipVerify: Boolean
+}
+
+"""
+Defines the input for K8S probe properties
+"""
+input K8SProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Group of the Probe
+  """
+  group: String
+  """
+  Version of the Probe
+  """
+  version: String!
+  """
+  Resource of the Probe
+  """
+  resource: String!
+  """
+  Namespace of the Probe
+  """
+  namespace: String
+  """
+  Field Selector of the Probe
+  """
+  fieldSelector: String
+  """
+  Label Selector of the Probe
+  """
+  labelSelector: String
+  """
+  Operation of the Probe
+  """
+  operation: String!
+}
+
+"""
+Defines the PROM probe properties
+"""
+type PROMProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Endpoint of the Probe
+  """
+  endpoint: String!
+  """
+  Query of the Probe
+  """
+  query: String
+  """
+  Query path of the Probe
+  """
+  queryPath: String
+  """
+  Comparator of the Probe
+  """
+  comparator: Comparator!
+}
+
+"""
+Defines the input for Kubernetes CMD probe properties
+"""
+input KubernetesCMDProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Command of the Probe
+  """
+  command: String!
+  """
+  Comparator of the Probe
+  """
+  comparator: ComparatorInput!
+  """
+  Source of the Probe
+  """
+  source: String
+}
+
+
+"""
+Defines the Kubernetes HTTP probe properties
+"""
+type KubernetesHTTPProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  URL of the Probe
+  """
+  url: String!
+  """
+  HTTP method of the Probe
+  """
+  method: Method!
+  """
+  If Insecure HTTP verification should  be skipped
+  """
+  insecureSkipVerify: Boolean
+}
+
+
+"""
+Defines the input for CMD probe properties
+"""
+input CMDProbeRequest {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Command of the Probe
+  """
+  command: String!
+  """
+  Comparator of the Probe
+  """
+  comparator: ComparatorInput!
+  """
+  Source of the Probe
+  """
+  source: String
+}
+
+
+"""
+Defines the K8S probe properties
+"""
+type K8SProbe implements CommonProbeProperties {
+  """
+  Timeout of the Probe
+  """
+  probeTimeout: String!
+  """
+  Interval of the Probe
+  """
+  interval: String!
+  """
+  Retry interval of the Probe
+  """
+  retry: Int
+  """
+  Attempt contains the total attempt count for the probe
+  """
+  attempt: Int
+  """
+  Polling interval of the Probe
+  """
+  probePollingInterval: String
+  """
+  Initial delay interval of the Probe in seconds
+  """
+  initialDelay: String
+  """
+  EvaluationTimeout is the timeout window in which the SLO metrics
+  """
+  evaluationTimeout: String
+  """
+  Is stop on failure enabled in the Probe
+  """
+  stopOnFailure: Boolean
+  """
+  Group of the Probe
+  """
+  group: String
+  """
+  Version of the Probe
+  """
+  version: String!
+  """
+  Resource of the Probe
+  """
+  resource: String!
+  """
+  Namespace of the Probe
+  """
+  namespace: String
+  """
+  Field Selector of the Probe
+  """
+  fieldSelector: String
+  """
+  Label Selector of the Probe
+  """
+  labelSelector: String
+  """
+  Operation of the Probe
+  """
+  operation: String!
+}
+
+"""
+Status defines whether a probe is pass or fail
+"""
+type Status {
+  """
+  Verdict defines the verdict of the probe, range: Passed, Failed, N/A
+  """
+  verdict: ProbeVerdict!
+  """
+  Description defines the description of probe status
+  """
+  description: String
+}
+
+"""
+Defines the response for Get Probe In Experiment Run Query
+"""
+type GetProbesInExperimentRunResponse {
+  """
+  Probe Object
+  """
+  probe: Probe!
+  """
+  Mode of the probe
+  """
+  mode: Mode!
+  """
+  Status of the Probe
+  """
+  status: Status!
+}
+
+"""
+Defines the input requests for GetProbeYAML query
+"""
+input GetProbeYAMLRequest {
+  """
+  Probe name of the probe
+  """
+  probeName: ID!
+  """
+  Mode of the Probe (SoT, EoT, Edge, Continuous or OnChaos)
+  """
+  mode: Mode!
+}
+
+extend type Query {
+  """
+  Returns the list of Probes based on various filter parameters
+  """
+  listProbes(projectID: ID!,  infrastructureType: InfrastructureType, probeNames: [ID!], filter: ProbeFilterInput): [Probe]!
+    @authorized
+
+  """
+  Returns a single Probe based on ProbeName and various filter parameters
+  """
+  getProbe(projectID: ID!, probeName: ID!): Probe! @authorized
+
+  """
+  Returns the Probe YAML based on ProbeName which can be used in ChaosEngine manifest
+  """
+  getProbeYAML(
+    projectID: ID!
+    request: GetProbeYAMLRequest!
+  ): String! @authorized
+
+  """
+  Returns all the reference of the Probe based on ProbeName
+  """
+  getProbeReference(
+    projectID: ID!
+    probeName: ID!
+  ): GetProbeReferenceResponse! @authorized
+
+  """
+  Returns all the Probes attached to the requested Experiment Run
+  """
+  getProbesInExperimentRun(
+    projectID: ID!
+    experimentRunID: String!
+    faultName: String!
+  ): [GetProbesInExperimentRunResponse]! @authorized
+
+  """
+  Validates if a probe is already present, returns true if unique
+  """
+  validateUniqueProbe(
+    projectID: ID!
+    probeName: ID!
+  ): Boolean! @authorized
+}
+
+extend type Mutation {
+  """
+  Creates a new Probe
+  """
+  addProbe(request: ProbeRequest!, projectID: ID!): Probe!
+    @authorized
+
+  """
+  Update the configuration of a Probe
+  """
+  updateProbe(
+    request: ProbeRequest!
+    projectID: ID!
+  ): String! @authorized
+
+  """
+  Delete a Probe
+  """
+  deleteProbe(probeName: ID!, projectID: ID!): Boolean!
+    @authorized
+}
+`, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/project.graphqls", Input: `enum Invitation {
   Accepted
   Pending
@@ -5931,6 +8061,28 @@ func (ec *executionContext) field_Mutation_addChaosHub_args(ctx context.Context,
 		}
 	}
 	args["request"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addProbe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ProbeRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -6168,12 +8320,34 @@ func (ec *executionContext) field_Mutation_deleteInfra_args(ctx context.Context,
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteProbe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["probeName"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["probeName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_disableGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
 	if tmp, ok := rawArgs["projectID"]; ok {
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6185,14 +8359,22 @@ func (ec *executionContext) field_Mutation_disableGitOps_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_enableGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.GitConfig
-	if tmp, ok := rawArgs["configurations"]; ok {
-		arg0, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["configurations"] = arg0
+	args["projectID"] = arg0
+	var arg1 model.GitConfig
+	if tmp, ok := rawArgs["configurations"]; ok {
+		arg1, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["configurations"] = arg1
 	return args, nil
 }
 
@@ -6455,14 +8637,22 @@ func (ec *executionContext) field_Mutation_updateEnvironment_args(ctx context.Co
 func (ec *executionContext) field_Mutation_updateGitOps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.GitConfig
-	if tmp, ok := rawArgs["configurations"]; ok {
-		arg0, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["configurations"] = arg0
+	args["projectID"] = arg0
+	var arg1 model.GitConfig
+	if tmp, ok := rawArgs["configurations"]; ok {
+		arg1, err = ec.unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["configurations"] = arg1
 	return args, nil
 }
 
@@ -6493,6 +8683,28 @@ func (ec *executionContext) field_Mutation_updateImageRegistry_args(ctx context.
 		}
 	}
 	args["imageRegistryInfo"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProbe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ProbeRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg0, err = ec.unmarshalNProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg1
 	return args, nil
 }
 
@@ -6615,14 +8827,22 @@ func (ec *executionContext) field_Query_getExperimentRun_args(ctx context.Contex
 		}
 	}
 	args["projectID"] = arg0
-	var arg1 string
+	var arg1 *string
 	if tmp, ok := rawArgs["experimentRunID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		arg1, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["experimentRunID"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["notifyID"]; ok {
+		arg2, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["notifyID"] = arg2
 	return args, nil
 }
 
@@ -6680,21 +8900,13 @@ func (ec *executionContext) field_Query_getImageRegistry_args(ctx context.Contex
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["imageRegistryID"]; ok {
+	if tmp, ok := rawArgs["projectID"]; ok {
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["imageRegistryID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["projectID"]; ok {
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectID"] = arg1
+	args["projectID"] = arg0
 	return args, nil
 }
 
@@ -6813,6 +9025,102 @@ func (ec *executionContext) field_Query_getPredefinedExperiment_args(ctx context
 		}
 	}
 	args["projectID"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getProbeReference_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["probeName"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["probeName"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getProbeYAML_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 model.GetProbeYAMLRequest
+	if tmp, ok := rawArgs["request"]; ok {
+		arg1, err = ec.unmarshalNGetProbeYAMLRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbeYAMLRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["request"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getProbe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["probeName"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["probeName"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getProbesInExperimentRun_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["experimentRunID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentRunID"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["faultName"]; ok {
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["faultName"] = arg2
 	return args, nil
 }
 
@@ -6995,6 +9303,66 @@ func (ec *executionContext) field_Query_listPredefinedExperiments_args(ctx conte
 		}
 	}
 	args["projectID"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_listProbes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 *model.InfrastructureType
+	if tmp, ok := rawArgs["infrastructureType"]; ok {
+		arg1, err = ec.unmarshalOInfrastructureType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfrastructureType(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["infrastructureType"] = arg1
+	var arg2 []string
+	if tmp, ok := rawArgs["probeNames"]; ok {
+		arg2, err = ec.unmarshalOID2ᚕstringᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["probeNames"] = arg2
+	var arg3 *model.ProbeFilterInput
+	if tmp, ok := rawArgs["filter"]; ok {
+		arg3, err = ec.unmarshalOProbeFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_validateUniqueProbe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["probeName"]; ok {
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["probeName"] = arg1
 	return args, nil
 }
 
@@ -9376,6 +11744,108 @@ func (ec *executionContext) _Chart_packageInfo(ctx context.Context, field graphq
 	return ec.marshalNPackageInformation2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPackageInformation(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Comparator_type(ctx context.Context, field graphql.CollectedField, obj *model.Comparator) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Comparator",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Comparator_value(ctx context.Context, field graphql.CollectedField, obj *model.Comparator) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Comparator",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Comparator_criteria(ctx context.Context, field graphql.CollectedField, obj *model.Comparator) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Comparator",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Criteria, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ConfirmInfraRegistrationResponse_isInfraConfirmed(ctx context.Context, field graphql.CollectedField, obj *model.ConfirmInfraRegistrationResponse) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -9860,6 +12330,275 @@ func (ec *executionContext) _Environment_infraIDs(ctx context.Context, field gra
 	res := resTmp.([]string)
 	fc.Result = res
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutedByExperiment_experimentID(ctx context.Context, field graphql.CollectedField, obj *model.ExecutedByExperiment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutedByExperiment",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutedByExperiment_experimentName(ctx context.Context, field graphql.CollectedField, obj *model.ExecutedByExperiment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutedByExperiment",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExperimentName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutedByExperiment_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.ExecutedByExperiment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutedByExperiment",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutedByExperiment_updatedBy(ctx context.Context, field graphql.CollectedField, obj *model.ExecutedByExperiment) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutedByExperiment",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserDetails)
+	fc.Result = res
+	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionHistory_mode(ctx context.Context, field graphql.CollectedField, obj *model.ExecutionHistory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutionHistory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Mode)
+	fc.Result = res
+	return ec.marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionHistory_faultName(ctx context.Context, field graphql.CollectedField, obj *model.ExecutionHistory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutionHistory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FaultName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionHistory_status(ctx context.Context, field graphql.CollectedField, obj *model.ExecutionHistory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutionHistory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExecutionHistory_executedByExperiment(ctx context.Context, field graphql.CollectedField, obj *model.ExecutionHistory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExecutionHistory",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExecutedByExperiment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ExecutedByExperiment)
+	fc.Result = res
+	return ec.marshalNExecutedByExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutedByExperiment(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Experiment_projectID(ctx context.Context, field graphql.CollectedField, obj *model.Experiment) (ret graphql.Marshaler) {
@@ -11205,6 +13944,71 @@ func (ec *executionContext) _ExperimentRun_createdBy(ctx context.Context, field 
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ExperimentRun_notifyID(ctx context.Context, field graphql.CollectedField, obj *model.ExperimentRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExperimentRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NotifyID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExperimentRun_runSequence(ctx context.Context, field graphql.CollectedField, obj *model.ExperimentRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExperimentRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RunSequence, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Experiments_name(ctx context.Context, field graphql.CollectedField, obj *model.Experiments) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -11540,6 +14344,74 @@ func (ec *executionContext) _FaultList_plan(ctx context.Context, field graphql.C
 	res := resTmp.([]string)
 	fc.Result = res
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GET_criteria(ctx context.Context, field graphql.CollectedField, obj *model.Get) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GET",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Criteria, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GET_responseCode(ctx context.Context, field graphql.CollectedField, obj *model.Get) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GET",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResponseCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GetChaosHubStatsResponse_totalChaosHubs(ctx context.Context, field graphql.CollectedField, obj *model.GetChaosHubStatsResponse) (ret graphql.Marshaler) {
@@ -12081,6 +14953,244 @@ func (ec *executionContext) _GetInfraStatsResponse_totalNonConfirmedInfrastructu
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbeReferenceResponse_projectID(ctx context.Context, field graphql.CollectedField, obj *model.GetProbeReferenceResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbeReferenceResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbeReferenceResponse_name(ctx context.Context, field graphql.CollectedField, obj *model.GetProbeReferenceResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbeReferenceResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbeReferenceResponse_totalRuns(ctx context.Context, field graphql.CollectedField, obj *model.GetProbeReferenceResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbeReferenceResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalRuns, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbeReferenceResponse_recentExecutions(ctx context.Context, field graphql.CollectedField, obj *model.GetProbeReferenceResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbeReferenceResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecentExecutions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.RecentExecutions)
+	fc.Result = res
+	return ec.marshalNRecentExecutions2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExecutions(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbesInExperimentRunResponse_probe(ctx context.Context, field graphql.CollectedField, obj *model.GetProbesInExperimentRunResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbesInExperimentRunResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Probe, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Probe)
+	fc.Result = res
+	return ec.marshalNProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbesInExperimentRunResponse_mode(ctx context.Context, field graphql.CollectedField, obj *model.GetProbesInExperimentRunResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbesInExperimentRunResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Mode)
+	fc.Result = res
+	return ec.marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GetProbesInExperimentRunResponse_status(ctx context.Context, field graphql.CollectedField, obj *model.GetProbesInExperimentRunResponse) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GetProbesInExperimentRunResponse",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GitConfigResponse_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GitConfigResponse) (ret graphql.Marshaler) {
@@ -14070,6 +17180,486 @@ func (ec *executionContext) _InfraVersionDetails_compatibleVersions(ctx context.
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _K8SProbe_probeTimeout(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbeTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_interval(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Interval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_retry(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Retry, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_attempt(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Attempt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbePollingInterval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_initialDelay(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InitialDelay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EvaluationTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StopOnFailure, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_group(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Group, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_version(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_resource(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Resource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_namespace(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Namespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_fieldSelector(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FieldSelector, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_labelSelector(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LabelSelector, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_operation(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Operation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _KubeObject_namespace(ctx context.Context, field graphql.CollectedField, obj *model.KubeObject) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -14204,6 +17794,712 @@ func (ec *executionContext) _KubeObjectResponse_kubeObj(ctx context.Context, fie
 	res := resTmp.([]*model.KubeObject)
 	fc.Result = res
 	return ec.marshalNKubeObject2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeObject(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_probeTimeout(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbeTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_interval(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Interval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_retry(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Retry, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_attempt(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Attempt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbePollingInterval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_initialDelay(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InitialDelay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EvaluationTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StopOnFailure, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_command(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Command, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_comparator(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Comparator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Comparator)
+	fc.Result = res
+	return ec.marshalNComparator2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparator(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesCMDProbe_source(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesCMDProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesCMDProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Source, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_probeTimeout(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbeTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_interval(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Interval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_retry(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Retry, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_attempt(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Attempt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbePollingInterval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_initialDelay(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InitialDelay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EvaluationTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StopOnFailure, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_url(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_method(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Method, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Method)
+	fc.Result = res
+	return ec.marshalNMethod2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethod(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _KubernetesHTTPProbe_insecureSkipVerify(ctx context.Context, field graphql.CollectedField, obj *model.KubernetesHTTPProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "KubernetesHTTPProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InsecureSkipVerify, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Link_name(ctx context.Context, field graphql.CollectedField, obj *model.Link) (ret graphql.Marshaler) {
@@ -14711,6 +19007,68 @@ func (ec *executionContext) _Metadata_annotations(ctx context.Context, field gra
 	res := resTmp.(*model.Annotation)
 	fc.Result = res
 	return ec.marshalNAnnotation2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐAnnotation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Method_get(ctx context.Context, field graphql.CollectedField, obj *model.Method) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Method",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Get, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Get)
+	fc.Result = res
+	return ec.marshalOGET2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGet(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Method_post(ctx context.Context, field graphql.CollectedField, obj *model.Method) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Method",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Post, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Post)
+	fc.Result = res
+	return ec.marshalOPOST2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createChaosExperiment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -15891,7 +20249,7 @@ func (ec *executionContext) _Mutation_enableGitOps(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().EnableGitOps(rctx, args["configurations"].(model.GitConfig))
+			return ec.resolvers.Mutation().EnableGitOps(rctx, args["projectID"].(string), args["configurations"].(model.GitConfig))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -16013,7 +20371,7 @@ func (ec *executionContext) _Mutation_updateGitOps(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateGitOps(rctx, args["configurations"].(model.GitConfig))
+			return ec.resolvers.Mutation().UpdateGitOps(rctx, args["projectID"].(string), args["configurations"].(model.GitConfig))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -16232,6 +20590,189 @@ func (ec *executionContext) _Mutation_deleteImageRegistry(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_addProbe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addProbe_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AddProbe(rctx, args["request"].(model.ProbeRequest), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Probe); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model.Probe`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Probe)
+	fc.Result = res
+	return ec.marshalNProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateProbe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateProbe_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateProbe(rctx, args["request"].(model.ProbeRequest), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteProbe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteProbe_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteProbe(rctx, args["probeName"].(string), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ObjectData_labels(ctx context.Context, field graphql.CollectedField, obj *model.ObjectData) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16295,6 +20836,551 @@ func (ec *executionContext) _ObjectData_name(ctx context.Context, field graphql.
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _POST_contentType(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "POST",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ContentType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _POST_body(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "POST",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Body, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _POST_bodyPath(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "POST",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BodyPath, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _POST_criteria(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "POST",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Criteria, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _POST_responseCode(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "POST",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResponseCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_probeTimeout(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbeTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_interval(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Interval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_retry(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Retry, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_attempt(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Attempt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_probePollingInterval(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProbePollingInterval, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_initialDelay(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InitialDelay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_evaluationTimeout(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EvaluationTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_stopOnFailure(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StopOnFailure, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_endpoint(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Endpoint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_query(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Query, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_queryPath(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.QueryPath, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PROMProbe_comparator(ctx context.Context, field graphql.CollectedField, obj *model.PROMProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "PROMProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Comparator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Comparator)
+	fc.Result = res
+	return ec.marshalNComparator2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparator(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _PackageInformation_packageName(ctx context.Context, field graphql.CollectedField, obj *model.PackageInformation) (ret graphql.Marshaler) {
@@ -16603,6 +21689,622 @@ func (ec *executionContext) _PredefinedExperimentList_experimentManifest(ctx con
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Probe_projectID(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_name(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_description(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_tags(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_type(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.ProbeType)
+	fc.Result = res
+	return ec.marshalNProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_infrastructureType(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InfrastructureType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.InfrastructureType)
+	fc.Result = res
+	return ec.marshalNInfrastructureType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfrastructureType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_kubernetesHTTPProperties(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KubernetesHTTPProperties, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.KubernetesHTTPProbe)
+	fc.Result = res
+	return ec.marshalOKubernetesHTTPProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_kubernetesCMDProperties(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KubernetesCMDProperties, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.KubernetesCMDProbe)
+	fc.Result = res
+	return ec.marshalOKubernetesCMDProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_k8sProperties(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.K8sProperties, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.K8SProbe)
+	fc.Result = res
+	return ec.marshalOK8SProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_promProperties(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PromProperties, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PROMProbe)
+	fc.Result = res
+	return ec.marshalOPROMProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_recentExecutions(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecentExecutions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ProbeRecentExecutions)
+	fc.Result = res
+	return ec.marshalOProbeRecentExecutions2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRecentExecutionsᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_referencedBy(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReferencedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_updatedBy(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserDetails)
+	fc.Result = res
+	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Probe_createdBy(ctx context.Context, field graphql.CollectedField, obj *model.Probe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Probe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserDetails)
+	fc.Result = res
+	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProbeRecentExecutions_faultName(ctx context.Context, field graphql.CollectedField, obj *model.ProbeRecentExecutions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProbeRecentExecutions",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FaultName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProbeRecentExecutions_status(ctx context.Context, field graphql.CollectedField, obj *model.ProbeRecentExecutions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProbeRecentExecutions",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProbeRecentExecutions_executedByExperiment(ctx context.Context, field graphql.CollectedField, obj *model.ProbeRecentExecutions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProbeRecentExecutions",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExecutedByExperiment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ExecutedByExperiment)
+	fc.Result = res
+	return ec.marshalNExecutedByExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutedByExperiment(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Provider_name(ctx context.Context, field graphql.CollectedField, obj *model.Provider) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16784,7 +22486,7 @@ func (ec *executionContext) _Query_getExperimentRun(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetExperimentRun(rctx, args["projectID"].(string), args["experimentRunID"].(string))
+		return ec.resolvers.Query().GetExperimentRun(rctx, args["projectID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17970,7 +23672,7 @@ func (ec *executionContext) _Query_getImageRegistry(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetImageRegistry(rctx, args["imageRegistryID"].(string), args["projectID"].(string))
+			return ec.resolvers.Query().GetImageRegistry(rctx, args["projectID"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authorized == nil {
@@ -18004,6 +23706,372 @@ func (ec *executionContext) _Query_getImageRegistry(ctx context.Context, field g
 	res := resTmp.(*model.ImageRegistryResponse)
 	fc.Result = res
 	return ec.marshalNImageRegistryResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐImageRegistryResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_listProbes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_listProbes_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ListProbes(rctx, args["projectID"].(string), args["infrastructureType"].(*model.InfrastructureType), args["probeNames"].([]string), args["filter"].(*model.ProbeFilterInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.Probe); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model.Probe`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Probe)
+	fc.Result = res
+	return ec.marshalNProbe2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getProbe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getProbe_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetProbe(rctx, args["projectID"].(string), args["probeName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.Probe); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model.Probe`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Probe)
+	fc.Result = res
+	return ec.marshalNProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getProbeYAML(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getProbeYAML_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetProbeYaml(rctx, args["projectID"].(string), args["request"].(model.GetProbeYAMLRequest))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(string); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getProbeReference(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getProbeReference_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetProbeReference(rctx, args["projectID"].(string), args["probeName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GetProbeReferenceResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model.GetProbeReferenceResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GetProbeReferenceResponse)
+	fc.Result = res
+	return ec.marshalNGetProbeReferenceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbeReferenceResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_getProbesInExperimentRun(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getProbesInExperimentRun_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetProbesInExperimentRun(rctx, args["projectID"].(string), args["experimentRunID"].(string), args["faultName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.GetProbesInExperimentRunResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model.GetProbesInExperimentRunResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GetProbesInExperimentRunResponse)
+	fc.Result = res
+	return ec.marshalNGetProbesInExperimentRunResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbesInExperimentRunResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_validateUniqueProbe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_validateUniqueProbe_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ValidateUniqueProbe(rctx, args["projectID"].(string), args["probeName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -18073,6 +24141,108 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecentExecutions_faultName(ctx context.Context, field graphql.CollectedField, obj *model.RecentExecutions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RecentExecutions",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FaultName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecentExecutions_mode(ctx context.Context, field graphql.CollectedField, obj *model.RecentExecutions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RecentExecutions",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Mode)
+	fc.Result = res
+	return ec.marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecentExecutions_executionHistory(ctx context.Context, field graphql.CollectedField, obj *model.RecentExecutions) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RecentExecutions",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExecutionHistory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ExecutionHistory)
+	fc.Result = res
+	return ec.marshalNExecutionHistory2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutionHistoryᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _RecentExperimentRun_experimentRunID(ctx context.Context, field graphql.CollectedField, obj *model.RecentExperimentRun) (ret graphql.Marshaler) {
@@ -18302,6 +24472,40 @@ func (ec *executionContext) _RecentExperimentRun_updatedBy(ctx context.Context, 
 	res := resTmp.(*model.UserDetails)
 	fc.Result = res
 	return ec.marshalOUserDetails2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐUserDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _RecentExperimentRun_runSequence(ctx context.Context, field graphql.CollectedField, obj *model.RecentExperimentRun) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "RecentExperimentRun",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RunSequence, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _RegisterInfraResponse_token(ctx context.Context, field graphql.CollectedField, obj *model.RegisterInfraResponse) (ret graphql.Marshaler) {
@@ -19101,6 +25305,71 @@ func (ec *executionContext) _Spec_chaosType(ctx context.Context, field graphql.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ChaosType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Status_verdict(ctx context.Context, field graphql.CollectedField, obj *model.Status) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Status",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Verdict, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.ProbeVerdict)
+	fc.Result = res
+	return ec.marshalNProbeVerdict2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeVerdict(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Status_description(ctx context.Context, field graphql.CollectedField, obj *model.Status) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Status",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20662,6 +26931,84 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCMDProbeRequest(ctx context.Context, obj interface{}) (model.CMDProbeRequest, error) {
+	var it model.CMDProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeTimeout":
+			var err error
+			it.ProbeTimeout, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "interval":
+			var err error
+			it.Interval, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retry":
+			var err error
+			it.Retry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "attempt":
+			var err error
+			it.Attempt, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "probePollingInterval":
+			var err error
+			it.ProbePollingInterval, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "initialDelay":
+			var err error
+			it.InitialDelay, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "evaluationTimeout":
+			var err error
+			it.EvaluationTimeout, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopOnFailure":
+			var err error
+			it.StopOnFailure, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "command":
+			var err error
+			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "comparator":
+			var err error
+			it.Comparator, err = ec.unmarshalNComparatorInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparatorInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "source":
+			var err error
+			it.Source, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputChaosExperimentRequest(ctx context.Context, obj interface{}) (model.ChaosExperimentRequest, error) {
 	var it model.ChaosExperimentRequest
 	var asMap = obj.(map[string]interface{})
@@ -20833,6 +27180,36 @@ func (ec *executionContext) unmarshalInputCloningInput(ctx context.Context, obj 
 		case "isDefault":
 			var err error
 			it.IsDefault, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputComparatorInput(ctx context.Context, obj interface{}) (model.ComparatorInput, error) {
+	var it model.ComparatorInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "type":
+			var err error
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+			it.Value, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "criteria":
+			var err error
+			it.Criteria, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21358,18 +27735,60 @@ func (ec *executionContext) unmarshalInputExperimentSortInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGETRequest(ctx context.Context, obj interface{}) (model.GETRequest, error) {
+	var it model.GETRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "criteria":
+			var err error
+			it.Criteria, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "responseCode":
+			var err error
+			it.ResponseCode, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputGetProbeYAMLRequest(ctx context.Context, obj interface{}) (model.GetProbeYAMLRequest, error) {
+	var it model.GetProbeYAMLRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeName":
+			var err error
+			it.ProbeName, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mode":
+			var err error
+			it.Mode, err = ec.unmarshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGitConfig(ctx context.Context, obj interface{}) (model.GitConfig, error) {
 	var it model.GitConfig
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "projectID":
-			var err error
-			it.ProjectID, err = ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "branch":
 			var err error
 			it.Branch, err = ec.unmarshalNString2string(ctx, v)
@@ -21409,6 +27828,84 @@ func (ec *executionContext) unmarshalInputGitConfig(ctx context.Context, obj int
 		case "sshPrivateKey":
 			var err error
 			it.SSHPrivateKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputHTTPProbeRequest(ctx context.Context, obj interface{}) (model.HTTPProbeRequest, error) {
+	var it model.HTTPProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeTimeout":
+			var err error
+			it.ProbeTimeout, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "interval":
+			var err error
+			it.Interval, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retry":
+			var err error
+			it.Retry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "attempt":
+			var err error
+			it.Attempt, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "probePollingInterval":
+			var err error
+			it.ProbePollingInterval, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "initialDelay":
+			var err error
+			it.InitialDelay, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "evaluationTimeout":
+			var err error
+			it.EvaluationTimeout, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopOnFailure":
+			var err error
+			it.StopOnFailure, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "method":
+			var err error
+			it.Method, err = ec.unmarshalNMethodRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethodRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "insecureSkipVerify":
+			var err error
+			it.InsecureSkipVerify, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21556,6 +28053,108 @@ func (ec *executionContext) unmarshalInputInfraIdentity(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputK8SProbeRequest(ctx context.Context, obj interface{}) (model.K8SProbeRequest, error) {
+	var it model.K8SProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeTimeout":
+			var err error
+			it.ProbeTimeout, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "interval":
+			var err error
+			it.Interval, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retry":
+			var err error
+			it.Retry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "attempt":
+			var err error
+			it.Attempt, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "probePollingInterval":
+			var err error
+			it.ProbePollingInterval, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "initialDelay":
+			var err error
+			it.InitialDelay, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "evaluationTimeout":
+			var err error
+			it.EvaluationTimeout, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopOnFailure":
+			var err error
+			it.StopOnFailure, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "group":
+			var err error
+			it.Group, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "version":
+			var err error
+			it.Version, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "resource":
+			var err error
+			it.Resource, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "namespace":
+			var err error
+			it.Namespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "fieldSelector":
+			var err error
+			it.FieldSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "labelSelector":
+			var err error
+			it.LabelSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "operation":
+			var err error
+			it.Operation, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputKubeGVRRequest(ctx context.Context, obj interface{}) (model.KubeGVRRequest, error) {
 	var it model.KubeGVRRequest
 	var asMap = obj.(map[string]interface{})
@@ -21643,6 +28242,162 @@ func (ec *executionContext) unmarshalInputKubeObjectRequest(ctx context.Context,
 		case "workloads":
 			var err error
 			it.Workloads, err = ec.unmarshalOWorkload2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐWorkload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubernetesCMDProbeRequest(ctx context.Context, obj interface{}) (model.KubernetesCMDProbeRequest, error) {
+	var it model.KubernetesCMDProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeTimeout":
+			var err error
+			it.ProbeTimeout, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "interval":
+			var err error
+			it.Interval, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retry":
+			var err error
+			it.Retry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "attempt":
+			var err error
+			it.Attempt, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "probePollingInterval":
+			var err error
+			it.ProbePollingInterval, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "initialDelay":
+			var err error
+			it.InitialDelay, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "evaluationTimeout":
+			var err error
+			it.EvaluationTimeout, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopOnFailure":
+			var err error
+			it.StopOnFailure, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "command":
+			var err error
+			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "comparator":
+			var err error
+			it.Comparator, err = ec.unmarshalNComparatorInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparatorInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "source":
+			var err error
+			it.Source, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputKubernetesHTTPProbeRequest(ctx context.Context, obj interface{}) (model.KubernetesHTTPProbeRequest, error) {
+	var it model.KubernetesHTTPProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeTimeout":
+			var err error
+			it.ProbeTimeout, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "interval":
+			var err error
+			it.Interval, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retry":
+			var err error
+			it.Retry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "attempt":
+			var err error
+			it.Attempt, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "probePollingInterval":
+			var err error
+			it.ProbePollingInterval, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "initialDelay":
+			var err error
+			it.InitialDelay, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "evaluationTimeout":
+			var err error
+			it.EvaluationTimeout, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopOnFailure":
+			var err error
+			it.StopOnFailure, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "url":
+			var err error
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "method":
+			var err error
+			it.Method, err = ec.unmarshalNMethodRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethodRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "insecureSkipVerify":
+			var err error
+			it.InsecureSkipVerify, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21826,6 +28581,30 @@ func (ec *executionContext) unmarshalInputListInfraRequest(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputMethodRequest(ctx context.Context, obj interface{}) (model.MethodRequest, error) {
+	var it model.MethodRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "get":
+			var err error
+			it.Get, err = ec.unmarshalOGETRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGETRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "post":
+			var err error
+			it.Post, err = ec.unmarshalOPOSTRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPOSTRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewInfraEventRequest(ctx context.Context, obj interface{}) (model.NewInfraEventRequest, error) {
 	var it model.NewInfraEventRequest
 	var asMap = obj.(map[string]interface{})
@@ -21853,6 +28632,132 @@ func (ec *executionContext) unmarshalInputNewInfraEventRequest(ctx context.Conte
 		case "accessKey":
 			var err error
 			it.AccessKey, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPOSTRequest(ctx context.Context, obj interface{}) (model.POSTRequest, error) {
+	var it model.POSTRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "contentType":
+			var err error
+			it.ContentType, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "body":
+			var err error
+			it.Body, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "bodyPath":
+			var err error
+			it.BodyPath, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "criteria":
+			var err error
+			it.Criteria, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "responseCode":
+			var err error
+			it.ResponseCode, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPROMProbeRequest(ctx context.Context, obj interface{}) (model.PROMProbeRequest, error) {
+	var it model.PROMProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "probeTimeout":
+			var err error
+			it.ProbeTimeout, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "interval":
+			var err error
+			it.Interval, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "retry":
+			var err error
+			it.Retry, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "attempt":
+			var err error
+			it.Attempt, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "probePollingInterval":
+			var err error
+			it.ProbePollingInterval, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "initialDelay":
+			var err error
+			it.InitialDelay, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "evaluationTimeout":
+			var err error
+			it.EvaluationTimeout, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopOnFailure":
+			var err error
+			it.StopOnFailure, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "endpoint":
+			var err error
+			it.Endpoint, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "query":
+			var err error
+			it.Query, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "queryPath":
+			var err error
+			it.QueryPath, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "comparator":
+			var err error
+			it.Comparator, err = ec.unmarshalNComparatorInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparatorInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -21985,6 +28890,102 @@ func (ec *executionContext) unmarshalInputPodLogRequest(ctx context.Context, obj
 		case "chaosNamespace":
 			var err error
 			it.ChaosNamespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputProbeFilterInput(ctx context.Context, obj interface{}) (model.ProbeFilterInput, error) {
+	var it model.ProbeFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "dateRange":
+			var err error
+			it.DateRange, err = ec.unmarshalODateRange2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐDateRange(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+			it.Type, err = ec.unmarshalOProbeType2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputProbeRequest(ctx context.Context, obj interface{}) (model.ProbeRequest, error) {
+	var it model.ProbeRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+			it.Name, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tags":
+			var err error
+			it.Tags, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "type":
+			var err error
+			it.Type, err = ec.unmarshalNProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "infrastructureType":
+			var err error
+			it.InfrastructureType, err = ec.unmarshalNInfrastructureType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐInfrastructureType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kubernetesHTTPProperties":
+			var err error
+			it.KubernetesHTTPProperties, err = ec.unmarshalOKubernetesHTTPProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbeRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "kubernetesCMDProperties":
+			var err error
+			it.KubernetesCMDProperties, err = ec.unmarshalOKubernetesCMDProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbeRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "k8sProperties":
+			var err error
+			it.K8sProperties, err = ec.unmarshalOK8SProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbeRequest(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "promProperties":
+			var err error
+			it.PromProperties, err = ec.unmarshalOPROMProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbeRequest(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -22436,6 +29437,50 @@ func (ec *executionContext) _Audit(ctx context.Context, sel ast.SelectionSet, ob
 			return graphql.Null
 		}
 		return ec._ImageRegistryResponse(ctx, sel, obj)
+	case model.Probe:
+		return ec._Probe(ctx, sel, &obj)
+	case *model.Probe:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Probe(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
+func (ec *executionContext) _CommonProbeProperties(ctx context.Context, sel ast.SelectionSet, obj model.CommonProbeProperties) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.KubernetesCMDProbe:
+		return ec._KubernetesCMDProbe(ctx, sel, &obj)
+	case *model.KubernetesCMDProbe:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._KubernetesCMDProbe(ctx, sel, obj)
+	case model.PROMProbe:
+		return ec._PROMProbe(ctx, sel, &obj)
+	case *model.PROMProbe:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._PROMProbe(ctx, sel, obj)
+	case model.KubernetesHTTPProbe:
+		return ec._KubernetesHTTPProbe(ctx, sel, &obj)
+	case *model.KubernetesHTTPProbe:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._KubernetesHTTPProbe(ctx, sel, obj)
+	case model.K8SProbe:
+		return ec._K8SProbe(ctx, sel, &obj)
+	case *model.K8SProbe:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._K8SProbe(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -22480,6 +29525,13 @@ func (ec *executionContext) _ResourceDetails(ctx context.Context, sel ast.Select
 			return graphql.Null
 		}
 		return ec._Environment(ctx, sel, obj)
+	case model.Probe:
+		return ec._Probe(ctx, sel, &obj)
+	case *model.Probe:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Probe(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -22906,6 +29958,43 @@ func (ec *executionContext) _Chart(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
+var comparatorImplementors = []string{"Comparator"}
+
+func (ec *executionContext) _Comparator(ctx context.Context, sel ast.SelectionSet, obj *model.Comparator) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, comparatorImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Comparator")
+		case "type":
+			out.Values[i] = ec._Comparator_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "value":
+			out.Values[i] = ec._Comparator_value(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "criteria":
+			out.Values[i] = ec._Comparator_criteria(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var confirmInfraRegistrationResponseImplementors = []string{"ConfirmInfraRegistrationResponse"}
 
 func (ec *executionContext) _ConfirmInfraRegistrationResponse(ctx context.Context, sel ast.SelectionSet, obj *model.ConfirmInfraRegistrationResponse) graphql.Marshaler {
@@ -22990,6 +30079,87 @@ func (ec *executionContext) _Environment(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Environment_isRemoved(ctx, field, obj)
 		case "infraIDs":
 			out.Values[i] = ec._Environment_infraIDs(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var executedByExperimentImplementors = []string{"ExecutedByExperiment"}
+
+func (ec *executionContext) _ExecutedByExperiment(ctx context.Context, sel ast.SelectionSet, obj *model.ExecutedByExperiment) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, executedByExperimentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExecutedByExperiment")
+		case "experimentID":
+			out.Values[i] = ec._ExecutedByExperiment_experimentID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "experimentName":
+			out.Values[i] = ec._ExecutedByExperiment_experimentName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._ExecutedByExperiment_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedBy":
+			out.Values[i] = ec._ExecutedByExperiment_updatedBy(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var executionHistoryImplementors = []string{"ExecutionHistory"}
+
+func (ec *executionContext) _ExecutionHistory(ctx context.Context, sel ast.SelectionSet, obj *model.ExecutionHistory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, executionHistoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExecutionHistory")
+		case "mode":
+			out.Values[i] = ec._ExecutionHistory_mode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "faultName":
+			out.Values[i] = ec._ExecutionHistory_faultName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+			out.Values[i] = ec._ExecutionHistory_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "executedByExperiment":
+			out.Values[i] = ec._ExecutionHistory_executedByExperiment(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23210,6 +30380,13 @@ func (ec *executionContext) _ExperimentRun(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._ExperimentRun_updatedBy(ctx, field, obj)
 		case "createdBy":
 			out.Values[i] = ec._ExperimentRun_createdBy(ctx, field, obj)
+		case "notifyID":
+			out.Values[i] = ec._ExperimentRun_notifyID(ctx, field, obj)
+		case "runSequence":
+			out.Values[i] = ec._ExperimentRun_runSequence(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23323,6 +30500,38 @@ func (ec *executionContext) _FaultList(ctx context.Context, sel ast.SelectionSet
 			}
 		case "plan":
 			out.Values[i] = ec._FaultList_plan(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var gETImplementors = []string{"GET"}
+
+func (ec *executionContext) _GET(ctx context.Context, sel ast.SelectionSet, obj *model.Get) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gETImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GET")
+		case "criteria":
+			out.Values[i] = ec._GET_criteria(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "responseCode":
+			out.Values[i] = ec._GET_responseCode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23507,6 +30716,85 @@ func (ec *executionContext) _GetInfraStatsResponse(ctx context.Context, sel ast.
 			}
 		case "totalNonConfirmedInfrastructures":
 			out.Values[i] = ec._GetInfraStatsResponse_totalNonConfirmedInfrastructures(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var getProbeReferenceResponseImplementors = []string{"GetProbeReferenceResponse"}
+
+func (ec *executionContext) _GetProbeReferenceResponse(ctx context.Context, sel ast.SelectionSet, obj *model.GetProbeReferenceResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, getProbeReferenceResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GetProbeReferenceResponse")
+		case "projectID":
+			out.Values[i] = ec._GetProbeReferenceResponse_projectID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._GetProbeReferenceResponse_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "totalRuns":
+			out.Values[i] = ec._GetProbeReferenceResponse_totalRuns(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "recentExecutions":
+			out.Values[i] = ec._GetProbeReferenceResponse_recentExecutions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var getProbesInExperimentRunResponseImplementors = []string{"GetProbesInExperimentRunResponse"}
+
+func (ec *executionContext) _GetProbesInExperimentRunResponse(ctx context.Context, sel ast.SelectionSet, obj *model.GetProbesInExperimentRunResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, getProbesInExperimentRunResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GetProbesInExperimentRunResponse")
+		case "probe":
+			out.Values[i] = ec._GetProbesInExperimentRunResponse_probe(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "mode":
+			out.Values[i] = ec._GetProbesInExperimentRunResponse_mode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+			out.Values[i] = ec._GetProbesInExperimentRunResponse_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -23893,6 +31181,73 @@ func (ec *executionContext) _InfraVersionDetails(ctx context.Context, sel ast.Se
 	return out
 }
 
+var k8SProbeImplementors = []string{"K8SProbe", "CommonProbeProperties"}
+
+func (ec *executionContext) _K8SProbe(ctx context.Context, sel ast.SelectionSet, obj *model.K8SProbe) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, k8SProbeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("K8SProbe")
+		case "probeTimeout":
+			out.Values[i] = ec._K8SProbe_probeTimeout(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "interval":
+			out.Values[i] = ec._K8SProbe_interval(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "retry":
+			out.Values[i] = ec._K8SProbe_retry(ctx, field, obj)
+		case "attempt":
+			out.Values[i] = ec._K8SProbe_attempt(ctx, field, obj)
+		case "probePollingInterval":
+			out.Values[i] = ec._K8SProbe_probePollingInterval(ctx, field, obj)
+		case "initialDelay":
+			out.Values[i] = ec._K8SProbe_initialDelay(ctx, field, obj)
+		case "evaluationTimeout":
+			out.Values[i] = ec._K8SProbe_evaluationTimeout(ctx, field, obj)
+		case "stopOnFailure":
+			out.Values[i] = ec._K8SProbe_stopOnFailure(ctx, field, obj)
+		case "group":
+			out.Values[i] = ec._K8SProbe_group(ctx, field, obj)
+		case "version":
+			out.Values[i] = ec._K8SProbe_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "resource":
+			out.Values[i] = ec._K8SProbe_resource(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "namespace":
+			out.Values[i] = ec._K8SProbe_namespace(ctx, field, obj)
+		case "fieldSelector":
+			out.Values[i] = ec._K8SProbe_fieldSelector(ctx, field, obj)
+		case "labelSelector":
+			out.Values[i] = ec._K8SProbe_labelSelector(ctx, field, obj)
+		case "operation":
+			out.Values[i] = ec._K8SProbe_operation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var kubeObjectImplementors = []string{"KubeObject"}
 
 func (ec *executionContext) _KubeObject(ctx context.Context, sel ast.SelectionSet, obj *model.KubeObject) graphql.Marshaler {
@@ -23946,6 +31301,118 @@ func (ec *executionContext) _KubeObjectResponse(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var kubernetesCMDProbeImplementors = []string{"KubernetesCMDProbe", "CommonProbeProperties"}
+
+func (ec *executionContext) _KubernetesCMDProbe(ctx context.Context, sel ast.SelectionSet, obj *model.KubernetesCMDProbe) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubernetesCMDProbeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubernetesCMDProbe")
+		case "probeTimeout":
+			out.Values[i] = ec._KubernetesCMDProbe_probeTimeout(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "interval":
+			out.Values[i] = ec._KubernetesCMDProbe_interval(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "retry":
+			out.Values[i] = ec._KubernetesCMDProbe_retry(ctx, field, obj)
+		case "attempt":
+			out.Values[i] = ec._KubernetesCMDProbe_attempt(ctx, field, obj)
+		case "probePollingInterval":
+			out.Values[i] = ec._KubernetesCMDProbe_probePollingInterval(ctx, field, obj)
+		case "initialDelay":
+			out.Values[i] = ec._KubernetesCMDProbe_initialDelay(ctx, field, obj)
+		case "evaluationTimeout":
+			out.Values[i] = ec._KubernetesCMDProbe_evaluationTimeout(ctx, field, obj)
+		case "stopOnFailure":
+			out.Values[i] = ec._KubernetesCMDProbe_stopOnFailure(ctx, field, obj)
+		case "command":
+			out.Values[i] = ec._KubernetesCMDProbe_command(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "comparator":
+			out.Values[i] = ec._KubernetesCMDProbe_comparator(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "source":
+			out.Values[i] = ec._KubernetesCMDProbe_source(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var kubernetesHTTPProbeImplementors = []string{"KubernetesHTTPProbe", "CommonProbeProperties"}
+
+func (ec *executionContext) _KubernetesHTTPProbe(ctx context.Context, sel ast.SelectionSet, obj *model.KubernetesHTTPProbe) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kubernetesHTTPProbeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("KubernetesHTTPProbe")
+		case "probeTimeout":
+			out.Values[i] = ec._KubernetesHTTPProbe_probeTimeout(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "interval":
+			out.Values[i] = ec._KubernetesHTTPProbe_interval(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "retry":
+			out.Values[i] = ec._KubernetesHTTPProbe_retry(ctx, field, obj)
+		case "attempt":
+			out.Values[i] = ec._KubernetesHTTPProbe_attempt(ctx, field, obj)
+		case "probePollingInterval":
+			out.Values[i] = ec._KubernetesHTTPProbe_probePollingInterval(ctx, field, obj)
+		case "initialDelay":
+			out.Values[i] = ec._KubernetesHTTPProbe_initialDelay(ctx, field, obj)
+		case "evaluationTimeout":
+			out.Values[i] = ec._KubernetesHTTPProbe_evaluationTimeout(ctx, field, obj)
+		case "stopOnFailure":
+			out.Values[i] = ec._KubernetesHTTPProbe_stopOnFailure(ctx, field, obj)
+		case "url":
+			out.Values[i] = ec._KubernetesHTTPProbe_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "method":
+			out.Values[i] = ec._KubernetesHTTPProbe_method(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "insecureSkipVerify":
+			out.Values[i] = ec._KubernetesHTTPProbe_insecureSkipVerify(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24183,6 +31650,32 @@ func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var methodImplementors = []string{"Method"}
+
+func (ec *executionContext) _Method(ctx context.Context, sel ast.SelectionSet, obj *model.Method) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, methodImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Method")
+		case "get":
+			out.Values[i] = ec._Method_get(ctx, field, obj)
+		case "post":
+			out.Values[i] = ec._Method_post(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -24340,6 +31833,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "addProbe":
+			out.Values[i] = ec._Mutation_addProbe(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateProbe":
+			out.Values[i] = ec._Mutation_updateProbe(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteProbe":
+			out.Values[i] = ec._Mutation_deleteProbe(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24366,6 +31874,102 @@ func (ec *executionContext) _ObjectData(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._ObjectData_labels(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._ObjectData_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var pOSTImplementors = []string{"POST"}
+
+func (ec *executionContext) _POST(ctx context.Context, sel ast.SelectionSet, obj *model.Post) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pOSTImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("POST")
+		case "contentType":
+			out.Values[i] = ec._POST_contentType(ctx, field, obj)
+		case "body":
+			out.Values[i] = ec._POST_body(ctx, field, obj)
+		case "bodyPath":
+			out.Values[i] = ec._POST_bodyPath(ctx, field, obj)
+		case "criteria":
+			out.Values[i] = ec._POST_criteria(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "responseCode":
+			out.Values[i] = ec._POST_responseCode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var pROMProbeImplementors = []string{"PROMProbe", "CommonProbeProperties"}
+
+func (ec *executionContext) _PROMProbe(ctx context.Context, sel ast.SelectionSet, obj *model.PROMProbe) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pROMProbeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PROMProbe")
+		case "probeTimeout":
+			out.Values[i] = ec._PROMProbe_probeTimeout(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "interval":
+			out.Values[i] = ec._PROMProbe_interval(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "retry":
+			out.Values[i] = ec._PROMProbe_retry(ctx, field, obj)
+		case "attempt":
+			out.Values[i] = ec._PROMProbe_attempt(ctx, field, obj)
+		case "probePollingInterval":
+			out.Values[i] = ec._PROMProbe_probePollingInterval(ctx, field, obj)
+		case "initialDelay":
+			out.Values[i] = ec._PROMProbe_initialDelay(ctx, field, obj)
+		case "evaluationTimeout":
+			out.Values[i] = ec._PROMProbe_evaluationTimeout(ctx, field, obj)
+		case "stopOnFailure":
+			out.Values[i] = ec._PROMProbe_stopOnFailure(ctx, field, obj)
+		case "endpoint":
+			out.Values[i] = ec._PROMProbe_endpoint(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "query":
+			out.Values[i] = ec._PROMProbe_query(ctx, field, obj)
+		case "queryPath":
+			out.Values[i] = ec._PROMProbe_queryPath(ctx, field, obj)
+		case "comparator":
+			out.Values[i] = ec._PROMProbe_comparator(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -24477,6 +32081,115 @@ func (ec *executionContext) _PredefinedExperimentList(ctx context.Context, sel a
 			}
 		case "experimentManifest":
 			out.Values[i] = ec._PredefinedExperimentList_experimentManifest(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var probeImplementors = []string{"Probe", "ResourceDetails", "Audit"}
+
+func (ec *executionContext) _Probe(ctx context.Context, sel ast.SelectionSet, obj *model.Probe) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, probeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Probe")
+		case "projectID":
+			out.Values[i] = ec._Probe_projectID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Probe_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._Probe_description(ctx, field, obj)
+		case "tags":
+			out.Values[i] = ec._Probe_tags(ctx, field, obj)
+		case "type":
+			out.Values[i] = ec._Probe_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "infrastructureType":
+			out.Values[i] = ec._Probe_infrastructureType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "kubernetesHTTPProperties":
+			out.Values[i] = ec._Probe_kubernetesHTTPProperties(ctx, field, obj)
+		case "kubernetesCMDProperties":
+			out.Values[i] = ec._Probe_kubernetesCMDProperties(ctx, field, obj)
+		case "k8sProperties":
+			out.Values[i] = ec._Probe_k8sProperties(ctx, field, obj)
+		case "promProperties":
+			out.Values[i] = ec._Probe_promProperties(ctx, field, obj)
+		case "recentExecutions":
+			out.Values[i] = ec._Probe_recentExecutions(ctx, field, obj)
+		case "referencedBy":
+			out.Values[i] = ec._Probe_referencedBy(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Probe_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._Probe_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updatedBy":
+			out.Values[i] = ec._Probe_updatedBy(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._Probe_createdBy(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var probeRecentExecutionsImplementors = []string{"ProbeRecentExecutions"}
+
+func (ec *executionContext) _ProbeRecentExecutions(ctx context.Context, sel ast.SelectionSet, obj *model.ProbeRecentExecutions) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, probeRecentExecutionsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProbeRecentExecutions")
+		case "faultName":
+			out.Values[i] = ec._ProbeRecentExecutions_faultName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "status":
+			out.Values[i] = ec._ProbeRecentExecutions_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "executedByExperiment":
+			out.Values[i] = ec._ProbeRecentExecutions_executedByExperiment(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -24874,10 +32587,131 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "listProbes":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listProbes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getProbe":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getProbe(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getProbeYAML":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getProbeYAML(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getProbeReference":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getProbeReference(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "getProbesInExperimentRun":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getProbesInExperimentRun(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "validateUniqueProbe":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_validateUniqueProbe(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var recentExecutionsImplementors = []string{"RecentExecutions"}
+
+func (ec *executionContext) _RecentExecutions(ctx context.Context, sel ast.SelectionSet, obj *model.RecentExecutions) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recentExecutionsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecentExecutions")
+		case "faultName":
+			out.Values[i] = ec._RecentExecutions_faultName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "mode":
+			out.Values[i] = ec._RecentExecutions_mode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "executionHistory":
+			out.Values[i] = ec._RecentExecutions_executionHistory(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24926,6 +32760,11 @@ func (ec *executionContext) _RecentExperimentRun(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._RecentExperimentRun_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._RecentExperimentRun_updatedBy(ctx, field, obj)
+		case "runSequence":
+			out.Values[i] = ec._RecentExperimentRun_runSequence(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25172,6 +33011,35 @@ func (ec *executionContext) _Spec(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "chaosType":
 			out.Values[i] = ec._Spec_chaosType(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var statusImplementors = []string{"Status"}
+
+func (ec *executionContext) _Status(ctx context.Context, sel ast.SelectionSet, obj *model.Status) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, statusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Status")
+		case "verdict":
+			out.Values[i] = ec._Status_verdict(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "description":
+			out.Values[i] = ec._Status_description(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25742,6 +33610,32 @@ func (ec *executionContext) marshalNChart2ᚖgithubᚗcomᚋlitmuschaosᚋlitmus
 	return ec._Chart(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNComparator2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparator(ctx context.Context, sel ast.SelectionSet, v model.Comparator) graphql.Marshaler {
+	return ec._Comparator(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNComparator2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparator(ctx context.Context, sel ast.SelectionSet, v *model.Comparator) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Comparator(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNComparatorInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparatorInput(ctx context.Context, v interface{}) (model.ComparatorInput, error) {
+	return ec.unmarshalInputComparatorInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNComparatorInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparatorInput(ctx context.Context, v interface{}) (*model.ComparatorInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNComparatorInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐComparatorInput(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) marshalNConfirmInfraRegistrationResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐConfirmInfraRegistrationResponse(ctx context.Context, sel ast.SelectionSet, v model.ConfirmInfraRegistrationResponse) graphql.Marshaler {
 	return ec._ConfirmInfraRegistrationResponse(ctx, sel, &v)
 }
@@ -25780,6 +33674,71 @@ func (ec *executionContext) unmarshalNEnvironmentType2githubᚗcomᚋlitmuschaos
 
 func (ec *executionContext) marshalNEnvironmentType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx context.Context, sel ast.SelectionSet, v model.EnvironmentType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNExecutedByExperiment2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutedByExperiment(ctx context.Context, sel ast.SelectionSet, v model.ExecutedByExperiment) graphql.Marshaler {
+	return ec._ExecutedByExperiment(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExecutedByExperiment2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutedByExperiment(ctx context.Context, sel ast.SelectionSet, v *model.ExecutedByExperiment) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExecutedByExperiment(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNExecutionHistory2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutionHistory(ctx context.Context, sel ast.SelectionSet, v model.ExecutionHistory) graphql.Marshaler {
+	return ec._ExecutionHistory(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExecutionHistory2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutionHistoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ExecutionHistory) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNExecutionHistory2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutionHistory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNExecutionHistory2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExecutionHistory(ctx context.Context, sel ast.SelectionSet, v *model.ExecutionHistory) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExecutionHistory(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNExperiment2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐExperiment(ctx context.Context, sel ast.SelectionSet, v model.Experiment) graphql.Marshaler {
@@ -26094,6 +34053,61 @@ func (ec *executionContext) marshalNGetInfraStatsResponse2ᚖgithubᚗcomᚋlitm
 		return graphql.Null
 	}
 	return ec._GetInfraStatsResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGetProbeReferenceResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbeReferenceResponse(ctx context.Context, sel ast.SelectionSet, v model.GetProbeReferenceResponse) graphql.Marshaler {
+	return ec._GetProbeReferenceResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGetProbeReferenceResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbeReferenceResponse(ctx context.Context, sel ast.SelectionSet, v *model.GetProbeReferenceResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._GetProbeReferenceResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGetProbeYAMLRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbeYAMLRequest(ctx context.Context, v interface{}) (model.GetProbeYAMLRequest, error) {
+	return ec.unmarshalInputGetProbeYAMLRequest(ctx, v)
+}
+
+func (ec *executionContext) marshalNGetProbesInExperimentRunResponse2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbesInExperimentRunResponse(ctx context.Context, sel ast.SelectionSet, v []*model.GetProbesInExperimentRunResponse) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOGetProbesInExperimentRunResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbesInExperimentRunResponse(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalNGitConfig2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGitConfig(ctx context.Context, v interface{}) (model.GitConfig, error) {
@@ -26508,6 +34522,41 @@ func (ec *executionContext) marshalNMetadata2ᚖgithubᚗcomᚋlitmuschaosᚋlit
 	return ec._Metadata(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNMethod2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethod(ctx context.Context, sel ast.SelectionSet, v model.Method) graphql.Marshaler {
+	return ec._Method(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMethod2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethod(ctx context.Context, sel ast.SelectionSet, v *model.Method) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Method(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNMethodRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethodRequest(ctx context.Context, v interface{}) (model.MethodRequest, error) {
+	return ec.unmarshalInputMethodRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNMethodRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethodRequest(ctx context.Context, v interface{}) (*model.MethodRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNMethodRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMethodRequest(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx context.Context, v interface{}) (model.Mode, error) {
+	var res model.Mode
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNMode2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐMode(ctx context.Context, sel ast.SelectionSet, v model.Mode) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNObjectData2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐObjectData(ctx context.Context, sel ast.SelectionSet, v []*model.ObjectData) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -26632,6 +34681,93 @@ func (ec *executionContext) marshalNPredefinedExperimentList2ᚖgithubᚗcomᚋl
 	return ec._PredefinedExperimentList(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProbe2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx context.Context, sel ast.SelectionSet, v model.Probe) graphql.Marshaler {
+	return ec._Probe(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProbe2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx context.Context, sel ast.SelectionSet, v []*model.Probe) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx context.Context, sel ast.SelectionSet, v *model.Probe) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Probe(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProbeRecentExecutions2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRecentExecutions(ctx context.Context, sel ast.SelectionSet, v model.ProbeRecentExecutions) graphql.Marshaler {
+	return ec._ProbeRecentExecutions(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProbeRecentExecutions2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRecentExecutions(ctx context.Context, sel ast.SelectionSet, v *model.ProbeRecentExecutions) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ProbeRecentExecutions(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRequest(ctx context.Context, v interface{}) (model.ProbeRequest, error) {
+	return ec.unmarshalInputProbeRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalNProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, v interface{}) (model.ProbeType, error) {
+	var res model.ProbeType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, sel ast.SelectionSet, v model.ProbeType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNProbeVerdict2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeVerdict(ctx context.Context, v interface{}) (model.ProbeVerdict, error) {
+	var res model.ProbeVerdict
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNProbeVerdict2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeVerdict(ctx context.Context, sel ast.SelectionSet, v model.ProbeVerdict) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNProvider2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProvider(ctx context.Context, sel ast.SelectionSet, v model.Provider) graphql.Marshaler {
 	return ec._Provider(ctx, sel, &v)
 }
@@ -26644,6 +34780,43 @@ func (ec *executionContext) marshalNProvider2ᚖgithubᚗcomᚋlitmuschaosᚋlit
 		return graphql.Null
 	}
 	return ec._Provider(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecentExecutions2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExecutions(ctx context.Context, sel ast.SelectionSet, v []*model.RecentExecutions) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalORecentExecutions2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExecutions(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalNRegisterInfraRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRegisterInfraRequest(ctx context.Context, v interface{}) (model.RegisterInfraRequest, error) {
@@ -26759,6 +34932,20 @@ func (ec *executionContext) marshalNSpec2ᚖgithubᚗcomᚋlitmuschaosᚋlitmus�
 		return graphql.Null
 	}
 	return ec._Spec(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNStatus2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
+	return ec._Status(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNStatus2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v *model.Status) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Status(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -27532,6 +35719,40 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	return ec.marshalOFloat2float64(ctx, sel, *v)
 }
 
+func (ec *executionContext) marshalOGET2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGet(ctx context.Context, sel ast.SelectionSet, v model.Get) graphql.Marshaler {
+	return ec._GET(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOGET2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGet(ctx context.Context, sel ast.SelectionSet, v *model.Get) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GET(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGETRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGETRequest(ctx context.Context, v interface{}) (model.GETRequest, error) {
+	return ec.unmarshalInputGETRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOGETRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGETRequest(ctx context.Context, v interface{}) (*model.GETRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOGETRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGETRequest(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOGetProbesInExperimentRunResponse2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbesInExperimentRunResponse(ctx context.Context, sel ast.SelectionSet, v model.GetProbesInExperimentRunResponse) graphql.Marshaler {
+	return ec._GetProbesInExperimentRunResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOGetProbesInExperimentRunResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐGetProbesInExperimentRunResponse(ctx context.Context, sel ast.SelectionSet, v *model.GetProbesInExperimentRunResponse) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GetProbesInExperimentRunResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
 	return graphql.UnmarshalID(v)
 }
@@ -27824,6 +36045,29 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
+func (ec *executionContext) marshalOK8SProbe2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbe(ctx context.Context, sel ast.SelectionSet, v model.K8SProbe) graphql.Marshaler {
+	return ec._K8SProbe(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOK8SProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbe(ctx context.Context, sel ast.SelectionSet, v *model.K8SProbe) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._K8SProbe(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOK8SProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbeRequest(ctx context.Context, v interface{}) (model.K8SProbeRequest, error) {
+	return ec.unmarshalInputK8SProbeRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOK8SProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbeRequest(ctx context.Context, v interface{}) (*model.K8SProbeRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOK8SProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐK8SProbeRequest(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) unmarshalOKubeGVRRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubeGVRRequest(ctx context.Context, v interface{}) (model.KubeGVRRequest, error) {
 	return ec.unmarshalInputKubeGVRRequest(ctx, v)
 }
@@ -27845,6 +36089,52 @@ func (ec *executionContext) marshalOKubeObject2ᚖgithubᚗcomᚋlitmuschaosᚋl
 		return graphql.Null
 	}
 	return ec._KubeObject(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOKubernetesCMDProbe2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbe(ctx context.Context, sel ast.SelectionSet, v model.KubernetesCMDProbe) graphql.Marshaler {
+	return ec._KubernetesCMDProbe(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOKubernetesCMDProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbe(ctx context.Context, sel ast.SelectionSet, v *model.KubernetesCMDProbe) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._KubernetesCMDProbe(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOKubernetesCMDProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbeRequest(ctx context.Context, v interface{}) (model.KubernetesCMDProbeRequest, error) {
+	return ec.unmarshalInputKubernetesCMDProbeRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOKubernetesCMDProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbeRequest(ctx context.Context, v interface{}) (*model.KubernetesCMDProbeRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOKubernetesCMDProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesCMDProbeRequest(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOKubernetesHTTPProbe2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbe(ctx context.Context, sel ast.SelectionSet, v model.KubernetesHTTPProbe) graphql.Marshaler {
+	return ec._KubernetesHTTPProbe(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOKubernetesHTTPProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbe(ctx context.Context, sel ast.SelectionSet, v *model.KubernetesHTTPProbe) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._KubernetesHTTPProbe(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOKubernetesHTTPProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbeRequest(ctx context.Context, v interface{}) (model.KubernetesHTTPProbeRequest, error) {
+	return ec.unmarshalInputKubernetesHTTPProbeRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOKubernetesHTTPProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbeRequest(ctx context.Context, v interface{}) (*model.KubernetesHTTPProbeRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOKubernetesHTTPProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐKubernetesHTTPProbeRequest(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalOListChaosHubRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐListChaosHubRequest(ctx context.Context, v interface{}) (model.ListChaosHubRequest, error) {
@@ -27905,6 +36195,52 @@ func (ec *executionContext) marshalOObjectData2ᚖgithubᚗcomᚋlitmuschaosᚋl
 	return ec._ObjectData(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOPOST2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v model.Post) graphql.Marshaler {
+	return ec._POST(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOPOST2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *model.Post) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._POST(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPOSTRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPOSTRequest(ctx context.Context, v interface{}) (model.POSTRequest, error) {
+	return ec.unmarshalInputPOSTRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOPOSTRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPOSTRequest(ctx context.Context, v interface{}) (*model.POSTRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOPOSTRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPOSTRequest(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOPROMProbe2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbe(ctx context.Context, sel ast.SelectionSet, v model.PROMProbe) graphql.Marshaler {
+	return ec._PROMProbe(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOPROMProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbe(ctx context.Context, sel ast.SelectionSet, v *model.PROMProbe) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PROMProbe(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPROMProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbeRequest(ctx context.Context, v interface{}) (model.PROMProbeRequest, error) {
+	return ec.unmarshalInputPROMProbeRequest(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOPROMProbeRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbeRequest(ctx context.Context, v interface{}) (*model.PROMProbeRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOPROMProbeRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPROMProbeRequest(ctx, v)
+	return &res, err
+}
+
 func (ec *executionContext) unmarshalOPagination2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPagination(ctx context.Context, v interface{}) (model.Pagination, error) {
 	return ec.unmarshalInputPagination(ctx, v)
 }
@@ -27915,6 +36251,164 @@ func (ec *executionContext) unmarshalOPagination2ᚖgithubᚗcomᚋlitmuschaos�
 	}
 	res, err := ec.unmarshalOPagination2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐPagination(ctx, v)
 	return &res, err
+}
+
+func (ec *executionContext) marshalOProbe2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx context.Context, sel ast.SelectionSet, v model.Probe) graphql.Marshaler {
+	return ec._Probe(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOProbe2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbe(ctx context.Context, sel ast.SelectionSet, v *model.Probe) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Probe(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOProbeFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeFilterInput(ctx context.Context, v interface{}) (model.ProbeFilterInput, error) {
+	return ec.unmarshalInputProbeFilterInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOProbeFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeFilterInput(ctx context.Context, v interface{}) (*model.ProbeFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOProbeFilterInput2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeFilterInput(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOProbeRecentExecutions2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRecentExecutionsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ProbeRecentExecutions) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProbeRecentExecutions2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeRecentExecutions(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) unmarshalOProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, v interface{}) (model.ProbeType, error) {
+	var res model.ProbeType
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, sel ast.SelectionSet, v model.ProbeType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOProbeType2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, v interface{}) ([]*model.ProbeType, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.ProbeType, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalOProbeType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOProbeType2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, sel ast.SelectionSet, v []*model.ProbeType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOProbeType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) unmarshalOProbeType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, v interface{}) (*model.ProbeType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOProbeType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOProbeType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐProbeType(ctx context.Context, sel ast.SelectionSet, v *model.ProbeType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalORecentExecutions2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExecutions(ctx context.Context, sel ast.SelectionSet, v model.RecentExecutions) graphql.Marshaler {
+	return ec._RecentExecutions(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalORecentExecutions2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExecutions(ctx context.Context, sel ast.SelectionSet, v *model.RecentExecutions) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RecentExecutions(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalORecentExperimentRun2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRecentExperimentRun(ctx context.Context, sel ast.SelectionSet, v model.RecentExperimentRun) graphql.Marshaler {

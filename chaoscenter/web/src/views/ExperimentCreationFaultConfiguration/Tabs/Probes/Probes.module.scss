@@ -4,6 +4,7 @@
   position: inherit;
   margin: 0 !important;
   padding: 0 !important;
+
   :global {
     .FloatingContainer--floatingContainer {
       transform: scale(0.85);
@@ -14,8 +15,31 @@
   }
 }
 
+.divider {
+  width: 98%;
+}
+
+.newProbeCard {
+  width: 100%;
+  border: 1px dashed var(--primary-7) !important;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  .plusIcon {
+    margin-top: 13px;
+    margin-right: 8px;
+
+    & :global(.bp3-icon) {
+      background-color: var(--primary-7) !important;
+      border-radius: 4px !important;
+    }
+  }
+}
+
 .stepWizardWrapper {
   height: 100%;
+
   :global {
     .StepWizard--navBarList {
       background-color: var(--primary-9) !important;
@@ -25,16 +49,39 @@
 
 .probeTable {
   width: 100%;
-  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
-  border-radius: 4px;
-  padding: 1rem;
-  :global {
-    .TableV2--header {
-      justify-content: space-between;
+
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+
+    &:hover {
+      background-color: white !important;
     }
-    .TableV2--row {
-      justify-content: space-between;
-      min-width: 100%;
+  }
+
+  div[class*='TableV2--body'] {
+    padding-bottom: 20px;
+  }
+
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 5px;
+  }
+
+  :global {
+    .bp3-transition-container {
+      top: -80px !important;
+      left: 5px !important;
+    }
+
+    .DropDown--main .DropDown--dropdownButton.DropDown--withBorder {
+      background-color: var(--white) !important;
     }
   }
 }
@@ -45,13 +92,6 @@
       top: -14px !important;
     }
   }
-}
-
-.errorMessage {
-  font-size: var(--font-size-normal) !important;
-  color: var(--red-600) !important;
-  margin-top: var(--spacing-small) !important;
-  word-break: break-word !important;
 }
 
 .fileUploadBox {

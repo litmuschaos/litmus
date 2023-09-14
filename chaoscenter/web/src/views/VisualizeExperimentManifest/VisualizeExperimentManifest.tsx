@@ -7,6 +7,7 @@ import { BaseReactComponentProps, NodeType } from '@components/PipelineDiagram/t
 import type { ExperimentManifest } from '@models';
 import ChaosExperimentNode from '@components/PipelineDiagram/Nodes/ChaosExperimentNode/ChaosExperimentNode';
 import experimentYamlService from 'services/experiment';
+import { InfrastructureType } from '@api/entities';
 import css from './VisualizeExperimentManifest.module.scss';
 
 interface VisualizeExperimentManifestViewProps {
@@ -18,7 +19,7 @@ export default function VisualizeExperimentManifestView({
   manifest,
   initialZoomLevel
 }: VisualizeExperimentManifestViewProps): React.ReactElement {
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
   const experimentSteps = experimentHandler?.getFaultsFromExperimentManifest(manifest, false) ?? [];
 
   // Initiate DiagramFactory

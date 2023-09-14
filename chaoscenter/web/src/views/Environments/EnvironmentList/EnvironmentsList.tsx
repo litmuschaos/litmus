@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Layout, Container, TableV2 } from '@harnessio/uicore';
+import { Layout, TableV2 } from '@harnessio/uicore';
 import type { Column, Row } from 'react-table';
 import { useHistory } from 'react-router-dom';
 import type { MutationFunction } from '@apollo/client';
@@ -13,15 +13,16 @@ import type {
   UpdateEnvironmentRequest
 } from '@api/core/environments';
 import DefaultLayout from '@components/DefaultLayout';
-import { useRouteWithBaseUrl } from '@hooks';
-import CreateEnvironment from './CreateEnvironment';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
+import Loader from '@components/Loader';
 import type {
   EnvironmentDetails,
   EnvironmentDetailsTableProps,
   RefetchEnvironments
-} from '../../../controllers/Environments/types';
-import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
+} from '@controllers/Environments/types';
+import CreateEnvironment from './CreateEnvironment';
 import { MenuCell } from './EnvironmentsTableMenu';
+import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
 
 interface EnvironmentListViewProps {
   environmentTableData: EnvironmentDetailsTableProps | undefined;
@@ -49,6 +50,8 @@ export default function EnvironmentListView({
   const history = useHistory();
   const paths = useRouteWithBaseUrl();
 
+  useDocumentTitle(getString('environments'));
+
   const envColumns: Column<EnvironmentDetails>[] = useMemo(
     () => [
       {
@@ -58,13 +61,6 @@ export default function EnvironmentListView({
         accessor: 'name',
         Cell: EnvironmentName
       },
-      // {
-      //   Header: 'Description',
-      //   id: 'description',
-      //   accessor: 'description',
-      //   width: '35%',
-      //   Cell: EnvironmentDescription
-      // },
       {
         Header: 'TYPE',
         id: 'type',
@@ -86,7 +82,7 @@ export default function EnvironmentListView({
       }
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getString]
+    []
   );
 
   return (
@@ -110,45 +106,35 @@ export default function EnvironmentListView({
           </Layout.Horizontal>
         </Layout.Horizontal>
       }
-      // error={error}
-      // retryOnError={refetchEnvironments}
-      loading={loading.listEnvironments}
     >
-      {isModalOpen && (
-        <CreateEnvironment
-          isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
-          mutation={{ createEnvironment: mutation.createEnvironment, updateEnvironment: mutation.updateEnvironment }}
-        />
-      )}
-      {true && (
-        <Container padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}>
-          <TableV2<EnvironmentDetails>
-            columns={envColumns}
-            sortable
-            onRowClick={rowDetails =>
-              rowDetails.environmentID &&
-              history.push({
-                pathname: paths.toKubernetesChaosInfrastructures({ environmentID: rowDetails.environmentID })
-                // search: `tab=${StudioTabs.BUILDER}`
-              })
-            }
-            data={environmentTableData?.content ?? []}
-            pagination={environmentTableData?.pagination}
+      <Loader
+        loading={loading.listEnvironments}
+        noData={{
+          when: () => environmentTableData === null,
+          messageTitle: getString('noEnvironmentFound'),
+          message: getString('noEnvironmentFoundMessage')
+        }}
+      >
+        {isModalOpen && (
+          <CreateEnvironment
+            isOpen={isModalOpen}
+            setIsOpen={setIsModalOpen}
+            mutation={{ createEnvironment: mutation.createEnvironment, updateEnvironment: mutation.updateEnvironment }}
           />
-        </Container>
-      )}
-      {/* {emptyEnvs && (
-          <Container flex={{ align: 'center-center' }} height="100%">
-            <Container flex style={{ flexDirection: 'column' }}>
-              <img src={EmptyContent} width={220} height={220} />
-              <Heading className={css.noEnvHeading} level={2}>
-                {getString('cd.noEnvironment.title')}
-              </Heading>
-              <Text className={css.noEnvText}>{getString('cd.noEnvironment.message')}</Text>
-            </Container>
-          </Container>
-        )} */}
+        )}
+        <TableV2<EnvironmentDetails>
+          columns={envColumns}
+          sortable
+          onRowClick={rowDetails =>
+            rowDetails.environmentID &&
+            history.push({
+              pathname: paths.toKubernetesChaosInfrastructures({ environmentID: rowDetails.environmentID })
+            })
+          }
+          data={environmentTableData?.content ?? []}
+          pagination={environmentTableData?.pagination}
+        />
+      </Loader>
     </DefaultLayout>
   );
 }

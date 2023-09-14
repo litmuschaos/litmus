@@ -1,4 +1,5 @@
-import type { ChaosEngine } from './chaosEngine';
+import type { ProbeObj } from '@api/entities';
+import type { ChaosEngine, ProbeAttributes } from './chaosEngine';
 import type { ChaosExperiment } from './chaosFaults';
 import type { CronWorkflow } from './cronWorkflows';
 import type { Workflow } from './workflows';
@@ -8,6 +9,7 @@ export type ExperimentManifest = KubernetesExperimentManifest;
 
 export interface FaultData {
   faultName: string;
+  probes?: ProbeObj[] | ProbeAttributes[];
   faultCR?: ChaosExperiment;
   engineCR?: ChaosEngine;
   weight?: number;

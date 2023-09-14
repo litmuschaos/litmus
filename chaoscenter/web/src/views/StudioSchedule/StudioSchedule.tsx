@@ -5,7 +5,7 @@ import { Form, Formik } from 'formik';
 import { useParams } from 'react-router-dom';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import { useStrings } from '@strings';
-import { ExperimentType } from '@api/entities';
+import { ExperimentType, InfrastructureType } from '@api/entities';
 import experimentYamlService, { KubernetesYamlService } from '@services/experiment';
 import type { Experiment } from '@db';
 import { CronWorkflow, StudioMode, StudioTabs } from '@models';
@@ -30,7 +30,7 @@ export default function StudioScheduleView({ mode }: StudioScheduleViewProps): R
   const updateSearchParams = useUpdateSearchParams();
   const hasUnsavedChangesInURL = searchParams.get('unsavedChanges') === 'true';
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const setUnsavedChanges = (): void => {
     if (!hasUnsavedChangesInURL) updateSearchParams({ unsavedChanges: 'true' });

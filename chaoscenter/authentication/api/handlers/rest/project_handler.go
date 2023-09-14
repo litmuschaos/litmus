@@ -48,7 +48,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 
 		outputUser.Projects = projects
 
-		c.JSON(200, gin.H{"data": outputUser})
+		c.JSON(http.StatusOK, gin.H{"data": outputUser})
 	}
 }
 
@@ -73,7 +73,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{"data": project})
+		c.JSON(http.StatusOK, gin.H{"data": project})
 	}
 }
 
@@ -83,7 +83,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 		uID := c.MustGet("uid").(string)
 		projects, err := service.GetProjectsByUserID(uID, false)
 		if projects == nil {
-			c.JSON(200, gin.H{
+			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
 		}
@@ -93,7 +93,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{"data": projects})
+		c.JSON(http.StatusOK, gin.H{"data": projects})
 	}
 }
 
@@ -102,13 +102,13 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role := c.MustGet("role").(string)
 		if role != string(entities.RoleAdmin) {
-			c.JSON(400, gin.H{
+			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "Permission denied, user is not admin",
 			})
 		}
 		project, err := service.GetProjectStats()
 		if project == nil {
-			c.JSON(200, gin.H{
+			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
 		}
@@ -117,7 +117,7 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, gin.H{"data": project})
+		c.JSON(http.StatusOK, gin.H{"data": project})
 	}
 }
 
@@ -130,7 +130,7 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.JSON(200, gin.H{"data": members})
+		c.JSON(http.StatusOK, gin.H{"data": members})
 	}
 }
 
@@ -170,12 +170,12 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 				if member.Role == entities.RoleOwner {
 					inviteRes.ProjectOwner = *member
 				} else {
-					inviteRes.InvitationRole = member.Invitation
+					inviteRes.InvitationRole = member.Role
 				}
 			}
 			response = append(response, inviteRes)
 		}
-		c.JSON(200, gin.H{"data": response})
+		c.JSON(http.StatusOK, gin.H{"data": response})
 	}
 }
 
@@ -211,7 +211,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		if len(projects) > 0 {
-			c.JSON(400, gin.H{"message": "project with name:" + userRequest.ProjectName + " already exists"})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "project with name:" + userRequest.ProjectName + " already exists"})
 			return
 		}
 		pID := uuid.Must(uuid.NewRandom()).String()
@@ -221,7 +221,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			UserID:     user.ID,
 			Role:       entities.RoleOwner,
 			Invitation: entities.AcceptedInvitation,
-			JoinedAt:   time.Now().Unix(),
+			JoinedAt:   time.Now().UnixMilli(),
 		}
 		var members []*entities.Member
 		members = append(members, newMember)
@@ -233,13 +233,13 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			State:   &state,
 			Audit: entities.Audit{
 				IsRemoved: false,
-				CreatedAt: time.Now().Unix(),
+				CreatedAt: time.Now().UnixMilli(),
 				CreatedBy: entities.UserDetailResponse{
 					Username: user.Username,
 					UserID:   user.ID,
 					Email:    user.Email,
 				},
-				UpdatedAt: time.Now().Unix(),
+				UpdatedAt: time.Now().UnixMilli(),
 				UpdatedBy: entities.UserDetailResponse{
 					Username: user.Username,
 					UserID:   user.ID,
@@ -255,7 +255,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{"data": newProject.GetProjectOutput()})
+		c.JSON(http.StatusOK, gin.H{"data": newProject.GetProjectOutput()})
 
 	}
 
@@ -325,8 +325,11 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		newMember := &entities.Member{
 			UserID:     user.ID,
 			Role:       *member.Role,
+			Username:   user.Username,
+			Name:       user.Name,
+			Email:      user.Email,
 			Invitation: entities.PendingInvitation,
-			JoinedAt:   time.Now().Unix(),
+			JoinedAt:   time.Now().UnixMilli(),
 		}
 
 		err = service.AddMember(member.ProjectID, newMember)
@@ -336,7 +339,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{"data": entities.Member{
+		c.JSON(http.StatusOK, gin.H{"data": entities.Member{
 			UserID:     user.ID,
 			Username:   user.Username,
 			Name:       user.Name,
@@ -377,7 +380,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
 		})
 	}
@@ -412,7 +415,7 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
 		})
 	}
@@ -447,7 +450,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
 		})
 	}
@@ -499,12 +502,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 
 		case entities.DeclinedInvitation, entities.ExitedProject:
 			{
-				c.JSON(400, gin.H{"message": "User is already not a part of your project"})
+				c.JSON(http.StatusBadRequest, gin.H{"message": "User is not a part of your project"})
 				return
 			}
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
 		})
 	}
@@ -543,7 +546,7 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		if len(projects) > 0 {
-			c.JSON(400, gin.H{"message": "project with name: " + userRequest.ProjectName + " already exists"})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "project with name: " + userRequest.ProjectName + " already exists"})
 			return
 		}
 
@@ -554,7 +557,7 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
 		})
 	}

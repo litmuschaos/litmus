@@ -39,54 +39,47 @@ export default function DefaultLayoutTemplate({
 }: React.PropsWithChildren<DefaultLayoutTemplateProps>): React.ReactElement {
   const breadCrumb = <LitmusBreadCrumbs links={breadcrumbs} />;
   return (
-    <Container>
-      <Container className={css.test} flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-        <Container flex className={css.leftSideBar}>
-          <MainNav />
-          {!hideSideNav && <SideNav />}
-        </Container>
-        <Container width={'100%'} border={{ right: true, style: `1px solid ${Color.GREY_200}` }}>
-          <Page.Header
-            size={subTitle ? 'large' : 'medium'}
-            breadcrumbs={breadCrumb}
-            toolbar={headerToolbar}
-            title={
-              <span data-testid="header">
-                <Layout.Horizontal spacing="small">
-                  <Heading
-                    level={4}
-                    className={css.title}
-                    font={{ variation: FontVariation.H4 }}
-                    color={Color.GREY_700}
-                  >
-                    {title ?? <Icon name="steps-spinner" size={22} color={Color.GREY_800} />}
-                  </Heading>
-                </Layout.Horizontal>
-                {subTitle && (
-                  <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_400} padding={{ top: 'xsmall' }}>
-                    {subTitle}
-                  </Text>
-                )}
-              </span>
-            }
-          />
-          <Page.Body className={cx(css.pageBody, { [css.pageBodyWithLevelUpBanner]: levelUpBanner?.show === true })}>
-            {subHeader && <Page.SubHeader className={css.subHeader}>{subHeader}</Page.SubHeader>}
-            <Page.Body
-              loading={loading}
-              className={cx(css.innerContainer, {
-                [css.innerContainerWithSubHeader]: subHeader,
-                [css.innerContainerWithoutSubHeader]: !subHeader
-              })}
-            >
-              <Container className={css.container} padding={noPadding ? 'none' : 'medium'}>
-                {children}
-              </Container>
-            </Page.Body>
-          </Page.Body>
-        </Container>
-        {rightSideBar && <Container className={css.rightSideBar}>{rightSideBar}</Container>}
+    <Container className={css.test} flex={{ justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+      <Container flex className={css.leftSideBar}>
+        <MainNav />
+        {!hideSideNav && <SideNav />}
       </Container>
+      <Container width={'100%'} border={{ right: true, style: `1px solid ${Color.GREY_200}` }}>
+        <Page.Header
+          size={subTitle ? 'large' : 'medium'}
+          breadcrumbs={breadCrumb}
+          toolbar={headerToolbar}
+          title={
+            <span data-testid="header">
+              <Layout.Horizontal spacing="small">
+                <Heading level={4} className={css.title} font={{ variation: FontVariation.H4 }} color={Color.GREY_700}>
+                  {title ?? <Icon name="steps-spinner" size={22} color={Color.GREY_800} />}
+                </Heading>
+              </Layout.Horizontal>
+              {subTitle && (
+                <Text font={{ variation: FontVariation.SMALL }} color={Color.GREY_400} padding={{ top: 'xsmall' }}>
+                  {subTitle}
+                </Text>
+              )}
+            </span>
+          }
+        />
+        <Page.Body className={cx(css.pageBody, { [css.pageBodyWithLevelUpBanner]: levelUpBanner?.show === true })}>
+          {subHeader && <Page.SubHeader className={css.subHeader}>{subHeader}</Page.SubHeader>}
+          <Page.Body
+            loading={loading}
+            className={cx(css.innerContainer, {
+              [css.innerContainerWithSubHeader]: subHeader,
+              [css.innerContainerWithoutSubHeader]: !subHeader
+            })}
+          >
+            <Container className={css.container} padding={noPadding ? 'none' : 'medium'}>
+              {children}
+            </Container>
+          </Page.Body>
+        </Page.Body>
+      </Container>
+      {rightSideBar && <Container className={css.rightSideBar}>{rightSideBar}</Container>}
     </Container>
   );
 }

@@ -14,20 +14,28 @@ aboutChaosCTL: >-
   infrastructure:
 acceptInvitation: Accept Invitation
 accessToAllNamespaces: Access to all namespaces
+accessToken: Access Token
+accessTokenPlaceholder: Enter your Personal Access Token
 accessType: Access Type
 account: Account
 accountURL: Account URL
 actionItems: Action Items
 active: Active
+activeMembers: Active members
 actualResilienceScore: Actual Resilience Score
 add: Add
 addExperimentToChaosHub: Add Experiment to ChaosHub
 addNewCluster: Add new cluster (Coming soon!)
+addNewCustomizedProbes: Add new customized probes to the fault
+addNewProbes: Select or Add new probes
 addNodeSelectorAgentDeployment: Add NodeSelector in Chaos Infrastructure deployment
+addOrClick: Add a probe, or click on a probe to view its details
 addProbe: Add Probe
 addResilienceStep: Add Resilience Step
 addRow: Add Row
+addSystemProbe: Add a System Probe
 addToChaosHub: Add to ChaosHub
+addToFault: Add to Fault
 addToTemplate: Add to Template
 addTolerationAgentDeployment: Add Toleration in Chaos Infrastructure deployment
 addViewSummaryNotes: Add/View Summary Notes
@@ -36,9 +44,11 @@ advanced: Advanced (Optional)
 advancedOptions: Advanced Options
 all: All
 allChaosEnabled: All Chaos Enabled Infrastructures
+allExecutions: All Executions
 allFaultsExecuted: All your faults executed without any issue
 allRuns: All Runs
 alreadyExists: '{{value}} already exists'
+apiTokens: API Tokens
 appKind: App Kind
 appKindName: app_kind
 appLabel: App Label
@@ -48,6 +58,7 @@ apply: Apply
 applyChanges: Apply Changes
 at: At
 atAGlance: At a Glance
+attempt: Attempt
 authentication: Authentication
 authenticationType: Authentication Type
 averageResilienceScore: Average Resilience Score
@@ -63,6 +74,7 @@ blankCanvasDescription: >-
   experiment.
 blankCanvasTitle: Select and arrange faults from ChaosHubs to create your desire sequence.
 blobLogsNotAvailable: Logs are not available for this node.
+branch: Branch
 cancel: Cancel
 cannotPushToDefault: Cannot push experiment to default ChaosHub
 cannotReRun: Cannot re-run an already running experiment
@@ -112,6 +124,7 @@ checkStatus: Check the status of your Chaos Infrastructure on your cluster
 chooseAccessType: Choose Access Type
 chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
+chooseProbeMode: Choose Mode for probe to be executed
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
   where you have kubectl installed and have access to your Kubernetes cluster.
@@ -172,6 +185,7 @@ connectionModal:
 connectionStatus: Connection Status
 consoleLogs: Console Logs
 continue: Continue
+copiedToClipboard: Copied to clipboard
 copyPrompt: >-
   Copy the downloaded YML to a machine where you have kubectl installed and have
   access to your Kubernetes cluster.
@@ -182,9 +196,11 @@ copyPrompt2: >-
 crdCopyPrompt: Apply the Chaos CRDs manually
 createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
+createNewToken: Create New Token
 createNewUser: Create New User
 createRecurringSchedule: Create recurring schedule
 created: Created
+createdAt: Created At
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
@@ -196,16 +212,26 @@ cronText: >-
   can stop the schedule anytime you want.
 currentRun: Current Run
 currentUTCTime: Current UTC Time
+customImageRegistry: Custom Image Registry
 customLabel: Custom
+customRepo: Custom Repo
+customValueText: All YAML files will use the custom values.
+customValues: Use Custom Values
 daily: Daily
 dailyMessage: Your chaos experiment will run daily at your chosen time.
 dateExecuted: Date Executed
 dayOfMonthLabel: Day of month
 dayOfWeekLabel: Day of week
+days: '{{count}} days'
 declineInvitation: Decline Invitation
 declineInvitationDescription: Are you sure you want to decline the invitation?
+defaultValueOption: Use Default Values
+defaultValueText: >-
+  All YAML files use these default values provided by Litmus. These values
+  cannot be changed.
 degelateNotActive: Selected infrastructure is inactive. Please select an active one.
 delete: Delete
+deleteApiTokenDescription: Are you sure you want to delete this API Token?
 deleteChaosInfrastructure: Are you sure you want to disable this Chaos Infrastructure?
 deleteExperiment: Delete Experiment
 deleteExperimentDesc: >-
@@ -233,9 +259,11 @@ disableUser: Disable User
 disableUserDescription: Are you sure you want to disable this user?
 discard: Discard
 discardExperiment: Are you sure you want to discard the current experiment?
+discardProbeConfiguration: Discard all probe configurations which are currently entered?
 disconnectDescriptionClusterMode: Disable Chaos for this cluster.
 disconnectDescriptionNamespaceMode: Disable Chaos for this namespace.
 disconnected: Disconnected
+docker: docker.io
 done: Done
 download: Download
 downloadChaosInfrastructureManifest: Re-Download the manifest
@@ -301,11 +329,13 @@ environments: Environments
 error: Error
 errorApplyChanges: Error in Applying the Changes. Please enter correct input values.
 errorFetchName: Error in fetching the name.
+evaluationTimeout: Evaluation timeout
 executedBy: Executed by
 executedOn: Executed on
 executionDetails: Execution details goes here
 executionError: Execution Error
 executionHistory: Execution History
+executionID: Execution ID
 executionOverview: Execution Overview
 executionStatus: Execution Status
 exhausted: Exhausted
@@ -332,6 +362,8 @@ experimentRuns: Experiment Runs
 experimentStopSuccessMessage: Experiment successfully stopped
 experimentType: Experiment Type
 experiments: Experiments
+expiresAt: Expires At
+expiresIn: Expires In
 expressionBreakdown: Expression Breakdown
 failStep: Fail Step
 failed: Failed
@@ -364,10 +396,15 @@ featureRestriction:
     You have exceeded your resource subscription limit. Consider increasing your
     limits to keep shipping.
 fieldSelector: Field Selector
+fixAllErrors: Fix all the errors indicated in the YAML Editor to resolve the issue.
+generateSSH: Generate New SSH Key
 genericResourceNotFoundError: >-
   {{resource}} [{{resourceID}}] under Project [{{projectID}}] does not exist or
   has been deleted.
 gitConnection: Repository Connection
+gitOps: GitOps
+githubRepo: Github Repository
+gitops: Gitops
 goBack: Go back to previous page
 goChaosHome: Go to Home
 greatJob: Great Job
@@ -399,8 +436,13 @@ hubEditedSuccessfully: Hub Edited Successfully
 hubName: Hub Name
 hubRepositoryBranch: Hub Repository Branch
 hubRepositoryURL: Repository URL
+hypothesis: hypothesis
 id: ID
 idlowerCase: id
+imageRegistry: Image Registry
+imageRegistryUpdateSuccess: Image Registry added successfully
+imageSecret: Image Secret
+imageSecretPlaceholder: Enter your Image Secret
 improveResilienceOfTheDeployedService: Improve resilience of the deployed service
 inactive: Inactive
 inactiveTooltip: >-
@@ -417,6 +459,7 @@ infrastructureRegistered: >-
   Environment -> Infrastructure list.
 infrastructureStates: Learn more about the states of Infrastructure
 infrastructureType: Infrastructure type
+initialDelay: Initial Delay
 initialDelaySeconds: Initial Delay Seconds
 insecureSkipVerify: Insecure skip verify
 installYaml: Install Chaos Infrastructure using YML
@@ -425,7 +468,11 @@ intervalOptional: Interval (Optional)
 invalidEmailText: Please enter a valid email address
 invalidSelection: Invalid Selection
 invalidText: Invalid
+invalidYaml: The Visual Editor is disabled because of the errors in the YAML file.
+invitationRemoveSuccess: Invitation cancelled successfully
+invitationSuccess: Invitation sent successfully
 invitations: Invitations
+inviteAs: Invite as
 invitedBy: Invited By
 isRequired: '{{field}} is required field'
 issueSupport: If the issue still persists, consider reaching out to support!
@@ -473,10 +520,13 @@ launchExperiment: Launch Experiment
 learnMore: Learn More
 leaveProject: Leave Project
 leaveProjectDescription: Are you sure you want to leave the project?
+leaveThisPage: Leave this Page
 letsGetStarted: Let`s get started
 litmus: Litmus
 litmusChaos: LitmusChaos
+litmuschaos: litmuschaos
 loading: Loading, please wait...
+local: Locally in Litmus
 logErrorMessage: Unable to fetch logs from log service, please try after some time.
 loginDescription: Login to create, orchestrate, analyze and collaborate your Chaos Experiments.
 loginToContinue: login to continue
@@ -487,9 +537,13 @@ manifestDownloadUnsuccessful: Manifest download is unavailable!
 manifestMissing: Manifest is missing! Please check your ChaosHub.
 manual: Manual
 manualInterruption: Manual Interruption needed
+manually: '| Manually'
 markRunAsComplete: Mark Run as Complete
 markRunAsCompleteDescription: This will mark the run as complete and you will no longer be able to re-run.
 meetsExpectations: The resilience score has met the expectation.
+members: Members
+membersNotAvailableMessage: No active project members available
+membersNotAvailableTitle: No members present
 menuItems:
   deleteHub: Delete Hub
   editHub: Edit Hub
@@ -529,13 +583,19 @@ nameVaidText: Name can only contain alphabets.
 namespace: Namespace
 namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
 namespaceWide: Namespace-wide
+navigationCheckText: >-
+  You have unsaved changes. Are you sure you want to leave this page without
+  saving?
+navigationCheckTitle: Close without saving?
 needAttention: Needs Attention
 newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
 newExperiment: New Experiment
+newMember: New Member
 newPassword: New Password
 newProbe: New Probe
+newToken: New Token
 newUpdates: New Updates
 newUser: New User
 newUserNoExperiments:
@@ -549,6 +609,7 @@ next: Next
 nextRun: Next Run
 nextSelectChaosExperiments: Next -> Select Chaos Experiments
 noAnalysis: No Analysis
+noApiTokensFound: No API Tokens found
 noChaosHubSelected: No ChaosHubs selected
 noChaosInfrastructure: There are no Kubernetes Chaos Infrastructures in this Environment
 noChaosInfrastructureFound: No Kuberenetes chaos infrastructure found!
@@ -558,11 +619,17 @@ noData:
   title: No Data Found
 noDataCV: No Data
 noDataToDisplay: No data to display
+noDescriptionProvided: No description provided
+noEnvironmentFound: No Environments found
+noEnvironmentFoundMessage: >-
+  No Environments found in this project, click on 'New Environment' to add
+  environments.
 noExpFound: No Predefined Chaos Experiments found using this Fault.
 noExperimentFoundMatchingSearch: No experiment found matching your search
 noExperimentSelected: No experiment selected
 noExperiments: No Experiments found
 noExperimentsAdded: No experiments added
+noExpiration: No Expiration
 noFaults: No Faults found in selected hub
 noFilteredActiveInfra: No active Chaos Infrastructures found for the search term
 noFilteredData:
@@ -580,6 +647,12 @@ noProbeDescription: >-
   Chaos Fault. The experiment pods execute these checks based on the mode they
   are defined in &amp; factor their success as necessary conditions in
   determining the verdict of the experiment
+noProbeExecution: No Probe executions found
+noProbeExecutionDetails:
+  subtitle: >-
+    Probes are pluggable checks that can be defined within the ChaosEngine for
+    any Chaos Experiment
+  title: There are no executions for the selected probe in your project
 noProbes: No probes configured
 noProbesAvailable: No Probes available for this node
 noProbesFound:
@@ -612,6 +685,7 @@ notMeetsExpectations: The resilience score didn't meet the expectation.
 notMeetsExpectationsInterventionNeeded: >-
   The resilience score did not meet the expectation. It needs the manual
   intervention.
+notStarted: NOT STARTED
 notes: Notes
 numberOfExperiments: Number of Experiments
 objective: Objective
@@ -644,6 +718,9 @@ passwordResetSuccess: Password reset successfully
 passwordsDoNotMatch: Passwords do not match
 pauseRun: Pause Run
 pending: Pending
+pendingInvitationsNotAvailableMessage: No pending invitations present
+pendingInvitationsNotAvailableTitle: No invitations present
+pendingMembers: Pending members
 pendingTime: >-
   It may take 3-5 minutes after applying the manifest for the infrastructure to
   be connected.
@@ -651,22 +728,48 @@ phase: Phase
 platform: Platform
 pleaseComplete: Please complete all the steps
 pleaseSelectLeastOneExperiment: Please select at least one experiment
+pleaseSpecifyYAMLValues: Please specify the values in the YAML script
 points: point(s)
 pollingInterval: Polling Interval
 preProd: Pre-Prod
 predefinedExperimentsNotFound: No Predefined Experiments found in this hub
 preview: Preview
 private: Private
+probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
 probeDetails: Probe Details
+probeExecutionPreview: PROBE EXECUTION PREVIEW
+probeInFault: Probe in fault
+probeMetadataExists: >-
+  Probe metadata already exists in the experiment manifest, recommended to use
+  probe annotations instead otherwise you won't get any analytics
 probeMode: Probe Mode
+probeModeAlreadyExists: is already present with the same mode
 probeModes:
   Continuous: Continuous
+  ContinuousDesc: >-
+    The probe is executed continuously, with a specified polling interval during
+    the chaos injection.
   EOT: EOT
+  EOTDesc: >-
+    The probe will check hypothesis at the End of the Test as a as a post-chaos
+    check.
+  EOTVerbose: End of Test (EOT)
   Edge: Edge
+  EdgeDesc: The probe will check hypothesis both before and after the Test.
   OnChaos: OnChaos
+  OnChaosDesc: >-
+    The probe is executed continuously, with a specified polling interval
+    strictly for chaos duration of chaos
   SOT: SOT
+  SOTDesc: >-
+    The probe will check hypothesis at the Start of the Test as a as a pre-chaos
+    check.
+  SOTVerbose: Start of Test (SOT)
 probeName: Probe Name
+probeNotAttachedToRef: >-
+  is not attached to a proper reference, please add it to annotations as
+  probeRef
 probeOverview: Probe Overview
 probePassedSuccessfully: Probe passed successfully
 probeProperties: Probe Properties
@@ -683,9 +786,10 @@ probeTypes:
   k8sProbe: K8S Probe
   promProbe: Prometheus Probe
 probeValidation:
-  body: POST body is a required field
+  accountIdentifier: Account identifier is a required field
+  apiTokenSecret: API Token Secret is a required field
+  apiTokenSecretName: API Token Secret Name is a required field
   command: Probe command is a required field
-  contentType: Content Type is a required field
   criteria: Comparator criteria is a required field
   endpoint: Probe endpoint is a required field
   getCriteria: GET Criteria is a required field
@@ -693,17 +797,19 @@ probeValidation:
   interval: Probe interval is a required field
   method: Probe method is a required field
   name: Probe Name is a required field
-  namespace: Probe namespace is a required field
-  pollingInterval: Probe polling interval is a required field
+  operation: Probe operation is a required field
+  orgIdentifier: Organization identifier is a required field
+  platformEndpoint: Platform endpoint is a required field
   postCriteria: POST Criteria is a required field
   postResponseCode: POST Response Code is a required field
-  query: Probe query is a required field
-  responseTimeout: Probe response timeout is a required field
-  retry: Retry is a required field
+  projectIdentifier: Project identifier is a required field
+  resource: Probe resource is a required field
+  timeFrame: Time Frame is a required field
   timeout: Probe timeout is a required field
   type: Comparator type is a required field
   url: URL is a required field
   value: Comparator value is a required field
+  version: Probe version is a required field
 probes: Probes
 probesArePassed: probes are passed
 prod: Prod
@@ -748,9 +854,18 @@ recentlyUsed: Recently Used
 recurringRun: Recurring Run (Cron)
 recurringSchedule: Recurring Schedule
 referencedBy: Referenced By
+registry: Registry
 registryName: Registry Name
+registryType: Registry Type
+remove: Remove
+removeMember: Remove Member
+removeMemberConfirmation: Are you sure you want to remove {{username}}?
+repoBranchPlaceholder: Enter repository branch
+repoURLPlaceholder: Enter repository URL
+repository: Repository
 required: Required
 rerun: Rerun
+resend: Resend
 resetFilters: Reset Filters
 resetPassword: Reset Password
 resilienceOverview: Resilience Overview
@@ -819,10 +934,12 @@ searchForHub: Search for a hub
 searchForMonitoredServices: Search for a monitored service
 searchHub: Search for a Hub
 secret: Secret
+securityKeyType: Select Security Key Type
 seeAllChaosHubs: See All ChaosHubs
 seeAllChaosInfrastructures: See All Infrastructures
 seeAllEnvironments: See All Environments
 seeAllFaults: See All Faults
+selectAProbe: Select a Probe
 selectAppKind: Select App Kind
 selectAppLabel: Select App Label
 selectAppNamespace: Select App Namespace
@@ -842,6 +959,7 @@ selectTimeframe: Select time frame
 selectYourProbe: Select your chaos probe
 selectYourProbeType: Select your probe type
 selectedExperiments: Selected Experiments
+selectedProbe: Selected Probe
 sequence: Sequence
 serviceAccount: Service Account
 serviceAccountName: Service Account Name
@@ -860,7 +978,14 @@ showingLastRuns: Showing last 50 runs only
 signOut: Sign Out
 singleRun: Single Run
 source: Source
+sourceModeDesction: >-
+  Source mode is where the command execution is carried out from within a new
+  pod whose image is specified. This is preferred when application-specific
+  binaries are required.
 specificNamespaceAccess: Specific namespace access
+ssh: SSH
+sshKey: SSH Key
+sshKeyHelper: Please make sure you copy the SSH key and save it safely.
 stages: Stages
 startBlankCanvasDescription: Start from scratch
 startBlankCanvasTitle: Blank Canvas
@@ -873,6 +998,7 @@ status: Status
 statusCheck: >-
   Note: You may check the status of your Chaos Infrastructure in the status
   column of the Chaos Infrastructures screen
+stayOnThisPage: Stay on this Page
 stop: Stop
 stopAllDesc: This will stop all the ongoing and upcoming experiment runs in this project.
 stopAllExp: Stop All Runs
@@ -891,6 +1017,7 @@ success: Success
 successSummary: Success Summary
 suggestion1: Here is what you can do
 summary: Summary
+supportedFaultTypes: 'Supported fault types:'
 switchToBarChart: Switch to bar chart
 switchToLineChart: Switch to line chart
 syncLatestRun: Sync Latest Run
@@ -908,9 +1035,13 @@ templateFromProjectDescription: Use experiments available in your Project
 templateFromProjectTitle: Templates from Project
 testConnection: Test Connection
 testSuccess: Chaos Infrastructure connection validated successfully
+testYour1: Test your
+testYour2: of the experiment against the result
 testingConnection: Testing Chaos Infrastructure Connection
 thisExperimentHasNoRuns: This experiment has no runs yet
 timeout: Timeout
+toBeDefined: (To be defined)
+tokenCreateSuccessMessage: Token created successfully
 toleration:
   effectPlaceholder: Enter effect
   keyPlaceholder: Enter key
@@ -957,12 +1088,13 @@ uploadYaml: Upload Yaml
 url: URL
 useIntegerValue: Please enter an integer value
 useThisTemplate: Use this template
-userCreateModalBottomText: By creating user an invitation will be send to the provided email address
 userCreateSuccessMessage: User '{{name}}' created successfully
 userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
+usersNotAvailableMessage: No users available to send invitation
+usersNotAvailableTitle: No users available
 validationError: Validation Error
 value: Value
 valuePlaceholder: Enter a value
@@ -994,4 +1126,10 @@ weightAdjustDescription: >-
   modify the weighage. The weights are relative to each other.
 weightAdjustHeader: Adjust the weights of the faults in the Chaos Experiment
 welcomeToLitmus: Welcome to Litmus
+yamlBuilder:
+  enableEditContext: Editor is currently in read-only mode. Do you want to enable edit mode?
+  lineNumberLabel: On line number
+  snippets:
+    noSnippetsFound: No snippets found.
+  yamlError: Invalid or malformed YAML. Please fix the YAML and try again.
 yearlyTabTitle: Yearly

@@ -6,6 +6,7 @@ import type { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@
 import { useStrings } from '@strings';
 import type { GetUserWithProjectOkResponse } from '@api/auth';
 import AccountSettingsOverviewProjectsController from '@controllers/AccountSettingsOverviewProjects';
+import APITokensController from '@controllers/APITokens';
 import css from './AccountSettingsOverview.module.scss';
 
 interface AccountSettingsOverviewViewProps {
@@ -22,9 +23,10 @@ interface AccountSettingsOverviewViewProps {
 export default function AccountSettingsOverviewView(props: AccountSettingsOverviewViewProps): React.ReactElement {
   const { userProjectData, projectCount, getUserWithProjectsRefetch } = props;
   const { getString } = useStrings();
+  const [apiTokensCount, setApiTokensCount] = React.useState<number>(0);
 
   return (
-    <Layout.Vertical padding={'medium'} height={'100%'}>
+    <Layout.Vertical padding={'medium'} height={'100%'} style={{ overflowY: 'auto' }}>
       <Container border={{ bottom: true }}>
         <Text font={{ variation: FontVariation.H3 }}>{getString('overview')}</Text>
         <Card className={css.overviewCard}>
@@ -41,6 +43,17 @@ export default function AccountSettingsOverviewView(props: AccountSettingsOvervi
               </Layout.Horizontal>
             </Layout.Horizontal>
             <Layout.Vertical style={{ gap: '0.5rem' }}>
+              <Layout.Horizontal
+                flex={{ alignItems: 'center', justifyContent: 'flex-start' }}
+                style={{ gap: '0.25rem' }}
+              >
+                <Text font={{ variation: FontVariation.H4 }} style={{ lineHeight: 1 }}>
+                  {apiTokensCount}
+                </Text>
+                <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600} style={{ lineHeight: 1 }}>
+                  {getString('apiTokens')}
+                </Text>
+              </Layout.Horizontal>
               <Layout.Horizontal
                 flex={{ alignItems: 'center', justifyContent: 'flex-start' }}
                 style={{ gap: '0.25rem' }}
@@ -67,6 +80,7 @@ export default function AccountSettingsOverviewView(props: AccountSettingsOvervi
           </Layout.Horizontal>
         </Card>
       </Container>
+      <APITokensController setApiTokensCount={setApiTokensCount} />
       <AccountSettingsOverviewProjectsController getUserWithProjectsRefetch={getUserWithProjectsRefetch} />
     </Layout.Vertical>
   );

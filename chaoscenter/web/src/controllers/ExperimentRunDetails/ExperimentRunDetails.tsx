@@ -1,22 +1,17 @@
 import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { ListExperimentRunRequest, ListExperimentRunResponse, listExperimentRunWithExecutionData } from '@api/core';
 import type { ExecutionData } from '@api/entities';
 import { ExperimentRunStatus } from '@api/entities';
 import { getScope } from '@utils';
 import ExperimentRunDetailsView from '@views/ExperimentRunDetails';
 import RightSideBarV2 from '@components/RightSideBarV2';
-import type { GqlAPIQueryRequest } from '@api/types';
+import { getExperimentRun } from '@api/core/experiments/getExperimentRun';
 
 export default function ExperimentRunDetailsController(): React.ReactElement {
   const { experimentID, runID, notifyID } = useParams<{ experimentID: string; runID: string; notifyID: string }>();
   const scope = getScope();
   const { showError } = useToaster();
-
-  const filter: Omit<GqlAPIQueryRequest<ListExperimentRunResponse, ListExperimentRunRequest>, 'Identifiers'> = runID
-    ? { experimentRunIDs: [runID] }
-    : { notifyIDs: [notifyID] };
 
   const {
     data: listExperimentRunData,
@@ -24,13 +19,14 @@ export default function ExperimentRunDetailsController(): React.ReactElement {
     exists: specificRunExists,
     startPolling,
     stopPolling
-  } = listExperimentRunWithExecutionData({
+  } = getExperimentRun({
     ...scope,
-    ...filter,
+    experimentRunID: runID,
+    notifyID,
     options: { onError: error => showError(error.message) }
   });
 
-  const specificRunData = listExperimentRunData?.listExperimentRun?.experimentRuns[0];
+  const specificRunData = listExperimentRunData?.getExperimentRun;
 
   React.useEffect(() => {
     if (
@@ -63,10 +59,10 @@ export default function ExperimentRunDetailsController(): React.ReactElement {
   return (
     <ExperimentRunDetailsView
       experimentID={experimentID}
+      runSequence={specificRunData?.runSequence}
       experimentRunID={specificRunData?.experimentRunID ?? runID}
       runExists={specificRunExists}
-      infraID={specificRunData?.infra.infraID}
-      infrastructureName={specificRunData?.infra.name}
+      infra={specificRunData?.infra}
       experimentName={specificRunData?.experimentName}
       experimentExecutionDetails={executionData}
       manifest={specificRunData?.experimentManifest}

@@ -25,19 +25,21 @@ export interface StepProps<PrevStepData> {
   firstStep?: (data?: PrevStepData) => void;
   lastStep?: (data?: PrevStepData) => void;
   faultData?: FaultData | undefined;
+  environmentID?: string;
 }
 
 export const ProbeStepWizard = ({
+  environmentID,
   hideDarkModal,
   setProbeData,
   faultData
 }: {
+  environmentID: string;
   hideDarkModal: () => void;
   setProbeData: React.Dispatch<React.SetStateAction<ProbeAttributes[] | undefined>>;
   faultData: FaultData | undefined;
 }): JSX.Element => {
   const { getString } = useStrings();
-  // const [stepNumber, setStepNumber] = React.useState<number>(1);
   const [formData, setFormData] = React.useState<ProbeAttributes>({
     name: `probe-${(+new Date()).toString(36).slice(-3)}`,
     type: '',
@@ -51,8 +53,9 @@ export const ProbeStepWizard = ({
       interval: undefined,
       retry: undefined,
       probePollingInterval: undefined,
-      initialDelaySeconds: undefined,
-      stopOnFailure: undefined
+      initialDelay: undefined,
+      stopOnFailure: undefined,
+      evaluationTimeout: undefined
     },
     data: undefined
   });
@@ -71,23 +74,12 @@ export const ProbeStepWizard = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
-  // const referenceId = (step: number, probeType: ProbeAttributes['type']): string => {
-  //   if (step === 1) return 'chaosProbe';
-  //   else {
-  //     if (probeType === 'httpProbe') return 'chaosHttpProbe';
-  //     else if (probeType === 'k8sProbe') return 'chaosK8sProbe';
-  //     else if (probeType === 'cmdProbe') return 'chaosCmdProbe';
-  //     else if (probeType === 'promProbe') return 'chaosPromProbe';
-  //     else return 'chaosProbe';
-  //   }
-  // };
   return (
     <>
       <StepWizard
-        icon={<Icon size={50} name="change-log" />}
+        icon={<Icon name="change-log" size={50} />}
         title={getString('addProbe')}
         className={css.stepWizardWrapper}
-        // onStepChange={data => setStepNumber(data.prevStep + 1)}
         onCompleteWizard={() => {
           hideDarkModal();
         }}
@@ -99,19 +91,26 @@ export const ProbeStepWizard = ({
           faultData={faultData}
         />
         <ProbePropertiesStep name={getString('probeProperties')} formData={formData} setFormData={setFormData} />
-        <ProbeDetailsStep name={getString('probeDetails')} formData={formData} setFormData={setFormData} />
+        <ProbeDetailsStep
+          environmentID={environmentID}
+          name={getString('probeDetails')}
+          formData={formData}
+          setFormData={setFormData}
+        />
       </StepWizard>
     </>
   );
 };
 
-const AddProbeModal = ({
+export const AddProbeStepWizard = ({
   setProbeData,
-  faultData
+  faultData,
+  environmentID
 }: {
   setProbeData: React.Dispatch<React.SetStateAction<ProbeAttributes[] | undefined>>;
   faultData: FaultData | undefined;
-}): JSX.Element => {
+  environmentID: string;
+}): React.ReactElement => {
   const { getString } = useStrings();
   const [isAddProbeModalOpen, setIsAddProbeModalOpen] = React.useState(false);
 
@@ -132,6 +131,7 @@ const AddProbeModal = ({
         className={css.modalStepWizard}
       >
         <ProbeStepWizard
+          environmentID={environmentID}
           setProbeData={setProbeData}
           hideDarkModal={() => setIsAddProbeModalOpen(false)}
           faultData={faultData}
@@ -139,14 +139,4 @@ const AddProbeModal = ({
       </Dialog>
     </>
   );
-};
-
-export const AddProbeStepWizard = ({
-  setProbeData,
-  faultData
-}: {
-  setProbeData: React.Dispatch<React.SetStateAction<ProbeAttributes[] | undefined>>;
-  faultData: FaultData | undefined;
-}): JSX.Element => {
-  return <AddProbeModal setProbeData={setProbeData} faultData={faultData} />;
 };

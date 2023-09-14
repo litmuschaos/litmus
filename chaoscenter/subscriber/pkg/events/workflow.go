@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"subscriber/pkg/graphql"
@@ -154,13 +153,8 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 			ChaosExp:   cd,
 			Message:    nodeStatus.Message,
 		}
-		if cd != nil && strings.ToLower(cd.ExperimentVerdict) == "fail" {
-			details.Phase = "Failed"
-			details.Message = "Chaos Experiment Failed"
-			cd.ExperimentVerdict = "Fail"
-		} else if cd != nil && strings.ToLower(cd.ExperimentVerdict) == "pass" {
-			details.Phase = "Passed"
-			cd.ExperimentVerdict = "Pass"
+		if nodeType == "ChaosEngine" && cd != nil {
+			details.Phase = cd.ExperimentStatus
 		}
 		nodes[nodeStatus.ID] = details
 	}
@@ -227,6 +221,11 @@ func SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent)
 			}
 		}
 	}
+	// Setting up the experiment status
+	// based on different probes results
+	// present in the experiment
+	event.Phase = getExperimentStatus(event)
+
 	eventMap[event.UID] = event
 
 	// generate graphql payload
@@ -275,4 +274,47 @@ func updateWorkflowStatus(status v1alpha1.WorkflowPhase) string {
 	default:
 		return "Pending"
 	}
+}
+
+// getExperimentStatus is used to fetch the final experiment status
+// based on the fault/probe status
+func getExperimentStatus(experiment types.WorkflowEvent) string {
+	var (
+		errorCount                     = 0
+		completedWithProbeFailureCount = 0
+		status                         = experiment.Phase
+	)
+
+	// Once the workflow is completed, and it is not stopped,
+	// we will fetch the data based on the different
+	// node statuses(which are coming from the probe status
+	// of these faults)
+	if status == "Stopped" || experiment.FinishedAt == "" {
+		return status
+	}
+
+	for _, node := range experiment.Nodes {
+		if node.Type == "ChaosEngine" && node.ChaosExp == nil {
+			errorCount++
+			continue
+		}
+		switch node.Phase {
+		case string(types.FaultCompletedWithProbeFailure):
+			completedWithProbeFailureCount++
+		case string(types.Error):
+			errorCount++
+		}
+
+	}
+
+	// For multiple faults, if one of the fault
+	// errors out, priority is given to the error
+	// status and then the remaining status
+	if errorCount > 0 {
+		status = string(types.Error)
+	} else if completedWithProbeFailureCount > 0 {
+		status = string(types.FaultCompletedWithProbeFailure)
+	}
+
+	return status
 }
