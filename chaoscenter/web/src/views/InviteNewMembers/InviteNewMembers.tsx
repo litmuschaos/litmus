@@ -21,14 +21,18 @@ interface InviteNewMembersViewProps {
 export default function InviteNewMembersView(props: InviteNewMembersViewProps): React.ReactElement {
   const { isLoading, data, handleClose, getUsers, searchInput } = props;
   const { getString } = useStrings();
+
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }} width={750}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>Choose members to add to the project </Text>
+        <Text font={{ variation: FontVariation.H4 }}>{getString('chooseMembersAddTheProject')}</Text>
         <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
       </Layout.Horizontal>
       <Container width={'100%'}>{searchInput}</Container>
-      <Layout.Vertical style={{ minHeight: 150 }} flex={{ alignItems: 'center', justifyContent: 'center' }}>
+      <Layout.Vertical
+        style={{ minHeight: data.length === 0 ? 400 : 0 }}
+        flex={{ alignItems: 'center', justifyContent: 'center' }}
+      >
         <Loader
           loading={isLoading}
           noData={{
@@ -38,16 +42,16 @@ export default function InviteNewMembersView(props: InviteNewMembersViewProps): 
           }}
         >
           <InviteUsersTableView users={data} getUsers={getUsers} />
-          <Container width="100%">
-            <Button
-              disabled={false}
-              onClick={() => handleClose()}
-              variation={ButtonVariation.SECONDARY}
-              text={getString('cancel')}
-            />
-          </Container>
         </Loader>
       </Layout.Vertical>
+      <Container width="100%">
+        <Button
+          disabled={false}
+          onClick={() => handleClose()}
+          variation={ButtonVariation.SECONDARY}
+          text={getString('cancel')}
+        />
+      </Container>
     </Layout.Vertical>
   );
 }
