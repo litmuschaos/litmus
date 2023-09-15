@@ -8,13 +8,11 @@ import type { RefetchEnvironments } from './types';
 interface EditEnvironmentControllerProps {
   environmentID: string;
   handleClose: () => void;
-  isEditOpen: boolean;
 }
 
 export default function EditEnvironmentController({
   environmentID,
   handleClose,
-  isEditOpen,
   refetchEnvironments
 }: EditEnvironmentControllerProps & RefetchEnvironments): React.ReactElement {
   const { showError, showSuccess } = useToaster();
@@ -36,12 +34,11 @@ export default function EditEnvironmentController({
 
   return (
     <CreateEnvironment
+      closeModal={handleClose}
       loading={{
         getEnvironment: getEnvironmentLoading
       }}
-      isOpen={isEditOpen}
       editable={true}
-      setIsOpen={handleClose}
       environmentID={environmentID}
       mutation={{ updateEnvironment: editEnvironmentMutation }}
       existingEnvironment={environmentDetails?.getEnvironment}

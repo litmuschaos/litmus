@@ -45,8 +45,8 @@ export default function SettingsWrapper(props: SettingsWrapperProps): React.Reac
         </Container>
         <Layout.Horizontal style={{ flexGrow: 1 }} height={'100%'}>
           <Container
-            width={'30%'}
-            style={{ minWidth: 420, position: 'relative' }}
+            width={'20%'}
+            style={{ minWidth: 350, position: 'relative' }}
             height={'100%'}
             background={Color.PRIMARY_1}
             padding={{ top: 'xxlarge', right: 'medium', bottom: 'xxlarge', left: 'medium' }}
