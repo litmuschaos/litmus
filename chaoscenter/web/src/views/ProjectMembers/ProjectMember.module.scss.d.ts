@@ -3,6 +3,7 @@ declare namespace ProjectMemberModuleScssNamespace {
     modalWithHelpPanel: string;
     nameChangeDialog: string;
     tabContainer: string;
+    tableContainerMain: string;
     toolbar: string;
   }
 }
