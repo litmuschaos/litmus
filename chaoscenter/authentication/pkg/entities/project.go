@@ -60,7 +60,7 @@ type ListInvitationResponse struct {
 	ProjectID      string     `json:"projectID"`
 	ProjectName    string     `json:"projectName"`
 	ProjectOwner   Member     `json:"projectOwner"`
-	InvitationRole Invitation `json:"invitationRole"`
+	InvitationRole MemberRole `json:"invitationRole"`
 }
 
 // GetProjectOutput takes a Project struct as input and returns the graphQL model equivalent

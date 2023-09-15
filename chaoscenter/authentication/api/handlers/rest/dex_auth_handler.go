@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
@@ -97,7 +99,7 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		createdAt := time.Now().Unix()
+		createdAt := time.Now().UnixMilli()
 
 		var userData = entities.User{
 			Name:     claims.Name,
@@ -122,6 +124,54 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		c.Redirect(http.StatusPermanentRedirect, "/login?jwtToken="+jwtToken)
+
+		var defaultProject string
+		ownerProjects, err := userService.GetOwnerProjectIDs(c, signedInUser.ID)
+
+		if len(ownerProjects) > 0 {
+			defaultProject = ownerProjects[0].ID
+		} else {
+			// Adding user as project owner in project's member list
+			newMember := &entities.Member{
+				UserID:     signedInUser.ID,
+				Role:       entities.RoleOwner,
+				Invitation: entities.AcceptedInvitation,
+				Username:   signedInUser.Username,
+				Name:       signedInUser.Name,
+				Email:      signedInUser.Email,
+				JoinedAt:   time.Now().UnixMilli(),
+			}
+			var members []*entities.Member
+			members = append(members, newMember)
+			state := "active"
+			newProject := &entities.Project{
+				ID:      uuid.Must(uuid.NewRandom()).String(),
+				Name:    signedInUser.Username + "-project",
+				Members: members,
+				State:   &state,
+				Audit: entities.Audit{
+					IsRemoved: false,
+					CreatedAt: time.Now().UnixMilli(),
+					CreatedBy: entities.UserDetailResponse{
+						Username: signedInUser.Username,
+						UserID:   signedInUser.ID,
+						Email:    signedInUser.Email,
+					},
+					UpdatedAt: time.Now().UnixMilli(),
+					UpdatedBy: entities.UserDetailResponse{
+						Username: signedInUser.Username,
+						UserID:   signedInUser.ID,
+						Email:    signedInUser.Email,
+					},
+				},
+			}
+			err := userService.CreateProject(newProject)
+			if err != nil {
+				return
+			}
+			defaultProject = newProject.ID
+		}
+
+		c.Redirect(http.StatusPermanentRedirect, "/login?jwtToken="+jwtToken+"&projectID="+defaultProject+"&projectRole="+string(entities.RoleOwner))
 	}
 }

@@ -30,7 +30,7 @@ func (a applicationService) RevokeToken(tokenString string) error {
 	revokedToken := &entities.RevokedToken{
 		Token:     tokenString,
 		ExpiresAt: int64(claims["exp"].(float64)),
-		CreatedAt: time.Now().Unix(),
+		CreatedAt: time.Now().UnixMilli(),
 	}
 	return a.revokedTokenRepository.RevokeToken(revokedToken)
 }
@@ -101,7 +101,7 @@ func (a applicationService) CreateApiToken(user *entities.User, request entities
 		Name:      request.Name,
 		Token:     tokenString,
 		ExpiresAt: expiresAt,
-		CreatedAt: time.Now().Unix(),
+		CreatedAt: time.Now().UnixMilli(),
 	}
 
 	if err = a.apiTokenRepository.CreateApiToken(apiToken); err != nil {
