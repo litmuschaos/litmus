@@ -19,14 +19,11 @@ const EnvironmentController: React.FC = () => {
 
   const setPage = (newPage: number): void => updateSearchParams({ page: newPage.toString() });
   const setLimit = (newLimit: number): void => updateSearchParams({ limit: newLimit.toString() });
-  // const resetPage = (): void => {
-  //   page !== 0 && updateSearchParams({ page: '0' });
-  // };
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const {
     data: envData,
     loading: listEnvironmentLoading,
-    refetch: refetchEnvironments
+    refetch: refetchEnvironments,
+    error: listEnvironmentError
   } = listEnvironment({
     projectID: scope.projectID,
     environmentIDs: [],
@@ -73,9 +70,7 @@ const EnvironmentController: React.FC = () => {
 
   return (
     <EnvironmentListView
-      isModalOpen={isModalOpen}
-      setIsModalOpen={setIsModalOpen}
-      loading={{ listEnvironments: listEnvironmentLoading }}
+      loading={{ listEnvironments: listEnvironmentLoading || listEnvironmentError?.message !== undefined }}
       environmentTableData={environmentTableData}
       refetchEnvironments={refetchEnvironments}
       mutation={{

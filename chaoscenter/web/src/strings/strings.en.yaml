@@ -324,7 +324,12 @@ enterYourName: Enter your name
 enterYourPassword: Enter your password
 enterYourUsername: Enter your username
 environment: Environment
+environmentDescription: >-
+  An environment is the place where you will deploy your cluster for chaos
+  testing
 environmentError: It seems there was an error fetching the Environment Details.
+environmentNameIsRequired: Environment Name is a required field
+environmentType: Environment Type
 environments: Environments
 error: Error
 errorApplyChanges: Error in Applying the Changes. Please enter correct input values.

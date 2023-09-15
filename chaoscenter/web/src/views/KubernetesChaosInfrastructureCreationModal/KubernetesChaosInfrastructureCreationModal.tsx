@@ -1,19 +1,27 @@
 import { ButtonVariation, Layout } from '@harnessio/uicore';
 import React from 'react';
+import type { ApolloQueryResult } from '@apollo/client';
 import { PermissionGroup } from '@models';
 import { useStrings } from '@strings';
 import { ParentComponentErrorWrapper } from '@errors';
 import RbacButton from '@components/RbacButton';
+import type { ListKubernetesChaosInfrastructureRequest, ListKubernetesChaosInfrastructureResponse } from '@api/core';
 import { KubernetesChaosInfrastructureStepWizardConfiguration } from './KubernetesChaosInfrastructureStepWizardConfiguration';
 
 interface KubernetesChaosInfrastructureCreationModalViewProps {
   startPolling: (pollInterval: number) => void;
   stopPolling: () => void;
+  refetch: {
+    listChaosInfra: (
+      variables?: Partial<ListKubernetesChaosInfrastructureRequest> | undefined
+    ) => Promise<ApolloQueryResult<ListKubernetesChaosInfrastructureResponse>>;
+  };
 }
 
 export default function KubernetesChaosInfrastructureCreationModalView({
   stopPolling,
-  startPolling
+  startPolling,
+  refetch
 }: KubernetesChaosInfrastructureCreationModalViewProps): React.ReactElement {
   const { getString } = useStrings();
 
@@ -30,6 +38,7 @@ export default function KubernetesChaosInfrastructureCreationModalView({
         {createInfrastructureModal && (
           <Layout.Horizontal style={{ flexGrow: '1' }}>
             <KubernetesChaosInfrastructureStepWizardConfiguration
+              refetch={refetch}
               kubernetesChaosInfrastructureCreationModalClose={kubernetesChaosInfrastructureCreationModalClose}
               chaosStepWizardIsOpen={createInfrastructureModal}
               setChaosStepWizardIsOpen={setCreateInfrastructureModal}

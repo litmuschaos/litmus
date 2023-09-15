@@ -17,6 +17,7 @@ import { FieldArray, Formik, Form, FormikProps } from 'formik';
 import { get } from 'lodash-es';
 import React from 'react';
 import * as Yup from 'yup';
+import type { ApolloQueryResult } from '@apollo/client';
 import { useStrings } from '@strings';
 import {
   DeploymentScopeOptions,
@@ -30,6 +31,7 @@ import KubernetesChaosInfrastructureGreenfieldController from '@controllers/Kube
 import KubernetesChaosInfrastructureDeploymentScopeController from '@controllers/KubernetesChaosInfrastructureDeploymentScope';
 import NameDescriptionTags from '@components/NameIdDescriptionTags';
 import CodeBlock from '@components/CodeBlock';
+import type { ListKubernetesChaosInfrastructureRequest, ListKubernetesChaosInfrastructureResponse } from '@api/core';
 import css from './KubernetesChaosInfrastructureCreationModal.module.scss';
 
 interface ParentModalProps {
@@ -40,11 +42,21 @@ interface ParentModalProps {
   connectorScope?: string;
   delegateID?: string;
   selectedConnector?: string;
+  refetch: {
+    listChaosInfra: (
+      variables?: Partial<ListKubernetesChaosInfrastructureRequest> | undefined
+    ) => Promise<ApolloQueryResult<ListKubernetesChaosInfrastructureResponse>>;
+  };
 }
 
 interface DeploySetupStepProps {
   kubernetesChaosInfrastructureCreationModalClose: () => void;
   setChaosStepWizardIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  refetch: {
+    listChaosInfra: (
+      variables?: Partial<ListKubernetesChaosInfrastructureRequest> | undefined
+    ) => Promise<ApolloQueryResult<ListKubernetesChaosInfrastructureResponse>>;
+  };
 }
 
 interface BasicChaosInfrastructureConfigProps {
@@ -306,9 +318,8 @@ function BasicChaosInfrastructureConfig({
 export function DeploySetupStep({
   prevStepData,
   kubernetesChaosInfrastructureCreationModalClose,
-  // connectorScope,
-  // delegateID,
-  setChaosStepWizardIsOpen
+  setChaosStepWizardIsOpen,
+  refetch
 }: StepProps<StepData> & DeploySetupStepProps): React.ReactElement {
   const { getString } = useStrings();
   const [infraRegistered, setInfraRegistered] = React.useState<boolean>(false);
@@ -396,6 +407,7 @@ export function DeploySetupStep({
             className={css.stepButton}
             onClick={() => {
               prevStepData && (prevStepData.value = initialValues);
+              refetch.listChaosInfra();
               kubernetesChaosInfrastructureCreationModalClose();
             }}
             variation={ButtonVariation.PRIMARY}
@@ -584,7 +596,8 @@ export const OverviewStep: React.FC<
 export function KubernetesChaosInfrastructureStepWizardConfiguration({
   kubernetesChaosInfrastructureCreationModalClose,
   chaosStepWizardIsOpen,
-  setChaosStepWizardIsOpen
+  setChaosStepWizardIsOpen,
+  refetch
 }: ParentModalProps): React.ReactElement {
   const { getString } = useStrings();
 
@@ -607,6 +620,7 @@ export function KubernetesChaosInfrastructureStepWizardConfiguration({
           <OverviewStep name={getString('overview')} setChaosStepWizardIsOpen={setChaosStepWizardIsOpen} />
           <ConfigureStep name={getString('configure')} setChaosStepWizardIsOpen={setChaosStepWizardIsOpen} />
           <DeploySetupStep
+            refetch={refetch}
             name={getString('deploySetup')}
             kubernetesChaosInfrastructureCreationModalClose={kubernetesChaosInfrastructureCreationModalClose}
             setChaosStepWizardIsOpen={setChaosStepWizardIsOpen}
