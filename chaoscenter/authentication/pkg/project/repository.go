@@ -26,7 +26,7 @@ type Repository interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
-	UpdateProjectState(userID string, deactivateTime string) error
+	UpdateProjectState(userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
@@ -288,7 +288,7 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 }
 
 // UpdateProjectState updates the deactivated_at state of the member and removed_at field of the project
-func (r repository) UpdateProjectState(userID string, deactivateTime string) error {
+func (r repository) UpdateProjectState(userID string, deactivateTime int64, isDeactivate bool) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
 			bson.D{{"elem.user_id", userID}},
@@ -320,7 +320,7 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 
 	update = bson.D{
 		{"$set", bson.D{
-			{"removed_at", deactivateTime},
+			{"is_removed", isDeactivate},
 		}},
 	}
 

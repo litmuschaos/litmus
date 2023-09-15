@@ -2,37 +2,47 @@ package projects
 
 import (
 	"context"
+	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/google/uuid"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/image_registry"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/project"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
-	image_registry2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/image_registry"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	grpc2 "google.golang.org/grpc"
 )
 
 // ProjectInitializer creates a default hub and default image registry for a new project
-func ProjectInitializer(ctx context.Context, projectID string, role string, operator mongodb.MongoOperator) error {
+func ProjectInitializer(ctx context.Context, project project.Project, role string, operator mongodb.MongoOperator) error {
 
 	var bl_true = true
+	currentTime := time.Now().UnixMilli()
 
-	//self_deployer.StartDeployer(projectID, operator)
-
-	irOp := image_registry.NewImageRegistryOperator(operator)
-	irService := image_registry2.NewImageRegistryService(irOp)
-	_, err := irService.CreateImageRegistry(ctx, projectID, model.ImageRegistryInput{
-		IsDefault:         bl_true,
+	imageRegistry := image_registry.ImageRegistry{
+		ImageRegistryID:   uuid.New().String(),
+		ProjectID:         project.ID,
 		ImageRegistryName: "docker.io",
 		ImageRepoName:     "litmuschaos",
 		ImageRegistryType: "public",
 		SecretName:        nil,
 		SecretNamespace:   nil,
 		EnableRegistry:    &bl_true,
-	})
+		IsDefault:         true,
+		Audit: mongodb.Audit{
+			CreatedAt: currentTime,
+			UpdatedAt: currentTime,
+			CreatedBy: project.CreatedBy,
+			UpdatedBy: project.UpdatedBy,
+			IsRemoved: false,
+		},
+	}
+
+	irOp := image_registry.NewImageRegistryOperator(operator)
+	err := irOp.InsertImageRegistry(ctx, imageRegistry)
 	if err != nil {
 		return err
 	}
@@ -40,37 +50,35 @@ func ProjectInitializer(ctx context.Context, projectID string, role string, oper
 	return nil
 }
 
-func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, mongoOp mongodb.MongoOperator) error {
-	routineCtx, cancelFn := context.WithCancel(context.Background())
-	_ = cancelFn
+func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, mongoOp mongodb.MongoOperator) {
+
 	pipeline := mongo.Pipeline{
 		bson.D{{"$match", bson.D{{"operationType", "insert"}}}},
 	}
-
-	projectDetails, err := project.NewProjectOperator(mongoOp).WatchProjectEvents(routineCtx, pipeline, mongoClient)
+	projectDetails, err := project.NewProjectOperator(mongoOp).WatchProjectEvents(context.Background(), pipeline, mongoClient)
 	if err != nil {
-		return err
+		log.Error(err.Error())
 	}
 	var conn *grpc2.ClientConn
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
 	defer conn.Close()
 
-	for projectDetails.Next(routineCtx) {
+	for projectDetails.Next(context.Background()) {
 		var DbEvent project.ProjectCreationEvent
 		if err := projectDetails.Decode(&DbEvent); err != nil {
-			return err
+			log.Error(err.Error())
 		}
 		if DbEvent.OperationType == "insert" {
-			user, err := grpc.GetUserById(client, DbEvent.FullDocument.CreatedBy)
+			user, err := grpc.GetUserById(client, DbEvent.FullDocument.CreatedBy.UserID)
 			if err != nil {
-				logrus.Error(err)
+				log.Error(err)
 			}
-			err = ProjectInitializer(routineCtx, DbEvent.FullDocument.ID, user.Role, mongoOp)
+			err = ProjectInitializer(context.Background(), DbEvent.FullDocument, user.Role, mongoOp)
 			if err != nil {
-				logrus.Error(err)
+				log.Error(err)
 			}
 			//projectEventChannel <- DbEvent.OperationType
 		}
 	}
-	return nil
+
 }
