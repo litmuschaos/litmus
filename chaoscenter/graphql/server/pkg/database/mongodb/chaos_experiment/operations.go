@@ -34,7 +34,7 @@ func (c *Operator) GetExperiments(query bson.D) ([]ChaosExperimentRequest, error
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
-	results, err := mongodb.Operator.List(ctx, mongodb.ChaosExperimentCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ChaosExperimentCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *Operator) GetExperiments(query bson.D) ([]ChaosExperimentRequest, error
 // GetExperiment takes a query parameter to retrieve the experiment details from the database
 func (c *Operator) GetExperiment(ctx context.Context, query bson.D) (ChaosExperimentRequest, error) {
 	var experiment ChaosExperimentRequest
-	results, err := mongodb.Operator.Get(ctx, mongodb.ChaosExperimentCollection, query)
+	results, err := c.operator.Get(ctx, mongodb.ChaosExperimentCollection, query)
 	if err != nil {
 		return ChaosExperimentRequest{}, err
 	}
@@ -69,7 +69,7 @@ func (c *Operator) GetAggregateExperiments(pipeline mongo.Pipeline) (*mongo.Curs
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
 	defer cancel()
 
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ChaosExperimentCollection, pipeline)
+	results, err := c.operator.Aggregate(ctx, mongodb.ChaosExperimentCollection, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (c *Operator) GetExperimentsByInfraID(infraID string) ([]ChaosExperimentReq
 	defer cancel()
 
 	query := bson.D{{"infra_id", infraID}}
-	results, err := mongodb.Operator.List(ctx, mongodb.ChaosExperimentCollection, query)
+	results, err := c.operator.List(ctx, mongodb.ChaosExperimentCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (c *Operator) GetExperimentsByInfraID(infraID string) ([]ChaosExperimentReq
 
 // InsertChaosExperiment takes details of a experiment and inserts into the database collection
 func (c *Operator) InsertChaosExperiment(ctx context.Context, chaosExperiment ChaosExperimentRequest) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ChaosExperimentCollection, chaosExperiment)
+	err := c.operator.Create(ctx, mongodb.ChaosExperimentCollection, chaosExperiment)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (c *Operator) InsertChaosExperiment(ctx context.Context, chaosExperiment Ch
 
 // UpdateChaosExperiment takes query and update parameters to update the experiment details in the database
 func (c *Operator) UpdateChaosExperiment(ctx context.Context, query bson.D, update bson.D, opts ...*options.UpdateOptions) error {
-	_, err := mongodb.Operator.Update(ctx, mongodb.ChaosExperimentCollection, query, update, opts...)
+	_, err := c.operator.Update(ctx, mongodb.ChaosExperimentCollection, query, update, opts...)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func (c *Operator) UpdateChaosExperiment(ctx context.Context, query bson.D, upda
 // UpdateChaosExperiments takes query and update parameters to updates multiple experiment's details in the database
 func (c *Operator) UpdateChaosExperiments(ctx context.Context, query bson.D, update bson.D) error {
 
-	_, err := mongodb.Operator.UpdateMany(ctx, mongodb.ChaosExperimentCollection, query, update)
+	_, err := c.operator.UpdateMany(ctx, mongodb.ChaosExperimentCollection, query, update)
 	if err != nil {
 		return err
 	}

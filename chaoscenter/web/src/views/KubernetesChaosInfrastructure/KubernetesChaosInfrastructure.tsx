@@ -1,4 +1,4 @@
-import type { ApolloError, MutationFunction } from '@apollo/client';
+import type { ApolloError, ApolloQueryResult, MutationFunction } from '@apollo/client';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Button, Container, ExpandingSearchInput, FlexExpander, Layout, Page, Text } from '@harnessio/uicore';
 import React from 'react';
@@ -6,7 +6,12 @@ import deployAgent from '@images/deployAgent.svg';
 import noFilteredData from '@images/noFilteredData.svg';
 import { useStrings } from '@strings';
 import type { KubernetesChaosInfrastructure } from '@api/entities';
-import type { DeleteKubernetesChaosInfraRequest, DeleteKubernetesChaosInfraResponse } from '@api/core';
+import type {
+  DeleteKubernetesChaosInfraRequest,
+  DeleteKubernetesChaosInfraResponse,
+  ListKubernetesChaosInfrastructureRequest,
+  ListKubernetesChaosInfrastructureResponse
+} from '@api/core';
 import Loader from '@components/Loader';
 import ChaosInfrastructureHeader from '@components/ChaosInfrastructureHeader';
 import KubernetesChaosInfrastructureTableView from '@views/KubernetesChaosInfrastructureTable';
@@ -25,6 +30,11 @@ interface KubernetesChaosInfrastructureViewProps {
   error: {
     getEnvironmentError: ApolloError | undefined;
     listChaosInfrastructureError: ApolloError | undefined;
+  };
+  refetch: {
+    listChaosInfra: (
+      variables?: Partial<ListKubernetesChaosInfrastructureRequest> | undefined
+    ) => Promise<ApolloQueryResult<ListKubernetesChaosInfrastructureResponse>>;
   };
   environmentID: string;
   deleteChaosInfrastructureMutation: MutationFunction<
@@ -50,37 +60,20 @@ export default function KubernetesChaosInfrastructureView({
   searchTerm,
   setSearchTerm,
   totalInfrastructures,
-  pagination
+  pagination,
+  refetch
 }: KubernetesChaosInfrastructureViewProps): React.ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
 
-  // if (error.getEnvironmentError?.response?.status === 400) {
-  //   return (
-  //     <GenericErrorHandler
-  //       errStatusCode={400}
-  //       errorMessage={getString('genericResourceNotFoundError', {
-  //         resource: getString('environment'),
-  //         resourceID: environmentDetails?.environment?.name ?? environmentID,
-  //         projectID: scope.projectID
-  //       })}
-  //     />
-  //   );
-  // }
-
-  // if (error.getEnvironmentError !== undefined || error.listChaosInfrastructureError !== undefined) {
-  //   return (
-  //     <GenericErrorHandler
-  //       errStatusCode={error.getEnvironmentError?.response?.status}
-  //       errorMessage={error.getEnvironmentError?.message}
-  //     />
-  //   );
-  // }
-
   const subHeader = (
     <Layout.Horizontal flex={{ justifyContent: 'space-between' }} width={'100%'}>
       <Layout.Horizontal spacing="medium">
-        <KubernetesChaosInfrastructureCreationModalView stopPolling={stopPolling} startPolling={startPolling} />
+        <KubernetesChaosInfrastructureCreationModalView
+          refetch={refetch}
+          stopPolling={stopPolling}
+          startPolling={startPolling}
+        />
       </Layout.Horizontal>
       <Layout.Horizontal flex={{ alignItems: 'center' }}>
         <ExpandingSearchInput
@@ -149,6 +142,7 @@ export default function KubernetesChaosInfrastructureView({
                     {getString('chaosInfrastructureDesc')}
                   </Text>
                   <KubernetesChaosInfrastructureCreationModalView
+                    refetch={refetch}
                     stopPolling={stopPolling}
                     startPolling={startPolling}
                   />
