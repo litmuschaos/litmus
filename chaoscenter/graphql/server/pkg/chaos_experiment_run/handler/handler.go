@@ -1225,7 +1225,9 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 					{"recent_experiment_run_details.notify_id", event.NotifyID},
 				}
 			}
-
+			updatedByModel := mongodb.UserDetailResponse{
+				Username: string(updatedBy),
+			}
 			update := bson.D{
 				{
 					"$set", bson.D{
@@ -1235,7 +1237,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 						{"recent_experiment_run_details.$.probes", probes},
 						{"recent_experiment_run_details.$.resiliency_score", workflowRunMetrics.ResiliencyScore},
 						{"recent_experiment_run_details.$.updated_at", currentTime.UnixMilli()},
-						{"recent_experiment_run_details.$.updated_by", string(updatedBy)},
+						{"recent_experiment_run_details.$.updated_by", updatedByModel},
 					},
 				},
 			}

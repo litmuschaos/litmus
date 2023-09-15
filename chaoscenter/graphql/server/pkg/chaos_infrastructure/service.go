@@ -215,7 +215,9 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 		{"$set", bson.D{
 			{"is_removed", true},
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		}},
 	}
 	err = in.infraOperator.UpdateInfra(context.TODO(), query, update)

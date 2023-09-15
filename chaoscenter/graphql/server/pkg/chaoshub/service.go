@@ -383,7 +383,9 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 			{"ssh_private_key", chaosHub.SSHPrivateKey},
 			{"ssh_public_key", chaosHub.SSHPublicKey},
 			{"updated_at", time},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		},
 		},
 	}
@@ -419,7 +421,9 @@ func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, proj
 		{"$set", bson.D{
 			{"is_removed", true},
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		},
 		},
 	}

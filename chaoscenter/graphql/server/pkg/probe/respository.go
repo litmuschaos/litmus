@@ -741,7 +741,9 @@ func (p *probe) DeleteProbe(ctx context.Context, probeName string) (bool, error)
 		{"$set", bson.D{
 			{"is_removed", true},
 			{"updated_at", Time},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		}},
 	}
 
@@ -884,7 +886,7 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 								ExperimentName: runs.ExperimentName,
 								UpdatedAt:      runs.UpdatedAt,
 								UpdatedBy: &model.UserDetails{
-									Username: runs.UpdatedBy,
+									Username: runs.UpdatedBy.Username,
 								},
 							},
 						})
