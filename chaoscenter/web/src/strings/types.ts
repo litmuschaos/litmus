@@ -275,7 +275,10 @@ export interface StringsMap {
   'enterYourPassword': unknown
   'enterYourUsername': unknown
   'environment': unknown
+  'environmentDescription': unknown
   'environmentError': unknown
+  'environmentNameIsRequired': unknown
+  'environmentType': unknown
   'environments': unknown
   'error': unknown
   'errorApplyChanges': unknown
