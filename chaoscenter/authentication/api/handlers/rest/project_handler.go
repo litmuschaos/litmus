@@ -170,7 +170,7 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 				if member.Role == entities.RoleOwner {
 					inviteRes.ProjectOwner = *member
 				} else {
-					inviteRes.InvitationRole = member.Invitation
+					inviteRes.InvitationRole = member.Role
 				}
 			}
 			response = append(response, inviteRes)
@@ -221,7 +221,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			UserID:     user.ID,
 			Role:       entities.RoleOwner,
 			Invitation: entities.AcceptedInvitation,
-			JoinedAt:   time.Now().Unix(),
+			JoinedAt:   time.Now().UnixMilli(),
 		}
 		var members []*entities.Member
 		members = append(members, newMember)
@@ -233,13 +233,13 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			State:   &state,
 			Audit: entities.Audit{
 				IsRemoved: false,
-				CreatedAt: time.Now().Unix(),
+				CreatedAt: time.Now().UnixMilli(),
 				CreatedBy: entities.UserDetailResponse{
 					Username: user.Username,
 					UserID:   user.ID,
 					Email:    user.Email,
 				},
-				UpdatedAt: time.Now().Unix(),
+				UpdatedAt: time.Now().UnixMilli(),
 				UpdatedBy: entities.UserDetailResponse{
 					Username: user.Username,
 					UserID:   user.ID,
@@ -329,7 +329,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			Name:       user.Name,
 			Email:      user.Email,
 			Invitation: entities.PendingInvitation,
-			JoinedAt:   time.Now().Unix(),
+			JoinedAt:   time.Now().UnixMilli(),
 		}
 
 		err = service.AddMember(member.ProjectID, newMember)

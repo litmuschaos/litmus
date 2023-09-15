@@ -36,7 +36,7 @@ func NewImageRegistryService(imageRegistryOperator *dbOperationsImageRegistry.Op
 
 func (i *imageRegistryService) CreateImageRegistry(ctx context.Context, projectID string, imageRegistryInfo model.ImageRegistryInput) (*model.ImageRegistryResponse, error) {
 	var (
-		currentTime = time.Now().Unix()
+		currentTime = time.Now().UnixMilli()
 		currTimeStr = strconv.FormatInt(currentTime, 10)
 		id          = uuid.New().String()
 		isRemoved   = false
