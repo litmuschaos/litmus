@@ -25,7 +25,7 @@ export default function KubernetesChaosInfrastructureController(): React.ReactEl
     data,
     loading: listChaosInfrastructureLoading,
     error: listChaosInfrastructureError,
-    refetch,
+    refetch: listInfrastructureRefetch,
     startPolling,
     stopPolling
   } = listChaosInfra({
@@ -56,7 +56,7 @@ export default function KubernetesChaosInfrastructureController(): React.ReactEl
   // Mutation is passed down, will be called on user click event
   const [deleteChaosInfrastructureMutation] = deleteKubernetesChaosInfra({
     onCompleted: () => {
-      refetch();
+      listInfrastructureRefetch();
       setPage(0);
       showSuccess(getString('deleteSuccess'));
     },
@@ -78,8 +78,6 @@ export default function KubernetesChaosInfrastructureController(): React.ReactEl
     );
   };
 
-  //TODO pass down refetch() to call it in done buttons
-
   return (
     <KubernetesChaosInfrastructureView
       chaosInfrastructures={InfrastructureData.length <= 0 && searchTerm == '' ? undefined : InfrastructureData}
@@ -90,6 +88,9 @@ export default function KubernetesChaosInfrastructureController(): React.ReactEl
       error={{
         getEnvironmentError: getEnvironmentError,
         listChaosInfrastructureError: listChaosInfrastructureError
+      }}
+      refetch={{
+        listChaosInfra: listInfrastructureRefetch
       }}
       startPolling={startPolling}
       stopPolling={stopPolling}
