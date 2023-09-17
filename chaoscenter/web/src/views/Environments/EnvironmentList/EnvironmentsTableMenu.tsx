@@ -52,12 +52,18 @@ export const MenuCell = ({
         )}
       </Dialog>
       {isEditOpen && (
-        <EditEnvironmentController
-          isEditOpen={isEditOpen}
-          handleClose={hideEditModal}
-          environmentID={data.environmentID}
-          refetchEnvironments={refetchEnvironments}
-        />
+        <Dialog
+          isOpen={isEditOpen}
+          canOutsideClickClose={false}
+          canEscapeKeyClose={false}
+          onClose={() => hideEditModal()}
+        >
+          <EditEnvironmentController
+            handleClose={hideEditModal}
+            environmentID={data.environmentID}
+            refetchEnvironments={refetchEnvironments}
+          />
+        </Dialog>
       )}
     </Layout.Vertical>
   );

@@ -90,7 +90,7 @@ export default function ImageRegistryView({
   return (
     <DefaultLayout
       headerToolbar={
-        <Layout.Horizontal flex={{ distribution: 'space-between' }} width="12%">
+        <Layout.Horizontal flex={{ distribution: 'space-between' }} style={{ gap: '0.5rem' }}>
           <RbacButton
             intent="primary"
             data-testid="save-image-registry"

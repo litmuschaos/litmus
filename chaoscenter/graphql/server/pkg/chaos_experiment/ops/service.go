@@ -242,7 +242,9 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 			{"description", workflow.ExperimentDescription},
 			{"is_custom_experiment", workflow.IsCustomExperiment},
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		}},
 		{"$push", bson.D{
 			{"revision", workflowRevision},
@@ -258,7 +260,9 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 		update = bson.D{
 			{"$set", bson.D{
 				{"updated_at", time.Now().UnixMilli()},
-				{"updated_by", username},
+				{"updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
 				{"revision.$.updated_at", time.Now().UnixMilli()},
 				{"revision.$.experiment_manifest", workflow.ExperimentManifest},
 			}},
@@ -304,7 +308,9 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 		update := bson.D{
 			{"$set", bson.D{
 				{"is_removed", true},
-				{"updated_by", username},
+				{"updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
 				{"updated_at", time.Now().UnixMilli()},
 			}},
 		}

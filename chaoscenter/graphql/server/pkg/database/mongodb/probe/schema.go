@@ -37,13 +37,13 @@ type Probes struct {
 }
 
 type ExecutionHistory struct {
-	ExperimentID   string                    `bson:"experiment_id"`
-	ExperimentName string                    `bson:"experiment_name"`
-	UpdatedBy      string                    `bson:"updated_by"`
-	ExecutionData  string                    `bson:"execution_data"`
-	UpdatedAt      int                       `bson:"updated_at"`
-	Probes         []Probes                  `bson:"probes"`
-	Phase          model.ExperimentRunStatus `bson:"phase"`
+	ExperimentID   string                     `bson:"experiment_id"`
+	ExperimentName string                     `bson:"experiment_name"`
+	UpdatedBy      mongodb.UserDetailResponse `bson:"updated_by"`
+	ExecutionData  string                     `bson:"execution_data"`
+	UpdatedAt      int                        `bson:"updated_at"`
+	Probes         []Probes                   `bson:"probes"`
+	Phase          model.ExperimentRunStatus  `bson:"phase"`
 }
 
 type ProbeWithExecutionHistory struct {

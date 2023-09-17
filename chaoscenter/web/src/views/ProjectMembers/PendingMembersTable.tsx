@@ -1,4 +1,14 @@
-import { Button, ButtonVariation, DropDown, Layout, SelectOption, TableV2, Text, useToaster } from '@harnessio/uicore';
+import {
+  Button,
+  ButtonVariation,
+  Container,
+  DropDown,
+  Layout,
+  SelectOption,
+  TableV2,
+  Text,
+  useToaster
+} from '@harnessio/uicore';
 import React, { useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
@@ -13,6 +23,7 @@ import {
 } from '@api/auth';
 import Loader from '@components/Loader';
 import { MemberEmail, MemberName } from './ActiveMembersListColumns';
+import styles from './ProjectMember.module.scss';
 
 interface PendingMembersTableViewProps {
   pendingMembers: ProjectMember[] | undefined;
@@ -33,7 +44,6 @@ export default function PendingMembersTableView({
       {
         Header: 'MEMBERS',
         id: 'username',
-        width: '25%',
         accessor: 'username',
         Cell: MemberName
       },
@@ -41,13 +51,11 @@ export default function PendingMembersTableView({
         Header: 'EMAIL',
         id: 'email',
         accessor: 'email',
-        width: '25%',
         Cell: MemberEmail
       },
       {
         Header: 'PERMISSIONS',
         id: 'Role',
-        width: '50%',
         disableSortBy: true,
         Cell: ({ row: { original: data } }: { row: Row<ProjectMember> }) => {
           const { projectID } = useParams<{ projectID: string }>();
@@ -86,16 +94,14 @@ export default function PendingMembersTableView({
           );
 
           return (
-            <Layout.Horizontal flex={{ justifyContent: 'space-between' }} spacing="medium">
-              <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="small" margin={{ bottom: 'small' }}>
-                <DropDown
-                  filterable={false}
-                  value={memberRole}
-                  items={rolesDropDown}
-                  onChange={option => setMemberRole(option.label as 'Editor' | 'Owner' | 'Viewer')}
-                />
-              </Layout.Horizontal>
-              <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="medium">
+            <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
+              <DropDown
+                filterable={false}
+                value={memberRole}
+                items={rolesDropDown}
+                onChange={option => setMemberRole(option.label as 'Editor' | 'Owner' | 'Viewer')}
+              />
+              <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'flex-start' }} style={{ gap: '1rem' }}>
                 <Button
                   disabled={false}
                   loading={sendLoading}
@@ -135,8 +141,7 @@ export default function PendingMembersTableView({
     []
   );
   return (
-    <Layout.Vertical height={'100%'} padding="medium">
-      <Text font={{ variation: FontVariation.H6 }}>Total Pending Invitations: {pendingMembers?.length ?? 0}</Text>
+    <Container height={'100%'} padding="medium">
       <Loader
         loading={isLoading}
         noData={{
@@ -145,8 +150,15 @@ export default function PendingMembersTableView({
           message: getString('pendingInvitationsNotAvailableMessage')
         }}
       >
-        {pendingMembers && <TableV2<ProjectMember> columns={envColumns} sortable data={pendingMembers} />}
+        <Layout.Vertical height="100%" style={{ gap: '0.5rem' }}>
+          <Text font={{ variation: FontVariation.H6 }}>
+            {getString('totalPendingInvitations')}: {pendingMembers?.length ?? 0}
+          </Text>
+          <Container style={{ flexGrow: 1 }} className={styles.tableContainerMain}>
+            {pendingMembers && <TableV2<ProjectMember> columns={envColumns} sortable data={pendingMembers} />}
+          </Container>
+        </Layout.Vertical>
       </Loader>
-    </Layout.Vertical>
+    </Container>
   );
 }

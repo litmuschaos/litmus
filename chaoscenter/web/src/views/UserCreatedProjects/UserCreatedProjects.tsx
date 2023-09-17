@@ -40,7 +40,9 @@ function MemoizedUserCreatedProjectsTable({
           return (
             <Layout.Horizontal style={{ gap: '0.25rem' }} flex={{ alignItems: 'center', justifyContent: 'flex-start' }}>
               <Icon name="nav-project" size={20} />
-              <Text font={{ variation: FontVariation.BODY }}>{data.name}</Text>
+              <Text width="calc(100% - 1.5rem)" lineClamp={1} font={{ variation: FontVariation.BODY }}>
+                {data.name}
+              </Text>
             </Layout.Horizontal>
           );
         }

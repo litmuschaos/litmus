@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Layout, TableV2 } from '@harnessio/uicore';
+import { Layout, TableV2, useToggleOpen, Dialog } from '@harnessio/uicore';
 import type { Column, Row } from 'react-table';
 import { useHistory } from 'react-router-dom';
 import type { MutationFunction } from '@apollo/client';
@@ -23,11 +23,10 @@ import type {
 import CreateEnvironment from './CreateEnvironment';
 import { MenuCell } from './EnvironmentsTableMenu';
 import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
+import css from './EnvironmentsList.module.scss';
 
 interface EnvironmentListViewProps {
   environmentTableData: EnvironmentDetailsTableProps | undefined;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  isModalOpen: boolean;
   loading: {
     listEnvironments: boolean;
   };
@@ -42,13 +41,12 @@ export default function EnvironmentListView({
   loading,
   environmentTableData,
   refetchEnvironments,
-  setIsModalOpen,
-  isModalOpen,
   mutation
 }: EnvironmentListViewProps & RefetchEnvironments): React.ReactElement {
   const { getString } = useStrings();
   const history = useHistory();
   const paths = useRouteWithBaseUrl();
+  const { isOpen, open, close } = useToggleOpen();
 
   useDocumentTitle(getString('environments'));
 
@@ -99,10 +97,26 @@ export default function EnvironmentListView({
               iconProps={{ size: 10 }}
               text="New Environment"
               permission={PermissionGroup.EDITOR}
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
+              onClick={() => open()}
             />
+            {isOpen && (
+              <Dialog
+                isOpen={isOpen}
+                canOutsideClickClose={false}
+                canEscapeKeyClose={false}
+                onClose={() => close()}
+                isCloseButtonShown
+                className={css.dialogStylesEnv}
+              >
+                <CreateEnvironment
+                  closeModal={close}
+                  mutation={{
+                    createEnvironment: mutation.createEnvironment,
+                    updateEnvironment: mutation.updateEnvironment
+                  }}
+                />
+              </Dialog>
+            )}
           </Layout.Horizontal>
         </Layout.Horizontal>
       }
@@ -115,13 +129,6 @@ export default function EnvironmentListView({
           message: getString('noEnvironmentFoundMessage')
         }}
       >
-        {isModalOpen && (
-          <CreateEnvironment
-            isOpen={isModalOpen}
-            setIsOpen={setIsModalOpen}
-            mutation={{ createEnvironment: mutation.createEnvironment, updateEnvironment: mutation.updateEnvironment }}
-          />
-        )}
         <TableV2<EnvironmentDetails>
           columns={envColumns}
           sortable
