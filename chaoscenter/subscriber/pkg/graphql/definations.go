@@ -5,9 +5,9 @@ type SubscriberGql interface {
 	MarshalGQLData(gqlData interface{}) (string, error)
 }
 
-type gqlServer struct {
+type subscriberGql struct {
 }
 
-func NewGqlServer() SubscriberGql {
-	return &gqlServer{}
+func NewSubscriberGql() SubscriberGql {
+	return &subscriberGql{}
 }
