@@ -64,8 +64,8 @@ func init() {
 
 	var c Config
 
-	var subscriberGraphql = graphql.NewSubscriberGql()
-	var subscriberK8s = k8s.NewK8sSubscriber(subscriberGraphql)
+	subscriberGraphql := graphql.NewSubscriberGql()
+	subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
 
 	err := envconfig.Process("", &c)
 	if err != nil {
