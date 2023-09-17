@@ -65,7 +65,7 @@ func init() {
 	var c Config
 
 	var subscriberGraphql = graphql.NewSubscriberGql()
-	var subscriberK8s = k8s.NewKubernetes(subscriberGraphql)
+	var subscriberK8s = k8s.NewK8sSubscriber(subscriberGraphql)
 
 	err := envconfig.Process("", &c)
 	if err != nil {
@@ -138,7 +138,7 @@ func main() {
 	stream := make(chan types.WorkflowEvent, 10)
 
 	subscriberGraphql := graphql.NewSubscriberGql()
-	subscriberK8s := k8s.NewKubernetes(subscriberGraphql)
+	subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
 	subscriberEvents := events.NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
 	subscriberUtils := utils.NewSubscriberUtils(subscriberEvents, subscriberK8s)
 	subscriberEventOperations := events.NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)

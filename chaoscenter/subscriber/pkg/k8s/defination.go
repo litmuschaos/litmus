@@ -37,7 +37,7 @@ type k8sSubscriber struct {
 	gqlSubscriberServer graphql.SubscriberGql
 }
 
-func NewKubernetes(gqlSubscriberServer graphql.SubscriberGql) SubscriberK8s {
+func NewK8sSubscriber(gqlSubscriberServer graphql.SubscriberGql) SubscriberK8s {
 	return &k8sSubscriber{
 		gqlSubscriberServer: gqlSubscriberServer,
 	}
