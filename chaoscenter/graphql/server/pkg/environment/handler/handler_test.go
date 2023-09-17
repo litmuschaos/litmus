@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	mongodbMockOperator = new(dbMocks.MongoOperator)
-	envOperator = environments.NewEnvironmentOperator(mongodbMockOperator)
+	mongodbMockOperator    = new(dbMocks.MongoOperator)
+	envOperator            = environments.NewEnvironmentOperator(mongodbMockOperator)
 	environmentTestHandler = handler.NewEnvironmentService(envOperator)
 )
 
@@ -34,13 +34,13 @@ func TestCreateEnvironment(t *testing.T) {
 	projectID := uuid.NewString()
 	newEnvironment := &model.CreateEnvironmentRequest{
 		EnvironmentID: uuid.NewString(),
-		Name: uuid.NewString(),
-		Description: strPtr(uuid.NewString()),
-		Tags: []string{uuid.NewString()},
+		Name:          uuid.NewString(),
+		Description:   strPtr(uuid.NewString()),
+		Tags:          []string{uuid.NewString()},
 	}
 	testcases := []struct {
-		name string
-		given func()
+		name    string
+		given   func()
 		wantErr bool
 	}{
 		{
@@ -80,12 +80,12 @@ func TestUpdateEnvironment(t *testing.T) {
 	projectID := uuid.NewString()
 	newEnvironment := &model.UpdateEnvironmentRequest{
 		EnvironmentID: uuid.NewString(),
-		Name: strPtr(uuid.NewString()),
-		Description: strPtr(uuid.NewString()),
+		Name:          strPtr(uuid.NewString()),
+		Description:   strPtr(uuid.NewString()),
 	}
 	testcases := []struct {
-		name string
-		given func()
+		name    string
+		given   func()
 		wantErr bool
 	}{
 		{
@@ -122,7 +122,7 @@ func TestUpdateEnvironment(t *testing.T) {
 func TestDeleteEnvironment(t *testing.T) {
 	ctx := context.Background()
 	projectID := uuid.NewString()
-	environmentID := uuid.NewString() 
+	environmentID := uuid.NewString()
 	//given
 	testcases := []struct {
 		name    string
@@ -143,10 +143,10 @@ func TestDeleteEnvironment(t *testing.T) {
 			isError: true,
 		},
 	}
-	
+
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			_ ,err := environmentTestHandler.DeleteEnvironment(ctx, projectID, environmentID)
+			_, err := environmentTestHandler.DeleteEnvironment(ctx, projectID, environmentID)
 			if err == nil {
 				t.Errorf("Deleted environment got %v but want %v", err, tc.isError)
 				return
@@ -159,8 +159,8 @@ func TestGetEnvironment(t *testing.T) {
 	projectID := uuid.NewString()
 	environmentID := uuid.NewString()
 	testcases := []struct {
-		name string
-		given func()
+		name    string
+		given   func()
 		isError bool
 	}{
 		{
@@ -194,11 +194,11 @@ func TestListEnvironment(t *testing.T) {
 	projectID := uuid.NewString()
 	environmentID := uuid.NewString()
 	envRequest := &model.ListEnvironmentRequest{
-		EnvironmentIDs: []string {uuid.NewString()},
+		EnvironmentIDs: []string{uuid.NewString()},
 	}
 	testcases := []struct {
-		name string
-		given func()
+		name    string
+		given   func()
 		isError bool
 	}{
 		{
