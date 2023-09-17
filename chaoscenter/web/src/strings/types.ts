@@ -119,6 +119,7 @@ export interface StringsMap {
   'chooseAccessType': unknown
   'chooseAuthenticationType': unknown
   'chooseHubAccess': unknown
+  'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
   'clickDownload': unknown
   'clone': unknown
@@ -247,6 +248,7 @@ export interface StringsMap {
   'editSameExperimentTitle': unknown
   'editYaml': unknown
   'editingChaosHub': unknown
+  'editor': unknown
   'effect': unknown
   'email': unknown
   'emailIsRequired': unknown
@@ -275,7 +277,10 @@ export interface StringsMap {
   'enterYourPassword': unknown
   'enterYourUsername': unknown
   'environment': unknown
+  'environmentDescription': unknown
   'environmentError': unknown
+  'environmentNameIsRequired': unknown
+  'environmentType': unknown
   'environments': unknown
   'error': unknown
   'errorApplyChanges': unknown
@@ -893,6 +898,7 @@ export interface StringsMap {
   'totalEnvironments': unknown
   'totalExp': unknown
   'totalExperiments': unknown
+  'totalPendingInvitations': unknown
   'totalRuns': unknown
   'totalUsers': unknown
   'triggeredBy': unknown
@@ -948,6 +954,7 @@ export interface StringsMap {
   'viewProbeDetails': unknown
   'viewProbeProperties': unknown
   'viewRun': unknown
+  'viewer': unknown
   'warning': unknown
   'weekly': unknown
   'weeklyMessage': unknown

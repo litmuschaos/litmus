@@ -124,6 +124,7 @@ checkStatus: Check the status of your Chaos Infrastructure on your cluster
 chooseAccessType: Choose Access Type
 chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
+chooseMembersAddTheProject: Choose members to add to the project
 chooseProbeMode: Choose Mode for probe to be executed
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
@@ -294,6 +295,7 @@ editSameExperimentDescription: >-
 editSameExperimentTitle: Edit on the existing Experiment
 editYaml: Edit Yaml
 editingChaosHub: Editing ChaosHub
+editor: Editor
 effect: Effect
 email: Email
 emailIsRequired: Email is a required field
@@ -324,7 +326,12 @@ enterYourName: Enter your name
 enterYourPassword: Enter your password
 enterYourUsername: Enter your username
 environment: Environment
+environmentDescription: >-
+  An environment is the place where you will deploy your cluster for chaos
+  testing
 environmentError: It seems there was an error fetching the Environment Details.
+environmentNameIsRequired: Environment Name is a required field
+environmentType: Environment Type
 environments: Environments
 error: Error
 errorApplyChanges: Error in Applying the Changes. Please enter correct input values.
@@ -1059,6 +1066,7 @@ totalChaosInfrastructures: Total Infrastructures
 totalEnvironments: Total Environments
 totalExp: Total Experiments
 totalExperiments: Total Faults in Execution
+totalPendingInvitations: Total Pending Invitations
 totalRuns: Total Runs
 totalUsers: Total Users
 triggeredBy: Triggered by
@@ -1116,6 +1124,7 @@ viewManifest: View YAML Manifest
 viewProbeDetails: View Probe Details
 viewProbeProperties: View Probe Properties
 viewRun: View Run
+viewer: Viewer
 warning: Warning
 weekly: Weekly
 weeklyMessage: Your chaos experiment will run weekly at your chosen day and time.

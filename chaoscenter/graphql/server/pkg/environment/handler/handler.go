@@ -114,7 +114,9 @@ func (e *EnvironmentService) UpdateEnvironment(ctx context.Context, projectID st
 	updateQuery = append(updateQuery, bson.E{
 		Key: "$set", Value: bson.D{
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		},
 	})
 	if request.Name != nil {
@@ -176,7 +178,9 @@ func (e *EnvironmentService) DeleteEnvironment(ctx context.Context, projectID st
 		{"$set", bson.D{
 			{"is_removed", true},
 			{"updated_at", currTime},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		}},
 	}
 	err = e.EnvironmentOperator.UpdateEnvironment(context.TODO(), query, update)

@@ -1,4 +1,4 @@
-import { Button, ButtonVariation, CardSelect, Container, Dialog, FormInput, Layout, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, CardSelect, Container, FormInput, Layout, Text } from '@harnessio/uicore';
 import { FontVariation, Color } from '@harnessio/design-system';
 import { Form, Formik } from 'formik';
 import React from 'react';
@@ -25,11 +25,10 @@ interface CreateEnvironmentData {
 }
 
 interface CreateEnvironmentProps {
-  isOpen: boolean;
   editable?: boolean;
   environmentID?: string;
   existingEnvironment?: Environment;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  closeModal: () => void;
   mutation: {
     createEnvironment?: MutationFunction<CreateEnvironmentResponse, CreateEnvironmentRequest>;
     updateEnvironment?: MutationFunction<string, UpdateEnvironmentRequest>;
@@ -40,13 +39,12 @@ interface CreateEnvironmentProps {
 }
 
 export default function CreateEnvironment({
-  isOpen,
   editable,
-  setIsOpen,
   environmentID,
   mutation,
   existingEnvironment,
-  loading
+  loading,
+  closeModal
 }: CreateEnvironmentProps): React.ReactElement {
   const { getString } = useStrings();
   const scope = getScope();
@@ -69,122 +67,106 @@ export default function CreateEnvironment({
   ];
 
   return (
-    <Dialog
-      isOpen={isOpen}
-      enforceFocus={false}
-      canEscapeKeyClose
-      canOutsideClickClose
-      onClose={
-        /* istanbul ignore next*/ () => {
-          setIsOpen(false);
-        }
-      }
-      isCloseButtonShown
-      className={css.dialogStylesEnv}
-    >
-      <Layout.Vertical height={'100%'} padding="small">
-        <Loader loading={loading?.getEnvironment}>
-          <Formik<CreateEnvironmentData>
-            initialValues={initialValues}
-            onSubmit={data => {
-              !editable
-                ? mutation.createEnvironment &&
-                  mutation
-                    .createEnvironment({
-                      variables: {
-                        projectID: scope.projectID,
-                        request: {
-                          environmentID: data.id,
-                          name: data.name,
-                          description: data.description,
-                          tags: data.tags,
-                          type: data.type
-                        }
-                      }
-                    })
-                    .then(() => setIsOpen(false))
-                : mutation.updateEnvironment &&
-                  environmentID &&
-                  mutation.updateEnvironment({
+    <Layout.Vertical height={'100%'} padding="small">
+      <Loader loading={loading?.getEnvironment}>
+        <Formik<CreateEnvironmentData>
+          initialValues={initialValues}
+          onSubmit={data => {
+            !editable
+              ? mutation.createEnvironment &&
+                mutation
+                  .createEnvironment({
                     variables: {
                       projectID: scope.projectID,
                       request: {
-                        environmentID: environmentID,
+                        environmentID: data.id,
                         name: data.name,
                         description: data.description,
                         tags: data.tags,
                         type: data.type
                       }
                     }
-                  });
-            }}
-            validationSchema={Yup.object().shape({
-              name: Yup.string().trim().required('Environment Name is a required field')
-            })}
-          >
-            {formikProps => {
-              return (
-                <Form style={{ height: '100%' }}>
-                  <Layout.Vertical height={'100%'}>
-                    <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'small' }}>
-                      {editable ? 'Edit Environment' : 'New Environment'}
-                    </Text>
-                    <Text color={Color.GREY_700} margin={{ bottom: 'large' }}>
-                      An environment is the place where you will deploy your cluster for chaos testing
-                    </Text>
-                    <div className={css.maxInputNameId}>
-                      <FormInput.InputWithIdentifier
-                        inputName="name"
-                        idName="id"
-                        isIdentifierEditable={editable ? false : true}
-                        inputLabel="Environment Name"
-                        inputGroupProps={{
-                          placeholder: 'Environment Name',
-                          className: css.maxWidthFormInput
-                        }}
-                      />
-                    </div>
-                    <DescriptionTags formikProps={formikProps} className={css.maxWidthFormInput} />
-                    {/* <FlexExpander /> */}
-
-                    <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'large' }}>
-                      Environment Type
-                    </Text>
-                    <CardSelect
-                      selected={environmentTypes.find(objective => objective._cardName === formikProps.values.type)}
-                      data={environmentTypes}
-                      onChange={key => {
-                        formikProps.setFieldValue('type', key._cardName);
+                  })
+                  .then(() => closeModal())
+              : mutation.updateEnvironment &&
+                environmentID &&
+                mutation.updateEnvironment({
+                  variables: {
+                    projectID: scope.projectID,
+                    request: {
+                      environmentID: environmentID,
+                      name: data.name,
+                      description: data.description,
+                      tags: data.tags,
+                      type: data.type
+                    }
+                  }
+                });
+          }}
+          validationSchema={Yup.object().shape({
+            name: Yup.string().trim().required(getString('environmentNameIsRequired'))
+          })}
+        >
+          {formikProps => {
+            return (
+              <Form style={{ height: '100%' }}>
+                <Layout.Vertical height={'100%'}>
+                  <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'small' }}>
+                    {editable ? 'Edit Environment' : 'New Environment'}
+                  </Text>
+                  <Text color={Color.GREY_700} margin={{ bottom: 'large' }}>
+                    {getString('environmentDescription')}
+                  </Text>
+                  <div className={css.maxInputNameId}>
+                    <FormInput.InputWithIdentifier
+                      inputName="name"
+                      idName="id"
+                      isIdentifierEditable={editable ? false : true}
+                      inputLabel="Environment Name"
+                      inputGroupProps={{
+                        placeholder: 'Environment Name',
+                        className: css.maxWidthFormInput
                       }}
-                      cornerSelected
-                      className={css.cardContainer}
-                      renderItem={item => (
-                        <Container className={css.card} flex={{ justifyContent: 'center', alignItems: 'center' }}>
-                          <Text font={{ variation: FontVariation.BODY, align: 'center' }}>{item.name}</Text>
-                        </Container>
-                      )}
                     />
-                    <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
-                      <Button
-                        disabled={false}
-                        onClick={() => setIsOpen(false)}
-                        variation={ButtonVariation.SECONDARY}
-                        text={getString('cancel')}
-                      />
-                      <Button
-                        type="submit"
-                        variation={ButtonVariation.PRIMARY}
-                        text={getString('save')}
-                        onClick={() => formikProps.handleSubmit()}
-                      />
-                    </Layout.Horizontal>
-                  </Layout.Vertical>
-                </Form>
-              );
-            }}
-          </Formik>
-        </Loader>
-      </Layout.Vertical>
-    </Dialog>
+                  </div>
+                  <DescriptionTags formikProps={formikProps} className={css.maxWidthFormInput} />
+                  <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'large' }}>
+                    {getString('environmentType')}
+                  </Text>
+                  <CardSelect
+                    selected={environmentTypes.find(objective => objective._cardName === formikProps.values.type)}
+                    data={environmentTypes}
+                    onChange={key => {
+                      formikProps.setFieldValue('type', key._cardName);
+                    }}
+                    cornerSelected
+                    className={css.cardContainer}
+                    renderItem={item => (
+                      <Container className={css.card} flex={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Text font={{ variation: FontVariation.BODY, align: 'center' }}>{item.name}</Text>
+                      </Container>
+                    )}
+                  />
+                  <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing={'medium'}>
+                    <Button
+                      disabled={false}
+                      onClick={() => closeModal()}
+                      variation={ButtonVariation.SECONDARY}
+                      text={getString('cancel')}
+                    />
+                    <Button
+                      type="submit"
+                      variation={ButtonVariation.PRIMARY}
+                      text={getString('save')}
+                      onClick={() => formikProps.handleSubmit()}
+                    />
+                  </Layout.Horizontal>
+                </Layout.Vertical>
+              </Form>
+            );
+          }}
+        </Formik>
+      </Loader>
+    </Layout.Vertical>
   );
 }
