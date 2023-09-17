@@ -24,18 +24,14 @@ type SubscriberEvents interface {
 	WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent)
 }
 
-type events struct {
-	gqlSubscriberServer       graphql.SubscriberGql
-	subscriberK8s             k8s.SubscriberK8s
-	subscriberEventOperations SubscriberEvents
+type subscriberEvents struct {
+	gqlSubscriberServer graphql.SubscriberGql
+	subscriberK8s       k8s.SubscriberK8s
 }
 
 func NewSubscriberEventsOperator(gqlSubscriberServer graphql.SubscriberGql, subscriberK8s k8s.SubscriberK8s) SubscriberEvents {
-	return &events{
+	return &subscriberEvents{
 		gqlSubscriberServer: gqlSubscriberServer,
 		subscriberK8s:       subscriberK8s,
 	}
 }
-
-// var gqlSubscriberServer = graphql.NewGqlServer()
-// var subscriberK8s = k8s.NewKubernetes()

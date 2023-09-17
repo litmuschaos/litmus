@@ -36,7 +36,7 @@ var (
 )
 
 // WorkflowEventWatcher initializes the Argo Workflow event watcher
-func (ev *events) WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
+func (ev *subscriberEvents) WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
 	startTime, err := strconv.Atoi(infraData["START_TIME"])
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to parse START_TIME")
@@ -68,7 +68,7 @@ func (ev *events) WorkflowEventWatcher(stopCh chan struct{}, stream chan types.W
 }
 
 // handles the different events events - add, update and delete
-func (ev *events) startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
+func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			workflowObj := obj.(*v1alpha1.Workflow)
@@ -97,7 +97,7 @@ func (ev *events) startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndex
 }
 
 // WorkflowEventHandler is responsible for extracting the required data from the event and streaming
-func (ev *events) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
+func (ev *subscriberEvents) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
 			"uid":         string(workflowObj.ObjectMeta.UID),
@@ -199,7 +199,7 @@ func (ev *events) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType
 }
 
 // SendWorkflowUpdates generates graphql mutation to send events updates to graphql server
-func (ev *events) SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error) {
+func (ev *subscriberEvents) SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error) {
 	if wfEvent, ok := eventMap[event.UID]; ok {
 		for key, node := range wfEvent.Nodes {
 			if node.Type == "ChaosEngine" && node.ChaosExp != nil && event.Nodes[key].ChaosExp == nil {
@@ -244,7 +244,7 @@ func (ev *events) SendWorkflowUpdates(infraData map[string]string, event types.W
 	return body, nil
 }
 
-func (ev *events) WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent) {
+func (ev *subscriberEvents) WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent) {
 	// listen on the channel for streaming event updates
 	for eventData := range event {
 		response, err := ev.SendWorkflowUpdates(infraData, eventData)

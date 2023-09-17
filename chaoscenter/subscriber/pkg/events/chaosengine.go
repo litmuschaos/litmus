@@ -20,7 +20,7 @@ import (
 )
 
 // ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
-func (ev *events) ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
+func (ev *subscriberEvents) ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
 	startTime, err := strconv.Atoi(infraData["START_TIME"])
 	if err != nil {
 		logrus.WithError(err).Fatal("failed to parse startTime")
@@ -55,8 +55,8 @@ func (ev *events) ChaosEventWatcher(stopCh chan struct{}, stream chan types.Work
 	go ev.startWatchEngine(stopCh, informer, stream, int64(startTime))
 }
 
-// handles the different events events - add, update and delete
-func (ev *events) startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
+// handles the different*subscriberEvents - add, update and delete
+func (ev *subscriberEvents) startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			ev.chaosEventHandler(obj, "ADD", stream, startTime)
@@ -71,7 +71,7 @@ func (ev *events) startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexIn
 }
 
 // responsible for extracting the required data from the event and streaming
-func (ev *events) chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
+func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*chaosTypes.ChaosEngine)
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
@@ -106,7 +106,7 @@ func (ev *events) chaosEventHandler(obj interface{}, eventType string, stream ch
 		logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 	}
 
-	// considering chaos events has only 1 artifact with manifest as raw data
+	// considering chaos*subscriberEvents has only 1 artifact with manifest as raw data
 	finTime := int64(-1)
 	if workflowObj.Status.EngineStatus == chaosTypes.EngineStatusCompleted || workflowObj.Status.EngineStatus == chaosTypes.EngineStatusStopped {
 		if len(workflowObj.Status.Experiments) > 0 {
@@ -154,7 +154,7 @@ func (ev *events) chaosEventHandler(obj interface{}, eventType string, stream ch
 }
 
 // StopChaosEngineState is used to patch all the chaosEngines with engineState=stop
-func (ev *events) StopChaosEngineState(namespace string, workflowRunID *string) error {
+func (ev *subscriberEvents) StopChaosEngineState(namespace string, workflowRunID *string) error {
 	ctx := context.TODO()
 
 	//Define the GVR
