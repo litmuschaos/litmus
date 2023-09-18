@@ -57,8 +57,8 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
           }
         },
         {
-          onSuccess: () => handleClose(),
-          onError: () => showError(getString('passwordsDoNotMatch'))
+          onError: () => showError(getString('passwordsDoNotMatch')),
+          onSuccess: () => handleClose()
         }
       );
   }
