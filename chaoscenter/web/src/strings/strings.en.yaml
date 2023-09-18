@@ -48,6 +48,7 @@ allExecutions: All Executions
 allFaultsExecuted: All your faults executed without any issue
 allRuns: All Runs
 alreadyExists: '{{value}} already exists'
+alreadyExistsID: Entered id '{{value}}' already exists
 apiTokens: API Tokens
 appKind: App Kind
 appKindName: app_kind
