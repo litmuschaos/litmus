@@ -402,6 +402,16 @@ metadata:
   name: litmus-server-account
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-auth-server-account
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-frontend-account
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: litmus-portal-admin-secret
@@ -532,10 +542,10 @@ spec:
       containers:
         - name: litmusportal-frontend
           image: litmuschaos/litmusportal-frontend:3.0.0-beta12
-          # securityContext:
-          #   runAsUser: 2000
-          #   allowPrivilegeEscalation: false
-          #   runAsNonRoot: true
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
           imagePullPolicy: Always
           ports:
             - containerPort: 8185
@@ -556,6 +566,7 @@ spec:
         - name: nginx-config
           configMap:
             name: litmusportal-frontend-nginx-configuration
+      serviceAccountName: litmus-frontend-account
 ---
 apiVersion: v1
 kind: Service
@@ -713,6 +724,7 @@ spec:
         component: litmusportal-auth-server
     spec:
       automountServiceAccountToken: false
+      serviceAccountName: litmus-auth-server-account
       containers:
         - name: auth-server
           image: litmuschaos/litmusportal-auth-server:3.0.0-beta12
