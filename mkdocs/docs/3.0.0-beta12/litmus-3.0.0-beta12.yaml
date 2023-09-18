@@ -369,7 +369,7 @@ subjects:
   - kind: ServiceAccount
     name: litmus-server-account
     namespace: litmus
-# litmus-server-cr is used by the litmusportal-server
+## litmus-server-cr is used by the litmusportal-server
 # If SELF_AGENT=false, then only litmus-server-cr and litmus-server-crb are required.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
