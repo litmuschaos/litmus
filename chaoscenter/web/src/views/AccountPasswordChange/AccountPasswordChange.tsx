@@ -1,5 +1,5 @@
 import { FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Container, FormInput, Layout, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { Icon } from '@harnessio/icons';
 import { Form, Formik } from 'formik';
@@ -28,6 +28,7 @@ interface AccountPasswordChangeFormProps {
 export default function AccountPasswordChangeView(props: AccountPasswordChangeViewProps): React.ReactElement {
   const { handleClose, updatePasswordMutation, updatePasswordMutationLoading, username } = props;
   const { getString } = useStrings();
+  const { showError } = useToaster();
 
   function isSubmitButtonDisabled(values: AccountPasswordChangeFormProps): boolean {
     if (values.oldPassword === '' || values.newPassword === '' || values.reEnterNewPassword === '') {
@@ -56,7 +57,8 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
           }
         },
         {
-          onSuccess: () => handleClose()
+          onSuccess: () => handleClose(),
+          onError: () => showError(getString('passwordsDoNotMatch'))
         }
       );
   }
