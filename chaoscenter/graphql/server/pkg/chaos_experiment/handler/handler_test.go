@@ -10,10 +10,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	choasExperimentMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/model/mocks"
+	chaosExperimentMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/model/mocks"
 	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
-	choasExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run/model/mocks"
+	chaosExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run/model/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -34,11 +34,11 @@ import (
 var (
 	mongodbMockOperator        = new(dbMocks.MongoOperator)
 	infrastructureService      = new(chaosInfraMocks.InfraService)
-	chaosExperimentRunService  = new(choasExperimentRunMocks.ChaosExperimentRunService)
+	chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
 	gitOpsService              = new(dbGitOpsMocks.GitOpsService)
 	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
 	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
-	chaosExperimentService     = new(choasExperimentMocks.ChaosExperimentService)
+	chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
 )
 
 var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
