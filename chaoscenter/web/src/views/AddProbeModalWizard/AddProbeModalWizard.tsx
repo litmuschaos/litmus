@@ -792,8 +792,8 @@ const TuneDetailsStep: React.FC<
                     } as SelectOption)
                   : undefined
               }
-              label="Method"
-              placeholder="Select Method GET / POST "
+              label={getString('method')}
+              placeholder={getString('selectMethod')}
               items={[
                 { label: 'GET', value: 'get' },
                 { label: 'POST', value: 'post' }
@@ -803,8 +803,8 @@ const TuneDetailsStep: React.FC<
               <>
                 <FormInput.Select
                   name="kubernetesHTTPProperties.method.get.criteria"
-                  label="Criteria"
-                  placeholder="Criteria for data"
+                  label={getString('criteria')}
+                  placeholder={getString('criteriafordata')}
                   items={[
                     { label: '==', value: '==' },
                     { label: '!=', value: '!=' },
@@ -836,8 +836,8 @@ const TuneDetailsStep: React.FC<
                 />
                 <FormInput.Select
                   name="kubernetesHTTPProperties.method.post.criteria"
-                  label="Criteria"
-                  placeholder="Criteria for data"
+                  label={getString('criteria')}
+                  placeholder={getString('criteriafordata')}
                   items={[
                     { label: '==', value: '==' },
                     { label: '!=', value: '!=' }
@@ -882,8 +882,8 @@ const TuneDetailsStep: React.FC<
             </Text>
             <FormInput.Select
               name="kubernetesCMDProperties.comparator.type"
-              label="Type"
-              placeholder="Type of data"
+              label={getString('type')}
+              placeholder={getString('typeofdata')}
               onChange={selected => (cmdComparatorType.current = selected.value as string)}
               items={[
                 { label: 'Int', value: 'int' },

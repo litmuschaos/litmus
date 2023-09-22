@@ -205,6 +205,7 @@ createdAt: Created At
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
+criteriafordata: Criteria for data
 cronExpression: Cron Expression
 cronExpressionRequired: Cron Expression required
 cronSelectOption: Cron (Recurring run)
@@ -324,6 +325,7 @@ enterProjectName: Enter Project Name
 enterYourEmail: Enter your email
 enterYourName: Enter your name
 enterYourPassword: Enter your password
+EnteryourPersonalAcessToken: Enter your Personal Acess Token
 enterYourUsername: Enter your username
 environment: Environment
 environmentDescription: >-
@@ -845,6 +847,8 @@ public: Public
 query: Query
 queryPath: Query path
 ranAt: Ran at
+range: range
+rangesliderinput: rangeSliderInput
 rbacDescription: You are missing permission '{{permission}}' to perform this action.
 rbacHeader: You do not have permission to perform this action
 reEnterNewPassword: Re-enter new password
@@ -960,6 +964,7 @@ selectExperiments: Select Experiments
 selectHub: Select a ChaosHub
 selectHubFromList: Select a hub from the list
 selectHubHeader: Create or select existing ChaosHub
+selectMethod: Select Method GET / POST
 selectProbes: Select Probes
 selectProject: Select a Project
 selectTimeframe: Select time frame
@@ -1076,6 +1081,7 @@ tuneFaultProperties: Tune fault properties
 tuneFaultWeight: Tune fault weightage
 tuneWeight: Tune Weight
 type: Type
+typeofdata: Type of data
 udpatePassword: Update Password
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
