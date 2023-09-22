@@ -95,7 +95,7 @@ export default function EnvironmentListView({
               data-testid="add-environment"
               icon="plus"
               iconProps={{ size: 10 }}
-              text="New Environment"
+              text={getString('newEnvironment')}
               permission={PermissionGroup.EDITOR}
               onClick={() => open()}
             />

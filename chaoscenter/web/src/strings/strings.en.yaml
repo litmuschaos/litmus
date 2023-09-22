@@ -126,6 +126,7 @@ chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
 chooseMembersAddTheProject: Choose members to add to the project
 chooseProbeMode: Choose Mode for probe to be executed
+clearSearch: Clear search
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
   where you have kubectl installed and have access to your Kubernetes cluster.
@@ -278,6 +279,7 @@ downloadedSuccessfully: Downloaded successfully
 duration: Duration
 edit: Edit
 editChaosHub: Edit ChaosHub
+editEnvironment: Edit Environment
 editExperiment: Edit Experiment
 editExperimentCopy: Edit Copy
 editExperimentOptions: Do you want to edit the same experiment or edit a copy?
@@ -601,6 +603,7 @@ needAttention: Needs Attention
 newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
+newEnvironment: New Environment
 newExperiment: New Experiment
 newMember: New Member
 newPassword: New Password
@@ -744,6 +747,7 @@ pollingInterval: Polling Interval
 preProd: Pre-Prod
 predefinedExperimentsNotFound: No Predefined Experiments found in this hub
 preview: Preview
+previous: Previous
 private: Private
 probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
@@ -978,6 +982,7 @@ serviceAccount: Service Account
 serviceAccountName: Service Account Name
 serviceHealthScore: Service Health Score
 setFaultWeights: Set fault weights
+setSchedule: Set Schedule
 settings: Settings
 setupChaosInfrastructures: >-
   Enabling Chaos on infrastructure helps to inject chaos by studying your

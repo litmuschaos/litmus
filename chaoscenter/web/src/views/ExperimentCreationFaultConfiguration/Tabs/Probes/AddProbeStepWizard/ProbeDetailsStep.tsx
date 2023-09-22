@@ -161,7 +161,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
@@ -344,7 +344,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
@@ -483,7 +483,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
@@ -619,7 +619,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
