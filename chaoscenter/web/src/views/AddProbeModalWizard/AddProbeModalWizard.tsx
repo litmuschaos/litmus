@@ -894,10 +894,10 @@ const TuneDetailsStep: React.FC<
             <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'flex-start' }} spacing="small">
               <FormInput.Select
                 name="kubernetesCMDProperties.comparator.criteria"
-                label="Comparison Criteria"
+                label={getString('comparisonCriteria')}
                 usePortal
                 style={{ width: '50%' }}
-                placeholder="Criteria for data"
+                placeholder={getString('criteriafordata')}
                 items={
                   cmdComparatorType.current === 'string'
                     ? [
@@ -1006,7 +1006,7 @@ const TuneDetailsStep: React.FC<
         </Text>
         <FormInput.Select
           name="promProperties.comparator.type"
-          label="Type"
+          label={getString('type')}
           onChange={selected => (promComparatorType.current = selected.value as string)}
           placeholder="Type of data"
           items={[
@@ -1018,10 +1018,10 @@ const TuneDetailsStep: React.FC<
         <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'flex-start' }} spacing="small">
           <FormInput.Select
             name="promProperties.comparator.criteria"
-            label="Comparison Criteria"
+            label={getString('comparisonCriteria')}
             usePortal
             style={{ width: '50%' }}
-            placeholder="Criteria for data"
+            placeholder={getString('criteriafordata')}
             items={
               promComparatorType.current === 'string'
                 ? [
@@ -1072,8 +1072,8 @@ const TuneDetailsStep: React.FC<
         <FormInput.Text name="k8sProperties.labelSelector" label={'Label Selector'} placeholder={'Label Selector'} />
         <FormInput.Select
           name="k8sProperties.operation"
-          label="Operation"
-          placeholder="Operation"
+          label={getString('operation')}
+          placeholder={getString('operation')}
           items={[
             // Create to be enabled once Engine CR is updated to include `data` inside k8s properties
             // { label: 'Create', value: 'create' },
