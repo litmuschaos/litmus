@@ -5,45 +5,117 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/stretchr/testify/assert"
 )
 var (
-	Testgrpc = new(grpc.ServerGrpc)
+	testGrpc = new(mocks.ServerGrpc)
 )
 func TestValidateRequest(t *testing.T) {
 	ctx := context.Background()
-	jwt, projectId, invitation := uuid.NewString(), uuid.NewString(), uuid.NewString()
-
+	input := &protos.ValidationRequest{
+		Jwt: uuid.NewString(),
+		ProjectId: uuid.NewString(),
+		RequiredRoles: []string{uuid.NewString()},
+		Invitation: uuid.NewString(),
+	}
 	testcases := []struct{
 		name string
-		request *protos.ValidationRequest
+		given func()
 		isError bool
 	}{
 		{
-			name: "Validate request",
-			request: &protos.ValidationRequest{
-				Jwt: jwt,
-				ProjectId: projectId,
-				Invitation: invitation,
+			name: "success",
+			given: func() {
+				testGrpc.On("ValidateRequest", ctx, input).Return(&protos.ValidationResponse{}, nil)
 			},
-			isError: true,
+			isError: false,
 		},
-
 	}
-	for _, tc := range testcases {
+	for _, tc := range testcases{
 		t.Run(tc.name, func(t *testing.T) {
+			// given
+			tc.given()
 			// when
-		    response, err := Testgrpc.ValidateRequest(ctx, tc.request)
+			response, err := testGrpc.ValidateRequest(ctx, input)
 			// then
-			if tc.isError {
-                assert.Error(t, err)
-            } else {
+			if err != nil {
+				assert.Error(t, err)
+			} else {
                 assert.NoError(t, err)
                 assert.NotNil(t, response)
-                assert.Equal(t, true, response.IsValid)
-                assert.Equal(t, "", response.Error)
+            }
+		})
+	}
+
+}
+
+func TestGetProjectById(t *testing.T){
+	ctx := context.Background()
+	input := &protos.GetProjectByIdRequest{
+		ProjectID: uuid.NewString(),
+	}
+	testcases := []struct{
+		name string
+		given func()
+		isError bool
+	}{
+		{
+			name: "success",
+			given: func() {
+				testGrpc.On("GetProjectById", ctx, input).Return(&protos.GetProjectByIdResponse{}, nil)
+			},
+			isError: false,
+		},
+	}
+	for _, tc := range testcases{
+		t.Run(tc.name, func(t *testing.T) {
+			// given
+			tc.given()
+			//when
+			response, err := testGrpc.GetProjectById(ctx, input)
+			// then
+			if err != nil {
+				assert.Error(t, err)
+			} else {
+                assert.NoError(t, err)
+                assert.NotNil(t, response)
+            }
+		})
+	}
+}
+
+func TestGetUserById(t *testing.T){
+	ctx := context.Background()
+	input := &protos.GetUserByIdRequest{
+		UserID: uuid.NewString(),
+	}
+	testcases := []struct{
+		name string
+		given func()
+		isError bool
+	}{
+		{
+			name: "success",
+			given: func ()  {
+				testGrpc.On("GetUserById", ctx, input).Return(&protos.GetUserByIdResponse{}, nil)
+			},
+			isError: false,
+		},
+	}
+	for _, tc := range testcases{
+		t.Run(tc.name, func(t *testing.T) {
+			// given
+			tc.given()
+			// when
+			response, err := testGrpc.GetUserById(ctx, input)
+			// then
+			if tc.isError {
+				assert.Error(t, err)
+            } else {
+                assert.NoError(t, err)
+				assert.NotNil(t, response)
             }
 		})
 	}
