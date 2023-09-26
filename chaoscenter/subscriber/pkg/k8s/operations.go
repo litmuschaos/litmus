@@ -338,7 +338,6 @@ func AgentOperations(infraAction types.Action) (*unstructured.Unstructured, erro
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("scopee", mapping.Scope.Name(), infraAction.Namespace)
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
