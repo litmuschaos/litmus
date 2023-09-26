@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 )
 
@@ -16,7 +18,7 @@ type userService interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
-	UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error
+	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
@@ -71,8 +73,8 @@ func (a applicationService) IsAdministrator(user *entities.User) error {
 }
 
 // UpdateUserState updates deactivated_at state of the user
-func (a applicationService) UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error {
-	return a.userRepository.UpdateUserState(username, isDeactivate, deactivateTime)
+func (a applicationService) UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error {
+	return a.userRepository.UpdateUserState(ctx, username, isDeactivate, deactivateTime)
 }
 
 func (a applicationService) InviteUsers(invitedUsers []string) (*[]entities.User, error) {

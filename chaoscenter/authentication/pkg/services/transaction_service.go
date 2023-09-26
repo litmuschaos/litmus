@@ -48,13 +48,13 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 		}
 
 		// Updating details in user collection
-		err = a.UpdateUserState(userRequest.Username, *userRequest.IsDeactivate, deactivateTime)
+		err = a.UpdateUserState(sc, userRequest.Username, *userRequest.IsDeactivate, deactivateTime)
 		if err != nil {
 			log.Info(err)
 			return utils.ErrServerError
 		}
 		// Updating details in project collection
-		err = a.UpdateProjectState(user.ID, deactivateTime, *userRequest.IsDeactivate)
+		err = a.UpdateProjectState(sc, user.ID, deactivateTime, *userRequest.IsDeactivate)
 		if err != nil {
 			log.Info(err)
 			return utils.ErrServerError
