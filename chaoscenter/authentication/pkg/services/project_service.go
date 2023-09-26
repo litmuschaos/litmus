@@ -21,7 +21,7 @@ type projectService interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
-	UpdateProjectState(userID string, deactivateTime int64, isDeactivate bool) error
+	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjectIDs(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
@@ -68,8 +68,8 @@ func (a applicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *
 	return a.projectRepository.GetAggregateProjects(pipeline, opts)
 }
 
-func (a applicationService) UpdateProjectState(userID string, deactivateTime int64, isDeactivate bool) error {
-	return a.projectRepository.UpdateProjectState(userID, deactivateTime, isDeactivate)
+func (a applicationService) UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error {
+	return a.projectRepository.UpdateProjectState(ctx, userID, deactivateTime, isDeactivate)
 }
 func (a applicationService) GetOwnerProjectIDs(ctx context.Context, userID string) ([]*entities.Project, error) {
 	return a.projectRepository.GetOwnerProjects(ctx, userID)
