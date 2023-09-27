@@ -20,6 +20,7 @@ export default function AddHubModalWizardController({
   const [addChaosHubMutation, { loading: addChaosHubMutationLoading, error: addHubMutationError }] = addChaosHub({
     onCompleted: () => {
       listChaosHubRefetch();
+      hideDarkModal();
     },
     onError: err => showError(err.message)
   });
