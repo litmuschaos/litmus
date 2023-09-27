@@ -60,14 +60,14 @@ export default function EnvironmentListView({
         Cell: EnvironmentName
       },
       {
-        Header: 'TYPE',
+        Header: getString('type').toUpperCase(),
         id: 'type',
         accessor: 'type',
         width: '30%',
         Cell: EnvironmentTypes
       },
       {
-        Header: 'LAST UPDATED BY',
+        Header: getString('lastUpdatedBy').toUpperCase(),
         id: 'modifiedBy',
         width: '30%',
         Cell: LastUpdatedBy

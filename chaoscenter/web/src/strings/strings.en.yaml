@@ -526,6 +526,7 @@ lastModified: Last Modified
 lastResilienceScore: Last Resilience Score
 lastRun: Last Run
 lastSyncedAt: Last Synced at
+lastUpdatedBy: Last Updated By
 latestRun: Latest Run
 latestRunFallbackText: No Experiment Runs found
 launchExperiment: Launch Experiment

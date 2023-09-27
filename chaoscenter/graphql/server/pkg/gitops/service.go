@@ -79,7 +79,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 	if config == nil {
 		return "Gitops Disabled", nil
 	}
-	query := bson.D{{"infra_id", infra.InfraID}, {"experiment_id", experimentID}, {"isRemoved", false}}
+	query := bson.D{{"infra_id", infra.InfraID}, {"experiment_id", experimentID}, {"is_removed", false}}
 	experiments, err := g.chaosExperimentOps.GetExperiments(query)
 	if err != nil {
 		logrus.Error("Could not get experiment :", err)
