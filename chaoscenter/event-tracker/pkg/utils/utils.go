@@ -302,7 +302,7 @@ func getAgentConfigMapData() (string, string, string, error) {
 	getCM, err := clientSet.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
 	if k8sErrors.IsNotFound(err) {
 		return "", "", "", errors.New(AgentConfigName + " configmap not found")
-	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
+	} else if getCM.Data["IS_INFRA_CONFIRMED"] == "true" {
 		getSecret, err := clientSet.CoreV1().Secrets(InfraNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
 		if err != nil {
 			return "", "", "", err
@@ -311,7 +311,7 @@ func getAgentConfigMapData() (string, string, string, error) {
 			return "", "", "", errors.New(AgentSecretName + " secret not found")
 		}
 
-		return string(getSecret.Data["ACCESS_KEY"]), string(getSecret.Data["CLUSTER_ID"]), getCM.Data["SERVER_ADDR"], nil
+		return string(getSecret.Data["ACCESS_KEY"]), string(getSecret.Data["INFRA_ID"]), getCM.Data["SERVER_ADDR"], nil
 	} else if err != nil {
 		return "", "", "", err
 	}

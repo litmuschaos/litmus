@@ -55,25 +55,11 @@ var (
 	setupLog = ctrl.Log.WithName("setup")
 )
 
-type Config struct {
-	Version            string `required:"true"`
-	AgentScope         string `required:"true" split_words:"true"`
-	IsClusterConfirmed string `required:"true" split_words:"true"`
-	AccessKey          string `required:"true" split_words:"true"`
-	ClusterId          string `required:"true" split_words:"true"`
-	ServerAddr         string `required:"true" split_words:"true"`
-	AgentNamespace     string `required:"true" split_words:"true"`
-	SkipSSLVerify      bool   `default:"false" split_words:"true"`
-}
-
 func init() {
-
 	logrus.Info("Go Version: ", rt.Version())
 	logrus.Info("Go OS/Arch: ", rt.GOOS, "/", rt.GOARCH)
 
-	var c Config
-
-	err := envconfig.Process("", &c)
+	err := envconfig.Process("", &utils.Config)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -89,14 +75,14 @@ func init() {
 	}
 
 	var (
-		agent_scope = os.Getenv("AGENT_SCOPE")
+		agent_scope = os.Getenv("INFRA_SCOPE")
 		factory     informers.SharedInformerFactory
 	)
 
 	if agent_scope == "cluster" {
 		factory = informers.NewSharedInformerFactory(clientset, 30*time.Second)
 	} else if agent_scope == "namespace" {
-		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(os.Getenv("AGENT_NAMESPACE")))
+		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(os.Getenv("INFRA_NAMESPACE")))
 	}
 
 	go utils.RunDeploymentInformer(factory)
@@ -136,7 +122,7 @@ func main() {
 	}
 
 	var (
-		agent_scope = os.Getenv("AGENT_SCOPE")
+		agent_scope = os.Getenv("INFRA_SCOPE")
 		mgr         manager.Manager
 		err         error
 	)
@@ -146,7 +132,7 @@ func main() {
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
 			Port:               9443,
-			Namespace:          os.Getenv("AGENT_NAMESPACE"),
+			Namespace:          os.Getenv("INFRA_NAMESPACE"),
 			LeaderElection:     enableLeaderElection,
 			LeaderElectionID:   "2b79cec3.litmuschaos.io",
 		})
