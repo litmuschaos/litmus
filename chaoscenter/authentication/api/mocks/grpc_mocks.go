@@ -13,19 +13,19 @@ type ServerGrpc struct {
 }
 
 // ValidateRequuest mock version with given ctx, inputRequest
-func(s *ServerGrpc) ValidateRequest(ctx context.Context, inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error){
+func (s *ServerGrpc) ValidateRequest(ctx context.Context, inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) {
 	args := s.Called(ctx, inputRequest)
 	return args.Get(0).(*protos.ValidationResponse), args.Error(1)
 }
 
 // GetProjectById mock version with given ctx, inputRequest
-func(s *ServerGrpc) GetProjectById(ctx context.Context, inputRequest *protos.GetProjectByIdRequest) (*protos.GetProjectByIdResponse, error){
+func (s *ServerGrpc) GetProjectById(ctx context.Context, inputRequest *protos.GetProjectByIdRequest) (*protos.GetProjectByIdResponse, error) {
 	args := s.Called(ctx, inputRequest)
 	return args.Get(0).(*protos.GetProjectByIdResponse), args.Error(1)
 }
 
 // GetUserById mock version with given ctx, inputRequest
-func(s *ServerGrpc) GetUserById(ctx context.Context, inputRequest *protos.GetUserByIdRequest) (*protos.GetUserByIdResponse, error){
+func (s *ServerGrpc) GetUserById(ctx context.Context, inputRequest *protos.GetUserByIdRequest) (*protos.GetUserByIdResponse, error) {
 	args := s.Called(ctx, inputRequest)
 	return args.Get(0).(*protos.GetUserByIdResponse), args.Error(1)
 }
