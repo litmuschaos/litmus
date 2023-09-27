@@ -207,7 +207,7 @@ createdAt: Created At
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
-criteriafordata: Criteria for data
+criteriaForData: Criteria for data
 cronExpression: Cron Expression
 cronExpressionRequired: Cron Expression required
 cronSelectOption: Cron (Recurring run)
@@ -328,7 +328,7 @@ enterProjectName: Enter Project Name
 enterYourEmail: Enter your email
 enterYourName: Enter your name
 enterYourPassword: Enter your password
-EnteryourPersonalAcessToken: Enter your Personal Acess Token
+enterYourPersonalAccessToken: Enter your Personal Access Token
 enterYourUsername: Enter your username
 environment: Environment
 environmentDescription: >-
@@ -853,7 +853,7 @@ query: Query
 queryPath: Query path
 ranAt: Ran at
 range: range
-rangesliderinput: rangeSliderInput
+rangeSliderInput: rangeSliderInput
 rbacDescription: You are missing permission '{{permission}}' to perform this action.
 rbacHeader: You do not have permission to perform this action
 reEnterNewPassword: Re-enter new password
@@ -1087,8 +1087,8 @@ tuneFaultProperties: Tune fault properties
 tuneFaultWeight: Tune fault weightage
 tuneWeight: Tune Weight
 type: Type
-typeofdata: Type of data
-udpatePassword: Update Password
+typeOfData: Type of data
+updatePassword: Update Password
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
 update: Update

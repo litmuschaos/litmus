@@ -29,7 +29,7 @@ export default function InputSlider({ initialValue, name, onChange }: InputSlide
       <Layout.Vertical className={cx(css.grow, css.gap1)}>
         <div className={css.rangeSliderCont}>
           <input
-            data-testid={getString('rangesliderinput')}
+            data-testid={getString('rangeSliderInput')}
             type={getString("range")}
             name={name}
             value={value}

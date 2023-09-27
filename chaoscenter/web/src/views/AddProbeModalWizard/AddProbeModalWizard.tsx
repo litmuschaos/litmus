@@ -804,7 +804,7 @@ const TuneDetailsStep: React.FC<
                 <FormInput.Select
                   name="kubernetesHTTPProperties.method.get.criteria"
                   label={getString('criteria')}
-                  placeholder={getString('criteriafordata')}
+                  placeholder={getString('criteriaForData')}
                   items={[
                     { label: '==', value: '==' },
                     { label: '!=', value: '!=' },
@@ -837,7 +837,7 @@ const TuneDetailsStep: React.FC<
                 <FormInput.Select
                   name="kubernetesHTTPProperties.method.post.criteria"
                   label={getString('criteria')}
-                  placeholder={getString('criteriafordata')}
+                  placeholder={getString('criteriaForData')}
                   items={[
                     { label: '==', value: '==' },
                     { label: '!=', value: '!=' }
@@ -883,7 +883,7 @@ const TuneDetailsStep: React.FC<
             <FormInput.Select
               name="kubernetesCMDProperties.comparator.type"
               label={getString('type')}
-              placeholder={getString('typeofdata')}
+              placeholder={getString('typeOfData')}
               onChange={selected => (cmdComparatorType.current = selected.value as string)}
               items={[
                 { label: 'Int', value: 'int' },
@@ -897,7 +897,7 @@ const TuneDetailsStep: React.FC<
                 label={getString('comparisonCriteria')}
                 usePortal
                 style={{ width: '50%' }}
-                placeholder={getString('criteriafordata')}
+                placeholder={getString('criteriaForData')}
                 items={
                   cmdComparatorType.current === 'string'
                     ? [
@@ -1021,7 +1021,7 @@ const TuneDetailsStep: React.FC<
             label={getString('comparisonCriteria')}
             usePortal
             style={{ width: '50%' }}
-            placeholder={getString('criteriafordata')}
+            placeholder={getString('criteriaForData')}
             items={
               promComparatorType.current === 'string'
                 ? [

@@ -260,7 +260,7 @@ const GitConnectionStep: React.FC<
                         PAT
                       </Text>
                     }
-                    placeholder={getString('EnteryourPersonalAcessToken')}
+                    placeholder={getString('enterYourPersonalAccessToken')}
                   />
                 )}
                 {formikProps.values.isPrivate && formikProps.values.authType === AuthType.SSH && (
