@@ -17,6 +17,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// GetUserWithProject 		godoc
+// @Summary			Get user with project.
+// @Description		Return users who has a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			/get_user_with_project/:username [get]
+
 // GetUserWithProject returns user and project details based on username
 func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -52,6 +59,13 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProject 		godoc
+// @Summary			Get user with project.
+// @Description		Return a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			/get_project/:project_id [get]
+
 // GetProject queries the project with a given projectID from the database
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -77,6 +91,12 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -97,6 +117,12 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // GetProjectStats is used to retrive stats related to projects in the DB
 func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -121,6 +147,12 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -134,6 +166,12 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // getInvitation returns the Invitation status
 func getInvitation(service services.ApplicationService, member entities.MemberInput) (entities.Invitation, error) {
 	project, err := service.GetProjectByProjectID(member.ProjectID)
@@ -149,6 +187,12 @@ func getInvitation(service services.ApplicationService, member entities.MemberIn
 	return "", nil
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // ListInvitations returns the Invitation status
 func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -179,6 +223,12 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.CreateProjectInput
@@ -261,6 +311,12 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // SendInvitation sends an invitation to a new user and
 // returns an error if the member is already part of the project
 func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
@@ -351,6 +407,12 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // AcceptInvitation is used to accept an invitation
 func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -386,6 +448,12 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // DeclineInvitation is used to decline an invitation
 func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -421,6 +489,12 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // LeaveProject is used to leave a project
 func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -456,6 +530,12 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // RemoveInvitation removes member or cancels invitation
 func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -513,6 +593,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // UpdateProjectName is used to update a project's name
 func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -563,6 +649,12 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // GetOwnerProjects returns an array of projects in which user is an owner
 func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -581,6 +673,12 @@ func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+// @Summary			Get stats of a project.
+// @Description		Return stats of a project.
+// @Tags			projectrouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [get]
 // GetProjectRole returns the role of a user in the project
 func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {

@@ -17,6 +17,12 @@ import (
 
 const BearerSchema = "Bearer "
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -84,6 +90,13 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		c.JSON(http.StatusOK, userResponse)
 	}
 }
+
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.UserDetails
@@ -114,6 +127,12 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 // GetUser returns the user that matches the uid passed in parameter
 func GetUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -128,6 +147,12 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -146,6 +171,12 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -169,6 +200,12 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.User
@@ -271,6 +308,12 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 // LogoutUser revokes the token passed in the Authorization header
 func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -293,6 +336,12 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
@@ -327,6 +376,12 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -377,6 +432,12 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -425,6 +486,12 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 // CreateApiToken creates a new api token for the user
 func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -457,6 +524,12 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 // GetApiTokens returns all the api tokens for the user
 func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -473,6 +546,12 @@ func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// Create		godoc
+// @Summary			Create user.
+// @Description		Create user.
+// @Tags			userRouter
+// @Success			200 {obejct} response.Response{}
+// @Router			//get_projects_stats [post]
 // DeleteApiToken deletes the api token for the user
 func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {

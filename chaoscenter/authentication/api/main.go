@@ -20,6 +20,8 @@ import (
 
 	"google.golang.org/grpc"
 
+	_ "github.com/golang-crud-gin/docs"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -50,6 +52,7 @@ func init() {
 	}
 }
 
+// @title Chaoscenter API documentation
 func main() {
 	// send logs to stderr, so we can use 'kubectl logs'
 	_ = flag.Set("logtostderr", "true")
