@@ -521,6 +521,7 @@ lastModified: Last Modified
 lastResilienceScore: Last Resilience Score
 lastRun: Last Run
 lastSyncedAt: Last Synced at
+lastUpdatedBy: Last Updated By
 latestRun: Latest Run
 latestRunFallbackText: No Experiment Runs found
 launchExperiment: Launch Experiment
@@ -598,6 +599,7 @@ needAttention: Needs Attention
 newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
+newEnvironment: New Environment
 newExperiment: New Experiment
 newMember: New Member
 newPassword: New Password

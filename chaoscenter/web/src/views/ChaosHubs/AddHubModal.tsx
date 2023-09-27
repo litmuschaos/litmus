@@ -1,11 +1,10 @@
 import React from 'react';
 import { Dialog } from '@blueprintjs/core';
-import { ButtonVariation } from '@harnessio/uicore';
+import { ButtonVariation, useToggleOpen } from '@harnessio/uicore';
 import type { ApolloQueryResult } from '@apollo/client';
 import AddHubModalWizardController from '@controllers/AddHubModalWizard';
 import type { ListChaosHubRequest, ListChaosHubResponse } from '@api/core';
 import { useStrings } from '@strings';
-import { ParentComponentErrorWrapper } from '@errors';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
 import css from './ChaosHubs.module.scss';
@@ -19,33 +18,23 @@ interface AddHubModalProviderProps {
 
 function AddHubModal({ listChaosHubRefetch, disabled }: AddHubModalProviderProps): React.ReactElement {
   const { getString } = useStrings();
-  const [isAddChaosHubModalOpen, setIsAddChaosHubModalOpen] = React.useState(false);
+  const { isOpen, open, close } = useToggleOpen();
 
   return (
     <>
-      <ParentComponentErrorWrapper>
-        <RbacButton
-          variation={ButtonVariation.PRIMARY}
-          text={getString('newChaosHub')}
-          icon="plus"
-          onClick={() => {
-            setIsAddChaosHubModalOpen(true);
-          }}
-          disabled={disabled}
-          permission={PermissionGroup.EDITOR}
-        />
-      </ParentComponentErrorWrapper>
-      <Dialog
-        isOpen={isAddChaosHubModalOpen}
-        enforceFocus={false}
-        onClose={() => setIsAddChaosHubModalOpen(false)}
-        className={css.modalWithHelpPanel}
-      >
-        <AddHubModalWizardController
-          hideDarkModal={() => setIsAddChaosHubModalOpen(false)}
-          listChaosHubRefetch={listChaosHubRefetch}
-        />
-      </Dialog>
+      <RbacButton
+        variation={ButtonVariation.PRIMARY}
+        text={getString('newChaosHub')}
+        icon="plus"
+        onClick={() => open()}
+        disabled={disabled}
+        permission={PermissionGroup.EDITOR}
+      />
+      {isOpen && (
+        <Dialog isOpen={isOpen} enforceFocus={false} onClose={() => close()} className={css.modalWithHelpPanel}>
+          <AddHubModalWizardController hideDarkModal={() => close()} listChaosHubRefetch={listChaosHubRefetch} />
+        </Dialog>
+      )}
     </>
   );
 }

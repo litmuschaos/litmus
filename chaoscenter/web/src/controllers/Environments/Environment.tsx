@@ -37,19 +37,22 @@ const EnvironmentController: React.FC = () => {
   const [deleteEnvironmentMutation] = deleteEnvironment({
     onCompleted: () => {
       refetchEnvironments();
-    }
+    },
+    onError: err => showError(err.message)
   });
 
   const [createEnvironmentMutation] = createEnvironment({
     onCompleted: () => {
       refetchEnvironments();
-    }
+    },
+    onError: err => showError(err.message)
   });
 
   const [updateEnvironmentMutation] = updateEnvironment({
     onCompleted: () => {
       refetchEnvironments();
-    }
+    },
+    onError: err => showError(err.message)
   });
 
   const environments = envData?.listEnvironments.environments;
