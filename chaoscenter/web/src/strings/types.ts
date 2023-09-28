@@ -51,6 +51,7 @@ export interface StringsMap {
   'allFaultsExecuted': unknown
   'allRuns': unknown
   'alreadyExists': PrimitiveObject<'value'>
+  'alreadyExistsID': PrimitiveObject<'value'>
   'apiTokens': unknown
   'appKind': unknown
   'appKindName': unknown

@@ -597,7 +597,7 @@ func (g *gitOpsService) updateExperiment(data, wfID, file string, config GitConf
 		return errors.New("file name doesn't match experiment name")
 	}
 
-	experiment, err := g.chaosExperimentOps.GetExperiments(bson.D{{"experiment_id", wfID}, {"project_id", config.ProjectID}, {"isRemoved", false}})
+	experiment, err := g.chaosExperimentOps.GetExperiments(bson.D{{"experiment_id", wfID}, {"project_id", config.ProjectID}, {"is_removed", false}})
 	if len(experiment) == 0 {
 		return errors.New("No such experiment found : " + wfID)
 	}

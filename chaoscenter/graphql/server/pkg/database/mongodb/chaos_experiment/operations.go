@@ -124,3 +124,12 @@ func (c *Operator) UpdateChaosExperiments(ctx context.Context, query bson.D, upd
 
 	return nil
 }
+
+// CountChaosExperiments returns total number of matched documents
+func (c *Operator) CountChaosExperiments(ctx context.Context, query bson.D) (int64, error) {
+	res, err := mongodb.Operator.CountDocuments(ctx, mongodb.ChaosExperimentCollection, query)
+	if err != nil {
+		return 0, err
+	}
+	return res, nil
+}
