@@ -431,6 +431,7 @@ export interface StringsMap {
   'lastResilienceScore': unknown
   'lastRun': unknown
   'lastSyncedAt': unknown
+  'lastUpdatedBy': unknown
   'latestRun': unknown
   'latestRunFallbackText': unknown
   'launchExperiment': unknown
@@ -500,6 +501,7 @@ export interface StringsMap {
   'newChaosExperiment': unknown
   'newChaosHub': unknown
   'newChaosInfrastructure': unknown
+  'newEnvironment': unknown
   'newExperiment': unknown
   'newMember': unknown
   'newPassword': unknown

@@ -25,7 +25,7 @@ type Repository interface {
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
 	IsAdministrator(user *entities.User) error
-	UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error
+	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
 }
 
@@ -94,8 +94,11 @@ func (r repository) InviteUsers(invitedUsers []string) (*[]entities.User, error)
 			{"_id", bson.D{
 				{"$nin", invitedUsers},
 			}},
-			{"deactivated_at", bson.D{
-				{"$exists", false},
+			{"$or", bson.A{
+				bson.D{{"deactivated_at", bson.D{
+					{"$exists", false},
+				}}},
+				bson.D{{"deactivated_at", nil}},
 			}},
 		})
 
@@ -231,15 +234,15 @@ func (r repository) IsAdministrator(user *entities.User) error {
 }
 
 // UpdateUserState updates the deactivated_at state of the user
-func (r repository) UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error {
+func (r repository) UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error {
 	var err error
 	if isDeactivate {
-		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
+		_, err = r.Collection.UpdateOne(ctx, bson.M{"username": username}, bson.M{"$set": bson.M{
 			"deactivated_at": deactivateTime,
 			"is_removed":     true,
 		}})
 	} else {
-		_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": username}, bson.M{"$set": bson.M{
+		_, err = r.Collection.UpdateOne(ctx, bson.M{"username": username}, bson.M{"$set": bson.M{
 			"deactivated_at": nil,
 			"is_removed":     false,
 		}})

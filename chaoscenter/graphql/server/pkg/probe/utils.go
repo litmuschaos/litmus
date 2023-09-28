@@ -110,7 +110,6 @@ func addKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request mode
 	// CMD Probe -> Source
 	if request.KubernetesCMDProperties.Source != nil {
 		var source *v1alpha1.SourceDetails
-		fmt.Println("source", []byte(*request.KubernetesCMDProperties.Source), *request.KubernetesCMDProperties.Source)
 
 		err := json.Unmarshal([]byte(*request.KubernetesCMDProperties.Source), &source)
 		if err != nil {
@@ -757,7 +756,6 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 								if err != nil {
 									return argoTypes.Workflow{}, fmt.Errorf("failed to fetch probe details, error: %s", err.Error())
 								}
-								fmt.Println("probes", probes)
 								probeManifestString, err := GenerateProbeManifest(probe.GetOutputProbe(), annotationKey.Mode)
 								if err != nil {
 									return argoTypes.Workflow{}, fmt.Errorf("failed to generate probe manifest, error: %s", err.Error())
