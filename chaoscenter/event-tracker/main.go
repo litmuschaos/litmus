@@ -75,13 +75,13 @@ func init() {
 	}
 
 	var (
-		agent_scope = os.Getenv("INFRA_SCOPE")
-		factory     informers.SharedInformerFactory
+		infraScope = os.Getenv("INFRA_SCOPE")
+		factory    informers.SharedInformerFactory
 	)
 
-	if agent_scope == "cluster" {
+	if infraScope == "cluster" {
 		factory = informers.NewSharedInformerFactory(clientset, 30*time.Second)
-	} else if agent_scope == "namespace" {
+	} else if infraScope == "namespace" {
 		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(os.Getenv("INFRA_NAMESPACE")))
 	}
 
@@ -122,12 +122,12 @@ func main() {
 	}
 
 	var (
-		agent_scope = os.Getenv("INFRA_SCOPE")
-		mgr         manager.Manager
-		err         error
+		infraScope = os.Getenv("INFRA_SCOPE")
+		mgr        manager.Manager
+		err        error
 	)
 
-	if agent_scope == "namespace" {
+	if infraScope == "namespace" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
@@ -136,7 +136,7 @@ func main() {
 			LeaderElection:     enableLeaderElection,
 			LeaderElectionID:   "2b79cec3.litmuschaos.io",
 		})
-	} else if agent_scope == "cluster" {
+	} else if infraScope == "cluster" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
