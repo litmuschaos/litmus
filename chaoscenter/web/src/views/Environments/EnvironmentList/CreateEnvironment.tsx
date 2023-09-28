@@ -154,12 +154,7 @@ export default function CreateEnvironment({
                       variation={ButtonVariation.SECONDARY}
                       text={getString('cancel')}
                     />
-                    <Button
-                      type="submit"
-                      variation={ButtonVariation.PRIMARY}
-                      text={getString('save')}
-                      onClick={() => formikProps.handleSubmit()}
-                    />
+                    <Button type="submit" variation={ButtonVariation.PRIMARY} text={getString('save')} />
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>
