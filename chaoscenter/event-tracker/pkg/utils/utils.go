@@ -21,16 +21,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
 	"k8s.io/client-go/dynamic"
-)
-
-var (
-	InfraNamespace = os.Getenv("INFRA_NAMESPACE")
-	Version        = os.Getenv("VERSION")
 )
 
 const (
@@ -137,19 +131,19 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 	}
 
 	deploymentRes := schema.GroupVersionResource{Group: "eventtracker.litmuschaos.io", Version: "v1", Resource: "eventtrackerpolicies"}
-	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(InfraNamespace).List(context.TODO(), metav1.ListOptions{})
+	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(Config.InfraNamespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	if len(deploymentConfigList.Items) == 0 {
-		logrus.Infof("No event-tracker policy(s) found in %s namespace", InfraNamespace)
+		logrus.Infof("No event-tracker policy(s) found in %s namespace", Config.InfraNamespace)
 		return nil
 	}
 
 	for _, ep := range deploymentConfigList.Items {
 
-		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(InfraNamespace).Get(context.TODO(), ep.GetName(), metav1.GetOptions{})
+		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(Config.InfraNamespace).Get(context.TODO(), ep.GetName(), metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
@@ -254,7 +248,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 		logFields := logrus.Fields{
 			"resourceType": resourceType,
 			"resourceName": resourceName,
-			"namespace":    InfraNamespace,
+			"namespace":    Config.InfraNamespace,
 			"experimentId": experimentId,
 			"policyName":   etp.GetName(),
 		}
@@ -283,7 +277,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 				return err
 			}
 
-			_, err = clientSet.Resource(deploymentRes).Namespace(InfraNamespace).Update(context.TODO(), &us, metav1.UpdateOptions{})
+			_, err = clientSet.Resource(deploymentRes).Namespace(Config.InfraNamespace).Update(context.TODO(), &us, metav1.UpdateOptions{})
 			if err != nil {
 				return err
 			}
@@ -303,7 +297,7 @@ func getInfraData() (string, string, string, error) {
 		return "", "", "", fmt.Errorf("failed to get Kubernetes clientset: %v", err)
 	}
 
-	getCM, err := clientSet.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
+	getCM, err := clientSet.CoreV1().ConfigMaps(Config.InfraNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
 	if err != nil {
 		return "", "", "", fmt.Errorf("failed to get ConfigMap: %v", err)
 	}
@@ -316,7 +310,7 @@ func getInfraData() (string, string, string, error) {
 		return "", "", "", fmt.Errorf("infrastructure not confirmed")
 	}
 
-	getSecret, err := clientSet.CoreV1().Secrets(InfraNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
+	getSecret, err := clientSet.CoreV1().Secrets(Config.InfraNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
 	if err != nil {
 		return "", "", "", fmt.Errorf("failed to get Secret: %v", err)
 	}
@@ -335,7 +329,7 @@ func SendRequest(experimentId string) (string, error) {
 		return "", fmt.Errorf("failed to get infra data: %v", err)
 	}
 
-	payload := `{"query": "mutation { gitopsNotifier(clusterInfo: { infraID: \"` + clusterID + `\", version: \"` + Version + `\", accessKey: \"` + accessKey + `\"}, experimentID: \"` + experimentId + `\")\n}"}`
+	payload := `{"query": "mutation { gitopsNotifier(clusterInfo: { infraID: \"` + clusterID + `\", version: \"` + Config.Version + `\", accessKey: \"` + accessKey + `\"}, experimentID: \"` + experimentId + `\")\n}"}`
 
 	req, err := http.NewRequest(http.MethodPost, serverAddr, bytes.NewBuffer([]byte(payload)))
 	if err != nil {

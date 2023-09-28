@@ -24,7 +24,6 @@ import (
 	"net/http"
 	"os"
 	rt "runtime"
-	"strings"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -74,15 +73,11 @@ func init() {
 		logrus.Error(err)
 	}
 
-	var (
-		infraScope = os.Getenv("INFRA_SCOPE")
-		factory    informers.SharedInformerFactory
-	)
-
-	if infraScope == "cluster" {
+	var factory informers.SharedInformerFactory
+	if utils.Config.InfraScope == "cluster" {
 		factory = informers.NewSharedInformerFactory(clientset, 30*time.Second)
-	} else if infraScope == "namespace" {
-		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(os.Getenv("INFRA_NAMESPACE")))
+	} else if utils.Config.InfraScope == "namespace" {
+		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(utils.Config.InfraNamespace))
 	}
 
 	go utils.RunDeploymentInformer(factory)
@@ -109,10 +104,10 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
 	// disable ssl verification if configured
-	if strings.ToLower(os.Getenv("SKIP_SSL_VERIFY")) == "true" {
+	if utils.Config.SkipSSLVerify {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	} else if os.Getenv("CUSTOM_TLS_CERT") != "" {
-		cert, err := base64.StdEncoding.DecodeString(os.Getenv("CUSTOM_TLS_CERT"))
+	} else if utils.Config.CustomTLSCert != "" {
+		cert, err := base64.StdEncoding.DecodeString(utils.Config.CustomTLSCert)
 		if err != nil {
 			logrus.Fatalf("failed to parse custom tls cert %v", err)
 		}
@@ -122,21 +117,20 @@ func main() {
 	}
 
 	var (
-		infraScope = os.Getenv("INFRA_SCOPE")
-		mgr        manager.Manager
-		err        error
+		mgr manager.Manager
+		err error
 	)
 
-	if infraScope == "namespace" {
+	if utils.Config.InfraScope == "namespace" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
 			Port:               9443,
-			Namespace:          os.Getenv("INFRA_NAMESPACE"),
+			Namespace:          utils.Config.InfraNamespace,
 			LeaderElection:     enableLeaderElection,
 			LeaderElectionID:   "2b79cec3.litmuschaos.io",
 		})
-	} else if infraScope == "cluster" {
+	} else if utils.Config.InfraScope == "cluster" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
