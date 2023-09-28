@@ -105,6 +105,20 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
+		if wfDetails.Name != request.Name {
+			filterQuery := bson.D{
+				{"project_id", request.ID},
+				{"name", request.Name},
+				{"is_removed", false},
+			}
+			experimentCount, err := c.chaosExperimentOperator.CountChaosExperiments(ctx, filterQuery)
+			if err != nil {
+				return "", err
+			}
+			if experimentCount > 0 {
+				return "", errors.New("experiment name should be unique, duplicate experiment found with name: " + request.Name)
+			}
+		}
 
 		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
 		if err != nil {
@@ -129,19 +143,18 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	var revID = uuid.New().String()
 
-	// Check if the workflow_name exists under same project
-	wfDetails, err := c.chaosExperimentOperator.GetExperiments(bson.D{
-		{"name", request.ExperimentName},
+	// Check if the experiment_name exists under same project
+	filterQuery := bson.D{
 		{"project_id", projectID},
-		{"tags", request.Tags},
+		{"name", request.ExperimentName},
 		{"is_removed", false},
-	})
+	}
+	experimentCount, err := c.chaosExperimentOperator.CountChaosExperiments(ctx, filterQuery)
 	if err != nil {
 		return nil, err
 	}
-
-	if wfDetails != nil || len(wfDetails) > 0 {
-		return nil, errors.New("experiment name already exists in this project")
+	if experimentCount > 0 {
+		return nil, errors.New("experiment name should be unique, duplicate experiment found with name: " + request.ExperimentName)
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
@@ -225,6 +238,20 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 	var (
 		revID = uuid.New().String()
 	)
+
+	// Check if the experiment_name exists under same project
+	filterQuery := bson.D{
+		{"project_id", projectID},
+		{"name", request.ExperimentName},
+		{"is_removed", false},
+	}
+	experimentCount, err := c.chaosExperimentOperator.CountChaosExperiments(ctx, filterQuery)
+	if err != nil {
+		return nil, err
+	}
+	if experimentCount > 0 {
+		return nil, errors.New("experiment name should be unique, duplicate experiment found with name: " + request.ExperimentName)
+	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
 	if err != nil {
