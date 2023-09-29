@@ -893,6 +893,7 @@ resilienceTabDescription: >-
   infrastructure.
 resiliencyScore: Resilience Score
 resource: Resource
+resourceNames: Resource Names
 responseCode: Response Code
 responseTimeout: Response Timeout
 responseType: Response Type
