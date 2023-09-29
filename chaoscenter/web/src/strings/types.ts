@@ -737,6 +737,7 @@ export interface StringsMap {
   'resilienceTabDescription': unknown
   'resiliencyScore': unknown
   'resource': unknown
+  'resourceNames': unknown
   'responseCode': unknown
   'responseTimeout': unknown
   'responseType': unknown

@@ -22,7 +22,6 @@ import (
 )
 
 func addKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
-
 	newProbe.KubernetesHTTPProperties = &dbSchemaProbe.KubernetesHTTPProbe{
 		// Common Probe Properties
 		ProbeTimeout:      request.KubernetesHTTPProperties.ProbeTimeout,
@@ -207,6 +206,9 @@ func addK8SProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeReq
 	// K8S Probe -> Group
 	newProbe.K8SProperties.Group = request.K8sProperties.Group
 
+	// K8S Probe -> ResourceNames
+	newProbe.K8SProperties.ResourceNames = request.K8sProperties.ResourceNames
+
 	// K8S Probe -> Namespace
 	newProbe.K8SProperties.Namespace = request.K8sProperties.Namespace
 
@@ -234,11 +236,9 @@ func GenerateProbeManifest(probe *model.Probe, mode model.Mode) (string, error) 
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				InsecureSkipVerify: *probe.KubernetesHTTPProperties.InsecureSkipVerify,
 			}
-
 		}
 
 		if probe.KubernetesHTTPProperties.Method.Get != nil {
-
 			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
 				URL: httpProbeURL,
 				Method: v1alpha1.HTTPMethod{
@@ -500,7 +500,7 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 				if artifact[0].Raw == nil {
 					continue
 				}
-				var data = artifact[0].Raw.Data
+				data := artifact[0].Raw.Data
 				if len(data) > 0 {
 					var (
 						meta       v1alpha1.ChaosEngine
@@ -548,7 +548,7 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 				if artifact[0].Raw == nil {
 					continue
 				}
-				var data = artifact[0].Raw.Data
+				data := artifact[0].Raw.Data
 				if len(data) > 0 {
 					var (
 						meta       v1alpha1.ChaosEngine
@@ -699,7 +699,6 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 
 // GenerateExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template for Non Cron Workflow
 func GenerateExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.Workflow, error) {
-
 	var (
 		probes            []v1alpha1.ProbeAttributes
 		backgroundContext = context.Background()
@@ -725,7 +724,7 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 			if artifact[0].Raw == nil {
 				continue
 			}
-			var data = artifact[0].Raw.Data
+			data := artifact[0].Raw.Data
 			if len(data) > 0 {
 				var (
 					meta       v1alpha1.ChaosEngine
@@ -858,7 +857,6 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 
 // GenerateCronExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template
 func GenerateCronExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.CronWorkflow, error) {
-
 	var (
 		probes            []v1alpha1.ProbeAttributes
 		backgroundContext = context.Background()
@@ -883,7 +881,7 @@ func GenerateCronExperimentManifestWithProbes(manifest string, projectID string)
 			if artifact[0].Raw == nil {
 				continue
 			}
-			var data = artifact[0].Raw.Data
+			data := artifact[0].Raw.Data
 			if len(data) > 0 {
 				var (
 					meta       v1alpha1.ChaosEngine
