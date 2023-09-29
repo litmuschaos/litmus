@@ -647,8 +647,6 @@ spec:
             - secretRef:
                 name: litmus-portal-admin-secret
           env:
-            - name: SELF_AGENT
-              value: "true"
             # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
             - name: TLS_SECRET_NAME
               value: ""
@@ -680,10 +678,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: SELF_AGENT_NODE_SELECTOR
-              value: ""
-            - name: SELF_AGENT_TOLERATIONS
-              value: ""
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: INGRESS

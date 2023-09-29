@@ -677,10 +677,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: SELF_AGENT_NODE_SELECTOR
-              value: ""
-            - name: SELF_AGENT_TOLERATIONS
-              value: ""
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: INGRESS
