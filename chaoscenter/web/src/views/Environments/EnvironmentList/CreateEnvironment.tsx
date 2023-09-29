@@ -1,4 +1,4 @@
-import { Button, ButtonVariation, CardSelect, Container, FormInput, Layout, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, CardSelect, Container, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
 import { FontVariation, Color } from '@harnessio/design-system';
 import { Form, Formik } from 'formik';
 import React from 'react';
@@ -48,6 +48,7 @@ export default function CreateEnvironment({
 }: CreateEnvironmentProps): React.ReactElement {
   const { getString } = useStrings();
   const scope = getScope();
+  const { showError } = useToaster();
   const initialValues: CreateEnvironmentData = {
     id: editable ? environmentID ?? '' : '',
     name: editable ? existingEnvironment?.name ?? '' : '',
@@ -87,6 +88,7 @@ export default function CreateEnvironment({
                       }
                     }
                   })
+                  .catch(() => showError(getString('alreadyExistsID', { value: data.id })))
                   .then(() => closeModal())
               : mutation.updateEnvironment &&
                 environmentID &&
@@ -154,12 +156,7 @@ export default function CreateEnvironment({
                       variation={ButtonVariation.SECONDARY}
                       text={getString('cancel')}
                     />
-                    <Button
-                      type="submit"
-                      variation={ButtonVariation.PRIMARY}
-                      text={getString('save')}
-                      onClick={() => formikProps.handleSubmit()}
-                    />
+                    <Button type="submit" variation={ButtonVariation.PRIMARY} text={getString('save')} />
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>
