@@ -329,7 +329,6 @@ enterProjectName: Enter Project Name
 enterYourEmail: Enter your email
 enterYourName: Enter your name
 enterYourPassword: Enter your password
-enterYourPersonalAccessToken: Enter your Personal Access Token
 enterYourUsername: Enter your username
 environment: Environment
 environmentDescription: >-
@@ -1090,10 +1089,10 @@ tuneFaultWeight: Tune fault weightage
 tuneWeight: Tune Weight
 type: Type
 typeOfData: Type of data
-updatePassword: Update Password
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
 update: Update
+updatePassword: Update Password
 updatedAt: Updated at
 updatedBy: Updated by
 upgradeChaosInfrastructure: Upgrade Chaos Infrastructure
