@@ -25,11 +25,10 @@ type ReadinessAPIStatus struct {
 	Collections string `json:"collections"`
 }
 
-// GetUsersList 		godoc
-// @Summary			Get All Users.
-// @Description		Return list of Users.
-// @Tags			tags
-// @Success			200 {obejct} response.Response{}
+// Status 		godoc
+// @Description		Status will request users list and return, if successful, an http code 200.
+// @Tags			MiscRouter
+// @Success			200 {object} response.Response{}
 // @Router			/status [get]
 // Status will request users list and return, if successful,
 // an http code 200
@@ -45,11 +44,10 @@ func Status(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
-// FindAllTags 		godoc
-// @Summary			.
+// Readiness 		godoc
 // @Description		Return list of tags.
-// @Tags			miscrouter
-// @Success			200 {obejct} response.Response{}
+// @Tags			MiscRouter
+// @Success			200 {object} response.Response{}
 // @Router			/readiness [get]
 func Readiness(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {

@@ -18,11 +18,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// DexLogin		godoc
-// @Description		DexRouter creates all the required routes for OAuth purposes. .
-// @Tags			dexRouter
-// @Success			200 {obejct} response.Response{}
-// @Router			/dex/login [get]
 func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 	ctx := oidc.ClientContext(context.Background(), &http.Client{})
 	provider, err := oidc.NewProvider(ctx, utils.DexOIDCIssuer)
@@ -41,8 +36,8 @@ func oAuthDexConfig() (*oauth2.Config, *oidc.IDTokenVerifier, error) {
 
 // DexLogin		godoc
 // @Description		DexRouter creates all the required routes for OAuth purposes. .
-// @Tags			dexRouter
-// @Success			200 {obejct} response.Response{}
+// @Tags			DexRouter
+// @Success			200 {object} response.Response{}
 // @Router			/dex/login [get]
 // DexLogin handles and redirects to DexServer to proceed with OAuth
 func DexLogin() gin.HandlerFunc {
@@ -67,7 +62,7 @@ func DexLogin() gin.HandlerFunc {
 
 // DexCallback		godoc
 // @Description		DexRouter creates all the required routes for OAuth purposes. .
-// @Tags			dexRouter
+// @Tags			DexRouter
 // @Success			200 {obejct} response.Response{}
 // @Router			/dex/callback [get]
 // DexCallback is the handler that creates/logs in the user from Dex and provides JWT to frontend via a redirect

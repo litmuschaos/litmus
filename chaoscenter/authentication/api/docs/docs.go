@@ -14,7 +14,571 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/accept_invitation": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/create_project": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/create_token": {
+            "post": {
+                "description": "Creates a new api token for the user.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.NewApiToken"
+                        }
+                    }
+                }
+            }
+        },
+        "/create_user": {
+            "post": {
+                "description": "Create new user.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/decline_invitation": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/dex/callback": {
+            "get": {
+                "description": "DexRouter creates all the required routes for OAuth purposes. .",
+                "tags": [
+                    "DexRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "obejct"
+                        }
+                    }
+                }
+            }
+        },
+        "/dex/login": {
+            "get": {
+                "description": "DexRouter creates all the required routes for OAuth purposes. .",
+                "tags": [
+                    "DexRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_owner_projects": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_project_members/:project_id/:state": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_project_role/:project_id": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_projects_stats": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_user/:uid": {
+            "get": {
+                "description": "Get user.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite_users/:project_id": {
+            "get": {
+                "description": "Invite users.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/leave_project": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/list_invitations_with_filters/:invitation_state": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/list_projects": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "User Login.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.LoginResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Revokes the token passed in the Authorization header.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/readiness": {
+            "get": {
+                "description": "Return list of tags.",
+                "tags": [
+                    "MiscRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/remove_invitation": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "obejct"
+                        }
+                    }
+                }
+            }
+        },
+        "/remove_token": {
+            "post": {
+                "description": "Delete api token for the user.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reset/password": {
+            "post": {
+                "description": "Reset user password.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/send_invitation": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/status": {
+            "get": {
+                "description": "Status will request users list and return, if successful, an http code 200.",
+                "tags": [
+                    "MiscRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/token/:uid": {
+            "post": {
+                "description": "Returns all the api tokens for the user.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiTokenResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/update/details": {
+            "post": {
+                "description": "Update users details.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/update/password": {
+            "post": {
+                "description": "Update user password.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/update/state": {
+            "post": {
+                "description": "Updates the user state.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/update_project_name": {
+            "get": {
+                "description": "Return stats of a project.",
+                "tags": [
+                    "ProjectRouter"
+                ],
+                "summary": "Get stats of a project.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Fetch users.",
+                "tags": [
+                    "UserRouter"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.UserResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "response.ApiTokenResponse": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "expiresAt": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LoginResponse": {
+            "type": "object"
+        },
+        "response.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.NewApiToken": {
+            "type": "object"
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.UserResponse": {
+            "type": "object",
+            "properties": {
+                "deactivatedAt": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "userID": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
@@ -23,7 +587,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "Chaoscenter API documentation",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

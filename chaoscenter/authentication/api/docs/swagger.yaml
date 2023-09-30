@@ -1,4 +1,364 @@
+definitions:
+  response.ApiTokenResponse:
+    properties:
+      createdAt:
+        type: integer
+      expiresAt:
+        type: integer
+      name:
+        type: string
+      token:
+        type: string
+      userID:
+        type: string
+    type: object
+  response.LoginResponse:
+    type: object
+  response.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  response.NewApiToken:
+    type: object
+  response.Response:
+    properties:
+      response:
+        type: string
+    type: object
+  response.UserResponse:
+    properties:
+      deactivatedAt:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      userID:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+  title: Chaoscenter API documentation
+paths:
+  /accept_invitation:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /create_project:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /create_token:
+    post:
+      description: Creates a new api token for the user.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.NewApiToken'
+      tags:
+      - UserRouter
+  /create_user:
+    post:
+      description: Create new user.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+      tags:
+      - UserRouter
+  /decline_invitation:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /dex/callback:
+    get:
+      description: DexRouter creates all the required routes for OAuth purposes. .
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: obejct
+      tags:
+      - DexRouter
+  /dex/login:
+    get:
+      description: DexRouter creates all the required routes for OAuth purposes. .
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      tags:
+      - DexRouter
+  /get_owner_projects:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /get_project_members/:project_id/:state:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /get_project_role/:project_id:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /get_projects_stats:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /get_user/:uid:
+    get:
+      description: Get user.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+      tags:
+      - UserRouter
+  /invite_users/:project_id:
+    get:
+      description: Invite users.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+      tags:
+      - UserRouter
+  /leave_project:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /list_invitations_with_filters/:invitation_state:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /list_projects:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /login:
+    post:
+      description: User Login.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.LoginResponse'
+      tags:
+      - UserRouter
+  /logout:
+    post:
+      description: Revokes the token passed in the Authorization header.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+      tags:
+      - UserRouter
+  /readiness:
+    get:
+      description: Return list of tags.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      tags:
+      - MiscRouter
+  /remove_invitation:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: obejct
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /remove_token:
+    post:
+      description: Delete api token for the user.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+      tags:
+      - UserRouter
+  /reset/password:
+    post:
+      description: Reset user password.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+      tags:
+      - UserRouter
+  /send_invitation:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /status:
+    get:
+      description: Status will request users list and return, if successful, an http
+        code 200.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      tags:
+      - MiscRouter
+  /token/:uid:
+    post:
+      description: Returns all the api tokens for the user.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiTokenResponse'
+      tags:
+      - UserRouter
+  /update/details:
+    post:
+      description: Update users details.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+      tags:
+      - UserRouter
+  /update/password:
+    post:
+      description: Update user password.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+      tags:
+      - UserRouter
+  /update/state:
+    post:
+      description: Updates the user state.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.MessageResponse'
+      tags:
+      - UserRouter
+  /update_project_name:
+    get:
+      description: Return stats of a project.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get stats of a project.
+      tags:
+      - ProjectRouter
+  /users:
+    get:
+      description: Fetch users.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+      tags:
+      - UserRouter
 swagger: "2.0"
