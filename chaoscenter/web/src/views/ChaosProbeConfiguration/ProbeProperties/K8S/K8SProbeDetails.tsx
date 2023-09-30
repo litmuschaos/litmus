@@ -36,6 +36,11 @@ function K8SProbeDetails({ k8sProperties }: Pick<ProbePropertiesProps, 'k8sPrope
         Cell: (props: Cell<K8sProbeInputs>) => checkAndReturn(props.value)
       },
       {
+        Header: `${getString('resourceNames')}`.toLocaleUpperCase(),
+        accessor: 'resourceNames',
+        Cell: (props: Cell<K8sProbeInputs>) => checkAndReturn(props.value)
+      },
+      {
         Header: `${getString('fieldSelector')}`.toLocaleUpperCase(),
         accessor: 'fieldSelector',
         Cell: (props: Cell<K8sProbeInputs>) => checkAndReturn(props.value)
@@ -61,6 +66,7 @@ function K8SProbeDetails({ k8sProperties }: Pick<ProbePropertiesProps, 'k8sPrope
       version: k8sProperties?.version as string,
       resource: k8sProperties?.resource as string,
       namespace: k8sProperties?.namespace,
+      resourceNames: k8sProperties?.resourceNames,
       fieldSelector: k8sProperties?.fieldSelector,
       labelSelector: k8sProperties?.labelSelector,
       operation: k8sProperties?.operation as string

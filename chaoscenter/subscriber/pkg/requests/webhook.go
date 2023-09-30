@@ -129,7 +129,7 @@ func RequestProcessor(infraData map[string]string, r types.RawData) error {
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 		_, err := k8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
 		if err != nil {
-			return errors.New("error performing infra operationn: " + err.Error())
+			return errors.New("error performing infra operation: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_run_delete ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 
