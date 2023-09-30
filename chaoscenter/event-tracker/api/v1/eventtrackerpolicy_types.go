@@ -46,7 +46,7 @@ type EventTrackerPolicyStatus struct {
 	Resource     string `json:"resource,omitempty"`
 	ResourceName string `json:"resource_name,omitempty"`
 	Result       string `json:"result,omitempty"`
-	WorkflowID   string `json:"workflow_id,omitempty"`
+	ExperimentID string `json:"experiment_id,omitempty"`
 	IsTriggered  string `json:"is_triggered,omitempty"`
 }
 

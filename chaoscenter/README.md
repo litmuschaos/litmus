@@ -1,4 +1,6 @@
-## Installation steps for Litmus 3.0.0-beta9
+# [LitmusChaos 3.0.0](https://docs.litmuschaos.io/)
+
+## Installation steps for Litmus 3.0.0
 
 ### Mongo installation via Helm - Bitnami Mongo
 

@@ -68,7 +68,7 @@ func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.R
 	var etp eventtrackerv1.EventTrackerPolicy
 	err := r.Client.Get(context.Background(), req.NamespacedName, &etp)
 	if errors.IsNotFound(err) {
-		logrus.Print(req.NamespacedName, " not found")
+		logrus.Infof("namespace: %s not found", req.NamespacedName)
 		return ctrl.Result{}, nil
 	} else if err != nil {
 		return ctrl.Result{}, err
@@ -76,8 +76,8 @@ func (r *EventTrackerPolicyReconciler) Reconcile(ctx context.Context, req ctrl.R
 
 	for index, status := range etp.Statuses {
 		if status.Result == utils.ConditionPassed && strings.ToLower(status.IsTriggered) == "false" {
-			logrus.Print("ResourceName: " + status.ResourceName + ", WorkflowID: " + status.WorkflowID)
-			response, err := utils.SendRequest(status.WorkflowID)
+			logrus.Print("ResourceName: " + status.ResourceName + ", ExperimentID: " + status.ExperimentID)
+			response, err := utils.SendRequest(status.ExperimentID)
 			if err != nil {
 				return ctrl.Result{}, err
 			}

@@ -1072,7 +1072,9 @@ const TuneDetailsStep: React.FC<
         <FormInput.Text name="k8sProperties.labelSelector" label={'Label Selector'} placeholder={'Label Selector'} />
         <FormInput.Select
           name="k8sProperties.operation"
+
           label={getString('operation')}
+          usePortal
           placeholder={getString('operation')}
           items={[
             // Create to be enabled once Engine CR is updated to include `data` inside k8s properties
