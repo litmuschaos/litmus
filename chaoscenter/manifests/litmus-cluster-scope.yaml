@@ -647,8 +647,6 @@ spec:
             - secretRef:
                 name: litmus-portal-admin-secret
           env:
-            - name: SELF_AGENT
-              value: "true"
             # if self-signed certificate are used pass the k8s tls secret name created in portal ns, to allow agents to use tls for communication
             - name: TLS_SECRET_NAME
               value: ""
@@ -667,23 +665,19 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.0.0-beta3"
+              value: "litmuschaos/chaos-operator:3.0.0-beta11"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.0.0-beta3"
+              value: "litmuschaos/chaos-runner:3.0.0-beta11"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.0.0-beta3"
+              value: "litmuschaos/chaos-exporter:3.0.0-beta11"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: INFRA_DEPLOYMENTS
-              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller"]'
+              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            - name: SELF_AGENT_NODE_SELECTOR
-              value: ""
-            - name: SELF_AGENT_TOLERATIONS
-              value: ""
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: INGRESS
@@ -693,9 +687,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "refactor-hub-3.0.0"
-            - name: HUB_BRANCH_NAME
-              value: "refactor-hub-3.0.0"
+              value: "master"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
             - name: LITMUS_AUTH_GRPC_PORT
@@ -705,7 +697,7 @@ spec:
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["0.3.0", "0.2.0", "0.1.0","ci"]'
+              value: '["ci"]'
           ports:
             - containerPort: 8080
             - containerPort: 8000
