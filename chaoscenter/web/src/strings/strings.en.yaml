@@ -661,7 +661,7 @@ noProbeExecution: No Probe executions found
 noProbeExecutionDetails:
   subtitle: >-
     Probes are pluggable checks that can be defined within the ChaosEngine for
-    any Chaos Experiment
+    any Chaos Fault
   title: There are no executions for the selected probe in your project
 noProbes: No probes configured
 noProbesAvailable: No Probes available for this node
