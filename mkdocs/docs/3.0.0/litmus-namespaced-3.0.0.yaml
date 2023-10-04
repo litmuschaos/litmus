@@ -415,7 +415,6 @@ kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
 data:
-  INFRA_SCOPE: namespace
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
   VERSION: "3.0.0"
   SKIP_SSL_VERIFY: "false"
