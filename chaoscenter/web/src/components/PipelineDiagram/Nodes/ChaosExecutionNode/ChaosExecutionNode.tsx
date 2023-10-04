@@ -132,7 +132,7 @@ function ChaosExecutionNode(props: ChaosExecutionNodeProps): JSX.Element {
               {
                 nodeName: props.name ?? props.data.name,
                 stepStatus: props.status as ExperimentRunFaultStatus,
-                chaosResult: props.data.chaosData?.chaosResult
+                chaosResult: props.data.chaosResult
               },
               {
                 useArrows: true,
