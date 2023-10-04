@@ -1,11 +1,11 @@
 ## Introduction
 
-- It causes termination of an EC2 instance by instance ID or list of instance IDs before bringing it back to running state after the specified chaos duration.
+- It causes stopping of an EC2 instance by instance ID or list of instance IDs before bringing it back to running state after the specified chaos duration.
 - It helps to check the performance of the application/process running on the ec2 instance.
 When the MANAGED_NODEGROUP is enable then the experiment will not try to start the instance post chaos instead it will check of the addition of the new node instance to the cluster.
 
-!!! tip "Scenario: Terminate EC2 Instance"    
-    ![EC2 Terminate By ID](../../images/ec2-terminate.png)
+!!! tip "Scenario: Stop EC2 Instance"
+    ![EC2 Stop By ID](../../images/ec2-stop.png)
 
 ## Uses
 
@@ -17,7 +17,7 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>ec2-terminate-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/experiment.yaml">here</a>
+    -  Ensure that the <code>ec2-stop-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/aws/ec2-stop-by-id/fault.yaml">here</a>
     - Ensure that you have sufficient AWS access to stop and start an ec2 instance. 
     - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
@@ -54,24 +54,24 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kube-aws/ec2-terminate-by-id/rbac.yaml yaml)
+        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kube-aws/ec2-stop-by-id/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: ec2-terminate-by-id-sa
+          name: ec2-stop-by-id-sa
           namespace: default
           labels:
-            name: ec2-terminate-by-id-sa
+            name: ec2-stop-by-id-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
         metadata:
-          name: ec2-terminate-by-id-sa
+          name: ec2-stop-by-id-sa
           labels:
-            name: ec2-terminate-by-id-sa
+            name: ec2-stop-by-id-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -110,17 +110,17 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         metadata:
-          name: ec2-terminate-by-id-sa
+          name: ec2-stop-by-id-sa
           labels:
-            name: ec2-terminate-by-id-sa
+            name: ec2-stop-by-id-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: ClusterRole
-          name: ec2-terminate-by-id-sa
+          name: ec2-stop-by-id-sa
         subjects:
         - kind: ServiceAccount
-          name: ec2-terminate-by-id-sa
+          name: ec2-stop-by-id-sa
           namespace: default
         ```
         
@@ -164,7 +164,7 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
       </tr>
       <tr> 
         <td> CHAOS_INTERVAL </td>
-        <td> The interval (in sec) between successive instance termination.</td>
+        <td> The interval (in sec) between successive instance stop.</td>
         <td> Defaults to 30s </td>
       </tr>  
       <tr> 
@@ -196,9 +196,9 @@ It contains comma separated list of instances IDs subjected to ec2 stop chaos. I
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-id/instance-id.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-stop-by-id/instance-id.yaml yaml)
 ```yaml
-# contains the instance id, to be terminated/stopped
+# contains the instance id to be stopped
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -206,9 +206,9 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: ec2-terminate-by-id-sa
+  chaosServiceAccount: ec2-stop-by-id-sa
   experiments:
-  - name: ec2-terminate-by-id
+  - name: ec2-stop-by-id
     spec:
       components:
         env:

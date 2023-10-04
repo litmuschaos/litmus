@@ -17,7 +17,7 @@
     <ul>
         <li> Ensure that Kubernetes Version > 1.16 </li>
         <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> </li>
-        <li> Ensure that the <code> spring-boot-exceptions </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/spring-boot/spring-boot-exceptions/experiment.yaml">here</a></li>
+        <li> Ensure that the <code> spring-boot-exceptions </code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/spring-boot/spring-boot-exceptions/fault.yaml">here</a></li>
         <li>Chaos Monkey Spring Boot dependency should be present in application. It can be enabled by two ways:
           <ol>
             <li>Add internal dependency inside the spring boot application
