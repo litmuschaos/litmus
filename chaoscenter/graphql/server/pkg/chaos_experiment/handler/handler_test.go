@@ -420,7 +420,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 			},
 			given: func(request *model.ChaosExperimentRequest) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
-
+				mongodbMockOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 				chaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 
 				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
@@ -439,7 +439,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 			},
 			given: func(request *model.ChaosExperimentRequest) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
-
+				mongodbMockOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 				chaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
 			},
 			wantErr: true,
@@ -456,6 +456,8 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 			},
 			given: func(request *model.ChaosExperimentRequest) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
+
+				mongodbMockOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 
 				chaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 
