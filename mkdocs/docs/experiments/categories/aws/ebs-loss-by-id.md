@@ -49,7 +49,6 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kube-aws/ebs-loss-by-id/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1

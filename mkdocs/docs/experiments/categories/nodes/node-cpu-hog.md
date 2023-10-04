@@ -31,7 +31,6 @@ Application implies services. Can be reframed as: Tests application resiliency u
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/node-cpu-hog/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1

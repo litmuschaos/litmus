@@ -52,7 +52,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-instance-stop-by-label/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1

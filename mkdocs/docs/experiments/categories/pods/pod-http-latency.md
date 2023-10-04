@@ -30,7 +30,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/pod-http-latency/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1

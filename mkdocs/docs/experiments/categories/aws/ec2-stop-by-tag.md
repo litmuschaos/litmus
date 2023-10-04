@@ -54,7 +54,6 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kube-aws/ec2-stop-by-tag/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1

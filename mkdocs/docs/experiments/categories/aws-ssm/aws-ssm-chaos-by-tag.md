@@ -50,7 +50,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/aws-ssm/aws-ssm-chaos-by-tag/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1

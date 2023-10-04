@@ -71,8 +71,7 @@
     If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre-installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
-    
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/spring-boot/spring-boot-app-kill/rbac.yaml yaml)
+
         ```yaml
         apiVersion: v1
         kind: ServiceAccount
