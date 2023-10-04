@@ -808,6 +808,7 @@ export interface StringsMap {
   'selectHub': unknown
   'selectHubFromList': unknown
   'selectHubHeader': unknown
+  'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
   'selectTimeframe': unknown

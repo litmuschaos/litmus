@@ -964,6 +964,7 @@ selectExperiments: Select Experiments
 selectHub: Select a ChaosHub
 selectHubFromList: Select a hub from the list
 selectHubHeader: Create or select existing ChaosHub
+selectProbe: Select Probe
 selectProbes: Select Probes
 selectProject: Select a Project
 selectTimeframe: Select time frame
