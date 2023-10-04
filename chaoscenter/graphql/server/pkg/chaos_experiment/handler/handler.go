@@ -106,7 +106,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
 		if wfDetails.Name != request.Name {
-			err = c.validateDuplicateExperimentName(ctx, request.ID, request.Name)
+			err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
 			if err != nil {
 				return "", err
 			}
@@ -120,7 +120,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		return "experiment updated successfully", nil
 	}
 
-	err = c.validateDuplicateExperimentName(ctx, request.ID, request.Name)
+	err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
 	if err != nil {
 		return "", err
 	}
@@ -128,7 +128,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	// Saving chaos experiment in the DB
 	logrus.WithFields(logFields).Info("request received to save k8s chaos experiment")
 
-	err = c.chaosExperimentService.ProcessExperimentCreation(context.TODO(), newRequest, username, projectID, wfType, revID, nil)
+	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
 		return "", err
 	}

@@ -1,8 +1,8 @@
-import type { CollapsableSelectOptions } from '@harnessio/uicore';
-import type { IconName } from '@harnessio/icons';
-import type { FormikHelpers } from 'formik';
-import type { ExperimentMetadata } from '@db';
 import { InfraScope, InfrastructureUpdateStatus } from '@api/entities';
+import type { ExperimentMetadata } from '@db';
+import type { IconName } from '@harnessio/icons';
+import type { CollapsableSelectOptions } from '@harnessio/uicore';
+import type { FormikHelpers } from 'formik';
 
 /* 
   Generic
@@ -118,7 +118,7 @@ export const initialValues: InitialValueProps = {
 };
 
 export const kubernetesChaosInfrastructureCRDsEndpoint =
-  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta10/litmus-portal-crds-3.0.0-beta10.yml';
+  'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0/litmus-portal-crds-3.0.0.yml';
 
 type InfrastructurePlatformNameType = 'Kubernetes';
 
