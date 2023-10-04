@@ -232,14 +232,14 @@ Following Platform Chaos experiments are available:
     <th>User Guide</th>
   </tr>
   <tr>
-    <td>EC2 Terminate By ID</td>
-    <td>Terminate the ec2 instance matched by instance id</td>
-    <td><a href="/litmus/experiments/categories/aws/ec2-terminate-by-id">ec2-terminate-by-id</a></td>
+    <td>EC2 Stop By ID</td>
+    <td>Stop the EC2 instance matched by instance id</td>
+    <td><a href="/litmus/experiments/categories/aws/ec2-stop-by-id">ec2-stop-by-id</a></td>
   </tr>
   <tr>
-    <td>EC2 Terminate By Tag</td>
-    <td>Terminate the ec2 instance matched by instance tag</td>
-    <td><a href="/litmus/experiments/categories/aws/ec2-terminate-by-tag">ec2-terminate-by-tag</a></td>
+    <td>EC2 Stop By Tag</td>
+    <td>Stop the EC2 instance matched by instance tag</td>
+    <td><a href="/litmus/experiments/categories/aws/ec2-stop-by-tag">ec2-stop-by-tag</a></td>
   </tr>
   <tr>
     <td>EBS Loss By ID</td>
