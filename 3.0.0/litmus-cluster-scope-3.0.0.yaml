@@ -440,8 +440,7 @@ metadata:
   name: litmus-portal-admin-config
   namespace: litmus
 data:
-  DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless.litmus.svc.cluster.local:27017,my-release-mongodb-1.my-release-mongodb-headless.litmus.svc.cluster.local:27017,my-release-mongodb-2.my-release-mongodb-headless.litmus.svc.cluster.local:27017/admin
-  INFRA_SCOPE: cluster
+  DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
   VERSION: "3.0.0"
   SKIP_SSL_VERIFY: "false"
   # Configurations if you are using dex for OAuth
@@ -688,7 +687,7 @@ spec:
             - name: DEFAULT_HUB_BRANCH_NAME
               value: "master"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
-              value: "litmusportal-auth-server-service.litmus.svc.cluster.local"
+              value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
@@ -768,7 +767,7 @@ spec:
             - name: ADMIN_PASSWORD
               value: "litmus"
             - name: LITMUS_GQL_GRPC_ENDPOINT
-              value: "litmusportal-server-service.litmus.svc.cluster.local"
+              value: "litmusportal-server-service"
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
           resources:
