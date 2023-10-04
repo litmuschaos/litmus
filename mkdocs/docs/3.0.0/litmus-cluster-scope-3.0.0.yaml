@@ -685,13 +685,13 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "master"
+              value: "v3.0.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "v3.0.x"
+              value: "3.0.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
