@@ -416,7 +416,7 @@ metadata:
   name: litmus-portal-admin-config
 data:
   INFRA_SCOPE: namespace
-  DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless.litmus.svc.cluster.local:27017,my-release-mongodb-1.my-release-mongodb-headless.litmus.svc.cluster.local:27017,my-release-mongodb-2.my-release-mongodb-headless.litmus.svc.cluster.local:27017/admin
+  DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
   VERSION: "ci"
   SKIP_SSL_VERIFY: "false"
 ---
@@ -425,7 +425,7 @@ kind: ConfigMap
 metadata:
   name: litmusportal-frontend-nginx-configuration
 data:
-  default.conf: |
+  nginx.conf: |
     pid /tmp/nginx.pid;
 
     events {
@@ -539,10 +539,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8185
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/nginx.conf
-              subPath: nginx.conf
           resources:
             requests:
               memory: "250Mi"
@@ -552,6 +548,10 @@ spec:
               memory: "512Mi"
               cpu: "550m"
               ephemeral-storage: "1Gi"
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
       volumes:
         - name: nginx-config
           configMap:
@@ -595,7 +595,7 @@ spec:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
           volumeMounts:
-            - mountPath: /tmp/gitops
+            - mountPath: /tmp/
               name: gitops-storage
             - mountPath: /tmp/version
               name: hub-storage
@@ -618,19 +618,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: SELF_AGENT
-              value: "true"
-            - name: SELF_AGENT_NODE_SELECTOR
-              value: ""
-            - name: SELF_AGENT_TOLERATIONS
-              value: ""
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64
               value: ""
             - name: CHAOS_CENTER_SCOPE
               value: "namespace"
             - name: INFRA_DEPLOYMENTS
-              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller"]'
+              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: CHAOS_CENTER_UI_ENDPOINT
@@ -644,15 +638,15 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.0.0-beta3"
+              value: "litmuschaos/chaos-operator:3.0.0-beta11"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.0.0-beta3"
+              value: "litmuschaos/chaos-runner:3.0.0-beta11"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.0.0-beta3"
+              value: "litmuschaos/chaos-exporter:3.0.0-beta11"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
-            - name: HUB_BRANCH_NAME
-              value: "refactor-hub-3.0.0"
+            - name: DEFAULT_HUB_BRANCH_NAME
+              value: "master"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
@@ -665,6 +659,8 @@ spec:
               value: "false"
             - name: INGRESS_NAME
               value: "litmus-ingress"
+            - name: INFRA_COMPATIBLE_VERSIONS
+              value: '["ci"]'  
           ports:
             - containerPort: 8080
             - containerPort: 8000

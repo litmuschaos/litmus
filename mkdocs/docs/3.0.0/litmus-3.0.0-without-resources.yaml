@@ -1,6 +1,6 @@
 ### RBAC Manifests
 ## If SELF_AGENT="true" then these permissions are required to apply
-## https://github.com/litmuschaos/litmus/blob/master/chaoscenter/graphql/server/manifests/cluster/1b_argo_rbac.yaml
+## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/cluster/1b_argo_rbac.yaml
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -67,7 +67,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: ci
+    app.kubernetes.io/version: 3.0.0
     app.kubernetes.io/component: operator-clusterrole
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -112,7 +112,7 @@ metadata:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
     # app.kubernetes.io/instance: litmus-abcxzy
-    app.kubernetes.io/version: ci
+    app.kubernetes.io/version: 3.0.0
     app.kubernetes.io/component: operator-clusterrolebinding
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
@@ -441,9 +441,9 @@ metadata:
   namespace: litmus
 data:
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless.litmus.svc.cluster.local:27017,my-release-mongodb-1.my-release-mongodb-headless.litmus.svc.cluster.local:27017,my-release-mongodb-2.my-release-mongodb-headless.litmus.svc.cluster.local:27017/admin
-  INFRA_SCOPE: cluster
-  INFRA_NAMESPACE: litmus
-  VERSION: "ci"
+  AGENT_SCOPE: cluster
+  AGENT_NAMESPACE: litmus
+  VERSION: "3.0.0"
   SKIP_SSL_VERIFY: "false"
   # Configurations if you are using dex for OAuth
   DEX_ENABLED: "false"
@@ -459,7 +459,7 @@ metadata:
   name: litmusportal-frontend-nginx-configuration
   namespace: litmus
 data:
-  nginx.conf: |
+  default.conf: |
     pid /tmp/nginx.pid;
 
     events {
@@ -566,7 +566,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:ci
+          image: litmuschaos/litmusportal-frontend:3.0.0
           imagePullPolicy: Always
           # securityContext:
           #   runAsUser: 2000
@@ -574,15 +574,6 @@ spec:
           #   runAsNonRoot: true
           ports:
             - containerPort: 8185
-          resources:
-            requests:
-              memory: "150Mi"
-              cpu: "125m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "512Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
@@ -630,7 +621,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:ci
+          image: litmuschaos/litmusportal-server:3.0.0
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -657,27 +648,31 @@ spec:
             - name: CHAOS_CENTER_SCOPE
               value: "cluster"
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:ci"
+              value: "litmuschaos/litmusportal-subscriber:3.0.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:ci"
+              value: "litmuschaos/litmusportal-event-tracker:3.0.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
               value: "litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.0.0-beta11"
+              value: "litmuschaos/chaos-operator:3.0.0-beta10"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.0.0-beta11"
+              value: "litmuschaos/chaos-runner:3.0.0-beta10"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.0.0-beta11"
+              value: "litmuschaos/chaos-exporter:3.0.0-beta10"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: INFRA_DEPLOYMENTS
-              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
+              value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller"]'
             - name: NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: SELF_AGENT_NODE_SELECTOR
+              value: ""
+            - name: SELF_AGENT_TOLERATIONS
+              value: ""
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: INGRESS
@@ -693,24 +688,13 @@ spec:
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.0.0-beta9"
+              value: "3.0.0-beta10"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
-            - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["ci"]'
           ports:
             - containerPort: 8080
             - containerPort: 8000
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
       serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
@@ -750,7 +734,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:ci
+          image: litmuschaos/litmusportal-auth-server:3.0.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -772,15 +756,6 @@ spec:
               value: "litmusportal-server-service.litmus.svc.cluster.local"
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
-          resources:
-            requests:
-              memory: "250Mi"
-              cpu: "225m"
-              ephemeral-storage: "500Mi"
-            limits:
-              memory: "712Mi"
-              cpu: "550m"
-              ephemeral-storage: "1Gi"
           ports:
             - containerPort: 3000
             - containerPort: 3030

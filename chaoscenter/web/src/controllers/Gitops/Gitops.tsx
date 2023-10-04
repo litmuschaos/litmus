@@ -4,6 +4,7 @@ import GitopsView from '@views/Gitops/Gitops';
 import { enableGitOps, getGitOpsDetails, updateGitOps } from '@api/core/gitops';
 import { getScope } from '@utils';
 import { disableGitOps } from '@api/core/gitops/disableGitops';
+import Loader from '@components/Loader';
 
 export default function GitopsController(): React.ReactElement {
   const scope = getScope();
@@ -44,17 +45,25 @@ export default function GitopsController(): React.ReactElement {
     onError: err => showError(err.message)
   });
   return (
-    <GitopsView
-      gitopsDetails={getGitOpsDetailsData?.getGitOpsDetails}
-      enableGitops={enableGitopsMutation}
-      disableGitops={disableGitopsMutation}
-      updateGitops={updateGitopsMutation}
-      loading={{
-        getGitOpsDetailsLoading: getGitOpsDetailsLoading,
-        disableGitopsMutationLoading: disableGitopsMutationLoading,
-        updateGitopsMutationLoading: updateGitopsMutationLoading,
-        enableGitopsMutationLoading: enableGitopsMutationLoading
+    <Loader
+      loading={getGitOpsDetailsLoading}
+      height="fit-content"
+      style={{
+        minHeight: getGitOpsDetailsLoading ? 'calc(var(--page-min-height) - var(--spacing-xxlarge))' : 'initial'
       }}
-    />
+    >
+      <GitopsView
+        gitopsDetails={getGitOpsDetailsData?.getGitOpsDetails}
+        enableGitops={enableGitopsMutation}
+        disableGitops={disableGitopsMutation}
+        updateGitops={updateGitopsMutation}
+        loading={{
+          getGitOpsDetailsLoading: getGitOpsDetailsLoading,
+          disableGitopsMutationLoading: disableGitopsMutationLoading,
+          updateGitopsMutationLoading: updateGitopsMutationLoading,
+          enableGitopsMutationLoading: enableGitopsMutationLoading
+        }}
+      />
+    </Loader>
   );
 }

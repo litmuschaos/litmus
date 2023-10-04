@@ -9,9 +9,6 @@ type Configuration struct {
 	InfraDeployments            string `required:"true" split_words:"true"`
 	DbServer                    string `required:"true" split_words:"true"`
 	JwtSecret                   string `required:"true" split_words:"true"`
-	SelfAgent                   string `required:"true" split_words:"true"`
-	InfraScope                  string `required:"true" split_words:"true"`
-	InfraNamespace              string `required:"true" split_words:"true"`
 	LitmusPortalNamespace       string `required:"true" split_words:"true"`
 	DbUser                      string `required:"true" split_words:"true"`
 	DbPassword                  string `required:"true" split_words:"true"`
@@ -24,7 +21,6 @@ type Configuration struct {
 	LitmusChaosRunnerImage      string `required:"true" split_words:"true"`
 	LitmusChaosExporterImage    string `required:"true" split_words:"true"`
 	ContainerRuntimeExecutor    string `required:"true" split_words:"true"`
-	HubBranchName               string `required:"true" split_words:"true"`
 	WorkflowHelperImageVersion  string `required:"true" split_words:"true"`
 	ServerServiceName           string `split_words:"true"`
 	NodeName                    string `split_words:"true"`

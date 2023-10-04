@@ -20,8 +20,7 @@ export default function CreateNewTokenController(props: CreateNewTokenController
   const { mutate: createNewTokenMutation, isLoading } = useCreateApiTokenMutation(
     {},
     {
-      onSuccess: data => {
-        data.accessToken;
+      onSuccess: () => {
         apiTokensRefetch();
         showSuccess(getString('tokenCreateSuccessMessage'));
       }
