@@ -72,7 +72,6 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	mongodb.Operator = mongodbOperator
 
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
 

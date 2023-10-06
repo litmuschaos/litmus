@@ -10,10 +10,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+func NewProbeOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // CreateProbe creates a probe of a specific type (HTTP, PROM, K8s or CMD)
 // as a shared entity in the database
-func CreateProbe(ctx context.Context, probe Probe) error {
-	err := mongodb.Operator.Create(ctx, mongodb.ChaosProbeCollection, probe)
+func (p *Operator) CreateProbe(ctx context.Context, probe Probe) error {
+	err := p.operator.Create(ctx, mongodb.ChaosProbeCollection, probe)
 	if err != nil {
 		return err
 	}
@@ -21,8 +31,8 @@ func CreateProbe(ctx context.Context, probe Probe) error {
 }
 
 // GetAggregateProbes takes a mongo pipeline to retrieve the project details from the database
-func GetAggregateProbes(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cursor, error) {
-	results, err := mongodb.Operator.Aggregate(ctx, mongodb.ChaosProbeCollection, pipeline)
+func (p *Operator) GetAggregateProbes(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+	results, err := p.operator.Aggregate(ctx, mongodb.ChaosProbeCollection, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -31,8 +41,8 @@ func GetAggregateProbes(ctx context.Context, pipeline mongo.Pipeline) (*mongo.Cu
 }
 
 // IsProbeUnique returns true if probe is unique
-func IsProbeUnique(ctx context.Context, query bson.D) (bool, error) {
-	count, err := mongodb.Operator.CountDocuments(ctx, mongodb.ChaosProbeCollection, query)
+func (p *Operator) IsProbeUnique(ctx context.Context, query bson.D) (bool, error) {
+	count, err := p.operator.CountDocuments(ctx, mongodb.ChaosProbeCollection, query)
 	if err != nil {
 		return false, err
 	}
@@ -44,8 +54,8 @@ func IsProbeUnique(ctx context.Context, query bson.D) (bool, error) {
 }
 
 // UpdateProbe updates details of a Probe
-func UpdateProbe(ctx context.Context, query bson.D, updateQuery bson.D) (*mongo.UpdateResult, error) {
-	result, err := mongodb.Operator.Update(ctx, mongodb.ChaosProbeCollection, query, updateQuery)
+func (p *Operator) UpdateProbe(ctx context.Context, query bson.D, updateQuery bson.D) (*mongo.UpdateResult, error) {
+	result, err := p.operator.Update(ctx, mongodb.ChaosProbeCollection, query, updateQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +66,8 @@ func UpdateProbe(ctx context.Context, query bson.D, updateQuery bson.D) (*mongo.
 }
 
 // UpdateProbes updates details of Probe
-func UpdateProbes(ctx context.Context, query bson.D, updateQuery bson.D) (*mongo.UpdateResult, error) {
-	result, err := mongodb.Operator.UpdateMany(ctx, mongodb.ChaosProbeCollection, query, updateQuery)
+func (p *Operator) UpdateProbes(ctx context.Context, query bson.D, updateQuery bson.D) (*mongo.UpdateResult, error) {
+	result, err := p.operator.UpdateMany(ctx, mongodb.ChaosProbeCollection, query, updateQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -68,9 +78,9 @@ func UpdateProbes(ctx context.Context, query bson.D, updateQuery bson.D) (*mongo
 }
 
 // GetProbeByName fetches the details of a single Probe with its Probe Name
-func GetProbeByName(ctx context.Context, probeName string, projectID string) (Probe, error) {
+func (p *Operator) GetProbeByName(ctx context.Context, probeName string, projectID string) (Probe, error) {
 	var probe Probe
-	result, err := mongodb.Operator.Get(ctx, mongodb.ChaosProbeCollection, bson.D{{"name", probeName}, {"project_id", projectID}, {"is_removed", false}})
+	result, err := p.operator.Get(ctx, mongodb.ChaosProbeCollection, bson.D{{"name", probeName}, {"project_id", projectID}, {"is_removed", false}})
 	err = result.Decode(&probe)
 	if err != nil {
 		return Probe{}, err
