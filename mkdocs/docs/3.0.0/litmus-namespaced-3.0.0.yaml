@@ -415,7 +415,6 @@ kind: ConfigMap
 metadata:
   name: litmus-portal-admin-config
 data:
-  INFRA_SCOPE: namespace
   DB_SERVER: mongodb://my-release-mongodb-0.my-release-mongodb-headless:27017,my-release-mongodb-1.my-release-mongodb-headless:27017,my-release-mongodb-2.my-release-mongodb-headless:27017/admin
   VERSION: "3.0.0"
   SKIP_SSL_VERIFY: "false"
@@ -646,7 +645,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "master"
+              value: "v3.0.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
