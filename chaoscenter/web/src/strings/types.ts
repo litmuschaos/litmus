@@ -816,6 +816,7 @@ export interface StringsMap {
   'selectHubFromList': unknown
   'selectHubHeader': unknown
   'selectMethod': unknown
+  'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
   'selectTimeframe': unknown
