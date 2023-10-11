@@ -30,8 +30,6 @@ func (m *MockedApplicationService) AddMember(projectID string, member *entities.
 	return args.Error(0)
 }
 
-
-
 func (m *MockedApplicationService) LoginUser(user *entities.User) (*entities.User, error) {
 	args := m.Called(user)
 	return args.Get(0).(*entities.User), args.Error(1)
@@ -81,7 +79,6 @@ func (m *MockedApplicationService) InviteUsers(invitedUsers []string) (*[]entiti
 	args := m.Called(invitedUsers)
 	return args.Get(0).(*[]entities.User), args.Error(1)
 }
-
 
 func (m *MockedApplicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
 	args := m.Called(projectID)
@@ -197,7 +194,6 @@ func (m *MockedApplicationService) UpdateStateTransaction(userRequest entities.U
 	args := m.Called(userRequest)
 	return args.Error(0)
 }
-
 
 func (m *MockedApplicationService) RbacValidator(userID, resourceID string, rules []string, invitationStatus string) error {
 	args := m.Called(userID, resourceID, rules, invitationStatus)
