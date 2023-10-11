@@ -66,7 +66,7 @@ func TestGetUserById(t *testing.T) {
 		Name:          "test-user",
 		Username:      "username",
 		DeactivatedAt: &deactivatedTimestamp,
-		Role:          "admin", // adjust to your actual type
+		Role:          "admin",
 		Email:         "user@email.com",
 	}, nil)
 
