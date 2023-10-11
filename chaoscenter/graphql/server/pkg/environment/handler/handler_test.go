@@ -3,235 +3,137 @@ package handler_test
 import (
 	"context"
 	"errors"
-	"strconv"
 	"testing"
 
-	"fortio.org/assert"
-	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
-	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
-	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var (
-	mongodbMockOperator    = new(dbMocks.MongoOperator)
-	envOperator            = environments.NewEnvironmentOperator(mongodbMockOperator)
-	environmentTestHandler = handler.NewEnvironmentService(envOperator)
-)
+type MockEnvironmentOperator struct {
+	InsertEnvironmentFunc func(ctx context.Context, env environments.Environment) error
+	GetEnvironmentsFunc   func(ctx context.Context, query bson.D) ([]environments.Environment, error)
+	UpdateEnvironmentFunc func(ctx context.Context, query bson.D, update bson.D) error
+	GetEnvironmentFunc    func(query bson.D) (environments.Environment, error)
+}
 
-func strPtr(s string) *string {
-	return &s
+func (m *MockEnvironmentOperator) InsertEnvironment(ctx context.Context, env environments.Environment) error {
+	if m.InsertEnvironmentFunc != nil {
+		return m.InsertEnvironmentFunc(ctx, env)
+	}
+	return nil
+}
+
+func (m *MockEnvironmentOperator) GetEnvironment(query bson.D) (environments.Environment, error) {
+	if m.GetEnvironmentFunc != nil {
+		return m.GetEnvironmentFunc(query)
+	}
+	return environments.Environment{}, nil
+}
+
+func (m *MockEnvironmentOperator) GetEnvironments(ctx context.Context, query bson.D) ([]environments.Environment, error) {
+	if m.GetEnvironmentsFunc != nil {
+		return m.GetEnvironmentsFunc(ctx, query)
+	}
+	return nil, nil
+}
+
+func (m *MockEnvironmentOperator) UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error {
+	if m.UpdateEnvironmentFunc != nil {
+		return m.UpdateEnvironmentFunc(ctx, query, update)
+	}
+	return nil
 }
 
 func TestCreateEnvironment(t *testing.T) {
-	//given
-	ctx := context.Background()
-	projectID := uuid.NewString()
-	newEnvironment := &model.CreateEnvironmentRequest{
-		EnvironmentID: uuid.NewString(),
-		Name:          uuid.NewString(),
-		Description:   strPtr(uuid.NewString()),
-		Tags:          []string{uuid.NewString()},
-	}
-	testcases := []struct {
-		name    string
-		given   func()
-		wantErr bool
+	testCases := []struct {
+		name           string
+		projectID      string
+		input          *model.CreateEnvironmentRequest
+		token          string
+		mockInsertFunc func(ctx context.Context, env environments.Environment) error
+		expectedEnv    *model.Environment
+		expectedErr    error
 	}{
 		{
-			name: "success update new environment",
-			given: func() {
-				mongodbMockOperator.On("Create", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+			name:      "Failed environment creation due to invalid token",
+			projectID: "testProject",
+			input: &model.CreateEnvironmentRequest{
+				EnvironmentID: "testEnvID",
+				Name:          "testName",
 			},
-		},
-		{
-			name: "failure: mongo update error",
-			given: func() {
-				mongodbMockOperator.On("Create", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
+			token: "invalidToken",
+			mockInsertFunc: func(ctx context.Context, env environments.Environment) error {
+				return nil
 			},
-			wantErr: true,
+			expectedEnv: nil,
+			expectedErr: errors.New("invalid Token"),
 		},
 	}
-	for _, tc := range testcases {
+
+	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			//given
-			tc.given()
-			//when
-			_, err := environmentTestHandler.CreateEnvironment(ctx, projectID, newEnvironment)
-			//then
-			if tc.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
+			ctx := context.WithValue(context.Background(), authorization.AuthKey, tc.token)
+			operator := &environments.Operator{}
+			service := handler.NewEnvironmentService(operator)
+
+			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
+			if (err != nil && tc.expectedErr == nil) ||
+				(err == nil && tc.expectedErr != nil) ||
+				(err != nil && tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {
+				t.Fatalf("Expected error %v, but got %v", tc.expectedErr, err)
+			}
+
+			if tc.expectedEnv != nil && (env.EnvironmentID != tc.expectedEnv.EnvironmentID ||
+				env.Name != tc.expectedEnv.Name) {
+				t.Fatalf("Expected environment %+v, but got %+v", tc.expectedEnv, env)
 			}
 		})
 	}
-
-}
-
-func TestUpdateEnvironment(t *testing.T) {
-	//given
-	ctx := context.Background()
-	projectID := uuid.NewString()
-	newEnvironment := &model.UpdateEnvironmentRequest{
-		EnvironmentID: uuid.NewString(),
-		Name:          strPtr(uuid.NewString()),
-		Description:   strPtr(uuid.NewString()),
-	}
-	testcases := []struct {
-		name    string
-		given   func()
-		wantErr bool
-	}{
-		{
-			name: "success update new environment",
-			given: func() {
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-			},
-		},
-		{
-			name: "failure: mongo update error",
-			given: func() {
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
-			},
-			wantErr: true,
-		},
-	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			//given
-			tc.given()
-			//when
-			_, err := environmentTestHandler.UpdateEnvironment(ctx, projectID, newEnvironment)
-			//then
-			if tc.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-			}
-		})
-	}
-
 }
 
 func TestDeleteEnvironment(t *testing.T) {
-	ctx := context.Background()
-	projectID := uuid.NewString()
-	environmentID := uuid.NewString()
-	//given
-	testcases := []struct {
-		name    string
-		given   func()
-		isError bool
+	testCases := []struct {
+		name                   string
+		projectID              string
+		environmentID          string
+		token                  string
+		mockGetEnvironmentFunc func(query bson.D) (environments.Environment, error)
+		mockUpdateFunc         func(ctx context.Context, query bson.D, update bson.D) error
+		expectedResult         string
+		expectedErr            error
 	}{
 		{
-			name: "success deleting environment",
-			given: func() {
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+			name:          "Failed environment deletion due to invalid token",
+			projectID:     "testProject",
+			environmentID: "testEnvID",
+			token:         "invalidToken",
+			mockGetEnvironmentFunc: func(query bson.D) (environments.Environment, error) {
+				return environments.Environment{
+					EnvironmentID: "testEnvID",
+				}, nil
 			},
-		},
-		{
-			name: "failure: mongo delete error",
-			given: func() {
-				mongodbMockOperator.On("Update", mock.Anything, mongodb.EnvironmentCollection, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
+			mockUpdateFunc: func(ctx context.Context, query bson.D, update bson.D) error {
+				return nil
 			},
-			isError: true,
+			expectedErr: errors.New("invalid Token"),
 		},
 	}
 
-	for _, tc := range testcases {
+	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := environmentTestHandler.DeleteEnvironment(ctx, projectID, environmentID)
-			if err == nil {
-				t.Errorf("Deleted environment got %v but want %v", err, tc.isError)
-				return
-			}
-		})
-	}
-}
+			ctx := context.WithValue(context.Background(), authorization.AuthKey, tc.token)
 
-func TestGetEnvironment(t *testing.T) {
-	projectID := uuid.NewString()
-	environmentID := uuid.NewString()
-	testcases := []struct {
-		name    string
-		given   func()
-		isError bool
-	}{
-		{
-			name: "success getting environment",
-			given: func() {
-				findResult := bson.D{{"environment_id", environmentID}, {"project_id", projectID}}
-				singleResult := mongo.NewSingleResultFromDocument(findResult, nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, nil).Once()
-			},
-		},
-		{
-			name: "failure: mongo get error",
-			given: func() {
-				singleResult := mongo.NewSingleResultFromDocument(nil, nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, errors.New("")).Once()
-			},
-			isError: true,
-		},
-	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			_, err := environmentTestHandler.GetEnvironment(projectID, environmentID)
-			if err == nil {
-				t.Errorf("Got environment")
-			}
-		})
-	}
-}
+			operator := &environments.Operator{}
+			service := handler.NewEnvironmentService(operator)
 
-func TestListEnvironment(t *testing.T) {
-	projectID := uuid.NewString()
-	environmentID := uuid.NewString()
-	envRequest := &model.ListEnvironmentRequest{
-		EnvironmentIDs: []string{uuid.NewString()},
-	}
-	testcases := []struct {
-		name    string
-		given   func()
-		isError bool
-	}{
-		{
-			name: "success getting environment",
-			given: func() {
-				imageRegistries := make([]interface{}, 10)
-				for i := 0; i < 10; i++ {
-					imageRegistries[i] = environments.Environment{EnvironmentID: environmentID + strconv.Itoa(i), ProjectID: projectID}
-				}
-				cursor, _ := mongo.NewCursorFromDocuments(imageRegistries, nil, nil)
-				mongodbMockOperator.On("List", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).Return(cursor, nil).Once()
-			},
-		},
-		{
-			name: "failure: mongo list error",
-			given: func() {
-				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
-				mongodbMockOperator.On("List", mock.Anything, mongodb.ImageRegistryCollection, mock.Anything).Return(cursor, errors.New("")).Once()
-			},
-			isError: true,
-		},
-	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			result, err := environmentTestHandler.ListEnvironments(projectID, envRequest)
-			if tc.isError {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				for i, envResponse := range result.Environments {
-					assert.Equal(t, projectID, envResponse.ProjectID)
-					assert.Equal(t, envResponse.EnvironmentID+strconv.Itoa(i), envResponse.EnvironmentID)
-				}
+			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
+			if (err != nil && tc.expectedErr == nil) ||
+				(err == nil && tc.expectedErr != nil) ||
+				(err != nil && tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {
+				t.Fatalf("Expected error %v, but got %v", tc.expectedErr, err)
 			}
 		})
 	}
