@@ -4,121 +4,83 @@ import (
 	"context"
 	"testing"
 
-	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	testGrpc = new(mocks.ServerGrpc)
-)
-
-func TestValidateRequest(t *testing.T) {
-	ctx := context.Background()
-	input := &protos.ValidationRequest{
-		Jwt:           uuid.NewString(),
-		ProjectId:     uuid.NewString(),
-		RequiredRoles: []string{uuid.NewString()},
-		Invitation:    uuid.NewString(),
-	}
-	testcases := []struct {
-		name    string
-		given   func()
-		isError bool
-	}{
-		{
-			name: "success",
-			given: func() {
-				testGrpc.On("ValidateRequest", ctx, input).Return(&protos.ValidationResponse{}, nil)
-			},
-			isError: false,
-		},
-	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			// given
-			tc.given()
-			// when
-			response, err := testGrpc.ValidateRequest(ctx, input)
-			// then
-			if err != nil {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, response)
-			}
-		})
-	}
-
-}
-
 func TestGetProjectById(t *testing.T) {
-	ctx := context.Background()
-	input := &protos.GetProjectByIdRequest{
-		ProjectID: uuid.NewString(),
+	s := &grpc.ServerGrpc{
+		ApplicationService: &mocks.MockedApplicationService{},
 	}
-	testcases := []struct {
-		name    string
-		given   func()
-		isError bool
-	}{
-		{
-			name: "success",
-			given: func() {
-				testGrpc.On("GetProjectById", ctx, input).Return(&protos.GetProjectByIdResponse{}, nil)
+
+	// Mocking ApplicationService methods
+	mockService := s.ApplicationService.(*mocks.MockedApplicationService)
+	mockService.On("GetProjectByProjectID", "project-id").Return(&entities.Project{
+		ID:      "project-id",
+		Name:    "test-project",
+		Members: []*entities.Member{
+			{
+				UserID:    "user-1",
+				Invitation: entities.PendingInvitation,
+				JoinedAt:  1234567890,
 			},
-			isError: false,
 		},
+	}, nil)
+	mockService.On("FindUsersByUID", []string{"user-1"}).Return(&[]entities.User{
+		{
+			ID:       "user-1",
+			Email:    "user1@email.com",
+			Username: "user1",
+		},
+	}, nil)
+
+	req := &protos.GetProjectByIdRequest{
+		ProjectID: "project-id",
 	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			// given
-			tc.given()
-			//when
-			response, err := testGrpc.GetProjectById(ctx, input)
-			// then
-			if err != nil {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, response)
-			}
-		})
-	}
+
+	ctx := context.Background()
+
+	resp, err := s.GetProjectById(ctx, req)
+
+	// Assertions
+	assert.Nil(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, "test-project", resp.Name)
+	assert.Equal(t, "user1@email.com", resp.Members[0].Email)
 }
 
 func TestGetUserById(t *testing.T) {
+	s := &grpc.ServerGrpc{
+		ApplicationService: &mocks.MockedApplicationService{},
+	}
+
+	deactivatedTimestamp := int64(1234567892)
+
+	// Mocking ApplicationService methods
+	mockService := s.ApplicationService.(*mocks.MockedApplicationService)
+	mockService.On("GetUser", "user-id").Return(&entities.User{
+		ID:           "user-id",
+		Name:         "test-user",
+		Username:     "username",
+		DeactivatedAt: &deactivatedTimestamp,
+		Role:         "admin", // adjust to your actual type
+		Email:        "user@email.com",
+	}, nil)
+
+	req := &protos.GetUserByIdRequest{
+		UserID: "user-id",
+	}
+
 	ctx := context.Background()
-	input := &protos.GetUserByIdRequest{
-		UserID: uuid.NewString(),
-	}
-	testcases := []struct {
-		name    string
-		given   func()
-		isError bool
-	}{
-		{
-			name: "success",
-			given: func() {
-				testGrpc.On("GetUserById", ctx, input).Return(&protos.GetUserByIdResponse{}, nil)
-			},
-			isError: false,
-		},
-	}
-	for _, tc := range testcases {
-		t.Run(tc.name, func(t *testing.T) {
-			// given
-			tc.given()
-			// when
-			response, err := testGrpc.GetUserById(ctx, input)
-			// then
-			if tc.isError {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, response)
-			}
-		})
-	}
+
+	resp, err := s.GetUserById(ctx, req)
+
+	// Assertions
+	assert.Nil(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, "test-user", resp.Name)
+	assert.Equal(t, "user@email.com", resp.Email)
 }
