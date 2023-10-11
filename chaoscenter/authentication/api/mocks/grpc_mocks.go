@@ -5,27 +5,34 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/stretchr/testify/mock"
+	"google.golang.org/grpc"
 )
 
 // ServerGrpc is a mock type for the ServerGrpc type
-type ServerGrpc struct {
+type MockAuthRpcServiceClient struct {
 	mock.Mock
 }
 
-// ValidateRequuest mock version with given ctx, inputRequest
-func (s *ServerGrpc) ValidateRequest(ctx context.Context, inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) {
-	args := s.Called(ctx, inputRequest)
-	return args.Get(0).(*protos.ValidationResponse), args.Error(1)
+func (m *MockAuthRpcServiceClient) ValidateRequest(ctx context.Context, in *protos.ValidationRequest, opts ...grpc.CallOption) (*protos.ValidationResponse, error) {
+	args := m.Called(ctx, in, opts)
+	if vr, ok := args.Get(0).(*protos.ValidationResponse); ok {
+		return vr, args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
-// GetProjectById mock version with given ctx, inputRequest
-func (s *ServerGrpc) GetProjectById(ctx context.Context, inputRequest *protos.GetProjectByIdRequest) (*protos.GetProjectByIdResponse, error) {
-	args := s.Called(ctx, inputRequest)
-	return args.Get(0).(*protos.GetProjectByIdResponse), args.Error(1)
+func (m *MockAuthRpcServiceClient) GetProjectById(ctx context.Context, in *protos.GetProjectByIdRequest, opts ...grpc.CallOption) (*protos.GetProjectByIdResponse, error) {
+	args := m.Called(ctx, in, opts)
+	if gpir, ok := args.Get(0).(*protos.GetProjectByIdResponse); ok {
+		return gpir, args.Error(1)
+	}
+	return nil, args.Error(1)
 }
 
-// GetUserById mock version with given ctx, inputRequest
-func (s *ServerGrpc) GetUserById(ctx context.Context, inputRequest *protos.GetUserByIdRequest) (*protos.GetUserByIdResponse, error) {
-	args := s.Called(ctx, inputRequest)
-	return args.Get(0).(*protos.GetUserByIdResponse), args.Error(1)
+func (m *MockAuthRpcServiceClient) GetUserById(ctx context.Context, in *protos.GetUserByIdRequest, opts ...grpc.CallOption) (*protos.GetUserByIdResponse, error) {
+	args := m.Called(ctx, in, opts)
+	if guir, ok := args.Get(0).(*protos.GetUserByIdResponse); ok {
+		return guir, args.Error(1)
+	}
+	return nil, args.Error(1)
 }
