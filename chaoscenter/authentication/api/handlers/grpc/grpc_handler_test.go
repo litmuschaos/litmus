@@ -19,13 +19,13 @@ func TestGetProjectById(t *testing.T) {
 	// Mocking ApplicationService methods
 	mockService := s.ApplicationService.(*mocks.MockedApplicationService)
 	mockService.On("GetProjectByProjectID", "project-id").Return(&entities.Project{
-		ID:      "project-id",
-		Name:    "test-project",
+		ID:   "project-id",
+		Name: "test-project",
 		Members: []*entities.Member{
 			{
-				UserID:    "user-1",
+				UserID:     "user-1",
 				Invitation: entities.PendingInvitation,
-				JoinedAt:  1234567890,
+				JoinedAt:   1234567890,
 			},
 		},
 	}, nil)
@@ -62,12 +62,12 @@ func TestGetUserById(t *testing.T) {
 	// Mocking ApplicationService methods
 	mockService := s.ApplicationService.(*mocks.MockedApplicationService)
 	mockService.On("GetUser", "user-id").Return(&entities.User{
-		ID:           "user-id",
-		Name:         "test-user",
-		Username:     "username",
+		ID:            "user-id",
+		Name:          "test-user",
+		Username:      "username",
 		DeactivatedAt: &deactivatedTimestamp,
-		Role:         "admin", // adjust to your actual type
-		Email:        "user@email.com",
+		Role:          "admin", // adjust to your actual type
+		Email:         "user@email.com",
 	}, nil)
 
 	req := &protos.GetUserByIdRequest{
