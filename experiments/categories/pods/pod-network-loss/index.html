@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.5">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.bd3936ea.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.6a10b989.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.356b1318.min.css">
@@ -1100,6 +1100,13 @@
           <li class="md-nav__item">
   <a href="#source-and-destination-ports" class="md-nav__link">
     Source And Destination Ports
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blacklist-source-and-destination-ports" class="md-nav__link">
+    Blacklist Source and Destination Ports
   </a>
   
 </li>
@@ -4148,6 +4155,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#blacklist-source-and-destination-ports" class="md-nav__link">
+    Blacklist Source and Destination Ports
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#network-interface" class="md-nav__link">
     Network Interface
   </a>
@@ -4507,6 +4521,40 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
+<h3 id="blacklist-source-and-destination-ports">Blacklist Source and Destination Ports<a class="headerlink" href="#blacklist-source-and-destination-ports" title="Permanent link">&para;</a></h3>
+<p>By default, the network experiments disrupt traffic for all the source and destination ports. The specific ports can be blacklisted via <code>SOURCE_PORTS</code> and <code>DESTINATION_PORTS</code> ENV.</p>
+<ul>
+<li><code>SOURCE_PORTS</code>: Provide the comma separated source ports preceded by <code>!</code>, that you'd like to blacklist from the chaos.</li>
+<li><code>DESTINATION_PORTS</code>: Provide the comma separated destination ports preceded by <code>!</code> , that you'd like to blacklist from the chaos.</li>
+</ul>
+<p>Use the following example to tune this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># blacklist the source and destination ports</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">litmuschaos.io/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChaosEngine</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">engine-nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">engineState</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;active&quot;</span>
+<span class="w">  </span><span class="nt">annotationCheck</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span>
+<span class="w">  </span><span class="nt">appinfo</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">appns</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;default&quot;</span>
+<span class="w">    </span><span class="nt">applabel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;app=nginx&quot;</span>
+<span class="w">    </span><span class="nt">appkind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deployment&quot;</span>
+<span class="w">  </span><span class="nt">chaosServiceAccount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-loss-sa</span>
+<span class="w">  </span><span class="nt">experiments</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-network-loss</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">components</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># it will blacklist 80 and 8080 source ports</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOURCE_PORTS</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;!80,8080&#39;</span>
+<span class="w">        </span><span class="c1"># it will blacklist 8080 and 9000 destination ports</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DESTINATION_PORTS</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;!8080,9000&#39;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+</code></pre></div>
 <h3 id="network-interface">Network Interface<a class="headerlink" href="#network-interface" title="Permanent link">&para;</a></h3>
 <p>The defined name of the ethernet interface, which is considered for shaping traffic. It can be tuned via <code>NETWORK_INTERFACE</code> ENV. Its default value is <code>eth0</code>.</p>
 <p>Use the following example to tune this:</p>
@@ -4697,7 +4745,7 @@ Provide the traffic control image via <code>TC_IMAGE</code> ENV for the pumba li
     
     
   
-      <script src="../../../../assets/javascripts/bundle.94c44541.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
 
