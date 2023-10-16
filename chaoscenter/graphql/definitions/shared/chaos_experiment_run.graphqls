@@ -32,4 +32,9 @@ extend type Mutation {
     experimentID: String!
     projectID: ID!
   ): RunChaosExperimentResponse!
+
+  """
+  stopExperiment will halt all the ongoing runs of a particular experiment
+  """
+  stopExperimentRuns(projectID: ID!, experimentID:String!, experimentRunID: String, notifyID: String): Boolean! @authorized
 }

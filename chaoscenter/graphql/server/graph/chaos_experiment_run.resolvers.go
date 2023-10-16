@@ -6,7 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	data_store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
@@ -51,6 +50,24 @@ func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID 
 	}
 
 	return &model.RunChaosExperimentResponse{NotifyID: uiResponse.NotifyID}, err
+}
+
+func (r *mutationResolver) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string) (bool, error) {
+	logFields := logrus.Fields{
+		"projectId":            projectID,
+		"chaosExperimentId":    experimentID,
+		"chaosExperimentRunId": experimentRunID,
+		"notifyID":             notifyID,
+	}
+
+	logrus.WithFields(logFields).Info("request received to stop chaos experiment")
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.StopChaosExperiment],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return false, err
+	}
+
 }
 
 func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error) {

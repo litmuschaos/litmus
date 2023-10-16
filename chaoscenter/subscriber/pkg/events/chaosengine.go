@@ -197,6 +197,31 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 	return nil
 }
 
+// StopWorkflow will patch the workflow based on workflow name using the shutdown strategy
+func StopWorkflow(wfName string, namespace string) error {
+	patch := []byte(`{"spec":{"shutdown":"Stop"}}`)
+
+	//Define the GVR
+	resourceType := schema.GroupVersionResource{
+		Group:    "litmuschaos.io",
+		Version:  "v1alpha1",
+		Resource: "workflows",
+	}
+
+	_, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
+	if err != nil {
+		return errors.New("failed to get dynamic client, error: " + err.Error())
+	}
+	wf, err := dynamicClient.Resource(resourceType).Namespace(namespace).Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})
+	if err != nil {
+		return fmt.Errorf("error in patching workflow: %w", err)
+	}
+	if wf != nil {
+		logrus.Info("Successfully patched workflow: ", wf.GetName())
+	}
+	return nil
+}
+
 func mapStatus(status chaosTypes.EngineStatus) string {
 	switch status {
 	case chaosTypes.EngineStatusInitialized:
