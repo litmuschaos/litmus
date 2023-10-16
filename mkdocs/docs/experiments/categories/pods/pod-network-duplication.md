@@ -331,6 +331,45 @@ spec:
           value: '60'
 ```
 
+### Blacklist Source and Destination Ports
+
+By default, the network experiments disrupt traffic for all the source and destination ports. The specific ports can be blacklisted via `SOURCE_PORTS` and `DESTINATION_PORTS` ENV.
+
+- `SOURCE_PORTS`: Provide the comma separated source ports preceded by `!`, that you'd like to blacklist from the chaos.
+- `DESTINATION_PORTS`: Provide the comma separated destination ports preceded by `!` , that you'd like to blacklist from the chaos.
+
+Use the following example to tune this:
+
+[embedmd]:# (pod-network-duplication/blacklist-source-and-destination-ports.yaml yaml)
+```yaml
+# blacklist the source and destination ports
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-network-duplication-sa
+  experiments:
+  - name: pod-network-duplication
+    spec:
+      components:
+        env:
+        # it will blacklist 80 and 8080 source ports
+        - name: SOURCE_PORTS
+          value: '!80,8080'
+        # it will blacklist 8080 and 9000 destination ports
+        - name: DESTINATION_PORTS
+          value: '!8080,9000'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
+```
+
 ### Network Interface
 
 The defined name of the ethernet interface, which is considered for shaping traffic. It can be tuned via `NETWORK_INTERFACE` ENV. Its default value is `eth0`.
