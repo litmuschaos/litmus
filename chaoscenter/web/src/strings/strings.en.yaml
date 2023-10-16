@@ -653,10 +653,7 @@ noKubernetesChaosInfrastructureFound: >-
 noLogs: Sorry, Logs are currently not available
 noMonitoredService: No monitoring services found for
 noProbeDescription: >-
-  Probes are pluggable checks that can be defined within the ChaosEngine for any
-  Chaos Fault. The experiment pods execute these checks based on the mode they
-  are defined in &amp; factor their success as necessary conditions in
-  determining the verdict of the experiment
+  Probes are lightweight, self-contained scripts that can be run against Kubernetes applications to gather information about their behavior under stress and failure conditions.
 noProbeExecution: No Probe executions found
 noProbeExecutionDetails:
   subtitle: >-
