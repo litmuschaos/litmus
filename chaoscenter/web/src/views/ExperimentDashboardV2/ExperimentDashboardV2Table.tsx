@@ -204,23 +204,28 @@ const ExperimentDashboardV2Table = ({
             : undefined;
 
           const ActionButton = (): React.ReactElement => {
+            let isButtonDisabled = false;
             switch (lastExperimentRunStatus) {
-              case ExperimentRunStatus.RUNNING:
-                return (
-                  <RunExperimentButton
-                    buttonProps={{ disabled: lastExperimentRunStatus === ExperimentRunStatus.RUNNING }}
-                    experimentID={data.experimentID}
-                    refetchExperiments={refetchExperiments}
-                  />
-                );
-              case ExperimentRunStatus.QUEUED:
-                return (
-                  <RunExperimentButton
-                    buttonProps={{ disabled: lastExperimentRunStatus === ExperimentRunStatus.QUEUED }}
-                    experimentID={data.experimentID}
-                    refetchExperiments={refetchExperiments}
-                  />
-                );
+            case ExperimentRunStatus.RUNNING:
+            isButtonDisabled = true;
+            break;
+            case ExperimentRunStatus.QUEUED:
+            isButtonDisabled = true;
+            break;
+            case ExperimentRunStatus.NEW_CASE: // Add your new case here
+            isButtonDisabled = true;
+            break;
+            default:
+            isButtonDisabled = false;
+            }
+            
+            return (
+            <RunExperimentButton
+            buttonProps={{ disabled: isButtonDisabled }}
+            experimentID={data.experimentID}
+            refetchExperiments={refetchExperiments}
+            />
+            );
               default:
                 return <RunExperimentButton experimentID={data.experimentID} refetchExperiments={refetchExperiments} />;
             }
