@@ -37,13 +37,13 @@ type Probes struct {
 }
 
 type ExecutionHistory struct {
-	ExperimentID   string                    `bson:"experiment_id"`
-	ExperimentName string                    `bson:"experiment_name"`
-	UpdatedBy      string                    `bson:"updated_by"`
-	ExecutionData  string                    `bson:"execution_data"`
-	UpdatedAt      int                       `bson:"updated_at"`
-	Probes         []Probes                  `bson:"probes"`
-	Phase          model.ExperimentRunStatus `bson:"phase"`
+	ExperimentID   string                     `bson:"experiment_id"`
+	ExperimentName string                     `bson:"experiment_name"`
+	UpdatedBy      mongodb.UserDetailResponse `bson:"updated_by"`
+	ExecutionData  string                     `bson:"execution_data"`
+	UpdatedAt      int                        `bson:"updated_at"`
+	Probes         []Probes                   `bson:"probes"`
+	Phase          model.ExperimentRunStatus  `bson:"phase"`
 }
 
 type ProbeWithExecutionHistory struct {
@@ -155,7 +155,6 @@ func (probe *Probe) GetOutputProbe() *model.Probe {
 		Name:               probe.Name,
 		Description:        &probe.Description,
 		Tags:               probe.Tags,
-		RecentExecutions:   probe.RecentExecutions,
 		CreatedAt:          strconv.Itoa(int(probe.CreatedAt)),
 		UpdatedAt:          strconv.Itoa(int(probe.UpdatedAt)),
 		Type:               model.ProbeType(probe.Type),
@@ -267,6 +266,7 @@ func (probe *Probe) GetOutputProbe() *model.Probe {
 				Group:                probe.K8SProperties.Group,
 				Version:              probe.K8SProperties.Version,
 				Resource:             probe.K8SProperties.Resource,
+				ResourceNames:        probe.K8SProperties.ResourceNames,
 				Namespace:            probe.K8SProperties.Namespace,
 				FieldSelector:        probe.K8SProperties.FieldSelector,
 				LabelSelector:        probe.K8SProperties.LabelSelector,

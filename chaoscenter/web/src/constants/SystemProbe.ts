@@ -2,7 +2,7 @@ import type { AddProbeRequest } from '@api/core';
 import { InfrastructureType, ProbeType } from '@api/entities';
 
 const sourceObj = {
-  image: 'chaosnative/chaos-go-runner:ci',
+  image: 'litmuschaos/go-runner:latest',
   inheritInputs: true
 };
 

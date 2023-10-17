@@ -51,6 +51,7 @@ export interface StringsMap {
   'allFaultsExecuted': unknown
   'allRuns': unknown
   'alreadyExists': PrimitiveObject<'value'>
+  'alreadyExistsID': PrimitiveObject<'value'>
   'apiTokens': unknown
   'appKind': unknown
   'appKindName': unknown
@@ -119,6 +120,7 @@ export interface StringsMap {
   'chooseAccessType': unknown
   'chooseAuthenticationType': unknown
   'chooseHubAccess': unknown
+  'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
   'clickDownload': unknown
   'clone': unknown
@@ -247,6 +249,7 @@ export interface StringsMap {
   'editSameExperimentTitle': unknown
   'editYaml': unknown
   'editingChaosHub': unknown
+  'editor': unknown
   'effect': unknown
   'email': unknown
   'emailIsRequired': unknown
@@ -428,6 +431,7 @@ export interface StringsMap {
   'lastResilienceScore': unknown
   'lastRun': unknown
   'lastSyncedAt': unknown
+  'lastUpdatedBy': unknown
   'latestRun': unknown
   'latestRunFallbackText': unknown
   'launchExperiment': unknown
@@ -497,6 +501,7 @@ export interface StringsMap {
   'newChaosExperiment': unknown
   'newChaosHub': unknown
   'newChaosInfrastructure': unknown
+  'newEnvironment': unknown
   'newExperiment': unknown
   'newMember': unknown
   'newPassword': unknown
@@ -732,6 +737,7 @@ export interface StringsMap {
   'resilienceTabDescription': unknown
   'resiliencyScore': unknown
   'resource': unknown
+  'resourceNames': unknown
   'responseCode': unknown
   'responseTimeout': unknown
   'responseType': unknown
@@ -802,6 +808,7 @@ export interface StringsMap {
   'selectHub': unknown
   'selectHubFromList': unknown
   'selectHubHeader': unknown
+  'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
   'selectTimeframe': unknown
@@ -896,6 +903,7 @@ export interface StringsMap {
   'totalEnvironments': unknown
   'totalExp': unknown
   'totalExperiments': unknown
+  'totalPendingInvitations': unknown
   'totalRuns': unknown
   'totalUsers': unknown
   'triggeredBy': unknown
@@ -951,6 +959,7 @@ export interface StringsMap {
   'viewProbeDetails': unknown
   'viewProbeProperties': unknown
   'viewRun': unknown
+  'viewer': unknown
   'warning': unknown
   'weekly': unknown
   'weeklyMessage': unknown

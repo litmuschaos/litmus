@@ -48,6 +48,7 @@ allExecutions: All Executions
 allFaultsExecuted: All your faults executed without any issue
 allRuns: All Runs
 alreadyExists: '{{value}} already exists'
+alreadyExistsID: Entered id '{{value}}' already exists
 apiTokens: API Tokens
 appKind: App Kind
 appKindName: app_kind
@@ -124,6 +125,7 @@ checkStatus: Check the status of your Chaos Infrastructure on your cluster
 chooseAccessType: Choose Access Type
 chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
+chooseMembersAddTheProject: Choose members to add to the project
 chooseProbeMode: Choose Mode for probe to be executed
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
@@ -294,6 +296,7 @@ editSameExperimentDescription: >-
 editSameExperimentTitle: Edit on the existing Experiment
 editYaml: Edit Yaml
 editingChaosHub: Editing ChaosHub
+editor: Editor
 effect: Effect
 email: Email
 emailIsRequired: Email is a required field
@@ -519,6 +522,7 @@ lastModified: Last Modified
 lastResilienceScore: Last Resilience Score
 lastRun: Last Run
 lastSyncedAt: Last Synced at
+lastUpdatedBy: Last Updated By
 latestRun: Latest Run
 latestRunFallbackText: No Experiment Runs found
 launchExperiment: Launch Experiment
@@ -596,6 +600,7 @@ needAttention: Needs Attention
 newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
+newEnvironment: New Environment
 newExperiment: New Experiment
 newMember: New Member
 newPassword: New Password
@@ -648,15 +653,12 @@ noKubernetesChaosInfrastructureFound: >-
 noLogs: Sorry, Logs are currently not available
 noMonitoredService: No monitoring services found for
 noProbeDescription: >-
-  Probes are pluggable checks that can be defined within the ChaosEngine for any
-  Chaos Fault. The experiment pods execute these checks based on the mode they
-  are defined in &amp; factor their success as necessary conditions in
-  determining the verdict of the experiment
+  Probes are lightweight, self-contained scripts that can be run against Kubernetes applications to gather information about their behavior under stress and failure conditions.
 noProbeExecution: No Probe executions found
 noProbeExecutionDetails:
   subtitle: >-
     Probes are pluggable checks that can be defined within the ChaosEngine for
-    any Chaos Experiment
+    any Chaos Fault
   title: There are no executions for the selected probe in your project
 noProbes: No probes configured
 noProbesAvailable: No Probes available for this node
@@ -888,6 +890,7 @@ resilienceTabDescription: >-
   infrastructure.
 resiliencyScore: Resilience Score
 resource: Resource
+resourceNames: Resource Names
 responseCode: Response Code
 responseTimeout: Response Timeout
 responseType: Response Type
@@ -958,6 +961,7 @@ selectExperiments: Select Experiments
 selectHub: Select a ChaosHub
 selectHubFromList: Select a hub from the list
 selectHubHeader: Create or select existing ChaosHub
+selectProbe: Select Probe
 selectProbes: Select Probes
 selectProject: Select a Project
 selectTimeframe: Select time frame
@@ -1064,6 +1068,7 @@ totalChaosInfrastructures: Total Infrastructures
 totalEnvironments: Total Environments
 totalExp: Total Experiments
 totalExperiments: Total Faults in Execution
+totalPendingInvitations: Total Pending Invitations
 totalRuns: Total Runs
 totalUsers: Total Users
 triggeredBy: Triggered by
@@ -1121,6 +1126,7 @@ viewManifest: View YAML Manifest
 viewProbeDetails: View Probe Details
 viewProbeProperties: View Probe Properties
 viewRun: View Run
+viewer: Viewer
 warning: Warning
 weekly: Weekly
 weeklyMessage: Your chaos experiment will run weekly at your chosen day and time.

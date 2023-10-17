@@ -89,6 +89,7 @@ export function getProbesInExperimentRun({
               group
               version
               resource
+              resourceNames
               namespace
               fieldSelector
               labelSelector

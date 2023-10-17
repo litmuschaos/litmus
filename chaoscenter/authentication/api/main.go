@@ -143,7 +143,7 @@ func validatedAdminSetup(service services.ApplicationService) {
 	if err != nil && err == utils.ErrUserExists {
 		log.Println("Admin already exists in the database, not creating a new admin")
 	} else if err != nil {
-		log.Panicf("Unable to create admin, error: %v", err)
+		log.Fatalf("Unable to create admin, error: %v", err)
 	}
 }
 

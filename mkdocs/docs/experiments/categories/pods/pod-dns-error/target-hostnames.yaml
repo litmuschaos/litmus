@@ -19,6 +19,6 @@ spec:
         ## comma separated list of host names
         ## if not provided, all hostnames/domains will be targeted
         - name: TARGET_HOSTNAMES
-          value: '["litmuschaos","chaosnative.com"]'
+          value: '["litmuschaos"]'
         - name: TOTAL_CHAOS_DURATION
           value: '60'

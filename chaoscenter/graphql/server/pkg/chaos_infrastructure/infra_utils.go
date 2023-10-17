@@ -10,7 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	"io/ioutil"
 	"os"
@@ -59,23 +59,19 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 		config.TLSCert = utils.Config.TlsCertB64
 	}
 
-	if !infra.IsRegistered {
-		var respData []byte
-		if infra.InfraScope == ClusterScope {
-			respData, err = ManifestParser(infra, "manifests/cluster", &config)
-		} else if infra.InfraScope == NamespaceScope {
-			respData, err = ManifestParser(infra, "manifests/namespace", &config)
-		} else {
-			logrus.Error("INFRA_SCOPE env is empty!")
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		return respData, nil
+	var respData []byte
+	if infra.InfraScope == ClusterScope {
+		respData, err = ManifestParser(infra, "manifests/cluster", &config)
+	} else if infra.InfraScope == NamespaceScope {
+		respData, err = ManifestParser(infra, "manifests/namespace", &config)
 	} else {
-		return []byte("Infra is already registered"), nil
+		logrus.Error("INFRA_SCOPE env is empty!")
 	}
+	if err != nil {
+		return nil, err
+	}
+
+	return respData, nil
 }
 
 // ManifestParser parses manifests yaml and generates dynamic manifest with specified keys
@@ -223,7 +219,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.InfraScope == string(model.InfraScopeCluster) {
+	if utils.Config.ChaosCenterScope == string(model.InfraScopeCluster) {
 		/*
 			namespace = Obtain from WorkflowManifest or
 			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
@@ -250,17 +246,19 @@ func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.State
 
 // SendExperimentToSubscriber sends the workflow to the subscriber to be handled
 func SendExperimentToSubscriber(projectID string, workflow *model.ChaosExperimentRequest, username *string, externalData *string, reqType string, r *store.StateData) {
-	workflowNamespace := gjson.Get(workflow.ExperimentManifest, "metadata.namespace").String()
 
-	if workflowNamespace == "" {
-		workflowNamespace = utils.Config.InfraNamespace
+	var workflowObj unstructured.Unstructured
+	err := yaml.Unmarshal([]byte(workflow.ExperimentManifest), &workflowObj)
+	if err != nil {
+		fmt.Errorf("error while parsing experiment manifest %v", err)
 	}
+
 	SendRequestToSubscriber(SubscriberRequests{
 		K8sManifest:  workflow.ExperimentManifest,
 		RequestType:  reqType,
 		ProjectID:    projectID,
 		InfraID:      workflow.InfraID,
-		Namespace:    workflowNamespace,
+		Namespace:    workflowObj.GetNamespace(),
 		ExternalData: externalData,
 		Username:     username,
 	}, *r)

@@ -97,7 +97,7 @@ export default function ProbesTab({
           <Button
             icon="plus"
             variation={ButtonVariation.PRIMARY}
-            text={getString('addProbe')}
+            text={getString('selectProbe')}
             onClick={() => setIsAddProbeSelected(true)}
           />
         </Layout.Vertical>
