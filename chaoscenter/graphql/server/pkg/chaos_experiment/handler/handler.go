@@ -1368,11 +1368,10 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 		}
 	} else if experimentRunID != nil && *experimentRunID != "" {
 		experimentRunsID = []string{*experimentRunID}
-	}
-
-	err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, query, experimentRunID, experiment, username, projectID, r)
-	if err != nil {
-		return false, err
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, query, experimentRunID, experiment, username, projectID, r)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return true, nil

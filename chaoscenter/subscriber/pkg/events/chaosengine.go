@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	"strconv"
 	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
@@ -199,25 +200,17 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 
 // StopWorkflow will patch the workflow based on workflow name using the shutdown strategy
 func StopWorkflow(wfName string, namespace string) error {
+
+	conf, err := k8s.GetKubeConfig()
+	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(namespace)
 	patch := []byte(`{"spec":{"shutdown":"Stop"}}`)
-
-	//Define the GVR
-	resourceType := schema.GroupVersionResource{
-		Group:    "litmuschaos.io",
-		Version:  "v1alpha1",
-		Resource: "workflows",
-	}
-
-	_, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
-	if err != nil {
-		return errors.New("failed to get dynamic client, error: " + err.Error())
-	}
-	wf, err := dynamicClient.Resource(resourceType).Namespace(namespace).Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})
+	wf, err := wfClient.Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})
 	if err != nil {
 		return fmt.Errorf("error in patching workflow: %w", err)
 	}
 	if wf != nil {
 		logrus.Info("Successfully patched workflow: ", wf.GetName())
+		return nil
 	}
 	return nil
 }
@@ -229,7 +222,7 @@ func mapStatus(status chaosTypes.EngineStatus) string {
 	case chaosTypes.EngineStatusCompleted:
 		return "Succeeded"
 	case chaosTypes.EngineStatusStopped:
-		return "Skipped"
+		return "Stopped"
 	default:
 		return "Running"
 	}

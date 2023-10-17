@@ -68,6 +68,12 @@ func (r *mutationResolver) StopExperimentRuns(ctx context.Context, projectID str
 		return false, err
 	}
 
+	uiResponse, err := r.chaosExperimentHandler.StopExperimentRuns(ctx, projectID, experimentID, experimentRunID, data_store.Store)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return false, err
+	}
+	return uiResponse, nil
 }
 
 func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error) {
