@@ -69,7 +69,7 @@ spec:
                     of cluster Important: Run "make" to regenerate code after modifying
                     this file'
                     type: string
-                  workflow_id:
+                  experiment_id:
                     type: string
                 type: object
               type: array

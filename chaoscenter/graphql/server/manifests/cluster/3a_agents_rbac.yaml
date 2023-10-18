@@ -241,3 +241,63 @@ roleRef:
   kind: ClusterRole
   name: subscriber-cluster-role
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: event-tracker-sa
+  namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: event-tracker-cluster-role
+rules:
+  - apiGroups:
+      - eventtracker.litmuschaos.io
+    resources:
+      - eventtrackerpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - eventtracker.litmuschaos.io
+    resources:
+      - eventtrackerpolicies/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - ""
+      - extensions
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+      - pods
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: event-tracker-clusterole-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: event-tracker-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: event-tracker-sa
+    namespace: #{INFRA_NAMESPACE}

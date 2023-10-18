@@ -6,7 +6,7 @@ export function generateInviteUsersTableContent(userData: Array<User> | undefine
     userData && userData.length > 0
       ? userData.map(user => {
           return {
-            id: user.userID,
+            userID: user.userID,
             username: user.username,
             email: user.email ?? '',
             name: user.name ?? ''
