@@ -1,11 +1,13 @@
 const path = require('path');
 
 const { DefinePlugin } = require('webpack');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const { GenerateStringTypesPlugin } = require('../scripts/GenerateStringTypesPlugin');
 const { RetryChunkLoadPlugin } = require('webpack-retry-chunk-load-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const CONTEXT = process.cwd();
 
@@ -111,6 +113,11 @@ module.exports = {
       {
         test: /\.(jpg|jpeg|png|svg|gif)$/,
         type: 'asset'
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+        include: /node_modules/
       }
     ]
   },
@@ -134,6 +141,30 @@ module.exports = {
     new RetryChunkLoadPlugin({
       retryDelay: 1000,
       maxRetries: 5
+    }),
+    new MonacoWebpackPlugin({
+      // Available options: https://github.com/microsoft/monaco-editor/tree/main/webpack-plugin#options
+      languages: ['json', 'yaml', 'shell', 'powershell', 'python'],
+      // This will define a global monaco object that is used in editor components.
+      globalAPI: true,
+      filename: '[name].worker.[contenthash:6].js',
+      customLanguages: [
+        {
+          label: 'yaml',
+          entry: 'monaco-yaml',
+          worker: {
+            id: 'monaco-yaml/yamlWorker',
+            entry: 'monaco-yaml/yaml.worker'
+          }
+        }
+      ]
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'src/static'
+        }
+      ]
     })
   ]
 };

@@ -24,7 +24,6 @@ import (
 var (
 	decUnstructured = yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	dr              dynamic.ResourceInterface
-	AgentNamespace  = utils.Config.InfraNamespace
 )
 
 // InfraResource This function handles cluster operations

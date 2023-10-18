@@ -1,9 +1,11 @@
 declare namespace ProbesModuleScssNamespace {
   export interface IProbesModuleScss {
+    divider: string;
     dotMenu: string;
-    errorMessage: string;
     fileUploadBox: string;
     modalStepWizard: string;
+    newProbeCard: string;
+    plusIcon: string;
     probeTable: string;
     stepWizardWrapper: string;
   }

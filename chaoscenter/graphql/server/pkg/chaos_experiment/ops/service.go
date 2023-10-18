@@ -51,10 +51,11 @@ type chaosExperimentService struct {
 }
 
 // NewChaosExperimentService returns a new instance of the chaos workflow service
-func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator) Service {
+func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator, chaosExperimentRunOperator *dbChaosExperimentRun.Operator) Service {
 	return &chaosExperimentService{
 		chaosExperimentOperator:     chaosWorkflowOperator,
 		chaosInfrastructureOperator: clusterOperator,
+		chaosExperimentRunOperator:  chaosExperimentRunOperator,
 	}
 }
 
@@ -191,8 +192,12 @@ func (c *chaosExperimentService) ProcessExperimentCreation(ctx context.Context, 
 			CreatedAt: timeNow,
 			UpdatedAt: timeNow,
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		Revision:                   revision,
 		RecentExperimentRunDetails: []dbChaosExperiment.ExperimentRunDetail{},
@@ -247,7 +252,9 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 			{"description", workflow.ExperimentDescription},
 			{"is_custom_experiment", workflow.IsCustomExperiment},
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		}},
 		{"$push", bson.D{
 			{"revision", workflowRevision},
@@ -263,7 +270,9 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 		update = bson.D{
 			{"$set", bson.D{
 				{"updated_at", time.Now().UnixMilli()},
-				{"updated_by", username},
+				{"updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
 				{"revision.$.updated_at", time.Now().UnixMilli()},
 				{"revision.$.experiment_manifest", workflow.ExperimentManifest},
 			}},
@@ -309,7 +318,9 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 		update := bson.D{
 			{"$set", bson.D{
 				{"is_removed", true},
-				{"updated_by", username},
+				{"updated_by", mongodb.UserDetailResponse{
+					Username: username,
+				}},
 				{"updated_at", time.Now().UnixMilli()},
 			}},
 		}

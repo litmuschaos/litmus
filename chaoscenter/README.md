@@ -1,4 +1,6 @@
-## Installation steps for Litmus 3.0.0-beta9
+# [LitmusChaos 3.0.0](https://docs.litmuschaos.io/)
+
+## Installation steps for Litmus 3.0.0
 
 ### Mongo installation via Helm - Bitnami Mongo
 
@@ -24,7 +26,7 @@ metrics:
   enabled: false
   prometheusRule:
     enabled: false
-    
+
 # bitnami/mongodb is not yet supported on ARM.
 # Using unofficial tools to build bitnami/mongodb (arm64 support)
 # more info: https://github.com/ZCube/bitnami-compat
@@ -40,8 +42,8 @@ helm install my-release bitnami/mongodb --values mongo-values.yml -n <NAMESPACE>
 
 ### Apply the Manifest
 
-Applying the manifest file will install all the required service account configuration and ChaosCenter.
+Applying the manifest file will install all the required service account configuration and ChaosCenter in cluster scope.
 
 ```shell
-kubectl apply -f https://litmuschaos.github.io/litmus/3.0.0-beta10/litmus-3.0.0-beta10.yaml
+kubectl apply -f https://github.com/litmuschaos/litmus/blob/master/mkdocs/docs/3.0.0/litmus-cluster-scope-3.0.0.yaml
 ```

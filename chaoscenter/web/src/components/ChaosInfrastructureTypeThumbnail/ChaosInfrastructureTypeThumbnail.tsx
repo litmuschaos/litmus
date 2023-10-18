@@ -31,7 +31,7 @@ export default function ChaosInfrastructureTypeThumbnail({
   const { getString } = useStrings();
   const updateSearchParams = useUpdateSearchParams();
   const { experimentKey } = useParams<{ experimentKey: string }>();
-  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler();
+  const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(InfrastructureType.KUBERNETES);
 
   const ChaosInfrastructureTypeThumbnailData: Array<ChaosInfrastructureTypeThumbnailData> = [
     {

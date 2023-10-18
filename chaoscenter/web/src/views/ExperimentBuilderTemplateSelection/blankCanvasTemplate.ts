@@ -19,7 +19,7 @@ function kubernetesBlankCanvasTemplate(
   chaosInfrastructureNamespace?: string,
   _serviceAccount?: string,
   imageRegistry: ImageRegistry = {
-    repo: 'chaosnative',
+    repo: 'litmuschaos',
     secret: ''
   }
 ): KubernetesExperimentManifest {

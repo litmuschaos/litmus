@@ -17,6 +17,8 @@ export interface StringsMap {
   'aboutChaosCTL': unknown
   'acceptInvitation': unknown
   'accessToAllNamespaces': unknown
+  'accessToken': unknown
+  'accessTokenPlaceholder': unknown
   'accessType': unknown
   'account': unknown
   'accountURL': unknown
@@ -27,11 +29,16 @@ export interface StringsMap {
   'add': unknown
   'addExperimentToChaosHub': unknown
   'addNewCluster': unknown
+  'addNewCustomizedProbes': unknown
+  'addNewProbes': unknown
   'addNodeSelectorAgentDeployment': unknown
+  'addOrClick': unknown
   'addProbe': unknown
   'addResilienceStep': unknown
   'addRow': unknown
+  'addSystemProbe': unknown
   'addToChaosHub': unknown
+  'addToFault': unknown
   'addToTemplate': unknown
   'addTolerationAgentDeployment': unknown
   'addViewSummaryNotes': unknown
@@ -40,9 +47,12 @@ export interface StringsMap {
   'advancedOptions': unknown
   'all': unknown
   'allChaosEnabled': unknown
+  'allExecutions': unknown
   'allFaultsExecuted': unknown
   'allRuns': unknown
   'alreadyExists': PrimitiveObject<'value'>
+  'alreadyExistsID': PrimitiveObject<'value'>
+  'apiTokens': unknown
   'appKind': unknown
   'appKindName': unknown
   'appLabel': unknown
@@ -52,6 +62,7 @@ export interface StringsMap {
   'applyChanges': unknown
   'at': unknown
   'atAGlance': unknown
+  'attempt': unknown
   'authentication': unknown
   'authenticationType': unknown
   'averageResilienceScore': unknown
@@ -61,6 +72,7 @@ export interface StringsMap {
   'blankCanvasDescription': unknown
   'blankCanvasTitle': unknown
   'blobLogsNotAvailable': unknown
+  'branch': unknown
   'cancel': unknown
   'cannotPushToDefault': unknown
   'cannotReRun': unknown
@@ -108,6 +120,8 @@ export interface StringsMap {
   'chooseAccessType': unknown
   'chooseAuthenticationType': unknown
   'chooseHubAccess': unknown
+  'chooseMembersAddTheProject': unknown
+  'chooseProbeMode': unknown
   'clickDownload': unknown
   'clone': unknown
   'cloneExperiment': unknown
@@ -145,15 +159,18 @@ export interface StringsMap {
   'connectionStatus': unknown
   'consoleLogs': unknown
   'continue': unknown
+  'copiedToClipboard': unknown
   'copyPrompt': unknown
   'copyPrompt1': unknown
   'copyPrompt2': unknown
   'crdCopyPrompt': unknown
   'createChaosExperiment': unknown
   'createNamespace': unknown
+  'createNewToken': unknown
   'createNewUser': unknown
   'createRecurringSchedule': unknown
   'created': unknown
+  'createdAt': unknown
   'createdOn': unknown
   'creationTime': unknown
   'criteria': unknown
@@ -163,16 +180,24 @@ export interface StringsMap {
   'cronText': unknown
   'currentRun': unknown
   'currentUTCTime': unknown
+  'customImageRegistry': unknown
   'customLabel': unknown
+  'customRepo': unknown
+  'customValueText': unknown
+  'customValues': unknown
   'daily': unknown
   'dailyMessage': unknown
   'dateExecuted': unknown
   'dayOfMonthLabel': unknown
   'dayOfWeekLabel': unknown
+  'days': PrimitiveObject<'count'>
   'declineInvitation': unknown
   'declineInvitationDescription': unknown
+  'defaultValueOption': unknown
+  'defaultValueText': unknown
   'degelateNotActive': unknown
   'delete': unknown
+  'deleteApiTokenDescription': unknown
   'deleteChaosInfrastructure': unknown
   'deleteExperiment': unknown
   'deleteExperimentDesc': unknown
@@ -195,9 +220,11 @@ export interface StringsMap {
   'disableUserDescription': unknown
   'discard': unknown
   'discardExperiment': unknown
+  'discardProbeConfiguration': unknown
   'disconnectDescriptionClusterMode': unknown
   'disconnectDescriptionNamespaceMode': unknown
   'disconnected': unknown
+  'docker': unknown
   'done': unknown
   'download': unknown
   'downloadChaosInfrastructureManifest': unknown
@@ -222,6 +249,7 @@ export interface StringsMap {
   'editSameExperimentTitle': unknown
   'editYaml': unknown
   'editingChaosHub': unknown
+  'editor': unknown
   'effect': unknown
   'email': unknown
   'emailIsRequired': unknown
@@ -250,16 +278,21 @@ export interface StringsMap {
   'enterYourPassword': unknown
   'enterYourUsername': unknown
   'environment': unknown
+  'environmentDescription': unknown
   'environmentError': unknown
+  'environmentNameIsRequired': unknown
+  'environmentType': unknown
   'environments': unknown
   'error': unknown
   'errorApplyChanges': unknown
   'errorFetchName': unknown
+  'evaluationTimeout': unknown
   'executedBy': unknown
   'executedOn': unknown
   'executionDetails': unknown
   'executionError': unknown
   'executionHistory': unknown
+  'executionID': unknown
   'executionOverview': unknown
   'executionStatus': unknown
   'exhausted': unknown
@@ -286,6 +319,8 @@ export interface StringsMap {
   'experimentStopSuccessMessage': unknown
   'experimentType': unknown
   'experiments': unknown
+  'expiresAt': unknown
+  'expiresIn': unknown
   'expressionBreakdown': unknown
   'failStep': unknown
   'failed': unknown
@@ -307,8 +342,13 @@ export interface StringsMap {
   'featureRestriction.resourceLevelUpTeam': PrimitiveObject<'resourceLimit'>
   'featureRestriction.resourceOveruseEnterprise': unknown
   'fieldSelector': unknown
+  'fixAllErrors': unknown
+  'generateSSH': unknown
   'genericResourceNotFoundError': PrimitiveObject<'resource' | 'resourceID' | 'projectID'>
   'gitConnection': unknown
+  'gitOps': unknown
+  'githubRepo': unknown
+  'gitops': unknown
   'goBack': unknown
   'goChaosHome': unknown
   'greatJob': unknown
@@ -334,8 +374,13 @@ export interface StringsMap {
   'hubName': unknown
   'hubRepositoryBranch': unknown
   'hubRepositoryURL': unknown
+  'hypothesis': unknown
   'id': unknown
   'idlowerCase': unknown
+  'imageRegistry': unknown
+  'imageRegistryUpdateSuccess': unknown
+  'imageSecret': unknown
+  'imageSecretPlaceholder': unknown
   'improveResilienceOfTheDeployedService': unknown
   'inactive': unknown
   'inactiveTooltip': unknown
@@ -345,6 +390,7 @@ export interface StringsMap {
   'infrastructureRegistered': unknown
   'infrastructureStates': unknown
   'infrastructureType': unknown
+  'initialDelay': unknown
   'initialDelaySeconds': unknown
   'insecureSkipVerify': unknown
   'installYaml': unknown
@@ -353,6 +399,7 @@ export interface StringsMap {
   'invalidEmailText': unknown
   'invalidSelection': unknown
   'invalidText': unknown
+  'invalidYaml': unknown
   'invitationRemoveSuccess': unknown
   'invitationSuccess': unknown
   'invitations': unknown
@@ -384,16 +431,20 @@ export interface StringsMap {
   'lastResilienceScore': unknown
   'lastRun': unknown
   'lastSyncedAt': unknown
+  'lastUpdatedBy': unknown
   'latestRun': unknown
   'latestRunFallbackText': unknown
   'launchExperiment': unknown
   'learnMore': unknown
   'leaveProject': unknown
   'leaveProjectDescription': unknown
+  'leaveThisPage': unknown
   'letsGetStarted': unknown
   'litmus': unknown
   'litmusChaos': unknown
+  'litmuschaos': unknown
   'loading': unknown
+  'local': unknown
   'logErrorMessage': unknown
   'loginDescription': unknown
   'loginToContinue': unknown
@@ -404,9 +455,11 @@ export interface StringsMap {
   'manifestMissing': unknown
   'manual': unknown
   'manualInterruption': unknown
+  'manually': unknown
   'markRunAsComplete': unknown
   'markRunAsCompleteDescription': unknown
   'meetsExpectations': unknown
+  'members': unknown
   'membersNotAvailableMessage': unknown
   'membersNotAvailableTitle': unknown
   'menuItems.deleteHub': unknown
@@ -442,14 +495,18 @@ export interface StringsMap {
   'namespace': unknown
   'namespaceScopeDescription': unknown
   'namespaceWide': unknown
+  'navigationCheckText': unknown
+  'navigationCheckTitle': unknown
   'needAttention': unknown
   'newChaosExperiment': unknown
   'newChaosHub': unknown
   'newChaosInfrastructure': unknown
+  'newEnvironment': unknown
   'newExperiment': unknown
   'newMember': unknown
   'newPassword': unknown
   'newProbe': unknown
+  'newToken': unknown
   'newUpdates': unknown
   'newUser': unknown
   'newUserNoExperiments.subtitle': unknown
@@ -459,6 +516,7 @@ export interface StringsMap {
   'nextRun': unknown
   'nextSelectChaosExperiments': unknown
   'noAnalysis': unknown
+  'noApiTokensFound': unknown
   'noChaosHubSelected': unknown
   'noChaosInfrastructure': unknown
   'noChaosInfrastructureFound': unknown
@@ -467,11 +525,15 @@ export interface StringsMap {
   'noData.title': unknown
   'noDataCV': unknown
   'noDataToDisplay': unknown
+  'noDescriptionProvided': unknown
+  'noEnvironmentFound': unknown
+  'noEnvironmentFoundMessage': unknown
   'noExpFound': unknown
   'noExperimentFoundMatchingSearch': unknown
   'noExperimentSelected': unknown
   'noExperiments': unknown
   'noExperimentsAdded': unknown
+  'noExpiration': unknown
   'noFaults': unknown
   'noFilteredActiveInfra': unknown
   'noFilteredData.subtitle': unknown
@@ -482,6 +544,9 @@ export interface StringsMap {
   'noLogs': unknown
   'noMonitoredService': unknown
   'noProbeDescription': unknown
+  'noProbeExecution': unknown
+  'noProbeExecutionDetails.subtitle': unknown
+  'noProbeExecutionDetails.title': unknown
   'noProbes': unknown
   'noProbesAvailable': unknown
   'noProbesFound.errorMessage': unknown
@@ -505,6 +570,7 @@ export interface StringsMap {
   'nonProd': unknown
   'notMeetsExpectations': unknown
   'notMeetsExpectationsInterventionNeeded': unknown
+  'notStarted': unknown
   'notes': unknown
   'numberOfExperiments': unknown
   'objective': unknown
@@ -545,21 +611,35 @@ export interface StringsMap {
   'platform': unknown
   'pleaseComplete': unknown
   'pleaseSelectLeastOneExperiment': unknown
+  'pleaseSpecifyYAMLValues': unknown
   'points': unknown
   'pollingInterval': unknown
   'preProd': unknown
   'predefinedExperimentsNotFound': unknown
   'preview': unknown
   'private': unknown
+  'probeAddedSuccessfully': unknown
   'probeConfiguration': unknown
   'probeDetails': unknown
+  'probeExecutionPreview': unknown
+  'probeInFault': unknown
+  'probeMetadataExists': unknown
   'probeMode': unknown
+  'probeModeAlreadyExists': unknown
   'probeModes.Continuous': unknown
+  'probeModes.ContinuousDesc': unknown
   'probeModes.EOT': unknown
+  'probeModes.EOTDesc': unknown
+  'probeModes.EOTVerbose': unknown
   'probeModes.Edge': unknown
+  'probeModes.EdgeDesc': unknown
   'probeModes.OnChaos': unknown
+  'probeModes.OnChaosDesc': unknown
   'probeModes.SOT': unknown
+  'probeModes.SOTDesc': unknown
+  'probeModes.SOTVerbose': unknown
   'probeName': unknown
+  'probeNotAttachedToRef': unknown
   'probeOverview': unknown
   'probePassedSuccessfully': unknown
   'probeProperties': unknown
@@ -574,9 +654,10 @@ export interface StringsMap {
   'probeTypes.httpProbe': unknown
   'probeTypes.k8sProbe': unknown
   'probeTypes.promProbe': unknown
-  'probeValidation.body': unknown
+  'probeValidation.accountIdentifier': unknown
+  'probeValidation.apiTokenSecret': unknown
+  'probeValidation.apiTokenSecretName': unknown
   'probeValidation.command': unknown
-  'probeValidation.contentType': unknown
   'probeValidation.criteria': unknown
   'probeValidation.endpoint': unknown
   'probeValidation.getCriteria': unknown
@@ -584,17 +665,19 @@ export interface StringsMap {
   'probeValidation.interval': unknown
   'probeValidation.method': unknown
   'probeValidation.name': unknown
-  'probeValidation.namespace': unknown
-  'probeValidation.pollingInterval': unknown
+  'probeValidation.operation': unknown
+  'probeValidation.orgIdentifier': unknown
+  'probeValidation.platformEndpoint': unknown
   'probeValidation.postCriteria': unknown
   'probeValidation.postResponseCode': unknown
-  'probeValidation.query': unknown
-  'probeValidation.responseTimeout': unknown
-  'probeValidation.retry': unknown
+  'probeValidation.projectIdentifier': unknown
+  'probeValidation.resource': unknown
+  'probeValidation.timeFrame': unknown
   'probeValidation.timeout': unknown
   'probeValidation.type': unknown
   'probeValidation.url': unknown
   'probeValidation.value': unknown
+  'probeValidation.version': unknown
   'probes': unknown
   'probesArePassed': unknown
   'prod': unknown
@@ -630,10 +713,15 @@ export interface StringsMap {
   'recurringRun': unknown
   'recurringSchedule': unknown
   'referencedBy': unknown
+  'registry': unknown
   'registryName': unknown
+  'registryType': unknown
   'remove': unknown
   'removeMember': unknown
   'removeMemberConfirmation': PrimitiveObject<'username'>
+  'repoBranchPlaceholder': unknown
+  'repoURLPlaceholder': unknown
+  'repository': unknown
   'required': unknown
   'rerun': unknown
   'resend': unknown
@@ -649,6 +737,7 @@ export interface StringsMap {
   'resilienceTabDescription': unknown
   'resiliencyScore': unknown
   'resource': unknown
+  'resourceNames': unknown
   'responseCode': unknown
   'responseTimeout': unknown
   'responseType': unknown
@@ -700,10 +789,12 @@ export interface StringsMap {
   'searchForMonitoredServices': unknown
   'searchHub': unknown
   'secret': unknown
+  'securityKeyType': unknown
   'seeAllChaosHubs': unknown
   'seeAllChaosInfrastructures': unknown
   'seeAllEnvironments': unknown
   'seeAllFaults': unknown
+  'selectAProbe': unknown
   'selectAppKind': unknown
   'selectAppLabel': unknown
   'selectAppNamespace': unknown
@@ -717,12 +808,14 @@ export interface StringsMap {
   'selectHub': unknown
   'selectHubFromList': unknown
   'selectHubHeader': unknown
+  'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
   'selectTimeframe': unknown
   'selectYourProbe': unknown
   'selectYourProbeType': unknown
   'selectedExperiments': unknown
+  'selectedProbe': unknown
   'sequence': unknown
   'serviceAccount': unknown
   'serviceAccountName': unknown
@@ -739,7 +832,11 @@ export interface StringsMap {
   'signOut': unknown
   'singleRun': unknown
   'source': unknown
+  'sourceModeDesction': unknown
   'specificNamespaceAccess': unknown
+  'ssh': unknown
+  'sshKey': unknown
+  'sshKeyHelper': unknown
   'stages': unknown
   'startBlankCanvasDescription': unknown
   'startBlankCanvasTitle': unknown
@@ -750,6 +847,7 @@ export interface StringsMap {
   'startingWith': unknown
   'status': unknown
   'statusCheck': unknown
+  'stayOnThisPage': unknown
   'stop': unknown
   'stopAllDesc': unknown
   'stopAllExp': unknown
@@ -768,6 +866,7 @@ export interface StringsMap {
   'successSummary': unknown
   'suggestion1': unknown
   'summary': unknown
+  'supportedFaultTypes': unknown
   'switchToBarChart': unknown
   'switchToLineChart': unknown
   'syncLatestRun': unknown
@@ -783,9 +882,13 @@ export interface StringsMap {
   'templateFromProjectTitle': unknown
   'testConnection': unknown
   'testSuccess': unknown
+  'testYour1': unknown
+  'testYour2': unknown
   'testingConnection': unknown
   'thisExperimentHasNoRuns': unknown
   'timeout': unknown
+  'toBeDefined': unknown
+  'tokenCreateSuccessMessage': unknown
   'toleration.effectPlaceholder': unknown
   'toleration.keyPlaceholder': unknown
   'toleration.operatorPlaceholder': unknown
@@ -800,6 +903,7 @@ export interface StringsMap {
   'totalEnvironments': unknown
   'totalExp': unknown
   'totalExperiments': unknown
+  'totalPendingInvitations': unknown
   'totalRuns': unknown
   'totalUsers': unknown
   'triggeredBy': unknown
@@ -827,7 +931,6 @@ export interface StringsMap {
   'url': unknown
   'useIntegerValue': unknown
   'useThisTemplate': unknown
-  'userCreateModalBottomText': unknown
   'userCreateSuccessMessage': PrimitiveObject<'name'>
   'userCreatedOn': unknown
   'userManagement': unknown
@@ -856,11 +959,16 @@ export interface StringsMap {
   'viewProbeDetails': unknown
   'viewProbeProperties': unknown
   'viewRun': unknown
+  'viewer': unknown
   'warning': unknown
   'weekly': unknown
   'weeklyMessage': unknown
   'weightAdjustDescription': PrimitiveObject<'numberOfFaults' | 'experimentName'>
   'weightAdjustHeader': unknown
   'welcomeToLitmus': unknown
+  'yamlBuilder.enableEditContext': unknown
+  'yamlBuilder.lineNumberLabel': unknown
+  'yamlBuilder.snippets.noSnippetsFound': unknown
+  'yamlBuilder.yamlError': unknown
   'yearlyTabTitle': unknown
 }

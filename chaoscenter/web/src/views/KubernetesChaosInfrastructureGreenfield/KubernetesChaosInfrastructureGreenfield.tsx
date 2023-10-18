@@ -7,7 +7,7 @@ import { useStrings } from '@strings';
 import { downloadYamlAsFile, getFormattedFileName, getScope } from '@utils';
 import type { StepData } from '@views/KubernetesChaosInfrastructureCreationModal/KubernetesChaosInfrastructureStepWizardConfiguration';
 import CodeBlock from '@components/CodeBlock';
-import { InfrastructureInstallationType } from '@api/entities';
+import { InfrastructureType } from '@api/entities';
 import type {
   connectChaosInfraManifestModeResponse,
   connectChaosInfraRequest
@@ -64,7 +64,7 @@ export default function KubernetesChaosInfrastructureGreenfieldView({
                   ? `${data.value.nodeSelectorValues[0].key.trim()}=${data.value.nodeSelectorValues[0].value.trim()}`
                   : undefined,
                 tags: data.value.tags ?? undefined,
-                infrastructureType: InfrastructureInstallationType.EXTERNAL
+                infrastructureType: InfrastructureType.KUBERNETES
               }
             },
             onCompleted: (result: connectChaosInfraManifestModeResponse) => {

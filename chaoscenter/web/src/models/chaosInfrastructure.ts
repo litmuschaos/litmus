@@ -49,13 +49,6 @@ export enum EnvironmentType {
   PRODUCTION = 'Production',
   NON_PRODUCTION = 'PreProduction'
 }
-
-export enum ConnectorScope {
-  PROJECT = 'project',
-  ORG = 'org',
-  ACCOUNT = 'account'
-}
-
 export interface InitialValueProps {
   infraScope: DeploymentScopeOptions;
   name: string;
@@ -126,3 +119,13 @@ export const initialValues: InitialValueProps = {
 
 export const kubernetesChaosInfrastructureCRDsEndpoint =
   'https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.0.0-beta10/litmus-portal-crds-3.0.0-beta10.yml';
+
+type InfrastructurePlatformNameType = 'Kubernetes';
+
+export interface InfrastructurePlatform extends CollapsableSelectOptions {
+  name: InfrastructurePlatformNameType;
+  image: IconName;
+  count: number | undefined;
+  isActive: boolean;
+  supportedFaults: Array<IconName>;
+}

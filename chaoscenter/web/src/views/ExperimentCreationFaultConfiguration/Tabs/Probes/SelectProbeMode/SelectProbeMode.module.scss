@@ -1,0 +1,86 @@
+.tabs {
+  flex-grow: 1;
+  display: flex;
+  :global {
+    .bp3-tabs {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      .bp3-tab-list {
+        background-color: var(--white);
+        border-bottom: 1px solid #d9dae5;
+        padding: 0 var(--spacing-medium) !important;
+        box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+      }
+      .bp3-tab-panel {
+        flex-grow: 1;
+        margin-top: 0 !important;
+        background-color: var(--primary-bg) !important;
+      }
+    }
+  }
+}
+
+.modeCardSelected {
+  position: relative;
+  cursor: pointer;
+  background: #effbff;
+  height: 80px;
+  width: 100%;
+  border: 1px solid var(--primary-7);
+  box-shadow: 0px 2px 4px rgba(40, 41, 61, 0.04), 0px 8px 16px rgba(96, 97, 112, 0.16);
+  border-radius: 5px;
+  margin-bottom: 20px;
+
+  .flex {
+    display: flex;
+    width: 100%;
+    text-align: left;
+    margin-top: 10px;
+    padding-left: 20px;
+
+    .icon {
+      margin-top: 10px;
+      margin-right: 20px;
+    }
+  }
+}
+
+.modeCard {
+  cursor: pointer;
+  position: relative;
+  background: white;
+  height: 80px;
+  width: 100%;
+  box-shadow: 0px 0px 2px rgba(40, 41, 61, 0.04), 0px 4px 8px rgba(96, 97, 112, 0.16);
+  border-radius: 5px;
+  margin-bottom: 20px;
+
+  .flex {
+    display: flex;
+    width: 100%;
+    text-align: left;
+    margin-top: 10px;
+    padding-left: 20px;
+
+    .icon {
+      margin-top: 10px;
+      margin-right: 20px;
+    }
+  }
+}
+
+.preview {
+  box-sizing: border-box;
+  width: 450px;
+  height: 500px;
+  background: white !important;
+  margin: 10px auto;
+  border: 1px dashed var(--grey-200) !important;
+  padding: 20px !important;
+
+  .image {
+    width: 300px;
+    height: auto;
+  }
+}

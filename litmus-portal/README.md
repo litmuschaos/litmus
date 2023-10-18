@@ -1,5 +1,7 @@
 ## **ChaosCenter**
 
+[Deprecated with the release of Litmus 3.0.0. Visit [here](https://github.com/litmuschaos/litmus/tree/master/chaoscenter) for installation guide.]
+
 ChaosCenter provides console and UI experience for managing, monitoring, and events around chaos workflows. Chaos workflows consist of a sequence of experiments run together to achieve the objective of introducing some kind of fault into an application or the Kubernetes platform.
 
 ## **Platforms Support**
@@ -70,7 +72,6 @@ kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/lit
 
 - All environment variables.
 
-
 #### Retrieving external url to access the litmus portal
 
 ##### GKE/Okteto Cloud/EKS
@@ -97,6 +98,7 @@ ChaosCenter provides console or UI experience for managing, monitoring, and even
 View the User Guide <b>[here](https://docs.litmuschaos.io/)</b>
 
 ### **Local Development Guide for ChaosCenter**
+
 Local Development Guide for ChaosCenter can be found <b>[here](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide)</b>
 
 ### **Upgrade from 3.0.0-beta7 to 3.0.0-beta8**

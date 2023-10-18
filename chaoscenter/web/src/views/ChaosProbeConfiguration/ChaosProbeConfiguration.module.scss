@@ -1,0 +1,77 @@
+.table {
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    padding-bottom: 20px;
+  }
+
+  :global {
+    .bp3-transition-container {
+      top: -80px !important;
+      left: 5px !important;
+    }
+    .DropDown--main .DropDown--dropdownButton.DropDown--withBorder {
+      background-color: var(--white) !important;
+    }
+  }
+}
+
+.properties {
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: repeat(8, minmax(100px, 1fr));
+  }
+}
+
+.httpDetails {
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(100px, 1fr));
+  }
+}
+
+.cmdDetails {
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+  }
+}
+
+.promDetails {
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(100px, 1fr));
+  }
+}
+
+.k8sDetails {
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: repeat(8, minmax(100px, 1fr));
+  }
+}
+
+.tablePadding {
+  padding-left: 40px !important;
+}
+
+.card {
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16);
+  border: none !important;
+}
