@@ -48,6 +48,7 @@ allExecutions: All Executions
 allFaultsExecuted: All your faults executed without any issue
 allRuns: All Runs
 alreadyExists: '{{value}} already exists'
+alreadyExistsID: Entered id '{{value}}' already exists
 apiTokens: API Tokens
 appKind: App Kind
 appKindName: app_kind
@@ -521,6 +522,7 @@ lastModified: Last Modified
 lastResilienceScore: Last Resilience Score
 lastRun: Last Run
 lastSyncedAt: Last Synced at
+lastUpdatedBy: Last Updated By
 latestRun: Latest Run
 latestRunFallbackText: No Experiment Runs found
 launchExperiment: Launch Experiment
@@ -598,6 +600,7 @@ needAttention: Needs Attention
 newChaosExperiment: New Chaos Experiment
 newChaosHub: New ChaosHub
 newChaosInfrastructure: Enable Chaos
+newEnvironment: New Environment
 newExperiment: New Experiment
 newMember: New Member
 newPassword: New Password
@@ -650,15 +653,12 @@ noKubernetesChaosInfrastructureFound: >-
 noLogs: Sorry, Logs are currently not available
 noMonitoredService: No monitoring services found for
 noProbeDescription: >-
-  Probes are pluggable checks that can be defined within the ChaosEngine for any
-  Chaos Fault. The experiment pods execute these checks based on the mode they
-  are defined in &amp; factor their success as necessary conditions in
-  determining the verdict of the experiment
+  Probes are lightweight, self-contained scripts that can be run against Kubernetes applications to gather information about their behavior under stress and failure conditions.
 noProbeExecution: No Probe executions found
 noProbeExecutionDetails:
   subtitle: >-
     Probes are pluggable checks that can be defined within the ChaosEngine for
-    any Chaos Experiment
+    any Chaos Fault
   title: There are no executions for the selected probe in your project
 noProbes: No probes configured
 noProbesAvailable: No Probes available for this node
@@ -890,6 +890,7 @@ resilienceTabDescription: >-
   infrastructure.
 resiliencyScore: Resilience Score
 resource: Resource
+resourceNames: Resource Names
 responseCode: Response Code
 responseTimeout: Response Timeout
 responseType: Response Type
@@ -960,6 +961,7 @@ selectExperiments: Select Experiments
 selectHub: Select a ChaosHub
 selectHubFromList: Select a hub from the list
 selectHubHeader: Create or select existing ChaosHub
+selectProbe: Select Probe
 selectProbes: Select Probes
 selectProject: Select a Project
 selectTimeframe: Select time frame

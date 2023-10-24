@@ -24,7 +24,6 @@ import (
 	"net/http"
 	"os"
 	rt "runtime"
-	"strings"
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
@@ -55,25 +54,11 @@ var (
 	setupLog = ctrl.Log.WithName("setup")
 )
 
-type Config struct {
-	Version            string `required:"true"`
-	AgentScope         string `required:"true" split_words:"true"`
-	IsClusterConfirmed string `required:"true" split_words:"true"`
-	AccessKey          string `required:"true" split_words:"true"`
-	ClusterId          string `required:"true" split_words:"true"`
-	ServerAddr         string `required:"true" split_words:"true"`
-	AgentNamespace     string `required:"true" split_words:"true"`
-	SkipSSLVerify      bool   `default:"false" split_words:"true"`
-}
-
 func init() {
-
 	logrus.Info("Go Version: ", rt.Version())
 	logrus.Info("Go OS/Arch: ", rt.GOOS, "/", rt.GOARCH)
 
-	var c Config
-
-	err := envconfig.Process("", &c)
+	err := envconfig.Process("", &utils.Config)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -88,15 +73,11 @@ func init() {
 		logrus.Error(err)
 	}
 
-	var (
-		agent_scope = os.Getenv("AGENT_SCOPE")
-		factory     informers.SharedInformerFactory
-	)
-
-	if agent_scope == "cluster" {
+	var factory informers.SharedInformerFactory
+	if utils.Config.InfraScope == "cluster" {
 		factory = informers.NewSharedInformerFactory(clientset, 30*time.Second)
-	} else if agent_scope == "namespace" {
-		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(os.Getenv("AGENT_NAMESPACE")))
+	} else if utils.Config.InfraScope == "namespace" {
+		factory = informers.NewSharedInformerFactoryWithOptions(clientset, 30*time.Second, informers.WithNamespace(utils.Config.InfraNamespace))
 	}
 
 	go utils.RunDeploymentInformer(factory)
@@ -123,10 +104,10 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
 	// disable ssl verification if configured
-	if strings.ToLower(os.Getenv("SKIP_SSL_VERIFY")) == "true" {
+	if utils.Config.SkipSSLVerify {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	} else if os.Getenv("CUSTOM_TLS_CERT") != "" {
-		cert, err := base64.StdEncoding.DecodeString(os.Getenv("CUSTOM_TLS_CERT"))
+	} else if utils.Config.CustomTLSCert != "" {
+		cert, err := base64.StdEncoding.DecodeString(utils.Config.CustomTLSCert)
 		if err != nil {
 			logrus.Fatalf("failed to parse custom tls cert %v", err)
 		}
@@ -136,21 +117,20 @@ func main() {
 	}
 
 	var (
-		agent_scope = os.Getenv("AGENT_SCOPE")
-		mgr         manager.Manager
-		err         error
+		mgr manager.Manager
+		err error
 	)
 
-	if agent_scope == "namespace" {
+	if utils.Config.InfraScope == "namespace" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,
 			Port:               9443,
-			Namespace:          os.Getenv("AGENT_NAMESPACE"),
+			Namespace:          utils.Config.InfraNamespace,
 			LeaderElection:     enableLeaderElection,
 			LeaderElectionID:   "2b79cec3.litmuschaos.io",
 		})
-	} else if agent_scope == "cluster" {
+	} else if utils.Config.InfraScope == "cluster" {
 		mgr, err = ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 			Scheme:             scheme,
 			MetricsBindAddress: metricsAddr,

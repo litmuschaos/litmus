@@ -390,6 +390,7 @@ type ComplexityRoot struct {
 		ProbePollingInterval func(childComplexity int) int
 		ProbeTimeout         func(childComplexity int) int
 		Resource             func(childComplexity int) int
+		ResourceNames        func(childComplexity int) int
 		Retry                func(childComplexity int) int
 		StopOnFailure        func(childComplexity int) int
 		Version              func(childComplexity int) int
@@ -2517,6 +2518,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.K8SProbe.Resource(childComplexity), true
+
+	case "K8SProbe.resourceNames":
+		if e.complexity.K8SProbe.ResourceNames == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.ResourceNames(childComplexity), true
 
 	case "K8SProbe.retry":
 		if e.complexity.K8SProbe.Retry == nil {
@@ -7188,7 +7196,6 @@ input KubernetesHTTPProbeRequest {
   insecureSkipVerify: Boolean
 }
 
-
 """
 Defines the properties of the comparator
 """
@@ -7225,8 +7232,6 @@ input ComparatorInput {
   criteria: String!
 }
 
-
-
 """
 Defines the Executed by which experiment details for Probes
 """
@@ -7249,27 +7254,26 @@ type ExecutedByExperiment {
   updatedBy: UserDetails
 }
 
-
 """
 Defines the Execution History of experiment referenced by the Probe
 """
 type ExecutionHistory {
-"""
-Probe Mode
-"""
-mode: Mode!
-"""
-Fault Name
-"""
-faultName: String!
-"""
-Fault Status
-"""
-status: Status!
-"""
-Fault executed by which experiment
-"""
-executedByExperiment: ExecutedByExperiment!
+  """
+  Probe Mode
+  """
+  mode: Mode!
+  """
+  Fault Name
+  """
+  faultName: String!
+  """
+  Fault Status
+  """
+  status: Status!
+  """
+  Fault executed by which experiment
+  """
+  executedByExperiment: ExecutedByExperiment!
 }
 """
 Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
@@ -7624,6 +7628,10 @@ input K8SProbeRequest {
   """
   namespace: String
   """
+  Resource Names of the Probe
+  """
+  resourceNames: String
+  """
   Field Selector of the Probe
   """
   fieldSelector: String
@@ -7741,7 +7749,6 @@ input KubernetesCMDProbeRequest {
   source: String
 }
 
-
 """
 Defines the Kubernetes HTTP probe properties
 """
@@ -7792,7 +7799,6 @@ type KubernetesHTTPProbe implements CommonProbeProperties {
   insecureSkipVerify: Boolean
 }
 
-
 """
 Defines the input for CMD probe properties
 """
@@ -7842,7 +7848,6 @@ input CMDProbeRequest {
   """
   source: String
 }
-
 
 """
 Defines the K8S probe properties
@@ -7896,6 +7901,10 @@ type K8SProbe implements CommonProbeProperties {
   Namespace of the Probe
   """
   namespace: String
+  """
+  Resource Names of the Probe
+  """
+  resourceNames: String
   """
   Field Selector of the Probe
   """
@@ -7960,8 +7969,12 @@ extend type Query {
   """
   Returns the list of Probes based on various filter parameters
   """
-  listProbes(projectID: ID!,  infrastructureType: InfrastructureType, probeNames: [ID!], filter: ProbeFilterInput): [Probe]!
-    @authorized
+  listProbes(
+    projectID: ID!
+    infrastructureType: InfrastructureType
+    probeNames: [ID!]
+    filter: ProbeFilterInput
+  ): [Probe]! @authorized
 
   """
   Returns a single Probe based on ProbeName and various filter parameters
@@ -7971,18 +7984,14 @@ extend type Query {
   """
   Returns the Probe YAML based on ProbeName which can be used in ChaosEngine manifest
   """
-  getProbeYAML(
-    projectID: ID!
-    request: GetProbeYAMLRequest!
-  ): String! @authorized
+  getProbeYAML(projectID: ID!, request: GetProbeYAMLRequest!): String!
+    @authorized
 
   """
   Returns all the reference of the Probe based on ProbeName
   """
-  getProbeReference(
-    projectID: ID!
-    probeName: ID!
-  ): GetProbeReferenceResponse! @authorized
+  getProbeReference(projectID: ID!, probeName: ID!): GetProbeReferenceResponse!
+    @authorized
 
   """
   Returns all the Probes attached to the requested Experiment Run
@@ -7996,32 +8005,24 @@ extend type Query {
   """
   Validates if a probe is already present, returns true if unique
   """
-  validateUniqueProbe(
-    projectID: ID!
-    probeName: ID!
-  ): Boolean! @authorized
+  validateUniqueProbe(projectID: ID!, probeName: ID!): Boolean! @authorized
 }
 
 extend type Mutation {
   """
   Creates a new Probe
   """
-  addProbe(request: ProbeRequest!, projectID: ID!): Probe!
-    @authorized
+  addProbe(request: ProbeRequest!, projectID: ID!): Probe! @authorized
 
   """
   Update the configuration of a Probe
   """
-  updateProbe(
-    request: ProbeRequest!
-    projectID: ID!
-  ): String! @authorized
+  updateProbe(request: ProbeRequest!, projectID: ID!): String! @authorized
 
   """
   Delete a Probe
   """
-  deleteProbe(probeName: ID!, projectID: ID!): Boolean!
-    @authorized
+  deleteProbe(probeName: ID!, projectID: ID!): Boolean! @authorized
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/project.graphqls", Input: `enum Invitation {
@@ -17551,6 +17552,37 @@ func (ec *executionContext) _K8SProbe_namespace(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Namespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _K8SProbe_resourceNames(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceNames, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -28131,6 +28163,12 @@ func (ec *executionContext) unmarshalInputK8SProbeRequest(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "resourceNames":
+			var err error
+			it.ResourceNames, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "fieldSelector":
 			var err error
 			it.FieldSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
@@ -31228,6 +31266,8 @@ func (ec *executionContext) _K8SProbe(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "namespace":
 			out.Values[i] = ec._K8SProbe_namespace(ctx, field, obj)
+		case "resourceNames":
+			out.Values[i] = ec._K8SProbe_resourceNames(ctx, field, obj)
 		case "fieldSelector":
 			out.Values[i] = ec._K8SProbe_fieldSelector(ctx, field, obj)
 		case "labelSelector":

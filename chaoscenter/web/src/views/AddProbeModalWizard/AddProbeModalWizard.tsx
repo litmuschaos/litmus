@@ -1073,6 +1073,7 @@ const TuneDetailsStep: React.FC<
         <FormInput.Select
           name="k8sProperties.operation"
           label="Operation"
+          usePortal
           placeholder="Operation"
           items={[
             // Create to be enabled once Engine CR is updated to include `data` inside k8s properties

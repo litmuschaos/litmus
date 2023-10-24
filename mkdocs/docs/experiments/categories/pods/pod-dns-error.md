@@ -138,7 +138,7 @@
       </tr>
       <tr>
         <td> TARGET_HOSTNAMES </td>
-        <td> List of the target hostnames or keywords eg. '["litmuschaos","chaosnative.com"]'</td>
+        <td> List of the target hostnames or keywords eg. '["litmuschaos"]'</td>
         <td> If not provided, all hostnames/domains will be targeted</td>
       </tr>
       <tr>
@@ -219,7 +219,7 @@ spec:
         ## comma separated list of host names
         ## if not provided, all hostnames/domains will be targeted
         - name: TARGET_HOSTNAMES
-          value: '["litmuschaos","chaosnative.com"]'
+          value: '["litmuschaos"]'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
