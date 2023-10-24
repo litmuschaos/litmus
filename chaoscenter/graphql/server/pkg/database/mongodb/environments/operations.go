@@ -18,24 +18,23 @@ type Operator struct {
 	operator mongodb.MongoOperator
 }
 
-
 // NewEnvironmentOperator retuurns a new instance of operator
 func NewEnvironmentOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 	return &Operator{
 		operator: mongodbOperator,
 	}
 }
+
 // Inside the dbOperationsEnvironment package
 
 type EnvironmentOperatorInterface interface {
-    InsertEnvironment(ctx context.Context, env Environment) error
-    GetEnvironments(ctx context.Context, query bson.D) ([]Environment, error)
-    UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error
-    GetEnvironment(query bson.D) (Environment, error)
+	InsertEnvironment(ctx context.Context, env Environment) error
+	GetEnvironments(ctx context.Context, query bson.D) ([]Environment, error)
+	UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error
+	GetEnvironment(query bson.D) (Environment, error)
 	GetAggregateEnvironments(pipeline mongo.Pipeline) (*mongo.Cursor, error)
 	GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error)
 	GetEnvironmentWithProjectID(projectID string) ([]*Environment, error)
-
 }
 
 // InsertEnvironment takes details of a chaos_environment and inserts into the database collection

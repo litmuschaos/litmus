@@ -14,13 +14,13 @@ import (
 )
 
 type MockEnvironmentOperator struct {
-	InsertEnvironmentFunc func(ctx context.Context, env environments.Environment) error
-	GetEnvironmentsFunc   func(ctx context.Context, query bson.D) ([]environments.Environment, error)
-	UpdateEnvironmentFunc func(ctx context.Context, query bson.D, update bson.D) error
-	GetEnvironmentFunc    func(query bson.D) (environments.Environment, error)
-	GetAggregateEnvironmentsFunc func(pipeline mongo.Pipeline) (*mongo.Cursor, error)
+	InsertEnvironmentFunc           func(ctx context.Context, env environments.Environment) error
+	GetEnvironmentsFunc             func(ctx context.Context, query bson.D) ([]environments.Environment, error)
+	UpdateEnvironmentFunc           func(ctx context.Context, query bson.D, update bson.D) error
+	GetEnvironmentFunc              func(query bson.D) (environments.Environment, error)
+	GetAggregateEnvironmentsFunc    func(pipeline mongo.Pipeline) (*mongo.Cursor, error)
 	GetEnvironmentWithProjectIDFunc func(projectID string) ([]*environments.Environment, error)
-	GetEnvironmentDetailFunc func(ctx context.Context, environmentID string, projectID string) (environments.Environment, error)
+	GetEnvironmentDetailFunc        func(ctx context.Context, environmentID string, projectID string) (environments.Environment, error)
 }
 
 func (m *MockEnvironmentOperator) InsertEnvironment(ctx context.Context, env environments.Environment) error {
@@ -53,7 +53,7 @@ func (m *MockEnvironmentOperator) UpdateEnvironment(ctx context.Context, query b
 
 func (m *MockEnvironmentOperator) GetAggregateEnvironments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
 	if m.GetAggregateEnvironmentsFunc != nil {
-		return m.GetAggregateEnvironmentsFunc(pipeline )
+		return m.GetAggregateEnvironmentsFunc(pipeline)
 	}
 	return nil, nil
 }
