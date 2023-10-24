@@ -10,6 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MockEnvironmentOperator struct {
@@ -17,6 +18,9 @@ type MockEnvironmentOperator struct {
 	GetEnvironmentsFunc   func(ctx context.Context, query bson.D) ([]environments.Environment, error)
 	UpdateEnvironmentFunc func(ctx context.Context, query bson.D, update bson.D) error
 	GetEnvironmentFunc    func(query bson.D) (environments.Environment, error)
+	GetAggregateEnvironmentsFunc func(pipeline mongo.Pipeline) (*mongo.Cursor, error)
+	GetEnvironmentWithProjectIDFunc func(projectID string) ([]*environments.Environment, error)
+	GetEnvironmentDetailFunc func(ctx context.Context, environmentID string, projectID string) (environments.Environment, error)
 }
 
 func (m *MockEnvironmentOperator) InsertEnvironment(ctx context.Context, env environments.Environment) error {
@@ -45,6 +49,27 @@ func (m *MockEnvironmentOperator) UpdateEnvironment(ctx context.Context, query b
 		return m.UpdateEnvironmentFunc(ctx, query, update)
 	}
 	return nil
+}
+
+func (m *MockEnvironmentOperator) GetAggregateEnvironments(pipeline mongo.Pipeline) (*mongo.Cursor, error) {
+	if m.GetAggregateEnvironmentsFunc != nil {
+		return m.GetAggregateEnvironmentsFunc(pipeline )
+	}
+	return nil, nil
+}
+
+func (m *MockEnvironmentOperator) GetEnvironmentWithProjectID(projectID string) ([]*environments.Environment, error) {
+	if m.GetEnvironmentWithProjectIDFunc != nil {
+		return m.GetEnvironmentWithProjectIDFunc(projectID)
+	}
+	return nil, nil
+}
+
+func (m *MockEnvironmentOperator) GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (environments.Environment, error) {
+	if m.GetEnvironmentDetailFunc != nil {
+		return m.GetEnvironmentDetailFunc(ctx, environmentID, projectID)
+	}
+	return environments.Environment{}, nil
 }
 
 func TestCreateEnvironment(t *testing.T) {
@@ -76,8 +101,11 @@ func TestCreateEnvironment(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, tc.token)
-			operator := &environments.Operator{}
-			service := handler.NewEnvironmentService(operator)
+			mockOperator := &MockEnvironmentOperator{
+				InsertEnvironmentFunc: tc.mockInsertFunc,
+			}
+			service := handler.NewEnvironmentService(mockOperator)
+			//service := handler.NewEnvironmentService(operator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -126,8 +154,10 @@ func TestDeleteEnvironment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, tc.token)
 
-			operator := &environments.Operator{}
-			service := handler.NewEnvironmentService(operator)
+			mockOperator := &MockEnvironmentOperator{
+				UpdateEnvironmentFunc: tc.mockUpdateFunc,
+			}
+			service := handler.NewEnvironmentService(mockOperator)
 
 			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
 			if (err != nil && tc.expectedErr == nil) ||
