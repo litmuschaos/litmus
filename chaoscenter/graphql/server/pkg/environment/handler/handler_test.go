@@ -105,7 +105,6 @@ func TestCreateEnvironment(t *testing.T) {
 				InsertEnvironmentFunc: tc.mockInsertFunc,
 			}
 			service := handler.NewEnvironmentService(mockOperator)
-			//service := handler.NewEnvironmentService(operator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
 			if (err != nil && tc.expectedErr == nil) ||
