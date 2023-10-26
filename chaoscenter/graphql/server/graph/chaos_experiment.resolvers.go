@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -133,6 +134,10 @@ func (r *mutationResolver) DeleteChaosExperiment(ctx context.Context, experiment
 		return false, err
 	}
 	return uiResponse, err
+}
+
+func (r *mutationResolver) UpdateCronExperimentState(ctx context.Context, experimentID string, disable bool, projectID string) (bool, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) GetExperiment(ctx context.Context, projectID string, experimentID string) (*model.GetExperimentResponse, error) {

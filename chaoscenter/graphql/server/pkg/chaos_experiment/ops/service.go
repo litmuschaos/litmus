@@ -289,7 +289,7 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 		return errors.New("failed to unmarshal workflow manifest1")
 	}
 
-	if /* strings.ToLower(workflowObj.GetKind()) == "cronworkflow" */ r != nil {
+	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, workflow, &username, nil, "update", r)
 	}
 	return nil
@@ -458,6 +458,10 @@ func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weigh
 	err := json.Unmarshal([]byte(workflow.ExperimentManifest), &cronExperimentManifest)
 	if err != nil {
 		return errors.New("failed to unmarshal workflow manifest")
+	}
+
+	if strings.TrimSpace(cronExperimentManifest.Spec.Schedule) == "" {
+		return errors.New("failed to process cron workflow, cron syntax not provided in manifest")
 	}
 
 	if cronExperimentManifest.Labels == nil {

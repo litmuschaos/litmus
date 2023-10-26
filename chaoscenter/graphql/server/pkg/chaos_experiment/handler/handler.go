@@ -4,6 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
+	"sort"
 	"strconv"
 	"time"
 
@@ -310,22 +315,22 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
+				bson.D{
+					{"$match", bson.D{
+						{"$expr", bson.D{
+							{"$eq", bson.A{"$infra_id", "$$infraID"}},
 						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
+					}},
 				},
+				bson.D{
+					{"$project", bson.D{
+						{"token", 0},
+						{"infra_ns_exists", 0},
+						{"infra_sa_exists", 0},
+						{"access_key", 0},
+					}},
+				},
+			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -570,22 +575,22 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
+				bson.D{
+					{"$match", bson.D{
+						{"$expr", bson.D{
+							{"$eq", bson.A{"$infra_id", "$$infraID"}},
 						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
+					}},
 				},
+				bson.D{
+					{"$project", bson.D{
+						{"token", 0},
+						{"infra_ns_exists", 0},
+						{"infra_sa_exists", 0},
+						{"access_key", 0},
+					}},
+				},
+			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -1072,11 +1077,11 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	groupByTotalCount := bson.D{
 		{
 			"$group", bson.D{
-				{"_id", nil},
-				{"count", bson.D{
-					{"$sum", 1},
-				}},
-			},
+			{"_id", nil},
+			{"count", bson.D{
+				{"$sum", 1},
+			}},
+		},
 		},
 	}
 
@@ -1315,4 +1320,93 @@ func (c *ChaosExperimentHandler) validateDuplicateExperimentName(ctx context.Con
 	}
 
 	return nil
+}
+
+func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, workflowID string, disable bool, projectID string, r *store.StateData) (bool, error) {
+	var (
+		cronWorkflowManifest v1alpha1.CronWorkflow
+	)
+
+	//Fetching the experiment details
+	query := bson.D{
+		{"project_id", projectID},
+		{"experiment_id", workflowID},
+		{"is_removed", false},
+	}
+	experiment, err := c.chaosExperimentOperator.GetExperiment(ctx, query)
+	if err != nil {
+		return false, fmt.Errorf("could not get experiment run, error: %v", err)
+	}
+
+	//Fetching infra details to check infra upgrade status and infra active status
+	infra, err := dbChaosInfra.NewInfrastructureOperator(c.mongodbOperator).GetInfra(experiment.InfraID)
+	if err != nil {
+		return false, fmt.Errorf("failed to get infra for infraID: %s, error: %v", experiment.InfraID, err)
+	}
+
+	if !infra.IsActive {
+		return false, fmt.Errorf("cron experiement updation failed due to inactive infra, err: %v", err)
+	}
+
+	//Validate if revisions are available
+	if len(experiment.Revision) == 0 {
+		return false, fmt.Errorf("no revisions found")
+	}
+	sort.Slice(experiment.Revision, func(i, j int) bool {
+		return experiment.Revision[i].UpdatedAt > experiment.Revision[j].UpdatedAt
+	})
+
+	//Parsing the manifest to cron experiment structure
+	if err := json.Unmarshal([]byte(experiment.Revision[0].ExperimentManifest), &cronWorkflowManifest); err != nil {
+		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %s", err.Error())
+	}
+
+	cronWorkflowManifest, err = probe.GenerateCronExperimentManifestWithProbes(experiment.Revision[0].ExperimentManifest, experiment.ProjectID)
+	if err != nil {
+		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
+	}
+
+	//state of the cron experiment state
+	cronWorkflowManifest.Spec.Suspend = disable
+
+	updatedManifest, err := json.Marshal(cronWorkflowManifest)
+	if err != nil {
+		return false, fmt.Errorf("failed to marshal workflow manifest, error: %v", err)
+	}
+
+	//Update the revision in database
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	err = c.chaosExperimentService.ProcessExperimentUpdate(&model.ChaosExperimentRequest{
+		ExperimentID:       &workflowID,
+		ExperimentManifest: string(updatedManifest),
+		ExperimentName:     experiment.Name,
+	}, username, &experiment.ExperimentType, experiment.Revision[0].RevisionID, true, experiment.ProjectID, nil)
+
+	if err != nil {
+		return false, err
+	}
+
+	//Update the runtime values in cron experiment manifest
+
+	cronWorkflowManifest, _, err = utils.UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest, experiment)
+	if err != nil {
+		return false, err
+	}
+
+	updatedManifest, err = json.Marshal(cronWorkflowManifest)
+	if err != nil {
+		return false, errors.New("failed to marshal workflow manifest")
+	}
+
+	if r != nil {
+		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
+			ExperimentID:       &workflowID,
+			ExperimentManifest: string(updatedManifest),
+			ExperimentName:     experiment.Name,
+		}, &username, nil, "update", r)
+	}
+
+	return true, err
 }
