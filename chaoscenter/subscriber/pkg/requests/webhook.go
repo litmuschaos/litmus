@@ -131,7 +131,7 @@ func RequestProcessor(infraData map[string]string, r types.RawData) error {
 		if err != nil {
 			return errors.New("error performing infra operation: " + err.Error())
 		}
-	} else if strings.Index("workflow_delete workflow_run_delete ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+	} else if strings.Index("workflow_delete workflow_run_delete workflow_run_stop ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 
 		err := utils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
 		if err != nil {
