@@ -8,9 +8,6 @@ import (
 	"strings"
 	"time"
 
-	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
@@ -29,7 +26,7 @@ import (
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/ghodss/yaml"
 	"github.com/google/uuid"
-
+	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	scheduleTypes "github.com/litmuschaos/chaos-scheduler/api/litmuschaos/v1alpha1"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -150,12 +147,6 @@ func (c *chaosExperimentService) ProcessExperimentCreation(ctx context.Context, 
 		weightages []*dbChaosExperiment.WeightagesInput
 		revision   []dbChaosExperiment.ExperimentRevision
 	)
-
-	probes, err := probe.ParseProbesFromManifest(wfType, input.ExperimentManifest)
-	if err != nil {
-		return err
-	}
-
 	if input.Weightages != nil {
 		//TODO: Once we make the new chaos terminology change in APIs, then we can we the copier instead of for loop
 		for _, v := range input.Weightages {
@@ -173,7 +164,6 @@ func (c *chaosExperimentService) ProcessExperimentCreation(ctx context.Context, 
 		ExperimentManifest: input.ExperimentManifest,
 		UpdatedAt:          timeNow,
 		Weightages:         weightages,
-		Probes:             probes,
 	})
 
 	newChaosExperiment := dbChaosExperiment.ChaosExperimentRequest{
@@ -203,7 +193,7 @@ func (c *chaosExperimentService) ProcessExperimentCreation(ctx context.Context, 
 		RecentExperimentRunDetails: []dbChaosExperiment.ExperimentRunDetail{},
 	}
 
-	err = c.chaosExperimentOperator.InsertChaosExperiment(ctx, newChaosExperiment)
+	err := c.chaosExperimentOperator.InsertChaosExperiment(ctx, newChaosExperiment)
 	if err != nil {
 		return err
 	}
