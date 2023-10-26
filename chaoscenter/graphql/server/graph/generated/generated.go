@@ -501,6 +501,7 @@ type ComplexityRoot struct {
 		RunChaosExperiment       func(childComplexity int, experimentID string, projectID string) int
 		SaveChaosExperiment      func(childComplexity int, request model.SaveChaosExperimentRequest, projectID string) int
 		SaveChaosHub             func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
+		StopExperimentRuns       func(childComplexity int, projectID string, experimentID string, experimentRunID *string, notifyID *string) int
 		SyncChaosHub             func(childComplexity int, id string, projectID string) int
 		UpdateChaosExperiment    func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
 		UpdateChaosHub           func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
@@ -715,6 +716,7 @@ type MutationResolver interface {
 	DeleteChaosExperiment(ctx context.Context, experimentID string, experimentRunID *string, projectID string) (bool, error)
 	ChaosExperimentRun(ctx context.Context, request model.ExperimentRunRequest) (string, error)
 	RunChaosExperiment(ctx context.Context, experimentID string, projectID string) (*model.RunChaosExperimentResponse, error)
+	StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string) (bool, error)
 	RegisterInfra(ctx context.Context, projectID string, request model.RegisterInfraRequest) (*model.RegisterInfraResponse, error)
 	ConfirmInfraRegistration(ctx context.Context, request model.InfraIdentity) (*model.ConfirmInfraRegistrationResponse, error)
 	DeleteInfra(ctx context.Context, projectID string, infraID string) (string, error)
@@ -3143,6 +3145,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SaveChaosHub(childComplexity, args["projectID"].(string), args["request"].(model.CreateChaosHubRequest)), true
 
+	case "Mutation.stopExperimentRuns":
+		if e.complexity.Mutation.StopExperimentRuns == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_stopExperimentRuns_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StopExperimentRuns(childComplexity, args["projectID"].(string), args["experimentID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string)), true
+
 	case "Mutation.syncChaosHub":
 		if e.complexity.Mutation.SyncChaosHub == nil {
 			break
@@ -5180,6 +5194,11 @@ extend type Mutation {
     experimentID: String!
     projectID: ID!
   ): RunChaosExperimentResponse!
+
+  """
+  stopExperiment will halt all the ongoing runs of a particular experiment
+  """
+  stopExperimentRuns(projectID: ID!, experimentID:String!, experimentRunID: String, notifyID: String): Boolean! @authorized
 }`, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/chaos_infrastructure.graphqls", Input: `directive @authorized on FIELD_DEFINITION
 
@@ -8544,6 +8563,44 @@ func (ec *executionContext) field_Mutation_saveChaosHub_args(ctx context.Context
 		}
 	}
 	args["request"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_stopExperimentRuns_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["experimentID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentID"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["experimentRunID"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentRunID"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["notifyID"]; ok {
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["notifyID"] = arg3
 	return args, nil
 }
 
@@ -19347,6 +19404,67 @@ func (ec *executionContext) _Mutation_runChaosExperiment(ctx context.Context, fi
 	res := resTmp.(*model.RunChaosExperimentResponse)
 	fc.Result = res
 	return ec.marshalNRunChaosExperimentResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRunChaosExperimentResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_stopExperimentRuns(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_stopExperimentRuns_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StopExperimentRuns(rctx, args["projectID"].(string), args["experimentID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_registerInfra(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -31758,6 +31876,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "runChaosExperiment":
 			out.Values[i] = ec._Mutation_runChaosExperiment(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "stopExperimentRuns":
+			out.Values[i] = ec._Mutation_stopExperimentRuns(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
