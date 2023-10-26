@@ -106,8 +106,12 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 			CreatedAt: currentTime.UnixMilli(),
 			UpdatedAt: currentTime.UnixMilli(),
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		LastSyncedAt: time.Now().UnixMilli(),
 		IsDefault:    false,
@@ -166,8 +170,12 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 			CreatedAt: currentTime.UnixMilli(),
 			UpdatedAt: currentTime.UnixMilli(),
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		LastSyncedAt: time.Now().UnixMilli(),
 		IsDefault:    false,
@@ -237,8 +245,12 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 			CreatedAt: currentTime.UnixMilli(),
 			UpdatedAt: currentTime.UnixMilli(),
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		LastSyncedAt: time.Now().UnixMilli(),
 	}
@@ -371,7 +383,9 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 			{"ssh_private_key", chaosHub.SSHPrivateKey},
 			{"ssh_public_key", chaosHub.SSHPublicKey},
 			{"updated_at", time},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		},
 		},
 	}
@@ -407,7 +421,9 @@ func (c *chaosHubService) DeleteChaosHub(ctx context.Context, hubID string, proj
 		{"$set", bson.D{
 			{"is_removed", true},
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		},
 		},
 	}
@@ -634,8 +650,8 @@ func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, r
 			TotalExperiments: strconv.Itoa(experimentCount),
 			CreatedAt:        strconv.Itoa(int(hub.CreatedAt)),
 			UpdatedAt:        strconv.Itoa(int(hub.UpdatedAt)),
-			CreatedBy:        &model.UserDetails{Username: hub.CreatedBy},
-			UpdatedBy:        &model.UserDetails{Username: hub.UpdatedBy},
+			CreatedBy:        &model.UserDetails{Username: hub.CreatedBy.Username},
+			UpdatedBy:        &model.UserDetails{Username: hub.UpdatedBy.Username},
 		}
 		hubDetails = append(hubDetails, hubDetail)
 	}
@@ -694,8 +710,8 @@ func (c *chaosHubService) GetChaosHub(ctx context.Context, chaosHubID string, pr
 		TotalExperiments: strconv.Itoa(experimentCount),
 		CreatedAt:        strconv.Itoa(int(hub.CreatedAt)),
 		UpdatedAt:        strconv.Itoa(int(hub.UpdatedAt)),
-		CreatedBy:        &model.UserDetails{Username: hub.CreatedBy},
-		UpdatedBy:        &model.UserDetails{Username: hub.UpdatedBy},
+		CreatedBy:        &model.UserDetails{Username: hub.CreatedBy.Username},
+		UpdatedBy:        &model.UserDetails{Username: hub.UpdatedBy.Username},
 	}
 
 	return hubDetail, nil
@@ -755,8 +771,8 @@ func (c *chaosHubService) getChaosHubDetails(ctx context.Context, hubID string, 
 		Tags:         hub.Tags,
 		Description:  &hub.Description,
 		//TODO util functions for this
-		CreatedBy: &model.UserDetails{Username: hub.CreatedBy},
-		UpdatedBy: &model.UserDetails{Username: hub.UpdatedBy},
+		CreatedBy: &model.UserDetails{Username: hub.CreatedBy.Username},
+		UpdatedBy: &model.UserDetails{Username: hub.UpdatedBy.Username},
 	}, nil
 }
 

@@ -9,7 +9,7 @@ import { AppStoreProvider } from '@context';
 
 export function AppWithAuthentication(): React.ReactElement {
   return (
-    <AppStoreProvider>
+    <AppStoreProvider updateAppStore={() => void 0}>
       <StringsContext.Provider value={{ data: strings as StringsMap }}>
         <LitmusAPIProvider config={APIEndpoints}>
           <RoutesWithAuthentication />

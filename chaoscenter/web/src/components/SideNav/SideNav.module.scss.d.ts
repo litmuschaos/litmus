@@ -6,6 +6,7 @@ declare namespace SideNavModuleScssNamespace {
     icon: string;
     iconContainer: string;
     link: string;
+    logOutContainer: string;
     main: string;
     newNav: string;
     popover: string;

@@ -225,7 +225,7 @@ export default function AccountSettingsUserManagementView(
         </Layout.Horizontal>
         {searchInput}
       </Layout.Horizontal>
-      <Layout.Vertical style={{ flexGrow: 1, gap: '0.5rem' }} padding="medium">
+      <Layout.Vertical style={{ height: 'calc(100% - 48px)', gap: '0.5rem', overflow: 'scroll' }} padding="medium">
         <Loader
           small
           loading={useUsersQueryLoading}

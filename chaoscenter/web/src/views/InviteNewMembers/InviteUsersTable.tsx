@@ -1,4 +1,12 @@
-import { ButtonVariation, Layout, SplitButton, SplitButtonOption, TableV2, useToaster } from '@harnessio/uicore';
+import {
+  ButtonVariation,
+  Container,
+  Layout,
+  SplitButton,
+  SplitButtonOption,
+  TableV2,
+  useToaster
+} from '@harnessio/uicore';
 import React, { useMemo } from 'react';
 import type { Column, Row } from 'react-table';
 import type { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
@@ -7,6 +15,7 @@ import { PopoverPosition } from '@blueprintjs/core';
 import { useStrings } from '@strings';
 import { GetUsersForInvitationOkResponse, User, useSendInvitationMutation } from '@api/auth';
 import { killEvent } from '@utils';
+import { PermissionGroup } from '@models';
 import { UserEmail, UserName } from './InviteNewMemberListColumns';
 import css from './InviteNewMemberTable.module.scss';
 
@@ -24,17 +33,15 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
       {
         Header: 'MEMBERS',
         id: 'username',
-        width: '40%',
         Cell: UserName
       },
       {
         Header: 'EMAIL',
         id: 'email',
-        width: '30%',
         Cell: UserEmail
       },
       {
-        Header: '',
+        Header: ' ',
         id: 'threeDotMenu',
         disableSortBy: true,
         Cell: ({ row: { original: data } }: { row: Row<User> }) => {
@@ -57,8 +64,7 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
               width="100%"
             >
               <SplitButton
-                text={getString('inviteAs')}
-                icon="email-inline"
+                text={getString('viewer')}
                 variation={ButtonVariation.PRIMARY}
                 loading={isLoading}
                 popoverProps={{
@@ -66,26 +72,23 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                   usePortal: true,
                   position: PopoverPosition.BOTTOM_RIGHT
                 }}
+                onClick={() =>
+                  sendInvitationMutation({
+                    body: {
+                      projectID: projectID,
+                      role: PermissionGroup.VIEWER,
+                      userID: data.userID
+                    }
+                  })
+                }
               >
                 <SplitButtonOption
-                  text="Editor"
+                  text={getString('editor')}
                   onClick={() =>
                     sendInvitationMutation({
                       body: {
                         projectID: projectID,
-                        role: 'Editor',
-                        userID: data.userID
-                      }
-                    })
-                  }
-                />
-                <SplitButtonOption
-                  text="Viewer"
-                  onClick={() =>
-                    sendInvitationMutation({
-                      body: {
-                        projectID: projectID,
-                        role: 'Viewer',
+                        role: PermissionGroup.EDITOR,
                         userID: data.userID
                       }
                     })
@@ -100,5 +103,9 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-  return <TableV2<User> columns={envColumns} data={users} className={css.inviteTable} />;
+  return (
+    <Container className={css.tableContainer}>
+      <TableV2<User> columns={envColumns} data={users} className={css.inviteTable} />
+    </Container>
+  );
 }

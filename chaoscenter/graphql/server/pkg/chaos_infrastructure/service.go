@@ -14,7 +14,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
+	dbEnvironments "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/sirupsen/logrus"
 
@@ -59,12 +59,14 @@ type Service interface {
 
 type infraService struct {
 	infraOperator *dbChaosInfra.Operator
+	envOperator   *dbEnvironments.Operator
 }
 
 // NewChaosInfrastructureService returns a new instance of Service
-func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator) Service {
+func NewChaosInfrastructureService(infraOperator *dbChaosInfra.Operator, envOperator *dbEnvironments.Operator) Service {
 	return &infraService{
 		infraOperator: infraOperator,
+		envOperator:   envOperator,
 	}
 }
 
@@ -138,8 +140,12 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 			CreatedAt: currentTime.UnixMilli(),
 			UpdatedAt: currentTime.UnixMilli(),
 			IsRemoved: false,
-			CreatedBy: username,
-			UpdatedBy: username,
+			CreatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
+			UpdatedBy: mongodb.UserDetailResponse{
+				Username: username,
+			},
 		},
 		EnvironmentID:  input.EnvironmentID,
 		AccessKey:      utils.RandomString(32),
@@ -171,7 +177,7 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 			{"infra_ids", infraID},
 		}},
 	}
-	err = environments.UpdateEnvironment(context.TODO(), envQuery, update)
+	err = in.envOperator.UpdateEnvironment(context.TODO(), envQuery, update)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +215,9 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 		{"$set", bson.D{
 			{"is_removed", true},
 			{"updated_at", time.Now().UnixMilli()},
-			{"updated_by", username},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
 		}},
 	}
 	err = in.infraOperator.UpdateInfra(context.TODO(), query, update)
@@ -225,7 +233,7 @@ func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infra
 			{"infra_ids", infra.InfraID},
 		}},
 	}
-	err = environments.UpdateEnvironment(context.TODO(), envQuery, updateQuery)
+	err = in.envOperator.UpdateEnvironment(context.TODO(), envQuery, updateQuery)
 	if err != nil {
 		return "", err
 	}
@@ -683,9 +691,9 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 			newInfra.NoOfExperiments = &infra.ExperimentDetails[0].TotalSchedules
 		}
 
-		newInfra.CreatedBy = &model.UserDetails{Username: infra.CreatedBy}
+		newInfra.CreatedBy = &model.UserDetails{Username: infra.CreatedBy.Username}
 		newInfra.UpdatedBy = &model.UserDetails{
-			Username: infra.UpdatedBy,
+			Username: infra.UpdatedBy.Username,
 		}
 		newInfras = append(newInfras, &newInfra)
 

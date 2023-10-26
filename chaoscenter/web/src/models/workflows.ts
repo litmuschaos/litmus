@@ -816,6 +816,17 @@ export interface WorkflowSpec {
    */
   nodeSelector?: { [key: string]: string };
   /**
+   * PodMetadata defines additional metadata that should be applied to workflow pods
+   */
+  podMetadata?: {
+    annotations?: {
+      [key: string]: string;
+    };
+    labels?: {
+      [key: string]: string;
+    };
+  };
+  /**
    * OnExit is a template reference which is invoked at the end of the workflow, irrespective of the success, failure, or error of the primary workflow.
    */
   onExit?: string;

@@ -8,12 +8,16 @@ export enum DrawerTypes {
   ChaosHub = 'ChaosHub',
   TuneFault = 'TuneFault',
   AdvacedOptions = 'AdvacedOptions',
-  ViewManifest = 'ViewManifest'
+  AddProbe = 'AddProbe',
+  ViewManifest = 'ViewManifest',
+  SelectMode = 'SelectMode'
 }
 
 export const DrawerSizes: Record<DrawerTypes, React.CSSProperties['width']> = {
   [DrawerTypes.ChaosHub]: 1200,
   [DrawerTypes.TuneFault]: 760,
+  [DrawerTypes.AddProbe]: 760,
+  [DrawerTypes.SelectMode]: 760,
   [DrawerTypes.AdvacedOptions]: 580,
   [DrawerTypes.ViewManifest]: 580
 };
@@ -21,6 +25,8 @@ export const DrawerSizes: Record<DrawerTypes, React.CSSProperties['width']> = {
 export const DrawerSizesWithHelpPanel: Record<DrawerTypes, React.CSSProperties['width']> = {
   [DrawerTypes.ChaosHub]: 1200 + 400,
   [DrawerTypes.TuneFault]: 760 + 400,
+  [DrawerTypes.AddProbe]: 760 + 400,
+  [DrawerTypes.SelectMode]: 760 + 400,
   [DrawerTypes.AdvacedOptions]: 580 + 400,
   [DrawerTypes.ViewManifest]: 580 + 400
 };

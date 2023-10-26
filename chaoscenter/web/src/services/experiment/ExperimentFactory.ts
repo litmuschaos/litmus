@@ -15,8 +15,10 @@ class ExperimentFactory {
     this.map.set(infrastructureType, handler);
   }
 
-  public getInfrastructureTypeHandler(): ExperimentYamlService | undefined {
-    return this.map.get(InfrastructureType.KUBERNETES);
+  public getInfrastructureTypeHandler(
+    infrastructureType: InfrastructureType | undefined
+  ): ExperimentYamlService | undefined {
+    return this.map.get(infrastructureType ?? InfrastructureType.KUBERNETES);
   }
 }
 

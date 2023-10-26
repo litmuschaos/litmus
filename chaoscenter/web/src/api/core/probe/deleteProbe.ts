@@ -1,10 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
-import type { Identifiers } from '@api/entities';
 import type { GqlAPIMutationRequest, GqlAPIMutationResponse } from '@api/types';
 
 export interface DeleteProbeRequest {
-  identifiers: Identifiers;
-  probeID: string;
+  projectID: string;
+  probeName: string;
 }
 
 export interface DeleteProbeResponse {
@@ -16,8 +15,8 @@ export function deleteProbe(
 ): GqlAPIMutationResponse<DeleteProbeResponse, DeleteProbeRequest> {
   const [deleteProbeMutation, result] = useMutation<DeleteProbeResponse, DeleteProbeRequest>(
     gql`
-      mutation deleteChaosHub($probeID: ID!, $identifiers: IdentifiersRequest!) {
-        deleteProbe(probeID: $probeID, identifiers: $identifiers)
+      mutation deleteProbe($probeName: ID!, $projectID: ID!) {
+        deleteProbe(probeName: $probeName, projectID: $projectID)
       }
     `,
     options

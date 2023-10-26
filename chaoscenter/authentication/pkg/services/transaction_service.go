@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -37,10 +36,10 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 			return utils.ErrUpdatingAdmin
 		}
 
-		var deactivateTime string
+		var deactivateTime int64
 
 		if *userRequest.IsDeactivate {
-			deactivateTime = strconv.FormatInt(time.Now().Unix(), 10)
+			deactivateTime = time.Now().UnixMilli()
 
 			// Checking if user is already deactivated
 			if user.DeactivatedAt != nil {
@@ -49,13 +48,13 @@ func (a applicationService) UpdateStateTransaction(userRequest entities.UpdateUs
 		}
 
 		// Updating details in user collection
-		err = a.UpdateUserState(userRequest.Username, *userRequest.IsDeactivate, deactivateTime)
+		err = a.UpdateUserState(sc, userRequest.Username, *userRequest.IsDeactivate, deactivateTime)
 		if err != nil {
 			log.Info(err)
 			return utils.ErrServerError
 		}
 		// Updating details in project collection
-		err = a.UpdateProjectState(user.ID, deactivateTime)
+		err = a.UpdateProjectState(sc, user.ID, deactivateTime, *userRequest.IsDeactivate)
 		if err != nil {
 			log.Info(err)
 			return utils.ErrServerError

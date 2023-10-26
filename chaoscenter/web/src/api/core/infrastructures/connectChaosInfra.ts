@@ -1,7 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import type { GqlAPIMutationRequest, GqlAPIMutationResponse } from '@api/types';
 import type { Toleration } from '@models';
-import type { InfrastructureInstallationType } from '@api/entities';
+import type { InfrastructureType } from '@api/entities';
 
 export interface connectChaosInfraRequest {
   projectID: string;
@@ -18,7 +18,7 @@ export interface connectChaosInfraRequest {
     skipSsl?: boolean;
     nodeSelector?: string;
     tolerations?: Array<Toleration>;
-    infrastructureType?: InfrastructureInstallationType;
+    infrastructureType?: InfrastructureType;
     tags?: Array<string>;
   };
 }

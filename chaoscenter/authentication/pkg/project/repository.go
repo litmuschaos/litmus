@@ -26,7 +26,7 @@ type Repository interface {
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
-	UpdateProjectState(userID string, deactivateTime string) error
+	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
@@ -244,7 +244,7 @@ func (r repository) UpdateInvite(projectID string, userID string, invitation ent
 		update = bson.D{
 			{"$set", bson.D{
 				{"members.$[elem].invitation", invitation},
-				{"members.$[elem].joined_at", time.Now().Unix()},
+				{"members.$[elem].joined_at", time.Now().UnixMilli()},
 			}}}
 	case entities.ExitedProject:
 		update = bson.D{
@@ -288,7 +288,7 @@ func (r repository) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.
 }
 
 // UpdateProjectState updates the deactivated_at state of the member and removed_at field of the project
-func (r repository) UpdateProjectState(userID string, deactivateTime string) error {
+func (r repository) UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error {
 	opts := options.Update().SetArrayFilters(options.ArrayFilters{
 		Filters: []interface{}{
 			bson.D{{"elem.user_id", userID}},
@@ -302,7 +302,7 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 		}},
 	}
 
-	_, err := r.Collection.UpdateMany(context.Background(), filter, update, opts)
+	_, err := r.Collection.UpdateMany(ctx, filter, update, opts)
 	if err != nil {
 		//log.Print("Error updating user's state in projects : ", err)
 		return err
@@ -320,11 +320,11 @@ func (r repository) UpdateProjectState(userID string, deactivateTime string) err
 
 	update = bson.D{
 		{"$set", bson.D{
-			{"removed_at", deactivateTime},
+			{"is_removed", isDeactivate},
 		}},
 	}
 
-	_, err = r.Collection.UpdateMany(context.Background(), filter, update)
+	_, err = r.Collection.UpdateMany(ctx, filter, update)
 	if err != nil {
 		//log.Print("Error updating user's state in projects : ", err)
 		return err

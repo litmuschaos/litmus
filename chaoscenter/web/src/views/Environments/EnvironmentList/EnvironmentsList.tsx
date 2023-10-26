@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Layout, Container, TableV2 } from '@harnessio/uicore';
+import { Layout, TableV2, useToggleOpen, Dialog } from '@harnessio/uicore';
 import type { Column, Row } from 'react-table';
 import { useHistory } from 'react-router-dom';
 import type { MutationFunction } from '@apollo/client';
@@ -13,20 +13,20 @@ import type {
   UpdateEnvironmentRequest
 } from '@api/core/environments';
 import DefaultLayout from '@components/DefaultLayout';
-import { useRouteWithBaseUrl } from '@hooks';
-import CreateEnvironment from './CreateEnvironment';
+import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
+import Loader from '@components/Loader';
 import type {
   EnvironmentDetails,
   EnvironmentDetailsTableProps,
   RefetchEnvironments
-} from '../../../controllers/Environments/types';
-import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
+} from '@controllers/Environments/types';
+import CreateEnvironment from './CreateEnvironment';
 import { MenuCell } from './EnvironmentsTableMenu';
+import { EnvironmentName, EnvironmentTypes, LastUpdatedBy } from '../EnvironmentsListColumns/EnvironmentsListColumns';
+import css from './EnvironmentsList.module.scss';
 
 interface EnvironmentListViewProps {
   environmentTableData: EnvironmentDetailsTableProps | undefined;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  isModalOpen: boolean;
   loading: {
     listEnvironments: boolean;
   };
@@ -41,13 +41,14 @@ export default function EnvironmentListView({
   loading,
   environmentTableData,
   refetchEnvironments,
-  setIsModalOpen,
-  isModalOpen,
   mutation
 }: EnvironmentListViewProps & RefetchEnvironments): React.ReactElement {
   const { getString } = useStrings();
   const history = useHistory();
   const paths = useRouteWithBaseUrl();
+  const { isOpen, open, close } = useToggleOpen();
+
+  useDocumentTitle(getString('environments'));
 
   const envColumns: Column<EnvironmentDetails>[] = useMemo(
     () => [
@@ -59,14 +60,14 @@ export default function EnvironmentListView({
         Cell: EnvironmentName
       },
       {
-        Header: 'TYPE',
+        Header: getString('type').toUpperCase(),
         id: 'type',
         accessor: 'type',
         width: '30%',
         Cell: EnvironmentTypes
       },
       {
-        Header: 'LAST UPDATED BY',
+        Header: getString('lastUpdatedBy').toUpperCase(),
         id: 'modifiedBy',
         width: '30%',
         Cell: LastUpdatedBy
@@ -94,54 +95,53 @@ export default function EnvironmentListView({
               data-testid="add-environment"
               icon="plus"
               iconProps={{ size: 10 }}
-              text="New Environment"
+              text={getString('newEnvironment')}
               permission={PermissionGroup.EDITOR}
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
+              onClick={() => open()}
             />
+            {isOpen && (
+              <Dialog
+                isOpen={isOpen}
+                canOutsideClickClose={false}
+                canEscapeKeyClose={false}
+                onClose={() => close()}
+                isCloseButtonShown
+                className={css.dialogStylesEnv}
+              >
+                <CreateEnvironment
+                  closeModal={close}
+                  mutation={{
+                    createEnvironment: mutation.createEnvironment,
+                    updateEnvironment: mutation.updateEnvironment
+                  }}
+                />
+              </Dialog>
+            )}
           </Layout.Horizontal>
         </Layout.Horizontal>
       }
-      // error={error}
-      // retryOnError={refetchEnvironments}
-      loading={loading.listEnvironments}
     >
-      {isModalOpen && (
-        <CreateEnvironment
-          isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
-          mutation={{ createEnvironment: mutation.createEnvironment, updateEnvironment: mutation.updateEnvironment }}
+      <Loader
+        loading={loading.listEnvironments}
+        noData={{
+          when: () => environmentTableData === null,
+          messageTitle: getString('noEnvironmentFound'),
+          message: getString('noEnvironmentFoundMessage')
+        }}
+      >
+        <TableV2<EnvironmentDetails>
+          columns={envColumns}
+          sortable
+          onRowClick={rowDetails =>
+            rowDetails.environmentID &&
+            history.push({
+              pathname: paths.toKubernetesChaosInfrastructures({ environmentID: rowDetails.environmentID })
+            })
+          }
+          data={environmentTableData?.content ?? []}
+          pagination={environmentTableData?.pagination}
         />
-      )}
-      {true && (
-        <Container padding={{ top: 'medium', right: 'xlarge', left: 'xlarge' }}>
-          <TableV2<EnvironmentDetails>
-            columns={envColumns}
-            sortable
-            onRowClick={rowDetails =>
-              rowDetails.environmentID &&
-              history.push({
-                pathname: paths.toKubernetesChaosInfrastructures({ environmentID: rowDetails.environmentID })
-                // search: `tab=${StudioTabs.BUILDER}`
-              })
-            }
-            data={environmentTableData?.content ?? []}
-            pagination={environmentTableData?.pagination}
-          />
-        </Container>
-      )}
-      {/* {emptyEnvs && (
-          <Container flex={{ align: 'center-center' }} height="100%">
-            <Container flex style={{ flexDirection: 'column' }}>
-              <img src={EmptyContent} width={220} height={220} />
-              <Heading className={css.noEnvHeading} level={2}>
-                {getString('cd.noEnvironment.title')}
-              </Heading>
-              <Text className={css.noEnvText}>{getString('cd.noEnvironment.message')}</Text>
-            </Container>
-          </Container>
-        )} */}
+      </Loader>
     </DefaultLayout>
   );
 }

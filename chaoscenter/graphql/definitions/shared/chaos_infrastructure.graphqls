@@ -121,8 +121,7 @@ type Infra implements ResourceDetails & Audit {
 }
 
 enum InfrastructureType {
-  INTERNAL
-  EXTERNAL
+  Kubernetes
 }
 
 """
