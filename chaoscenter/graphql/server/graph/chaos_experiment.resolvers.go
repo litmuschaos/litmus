@@ -6,8 +6,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
-
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
@@ -137,7 +135,26 @@ func (r *mutationResolver) DeleteChaosExperiment(ctx context.Context, experiment
 }
 
 func (r *mutationResolver) UpdateCronExperimentState(ctx context.Context, experimentID string, disable bool, projectID string) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
+	logFields := logrus.Fields{
+		"projectId":         projectID,
+		"chaosExperimentId": experimentID,
+	}
+
+	logrus.WithFields(logFields).Info("request received to update cron chaos experiment")
+
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return false, err
+	}
+
+	uiResponse, err := r.chaosExperimentHandler.UpdateCronExperimentState(ctx, experimentID, disable, projectID, data_store.Store)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return false, err
+	}
+	return uiResponse, err
 }
 
 func (r *queryResolver) GetExperiment(ctx context.Context, projectID string, experimentID string) (*model.GetExperimentResponse, error) {
