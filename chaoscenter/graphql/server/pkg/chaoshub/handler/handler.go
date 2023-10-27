@@ -29,7 +29,7 @@ const DefaultPath = "/tmp/"
 func GetChartsPath(chartsInput model.CloningInput, projectID string, isDefault bool) string {
 	var repoPath string
 	if isDefault {
-		repoPath = DefaultPath + "/default/" + chartsInput.Name + "/faults/"
+		repoPath = DefaultPath + "default/" + chartsInput.Name + "/faults/"
 	} else {
 		repoPath = DefaultPath + projectID + "/" + chartsInput.Name + "/faults/"
 	}

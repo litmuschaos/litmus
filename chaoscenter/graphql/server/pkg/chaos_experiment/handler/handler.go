@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -1315,4 +1316,66 @@ func (c *ChaosExperimentHandler) validateDuplicateExperimentName(ctx context.Con
 	}
 
 	return nil
+}
+
+func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData) (bool, error) {
+
+	var experimentRunsID []string
+
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	query := bson.D{
+		{"experiment_id", experimentID},
+		{"project_id", projectID},
+		{"is_removed", false},
+	}
+	experiment, err := c.chaosExperimentOperator.GetExperiment(context.TODO(), query)
+	if err != nil {
+		return false, err
+	}
+
+	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
+	if experimentRunID == nil {
+
+		// if experiment is of cron type, disable it
+		if experiment.CronSyntax != "" {
+
+			err = c.DisableCronExperiment(username, experiment, projectID, r)
+			if err != nil {
+				return false, err
+			}
+		}
+
+		// Fetching all the experiment runs in the experiment
+		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
+			{"experiment_id", experimentID},
+			{"is_removed", false},
+		})
+		if err != nil {
+			return false, err
+		}
+
+		for _, runs := range expRuns {
+			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout)) && !runs.Completed {
+				experimentRunsID = append(experimentRunsID, runs.ExperimentRunID)
+			}
+		}
+
+		// Check if experiment run count is 0 and if it's not a cron experiment
+		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
+			return false, fmt.Errorf("no running or timeout experiments found")
+		}
+	} else if experimentRunID != nil && *experimentRunID != "" {
+		experimentRunsID = []string{*experimentRunID}
+	}
+
+	for _, runID := range experimentRunsID {
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, query, &runID, experiment, username, projectID, r)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
 }

@@ -33,9 +33,22 @@ func TestGetChartsPath(t *testing.T) {
 		Name: "test",
 	}
 	// when
-	path := handler.GetChartsPath(chartsInput, projectID)
+	path := handler.GetChartsPath(chartsInput, projectID, true)
 	// then
-	assert.Equal(t, "/tmp/version/test/test/charts/", path)
+	assert.Equal(t, "/tmp/default/test/faults/", path)
+}
+
+func TestGetChartsPathFalse(t *testing.T) {
+	// given
+	projectID := "test"
+
+	chartsInput := model.CloningInput{
+		Name: "test",
+	}
+	// when
+	path := handler.GetChartsPath(chartsInput, projectID, false)
+	// then
+	assert.Equal(t, "/tmp/test/test/faults/", path)
 }
 
 // TestReadExperimentFile is used to test the ReadExperimentFile function
@@ -273,6 +286,7 @@ func TestGetChartsData(t *testing.T) {
 				RepoBranch: "master",
 				IsPrivate:  false,
 			},
+			isError: false,
 		},
 		{
 			name:      "invalid url",
@@ -290,7 +304,7 @@ func TestGetChartsData(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.isError {
 				// when
-				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID)
+				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID, false)
 				_, err := handler.GetChartsData(chartsPath)
 				// then
 				assert.Error(t, err)
@@ -300,7 +314,7 @@ func TestGetChartsData(t *testing.T) {
 
 				err := chaosHubOps.GitClone(tc.repoData, tc.projectID)
 				assert.NoError(t, err)
-				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID)
+				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID, true)
 				// when
 				_, err = handler.GetChartsData(chartsPath)
 				// then

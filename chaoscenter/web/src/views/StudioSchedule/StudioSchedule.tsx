@@ -130,7 +130,7 @@ export default function StudioScheduleView({ mode }: StudioScheduleViewProps): R
                       return updateSearchParams({ tab: StudioTabs.BUILDER });
                     }}
                   />
-                  <Button type="submit" intent="primary" text="Set Schedule" />
+                  <Button type="submit" intent="primary" text={getString('setSchedule')}/>
                 </Layout.Horizontal>
               </Form>
             );

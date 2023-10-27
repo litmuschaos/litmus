@@ -275,7 +275,7 @@ const GitConnectionStep: React.FC<
                         });
                       }}
                       variation={ButtonVariation.SECONDARY}
-                      text="Generate New SSH Key"
+                      text={getString('generateSSH')}
                     />
                     <div className={css.textInputContainer}>
                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
