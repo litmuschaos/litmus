@@ -127,6 +127,7 @@ chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
 chooseMembersAddTheProject: Choose members to add to the project
 chooseProbeMode: Choose Mode for probe to be executed
+clearSearch: Clear search
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
   where you have kubectl installed and have access to your Kubernetes cluster.
@@ -157,6 +158,7 @@ collaborators: Collaborators
 comingSoon: Coming Soon
 command: Command
 comparator: Comparator
+comparisonCriteria: Comparison Criteria
 completed: Completed
 configure: Configure
 configureChaosInfrastructure: Configure Chaos Infrastructure
@@ -206,6 +208,7 @@ createdAt: Created At
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
+criteriaForData: Criteria for data
 cronExpression: Cron Expression
 cronExpressionRequired: Cron Expression required
 cronSelectOption: Cron (Recurring run)
@@ -277,6 +280,7 @@ downloadedSuccessfully: Downloaded successfully
 duration: Duration
 edit: Edit
 editChaosHub: Edit ChaosHub
+editEnvironment: Edit Environment
 editExperiment: Edit Experiment
 editExperimentCopy: Edit Copy
 editExperimentOptions: Do you want to edit the same experiment or edit a copy?
@@ -741,6 +745,7 @@ pollingInterval: Polling Interval
 preProd: Pre-Prod
 predefinedExperimentsNotFound: No Predefined Experiments found in this hub
 preview: Preview
+previous: Previous
 private: Private
 probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
@@ -845,6 +850,8 @@ public: Public
 query: Query
 queryPath: Query path
 ranAt: Ran at
+range: range
+rangeSliderInput: rangeSliderInput
 rbacDescription: You are missing permission '{{permission}}' to perform this action.
 rbacHeader: You do not have permission to perform this action
 reEnterNewPassword: Re-enter new password
@@ -961,6 +968,7 @@ selectExperiments: Select Experiments
 selectHub: Select a ChaosHub
 selectHubFromList: Select a hub from the list
 selectHubHeader: Create or select existing ChaosHub
+selectMethod: Select Method GET / POST
 selectProbe: Select Probe
 selectProbes: Select Probes
 selectProject: Select a Project
@@ -974,6 +982,7 @@ serviceAccount: Service Account
 serviceAccountName: Service Account Name
 serviceHealthScore: Service Health Score
 setFaultWeights: Set fault weights
+setSchedule: Set Schedule
 settings: Settings
 setupChaosInfrastructures: >-
   Enabling Chaos on infrastructure helps to inject chaos by studying your
@@ -1078,10 +1087,11 @@ tuneFaultProperties: Tune fault properties
 tuneFaultWeight: Tune fault weightage
 tuneWeight: Tune Weight
 type: Type
-udpatePassword: Update Password
+typeOfData: Type of data
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
 update: Update
+updatePassword: Update Password
 updatedAt: Updated at
 updatedBy: Updated by
 upgradeChaosInfrastructure: Upgrade Chaos Infrastructure

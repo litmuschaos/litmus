@@ -469,7 +469,7 @@ const ConfigureStep: React.FC<
                     noAutoScroll
                     isDefaultOpen
                     addDomId
-                    id="Basic"
+                    id={getString('basic')}
                     summary={
                       <Text font={{ variation: FontVariation.CARD_TITLE }} color={Color.GREY_1000}>
                         {getString('chaosComponentInstallation')}
