@@ -53,6 +53,30 @@ func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID 
 	return &model.RunChaosExperimentResponse{NotifyID: uiResponse.NotifyID}, err
 }
 
+func (r *mutationResolver) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string) (bool, error) {
+	logFields := logrus.Fields{
+		"projectId":            projectID,
+		"chaosExperimentId":    experimentID,
+		"chaosExperimentRunId": experimentRunID,
+		"notifyID":             notifyID,
+	}
+
+	logrus.WithFields(logFields).Info("request received to stop chaos experiment")
+	err := authorization.ValidateRole(ctx, projectID,
+		authorization.MutationRbacRules[authorization.StopChaosExperiment],
+		model.InvitationAccepted.String())
+	if err != nil {
+		return false, err
+	}
+
+	uiResponse, err := r.chaosExperimentHandler.StopExperimentRuns(ctx, projectID, experimentID, experimentRunID, data_store.Store)
+	if err != nil {
+		logrus.WithFields(logFields).Error(err)
+		return false, err
+	}
+	return uiResponse, nil
+}
+
 func (r *queryResolver) GetExperimentRun(ctx context.Context, projectID string, experimentRunID *string, notifyID *string) (*model.ExperimentRun, error) {
 	logFields := logrus.Fields{
 		"projectId":            projectID,

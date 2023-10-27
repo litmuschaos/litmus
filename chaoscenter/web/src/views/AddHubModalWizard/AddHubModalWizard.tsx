@@ -260,7 +260,7 @@ const GitConnectionStep: React.FC<
                         PAT
                       </Text>
                     }
-                    placeholder="Enter your Personal Acess Token"
+                    placeholder={getString('accessTokenPlaceholder')}
                   />
                 )}
                 {formikProps.values.isPrivate && formikProps.values.authType === AuthType.SSH && (
@@ -276,14 +276,14 @@ const GitConnectionStep: React.FC<
                         });
                       }}
                       variation={ButtonVariation.SECONDARY}
-                      text="Generate New SSH Key"
+                      text={getString('generateSSH')}
                     />
                     <div className={css.textInputContainer}>
                       <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ bottom: 'xsmall' }}>
                         SSH Key
                       </Text>
                       <TextInput
-                        placeholder="SSH Key"
+                        placeholder={getString('sshKey')}
                         value={sshPublicKey}
                         onChange={(e: FormEvent<HTMLInputElement>) => {
                           setPublicSshKey(e.currentTarget.value);

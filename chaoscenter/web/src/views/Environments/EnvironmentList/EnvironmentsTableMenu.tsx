@@ -28,7 +28,7 @@ export const MenuCell = ({
         <Menu style={{ backgroundColor: 'unset' }}>
           <RbacMenuItem
             icon="edit"
-            text="Edit Environment"
+            text={getString('editEnvironment')}
             onClick={openEditModal}
             permission={PermissionGroup.EDITOR}
           />

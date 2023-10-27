@@ -120,7 +120,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Select
                       name="criteria"
-                      label="Criteria"
+                      label={getString('criteria')}
                       placeholder={formikProps.initialValues.criteria}
                       items={[
                         { label: '==', value: '==' },
@@ -161,7 +161,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
@@ -344,7 +344,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
@@ -424,7 +424,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                   >
                     <FormInput.Text
                       name="endpoint"
-                      label="Endpoint"
+                      label={getString('endpoint')}
                       placeholder={formikProps.initialValues.endpoint}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_prom_endpoint' }}
                     />
@@ -447,7 +447,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Select
                       name="criteria"
-                      label="Criteria"
+                      label={getString('criteria')}
                       placeholder={formikProps.initialValues.criteria}
                       items={
                         formikProps.values.type === 'string'
@@ -483,7 +483,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
@@ -559,7 +559,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                   >
                     <FormInput.Text
                       name="command"
-                      label="Command"
+                      label={getString('command')}
                       placeholder={formikProps.initialValues.command}
                       tooltipProps={{ dataTooltipId: 'chaos_probe_cmd_command' }}
                     />
@@ -576,7 +576,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                     />
                     <FormInput.Select
                       name="criteria"
-                      label="Criteria"
+                      label={getString('criteria')}
                       placeholder={formikProps.initialValues.criteria}
                       items={
                         formikProps.values.type === 'string'
@@ -619,7 +619,7 @@ export const ProbeDetailsStep: React.FC<StepProps<StepData>> = props => {
                       variation={ButtonVariation.SECONDARY}
                       icon="main-chevron-left"
                       iconProps={{ color: Color.WHITE }}
-                      text="Previous"
+                      text={getString('previous')}
                     />
                   )}
                   <Button
