@@ -792,8 +792,8 @@ const TuneDetailsStep: React.FC<
                     } as SelectOption)
                   : undefined
               }
-              label="Method"
-              placeholder="Select Method GET / POST "
+              label={getString('method')}
+              placeholder={getString('selectMethod')}
               items={[
                 { label: 'GET', value: 'get' },
                 { label: 'POST', value: 'post' }
@@ -803,8 +803,8 @@ const TuneDetailsStep: React.FC<
               <>
                 <FormInput.Select
                   name="kubernetesHTTPProperties.method.get.criteria"
-                  label="Criteria"
-                  placeholder="Criteria for data"
+                  label={getString('criteria')}
+                  placeholder={getString('criteriaForData')}
                   items={[
                     { label: '==', value: '==' },
                     { label: '!=', value: '!=' },
@@ -836,8 +836,8 @@ const TuneDetailsStep: React.FC<
                 />
                 <FormInput.Select
                   name="kubernetesHTTPProperties.method.post.criteria"
-                  label="Criteria"
-                  placeholder="Criteria for data"
+                  label={getString('criteria')}
+                  placeholder={getString('criteriaForData')}
                   items={[
                     { label: '==', value: '==' },
                     { label: '!=', value: '!=' }
@@ -882,8 +882,8 @@ const TuneDetailsStep: React.FC<
             </Text>
             <FormInput.Select
               name="kubernetesCMDProperties.comparator.type"
-              label="Type"
-              placeholder="Type of data"
+              label={getString('type')}
+              placeholder={getString('typeOfData')}
               onChange={selected => (cmdComparatorType.current = selected.value as string)}
               items={[
                 { label: 'Int', value: 'int' },
@@ -894,10 +894,10 @@ const TuneDetailsStep: React.FC<
             <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'flex-start' }} spacing="small">
               <FormInput.Select
                 name="kubernetesCMDProperties.comparator.criteria"
-                label="Comparison Criteria"
+                label={getString('comparisonCriteria')}
                 usePortal
                 style={{ width: '50%' }}
-                placeholder="Criteria for data"
+                placeholder={getString('criteriaForData')}
                 items={
                   cmdComparatorType.current === 'string'
                     ? [
@@ -1006,7 +1006,7 @@ const TuneDetailsStep: React.FC<
         </Text>
         <FormInput.Select
           name="promProperties.comparator.type"
-          label="Type"
+          label={getString('type')}
           onChange={selected => (promComparatorType.current = selected.value as string)}
           placeholder="Type of data"
           items={[
@@ -1018,10 +1018,10 @@ const TuneDetailsStep: React.FC<
         <Layout.Horizontal flex={{ justifyContent: 'space-between', alignItems: 'flex-start' }} spacing="small">
           <FormInput.Select
             name="promProperties.comparator.criteria"
-            label="Comparison Criteria"
+            label={getString('comparisonCriteria')}
             usePortal
             style={{ width: '50%' }}
-            placeholder="Criteria for data"
+            placeholder={getString('criteriaForData')}
             items={
               promComparatorType.current === 'string'
                 ? [
@@ -1072,9 +1072,10 @@ const TuneDetailsStep: React.FC<
         <FormInput.Text name="k8sProperties.labelSelector" label={'Label Selector'} placeholder={'Label Selector'} />
         <FormInput.Select
           name="k8sProperties.operation"
-          label="Operation"
+
+          label={getString('operation')}
           usePortal
-          placeholder="Operation"
+          placeholder={getString('operation')}
           items={[
             // Create to be enabled once Engine CR is updated to include `data` inside k8s properties
             // { label: 'Create', value: 'create' },
