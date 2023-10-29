@@ -26,7 +26,7 @@ inducing chaos tests in a controlled way. Developers & SREs can practice Chaos E
 Chaos Engineering principles & community collaborated. It is 100% open source & a CNCF project.
 
 LitmusChaos takes a cloud-native approach to create, manage and monitor chaos. The platform itself runs as a set of microservices and uses Kubernetes 
-custom resources to define the chaos intent, as well as the steady state hypothesis. 
+custom resources (CRs) to define the chaos intent, as well as the steady state hypothesis. 
 
 At a high-level, Litmus comprises of:  
 
