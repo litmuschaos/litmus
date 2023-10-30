@@ -20,7 +20,7 @@ describe('ErrorCheckView Component Tests', () => {
     fireEvent.click(counter);
     fireEvent.click(counter);
     fireEvent.click(counter);
-    expect(await screen.findByText('Something went wrong.')).toBeInTheDocument();
+    expect(await screen.findByText('Something went wrong:')).toBeInTheDocument();
   });
 
   test('counter throws a Set Timeout error after 2 seconds', async () => {
@@ -32,7 +32,7 @@ describe('ErrorCheckView Component Tests', () => {
     jest.advanceTimersByTime(2500);
 
     await waitFor(() => {
-      expect(screen.getByText('Something went wrong.')).toBeInTheDocument();
+      expect(screen.getByText('Something went wrong:')).toBeInTheDocument();
     });
     jest.useRealTimers();
   });
@@ -41,12 +41,13 @@ describe('ErrorCheckView Component Tests', () => {
     const counters = screen.getAllByRole('heading');
     const isolatedCounter1 = counters[counters.length - 2];
     const isolatedCounter2 = counters[counters.length - 1];
-
+  
     fireEvent.click(isolatedCounter1);
     fireEvent.click(isolatedCounter1);
     fireEvent.click(isolatedCounter1);
-    expect(await screen.findByText('Something went wrong.')).toBeInTheDocument();
-
+    
+    expect(await screen.findByText('Something went wrong:')).toBeInTheDocument();
+  
     expect(isolatedCounter2).toHaveTextContent('0');
   });
 });

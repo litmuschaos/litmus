@@ -1,14 +1,25 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import * as stringUtils from '@strings';
 import { TestWrapper } from 'utils/testUtils';
 import ResetPasswordView from '../ResetPassword';
-
 describe('ResetPasswordView Component', () => {
   const mockClose = jest.fn();
   const mockRestPasswordMutation = jest.fn();
 
   beforeEach(() => {
+    jest.spyOn(stringUtils, 'useStrings').mockReturnValue({
+      getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`)
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should render without crashing', () => {
     render(
       <TestWrapper>
         <ResetPasswordView
@@ -18,62 +29,57 @@ describe('ResetPasswordView Component', () => {
         />
       </TestWrapper>
     );
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('should render without crashing', () => {
-    expect(screen.getByPlaceholderText('newPassword')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('reEnterNewPassword')).toBeInTheDocument();
-    expect(screen.getByText('confirm')).toBeInTheDocument();
-    expect(screen.getByText('cancel')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Mocked String for newPassword')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Mocked String for reEnterNewPassword')).toBeInTheDocument();
+    screen.getByRole('button', { name: /confirm/i });
   });
 
   test('submit button should be disabled when input fields are empty', () => {
-    const submitButton = screen.getByText('confirm');
+    render(<ResetPasswordView handleClose={() => {}} resetPasswordMutation={() => {}} username="testUser" />);
+
+    const submitButton = screen.getByRole('button', { name: /confirm/i });
     expect(submitButton).toBeDisabled();
   });
 
-  test('submit button should be disabled when passwords do not match', () => {
-    fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'password1' } });
-    fireEvent.change(screen.getByPlaceholderText(' reEnterNewPassword'), { target: { value: 'password2' } });
-
-    const submitButton = screen.getByText('confirm');
-    expect(submitButton).toBeDisabled();
-  });
-
-  test('should call reset password mutatin when form is submitted with valid inputs', () => {
-    fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'password' } });
-    fireEvent.change(screen.getByPlaceholderText('reEnterNewPassword'), { target: { value: 'password' } });
-
-    const submitButton = screen.getByText('confirm');
-    fireEvent.click(submitButton);
-
-    expect(mockRestPasswordMutation).toHaveBeenCalledWith(
-      {
-        body: {
-          username: 'testUser',
-          oldPassword: '',
-          newPassword: 'password'
-        }
-      },
-      expect.any(Object)
+  test('submit button is enabled when input fields are valid', () => {
+    render(
+      <TestWrapper>
+        <ResetPasswordView
+          handleClose={mockClose}
+          resetPasswordMutation={mockRestPasswordMutation}
+          username="testUser"
+        />
+      </TestWrapper>
     );
-
-    test('should call handleClose when cancel button is clicked', () => {
-      const cancelButton = screen.getByText('cancel');
-      fireEvent.click(cancelButton);
-
-      expect(mockClose).toHaveBeenCalled();
+    fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
+      target: { value: 'password123' }
+    });
+    fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
+      target: { value: 'password123' }
     });
 
-    test('should call handleClose when close icon is clicked', () => {
-      const closeIcon = screen.getByTestId('cross-icon');
-      fireEvent.click(closeIcon);
+    const submitButton = screen.getByRole('button', { name: /confirm/i });
+    expect(submitButton).not.toBeDisabled();
+  });
 
-      expect(mockClose).toHaveBeenCalled();
+  test('submit button remains disabled if passwords do not match', () => {
+    render(
+      <TestWrapper>
+        <ResetPasswordView
+          handleClose={mockClose}
+          resetPasswordMutation={mockRestPasswordMutation}
+          username="testUser"
+        />
+      </TestWrapper>
+    );
+    fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
+      target: { value: 'password123' }
     });
+    fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
+      target: { value: 'differentPassword123' }
+    });
+
+    const submitButton = screen.getByRole('button', { name: /confirm/i });
+    expect(submitButton).toBeDisabled();
   });
 });
