@@ -37,7 +37,10 @@ export const MenuCell = ({ row: { original: data }, refetchProbes }: MenuCellPro
   } = useToggleOpen();
 
   const [deleteProbeMutation] = deleteProbe({
-    onError: error => showError(error.message)
+    onError: error => showError(error.message),
+    onCompleted: () => {
+      refetchProbes?.();
+    }
   });
 
   // <!-- confirmation dialog boxes -->

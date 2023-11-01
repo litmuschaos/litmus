@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"subscriber/pkg/types"
 
+	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
+
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned"
@@ -196,6 +198,23 @@ func (ev *subscriberEvents) StopChaosEngineState(namespace string, workflowRunID
 	return nil
 }
 
+// StopWorkflow will patch the workflow based on workflow name using the shutdown strategy
+func StopWorkflow(wfName string, namespace string) error {
+
+	conf, err := k8s.GetKubeConfig()
+	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(namespace)
+	patch := []byte(`{"spec":{"shutdown":"Stop"}}`)
+	wf, err := wfClient.Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})
+	if err != nil {
+		return fmt.Errorf("error in patching workflow: %w", err)
+	}
+	if wf != nil {
+		logrus.Info("Successfully patched workflow: ", wf.GetName())
+		return nil
+	}
+	return nil
+}
+
 func mapStatus(status chaosTypes.EngineStatus) string {
 	switch status {
 	case chaosTypes.EngineStatusInitialized:
@@ -203,7 +222,7 @@ func mapStatus(status chaosTypes.EngineStatus) string {
 	case chaosTypes.EngineStatusCompleted:
 		return "Succeeded"
 	case chaosTypes.EngineStatusStopped:
-		return "Skipped"
+		return "Stopped"
 	default:
 		return "Running"
 	}

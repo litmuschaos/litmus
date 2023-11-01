@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -105,6 +106,12 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
+		if wfDetails.Name != request.Name {
+			err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
+			if err != nil {
+				return "", err
+			}
+		}
 
 		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
 		if err != nil {
@@ -114,10 +121,15 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		return "experiment updated successfully", nil
 	}
 
+	err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
+	if err != nil {
+		return "", err
+	}
+
 	// Saving chaos experiment in the DB
 	logrus.WithFields(logFields).Info("request received to save k8s chaos experiment")
 
-	err = c.chaosExperimentService.ProcessExperimentCreation(context.TODO(), newRequest, username, projectID, wfType, revID, nil)
+	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
 		return "", err
 	}
@@ -129,19 +141,10 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	var revID = uuid.New().String()
 
-	// Check if the workflow_name exists under same project
-	wfDetails, err := c.chaosExperimentOperator.GetExperiments(bson.D{
-		{"name", request.ExperimentName},
-		{"project_id", projectID},
-		{"tags", request.Tags},
-		{"is_removed", false},
-	})
+	// Check if the experiment_name exists under same project
+	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
 	if err != nil {
 		return nil, err
-	}
-
-	if wfDetails != nil || len(wfDetails) > 0 {
-		return nil, errors.New("experiment name already exists in this project")
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
@@ -225,6 +228,12 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 	var (
 		revID = uuid.New().String()
 	)
+
+	// Check if the experiment_name exists under same project
+	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+	if err != nil {
+		return nil, err
+	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
 	if err != nil {
@@ -1289,4 +1298,84 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 	}
 
 	return probeDetails, nil
+}
+
+// validateDuplicateExperimentName validates if the name of experiment is duplicate
+func (c *ChaosExperimentHandler) validateDuplicateExperimentName(ctx context.Context, projectID, name string) error {
+	filterQuery := bson.D{
+		{"project_id", projectID},
+		{"name", name},
+		{"is_removed", false},
+	}
+	experimentCount, err := c.chaosExperimentOperator.CountChaosExperiments(ctx, filterQuery)
+	if err != nil {
+		return err
+	}
+	if experimentCount > 0 {
+		return errors.New("experiment name should be unique, duplicate experiment found with name: " + name)
+	}
+
+	return nil
+}
+
+func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData) (bool, error) {
+
+	var experimentRunsID []string
+
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	query := bson.D{
+		{"experiment_id", experimentID},
+		{"project_id", projectID},
+		{"is_removed", false},
+	}
+	experiment, err := c.chaosExperimentOperator.GetExperiment(context.TODO(), query)
+	if err != nil {
+		return false, err
+	}
+
+	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
+	if experimentRunID == nil {
+
+		// if experiment is of cron type, disable it
+		if experiment.CronSyntax != "" {
+
+			err = c.DisableCronExperiment(username, experiment, projectID, r)
+			if err != nil {
+				return false, err
+			}
+		}
+
+		// Fetching all the experiment runs in the experiment
+		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
+			{"experiment_id", experimentID},
+			{"is_removed", false},
+		})
+		if err != nil {
+			return false, err
+		}
+
+		for _, runs := range expRuns {
+			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout)) && !runs.Completed {
+				experimentRunsID = append(experimentRunsID, runs.ExperimentRunID)
+			}
+		}
+
+		// Check if experiment run count is 0 and if it's not a cron experiment
+		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
+			return false, fmt.Errorf("no running or timeout experiments found")
+		}
+	} else if experimentRunID != nil && *experimentRunID != "" {
+		experimentRunsID = []string{*experimentRunID}
+	}
+
+	for _, runID := range experimentRunsID {
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, query, &runID, experiment, username, projectID, r)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
 }

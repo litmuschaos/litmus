@@ -14,10 +14,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	choas_experiment_run "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
+	choasExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run/model/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
-	choas_experiment_run "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run"
-	choasExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/choas_experiment_run/model/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbOperationsChaosExpRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
@@ -207,7 +207,9 @@ func TestChaosExperimentRunHandler_GetExperimentRun(t *testing.T) {
 	for _, tc := range tests {
 		tc.given()
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := chaosExperimentRunHandler.GetExperimentRun(tc.args.ctx, tc.args.projectID, tc.args.experimentRunID)
+			experimentRunID := tc.args.experimentRunID
+			experimentRunUUID := uuid.NewString()
+			_, err := chaosExperimentRunHandler.GetExperimentRun(tc.args.ctx, tc.args.projectID, &experimentRunID, &experimentRunUUID)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentRunHandler.GetExperimentRun() error = %v, wantErr %v", err, tc.wantErr)
 				return

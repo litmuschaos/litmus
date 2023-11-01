@@ -39,16 +39,18 @@ export function useAppStore(): AppStoreContextProps {
 
 export const AppStoreProvider: React.FC<AppStoreContextProps> = ({ children }) => {
   const userDetails = getUserDetails();
-  const tokenDecode: DecodedTokenType = jwtDecode(userDetails.accessToken);
+  const tokenDecode: DecodedTokenType | undefined = userDetails.accessToken
+    ? jwtDecode(userDetails.accessToken)
+    : undefined;
   const [appStore, setAppStore] = React.useState<AppStoreContextProps>({
     projectID: userDetails.projectID,
     projectRole: userDetails.projectRole,
     currentUserInfo: {
-      ID: tokenDecode.uid,
-      username: tokenDecode.username,
-      userRole: tokenDecode.role
+      ID: tokenDecode?.uid ?? '',
+      username: tokenDecode?.username ?? '',
+      userRole: tokenDecode?.role ?? ''
     },
-    renderUrl: `/account/${tokenDecode.uid}`,
+    renderUrl: `/account/${tokenDecode?.uid}`,
     matchPath: '/account/:accountID',
     updateAppStore: () => void 0
   });

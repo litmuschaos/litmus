@@ -159,7 +159,7 @@ func (ev *subscriberEvents) WorkflowEventHandler(workflowObj *v1alpha1.Workflow,
 	status := updateWorkflowStatus(workflowObj.Status.Phase)
 
 	finishedTime := StrConvTime(workflowObj.Status.FinishedAt.Unix())
-	if eventType == "STOPPED" {
+	if workflowObj.Spec.Shutdown.Enabled() {
 		status = "Stopped"
 		finishedTime = StrConvTime(time.Now().Unix())
 		nodes[workflowObj.Name] = types.Node{
@@ -214,6 +214,7 @@ func (ev *subscriberEvents) SendWorkflowUpdates(infraData map[string]string, eve
 					nodeData := event.Nodes[key]
 					nodeData.Phase = "Stopped"
 					event.Nodes[key] = nodeData
+					nodeData.FinishedAt = event.FinishedAt
 				}
 			}
 		}

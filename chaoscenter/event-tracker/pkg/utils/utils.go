@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"github.com/sirupsen/logrus"
 
@@ -21,16 +21,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
 	"k8s.io/client-go/dynamic"
-)
-
-var (
-	InfraNamespace = os.Getenv("INFRA_NAMESPACE")
-	Version        = os.Getenv("VERSION")
 )
 
 const (
@@ -67,7 +61,7 @@ func cases(key string, value string, operator string) bool {
 }
 
 func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{}, oldData interface{}) bool {
-	final_result := false
+	finalResult := false
 	if etp.Spec.ConditionType == "and" {
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
@@ -84,18 +78,16 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 
 			if newDataResult != oldDataResult {
 				if condition.Operator == "Change" {
-					final_result = true
+					finalResult = true
 				} else {
 					str := fmt.Sprintf("%v", newDataResult)
 					if val := cases(str, *condition.Value, condition.Operator); !val {
-						final_result = val
+						finalResult = val
 						break
 					} else if val {
-						final_result = true
+						finalResult = true
 					}
 				}
-			} else {
-				logrus.Println("no changes in the resource")
 			}
 		}
 	} else if etp.Spec.ConditionType == "or" {
@@ -113,23 +105,21 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 
 			if newDataResult != oldDataResult {
 				if condition.Operator == "Change" {
-					final_result = true
+					finalResult = true
 				} else {
 					str := fmt.Sprintf("%v", newDataResult)
 					if val := cases(str, *condition.Value, condition.Operator); val {
-						final_result = val
+						finalResult = val
 					}
 				}
-			} else {
-				logrus.Println("no changes in the resource")
 			}
 		}
 	}
 
-	return final_result
+	return finalResult
 }
 
-func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, workflowid string) error {
+func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, experimentId string) error {
 	restConfig, err := k8s.GetKubeConfig()
 	if err != nil {
 		return err
@@ -141,19 +131,19 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 	}
 
 	deploymentRes := schema.GroupVersionResource{Group: "eventtracker.litmuschaos.io", Version: "v1", Resource: "eventtrackerpolicies"}
-	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(InfraNamespace).List(context.TODO(), metav1.ListOptions{})
+	deploymentConfigList, err := clientSet.Resource(deploymentRes).Namespace(Config.InfraNamespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
 	}
 
 	if len(deploymentConfigList.Items) == 0 {
-		logrus.Print("No event-tracker policy(s) found in " + InfraNamespace + " namespace")
+		logrus.Infof("No event-tracker policy(s) found in %s namespace", Config.InfraNamespace)
 		return nil
 	}
 
 	for _, ep := range deploymentConfigList.Items {
 
-		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(InfraNamespace).Get(context.TODO(), ep.GetName(), metav1.GetOptions{})
+		eventTrackerPolicy, err := clientSet.Resource(deploymentRes).Namespace(Config.InfraNamespace).Get(context.TODO(), ep.GetName(), metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
@@ -255,98 +245,112 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 			return errors.New("resource not supported")
 		}
 
+		logFields := logrus.Fields{
+			"resourceType": resourceType,
+			"resourceName": resourceName,
+			"namespace":    Config.InfraNamespace,
+			"experimentId": experimentId,
+			"policyName":   etp.GetName(),
+		}
+
 		check := conditionChecker(etp, newDataInterface, oldDataInterface)
 
-		if check == true {
+		if check {
 			etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
 				TimeStamp:    time.Now().Format(time.RFC850),
 				Resource:     resourceType,
 				ResourceName: resourceName,
 				Result:       ConditionPassed,
-				WorkflowID:   workflowid,
+				ExperimentID: experimentId,
 				IsTriggered:  "false",
 			})
 
 			// Updating EventTrackerPolicy
-			var unstruc unstructured.Unstructured
+			var us unstructured.Unstructured
 			data, err = json.Marshal(etp)
 			if err != nil {
 				return err
 			}
 
-			err = json.Unmarshal(data, &unstruc)
+			err = json.Unmarshal(data, &us)
 			if err != nil {
 				return err
 			}
 
-			_, err = clientSet.Resource(deploymentRes).Namespace(InfraNamespace).Update(context.TODO(), &unstruc, metav1.UpdateOptions{})
+			_, err = clientSet.Resource(deploymentRes).Namespace(Config.InfraNamespace).Update(context.TODO(), &us, metav1.UpdateOptions{})
 			if err != nil {
 				return err
 			}
 
-			logrus.Print("EventTrackerPolicy updated")
+			logrus.WithFields(logFields).Infof("Policy conditions are matched with the changes in %s", resourceType)
 		} else {
-			logrus.Println("Condition failed for resource name:", resourceName, " resource type:", resourceType)
+			logrus.WithFields(logFields).Infof("Policy conditions are not matched with the changes in %s", resourceType)
 		}
 	}
 
 	return nil
 }
 
-func getAgentConfigMapData() (string, string, string, error) {
+func getInfraData() (string, string, string, error) {
 	clientSet, err := k8s.K8sClient()
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", fmt.Errorf("failed to get Kubernetes clientset: %v", err)
 	}
 
-	getCM, err := clientSet.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
+	getCM, err := clientSet.CoreV1().ConfigMaps(Config.InfraNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
+	if err != nil {
+		return "", "", "", fmt.Errorf("failed to get ConfigMap: %v", err)
+	}
+
 	if k8sErrors.IsNotFound(err) {
-		return "", "", "", errors.New(AgentConfigName + " configmap not found")
-	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
-		getSecret, err := clientSet.CoreV1().Secrets(InfraNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
-		if err != nil {
-			return "", "", "", err
-		}
-		if k8sErrors.IsNotFound(err) {
-			return "", "", "", errors.New(AgentSecretName + " secret not found")
-		}
-
-		return string(getSecret.Data["ACCESS_KEY"]), string(getSecret.Data["CLUSTER_ID"]), getCM.Data["SERVER_ADDR"], nil
-	} else if err != nil {
-		return "", "", "", err
+		return "", "", "", fmt.Errorf("%s configmap not found", AgentConfigName)
 	}
 
-	return "", "", "", nil
+	if getCM.Data["IS_INFRA_CONFIRMED"] != "true" {
+		return "", "", "", fmt.Errorf("infrastructure not confirmed")
+	}
+
+	getSecret, err := clientSet.CoreV1().Secrets(Config.InfraNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
+	if err != nil {
+		return "", "", "", fmt.Errorf("failed to get Secret: %v", err)
+	}
+
+	if k8sErrors.IsNotFound(err) {
+		return "", "", "", fmt.Errorf("%s secret not found", AgentSecretName)
+	}
+
+	return string(getSecret.Data["ACCESS_KEY"]), string(getSecret.Data["INFRA_ID"]), getCM.Data["SERVER_ADDR"], nil
 }
 
 // SendRequest Function to send request to litmus graphql server
-func SendRequest(workflowID string) (string, error) {
-	accessKey, clusterID, serverAddr, err := getAgentConfigMapData()
+func SendRequest(experimentId string) (string, error) {
+	accessKey, clusterID, serverAddr, err := getInfraData()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to get infra data: %v", err)
 	}
 
-	payload := `{"query": "mutation { gitopsNotifier(clusterInfo: { infraID: \"` + clusterID + `\", version: \"` + Version + `\", accessKey: \"` + accessKey + `\"}, experimentID: \"` + workflowID + `\")\n}"}`
-	req, err := http.NewRequest("POST", serverAddr, bytes.NewBuffer([]byte(payload)))
+	payload := `{"query": "mutation { gitopsNotifier(clusterInfo: { infraID: \"` + clusterID + `\", version: \"` + Config.Version + `\", accessKey: \"` + accessKey + `\"}, experimentID: \"` + experimentId + `\")\n}"}`
+
+	req, err := http.NewRequest(http.MethodPost, serverAddr, bytes.NewBuffer([]byte(payload)))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create request: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to send request: %v", err)
 	}
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return "URL is not reachable or Bad request", nil
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to read response body: %v", err)
 	}
 
 	return string(body), nil

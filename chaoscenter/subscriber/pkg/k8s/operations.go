@@ -206,11 +206,12 @@ func (k8s *k8sSubscriber) AgentRegister(infraData map[string]string) (bool, erro
 
 func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	ctx := context.TODO()
+
 	logrus.Info("Applying request for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 	if requestType == "create" {
 		response, err := dr.Create(ctx, obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
-			// This doesnt ever happen even if it does already exist
+			// This doesn't ever happen even if it does already exist
 			logrus.Info("Already exists")
 			return nil, nil
 		}
@@ -253,7 +254,6 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			}
 			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		} else if obj.GetLabels() != nil {
-			fmt.Println(obj)
 			objLabels := obj.GetLabels()
 			delete(objLabels, "updated_by")
 			err = dr.DeleteCollection(ctx, metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: labels.FormatLabels(objLabels)})
@@ -337,7 +337,6 @@ func (k8s *k8sSubscriber) AgentOperations(infraAction types.Action) (*unstructur
 	if err != nil {
 		return nil, err
 	}
-
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace

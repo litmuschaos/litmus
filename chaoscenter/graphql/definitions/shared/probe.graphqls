@@ -288,7 +288,6 @@ input KubernetesHTTPProbeRequest {
   insecureSkipVerify: Boolean
 }
 
-
 """
 Defines the properties of the comparator
 """
@@ -325,8 +324,6 @@ input ComparatorInput {
   criteria: String!
 }
 
-
-
 """
 Defines the Executed by which experiment details for Probes
 """
@@ -349,27 +346,26 @@ type ExecutedByExperiment {
   updatedBy: UserDetails
 }
 
-
 """
 Defines the Execution History of experiment referenced by the Probe
 """
 type ExecutionHistory {
-"""
-Probe Mode
-"""
-mode: Mode!
-"""
-Fault Name
-"""
-faultName: String!
-"""
-Fault Status
-"""
-status: Status!
-"""
-Fault executed by which experiment
-"""
-executedByExperiment: ExecutedByExperiment!
+  """
+  Probe Mode
+  """
+  mode: Mode!
+  """
+  Fault Name
+  """
+  faultName: String!
+  """
+  Fault Status
+  """
+  status: Status!
+  """
+  Fault executed by which experiment
+  """
+  executedByExperiment: ExecutedByExperiment!
 }
 """
 Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
@@ -724,6 +720,10 @@ input K8SProbeRequest {
   """
   namespace: String
   """
+  Resource Names of the Probe
+  """
+  resourceNames: String
+  """
   Field Selector of the Probe
   """
   fieldSelector: String
@@ -841,7 +841,6 @@ input KubernetesCMDProbeRequest {
   source: String
 }
 
-
 """
 Defines the Kubernetes HTTP probe properties
 """
@@ -892,7 +891,6 @@ type KubernetesHTTPProbe implements CommonProbeProperties {
   insecureSkipVerify: Boolean
 }
 
-
 """
 Defines the input for CMD probe properties
 """
@@ -942,7 +940,6 @@ input CMDProbeRequest {
   """
   source: String
 }
-
 
 """
 Defines the K8S probe properties
@@ -996,6 +993,10 @@ type K8SProbe implements CommonProbeProperties {
   Namespace of the Probe
   """
   namespace: String
+  """
+  Resource Names of the Probe
+  """
+  resourceNames: String
   """
   Field Selector of the Probe
   """
@@ -1060,8 +1061,12 @@ extend type Query {
   """
   Returns the list of Probes based on various filter parameters
   """
-  listProbes(projectID: ID!,  infrastructureType: InfrastructureType, probeNames: [ID!], filter: ProbeFilterInput): [Probe]!
-    @authorized
+  listProbes(
+    projectID: ID!
+    infrastructureType: InfrastructureType
+    probeNames: [ID!]
+    filter: ProbeFilterInput
+  ): [Probe]! @authorized
 
   """
   Returns a single Probe based on ProbeName and various filter parameters
@@ -1071,18 +1076,14 @@ extend type Query {
   """
   Returns the Probe YAML based on ProbeName which can be used in ChaosEngine manifest
   """
-  getProbeYAML(
-    projectID: ID!
-    request: GetProbeYAMLRequest!
-  ): String! @authorized
+  getProbeYAML(projectID: ID!, request: GetProbeYAMLRequest!): String!
+    @authorized
 
   """
   Returns all the reference of the Probe based on ProbeName
   """
-  getProbeReference(
-    projectID: ID!
-    probeName: ID!
-  ): GetProbeReferenceResponse! @authorized
+  getProbeReference(projectID: ID!, probeName: ID!): GetProbeReferenceResponse!
+    @authorized
 
   """
   Returns all the Probes attached to the requested Experiment Run
@@ -1096,30 +1097,22 @@ extend type Query {
   """
   Validates if a probe is already present, returns true if unique
   """
-  validateUniqueProbe(
-    projectID: ID!
-    probeName: ID!
-  ): Boolean! @authorized
+  validateUniqueProbe(projectID: ID!, probeName: ID!): Boolean! @authorized
 }
 
 extend type Mutation {
   """
   Creates a new Probe
   """
-  addProbe(request: ProbeRequest!, projectID: ID!): Probe!
-    @authorized
+  addProbe(request: ProbeRequest!, projectID: ID!): Probe! @authorized
 
   """
   Update the configuration of a Probe
   """
-  updateProbe(
-    request: ProbeRequest!
-    projectID: ID!
-  ): String! @authorized
+  updateProbe(request: ProbeRequest!, projectID: ID!): String! @authorized
 
   """
   Delete a Probe
   """
-  deleteProbe(probeName: ID!, projectID: ID!): Boolean!
-    @authorized
+  deleteProbe(probeName: ID!, projectID: ID!): Boolean! @authorized
 }

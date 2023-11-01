@@ -38,6 +38,21 @@ func (utils *subscriberUtils) WorkflowRequest(agentData map[string]string, reque
 		}
 
 		logrus.Info("events delete name: ", wfOb.Name, "namespace: ", wfOb.Namespace)
+	} else if requestType == "workflow_run_stop" {
+		wfOb, err := events.GetWorkflowObj(externalData)
+		if err != nil {
+			return err
+		}
+		err = events.StopChaosEngineState(agentData["INFRA_NAMESPACE"], &externalData)
+		if err != nil {
+			logrus.Info("failed to stop chaosEngine for : ", wfOb.Name, " namespace: ", wfOb.Namespace, " : ", err)
+		}
+		err = events.StopWorkflow(wfOb.Name, wfOb.Namespace)
+		if err != nil {
+			logrus.Info("failed to stop experiment: ", wfOb.Name, " namespace: ", wfOb.Namespace, " : ", err)
+		}
+		logrus.Info("events stop name: ", wfOb.Name, " namespace: ", wfOb.Namespace)
+
 	}
 
 	return nil

@@ -127,6 +127,7 @@ export function getLazyProbe({
             group
             version
             resource
+            resourceNames
             namespace
             fieldSelector
             labelSelector
@@ -289,6 +290,7 @@ export function getK8SProbeProperties({
             group
             version
             resource
+            resourceNames
             namespace
             fieldSelector
             labelSelector
@@ -433,6 +435,7 @@ export function getProbeAllProperties({
             group
             version
             resource
+            resourceNames
             namespace
             fieldSelector
             labelSelector

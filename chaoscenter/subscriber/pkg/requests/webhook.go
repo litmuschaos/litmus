@@ -127,9 +127,9 @@ func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r t
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 		_, err := req.subscriberK8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
 		if err != nil {
-			return errors.New("error performing infra operationn: " + err.Error())
+			return errors.New("error performing infra operation: " + err.Error())
 		}
-	} else if strings.Index("workflow_delete workflow_run_delete ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+	} else if strings.Index("workflow_delete workflow_run_delete workflow_run_stop ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 
 		err := req.subscriberUtils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
 		if err != nil {
