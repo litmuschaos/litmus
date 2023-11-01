@@ -199,9 +199,9 @@ func (ev *subscriberEvents) StopChaosEngineState(namespace string, workflowRunID
 }
 
 // StopWorkflow will patch the workflow based on workflow name using the shutdown strategy
-func StopWorkflow(wfName string, namespace string) error {
+func (ev *subscriberEvents) StopWorkflow(wfName string, namespace string) error {
 
-	conf, err := k8s.GetKubeConfig()
+	conf, err := ev.subscriberK8s.GetKubeConfig()
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(namespace)
 	patch := []byte(`{"spec":{"shutdown":"Stop"}}`)
 	wf, err := wfClient.Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})

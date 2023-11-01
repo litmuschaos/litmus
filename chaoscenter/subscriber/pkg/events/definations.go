@@ -22,6 +22,7 @@ type SubscriberEvents interface {
 	WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error)
 	SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error)
 	WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent)
+	StopWorkflow(wfName string, namespace string) error
 }
 
 type subscriberEvents struct {
