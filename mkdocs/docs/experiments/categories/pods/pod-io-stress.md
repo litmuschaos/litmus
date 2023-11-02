@@ -232,7 +232,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_PERCENTAGE
           value: '10' #in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Filesystem Utilization Bytes
@@ -268,7 +268,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_BYTES
           value: '1' #in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -308,7 +308,7 @@ spec:
         - name: SOCKET_PATH
           value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mount Path
@@ -341,7 +341,7 @@ spec:
         - name: VOLUME_MOUNT_PATH
           value: '/some-dir-in-container'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Workers For Stress
@@ -374,7 +374,7 @@ spec:
         - name: NUMBER_OF_WORKERS
           value: '4'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pumba Chaos Library
@@ -408,5 +408,5 @@ spec:
         - name: LIB
           value: 'pumba'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

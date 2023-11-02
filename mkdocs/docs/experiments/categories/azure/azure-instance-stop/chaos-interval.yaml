@@ -17,7 +17,7 @@ spec:
           value: '10'
          # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: AZURE_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         - name: RESOURCE_GROUP

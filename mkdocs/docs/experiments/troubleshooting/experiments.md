@@ -298,5 +298,5 @@ We can fix the above failure by avoiding istio sidecar for the chaos pods. Refer
               sidecar.istio.io/inject: "false"
             env:
             - name: TOTAL_CHAOS_DURATION
-              VALUE: '60'
+              value: '60'
     ```

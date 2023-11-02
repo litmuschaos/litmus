@@ -19,4 +19,4 @@ spec:
         - name: RESOURCE_GROUP
           value: '<resource group of VIRTUAL_DISK_NAMES>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

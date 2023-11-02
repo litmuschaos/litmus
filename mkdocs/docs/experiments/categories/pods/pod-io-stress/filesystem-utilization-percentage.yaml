@@ -22,4 +22,4 @@ spec:
         - name: FILESYSTEM_UTILIZATION_PERCENTAGE
           value: '10' #in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
