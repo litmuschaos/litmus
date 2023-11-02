@@ -7,9 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"subscriber/pkg/graphql"
-
-	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
@@ -39,12 +36,12 @@ var (
 )
 
 // WorkflowEventWatcher initializes the Argo Workflow event watcher
-func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
+func (ev *subscriberEvents) WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
 	startTime, err := strconv.Atoi(infraData["START_TIME"])
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to parse START_TIME")
 	}
-	cfg, err := k8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not get kube config")
 	}
@@ -67,15 +64,15 @@ func WorkflowEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent,
 		informer = f.Argoproj().V1alpha1().Workflows().Informer()
 		// Start Event Watch
 	}
-	go startWatchWorkflow(stopCh, informer, stream, int64(startTime))
+	go ev.startWatchWorkflow(stopCh, informer, stream, int64(startTime))
 }
 
 // handles the different events events - add, update and delete
-func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
+func (ev *subscriberEvents) startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
 			workflowObj := obj.(*v1alpha1.Workflow)
-			workflow, err := WorkflowEventHandler(workflowObj, "ADD", startTime)
+			workflow, err := ev.WorkflowEventHandler(workflowObj, "ADD", startTime)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -86,7 +83,7 @@ func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, str
 		},
 		UpdateFunc: func(oldObj, obj interface{}) {
 			workflowObj := obj.(*v1alpha1.Workflow)
-			workflow, err := WorkflowEventHandler(workflowObj, "UPDATE", startTime)
+			workflow, err := ev.WorkflowEventHandler(workflowObj, "UPDATE", startTime)
 			if err != nil {
 				logrus.Error(err)
 			}
@@ -100,7 +97,7 @@ func startWatchWorkflow(stopCh <-chan struct{}, s cache.SharedIndexInformer, str
 }
 
 // WorkflowEventHandler is responsible for extracting the required data from the event and streaming
-func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
+func (ev *subscriberEvents) WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, startTime int64) (types.WorkflowEvent, error) {
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
 			"uid":         string(workflowObj.ObjectMeta.UID),
@@ -114,7 +111,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 		return types.WorkflowEvent{}, errors.New("startTime of subscriber is greater than experiment creation timestamp")
 	}
 
-	cfg, err := k8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not get kube config")
 	}
@@ -137,7 +134,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 		// considering chaos events has only 1 artifact with manifest as raw data
 		if nodeStatus.Type == "Pod" && nodeStatus.Inputs != nil && len(nodeStatus.Inputs.Artifacts) == 1 && nodeStatus.Inputs.Artifacts[0].Raw != nil {
 			//extracts chaos data
-			nodeType, cd, err = CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
+			nodeType, cd, err = ev.CheckChaosData(nodeStatus, workflowObj.ObjectMeta.Namespace, chaosClient)
 			if err != nil {
 				logrus.WithError(err).Print("Failed to parse ChaosEngine CRD")
 			}
@@ -202,7 +199,7 @@ func WorkflowEventHandler(workflowObj *v1alpha1.Workflow, eventType string, star
 }
 
 // SendWorkflowUpdates generates graphql mutation to send events updates to graphql server
-func SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error) {
+func (ev *subscriberEvents) SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent) (string, error) {
 	if wfEvent, ok := eventMap[event.UID]; ok {
 		for key, node := range wfEvent.Nodes {
 			if node.Type == "ChaosEngine" && node.ChaosExp != nil && event.Nodes[key].ChaosExp == nil {
@@ -230,17 +227,17 @@ func SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent)
 	eventMap[event.UID] = event
 
 	// generate graphql payload
-	payload, err := GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "false", event)
+	payload, err := ev.GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "false", event)
 	if err != nil {
 		return "", errors.New("Error while generating graphql payload from the workflow event" + err.Error())
 	}
 
 	if event.FinishedAt != "" {
-		payload, err = GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "true", event)
+		payload, err = ev.GenerateWorkflowPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], "true", event)
 		delete(eventMap, event.UID)
 	}
 
-	body, err := graphql.SendRequest(infraData["SERVER_ADDR"], payload)
+	body, err := ev.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
 	if err != nil {
 		return "", err
 	}
@@ -248,10 +245,10 @@ func SendWorkflowUpdates(infraData map[string]string, event types.WorkflowEvent)
 	return body, nil
 }
 
-func WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent) {
+func (ev *subscriberEvents) WorkflowUpdates(infraData map[string]string, event chan types.WorkflowEvent) {
 	// listen on the channel for streaming event updates
 	for eventData := range event {
-		response, err := SendWorkflowUpdates(infraData, eventData)
+		response, err := ev.SendWorkflowUpdates(infraData, eventData)
 		if err != nil {
 			logrus.Print(err.Error())
 		}

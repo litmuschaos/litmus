@@ -8,8 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"subscriber/pkg/graphql"
-
 	"github.com/sirupsen/logrus"
 
 	"subscriber/pkg/types"
@@ -26,8 +24,8 @@ var (
 )
 
 // GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
-func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
-	conf, err := GetKubeConfig()
+func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
+	conf, err := k8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -41,14 +39,14 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 		Version:  request.KubeGVRRequest.Version,
 		Resource: request.KubeGVRRequest.Resource,
 	}
-	_, dynamicClient, err := GetDynamicAndDiscoveryClient()
+	_, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
 	}
 	var ObjData []*types.KubeObject
 
 	if strings.ToLower(InfraScope) == "namespace" {
-		dataList, err := GetObjectDataByNamespace(InfraNamespace, dynamicClient, resourceType)
+		dataList, err := k8s.GetObjectDataByNamespace(InfraNamespace, dynamicClient, resourceType)
 		if err != nil {
 			return nil, err
 		}
@@ -65,7 +63,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 
 		if len(namespace.Items) > 0 {
 			for _, namespace := range namespace.Items {
-				podList, err := GetObjectDataByNamespace(namespace.GetName(), dynamicClient, resourceType)
+				podList, err := k8s.GetObjectDataByNamespace(namespace.GetName(), dynamicClient, resourceType)
 				if err != nil {
 					return nil, err
 				}
@@ -90,7 +88,7 @@ func GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, er
 }
 
 // GetObjectDataByNamespace uses dynamic client to fetch Kubernetes Objects data.
-func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, resourceType schema.GroupVersionResource) ([]types.ObjectData, error) {
+func (k8s *k8sSubscriber) GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, resourceType schema.GroupVersionResource) ([]types.ObjectData, error) {
 	list, err := dynamicClient.Resource(resourceType).Namespace(namespace).List(context.TODO(), metav1.ListOptions{})
 	var kubeObjects []types.ObjectData
 	if err != nil {
@@ -104,14 +102,14 @@ func GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface,
 			APIVersion:              list.GetAPIVersion(),
 			CreationTimestamp:       list.GetCreationTimestamp(),
 			TerminationGracePeriods: list.GetDeletionGracePeriodSeconds(),
-			Labels:                  updateLabels(list.GetLabels()),
+			Labels:                  k8s.updateLabels(list.GetLabels()),
 		}
 		kubeObjects = append(kubeObjects, listInfo)
 	}
 	return kubeObjects, nil
 }
 
-func updateLabels(labels map[string]string) []string {
+func (k8s *k8sSubscriber) updateLabels(labels map[string]string) []string {
 	var updatedLabels []string
 
 	for k, v := range labels {
@@ -120,13 +118,13 @@ func updateLabels(labels map[string]string) []string {
 	return updatedLabels
 }
 
-func GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
+func (k8s *k8sSubscriber) GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest types.KubeObjRequest) ([]byte, error) {
 	infraID := `{infraID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
-	kubeObj, err := GetKubernetesObjects(kubeobjectrequest)
+	kubeObj, err := k8s.GetKubernetesObjects(kubeobjectrequest)
 	if err != nil {
 		return nil, err
 	}
-	processed, err := graphql.MarshalGQLData(kubeObj)
+	processed, err := k8s.gqlSubscriberServer.MarshalGQLData(kubeObj)
 	if err != nil {
 		return nil, err
 	}
@@ -137,15 +135,15 @@ func GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest
 }
 
 // SendKubeObjects generates graphql mutation to send kubernetes objects data to graphql server
-func SendKubeObjects(infraData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
+func (k8s *k8sSubscriber) SendKubeObjects(infraData map[string]string, kubeobjectrequest types.KubeObjRequest) error {
 	// generate graphql payload
-	payload, err := GenerateKubeObject(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], kubeobjectrequest)
+	payload, err := k8s.GenerateKubeObject(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], kubeobjectrequest)
 	if err != nil {
 		logrus.WithError(err).Print("Error while getting KubeObject Data")
 		return err
 	}
 
-	body, err := graphql.SendRequest(infraData["SERVER_ADDR"], payload)
+	body, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
 	if err != nil {
 		logrus.Print(err.Error())
 		return err
