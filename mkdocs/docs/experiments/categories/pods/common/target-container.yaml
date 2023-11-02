@@ -13,12 +13,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-delete-sa
   experiments:
-  - name: pod-delete
-    spec:
-      components:
-        env:
-        # name of the target container
-        - name: TARGET_CONTAINER
-          value: 'nginx'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: pod-delete
+      spec:
+        components:
+          env:
+            # name of the target container
+            - name: TARGET_CONTAINER
+              value: "nginx"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

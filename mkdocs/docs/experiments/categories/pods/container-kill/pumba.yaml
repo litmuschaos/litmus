@@ -12,13 +12,13 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # name of the lib
-        # supoorts pumba and litmus
-        - name: LIB
-          value: 'pumba'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # name of the lib
+            # supoorts pumba and litmus
+            - name: LIB
+              value: "pumba"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

@@ -12,15 +12,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-  - name: disk-fill
-    spec:
-      components:
-        env:
-        # provide the name of container runtime, it supports docker, containerd, crio
-        - name: CONTAINER_RUNTIME
-          value: 'containerd'
-        # provide the socket file path
-        - name: SOCKET_PATH
-          value: '/run/containerd/containerd.sock'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: disk-fill
+      spec:
+        components:
+          env:
+            # provide the name of container runtime, it supports docker, containerd, crio
+            - name: CONTAINER_RUNTIME
+              value: "containerd"
+            # provide the socket file path
+            - name: SOCKET_PATH
+              value: "/run/containerd/containerd.sock"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

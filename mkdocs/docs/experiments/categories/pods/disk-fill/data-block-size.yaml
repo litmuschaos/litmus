@@ -12,12 +12,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-  - name: disk-fill
-    spec:
-      components:
-        env:
-        ## size of data block used to fill the disk
-        - name: DATA_BLOCK_SIZE
-          value: '256' #in KB
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: disk-fill
+      spec:
+        components:
+          env:
+            ## size of data block used to fill the disk
+            - name: DATA_BLOCK_SIZE
+              value: "256" #in KB
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

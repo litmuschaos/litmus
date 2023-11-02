@@ -12,13 +12,13 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # delay between each iteration of chaos
-        - name: CHAOS_INTERVAL
-          value: '15'
-        # time duration for the chaos execution
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # delay between each iteration of chaos
+            - name: CHAOS_INTERVAL
+              value: "15"
+            # time duration for the chaos execution
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

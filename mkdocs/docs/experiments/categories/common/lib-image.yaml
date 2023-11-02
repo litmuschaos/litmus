@@ -14,12 +14,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # nane of the lib image
-        - name: LIB_IMAGE
-          value: 'litmuschaos/go-runner:latest'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # nane of the lib image
+            - name: LIB_IMAGE
+              value: "litmuschaos/go-runner:latest"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

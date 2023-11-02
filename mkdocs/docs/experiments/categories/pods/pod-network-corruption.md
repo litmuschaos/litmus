@@ -4,29 +4,26 @@
 - It can test the application's resilience to lossy/flaky network
 
 !!! tip "Scenario: Corrupt the network packets of target pod"
-    ![Pod Network Corruption](../../images/network-chaos.png)
+![Pod Network Corruption](../../images/network-chaos.png)
 
 ## Uses
 
 ??? info "View the uses of the experiment"
-    coming soon
+coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites"
-    - Ensure that Kubernetes Version > 1.16
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a>
+??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>pod-network-corruption</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-network-corruption/experiment.yaml">here</a>
 
 ## Default Validations
 
 ??? info "View the default validations"
-    The application pods should be in running state before and after chaos injection.
+The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
 !!! tip "NOTE"
-    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -118,7 +115,7 @@
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-    <h2>Optional Fields</h2>
+<h2>Optional Fields</h2>
 
     <table>
       <tr>
@@ -175,7 +172,7 @@
         <td> SOURCE_PORTS </td>
         <td> ports of the target application, the accessibility to which is impacted </td>
         <td> comma separated port(s) can be provided. If not provided, it will induce network chaos for all ports</td>
-      </tr>  
+      </tr>
       <tr>
         <td> DESTINATION_PORTS </td>
         <td> ports of the destination services or pods or the CIDR blocks(range of IPs), the accessibility to which is impacted </td>
@@ -225,7 +222,8 @@ It defines the network packet corruption percentage to be injected in the target
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/network-corruption.yaml yaml)
+[embedmd]: # "pod-network-corruption/network-corruption.yaml yaml"
+
 ```yaml
 # it inject the network-corruption for the egress traffic
 apiVersion: litmuschaos.io/v1alpha1
@@ -241,15 +239,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # network packet corruption percentage
-        - name: NETWORK_PACKET_CORRUPTION_PERCENTAGE
-          value: '100' #in percentage
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # network packet corruption percentage
+            - name: NETWORK_PACKET_CORRUPTION_PERCENTAGE
+              value: "100" #in percentage
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Destination IPs And Destination Hosts
@@ -261,7 +259,8 @@ The network experiments interrupt traffic for all the IPs/hosts by default. The 
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/destination-ips-and-hosts.yaml yaml)
+[embedmd]: # "pod-network-corruption/destination-ips-and-hosts.yaml yaml"
+
 ```yaml
 # it inject the chaos for the egress traffic for specific ips/hosts
 apiVersion: litmuschaos.io/v1alpha1
@@ -277,18 +276,18 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # supports comma separated destination ips
-        - name: DESTINATION_IPS
-          value: '8.8.8.8,192.168.5.6'
-        # supports comma separated destination hosts
-        - name: DESTINATION_HOSTS
-          value: 'nginx.default.svc.cluster.local,google.com'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # supports comma separated destination ips
+            - name: DESTINATION_IPS
+              value: "8.8.8.8,192.168.5.6"
+            # supports comma separated destination hosts
+            - name: DESTINATION_HOSTS
+              value: "nginx.default.svc.cluster.local,google.com"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Source And Destination Ports
@@ -300,7 +299,8 @@ The network experiments interrupt traffic for all the source & destination ports
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/source-and-destination-ports.yaml yaml)
+[embedmd]: # "pod-network-corruption/source-and-destination-ports.yaml yaml"
+
 ```yaml
 # it inject the chaos for the ingrees and egress traffic for specific ports
 apiVersion: litmuschaos.io/v1alpha1
@@ -316,18 +316,18 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # supports comma separated source ports
-        - name: SOURCE_PORTS
-          value: '80'
-        # supports comma separated destination ports
-        - name: DESTINATION_PORTS
-          value: '8080,9000'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # supports comma separated source ports
+            - name: SOURCE_PORTS
+              value: "80"
+            # supports comma separated destination ports
+            - name: DESTINATION_PORTS
+              value: "8080,9000"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Blacklist Source and Destination Ports
@@ -339,7 +339,8 @@ By default, the network experiments disrupt traffic for all the source and desti
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/blacklist-source-and-destination-ports.yaml yaml)
+[embedmd]: # "pod-network-corruption/blacklist-source-and-destination-ports.yaml yaml"
+
 ```yaml
 # blacklist the source and destination ports
 apiVersion: litmuschaos.io/v1alpha1
@@ -355,18 +356,18 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # it will blacklist 80 and 8080 source ports
-        - name: SOURCE_PORTS
-          value: '!80,8080'
-        # it will blacklist 8080 and 9000 destination ports
-        - name: DESTINATION_PORTS
-          value: '!8080,9000'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # it will blacklist 80 and 8080 source ports
+            - name: SOURCE_PORTS
+              value: "!80,8080"
+            # it will blacklist 8080 and 9000 destination ports
+            - name: DESTINATION_PORTS
+              value: "!8080,9000"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Network Interface
@@ -375,7 +376,8 @@ The defined name of the ethernet interface, which is considered for shaping traf
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/network-interface.yaml yaml)
+[embedmd]: # "pod-network-corruption/network-interface.yaml yaml"
+
 ```yaml
 # provide the network interface
 apiVersion: litmuschaos.io/v1alpha1
@@ -391,15 +393,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # name of the network interface
-        - name: NETWORK_INTERFACE
-          value: 'eth0'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # name of the network interface
+            - name: NETWORK_INTERFACE
+              value: "eth0"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Container Runtime Socket Path
@@ -411,7 +413,8 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/container-runtime-and-socket-path.yaml yaml)
+[embedmd]: # "pod-network-corruption/container-runtime-and-socket-path.yaml yaml"
+
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -427,19 +430,19 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # runtime for the container
-        # supports docker, containerd, crio
-        - name: CONTAINER_RUNTIME
-          value: 'containerd'
-        # path of the socket file
-        - name: SOCKET_PATH
-          value: '/run/containerd/containerd.sock'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # runtime for the container
+            # supports docker, containerd, crio
+            - name: CONTAINER_RUNTIME
+              value: "containerd"
+            # path of the socket file
+            - name: SOCKET_PATH
+              value: "/run/containerd/containerd.sock"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Pumba Chaos Library
@@ -449,7 +452,8 @@ Provide the traffic control image via `TC_IMAGE` ENV for the pumba library.
 
 Use the following example to tune this:
 
-[embedmd]:# (pod-network-corruption/pumba-lib.yaml yaml)
+[embedmd]: # "pod-network-corruption/pumba-lib.yaml yaml"
+
 ```yaml
 # use pumba chaoslib for the network chaos
 apiVersion: litmuschaos.io/v1alpha1
@@ -465,18 +469,18 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-network-corruption-sa
   experiments:
-  - name: pod-network-corruption
-    spec:
-      components:
-        env:
-        # name of the chaoslib
-        # supports litmus and pumba lib
-        - name: LIB
-          value: 'pumba'
-        # image used for the traffic control in linux
-        # applicable for pumba lib only
-        - name: TC_IMAGE
-          value: 'gaiadocker/iproute2'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-network-corruption
+      spec:
+        components:
+          env:
+            # name of the chaoslib
+            # supports litmus and pumba lib
+            - name: LIB
+              value: "pumba"
+            # image used for the traffic control in linux
+            # applicable for pumba lib only
+            - name: TC_IMAGE
+              value: "gaiadocker/iproute2"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```

@@ -2,32 +2,29 @@
 
 - This experiment causes CPU resource exhaustion on the Kubernetes node. The experiment aims to verify resiliency of applications whose replicas may be evicted on account on nodes turning unschedulable (Not Ready) due to lack of CPU resources.
 - The CPU chaos is injected using a helper pod running the linux stress tool (a workload generator). The chaos is effected for a period equalling the TOTAL_CHAOS_DURATION
-Application implies services. Can be reframed as: Tests application resiliency upon replica evictions caused due to lack of CPU resources
+  Application implies services. Can be reframed as: Tests application resiliency upon replica evictions caused due to lack of CPU resources
 
-!!! tip "Scenario: Stress the CPU of node"    
-    ![Node CPU Hog](../../images/node-stress.png)
+!!! tip "Scenario: Stress the CPU of node"  
+ ![Node CPU Hog](../../images/node-stress.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
-    coming soon
+??? info "View the uses of the experiment"
+coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>node-cpu-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-cpu-hog/experiment.yaml">here</a> 
-    
+??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>node-cpu-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-cpu-hog/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
-    The target nodes should be in ready state before and after chaos injection.
+??? info "View the default validations"
+The target nodes should be in ready state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
-    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"  
+ If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -63,10 +60,10 @@ Application implies services. Can be reframed as: Tests application resiliency u
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -106,7 +103,7 @@ Application implies services. Can be reframed as: Tests application resiliency u
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-    <h2>Mandatory Fields</h2>
+<h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -160,12 +157,12 @@ Application implies services. Can be reframed as: Tests application resiliency u
         <td> Number of cores of node CPU to be consumed  </td>
         <td> Defaults to <code>2</code> </td>
         <td> </td>
-      </tr>  
+      </tr>
       <tr>
         <td> NODES_AFFECTED_PERC </td>
         <td> The Percentage of total nodes to target  </td>
         <td> Defaults to 0 (corresponds to 1 node), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple target pods </td>
@@ -177,7 +174,7 @@ Application implies services. Can be reframed as: Tests application resiliency u
 
 ### Common and Node specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.
 
 ### Node CPU Cores
 
@@ -185,7 +182,8 @@ It contains number of cores of node CPU to be consumed. It can be tuned via `NOD
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-core.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-core.yaml yaml"
+
 ```yaml
 # stress the cpu of the targeted nodes
 apiVersion: litmuschaos.io/v1alpha1
@@ -197,15 +195,15 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-cpu-hog-sa
   experiments:
-  - name: node-cpu-hog
-    spec:
-      components:
-        env:
-        # number of cpu cores to be stressed
-        - name: NODE_CPU_CORE
-          value: '2'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-cpu-hog
+      spec:
+        components:
+          env:
+            # number of cpu cores to be stressed
+            - name: NODE_CPU_CORE
+              value: "2"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Node CPU Load
@@ -214,7 +212,8 @@ It contains percentage of node CPU to be consumed. It can be tuned via `CPU_LOAD
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-load.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-cpu-hog/node-cpu-load.yaml yaml"
+
 ```yaml
 # stress the cpu of the targeted nodes by load percentage
 apiVersion: litmuschaos.io/v1alpha1
@@ -226,17 +225,17 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-cpu-hog-sa
   experiments:
-  - name: node-cpu-hog
-    spec:
-      components:
-        env:
-        # percentage of cpu to be stressed
-        - name: CPU_LOAD
-          value: "100"
-        # node cpu core should be provided as 0 for cpu load
-        # to work otherwise it will take cpu core as priority
-        - name: NODE_CPU_CORE
-          value: '0'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-cpu-hog
+      spec:
+        components:
+          env:
+            # percentage of cpu to be stressed
+            - name: CPU_LOAD
+              value: "100"
+            # node cpu core should be provided as 0 for cpu load
+            # to work otherwise it will take cpu core as priority
+            - name: NODE_CPU_CORE
+              value: "0"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```

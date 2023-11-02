@@ -4,30 +4,27 @@
 - The amount of io stress can be either specifed as the size in percentage of the total free space on the file system or simply in Gigabytes(GB). When provided both it will execute with the utilization percentage specified and non of them are provided it will execute with default value of 10%.
 - It tests application resiliency upon replica evictions caused due IO stress on the available Disk space.
 
-!!! tip "Scenario: Stress the IO of Node"    
-    ![Node IO Stress](../../images/node-stress.png)
+!!! tip "Scenario: Stress the IO of Node"  
+ ![Node IO Stress](../../images/node-stress.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
-    coming soon
+??? info "View the uses of the experiment"
+coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>node-io-stress</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-io-stress/experiment.yaml">here</a> 
-    
+??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>node-io-stress</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-io-stress/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
-    The target nodes should be in ready state before and after chaos injection.
+??? info "View the default validations"
+The target nodes should be in ready state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
-    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"  
+ If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -63,10 +60,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -106,7 +103,7 @@
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-    <h2>Mandatory Fields</h2>
+<h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -153,17 +150,17 @@
         <td> CPU </td>
         <td> Number of core of CPU to be used </td>
         <td> Default to 1 </td>
-      </tr>    
+      </tr>
       <tr>
         <td> NUMBER_OF_WORKERS </td>
         <td> It is the number of IO workers involved in IO disk stress </td>
         <td> Default to 4 </td>
-      </tr> 
+      </tr>
       <tr>
         <td> VM_WORKERS </td>
         <td> It is the number vm workers involved in IO disk stress </td>
         <td> Default to 1 </td>
-      </tr>     
+      </tr>
       <tr>
         <td> LIB  </td>
         <td> The chaos lib used to inject the chaos </td>
@@ -183,7 +180,7 @@
         <td> NODES_AFFECTED_PERC </td>
         <td> The Percentage of total nodes to target  </td>
         <td> Defaults to 0 (corresponds to 1 node), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple target pods </td>
@@ -195,17 +192,18 @@
 
 ### Common and Node specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.
 
 ### Filesystem Utilization Percentage
 
-It stresses the `FILESYSTEM_UTILIZATION_PERCENTAGE` percentage of total free space available in the node. 
+It stresses the `FILESYSTEM_UTILIZATION_PERCENTAGE` percentage of total free space available in the node.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-percentage.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-percentage.yaml yaml"
+
 ```yaml
-# stress the i/o of the targeted node with FILESYSTEM_UTILIZATION_PERCENTAGE of total free space 
+# stress the i/o of the targeted node with FILESYSTEM_UTILIZATION_PERCENTAGE of total free space
 # it is mutually exclusive with the FILESYSTEM_UTILIZATION_BYTES.
 # if both are provided then it will use FILESYSTEM_UTILIZATION_PERCENTAGE for stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -217,25 +215,26 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-io-stress-sa
   experiments:
-  - name: node-io-stress
-    spec:
-      components:
-        env:
-        # percentage of total free space of file system
-        - name: FILESYSTEM_UTILIZATION_PERCENTAGE
-          value: '10' # in percentage
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-io-stress
+      spec:
+        components:
+          env:
+            # percentage of total free space of file system
+            - name: FILESYSTEM_UTILIZATION_PERCENTAGE
+              value: "10" # in percentage
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Filesystem Utilization Bytes
 
-It stresses the `FILESYSTEM_UTILIZATION_BYTES` GB of the i/o of the targeted node. 
+It stresses the `FILESYSTEM_UTILIZATION_BYTES` GB of the i/o of the targeted node.
 It is mutually exclusive with the `FILESYSTEM_UTILIZATION_PERCENTAGE` ENV. If `FILESYSTEM_UTILIZATION_PERCENTAGE` ENV is set then it will use the percentage for the stress otherwise, it will stress the i/o based on `FILESYSTEM_UTILIZATION_BYTES` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-bytes.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/filesystem-utilization-bytes.yaml yaml"
+
 ```yaml
 # stress the i/o of the targeted node with given FILESYSTEM_UTILIZATION_BYTES
 # it is mutually exclusive with the FILESYSTEM_UTILIZATION_PERCENTAGE.
@@ -249,15 +248,15 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-io-stress-sa
   experiments:
-  - name: node-io-stress
-    spec:
-      components:
-        env:
-        # file system to be stress in GB
-        - name: FILESYSTEM_UTILIZATION_BYTES
-          value: '500' # in GB
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-io-stress
+      spec:
+        components:
+          env:
+            # file system to be stress in GB
+            - name: FILESYSTEM_UTILIZATION_BYTES
+              value: "500" # in GB
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Limit CPU Utilization
@@ -266,7 +265,8 @@ The CPU usage can be limit to `CPU` cpu while performing io stress. It can be tu
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/limit-cpu-utilization.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/limit-cpu-utilization.yaml yaml"
+
 ```yaml
 # limit the cpu uses to the provided value while performing io stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -278,24 +278,25 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-io-stress-sa
   experiments:
-  - name: node-io-stress
-    spec:
-      components:
-        env:
-        # number of cpu cores to be stressed
-        - name: CPU
-          value: '1' 
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-io-stress
+      spec:
+        components:
+          env:
+            # number of cpu cores to be stressed
+            - name: CPU
+              value: "1"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Workers For Stress
 
-The i/o and VM workers count for the stress can be tuned with `NUMBER_OF_WORKERS` and `VM_WORKERS` ENV respectively. 
+The i/o and VM workers count for the stress can be tuned with `NUMBER_OF_WORKERS` and `VM_WORKERS` ENV respectively.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/workers.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-io-stress/workers.yaml yaml"
+
 ```yaml
 # define the workers count for the i/o and vm
 apiVersion: litmuschaos.io/v1alpha1
@@ -307,16 +308,16 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-io-stress-sa
   experiments:
-  - name: node-io-stress
-    spec:
-      components:
-        env:
-        # total number of io workers involved in stress
-        - name: NUMBER_OF_WORKERS
-          value: '4' 
-          # total number of vm workers involved in stress
-        - name: VM_WORKERS
-          value: '1'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-io-stress
+      spec:
+        components:
+          env:
+            # total number of io workers involved in stress
+            - name: NUMBER_OF_WORKERS
+              value: "4"
+              # total number of vm workers involved in stress
+            - name: VM_WORKERS
+              value: "1"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```

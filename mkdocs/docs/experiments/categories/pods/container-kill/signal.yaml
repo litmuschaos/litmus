@@ -12,13 +12,13 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # signal passed while killing container
-        # defaults to SIGTERM
-        - name: SIGNAL
-          value: 'SIGKILL'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # signal passed while killing container
+            # defaults to SIGTERM
+            - name: SIGNAL
+              value: "SIGKILL"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

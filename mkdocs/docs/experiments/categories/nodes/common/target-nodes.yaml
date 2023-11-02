@@ -9,12 +9,12 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-cpu-hog-sa
   experiments:
-  - name: node-cpu-hog
-    spec:
-      components:
-        env:
-        # comma separated target node names
-        - name: TARGET_NODES
-          value: 'node01,node02'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-cpu-hog
+      spec:
+        components:
+          env:
+            # comma separated target node names
+            - name: TARGET_NODES
+              value: "node01,node02"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

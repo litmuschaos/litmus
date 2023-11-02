@@ -4,30 +4,27 @@
 - It tests deployment sanity (replica availability & uninterrupted service) and recovery workflow of the application
 - Good for testing recovery of pods having side-car containers
 
-!!! tip "Scenario: Kill target container"    
-    ![Container-Kill](../../images/container-kill.png)
+!!! tip "Scenario: Kill target container"  
+ ![Container-Kill](../../images/container-kill.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
-    coming soon
+??? info "View the uses of the experiment"
+coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>container-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/container-kill/experiment.yaml">here</a> 
+??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>container-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/container-kill/experiment.yaml">here</a>
 
 ## Default Validations
 
-??? info "View the default validations" 
-    The application pods should be in running state before and after chaos injection.
+??? info "View the default validations"
+The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
-    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"  
+ If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -64,10 +61,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -76,7 +73,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -119,8 +116,8 @@
 
 ## Experiment tunables
 
-??? info "check the experiment tunables" 
-    <h2>Optional Fields</h2>
+??? info "check the experiment tunables"
+<h2>Optional Fields</h2>
 
     <table>
       <tr>
@@ -147,7 +144,7 @@
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target </td>
         <td> Defaults to 0 (corresponds to 1 replica), provide numeric value only </td>
-      </tr> 
+      </tr>
       <tr>
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to container kill chaos</td>
@@ -194,13 +191,14 @@
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### Kill Specific Container
 
 It defines the name of the targeted container subjected to chaos. It can be tuned via `TARGET_CONTAINER` ENV. If `TARGET_CONTAINER` is provided as empty then it will use the first container of the targeted pod.
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/kill-specific-container.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/kill-specific-container.yaml yaml"
+
 ```yaml
 # kill the specific target container
 apiVersion: litmuschaos.io/v1alpha1
@@ -216,22 +214,23 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # name of the target container
-        - name: TARGET_CONTAINER
-          value: 'nginx'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # name of the target container
+            - name: TARGET_CONTAINER
+              value: "nginx"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Multiple Iterations Of Chaos
 
 The multiple iterations of chaos can be tuned via setting `CHAOS_INTERVAL` ENV. Which defines the delay between each iteration of chaos.
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/chaos-interval.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/chaos-interval.yaml yaml"
+
 ```yaml
 # defines delay between each successive iteration of the chaos
 apiVersion: litmuschaos.io/v1alpha1
@@ -247,16 +246,16 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # delay between each iteration of chaos
-        - name: CHAOS_INTERVAL
-          value: '15'
-        # time duration for the chaos execution
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # delay between each iteration of chaos
+            - name: CHAOS_INTERVAL
+              value: "15"
+            # time duration for the chaos execution
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Container Runtime Socket Path
@@ -266,7 +265,8 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 - `CONTAINER_RUNTIME`: It supports `docker`, `containerd`, and `crio` runtimes. The default value is `docker`.
 - `SOCKET_PATH`: It contains path of docker socket file by default(`/run/containerd/containerd.sock`). For other runtimes provide the appropriate path.
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/container-runtime-and-socket-path.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/container-runtime-and-socket-path.yaml yaml"
+
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -282,26 +282,27 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # runtime for the container
-        # supports docker, containerd, crio
-        - name: CONTAINER_RUNTIME
-          value: 'containerd'
-        # path of the socket file
-        - name: SOCKET_PATH
-          value: '/run/containerd/containerd.sock'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # runtime for the container
+            # supports docker, containerd, crio
+            - name: CONTAINER_RUNTIME
+              value: "containerd"
+            # path of the socket file
+            - name: SOCKET_PATH
+              value: "/run/containerd/containerd.sock"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Signal For Kill
 
 It defines the Linux signal passed while killing the container. It can be tuned via `SIGNAL` ENV. It defaults to the `SIGTERM`.
- 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/signal.yaml yaml)
+
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/signal.yaml yaml"
+
 ```yaml
 # specific linux signal passed while kiiling container
 apiVersion: litmuschaos.io/v1alpha1
@@ -317,23 +318,24 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # signal passed while killing container
-        # defaults to SIGTERM
-        - name: SIGNAL
-          value: 'SIGKILL'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # signal passed while killing container
+            # defaults to SIGTERM
+            - name: SIGNAL
+              value: "SIGKILL"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Pumba Chaos Library
 
 It specifies the Pumba chaos library for the chaos injection. It can be tuned via `LIB` ENV. The defaults chaos library is `litmus`.
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/pumba.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/pumba.yaml yaml"
+
 ```yaml
 # pumba chaoslib used to kill the container
 apiVersion: litmuschaos.io/v1alpha1
@@ -349,14 +351,14 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-  - name: container-kill
-    spec:
-      components:
-        env:
-        # name of the lib
-        # supoorts pumba and litmus
-        - name: LIB
-          value: 'pumba'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: container-kill
+      spec:
+        components:
+          env:
+            # name of the lib
+            # supoorts pumba and litmus
+            - name: LIB
+              value: "pumba"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```

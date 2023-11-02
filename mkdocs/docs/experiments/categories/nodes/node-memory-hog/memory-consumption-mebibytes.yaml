@@ -10,12 +10,12 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-memory-hog-sa
   experiments:
-  - name: node-memory-hog
-    spec:
-      components:
-        env:
-        # node memory to be stressed
-        - name: MEMORY_CONSUMPTION_MEBIBYTES
-          value: '500' # in MiBi
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: node-memory-hog
+      spec:
+        components:
+          env:
+            # node memory to be stressed
+            - name: MEMORY_CONSUMPTION_MEBIBYTES
+              value: "500" # in MiBi
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"

@@ -2,24 +2,19 @@
 
 - It causes chaos to disrupt state of ebs volume by detaching it from the node/ec2 instance for a certain chaos duration using volume id.
 - In case of EBS persistent volumes, the volumes can get self-attached and experiment skips the re-attachment step.
-Tests deployment sanity (replica availability & uninterrupted service) and recovery workflows of the application pod.
+  Tests deployment sanity (replica availability & uninterrupted service) and recovery workflows of the application pod.
 
-!!! tip "Scenario: Detach EBS Volume"    
-    ![EBS Loss By ID](../../images/ebs-loss.png)
+!!! tip "Scenario: Detach EBS Volume"  
+ ![EBS Loss By ID](../../images/ebs-loss.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
-    coming soon
+??? info "View the uses of the experiment"
+coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>ebs-loss-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/experiment.yaml">here</a>
-    - Ensure that you have sufficient AWS access to attach or detach an ebs volume for the instance. 
-    - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
+??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>ebs-loss-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ebs-loss-by-id/experiment.yaml">here</a> - Ensure that you have sufficient AWS access to attach or detach an ebs volume for the instance. - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
         ```yaml
         apiVersion: v1
@@ -34,18 +29,17 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
             aws_access_key_id = XXXXXXXXXXXXXXXXXXX
             aws_secret_access_key = XXXXXXXXXXXXXXX
         ```
-    - If you change the secret key name (from `cloud_config.yml`) please also update the `AWS_SHARED_CREDENTIALS_FILE` 
+    - If you change the secret key name (from `cloud_config.yml`) please also update the `AWS_SHARED_CREDENTIALS_FILE`
     ENV value on `experiment.yaml`with the same name.
-   
+
 ## Default Validations
 
-??? info "View the default validations" 
-    - EBS volume is attached to the instance.
+??? info "View the default validations" - EBS volume is attached to the instance.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
-    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"  
+ If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -81,10 +75,10 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
           - apiGroups: [""]
             resources: ["secrets","configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -114,13 +108,13 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
           name: ebs-loss-by-id-sa
           namespace: default
         ```
-        
+
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-    <h2>Mandatory Fields</h2>
+<h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -128,7 +122,7 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
         <th> Description </th>
         <th> Notes </th>
       </tr>
-      <tr> 
+      <tr>
         <td> EBS_VOLUME_ID </td>
         <td> Comma separated list of volume IDs subjected to ebs detach chaos</td>
         <td>  </td>
@@ -139,7 +133,7 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
         <td> </td>
       </tr>
     </table>
-    
+
     <h2>Optional Fields</h2>
 
     <table>
@@ -148,33 +142,33 @@ Tests deployment sanity (replica availability & uninterrupted service) and recov
         <th> Description </th>
         <th> Notes </th>
       </tr>
-      <tr> 
+      <tr>
         <td> TOTAL_CHAOS_DURATION </td>
         <td> The time duration for chaos insertion (sec) </td>
         <td> Defaults to 30s </td>
       </tr>
-      <tr> 
+      <tr>
         <td> CHAOS_INTERVAL </td>
         <td> The time duration between the attachment and detachment of the volumes (sec) </td>
         <td> Defaults to 30s </td>
-      </tr>  
+      </tr>
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple volumes</td>
         <td> Default value: parallel. Supported: serial, parallel </td>
-      </tr>  
+      </tr>
       <tr>
         <td> RAMP_TIME </td>
         <td> Period to wait before and after injection of chaos in sec </td>
         <td> </td>
-      </tr>   
+      </tr>
     </table>
 
 ## Experiment Examples
 
 ### Common and AWS specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.  
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.
 
 ### Detach Volumes By ID
 
@@ -182,9 +176,10 @@ It contains comma separated list of volume IDs subjected to ebs detach chaos. It
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ebs-loss-by-id/ebs-volume-id.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ebs-loss-by-id/ebs-volume-id.yaml yaml"
+
 ```yaml
-# contains ebs volume id 
+# contains ebs volume id
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -194,16 +189,16 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: ebs-loss-by-id-sa
   experiments:
-  - name: ebs-loss-by-id
-    spec:
-      components:
-        env:
-        # id of the ebs volume
-        - name: EBS_VOLUME_ID
-          value: 'ebs-vol-1'
-        # region for the ebs volume
-        - name: REGION
-          value: '<region for EBS_VOLUME_ID>'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: ebs-loss-by-id
+      spec:
+        components:
+          env:
+            # id of the ebs volume
+            - name: EBS_VOLUME_ID
+              value: "ebs-vol-1"
+            # region for the ebs volume
+            - name: REGION
+              value: "<region for EBS_VOLUME_ID>"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```

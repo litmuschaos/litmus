@@ -4,32 +4,29 @@
 - It simulates conditions where app pods experience CPU spikes either due to expected/undesired processes thereby testing how the overall application stack behaves when this occurs.
 - It can test the application's resilience to potential slowness/unavailability of some replicas due to high CPU load
 
-!!! tip "Scenario: Stress the CPU"    
-    ![Pod CPU Hog](../../images/pod-stress.png)
+!!! tip "Scenario: Stress the CPU"  
+ ![Pod CPU Hog](../../images/pod-stress.png)
 
 ## Uses
 
-??? info "View the uses of the experiment" 
-    Disk Pressure or CPU hogs is another very common and frequent scenario we find in kubernetes applications that can result in the eviction of the application replica and impact its delivery. Such scenarios that can still occur despite whatever availability aids K8s provides. These problems are generally referred to as "Noisy Neighbour" problems.
-    
+??? info "View the uses of the experiment"
+Disk Pressure or CPU hogs is another very common and frequent scenario we find in kubernetes applications that can result in the eviction of the application replica and impact its delivery. Such scenarios that can still occur despite whatever availability aids K8s provides. These problems are generally referred to as "Noisy Neighbour" problems.
+
     Injecting a rogue process into a target container, we starve the main microservice process (typically pid 1) of the resources allocated to it (where limits are defined) causing slowness in application traffic or in other cases unrestrained use can cause node to exhaust resources leading to eviction of all pods.So this category of chaos experiment helps to build the immunity on the application undergoing any such stress scenario
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" 
-    - Ensure that Kubernetes Version > 1.16 
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    - Ensure that the <code>pod-cpu-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-hog/experiment.yaml">here</a> 
-    
+??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>pod-cpu-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-cpu-hog/experiment.yaml">here</a>
+
 ## Default Validations
 
-??? info "View the default validations" 
-    The application pods should be in running state before and after chaos injection.
+??? info "View the default validations"
+The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"   
-    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"  
+ If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -66,10 +63,10 @@
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log 
+          # Track and get the runner, experiment, and helper pods log
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]  
+            verbs: ["get","list","watch"]
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -78,7 +75,7 @@
           - apiGroups: ["apps"]
             resources: ["deployments","statefulsets","replicasets", "daemonsets"]
             verbs: ["list","get"]
-          # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+          # deriving the parent/owner details of the pod(if parent is deploymentConfig)
           - apiGroups: ["apps.openshift.io"]
             resources: ["deploymentconfigs"]
             verbs: ["list","get"]
@@ -122,7 +119,7 @@
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-    <h2>Optional Fields</h2>
+<h2>Optional Fields</h2>
 
     <table>
       <tr>
@@ -159,12 +156,12 @@
         <td> TARGET_PODS </td>
         <td> Comma separated list of application pod name subjected to pod cpu hog chaos</td>
         <td> If not provided, it will select target pods randomly based on provided appLabels</td>
-      </tr> 
-      <tr> 
+      </tr>
+      <tr>
         <td> TARGET_CONTAINER </td>
         <td> Name of the target container under chaos </td>
         <td> If not provided, it will select the first container of the target pod </td>
-      </tr> 
+      </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
         <td> The Percentage of total pods to target  </td>
@@ -179,7 +176,7 @@
         <td> SOCKET_PATH </td>
         <td> Path of the containerd/crio/docker socket file </td>
         <td> Defaults to <code>/run/containerd/containerd.sock</code> </td>
-      </tr> 
+      </tr>
       <tr>
         <td> RAMP_TIME </td>
         <td> Period to wait before injection of chaos in sec </td>
@@ -193,10 +190,10 @@
     </table>
 
 ## Experiment Examples
- 
+
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
 
 ### CPU Cores
 
@@ -204,7 +201,8 @@ It stresses the `CPU_CORE` of the targeted pod for the `TOTAL_CHAOS_DURATION` du
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-cores.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-cores.yaml yaml"
+
 ```yaml
 # cpu cores for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -220,23 +218,25 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-cpu-hog-sa
   experiments:
-  - name: pod-cpu-hog
-    spec:
-      components:
-        env:
-        # cpu cores for stress
-        - name: CPU_CORES
-          value: '1'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            # cpu cores for stress
+            - name: CPU_CORES
+              value: "1"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### CPU Load
+
 It contains percentage of pod CPU to be consumed. It can be tuned via `CPU_LOAD` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-load.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/cpu-load.yaml yaml"
+
 ```yaml
 # cpu load for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -252,19 +252,19 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-cpu-hog-sa
   experiments:
-  - name: pod-cpu-hog
-    spec:
-      components:
-        env:
-        # cpu load in percentage for the stress
-        - name: CPU_LOAD
-          value: '100'
-        # cpu core should be provided as 0 for cpu load
-        # to work, otherwise it will take cpu core as priority
-        - name: CPU_CORES
-          value: '0'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            # cpu load in percentage for the stress
+            - name: CPU_LOAD
+              value: "100"
+            # cpu core should be provided as 0 for cpu load
+            # to work, otherwise it will take cpu core as priority
+            - name: CPU_CORES
+              value: "0"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Container Runtime Socket Path
@@ -276,7 +276,8 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/container-runtime-and-socket-path.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/container-runtime-and-socket-path.yaml yaml"
+
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -292,19 +293,19 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-cpu-hog-sa
   experiments:
-  - name: pod-cpu-hog
-    spec:
-      components:
-        env:
-        # runtime for the container
-        # supports docker, containerd, crio
-        - name: CONTAINER_RUNTIME
-          value: 'containerd'
-        # path of the socket file
-        - name: SOCKET_PATH
-          value: '/run/containerd/containerd.sock'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            # runtime for the container
+            # supports docker, containerd, crio
+            - name: CONTAINER_RUNTIME
+              value: "containerd"
+            # path of the socket file
+            - name: SOCKET_PATH
+              value: "/run/containerd/containerd.sock"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```
 
 ### Pumba Chaos Library
@@ -314,7 +315,8 @@ Provide the stress image via `STRESS_IMAGE` ENV for the pumba library.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/pumba-lib.yaml yaml)
+[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-cpu-hog/pumba-lib.yaml yaml"
+
 ```yaml
 # use pumba chaoslib for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -330,17 +332,17 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-cpu-hog-sa
   experiments:
-  - name: pod-cpu-hog
-    spec:
-      components:
-        env:
-        # name of chaos lib
-        # supports litmus and pumba
-        - name: LIB
-          value: 'pumba'
-        # stress image - applicable for pumba only
-        - name: STRESS_IMAGE
-          value: 'alexeiled/stress-ng:latest-ubuntu'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
+    - name: pod-cpu-hog
+      spec:
+        components:
+          env:
+            # name of chaos lib
+            # supports litmus and pumba
+            - name: LIB
+              value: "pumba"
+            # stress image - applicable for pumba only
+            - name: STRESS_IMAGE
+              value: "alexeiled/stress-ng:latest-ubuntu"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
 ```

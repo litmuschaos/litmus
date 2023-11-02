@@ -8,18 +8,18 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: azure-instance-stop-sa
   experiments:
-  - name: azure-instance-stop
-    spec:
-      components:
-        env:
-        # comma separated list of azure instance names
-        - name: AZURE_INSTANCE_NAMES
-          value: 'instance-01,instance-02'
-        # name of the resource group
-        - name: RESOURCE_GROUP
-          value: '<resource group of Scale set>'
-        # accepts enable/disable value. default is disable
-        - name: SCALE_SET
-          value: 'enable'
-        - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+    - name: azure-instance-stop
+      spec:
+        components:
+          env:
+            # comma separated list of azure instance names
+            - name: AZURE_INSTANCE_NAMES
+              value: "instance-01,instance-02"
+            # name of the resource group
+            - name: RESOURCE_GROUP
+              value: "<resource group of Scale set>"
+            # accepts enable/disable value. default is disable
+            - name: SCALE_SET
+              value: "enable"
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
