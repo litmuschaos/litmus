@@ -12,12 +12,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-delete-sa
   experiments:
-    - name: pod-delete
-      spec:
-        components:
-          env:
-            # user-defined string appended as suffix in the chaosresult name
-            - name: INSTANCE_ID
-              value: "123"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # user-defined string appended as suffix in the chaosresult name
+        - name: INSTANCE_ID
+          value: '123'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

@@ -7,18 +7,18 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: aws-ssm-chaos-by-tag-sa
   experiments:
-    - name: aws-ssm-chaos-by-tag
-      spec:
-        components:
-          env:
-            # percentage of the ec2 instances filtered by tags
-            - name: INSTANCE_AFFECTED_PERC
-              value: "100"
-            # tag of the ec2 instances
-            - name: EC2_INSTANCE_TAG
-              value: "key:value"
-            # region of the ec2 instance
-            - name: REGION
-              value: "<region of the ec2 instances>"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: aws-ssm-chaos-by-tag
+    spec:
+      components:
+        env:
+        # percentage of the ec2 instances filtered by tags
+        - name: INSTANCE_AFFECTED_PERC
+          value: '100'
+        # tag of the ec2 instances
+        - name: EC2_INSTANCE_TAG
+          value: 'key:value'
+        # region of the ec2 instance
+        - name: REGION
+          value: '<region of the ec2 instances>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

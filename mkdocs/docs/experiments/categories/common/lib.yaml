@@ -12,12 +12,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-delete-sa
   experiments:
-    - name: pod-delete
-      spec:
-        components:
-          env:
-            # defines the name of the chaoslib used for the experiment
-            - name: LIB
-              value: "litmus"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # defines the name of the chaoslib used for the experiment
+        - name: LIB
+          value: 'litmus'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

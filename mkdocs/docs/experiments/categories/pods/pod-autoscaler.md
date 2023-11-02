@@ -4,27 +4,30 @@
 
 - This experiment can be used for other scenarios as well, such as for checking the Node auto-scaling feature. For example, check if the pods are successfully rescheduled within a specified period in cases where the existing nodes are already running at the specified limits.
 
-!!! tip "Scenario: Scale the replicas"  
- ![Pod Autoscaler](../../images/pod-autoscaler.png)
+!!! tip "Scenario: Scale the replicas"    
+    ![Pod Autoscaler](../../images/pod-autoscaler.png)
 
 ## Uses
 
-??? info "View the uses of the experiment"
-coming soon
+??? info "View the uses of the experiment" 
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>pod-autoscaler</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-autoscaler/experiment.yaml">here</a>
-
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>pod-autoscaler</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-autoscaler/experiment.yaml">here</a> 
+    
 ## Default Validations
 
-??? info "View the default validations"
-The application pods should be in running state before and after chaos injection.
+??? info "View the default validations" 
+    The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"  
- If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -60,10 +63,10 @@ The application pods should be in running state before and after chaos injection
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log
+          # Track and get the runner, experiment, and helper pods log 
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]
+            verbs: ["get","list","watch"]  
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -101,8 +104,8 @@ The application pods should be in running state before and after chaos injection
 
 ## Experiment tunables
 
-??? info "check the experiment tunables"
-<h2>Mandatory Fields</h2>
+??? info "check the experiment tunables" 
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -145,7 +148,7 @@ The application pods should be in running state before and after chaos injection
 
 ### Common and Pod specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Pod specific tunable](common-tunables-for-pod-experiments.md) to tune the common tunables for all experiments and pod specific tunables. 
 
 ### Replica counts
 
@@ -153,10 +156,9 @@ It defines the number of replicas, which should be present in the targeted appli
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-autoscaler/replica-count.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-autoscaler/replica-count.yaml yaml)
 ```yaml
-# provide the number of replicas
+# provide the number of replicas 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -170,13 +172,13 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-autoscaler-sa
   experiments:
-    - name: pod-autoscaler
-      spec:
-        components:
-          env:
-            # number of replica, needs to scale
-            - name: REPLICA_COUNT
-              value: "3"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-autoscaler
+    spec:
+      components:
+        env:
+        # number of replica, needs to scale
+        - name: REPLICA_COUNT
+          value: '3'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```

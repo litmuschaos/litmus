@@ -12,16 +12,16 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-dns-error-sa
   experiments:
-    - name: pod-dns-error
-      spec:
-        components:
-          env:
-            # runtime for the container
-            # supports docker
-            - name: CONTAINER_RUNTIME
-              value: "containerd"
-            # path of the socket file
-            - name: SOCKET_PATH
-              value: "/run/containerd/containerd.sock"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-dns-error
+    spec:
+      components:
+        env:
+        # runtime for the container
+        # supports docker
+        - name: CONTAINER_RUNTIME
+          value: 'containerd'
+        # path of the socket file
+        - name: SOCKET_PATH
+          value: '/run/containerd/containerd.sock'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

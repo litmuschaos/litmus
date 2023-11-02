@@ -2,19 +2,24 @@
 
 - It causes termination of an EC2 instance by instance ID or list of instance IDs before bringing it back to running state after the specified chaos duration.
 - It helps to check the performance of the application/process running on the ec2 instance.
-  When the MANAGED_NODEGROUP is enable then the experiment will not try to start the instance post chaos instead it will check of the addition of the new node instance to the cluster.
+When the MANAGED_NODEGROUP is enable then the experiment will not try to start the instance post chaos instead it will check of the addition of the new node instance to the cluster.
 
-!!! tip "Scenario: Terminate EC2 Instance"  
- ![EC2 Terminate By ID](../../images/ec2-terminate.png)
+!!! tip "Scenario: Terminate EC2 Instance"    
+    ![EC2 Terminate By ID](../../images/ec2-terminate.png)
 
 ## Uses
 
-??? info "View the uses of the experiment"
-coming soon
+??? info "View the uses of the experiment" 
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>ec2-terminate-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/experiment.yaml">here</a> - Ensure that you have sufficient AWS access to stop and start an ec2 instance. - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>ec2-terminate-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-id/experiment.yaml">here</a>
+    - Ensure that you have sufficient AWS access to stop and start an ec2 instance. 
+    - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
         ```yaml
         apiVersion: v1
@@ -29,22 +34,23 @@ coming soon
             aws_access_key_id = XXXXXXXXXXXXXXXXXXX
             aws_secret_access_key = XXXXXXXXXXXXXXX
         ```
-    - If you change the secret key name (from `cloud_config.yml`) please also update the `AWS_SHARED_CREDENTIALS_FILE`
+    - If you change the secret key name (from `cloud_config.yml`) please also update the `AWS_SHARED_CREDENTIALS_FILE` 
     ENV value on `experiment.yaml`with the same name.
 
     ### WARNING
 
     If the target EC2 instance is a part of a self-managed nodegroup:
-    Make sure to drain the target node if any application is running on it and also ensure to cordon the target node before running the experiment so that the experiment pods do not schedule on it.
-
+    Make sure to drain the target node if any application is running on it and also ensure to cordon the target node before running the experiment so that the experiment pods do not schedule on it. 
+    
 ## Default Validations
 
-??? info "View the default validations" - EC2 instance should be in healthy state.
+??? info "View the default validations" 
+    - EC2 instance should be in healthy state.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"  
- If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -80,10 +86,10 @@ coming soon
           - apiGroups: [""]
             resources: ["secrets","configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log
+          # Track and get the runner, experiment, and helper pods log 
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]
+            verbs: ["get","list","watch"]  
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -117,13 +123,13 @@ coming soon
           name: ec2-terminate-by-id-sa
           namespace: default
         ```
-
+        
         Use this sample RBAC manifest to create a chaosServiceAccount in the desired (app) namespace. This example consists of the minimum necessary role permissions to execute the experiment.
 
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-<h2>Mandatory Fields</h2>
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -131,7 +137,7 @@ coming soon
         <th> Description </th>
         <th> Notes </th>
       </tr>
-      <tr>
+      <tr> 
         <td> EC2_INSTANCE_ID </td>
         <td> Instance ID of the target ec2 instance. Multiple IDs can also be provided as a comma(,) separated values</td>
         <td> Multiple IDs can be provided as `id1,id2` </td>
@@ -140,9 +146,9 @@ coming soon
         <td> REGION </td>
         <td> The region name of the target instace</td>
         <td> </td>
-      </tr>
+      </tr> 
     </table>
-
+    
     <h2>Optional Fields</h2>
 
     <table>
@@ -151,21 +157,21 @@ coming soon
         <th> Description </th>
         <th> Notes </th>
       </tr>
-      <tr>
+      <tr> 
         <td> TOTAL_CHAOS_DURATION </td>
         <td> The total time duration for chaos insertion (sec) </td>
         <td> Defaults to 30s </td>
       </tr>
-      <tr>
+      <tr> 
         <td> CHAOS_INTERVAL </td>
         <td> The interval (in sec) between successive instance termination.</td>
         <td> Defaults to 30s </td>
-      </tr>
-      <tr>
+      </tr>  
+      <tr> 
         <td> MANAGED_NODEGROUP </td>
         <td> Set to <code>enable</code> if the target instance is the part of self-managed nodegroups </td>
         <td> Defaults to <code>disable</code> </td>
-      </tr>
+      </tr>  
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple instance</td>
@@ -175,14 +181,14 @@ coming soon
         <td> RAMP_TIME </td>
         <td> Period to wait before and after injection of chaos in sec </td>
         <td> </td>
-      </tr>
+      </tr>    
     </table>
 
 ## Experiment Examples
 
 ### Common and AWS specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.  
 
 ### Stop Instances By ID
 
@@ -190,8 +196,7 @@ It contains comma separated list of instances IDs subjected to ec2 stop chaos. I
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-id/instance-id.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-id/instance-id.yaml yaml)
 ```yaml
 # contains the instance id, to be terminated/stopped
 apiVersion: litmuschaos.io/v1alpha1
@@ -203,16 +208,16 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: ec2-terminate-by-id-sa
   experiments:
-    - name: ec2-terminate-by-id
-      spec:
-        components:
-          env:
-            # id of the ec2 instance
-            - name: EC2_INSTANCE_ID
-              value: "instance-1"
-            # region for the ec2 instance
-            - name: REGION
-              value: "<region for EC2_INSTANCE_ID>"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: ec2-terminate-by-id
+    spec:
+      components:
+        env:
+        # id of the ec2 instance
+        - name: EC2_INSTANCE_ID
+          value: 'instance-1'
+        # region for the ec2 instance
+        - name: REGION
+          value: '<region for EC2_INSTANCE_ID>'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```

@@ -2,27 +2,33 @@
 
 - It taints the node to apply the desired effect. The resources which contains the correspoing tolerations can only bypass the taints.
 
-!!! tip "Scenario: Taint the node"  
- ![Node Taint](../../images/node-taint.png)
+!!! tip "Scenario: Taint the node"    
+    ![Node Taint](../../images/node-taint.png)
 
 ## Uses
 
-??? info "View the uses of the experiment"
-coming soon
+??? info "View the uses of the experiment" 
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>node-taint</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-taint/experiment.yaml">here</a> - Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node which will be tainted) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps: - Get node names against the applications pods: <code>kubectl get pods -o wide</code> - Cordon the node <code>kubectl cordon &lt;nodename&gt;</code>
-
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>node-taint</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-taint/experiment.yaml">here</a>
+    - Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node which will be tainted) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps:
+        - Get node names against the applications pods: <code>kubectl get pods -o wide</code>
+        - Cordon the node <code>kubectl cordon &lt;nodename&gt;</code>
+    
 ## Default Validations
 
-??? info "View the default validations"
-The target nodes should be in ready state before and after chaos injection.
+??? info "View the default validations" 
+    The target nodes should be in ready state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"  
- If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -58,10 +64,10 @@ The target nodes should be in ready state before and after chaos injection.
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log
+          # Track and get the runner, experiment, and helper pods log 
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]
+            verbs: ["get","list","watch"]  
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec","pods/eviction"]
@@ -105,7 +111,7 @@ The target nodes should be in ready state before and after chaos injection.
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-<h2>Mandatory Fields</h2>
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -129,7 +135,7 @@ The target nodes should be in ready state before and after chaos injection.
         <td> </td>
       </tr>
     </table>
-
+    
     <h2>Optional Fields</h2>
 
     <table>
@@ -159,7 +165,7 @@ The target nodes should be in ready state before and after chaos injection.
 
 ### Common and Node specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.  
 
 ### Taint Label
 
@@ -167,8 +173,7 @@ It contains label and effect to be tainted on application node. It can be tuned 
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-taint/taint-labels.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-taint/taint-labels.yaml yaml)
 ```yaml
 # node tainted with provided key and effect
 apiVersion: litmuschaos.io/v1alpha1
@@ -180,13 +185,13 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-taint-sa
   experiments:
-    - name: node-taint
-      spec:
-        components:
-          env:
-            # label and effect to be tainted on the targeted node
-            - name: TAINT_LABEL
-              value: "key=value:effect"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: node-taint
+    spec:
+      components:
+        env:
+        # label and effect to be tainted on the targeted node
+        - name: TAINT_LABEL
+          value: 'key=value:effect'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```

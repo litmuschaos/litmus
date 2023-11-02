@@ -10,12 +10,12 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-io-stress-sa
   experiments:
-    - name: node-io-stress
-      spec:
-        components:
-          env:
-            # file system to be stress in GB
-            - name: FILESYSTEM_UTILIZATION_BYTES
-              value: "500" # in GB
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: node-io-stress
+    spec:
+      components:
+        env:
+        # file system to be stress in GB
+        - name: FILESYSTEM_UTILIZATION_BYTES
+          value: '500' # in GB
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

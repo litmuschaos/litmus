@@ -12,12 +12,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: container-kill-sa
   experiments:
-    - name: container-kill
-      spec:
-        components:
-          env:
-            # name of the target container
-            - name: TARGET_CONTAINER
-              value: "nginx"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: container-kill
+    spec:
+      components:
+        env:
+        # name of the target container
+        - name: TARGET_CONTAINER
+          value: 'nginx'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

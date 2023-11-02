@@ -8,13 +8,13 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: vm-poweroff-sa
   experiments:
-    - name: vm-poweroff
-      spec:
-        components:
-          env:
-            # MOID of the VM
-            - name: APP_VM_MOIDS
-              value: "vm-53,vm-65"
+  - name: vm-poweroff
+    spec:
+      components:
+        env:
+        # MOID of the VM
+        - name: APP_VM_MOIDS
+          value: 'vm-53,vm-65'
 
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

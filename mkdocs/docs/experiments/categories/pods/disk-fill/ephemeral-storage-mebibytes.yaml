@@ -13,12 +13,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-    - name: disk-fill
-      spec:
-        components:
-          env:
-            ## ephemeral storage size, which needs to be filled
-            - name: EPHEMERAL_STORAGE_MEBIBYTES
-              value: "256" #in MiBi
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        ## ephemeral storage size, which needs to be filled
+        - name: EPHEMERAL_STORAGE_MEBIBYTES
+          value: '256' #in MiBi
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

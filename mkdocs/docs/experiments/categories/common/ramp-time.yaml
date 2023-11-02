@@ -1,4 +1,4 @@
-# waits for the ramp time before and after injection of chaos
+# waits for the ramp time before and after injection of chaos 
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -12,12 +12,12 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-delete-sa
   experiments:
-    - name: pod-delete
-      spec:
-        components:
-          env:
-            # waits for the time interval before and after injection of chaos
-            - name: RAMP_TIME
-              value: "10" # in seconds
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        # waits for the time interval before and after injection of chaos
+        - name: RAMP_TIME
+          value: '10' # in seconds
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

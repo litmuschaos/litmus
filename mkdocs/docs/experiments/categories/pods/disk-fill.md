@@ -6,17 +6,21 @@
 - It tests the application's resiliency to disk stress/replica evictions.
 
 !!! tip "Scenario: Fill ephemeral-storage"
-![Disk Fill](../../images/disk-fill.png)
+    ![Disk Fill](../../images/disk-fill.png)
 
 ## Uses
 
 ??? info "View the uses of the experiment"
-coming soon
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>disk-fill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/disk-fill/experiment.yaml">here</a> - Appropriate Ephemeral Storage Requests and Limits should be set for the application before running the experiment. An example specification is shown below:
-`yaml
+??? info "Verify the prerequisites"
+    - Ensure that Kubernetes Version > 1.16
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>disk-fill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/disk-fill/experiment.yaml">here</a>
+    - Appropriate Ephemeral Storage Requests and Limits should be set for the application before running the experiment. An example specification is shown below:
+    ```yaml
     apiVersion: v1
     kind: Pod
     metadata:
@@ -40,17 +44,17 @@ coming soon
             ephemeral-storage: "2Gi"
           limits:
             ephemeral-storage: "4Gi"
-    `
+    ```
 
 ## Default Validations
 
 ??? info "View the default validations"
-The application pods should be in running state before and after chaos injection.
+    The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
 !!! tip "NOTE"
-If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -142,7 +146,7 @@ If you are using this experiment as part of a litmus workflow scheduled construc
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-<h2>Mandatory Fields</h2>
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -239,8 +243,7 @@ It fills the `FILL_PERCENTAGE` percentage of the ephemeral-storage limit specifi
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/fill-percentage.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/fill-percentage.yaml yaml)
 ```yaml
 ## percentage of ephemeral storage limit specified at `resource.limits.ephemeral-storage` inside target application
 apiVersion: litmuschaos.io/v1alpha1
@@ -256,15 +259,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-    - name: disk-fill
-      spec:
-        components:
-          env:
-            ## percentage of ephemeral storage limit, which needs to be filled
-            - name: FILL_PERCENTAGE
-              value: "80" # in percentage
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        ## percentage of ephemeral storage limit, which needs to be filled
+        - name: FILL_PERCENTAGE
+          value: '80' # in percentage
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
 
 ### Disk Fill Mebibytes
@@ -274,8 +277,7 @@ It is mutually exclusive with the `FILL_PERCENTAGE` ENV. If `FILL_PERCENTAGE` EN
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/ephemeral-storage-mebibytes.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/ephemeral-storage-mebibytes.yaml yaml)
 ```yaml
 # ephemeral storage which needs to fill in will application
 # if ephemeral-storage limits is not specified inside target application
@@ -292,15 +294,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-    - name: disk-fill
-      spec:
-        components:
-          env:
-            ## ephemeral storage size, which needs to be filled
-            - name: EPHEMERAL_STORAGE_MEBIBYTES
-              value: "256" #in MiBi
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        ## ephemeral storage size, which needs to be filled
+        - name: EPHEMERAL_STORAGE_MEBIBYTES
+          value: '256' #in MiBi
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
 
 ### Data Block Size
@@ -310,8 +312,7 @@ The default value of `DATA_BLOCK_SIZE` is `256`.
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/data-block-size.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/data-block-size.yaml yaml)
 ```yaml
 # size of the data block used to fill the disk
 apiVersion: litmuschaos.io/v1alpha1
@@ -327,15 +328,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-    - name: disk-fill
-      spec:
-        components:
-          env:
-            ## size of data block used to fill the disk
-            - name: DATA_BLOCK_SIZE
-              value: "256" #in KB
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        ## size of data block used to fill the disk
+        - name: DATA_BLOCK_SIZE
+          value: '256' #in KB
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -347,8 +348,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/container-path.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/disk-fill/container-path.yaml yaml)
 ```yaml
 # path inside node/vm where containers are present
 apiVersion: litmuschaos.io/v1alpha1
@@ -364,16 +364,16 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: disk-fill-sa
   experiments:
-    - name: disk-fill
-      spec:
-        components:
-          env:
-            # provide the name of container runtime, it supports docker, containerd, crio
-            - name: CONTAINER_RUNTIME
-              value: "containerd"
-            # provide the socket file path
-            - name: SOCKET_PATH
-              value: "/run/containerd/containerd.sock"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: disk-fill
+    spec:
+      components:
+        env:
+        # provide the name of container runtime, it supports docker, containerd, crio
+        - name: CONTAINER_RUNTIME
+          value: 'containerd'
+        # provide the socket file path
+        - name: SOCKET_PATH
+          value: '/run/containerd/containerd.sock'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```

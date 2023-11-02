@@ -4,26 +4,29 @@
 - It causes dns resolution of target hostnames/domains to wrong IPs as specified by SPOOF_MAP in the engine config.
 
 !!! tip "Scenario: DNS spoof for the target pod"
-![Pod DNS Spoof](../../images/dns-chaos.png)
+    ![Pod DNS Spoof](../../images/dns-chaos.png)
 
 ## Uses
 
 ??? info "View the uses of the experiment"
-coming soon
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>pod-dns-spoof</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-spoof/experiment.yaml">here</a>
+??? info "Verify the prerequisites"
+    - Ensure that Kubernetes Version > 1.16
+    -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    -  Ensure that the <code>pod-dns-spoof</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-dns-spoof/experiment.yaml">here</a>
 
 ## Default Validations
 
 ??? info "View the default validations"
-The application pods should be in running state before and after chaos injection.
+    The application pods should be in running state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
 !!! tip "NOTE"
-If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -115,7 +118,7 @@ If you are using this experiment as part of a litmus workflow scheduled construc
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-<h2>Optional Fields</h2>
+    <h2>Optional Fields</h2>
 
     <table>
       <tr>
@@ -187,8 +190,7 @@ It defines the map of the target hostnames eg. '{"abc.com":"spoofabc.com"}' wher
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-dns-spoof/spoof-map.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-dns-spoof/spoof-map.yaml yaml)
 ```yaml
 # contains the spoof map for the dns spoofing
 apiVersion: litmuschaos.io/v1alpha1
@@ -204,15 +206,15 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-dns-spoof-sa
   experiments:
-    - name: pod-dns-spoof
-      spec:
-        components:
-          env:
-            # map of host names
-            - name: SPOOF_MAP
-              value: '{"abc.com":"spoofabc.com"}'
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-dns-spoof
+    spec:
+      components:
+        env:
+        # map of host names
+        - name: SPOOF_MAP
+          value: '{"abc.com":"spoofabc.com"}'
+        - name: TOTAL_CHAOS_DURATION
+          value: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -224,8 +226,7 @@ It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container ru
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-dns-spoof/container-runtime-and-socket-path.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/pod-dns-spoof/container-runtime-and-socket-path.yaml yaml)
 ```yaml
 ## provide the container runtime and socket file path
 apiVersion: litmuschaos.io/v1alpha1
@@ -241,20 +242,20 @@ spec:
     appkind: "deployment"
   chaosServiceAccount: pod-dns-spoof-sa
   experiments:
-    - name: pod-dns-spoof
-      spec:
-        components:
-          env:
-            # runtime for the container
-            # supports docker
-            - name: CONTAINER_RUNTIME
-              value: "containerd"
-            # path of the socket file
-            - name: SOCKET_PATH
-              value: "/run/containerd/containerd.sock"
-            # map of host names
-            - name: SPOOF_MAP
-              value: '{"abc.com":"spoofabc.com"}'
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: pod-dns-spoof
+    spec:
+      components:
+        env:
+        # runtime for the container
+        # supports docker
+        - name: CONTAINER_RUNTIME
+          value: 'containerd'
+        # path of the socket file
+        - name: SOCKET_PATH
+          value: '/run/containerd/containerd.sock'
+        # map of host names
+        - name: SPOOF_MAP
+          value: '{"abc.com":"spoofabc.com"}'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```

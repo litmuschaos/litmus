@@ -4,27 +4,33 @@
 - The docker service has been stopped/killed on a node to make it unschedulable for a certain duration i.e TOTAL_CHAOS_DURATION. The application node should be healthy after the chaos injection and the services should be reaccessable.
 - The application implies services. Can be reframed as: Test application resiliency upon replica getting unreachable caused due to docker service down.
 
-!!! tip "Scenario: Kill the docker service of the node"  
- ![Docker Service Kill](../../images/svc-kill.png)
+!!! tip "Scenario: Kill the docker service of the node"    
+    ![Docker Service Kill](../../images/svc-kill.png)
 
 ## Uses
 
-??? info "View the uses of the experiment"
-coming soon
+??? info "View the uses of the experiment" 
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>docker-service-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/docker-service-kill/experiment.yaml">here</a> - Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node for which docker service need to be killed) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps: - Get node names against the applications pods: <code>kubectl get pods -o wide</code> - Cordon the node <code>kubectl cordon &lt;nodename&gt;</code>
-
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>docker-service-kill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/docker-service-kill/experiment.yaml">here</a>
+    - Ensure that the node specified in the experiment ENV variable <code>TARGET_NODE</code> (the node for which docker service need to be killed) should be cordoned before execution of the chaos experiment (before applying the chaosengine manifest) to ensure that the litmus experiment runner pods are not scheduled on it / subjected to eviction. This can be achieved with the following steps:
+        - Get node names against the applications pods: <code>kubectl get pods -o wide</code>
+        - Cordon the node <code>kubectl cordon &lt;nodename&gt;</code>
+    
 ## Default Validations
 
-??? info "View the default validations"
-The target nodes should be in ready state before and after chaos injection.
+??? info "View the default validations" 
+    The target nodes should be in ready state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"  
- If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -60,10 +66,10 @@ The target nodes should be in ready state before and after chaos injection.
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log
+          # Track and get the runner, experiment, and helper pods log 
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]
+            verbs: ["get","list","watch"]  
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -103,7 +109,7 @@ The target nodes should be in ready state before and after chaos injection.
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-<h2>Mandatory Fields</h2>
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -122,7 +128,7 @@ The target nodes should be in ready state before and after chaos injection.
         <td>It is mutually exclusive with the TARGET_NODE ENV. If both are provided then it will use the TARGET_NODE</td>
       </tr>
     </table>
-
+    
     <h2>Optional Fields</h2>
 
     <table>
@@ -152,7 +158,7 @@ The target nodes should be in ready state before and after chaos injection.
 
 ### Common and Node specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.  
 
 ### Kill Docker Service
 
@@ -160,8 +166,7 @@ It contains name of target node subjected to the chaos. It can be tuned via `TAR
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/docker-service-kill/docker-service-kill.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/docker-service-kill/docker-service-kill.yaml yaml)
 ```yaml
 # kill the docker service of the target node
 apiVersion: litmuschaos.io/v1alpha1
@@ -173,13 +178,13 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: docker-service-kill-sa
   experiments:
-    - name: docker-service-kill
-      spec:
-        components:
-          env:
-            # name of the target node
-            - name: TARGET_NODE
-              value: "node01"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: docker-service-kill
+    spec:
+      components:
+        env:
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```

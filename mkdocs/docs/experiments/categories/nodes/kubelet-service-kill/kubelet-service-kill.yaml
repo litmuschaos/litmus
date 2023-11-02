@@ -8,12 +8,12 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: kubelet-service-kill-sa
   experiments:
-    - name: kubelet-service-kill
-      spec:
-        components:
-          env:
-            # name of the target node
-            - name: TARGET_NODE
-              value: "node01"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: kubelet-service-kill
+    spec:
+      components:
+        env:
+        # name of the target node
+        - name: TARGET_NODE
+          value: 'node01'
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'

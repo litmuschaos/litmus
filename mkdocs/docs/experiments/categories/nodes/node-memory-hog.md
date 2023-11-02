@@ -4,27 +4,30 @@
 - The Memory chaos is injected using a helper pod running the linux stress-ng tool (a workload generator)- The chaos is effected for a period equalling the TOTAL_CHAOS_DURATION and upto MEMORY_CONSUMPTION_PERCENTAGE(out of 100) or MEMORY_CONSUMPTION_MEBIBYTES(in Mebibytes out of total available memory).
 - Application implies services. Can be reframed as: Tests application resiliency upon replica evictions caused due to lack of Memory resources
 
-!!! tip "Scenario: Stress the memory of node"  
- ![Node Memory Hog](../../images/node-stress.png)
+!!! tip "Scenario: Stress the memory of node"    
+    ![Node Memory Hog](../../images/node-stress.png)
 
 ## Uses
 
-??? info "View the uses of the experiment"
-coming soon
+??? info "View the uses of the experiment" 
+    coming soon
 
 ## Prerequisites
 
-??? info "Verify the prerequisites" - Ensure that Kubernetes Version > 1.16 - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a> - Ensure that the <code>node-memory-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-memory-hog/experiment.yaml">here</a>
-
+??? info "Verify the prerequisites" 
+    - Ensure that Kubernetes Version > 1.16 
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
+    - Ensure that the <code>node-memory-hog</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/node-memory-hog/experiment.yaml">here</a> 
+    
 ## Default Validations
 
-??? info "View the default validations"
-The target nodes should be in ready state before and after chaos injection.
+??? info "View the default validations" 
+    The target nodes should be in ready state before and after chaos injection.
 
 ## Minimal RBAC configuration example (optional)
 
-!!! tip "NOTE"  
- If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
+!!! tip "NOTE"   
+    If you are using this experiment as part of a litmus workflow scheduled constructed & executed from chaos-center, then you may be making use of the [litmus-admin](https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml) RBAC, which is pre installed in the cluster as part of the agent setup.
 
     ??? note "View the Minimal RBAC permissions"
 
@@ -60,10 +63,10 @@ The target nodes should be in ready state before and after chaos injection.
           - apiGroups: [""]
             resources: ["configmaps"]
             verbs: ["get","list",]
-          # Track and get the runner, experiment, and helper pods log
+          # Track and get the runner, experiment, and helper pods log 
           - apiGroups: [""]
             resources: ["pods/log"]
-            verbs: ["get","list","watch"]
+            verbs: ["get","list","watch"]  
           # for creating and managing to execute comands inside target container
           - apiGroups: [""]
             resources: ["pods/exec"]
@@ -103,7 +106,7 @@ The target nodes should be in ready state before and after chaos injection.
 ## Experiment tunables
 
 ??? info "check the experiment tunables"
-<h2>Mandatory Fields</h2>
+    <h2>Mandatory Fields</h2>
 
     <table>
       <tr>
@@ -122,7 +125,7 @@ The target nodes should be in ready state before and after chaos injection.
         <td>It is mutually exclusive with the TARGET_NODES ENV. If both are provided then it will use the TARGET_NODES</td>
       </tr>
     </table>
-
+    
     <h2>Optional Fields</h2>
 
     <table>
@@ -161,7 +164,7 @@ The target nodes should be in ready state before and after chaos injection.
         <td> The size in Mebibytes of total available memory. When using this we need to keep MEMORY_CONSUMPTION_PERCENTAGE empty as the percentage have more precedence</td>
         <td> Optional </td>
         <td>  </td>
-      </tr>
+      </tr>  
       <tr>
         <td> NUMBER_OF_WORKERS </td>
         <td> It is the number of VM workers involved in IO disk stress </td>
@@ -179,7 +182,7 @@ The target nodes should be in ready state before and after chaos injection.
         <td> The Percentage of total nodes to target  </td>
         <td> Optional </td>
         <td> Defaults to 0 (corresponds to 1 node), provide numeric value only </td>
-      </tr>
+      </tr> 
       <tr>
         <td> SEQUENCE </td>
         <td> It defines sequence of chaos execution for multiple target pods </td>
@@ -191,16 +194,15 @@ The target nodes should be in ready state before and after chaos injection.
 
 ### Common and Node specific tunables
 
-Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.
+Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [Node specific tunable](common-tunables-for-node-experiments.md) to tune the common tunables for all experiments and node specific tunables.  
 
 ### Memory Consumption Percentage
 
-It stresses the `MEMORY_CONSUMPTION_PERCENTAGE` percentage of total node capacity of the targeted node.
+It stresses the `MEMORY_CONSUMPTION_PERCENTAGE` percentage of total node capacity of the targeted node. 
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-percentage.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-percentage.yaml yaml)
 ```yaml
 # stress the memory of the targeted node with MEMORY_CONSUMPTION_PERCENTAGE of node capacity
 # it is mutually exclusive with the MEMORY_CONSUMPTION_MEBIBYTES.
@@ -214,26 +216,25 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-memory-hog-sa
   experiments:
-    - name: node-memory-hog
-      spec:
-        components:
-          env:
-            # percentage of total node capacity to be stressed
-            - name: MEMORY_CONSUMPTION_PERCENTAGE
-              value: "10" # in percentage
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: node-memory-hog
+    spec:
+      components:
+        env:
+        # percentage of total node capacity to be stressed
+        - name: MEMORY_CONSUMPTION_PERCENTAGE
+          value: '10' # in percentage
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
 
 ### Memory Consumption Mebibytes
 
-It stresses the `MEMORY_CONSUMPTION_MEBIBYTES` MiBi of the memory of the targeted node.
+It stresses the `MEMORY_CONSUMPTION_MEBIBYTES` MiBi of the memory of the targeted node. 
 It is mutually exclusive with the `MEMORY_CONSUMPTION_PERCENTAGE` ENV. If `MEMORY_CONSUMPTION_PERCENTAGE` ENV is set then it will use the percentage for the stress otherwise, it will stress the i/o based on `MEMORY_CONSUMPTION_MEBIBYTES` ENV.
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-mebibytes.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/memory-consumption-mebibytes.yaml yaml)
 ```yaml
 # stress the memory of the targeted node with given MEMORY_CONSUMPTION_MEBIBYTES
 # it is mutually exclusive with the MEMORY_CONSUMPTION_PERCENTAGE.
@@ -247,15 +248,15 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-memory-hog-sa
   experiments:
-    - name: node-memory-hog
-      spec:
-        components:
-          env:
-            # node memory to be stressed
-            - name: MEMORY_CONSUMPTION_MEBIBYTES
-              value: "500" # in MiBi
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: node-memory-hog
+    spec:
+      components:
+        env:
+        # node memory to be stressed
+        - name: MEMORY_CONSUMPTION_MEBIBYTES
+          value: '500' # in MiBi
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
 
 ### Workers For Stress
@@ -264,8 +265,7 @@ The workers count for the stress can be tuned with `NUMBER_OF_WORKERS` ENV.
 
 Use the following example to tune this:
 
-[embedmd]: # "https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/workers.yaml yaml"
-
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/nodes/node-memory-hog/workers.yaml yaml)
 ```yaml
 # provide for the workers count for the stress
 apiVersion: litmuschaos.io/v1alpha1
@@ -277,13 +277,13 @@ spec:
   annotationCheck: "false"
   chaosServiceAccount: node-memory-hog-sa
   experiments:
-    - name: node-memory-hog
-      spec:
-        components:
-          env:
-            # total number of workers involved in stress
-            - name: NUMBER_OF_WORKERS
-              value: "1"
-            - name: TOTAL_CHAOS_DURATION
-              value: "60"
+  - name: node-memory-hog
+    spec:
+      components:
+        env:
+        # total number of workers involved in stress
+        - name: NUMBER_OF_WORKERS
+          value: '1' 
+        - name: TOTAL_CHAOS_DURATION
+          VALUE: '60'
 ```
