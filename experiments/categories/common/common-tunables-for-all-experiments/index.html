@@ -4001,7 +4001,7 @@
 <span class="w">        </span><span class="nt">env</span><span class="p">:</span>
 <span class="w">        </span><span class="c1"># time duration for the chaos execution</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="ramp-time">Ramp Time<a class="headerlink" href="#ramp-time" title="Permanent link">&para;</a></h3>
 <p>It defines the period to wait before and after the injection of chaos. It can be tuned with the <code>RAMP_TIME</code> ENV. It is provided in a unit of seconds.</p>
@@ -4028,7 +4028,7 @@
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RAMP_TIME</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10&#39;</span><span class="w"> </span><span class="c1"># in seconds</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="sequence-of-chaos-execution">Sequence of chaos execution<a class="headerlink" href="#sequence-of-chaos-execution" title="Permanent link">&para;</a></h3>
 <p>It defines the sequence of the chaos execution in the case of multiple targets. It can be tuned with the <code>SEQUENCE</code> ENV. It supports the following modes:</p>
@@ -4061,7 +4061,7 @@ The default value of <code>SEQUENCE</code> is <code>parallel</code>.</li>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SEQUENCE</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;parallel&#39;</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="name-of-chaos-library">Name of chaos library<a class="headerlink" href="#name-of-chaos-library" title="Permanent link">&para;</a></h3>
 <p>It defines the name of the chaos library used for the chaos injection. It can be tuned with the <code>LIB</code> ENV.</p>
@@ -4088,7 +4088,7 @@ The default value of <code>SEQUENCE</code> is <code>parallel</code>.</li>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LIB</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;litmus&#39;</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="instance-id">Instance ID<a class="headerlink" href="#instance-id" title="Permanent link">&para;</a></h3>
 <p>It defines a user-defined string that holds metadata/info about the current run/instance of chaos. Ex: 04-05-2020-9-00. This string is appended as a suffix in the chaosresult CR name. It can be tuned with <code>INSTANCE_ID</code> ENV.</p>
@@ -4115,7 +4115,7 @@ The default value of <code>SEQUENCE</code> is <code>parallel</code>.</li>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">INSTANCE_ID</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123&#39;</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 <h3 id="image-used-by-the-helper-pod">Image used by the helper pod<a class="headerlink" href="#image-used-by-the-helper-pod" title="Permanent link">&para;</a></h3>
 <p>It defines the image, which is used to launch the helper pod, if applicable. It can be tuned with the <code>LIB_IMAGE</code> ENV.
@@ -4145,7 +4145,7 @@ It is supported by [container-kill, network-experiments, stress-experiments, dns
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LIB_IMAGE</span>
 <span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;litmuschaos/go-runner:latest&#39;</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TOTAL_CHAOS_DURATION</span>
-<span class="w">          </span><span class="nt">VALUE</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;60&#39;</span>
 </code></pre></div>
 
 
