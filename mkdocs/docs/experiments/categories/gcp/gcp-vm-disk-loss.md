@@ -226,7 +226,7 @@ spec:
         - name: GCP_PROJECT_ID
           value: 'project-id'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mutiple Iterations Of Chaos
@@ -256,7 +256,7 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: DISK_VOLUME_NAMES
           value: 'disk-01,disk-02'
         - name: ZONES

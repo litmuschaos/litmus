@@ -440,7 +440,7 @@ spec:
         - name: SOCKET_PATH
           value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pumba Chaos Library
