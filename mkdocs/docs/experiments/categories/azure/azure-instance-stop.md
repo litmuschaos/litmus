@@ -217,7 +217,7 @@ spec:
         - name: RESOURCE_GROUP
           value: '<resource group of AZURE_INSTANCE_NAME>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Stop Scale Set Instances
@@ -252,7 +252,7 @@ spec:
         - name: SCALE_SET
           value: 'enable'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Multiple Iterations Of Chaos
@@ -282,7 +282,7 @@ spec:
           value: '10'
          # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: AZURE_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         - name: RESOURCE_GROUP
