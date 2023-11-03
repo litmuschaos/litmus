@@ -1208,7 +1208,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		probeDetails        []*model.GetProbesInExperimentRunResponse
 		probeStatusMap      = make(map[string]model.ProbeVerdict)
 		probeDescriptionMap = make(map[string]*string)
-		probeModeMap = make(map[string]model.Mode)
+		probeModeMap        = make(map[string]model.Mode)
 	)
 
 	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
@@ -1218,10 +1218,6 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 	})
 	if err != nil {
 		return nil, err
-	}
-
-	if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
-		return nil, errors.New("failed to unmarshal workflow manifest")
 	}
 
 	for _, _probe := range wfRun.Probes {
