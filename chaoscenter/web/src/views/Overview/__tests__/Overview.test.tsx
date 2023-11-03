@@ -12,21 +12,27 @@ const queryClient = new QueryClient();
 
 describe('OverviewView Component', () => {
   test('shows loading state', async () => {
+    const props = {
+      loading: {
+        chaosHubStats: true,
+        infraStats: true,
+        experimentStats: true,
+        recentExperimentsTable: true
+      },
+      chaosHubStats: undefined,
+      infraStats: undefined,
+      experimentStats: undefined,
+      experimentDashboardTableData: undefined,
+      refetchExperiments: function (
+        _variables?: Partial<ListExperimentRequest> | undefined
+      ): Promise<ApolloQueryResult<ListExperimentResponse>> {
+        throw new Error('Function not implemented.');
+      }
+    };
     render(
       <QueryClientProvider client={queryClient}>
         <TestWrapper>
-          <OverviewView
-            loading={{ chaosHubStats: true, infraStats: true, experimentStats: true, recentExperimentsTable: true }}
-            chaosHubStats={undefined}
-            infraStats={undefined}
-            experimentStats={undefined}
-            experimentDashboardTableData={undefined}
-            refetchExperiments={function (
-              _variables?: Partial<ListExperimentRequest> | undefined
-            ): Promise<ApolloQueryResult<ListExperimentResponse>> {
-              throw new Error('Function not implemented.');
-            }}
-          />
+          <OverviewView {...props} />
         </TestWrapper>
       </QueryClientProvider>
     );
@@ -35,26 +41,28 @@ describe('OverviewView Component', () => {
   });
 
   test('renders NewUserLanding if no experiment data is present', async () => {
+    const props = {
+      experimentDashboardTableData: { content: [] },
+      chaosHubStats: undefined,
+      infraStats: undefined,
+      experimentStats: undefined,
+      loading: {
+        chaosHubStats: false,
+        infraStats: false,
+        experimentStats: false,
+        recentExperimentsTable: false
+      },
+      refetchExperiments: function (
+        _variables?: Partial<ListExperimentRequest> | undefined
+      ): Promise<ApolloQueryResult<ListExperimentResponse>> {
+        throw new Error('Function not implemented.');
+      }
+    };
+
     render(
       <QueryClientProvider client={queryClient}>
         <TestWrapper>
-          <OverviewView
-            experimentDashboardTableData={{ content: [] }}
-            chaosHubStats={undefined}
-            infraStats={undefined}
-            experimentStats={undefined}
-            loading={{
-              chaosHubStats: false,
-              infraStats: false,
-              experimentStats: false,
-              recentExperimentsTable: false
-            }}
-            refetchExperiments={function (
-              _variables?: Partial<ListExperimentRequest> | undefined
-            ): Promise<ApolloQueryResult<ListExperimentResponse>> {
-              throw new Error('Function not implemented.');
-            }}
-          />
+          <OverviewView {...props} />
         </TestWrapper>
       </QueryClientProvider>
     );
