@@ -30,7 +30,7 @@ spec:
         - name: TARGET_PODS
           value: 'pod1,pod2'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pod Affected Percentage
@@ -64,7 +64,7 @@ spec:
         - name: PODS_AFFECTED_PERC
           value: '100'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Specific Container
@@ -98,7 +98,7 @@ spec:
         - name: TARGET_CONTAINER
           value: 'nginx'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Default Application Health Check

@@ -245,7 +245,7 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Random Interval

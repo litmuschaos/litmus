@@ -21,4 +21,4 @@ spec:
         - name: PODS_AFFECTED_PERC
           value: '100'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
