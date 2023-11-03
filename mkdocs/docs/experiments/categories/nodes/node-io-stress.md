@@ -225,7 +225,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_PERCENTAGE
           value: '10' # in percentage
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Filesystem Utilization Bytes
@@ -257,7 +257,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_BYTES
           value: '500' # in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Limit CPU Utilization
@@ -286,7 +286,7 @@ spec:
         - name: CPU
           value: '1' 
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Workers For Stress
@@ -318,5 +318,5 @@ spec:
         - name: VM_WORKERS
           value: '1'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

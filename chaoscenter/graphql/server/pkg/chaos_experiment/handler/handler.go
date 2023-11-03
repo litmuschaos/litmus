@@ -1208,7 +1208,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		probeDetails        []*model.GetProbesInExperimentRunResponse
 		probeStatusMap      = make(map[string]model.ProbeVerdict)
 		probeDescriptionMap = make(map[string]*string)
-		executionData       types.ExecutionData
+		probeModeMap        = make(map[string]model.Mode)
 	)
 
 	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
@@ -1220,16 +1220,12 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		return nil, err
 	}
 
-	if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
-		return nil, errors.New("failed to unmarshal workflow manifest")
-	}
-
 	for _, _probe := range wfRun.Probes {
 		if _probe.FaultName == faultName {
-
-			mode := "SOT"
 			for _, probeName := range _probe.ProbeNames {
+				var executionData types.ExecutionData
 				probeStatusMap[probeName] = model.ProbeVerdictNa
+				probeModeMap[probeName] = model.ModeSot
 				description := "Either probe is not executed or not evaluated"
 				probeDescriptionMap[probeName] = &description
 
@@ -1250,7 +1246,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 
 									for _, probeStatus := range probeStatuses {
 										if probeStatus.Name == probeName {
-											mode = probeStatus.Mode
+											probeModeMap[probeName] = model.Mode(probeStatus.Mode)
 
 											description := probeStatus.Status.Description
 											probeDescriptionMap[probeStatus.Name] = &description
@@ -1286,7 +1282,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 
 				probeDetails = append(probeDetails, &model.GetProbesInExperimentRunResponse{
 					Probe: singleProbe.GetOutputProbe(),
-					Mode:  model.Mode(mode),
+					Mode:  probeModeMap[probeName],
 					Status: &model.Status{
 						Verdict:     probeStatusMap[probeName],
 						Description: probeDescriptionMap[probeName],

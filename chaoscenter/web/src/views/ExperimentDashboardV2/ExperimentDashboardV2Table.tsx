@@ -12,7 +12,7 @@ import { getDetailedTime, killEvent } from '@utils';
 import { useStrings } from '@strings';
 import { useRouteWithBaseUrl } from '@hooks';
 import CopyButton from '@components/CopyButton';
-import { ExperimentRunStatus } from '@api/entities';
+import { ExperimentRunStatus, InfrastructureType } from '@api/entities';
 import type {
   ExperimentDashboardTableProps,
   ExperimentDetails,
@@ -21,7 +21,7 @@ import type {
 import DarkPopover from '@components/DarkPopover';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import StatusHeatMap from '@components/StatusHeatMap';
-import { RunExperimentButton } from '@components/ExperimentActionButtons';
+import { RunExperimentButton, StopExperimentButton } from '@components/ExperimentActionButtons';
 import { StudioTabs } from '@models';
 import { MenuCell } from './ExperimentDashboardV2TableMenu';
 import css from './ExperimentDashboardV2.module.scss';

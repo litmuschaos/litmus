@@ -196,5 +196,5 @@ spec:
           value: 'vm-53,vm-65'
 
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
