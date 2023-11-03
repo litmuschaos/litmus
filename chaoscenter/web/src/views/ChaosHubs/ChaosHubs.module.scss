@@ -1,0 +1,134 @@
+.wrapper {
+  padding: '20px 40px';
+}
+
+.modalWithHelpPanel {
+  width: 1000px;
+  min-height: 600px;
+  border-left: 0;
+  padding-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  :global {
+    .FloatingContainer--floatingContainer {
+      transform: scale(0.85);
+      position: absolute !important;
+      right: 20px !important;
+      bottom: 20px !important;
+    }
+  }
+}
+
+.headerFont {
+  font-weight: 500;
+}
+
+.overlayContainer {
+  height: calc(100vh - 177px);
+}
+
+.pageMainContainer {
+  margin: 0 auto !important ;
+  padding: 0rem 5rem !important;
+  max-width: 1220px;
+  height: 100%;
+}
+
+.cardsMainContainer {
+  align-items: flex-start;
+  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 245px);
+  gap: 2rem 1.5rem;
+}
+
+.card {
+  min-height: 260px;
+  gap: 1rem;
+}
+
+.chaosHubCard {
+  position: relative;
+
+  .tagsList {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    .tag {
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px;
+    }
+  }
+}
+
+.connectionStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid #d9dae5;
+  background: #fafbfc;
+  padding: 0.15rem 0.25rem;
+  border-radius: 2px;
+}
+
+.chipCard {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%);
+  width: 150px;
+  height: 24px;
+  text-align: center;
+  line-height: 24px;
+  text-transform: uppercase;
+  font-weight: bold;
+  clip-path: polygon(var(--spacing-xlarge) 0, calc(100% - var(--spacing-xlarge)) 0, 100% 100%, 0 100%);
+  letter-spacing: 2px;
+  font-size: 10px;
+}
+
+.default {
+  color: #0278d5;
+  background: #cdf4fe;
+  border: 1px solid #a3e9ff;
+}
+
+.private {
+  color: #ee2a89;
+  background: #fff3f9;
+  border: 1px solid #ffeef7;
+}
+
+.hubModalText {
+  font-weight: 500;
+  font-size: 24px;
+  color: 'black';
+}
+
+.helpPanelDiv {
+  width: '50%';
+  padding: 30px 30px;
+}
+
+.loaderDiv {
+  height: 530px;
+}
+
+.formContainer {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}

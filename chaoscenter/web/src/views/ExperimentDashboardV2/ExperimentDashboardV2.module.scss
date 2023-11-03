@@ -1,0 +1,46 @@
+.table {
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    padding-bottom: 20px;
+  }
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1.8fr 1.2fr 1.6fr 1.5fr 4rem 2.5rem;
+  }
+
+  :global {
+    .bp3-transition-container {
+      top: -80px !important;
+      left: 5px !important;
+    }
+    .DropDown--main .DropDown--dropdownButton.DropDown--withBorder {
+      background-color: var(--white) !important;
+    }
+  }
+}
+
+.recentExecutionHeader {
+  position: relative;
+}
+
+.latestExecutionText {
+  position: absolute;
+  text-transform: lowercase;
+  top: -16px;
+  p {
+    white-space: nowrap !important;
+  }
+}

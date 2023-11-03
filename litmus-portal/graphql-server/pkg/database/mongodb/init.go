@@ -2,10 +2,12 @@ package mongodb
 
 import (
 	"context"
-	"os"
+	"fmt"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
+
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,7 +21,7 @@ const (
 	WorkflowCollection
 	WorkflowTemplateCollection
 	GitOpsCollection
-	MyHubCollection
+	ChaosHubCollection
 	DataSourceCollection
 	PanelCollection
 	DashboardCollection
@@ -30,7 +32,6 @@ const (
 // MongoInterface requires a MongoClient that implements the Initialize method to create the Mongo DB client
 // and a initAllCollection method to initialize all DB Collections
 type MongoInterface interface {
-	Initialize() *MongoClient
 	initAllCollection()
 }
 
@@ -43,7 +44,7 @@ type MongoClient struct {
 	WorkflowCollection         *mongo.Collection
 	WorkflowTemplateCollection *mongo.Collection
 	GitOpsCollection           *mongo.Collection
-	MyHubCollection            *mongo.Collection
+	ChaosHubCollection         *mongo.Collection
 	DataSourceCollection       *mongo.Collection
 	PanelCollection            *mongo.Collection
 	DashboardCollection        *mongo.Collection
@@ -52,8 +53,6 @@ type MongoClient struct {
 }
 
 var (
-	Client MongoInterface = &MongoClient{}
-
 	collections = map[int]string{
 		ClusterCollection:          "cluster-collection",
 		UserCollection:             "user",
@@ -61,7 +60,7 @@ var (
 		WorkflowCollection:         "workflow-collection",
 		WorkflowTemplateCollection: "workflow-template",
 		GitOpsCollection:           "gitops-collection",
-		MyHubCollection:            "myhub",
+		ChaosHubCollection:         "chaoshub",
 		DataSourceCollection:       "datasource-collection",
 		PanelCollection:            "panel-collection",
 		DashboardCollection:        "dashboard-collection",
@@ -74,16 +73,15 @@ var (
 	backgroundContext = context.Background()
 )
 
-// Initialize initializes database connection
-func (m *MongoClient) Initialize() *MongoClient {
+func MongoConnection() (*mongo.Client, error) {
 	var (
-		dbServer   = os.Getenv("DB_SERVER")
-		dbUser     = os.Getenv("DB_USER")
-		dbPassword = os.Getenv("DB_PASSWORD")
+		dbServer   = utils.Config.DbServer
+		dbUser     = utils.Config.DbUser
+		dbPassword = utils.Config.DbPassword
 	)
 
 	if dbServer == "" || dbUser == "" || dbPassword == "" {
-		logrus.Fatal("DB configuration failed")
+		return nil, fmt.Errorf("missing required DB configuration")
 	}
 
 	credential := options.Credential{
@@ -94,7 +92,7 @@ func (m *MongoClient) Initialize() *MongoClient {
 	clientOptions := options.Client().ApplyURI(dbServer).SetAuth(credential)
 	client, err := mongo.Connect(backgroundContext, clientOptions)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, err
 	}
 
 	ctx, _ := context.WithTimeout(backgroundContext, ConnectionTimeout)
@@ -102,14 +100,22 @@ func (m *MongoClient) Initialize() *MongoClient {
 	// Check the connection
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, err
 	} else {
-		logrus.Print("Connected To MongoDB")
+		log.Infof("connected To MongoDB")
 	}
 
-	m.Database = client.Database(dbName)
-	m.initAllCollection()
-	return m
+	return client, nil
+}
+
+// Initialize initializes database connection
+func Initialize(client *mongo.Client) *MongoClient {
+	mongodbClient := &MongoClient{
+		Database: client.Database(dbName),
+	}
+	mongodbClient.initAllCollection()
+
+	return mongodbClient
 }
 
 // initAllCollection initializes all the database collections
@@ -136,7 +142,7 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.Fatal("Error Creating Index for Workflow Collection: ", err)
+		log.Fatal("error Creating Index for Workflow Collection: ", err)
 	}
 
 	m.WorkflowTemplateCollection = m.Database.Collection(collections[WorkflowTemplateCollection])
@@ -150,10 +156,10 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.Fatal("Error Creating Index for GitOps Collection : ", err)
+		log.Fatal("error Creating Index for GitOps Collection : ", err)
 	}
 
-	m.MyHubCollection = m.Database.Collection(collections[MyHubCollection])
+	m.ChaosHubCollection = m.Database.Collection(collections[ChaosHubCollection])
 	m.DataSourceCollection = m.Database.Collection(collections[DataSourceCollection])
 	m.PanelCollection = m.Database.Collection(collections[PanelCollection])
 	m.DashboardCollection = m.Database.Collection(collections[DashboardCollection])
@@ -168,6 +174,6 @@ func (m *MongoClient) initAllCollection() {
 		},
 	})
 	if err != nil {
-		logrus.Fatal("Error Creating Index for Server Config Collection : ", err)
+		log.Fatal("error Creating Index for Server Config Collection : ", err)
 	}
 }

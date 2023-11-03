@@ -4,9 +4,9 @@ import localforage from 'localforage';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GET_HUB_STATUS } from '../../../graphql/queries';
+import { HubStatus } from '../../../models/graphql/chaoshub';
 import { MyHubDetail } from '../../../models/graphql/user';
 import { ChooseWorkflowRadio } from '../../../models/localforage/radioButton';
-import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles, { MenuProps } from './styles';
 
@@ -18,7 +18,7 @@ const SelectMyHub = () => {
 
   // Get all MyHubs with status
   const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-    variables: { data: selectedProjectID },
+    variables: { projectID: selectedProjectID },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -38,25 +38,25 @@ const SelectMyHub = () => {
   };
 
   useEffect(() => {
-    if (data?.getHubStatus !== undefined) {
-      if (data.getHubStatus.length) {
+    if (data?.listHubStatus !== undefined) {
+      if (data.listHubStatus.length) {
         const hubDetails: MyHubDetail[] = [];
-        data.getHubStatus.forEach((hub) => {
+        data.listHubStatus.forEach((hub) => {
           /**
            * Push only available hubs
            */
-          if (hub.IsAvailable) {
+          if (hub.isAvailable) {
             hubDetails.push({
               id: hub.id,
-              HubName: hub.HubName,
-              RepoBranch: hub.RepoBranch,
-              RepoURL: hub.RepoURL,
+              hubName: hub.hubName,
+              repoBranch: hub.repoBranch,
+              repoURL: hub.repoURL,
             });
           }
         });
         setAvailableHubs(hubDetails);
-        data.getHubStatus.forEach((hubData) => {
-          if (hubData.HubName.toLowerCase() === 'litmus chaoshub') {
+        data.listHubStatus.forEach((hubData) => {
+          if (hubData.hubName.toLowerCase() === 'litmus chaoshub') {
             setSelectedHub('Litmus ChaosHub');
             localforage.setItem('selectedHub', 'Litmus ChaosHub');
             localforage.setItem('hasSetWorkflowData', false);
@@ -85,11 +85,11 @@ const SelectMyHub = () => {
           >
             {availableHubs.map((hubs) => (
               <MenuItem
-                key={hubs.HubName}
+                key={hubs.hubName}
                 data-cy="hubOption"
-                value={hubs.HubName}
+                value={hubs.hubName}
               >
-                {hubs.HubName}
+                {hubs.hubName}
               </MenuItem>
             ))}
           </Select>

@@ -2,6 +2,7 @@ package k8s
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/graphql"
+	"github.com/litmuschaos/litmus/litmus-portal/cluster-agents/subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
@@ -18,6 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
@@ -26,8 +29,9 @@ import (
 )
 
 const (
-	ExternAgentConfigName = "agent-config"
-	LiveCheckMaxTries     = 6
+	AgentConfigName   = "agent-config"
+	AgentSecretName   = "agent-secret"
+	LiveCheckMaxTries = 6
 )
 
 type AgentComponents struct {
@@ -111,7 +115,7 @@ func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Cl
 			}
 		}
 		if downCount == 0 {
-			logrus.Info("all deployments up")
+			logrus.Info("All agent deployments are up")
 			return
 		} else {
 			retries += 1
@@ -125,17 +129,26 @@ func checkDeploymentStatus(components *AgentComponents, clientset *kubernetes.Cl
 }
 
 func IsClusterConfirmed() (bool, string, error) {
-	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
 	}
 
-	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(ctx, ExternAgentConfigName, metav1.GetOptions{})
+	getCM, err := clientset.CoreV1().ConfigMaps(AgentNamespace).Get(context.TODO(), AgentConfigName, metav1.GetOptions{})
 	if k8s_errors.IsNotFound(err) {
-		return false, "", nil
+		return false, "", errors.New(AgentConfigName + " configmap not found")
 	} else if getCM.Data["IS_CLUSTER_CONFIRMED"] == "true" {
-		return true, getCM.Data["ACCESS_KEY"], nil
+		getSecret, err := clientset.CoreV1().Secrets(AgentNamespace).Get(context.TODO(), AgentSecretName, metav1.GetOptions{})
+
+		if k8s_errors.IsNotFound(err) {
+			return false, "", errors.New(AgentSecretName + " secret not found")
+		}
+
+		if err != nil {
+			return false, "", err
+		}
+
+		return true, string(getSecret.Data["ACCESS_KEY"]), nil
 	} else if err != nil {
 		return false, "", err
 	}
@@ -145,16 +158,13 @@ func IsClusterConfirmed() (bool, string, error) {
 
 // ClusterRegister function creates litmus-portal config map in the litmus namespace
 func ClusterRegister(clusterData map[string]string) (bool, error) {
-	ctx := context.TODO()
 	clientset, err := GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
 
 	newConfigMapData := map[string]string{
-		"ACCESS_KEY":           clusterData["ACCESS_KEY"],
 		"IS_CLUSTER_CONFIRMED": clusterData["IS_CLUSTER_CONFIRMED"],
-		"CLUSTER_ID":           clusterData["CLUSTER_ID"],
 		"SERVER_ADDR":          clusterData["SERVER_ADDR"],
 		"AGENT_SCOPE":          clusterData["AGENT_SCOPE"],
 		"COMPONENTS":           clusterData["COMPONENTS"],
@@ -164,17 +174,35 @@ func ClusterRegister(clusterData map[string]string) (bool, error) {
 		"CUSTOM_TLS_CERT":      clusterData["CUSTOM_TLS_CERT"],
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(ctx, &corev1.ConfigMap{
+	_, err = clientset.CoreV1().ConfigMaps(AgentNamespace).Update(context.TODO(), &corev1.ConfigMap{
 		Data: newConfigMapData,
 		ObjectMeta: metav1.ObjectMeta{
-			Name: ExternAgentConfigName,
+			Name: AgentConfigName,
 		},
 	}, metav1.UpdateOptions{})
 	if err != nil {
 		return false, err
 	}
 
-	logrus.Info(ExternAgentConfigName + " has been updated")
+	logrus.Info(AgentConfigName + " has been updated")
+
+	newSecretData := map[string]string{
+		"ACCESS_KEY": clusterData["ACCESS_KEY"],
+		"CLUSTER_ID": clusterData["CLUSTER_ID"],
+	}
+
+	_, err = clientset.CoreV1().Secrets(AgentNamespace).Update(context.TODO(), &corev1.Secret{
+		StringData: newSecretData,
+		ObjectMeta: metav1.ObjectMeta{
+			Name: AgentSecretName,
+		},
+	}, metav1.UpdateOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	logrus.Info(AgentSecretName + " has been updated")
+
 	return true, nil
 }
 
@@ -183,7 +211,7 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	if requestType == "create" {
 		response, err := dr.Create(ctx, obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
-			// This doesnt ever happen even if it does already exist
+			// This doesn't ever happen even if it does already exist
 			logrus.Info("Already exists")
 			return nil, nil
 		}
@@ -192,12 +220,12 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			return nil, err
 		}
 
-		logrus.Info("successfully created for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
+		logrus.Info("Successfully created for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "update" {
 		getObj, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -216,9 +244,18 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		logrus.Info("successfully updated for kind: ", response.GetKind(), ", resource name: ", response.GetName(), ", and namespace: ", response.GetNamespace())
 		return response, nil
 	} else if requestType == "delete" {
-		err := dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
+		var err error
+		if obj.GetName() != "" {
+			err = dr.Delete(ctx, obj.GetName(), metav1.DeleteOptions{})
+			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
+		} else if obj.GetLabels() != nil {
+			objLabels := obj.GetLabels()
+			delete(objLabels, "executed_by")
+			err = dr.DeleteCollection(ctx, metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: labels.FormatLabels(objLabels)})
+			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource labels: ", objLabels, ", and namespace: ", obj.GetNamespace())
+		}
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -226,13 +263,11 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 		if err != nil {
 			return nil, err
 		}
-
-		logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		return &unstructured.Unstructured{}, nil
 	} else if requestType == "get" {
 		response, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{})
 		if k8s_errors.IsNotFound(err) {
-			// This doesnt ever happen even if it is already deleted or not found
+			// This doesn't ever happen even if it is already deleted or not found
 			logrus.Info("%v not found", obj.GetName())
 			return nil, nil
 		}
@@ -248,11 +283,25 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 	return nil, fmt.Errorf("err: %v\n", "Invalid Request")
 }
 
-// This function handles cluster operations
-func ClusterOperations(manifest string, requestType string, namespace string) (*unstructured.Unstructured, error) {
+func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]string) {
+	newLabels := obj.GetLabels()
+
+	if len(newLabels) == 0 {
+		newLabels = make(map[string]string)
+	}
+
+	for label, value := range customLabels {
+		newLabels[label] = value
+	}
+
+	obj.SetLabels(newLabels)
+}
+
+// ClusterOperations handles cluster operations
+func ClusterOperations(clusterAction types.Action) (*unstructured.Unstructured, error) {
 
 	// Converting JSON to YAML and store it in yamlStr variable
-	yamlStr, err := yaml_converter.JSONToYAML([]byte(manifest))
+	yamlStr, err := yaml_converter.JSONToYAML([]byte(clusterAction.K8SManifest))
 	if err != nil {
 		return nil, err
 	}
@@ -273,6 +322,8 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 		return nil, err
 	}
 
+	addCustomLabels(obj, map[string]string{"executed_by": base64.RawURLEncoding.EncodeToString([]byte(clusterAction.Username))})
+
 	// Find GVR
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
@@ -282,17 +333,17 @@ func ClusterOperations(manifest string, requestType string, namespace string) (*
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
-		dr = dynamicClient.Resource(mapping.Resource).Namespace(namespace)
+		dr = dynamicClient.Resource(mapping.Resource).Namespace(clusterAction.Namespace)
 	} else {
 		// for cluster-wide resources
 		dr = dynamicClient.Resource(mapping.Resource)
 	}
 
-	return applyRequest(requestType, obj)
+	return applyRequest(clusterAction.RequestType, obj)
 }
 
 func ClusterConfirm(clusterData map[string]string) ([]byte, error) {
-	payload := `{"query":"mutation{ clusterConfirm(identity: {cluster_id: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", access_key: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey cluster_id}}"}`
+	payload := `{"query":"mutation{ confirmClusterRegistration(request: {clusterID: \"` + clusterData["CLUSTER_ID"] + `\", version: \"` + clusterData["VERSION"] + `\", accessKey: \"` + clusterData["ACCESS_KEY"] + `\"}){isClusterConfirmed newAccessKey clusterID}}"}`
 	resp, err := graphql.SendRequest(clusterData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err

@@ -59,27 +59,6 @@ const RemoveMemberModal: React.FC<RemoveMemberModalProps> = ({
       });
   };
 
-  // mutation to remove member
-  // const [removeMember, { loading }] = useMutation<MemberInvitation>(
-  //   REMOVE_INVITATION,
-  //   {
-  //     onCompleted: () => {
-  //       showModal();
-  //       handleClose();
-  //       window.location.reload();
-  //     },
-  //     refetchQueries: [
-  //       {
-  //         query: GET_PROJECT,
-  //         variables: { projectID },
-  //       },
-  //       {
-  //         query: ALL_USERS,
-  //       },
-  //     ],
-  //   }
-  // );
-
   return (
     <Modal
       data-cy="modal"

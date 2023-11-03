@@ -1,0 +1,22 @@
+.hourlyTab {
+  padding: var(--spacing-xsmall) var(--spacing-xlarge) 0 var(--spacing-xlarge);
+
+  .label {
+    margin-bottom: var(--spacing-small) !important;
+    color: var(--grey-800) !important;
+    font-size: 14px !important;
+  }
+
+  [class*='bp3-menu'] {
+    overflow-x: hidden !important;
+    min-width: 100px;
+  }
+
+  [class*='Select'] {
+    width: 100px;
+  }
+
+  [data-name='expressionBreakdown'] {
+    padding: var(--spacing-large) 0 var(--spacing-large) !important;
+  }
+}

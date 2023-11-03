@@ -8,4 +8,5 @@ type SubscriberRequests struct {
 	ProjectID    string  `json:"project_id"`
 	ClusterID    string  `json:"cluster_id"`
 	Namespace    string  `json:"namespace"`
+	Username     *string `json:"username"`
 }

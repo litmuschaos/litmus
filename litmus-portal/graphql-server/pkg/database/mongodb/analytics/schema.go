@@ -72,12 +72,12 @@ type Panel struct {
 
 type PanelOption struct {
 	Points   *bool `bson:"points"`
-	Grids    *bool `bson:"grids"`
+	GrIDs    *bool `bson:"grids"`
 	LeftAxis *bool `bson:"left_axis"`
 }
 
 type PromQuery struct {
-	Queryid       string  `bson:"queryid"`
+	QueryID       string  `bson:"queryid"`
 	PromQueryName *string `bson:"prom_query_name"`
 	Legend        *string `bson:"Legend"`
 	Resolution    *string `bson:"resolution"`

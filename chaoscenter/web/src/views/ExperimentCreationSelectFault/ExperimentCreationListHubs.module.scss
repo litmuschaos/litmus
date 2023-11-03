@@ -1,0 +1,41 @@
+.headContainer {
+  padding: var(--spacing-4) var(--spacing-7) !important;
+}
+
+.spaceRight {
+  margin-right: var(--spacing-medium) !important;
+}
+
+.allHubs {
+  padding: var(--spacing-large) 0;
+
+  img {
+    height: 15px;
+    width: 15px;
+  }
+}
+
+.leftSpacing {
+  margin-left: 70px !important;
+}
+
+.hub {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-medium);
+  padding-left: var(--spacing-xxxlarge);
+
+  &:hover {
+    cursor: pointer;
+    background-color: var(--primary-8) !important;
+  }
+}
+
+.active {
+  background-color: var(--primary-8) !important;
+}
+
+.category {
+  cursor: pointer;
+  padding: var(--spacing-small) 0 !important;
+}

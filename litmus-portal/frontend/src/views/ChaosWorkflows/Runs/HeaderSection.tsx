@@ -102,12 +102,12 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
         {/* Select Workflow */}
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel className={classes.selectText}>
-            Workflow Status
+            Chaos Scenario Status
           </InputLabel>
           <Select
             value={statusValue}
             onChange={changeStatus}
-            label="Workflow Status"
+            label="Chaos Scenario Status"
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>
@@ -119,17 +119,17 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
 
         {/* Select Cluster */}
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel className={classes.selectText}>Target Cluster</InputLabel>
+          <InputLabel className={classes.selectText}>Chaos Delegate</InputLabel>
           <Select
             value={clusterValue}
             onChange={changeCluster}
-            label="Target Cluster"
+            label="Chaos Delegate"
             className={classes.selectText}
           >
             <MenuItem value="All">All</MenuItem>
-            {clusterList?.getCluster?.map((cluster) => (
-              <MenuItem key={cluster.cluster_name} value={cluster.cluster_name}>
-                {cluster.cluster_name}
+            {clusterList?.listClusters?.map((cluster) => (
+              <MenuItem key={cluster.clusterName} value={cluster.clusterName}>
+                {cluster.clusterName}
               </MenuItem>
             ))}
           </Select>

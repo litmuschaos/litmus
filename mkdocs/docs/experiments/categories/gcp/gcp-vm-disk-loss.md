@@ -17,7 +17,7 @@
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
     -  Ensure that the <code>gcp-vm-disk-loss</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss/experiment.yaml">here</a>
     - Ensure that your service account has an editor access or owner access for the GCP project.
-    - Ensure the target disk volume to be detached should not be the root volume its instance. 
+    - Ensure that the target disk volume is not a boot disk of any VM instance.
     - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:
 
         ```yaml
@@ -140,7 +140,7 @@
         <td> Multiple disk volume names can be provided as disk1,disk2,... </td>
       </tr>  
       <tr>
-        <td> DISK_ZONES </td>
+        <td> ZONES </td>
         <td> The zones of respective target disk volumes </td>
         <td> Provide the zone for every target disk name as zone1,zone2... in the respective order of <code>DISK_VOLUME_NAMES</code>  </td>
       </tr>
@@ -171,7 +171,7 @@
       </tr>  
       <tr>
         <td> SEQUENCE </td>
-        <td> It defines sequence of chaos execution for multiple instance </td>
+        <td> It defines sequence of chaos execution for multiple disks </td>
         <td> Default value: parallel. Supported: serial, parallel </td>
       </tr> 
       <tr>
@@ -189,7 +189,7 @@ Refer the [common attributes](../common/common-tunables-for-all-experiments.md) 
 
 ### Detach Volumes By Names
 
-It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given `DISK_VOLUME_NAMES` disk names and corresponding `DISK_ZONES` zone names and the `DEVICE_NAMES` device names in `GCP_PROJECT_ID` project.  It reattached the volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
+It contains comma separated list of volume names subjected to disk loss chaos. It will detach all the disks with the given `DISK_VOLUME_NAMES` disk names and corresponding `ZONES` zone names and the `DEVICE_NAMES` device names in `GCP_PROJECT_ID` project.  It reattached the volume after waiting for the specified `TOTAL_CHAOS_DURATION` duration.
 
 `NOTE:` The `DISK_VOLUME_NAMES` contains multiple comma-separated disk names. The comma-separated zone names should be provided in the same order as disk names.
 
@@ -216,7 +216,7 @@ spec:
           value: 'disk-01,disk-02'
         # comma separated list of zone names corresponds to the DISK_VOLUME_NAMES
         # it should be provided in same order of DISK_VOLUME_NAMES
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         # comma separated list of device names corresponds to the DISK_VOLUME_NAMES
         # it should be provided in same order of DISK_VOLUME_NAMES
@@ -226,7 +226,7 @@ spec:
         - name: GCP_PROJECT_ID
           value: 'project-id'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mutiple Iterations Of Chaos
@@ -256,10 +256,10 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: DISK_VOLUME_NAMES
           value: 'disk-01,disk-02'
-        - name: DISK_ZONES
+        - name: ZONES
           value: 'zone-01,zone-02'
         - name: DEVICE_NAMES
           value: 'device-01,device-02'

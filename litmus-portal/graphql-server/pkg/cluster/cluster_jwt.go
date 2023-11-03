@@ -3,20 +3,18 @@ package cluster
 import (
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/utils"
 )
 
-var secret = os.Getenv("JWT_SECRET")
-
-// ClusterCreateJWT generates jwt used in cluster registration
-func ClusterCreateJWT(id string) (string, error) {
+// CreateClusterJWT generates jwt used in cluster registration
+func CreateClusterJWT(id string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["cluster_id"] = id
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString([]byte(secret))
+	tokenString, err := token.SignedString([]byte(utils.Config.JwtSecret))
 	if err != nil {
 		return "", err
 	}
@@ -24,13 +22,13 @@ func ClusterCreateJWT(id string) (string, error) {
 	return tokenString, nil
 }
 
-// ClusterValidateJWT validates the cluster jwt
-func ClusterValidateJWT(token string) (string, error) {
+// ValidateClusterJWT validates the cluster jwt
+func ValidateClusterJWT(token string) (string, error) {
 	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(secret), nil
+		return []byte(utils.Config.JwtSecret), nil
 	})
 
 	if err != nil {

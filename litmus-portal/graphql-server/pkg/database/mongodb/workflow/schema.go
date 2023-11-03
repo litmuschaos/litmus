@@ -7,8 +7,8 @@ const (
 	ChaosEngine ChaosWorkflowType = "chaosengine"
 )
 
-// ChaosWorkFlowInput contains the required fields to be stored in the database for a chaos workflow input
-type ChaosWorkFlowInput struct {
+// ChaosWorkFlowRequest contains the required fields to be stored in the database for a chaos workflow input
+type ChaosWorkFlowRequest struct {
 	WorkflowID          string              `bson:"workflow_id"`
 	WorkflowManifest    string              `bson:"workflow_manifest"`
 	CronSyntax          string              `bson:"cronSyntax"`
@@ -25,6 +25,7 @@ type ChaosWorkFlowInput struct {
 	ClusterType         string              `bson:"cluster_type"`
 	WorkflowRuns        []*ChaosWorkflowRun `bson:"workflow_runs"`
 	IsRemoved           bool                `bson:"isRemoved"`
+	LastUpdatedBy       string              `bson:"last_updated_by"`
 }
 
 // WeightagesInput contains the required fields to be stored in the database for a weightages input
@@ -48,6 +49,7 @@ type ChaosWorkflowRun struct {
 	ExecutionData      string   `bson:"execution_data"`
 	Completed          bool     `bson:"completed"`
 	IsRemoved          *bool    `bson:"isRemoved"`
+	ExecutedBy         string   `bson:"executed_by"`
 }
 
 type AggregatedWorkflowRuns struct {
@@ -76,6 +78,6 @@ type FlattenedWorkflowRun struct {
 }
 
 type AggregatedWorkflows struct {
-	TotalFilteredWorkflows []TotalFilteredData  `bson:"total_filtered_workflows"`
-	ScheduledWorkflows     []ChaosWorkFlowInput `bson:"scheduled_workflows"`
+	TotalFilteredWorkflows []TotalFilteredData    `bson:"total_filtered_workflows"`
+	ScheduledWorkflows     []ChaosWorkFlowRequest `bson:"scheduled_workflows"`
 }

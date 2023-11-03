@@ -1,0 +1,3 @@
+import KubernetesChaosInfrastructureCreationModalView from './KubernetesChaosInfrastructureCreationModal';
+
+export default KubernetesChaosInfrastructureCreationModalView;

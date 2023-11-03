@@ -94,7 +94,9 @@ const TableData: React.FC<TableDataProps> = ({
             )}
           </Tooltip>
 
-          <Typography>{row.username}</Typography>
+          <Typography style={{ wordBreak: 'break-word' }}>
+            {row.username}
+          </Typography>
         </div>
       </TableCell>
 
@@ -115,7 +117,7 @@ const TableData: React.FC<TableDataProps> = ({
         </div>
       </TableCell>
       <TableCell className={classes.lastTC} key={row.username}>
-        {row.username !== UserRole.admin && (
+        {row.username !== UserRole.ADMIN && (
           <>
             <IconButton
               data-cy="editUser"

@@ -1,0 +1,105 @@
+.modalStepWizard {
+  width: 1160px;
+  height: 687px;
+  position: inherit;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  :global {
+    .FloatingContainer--floatingContainer {
+      transform: scale(0.85);
+      position: absolute !important;
+      right: 20px !important;
+      bottom: 20px !important;
+    }
+  }
+}
+
+.divider {
+  width: 98%;
+}
+
+.newProbeCard {
+  width: 100%;
+  border: 1px dashed var(--primary-7) !important;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  .plusIcon {
+    margin-top: 13px;
+    margin-right: 8px;
+
+    & :global(.bp3-icon) {
+      background-color: var(--primary-7) !important;
+      border-radius: 4px !important;
+    }
+  }
+}
+
+.stepWizardWrapper {
+  height: 100%;
+
+  :global {
+    .StepWizard--navBarList {
+      background-color: var(--primary-9) !important;
+    }
+  }
+}
+
+.probeTable {
+  width: 100%;
+
+  [role='cell'],
+  [role='columnheader'] {
+    width: auto !important;
+    padding-right: var(--spacing-small);
+  }
+
+  div[class*='TableV2--row TableV2--card'] {
+    border-radius: 6px !important;
+
+    &:hover {
+      background-color: white !important;
+    }
+  }
+
+  div[class*='TableV2--body'] {
+    padding-bottom: 20px;
+  }
+
+  div[class*='TableV2--cells'],
+  div[class*='TableV2--header'] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 5px;
+  }
+
+  :global {
+    .bp3-transition-container {
+      top: -80px !important;
+      left: 5px !important;
+    }
+
+    .DropDown--main .DropDown--dropdownButton.DropDown--withBorder {
+      background-color: var(--white) !important;
+    }
+  }
+}
+
+.dotMenu {
+  :global {
+    .Card--dots {
+      top: -14px !important;
+    }
+  }
+}
+
+.fileUploadBox {
+  span {
+    border-radius: 5px;
+    line-height: 30px;
+    height: 32px;
+    box-shadow: none !important;
+    border: 1px solid var(--grey-200) !important;
+  }
+}

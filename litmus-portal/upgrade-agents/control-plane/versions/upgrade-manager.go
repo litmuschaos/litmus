@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	v2_6_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.6.0"
+
 	v2_4_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.4.0"
 
 	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
@@ -39,7 +41,8 @@ func NewUpgradeManager(logger *zap.Logger, dbClient *mongo.Client) (*UpgradeMana
 		return nil, fmt.Errorf("failed to get previous version data from db, value=%v", config.Value)
 	}
 	if config.Value.(string) == currentVersion {
-		return nil, fmt.Errorf("previous version and current version are same")
+		logger.Info("Not upgrading agent plane since current version and desired version are same ")
+		return nil, nil
 	}
 
 	return &UpgradeManager{
@@ -65,8 +68,93 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 			VersionManager: nil,
 		},
 
-		// latest version no more upgrades available
 		"2.5.0": {
+			NextVersion:    "2.6.0",
+			VersionManager: v2_6_0.NewVersionManger(m.Logger, m.DBClient),
+		},
+
+		"2.6.0": {
+			NextVersion:    "2.7.0",
+			VersionManager: nil,
+		},
+
+		"2.7.0": {
+			NextVersion:    "2.8.0",
+			VersionManager: nil,
+		},
+
+		"2.8.0": {
+			NextVersion:    "2.9.0",
+			VersionManager: nil,
+		},
+
+		"2.9.0": {
+			NextVersion:    "2.10.0",
+			VersionManager: nil,
+		},
+
+		"2.10.0": {
+			NextVersion:    "2.11.0",
+			VersionManager: nil,
+		},
+
+		"2.11.0": {
+			NextVersion:    "2.12.0",
+			VersionManager: nil,
+		},
+
+		"2.12.0": {
+			NextVersion:    "2.13.0",
+			VersionManager: nil,
+		},
+
+		"2.13.0": {
+			NextVersion:    "2.14.0",
+			VersionManager: nil,
+		},
+
+		"2.14.0": {
+			NextVersion:    "3.0-beta1",
+			VersionManager: nil,
+		},
+
+		"3.0-beta1": {
+			NextVersion:    "3.0.0-beta2",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta2": {
+			NextVersion:    "3.0.0-beta3",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta3": {
+			NextVersion:    "3.0.0-beta4",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta4": {
+			NextVersion:    "3.0.0-beta5",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta5": {
+			NextVersion:    "3.0.0-beta6",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta6": {
+			NextVersion:    "3.0.0-beta7",
+			VersionManager: nil,
+		},
+
+		"3.0.0-beta7": {
+			NextVersion:    "3.0.0-beta8",
+			VersionManager: nil,
+		},
+
+		// latest version, no more upgrades available
+		"3.0.0-beta8": {
 			NextVersion:    "",
 			VersionManager: nil,
 		},
@@ -76,9 +164,6 @@ func (m *UpgradeManager) getUpgradePath() map[string]UpgradeExecutor {
 // verifyPath verifies whether the current upgrade from PreviousVersion to TargetVersion
 // is possible given the configured upgrade path
 func (m *UpgradeManager) verifyPath(upgradePath map[string]UpgradeExecutor) error {
-	if m.PreviousVersion == m.TargetVersion {
-		return fmt.Errorf("previous version and current version are same")
-	}
 
 	_, okP := upgradePath[m.PreviousVersion]
 	_, okT := upgradePath[m.TargetVersion]

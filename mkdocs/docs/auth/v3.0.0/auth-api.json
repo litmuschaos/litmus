@@ -1,0 +1,1619 @@
+{
+  "swagger": "2.0",
+  "host": "localhost:3000",
+  "schemes": ["https", "http"],
+  "info": {
+    "title": "Litmus Portal Authentication API",
+    "version": "2.7.0",
+    "description": "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like:\n <li>Update Profile</li>\n <li>Change Password</li>\n <li>Reset Password</li>\n <li>Create new users etc.</li>\n"
+  },
+  "paths": {
+    "/status": {
+      "get": {
+        "description": "This API is used to check the status of the server.",
+        "operationId": "status",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "status": "up"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "This API is used to login into auth server.",
+        "operationId": "login",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA",
+                "expires_in": 86400,
+                "type": "Bearer"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["username", "password"],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "username": "admin",
+                "password": "admin"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/logout": {
+      "post": {
+        "description": "This API is used to logout into auth server.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message":"successfully logged out"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/LogoutResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/token/{user_id}": {
+      "get": {
+        "description": "This API is used to get the api-tokens of a user by passing uid",
+        "operationId": "getApiTokens",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "apiTokens": [
+                  {
+                    "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
+                    "name": "test-api-token",
+                    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                    "expires_at": 1627040198,
+                    "created_at": 1627040098
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/GetApiTokensResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "required": true,
+            "description": "ID of the user",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/create_token": {
+      "post": {
+        "description": "This API is used to create api-token for a user",
+        "operationId": "createApiToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "accessToken": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                "type":        "Bearer"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/CreateApiTokenResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["user_id", "name", "days_until_expiration"],
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "days_until_expiration": {
+                  "type": "integer"
+                }
+              },
+              "example": {
+                "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
+                "name": "test api token",
+                "days_until_expiration": 30
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/remove_token": {
+      "post": {
+        "description": "This API is used to delete api-token for a user",
+        "operationId": "removeApiToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "api token deleted successfully"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RemoveApiTokenResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "examples": {
+              "application/json": {
+                "error": "unauthorized",
+                "error_description": "The user does not have requested authorization to access this resource"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ErrorModel"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["token"],
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "This API is used to get the list of users",
+        "operationId": "users",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": [
+                {
+                  "_id": "f8036c51-0d79-4cd7-a7d0-45dcadb80eeb",
+                  "username": "admin",
+                  "email": "user1@litmus.com",
+                  "name": "user1",
+                  "role": "admin",
+                  "created_at": "1627040098"
+                }
+              ]
+            },
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        },
+        "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_user/{user_id}": {
+      "get": {
+        "description": "This API is used to get the details of an user by passing uid in the URL",
+        "operationId": "getUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "_id": "f8036c51-0d79-4cd7-a7d0-45dcadb80eeb",
+                "username": "admin",
+                "email": "user1@litmus.com",
+                "name": "user1",
+                "role": "admin",
+                "created_at": "1627040098"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "required": true,
+            "description": "ID of the user",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/update/password": {
+      "post": {
+        "description": "This API is used to update the password",
+        "operationId": "updatePassword",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "password has been reset"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["username", "oldPassword", "newPassword"],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "oldPassword": {
+                  "type": "string"
+                },
+                "newPassword": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "username": "admin",
+                "oldPassword": "admin",
+                "newPassword": "litmus"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/create_user": {
+      "post": {
+        "description": "This API is used to create a new user.",
+        "operationId": "createUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "_id": "5873815a-1535-4b1c-8766-2fe53c726276",
+                "username": "test1",
+                "email": "test1@litmus.com",
+                "name": "Test Account",
+                "role": "admin",
+                "created_at": "1627040799"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "required": ["username", "password", "role"],
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "username": "test1",
+                "password": "test1",
+                "role": "admin",
+                "email": "test1@litmus.com",
+                "name": "Test Account"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/reset/password": {
+      "post": {
+        "description": "This API is used to reset the password of a user.",
+        "operationId": "resetPassword",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "password has been reset successfully"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["username", "oldPassword", "newPassword"],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "oldPassword": {
+                  "type": "string"
+                },
+                "newPassword": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "username": "test1",
+                "new_password": "test2"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/update/details": {
+      "post": {
+        "description": "This API is used to update the details of a user.",
+        "operationId": "updateDetails",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "User details updated successfully"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "name": "Administrator",
+                "email": "admin@litmus.com"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/update/state": {
+      "post": {
+        "description": "This API is used to update the state of a user.",
+        "operationId": "updateState",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "user's state updated successfully"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["username", "isDeactivate"],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "isDeactivate": {
+                  "type": "boolean"
+                }
+              },
+              "example": {
+                "username": "test1",
+                "is_deactivate": true
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/create_project": {
+      "post": {
+        "description": "This API is used to create a project",
+        "operationId": "createProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": {
+                  "ID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                  "Name": "my project",
+                  "Members": [
+                    {
+                      "UserID": "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                      "Role": "Owner",
+                      "Invitation": "Accepted",
+                      "JoinedAt": "1640676874"
+                    }
+                  ],
+                  "State": "active",
+                  "CreatedAt": "1627040799",
+                  "UpdatedAt": "1627040799",
+                  "RemovedAt": ""
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/Project"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["projectName"],
+              "properties": {
+                "projectName": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "projectName": "my project"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_project/{project_id}": {
+      "get": {
+        "description": "This API is used to get details of a project with given project ID",
+        "operationId": "getProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": {
+                  "ID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                  "Name": "my project",
+                  "Members": [
+                    {
+                      "UserID": "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                      "UserName": "admin",
+                      "Name": "",
+                      "Role": "Owner",
+                      "Email": "",
+                      "Invitation": "Accepted",
+                      "JoinedAt": "1640676874",
+                      "DeactivatedAt": ""
+                    }
+                  ],
+                  "State": "active",
+                  "CreatedAt": "1627040799",
+                  "UpdatedAt": "1627040799",
+                  "RemovedAt": ""
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/Project"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_user_with_project/{username}": {
+      "get": {
+        "description": "This API is used to get details of a project for a user\n",
+        "operationId": "getUserWithProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": {
+                  "ID": "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                  "UserName": "admin",
+                  "CreatedAt": "1627040799",
+                  "Email": "",
+                  "Name": "",
+                  "Projects": [
+                    {
+                      "ID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                      "Name": "my project",
+                      "Members": [
+                        {
+                          "UserID": "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                          "Role": "Owner",
+                          "Invitation": "Accepted",
+                          "JoinedAt": "1640676874"
+                        }
+                      ],
+                      "State": "active",
+                      "CreatedAt": "1627040799",
+                      "UpdatedAt": "1627040799",
+                      "RemovedAt": ""
+                    }
+                  ]
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/GetUserWithProject"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "required": true,
+            "description": "username of the user",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/list_projects": {
+      "get": {
+        "description": "This API is used to get project details of logged in user\n",
+        "operationId": "listProjects",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": [
+                  {
+                    "ID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                    "Name": "my project",
+                    "Members": [
+                      {
+                        "UserID": "c0b43e3f-8e7f-475e-9aa3-c2393a0f408b",
+                        "Role": "Owner",
+                        "Invitation": "Accepted",
+                        "JoinedAt": "1640676874"
+                      }
+                    ],
+                    "State": "active",
+                    "CreatedAt": "1627040799",
+                    "UpdatedAt": "1627040799",
+                    "RemovedAt": ""
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Project"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_projects_stats": {
+      "get": {
+        "description": "This API is used to get overall stats for all the projects(accessible only to admin).",
+        "operationId": "getProjectStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": [
+                  {
+                    "Name": "admin's project",
+                    "ProjectId": "430baca1-cdea-4886-bd80-9cfa204ea81f",
+                    "Members": {
+                      "Owner": [
+                        {
+                          "UserId": "6abec0cf-7263-4519-bd69-7e02e26837fa",
+                          "Username": "admin"
+                        }
+                      ],
+                      "Total": 2
+                    }
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/update_project_name": {
+      "post": {
+        "description": "This API is used to update a project name",
+        "operationId": "updateProjectName",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Successful"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["projectID", "projectName"],
+              "properties": {
+                "projectID": {
+                  "type": "string"
+                },
+                "projectName": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "projectID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                "projectName": "admin's project"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/send_invitation": {
+      "post": {
+        "description": "This API is used to send project invite to an user",
+        "operationId": "sendInvitation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": {
+                  "UserID": "3bdc0bd9-fc46-433b-ac21-05d555566c46",
+                  "UserName": "john",
+                  "Name": "",
+                  "Role": "Viewer",
+                  "Email": "",
+                  "Invitation": "Pending",
+                  "JoinedAt": "1640676874",
+                  "DeactivatedAt": ""
+                }
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/ProjectMember"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["projectID", "userID", "role"],
+              "properties": {
+                "projectID": {
+                  "type": "string"
+                },
+                "userID": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": ["Owner", "Editor", "Viewer"]
+                }
+              },
+              "example": {
+                "projectID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                "userID": "3bdc0bd9-fc46-433b-ac21-05d555566c46",
+                "role": "Viewer"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/accept_invitation": {
+      "post": {
+        "description": "This API is used to accept a project invite",
+        "operationId": "acceptInvitation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Successful"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["projectID", "userID"],
+              "properties": {
+                "projectID": {
+                  "type": "string"
+                },
+                "userID": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "project_id": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                "user_id": "3bdc0bd9-fc46-433b-ac21-05d555566c46"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/decline_invitation": {
+      "post": {
+        "description": "This API is used to decline a project invite",
+        "operationId": "declineInvitation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Successful"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["projectID", "userID"],
+              "properties": {
+                "projectID": {
+                  "type": "string"
+                },
+                "userID": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "projectID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                "userID": "3bdc0bd9-fc46-433b-ac21-05d555566c46"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/remove_invitation": {
+      "post": {
+        "description": "This API is used to revoke a project invite or remove a project member",
+        "operationId": "removeInvitation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Successful"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": ["projectID", "userID"],
+              "properties": {
+                "projectID": {
+                  "type": "string"
+                },
+                "userID": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "projectID": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                "userID": "3bdc0bd9-fc46-433b-ac21-05d555566c46"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/leave_project": {
+      "post": {
+        "description": "This API is used to leave a project",
+        "operationId": "leaveProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "message": "Successful"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "required": ["projectID", "userID"],
+                "projectID": {
+                  "type": "string"
+                },
+                "userID": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "project_id": "384f6666-3b7d-4381-b5b5-bfc4c3dedbc8",
+                "user_id": "3bdc0bd9-fc46-433b-ac21-05d555566c46"
+              }
+            }
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_owner_projects": {
+      "get": {
+        "description": "This API is used to list all the project IDs in which the user is the owner\n",
+        "operationId": "getOwnerProjects",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Project"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [],
+        "produces": ["application/json"]
+      }
+    },
+    "/list_invitations_with_filters/{invitation_state}": {
+      "get": {
+        "description": "This API is used to list all the pending invitations of the user\n",
+        "operationId": "listInvitations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/GetInvitationResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "invitation_state",
+            "required": true,
+            "description": "state of the invitation",
+            "in": "path",
+            "type": "string",
+            "enum": ["Accepted", "Pending", "Declined", "Exited"]
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_project_role/{project_id}": {
+      "get": {
+        "description": "This API is used to fetch the role of the user in the given project\n",
+        "operationId": "getProjectRole",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "role": "Owner"
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/get_project_members/{project_id}/{state}": {
+      "get": {
+        "description": "This API is used to fetch members of the project based on the invitation state",
+        "operationId": "getProjectMembers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": [
+                  {
+                    "userID": "4ded0007-ab3c-4376-9605-14654559ff6c",
+                    "username": "admin",
+                    "email": "admin@gmail.com",
+                    "name": "admin",
+                    "role": "Owner",
+                    "invitation": "Accepted",
+                    "joinedAt": 1690264328
+                  },
+                  {
+                    "userID": "345d0007-ab3c-4376-9605-347y3949ff6c",
+                    "username": "john",
+                    "email": "john@gmail.com",
+                    "name": "john doe",
+                    "role": "Editor",
+                    "invitation": "Accepted",
+                    "joinedAt": 1690245328
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ProjectMember"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project",
+            "in": "path",
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "required": true,
+            "description": "state of the invitation",
+            "in": "path",
+            "type": "string",
+            "enum": ["accepted", "not_accepted", "all"]
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    },
+    "/invite_users/{project_id}": {
+      "get": {
+        "description": "This API is used to fetch users who can be invited",
+        "operationId": "getUsersForInvitation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"]
+      }
+    }
+  },
+  "definitions": {
+    "ErrorModel": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "error": {
+          "type": "string"
+        },
+        "errorDescription": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "required": [
+        "accessToken",
+        "expiresIn",
+        "projectID",
+        "projectRole",
+        "type"
+      ],
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "expiresIn": {
+          "type": "integer"
+        },
+        "projectID": {
+          "type": "string"
+        },
+        "projectRole": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "LogoutResponse": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "GetApiTokensResponse": {
+      "type": "object",
+      "required": [
+        "apiTokens"
+      ],
+      "properties": {
+        "apiTokens": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApiToken"
+          }
+        }
+      }
+    },
+    "ApiToken": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "expires_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "CreateApiTokenResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "RemoveApiTokenResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+    },
+    "ActionBy": {
+      "type": "object",
+      "properties": {
+        "userID": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": ["userID", "username", "role", "isRemoved"],
+      "properties": {
+        "userID": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "isRemoved": {
+          "type": "boolean"
+        },
+        "updatedBy": {
+          "$ref": "#/definitions/ActionBy"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/ActionBy"
+        },
+        "createdAt": {
+          "type": "integer"
+        },
+        "updatedAt": {
+          "type": "integer"
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/User"
+      }
+    },
+    "ProjectMember": {
+      "type": "object",
+      "required": ["userID", "username", "invitation", "role"],
+      "properties": {
+        "userID": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["Owner", "Editor", "Viewer"]
+        },
+        "invitation": {
+          "type": "string",
+          "enum": ["Accepted", "Pending", "Declined", "Exited"]
+        },
+        "joinedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "GetInvitationResponse": {
+      "type": "object",
+      "required": [
+        "projectID",
+        "projectName",
+        "invitationRole",
+        "projectOwner"
+      ],
+      "properties": {
+        "projectName": {
+          "type": "string"
+        },
+        "projectID": {
+          "type": "string"
+        },
+        "invitationRole": {
+          "type": "string",
+          "enum": ["Owner", "Editor", "Viewer"]
+        },
+        "projectOwner": {
+          "$ref": "#/definitions/ProjectMember"
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "required": ["projectID", "name", "members"],
+      "properties": {
+        "updatedBy": {
+          "$ref": "#/definitions/ActionBy"
+        },
+        "createdBy": {
+          "$ref": "#/definitions/ActionBy"
+        },
+        "createAt": {
+          "type": "integer"
+        },
+        "updatedAt": {
+          "type": "integer"
+        },
+        "isRemoved": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "projectID": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProjectMember"
+          }
+        }
+      }
+    },
+    "GetUserWithProject": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "projects": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Project"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

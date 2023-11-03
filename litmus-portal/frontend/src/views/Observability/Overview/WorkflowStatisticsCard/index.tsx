@@ -67,16 +67,16 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                 <Typography
                   className={`${classes.testName} ${classes.noWrapProvider}`}
                 >
-                  {data.workflow_name}
+                  {data.workflowName}
                 </Typography>
                 <Typography className={classes.hint}>
-                  Agent: {data.cluster_name}
+                  Chaos Delegate: {data.clusterName}
                 </Typography>
               </div>
             </div>
           </div>
           <Typography className={`${classes.noWrapProvider} ${classes.hint}`}>
-            {timeDifferenceForDate(data.last_updated)}
+            {timeDifferenceForDate(data.lastUpdated)}
           </Typography>
           <section className={classes.cardActionsSection}>
             <div className={classes.cardActions}>
@@ -87,20 +87,20 @@ const WorkflowStatisticsCard: React.FC<WorkflowStatisticsCardProps> = ({
                   });
                   if (data.phase?.toLowerCase() !== 'notavailable')
                     history.push({
-                      pathname: `/workflows/${data.workflow_run_id}`,
+                      pathname: `/scenarios/${data.workflowRunID}`,
                       search: `?projectID=${projectID}&projectRole=${projectRole}`,
                     });
                 }}
               >
                 <WorkflowRunIcon />
               </IconButton>
-              <Typography align="center">See workflow run</Typography>
+              <Typography align="center">See Chaos Scenario run</Typography>
             </div>
             <div className={classes.cardActions}>
               <IconButton
                 onClick={() => {
                   history.push({
-                    pathname: `/observability/workflowStatistics/${data.workflow_id}`,
+                    pathname: `/analytics/scenarioStatistics/${data.workflowID}`,
                     search: `?projectID=${projectID}&projectRole=${projectRole}`,
                   });
                 }}

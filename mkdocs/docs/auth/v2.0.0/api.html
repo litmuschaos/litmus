@@ -145,6 +145,16 @@
           <!-- </ul>
               </section> -->
           <!-- <section>
+                <a href="#path--get_projects_stats">/get_projects_stats</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--get_projects_stats-get">
+            GET /get_projects_stats
+          </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
                 <a href="#path--update_projectname">/update_projectname</a>
                 <ul> -->
           <!-- <li> -->
@@ -222,7 +232,7 @@
               <div class="doc-copy">
                 <p>
                   Litmus Portal Authentication APIs are used to authenticate the
-                  idenity of a user and to perform several user-specific tasks
+                  identity of a user and to perform several user-specific tasks
                   like:
                   <li>Update Profile</li>
                   <li>Change Password</li>
@@ -239,6 +249,10 @@
                   <h5>
                     Schemes:
                     <span>https, http</span>
+                  </h5>
+                  <h5>
+                    Version:
+                    <span>2.7.0</span>
                   </h5>
                 </section>
               </div>
@@ -573,7 +587,29 @@
               </div>
             </div>
             <div class="doc-row">
-              <div class="doc-copy"></div>
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">
+                        user_id:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span
+                            class="json-property-range"
+                            title="Value limits"
+                          ></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle">in path</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>ID of the user</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
               <div class="doc-examples"></div>
             </div>
             <div class="doc-row">
@@ -615,16 +651,14 @@
                   <html>
                     <head></head>
                     <body>
-                      <pre><code class="hljs language-json">[
-  {
-    <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
-    <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
-    <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user1@litmus.com"</span>,
-    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"user1"</span>,
-    <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
-    <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040098"</span>
-  }
-]
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"_id"</span>: <span class="hljs-string">"f8036c51-0d79-4cd7-a7d0-45dcadb80eeb"</span>,
+  <span class="hljs-attr">"username"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user1@litmus.com"</span>,
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"user1"</span>,
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"admin"</span>,
+  <span class="hljs-attr">"created_at"</span>: <span class="hljs-string">"1627040098"</span>
+}
 </code></pre>
                     </body>
                   </html>
@@ -658,7 +692,7 @@
                     <tr>
                       <td>username</td>
                       <td>admin</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                     <tr>
                       <td>old_password</td>
@@ -791,12 +825,12 @@
                     <tr>
                       <td>email</td>
                       <td>user1@gmail.com</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                     <tr>
                       <td>name</td>
                       <td>admin</td>
-                      <td>Mandatory</td>
+                      <td>Optional</td>
                     </tr>
                   </table>
                 </section>
@@ -1324,13 +1358,9 @@
     <span class="hljs-attr">"Members"</span>: [
       {
         <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
-        <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
-        <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
         <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
-        <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
         <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
-        <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
-        <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+        <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>
       }
     ],
     <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
@@ -1370,7 +1400,29 @@
               </div>
             </div>
             <div class="doc-row">
-              <div class="doc-copy"></div>
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">
+                        project_id:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span
+                            class="json-property-range"
+                            title="Value limits"
+                          ></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle">in path</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>ID of the project</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
               <div class="doc-examples"></div>
             </div>
             <div class="doc-row">
@@ -1464,7 +1516,29 @@
               </div>
             </div>
             <div class="doc-row">
-              <div class="doc-copy"></div>
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">
+                        username:
+                        <span class="prop-type">
+                          <span class="json-property-type">string</span>
+                          <span
+                            class="json-property-range"
+                            title="Value limits"
+                          ></span>
+                        </span>
+                      </div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle">in path</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>username of the user</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
               <div class="doc-examples"></div>
             </div>
             <div class="doc-row">
@@ -1520,13 +1594,9 @@
         <span class="hljs-attr">"Members"</span>: [
           {
             <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
-            <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
-            <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
             <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
-            <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
             <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
-            <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
-            <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+            <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>
           }
         ],
         <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
@@ -1617,19 +1687,105 @@
       <span class="hljs-attr">"Members"</span>: [
         {
           <span class="hljs-attr">"UserID"</span>: <span class="hljs-string">"c0b43e3f-8e7f-475e-9aa3-c2393a0f408b"</span>,
-          <span class="hljs-attr">"UserName"</span>: <span class="hljs-string">"admin"</span>,
-          <span class="hljs-attr">"Name"</span>: <span class="hljs-string">""</span>,
           <span class="hljs-attr">"Role"</span>: <span class="hljs-string">"Owner"</span>,
-          <span class="hljs-attr">"Email"</span>: <span class="hljs-string">""</span>,
           <span class="hljs-attr">"Invitation"</span>: <span class="hljs-string">"Accepted"</span>,
-          <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>,
-          <span class="hljs-attr">"DeactivatedAt"</span>: <span class="hljs-string">""</span>
+          <span class="hljs-attr">"JoinedAt"</span>: <span class="hljs-string">"1640676874"</span>
         }
       ],
       <span class="hljs-attr">"State"</span>: <span class="hljs-string">"active"</span>,
       <span class="hljs-attr">"CreatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
       <span class="hljs-attr">"UpdatedAt"</span>: <span class="hljs-string">"1627040799"</span>,
       <span class="hljs-attr">"RemovedAt"</span>: <span class="hljs-string">""</span>
+    }
+  ]
+}
+</code></pre>
+                    </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--get_projects_stats"></span>
+          <div
+            id="operation--get_projects_stats-get"
+            class="operation panel"
+            data-traverse-target="operation--get_projects_stats-get"
+          >
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">GET</span>
+                <span class="operation-path">/get_projects_stats</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    This API is used to get overall stats for all the
+                    projects(accessible only to admin).
+                  </p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"></div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>OK</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span
+                        class="json-property-range"
+                        title="Value limits"
+                      ></span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>
+                  Response Content-Types:
+                  <span>application/json</span>
+                </h5>
+                <section>
+                  <h5>
+                    Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                    <head></head>
+                    <body>
+                      <pre><code class="hljs language-json">{
+  <span class="hljs-attr">"data"</span>: [
+    {
+      <span class="hljs-attr">"Name"</span>: <span class="hljs-string">"admin's project"</span>,
+      <span class="hljs-attr">"ProjectId"</span>: <span class="hljs-string">"430baca1-cdea-4886-bd80-9cfa204ea81f"</span>,
+      <span class="hljs-attr">"Members"</span>: {
+        <span class="hljs-attr">"Owner"</span>: [
+          {
+            <span class="hljs-attr">"UserId"</span>: <span class="hljs-string">"6abec0cf-7263-4519-bd69-7e02e26837fa"</span>,
+            <span class="hljs-attr">"Username"</span>: <span class="hljs-string">"admin"</span>
+          }
+        ],
+        <span class="hljs-attr">"Total"</span>: <span class="hljs-number">2</span>
+      }
     }
   ]
 }

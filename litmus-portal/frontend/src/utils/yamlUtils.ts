@@ -1,9 +1,9 @@
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-param-reassign */
-import YAML from 'yaml';
-import { v4 as uuidv4 } from 'uuid';
+/* eslint-disable no-unused-expressions */
 import localforage from 'localforage';
+import YAML from 'yaml';
 import { constants } from '../constants';
 import { ImageRegistryInfo } from '../models/redux/image_registry';
 import { experimentMap } from '../models/redux/workflow';
@@ -37,7 +37,6 @@ const nameextractor = (val: any) => {
 };
 
 export const updateEngineName = (parsedYaml: any) => {
-  let engineInstance: string = '';
   try {
     if (parsedYaml.spec !== undefined) {
       const yamlData = parsedYaml.spec;
@@ -54,7 +53,7 @@ export const updateEngineName = (parsedYaml: any) => {
                 delete chaosEngine.metadata.name;
               }
               chaosEngine.metadata['labels'] = {
-                instance_id: uuidv4(),
+                workflow_run_id: '{{workflow.uid}}',
               };
               validateNamespace(chaosEngine);
 
@@ -69,7 +68,6 @@ export const updateEngineName = (parsedYaml: any) => {
                   )[0].replace(/\s/g, '');
                   chaosEngine.spec.appinfo.appns = `{${appns}}`;
                 }
-              engineInstance += `${chaosEngine.metadata.labels['instance_id']}, `;
             }
             // Update the artifact in template
             const artifactData = artifact;
@@ -79,7 +77,8 @@ export const updateEngineName = (parsedYaml: any) => {
         if (template.name.includes('revert-')) {
           // Update the args in revert chaos template
           const revertTemplate = template;
-          revertTemplate.container.args[0] = `kubectl delete chaosengine -l 'instance_id in (${engineInstance})' -n {{workflow.parameters.adminModeNamespace}} `;
+          revertTemplate.container.args[0] =
+            'kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}';
         }
       });
     }
@@ -109,9 +108,12 @@ export const updateWorkflowNameLabel = (
             if (chaosEngine.kind === 'ChaosEngine') {
               if (chaosEngine.metadata.labels !== undefined) {
                 chaosEngine.metadata.labels['workflow_name'] = workflowName;
+                chaosEngine.metadata.labels['workflow_run_id'] =
+                  '{{workflow.uid}}';
               } else {
                 chaosEngine.metadata['labels'] = {
                   workflow_name: workflowName,
+                  workflow_run_id: '{{workflow.uid}}',
                 };
               }
 
@@ -223,10 +225,32 @@ const parsed = (yaml: string) => {
   }
 };
 
+export const extractEngineNames = (manifest: string) => {
+  const engineNames: string[] = [];
+  const parsedManifest = YAML.parse(manifest);
+  if (parsedManifest.spec !== undefined) {
+    const yamlData =
+      parsedManifest.kind.toLowerCase() === 'workflow'
+        ? parsedManifest.spec
+        : parsedManifest.spec.workflowSpec;
+    yamlData?.templates?.forEach((template: any) => {
+      template?.inputs?.artifacts?.forEach((artifact: any) => {
+        if (artifact?.raw?.data) {
+          const artifactManifest = YAML.parse(artifact.raw.data);
+          if (artifactManifest.kind === 'ChaosEngine') {
+            engineNames.push(artifactManifest.metadata.generateName);
+          }
+        }
+      });
+    });
+  }
+  return engineNames;
+};
+
 export const addWeights = (manifest: string) => {
   const arr: experimentMap[] = [];
   const hashMap = new Map();
-  const tests = parsed(manifest);
+  const tests = extractEngineNames(manifest);
   if (tests.length) {
     tests.forEach((test) => {
       let value = 10;
@@ -402,6 +426,32 @@ export const updateManifestImage = (
   return YAML.stringify(parsedYaml);
 };
 
+export const updateChaosExpCRDImage = (
+  chaosExp: string,
+  registryData: ImageRegistryInfo
+) => {
+  const chaosExpCRD = YAML.parse(chaosExp);
+  if (
+    chaosExpCRD?.kind.toLowerCase() === 'chaosexperiment' &&
+    chaosExpCRD?.spec &&
+    chaosExpCRD?.spec?.definition
+  ) {
+    const chaosExpDef = chaosExpCRD.spec.definition;
+    if (registryData.update_registry) {
+      if (!registryData.is_default) {
+        const imageData = chaosExpDef.image.split('/');
+        const imageName = imageData[imageData.length - 1];
+        chaosExpDef.image = `${registryData.image_registry_name}/${registryData.image_repo_name}/${imageName}`;
+      } else {
+        const imageData = chaosExpDef.image.split('/');
+        const imageName = imageData[imageData.length - 1];
+        chaosExpDef.image = `${constants.litmus}/${imageName}`;
+      }
+    }
+  }
+  return YAML.stringify(chaosExpCRD);
+};
+
 export const isCronWorkflow = (manifest: any): boolean => {
   if (manifest.kind.toLowerCase() === 'workflow') {
     return false;
@@ -410,4 +460,38 @@ export const isCronWorkflow = (manifest: any): boolean => {
     return true;
   }
   return false;
+};
+
+export const validateExperimentNames = (manifest: any): boolean => {
+  const value: any = [];
+  if (manifest.spec !== undefined) {
+    const yamlData =
+      manifest.kind === constants.workflow
+        ? manifest.spec
+        : manifest.spec.workflowSpec;
+    yamlData?.templates[0]?.steps?.forEach((step: any) => {
+      step.forEach((values: any) => {
+        // if exp name exists append the count
+        if (value[`${values.name}`]) {
+          const val = value[`${values.name}`] + 1;
+          value[`${values.name}`] = val;
+        }
+        // else set the default count as 1
+        else {
+          value[`${values.name}`] = 1;
+        }
+      });
+    });
+  }
+
+  // filter the experiment if it is occuring more than 1
+  const exp = Object.entries(value).filter(
+    ([, value]) => (value as number) > 1
+  ).length;
+
+  // if any experiment exists (with more than 1 occurance)
+  if (exp > 0) {
+    return false;
+  }
+  return true;
 };

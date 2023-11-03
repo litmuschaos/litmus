@@ -1,13 +1,13 @@
 import { Typography } from '@material-ui/core';
-import { useTranslation } from 'react-i18next';
-import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import CreateIcon from '@material-ui/icons/Create';
+import { ButtonFilled, ButtonOutlined, Modal } from 'litmus-ui';
 import React from 'react';
-import { GitOpsDetail } from '../../../models/graphql/gitOps';
+import { useTranslation } from 'react-i18next';
+import { GetGitOpsDetailRequest } from '../../../models/graphql/gitOps';
 import useStyles from './styles';
 
 interface GitOpsInfoProps {
-  data: GitOpsDetail | undefined;
+  data: GetGitOpsDetailRequest | undefined;
   onEditClicked: () => void;
   modalState: boolean;
   onModalClick: () => void;
@@ -26,13 +26,13 @@ const GitOpsInfo: React.FC<GitOpsInfoProps> = ({
   return (
     <div className={classes.gitInfo} data-cy="gitopsInfoBox">
       <Typography className={classes.branchText}>
-        <strong>{data?.getGitOpsDetails.Branch}</strong>
+        <strong>{data?.getGitOpsDetails.branch}</strong>
       </Typography>
       <Typography className={classes.branch}>
         {t('settings.gitopsTab.branch')}
       </Typography>
       <Typography className={classes.repoURLText}>
-        <strong> {data?.getGitOpsDetails.RepoURL}</strong>
+        <strong> {data?.getGitOpsDetails.repoURL}</strong>
       </Typography>
       <Typography className={classes.gitURL}>
         {' '}

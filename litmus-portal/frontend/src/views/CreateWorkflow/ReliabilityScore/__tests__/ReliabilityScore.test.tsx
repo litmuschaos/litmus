@@ -13,7 +13,7 @@ describe('Reliability Score', () => {
 
     await act(async () => {
       await expect(screen.getByRole('slider').className).toBe(
-        'MuiSlider-thumb WithStyles(ForwardRef(Slider))-thumb-47 MuiSlider-thumbColorPrimary PrivateValueLabel-thumb-54'
+        'MuiSlider-thumb WithStyles(ForwardRef(Slider))-thumb-46 MuiSlider-thumbColorPrimary PrivateValueLabel-thumb-53'
       );
       await expect(screen.getByRole('slider').getAttribute('aria-label')).toBe(
         'pretto slider'

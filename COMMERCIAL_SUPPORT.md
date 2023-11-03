@@ -5,4 +5,4 @@ If you are a commercial support provider for LitmusChaos and wish to add your co
 
 The list is provided in alphabetical order.
 
-- [ChaosNative](https://www.chaosnative.com/)
+- [Harness](https://harness.io/products/chaos-engineering)

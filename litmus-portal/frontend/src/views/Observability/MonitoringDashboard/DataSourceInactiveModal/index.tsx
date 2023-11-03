@@ -51,7 +51,7 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
                 activePanelID: '',
               });
               history.push({
-                pathname: '/observability/dashboard/configure',
+                pathname: '/analytics/dashboard/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
@@ -73,7 +73,7 @@ const DataSourceInactiveModal: React.FC<DataSourceInactiveModalProps> = ({
           <ButtonOutlined
             onClick={() =>
               history.push({
-                pathname: '/observability/datasource/configure',
+                pathname: '/analytics/datasource/configure',
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               })
             }

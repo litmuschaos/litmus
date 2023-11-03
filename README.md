@@ -1,6 +1,6 @@
 <img alt="LitmusChaos" src="https://avatars.githubusercontent.com/u/49853472?s=200&v=4" width="200" align="left">
 
-# Litmus
+# [LitmusChaos](https://litmuschaos.io/)
 ### Open Source Chaos Engineering Platform
 
 [![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
@@ -10,7 +10,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
 [![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
-[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
 [![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
 <br><br><br><br>
@@ -23,11 +22,11 @@
 ## Overview
 
 LitmusChaos is an open source Chaos Engineering platform that enables teams to identify weaknesses & potential outages in infrastructures by 
-inducing chaos tests in a controlled way. Developers & SREs can practice Chaos Engineering with Litmus as it is easy to use, based on modern 
-chaos engineering principles & community collaborated. It is 100% open source & a CNCF project.
+inducing chaos tests in a controlled way. Developers & SREs can practice Chaos Engineering with LitmusChaos as it is easy to use, based on modern 
+Chaos Engineering principles & community collaborated. It is 100% open source & a CNCF project.
 
-Litmus takes a cloud-native approach to create, manage and monitor chaos. The platform itself runs as a set of microservices and uses Kubernetes 
-custom resources to define the chaos intent, as well as the steady state hypothesis. 
+LitmusChaos takes a cloud-native approach to create, manage and monitor chaos. The platform itself runs as a set of microservices and uses Kubernetes 
+custom resources (CRs) to define the chaos intent, as well as the steady state hypothesis. 
 
 At a high-level, Litmus comprises of:  
 
@@ -67,7 +66,7 @@ in production.
 
 ## Getting Started with Litmus
 
-Check out the <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> to get started.
+To get started, check out the <a href="https://docs.litmuschaos.io/docs/introduction/what-is-litmus" target="_blank">Litmus Docs</a> and specifically the <a href="https://docs.litmuschaos.io/docs/getting-started/installation#prerequisites" target="_blank">Installation section</a> of the <a href="https://docs.litmuschaos.io/docs/getting-started/installation" target="_blank">Getting Started with Litmus</a> page.
 
 ## Contributing to Chaos Hub
 
@@ -76,9 +75,11 @@ Check out the <a href="https://github.com/litmuschaos/community-charts/blob/mast
 
 ## Community
 
-Community Resources:
+### Community Resources:
 
 Feel free to reach out if you have any queries,concerns, or feature requests
+
+- Give us a star ⭐️ - If you are using LitmusChaos or think it is an interesting project, we would love a star ❤️
 
 - Follow LitmusChaos on Twitter [@LitmusChaos](https://twitter.com/LitmusChaos).
 
@@ -88,12 +89,18 @@ Feel free to reach out if you have any queries,concerns, or feature requests
 ### Community Meetings
 The Litmus community meets on the third wednesday of every month at 10:00PM IST/6:30 PM CEST/9:30 AM PST.
 
-- [Sync Up Meeting Link](https://zoom.us/j/91358162694)
+- [Sync Up Meeting Link](https://harness-io.zoom.us/j/95100368978?pwd=b2VrdCtaakE5U3dhOElFMUJOaXVOUT09)
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
 - [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
 
 ### Videos
 
+- [Cloud Native Live: Litmus Chaos Engine and a microservices demo app](https://youtu.be/hOghvd9qCzI)
+- [Chaos Engineering hands-on - An SRE ideating Chaos Experiments and using LitmusChaos | July 2022](https://youtu.be/_x_7SiesjF0) 
+- [Achieve Digital Product Resiliency with Chaos Engineering](https://youtu.be/PQrmBHgk0ps)
+- [How to create Chaos Experiments with Litmus | Litmus Chaos tutorial](https://youtu.be/mwu5eLgUKq4) @ [Is it Observable](https://www.youtube.com/c/IsitObservable)
+- [Cloud Native Chaos Engineering Preview With LitmusChaos](https://youtu.be/pMWqhS-F3tQ)
+- [Get started with Chaos Engineering with Litmus](https://youtu.be/5CI8d-SKBfc) @ [Containers from the Couch](https://www.youtube.com/c/ContainersfromtheCouch)
 - [Litmus 2 - Chaos Engineering Meets Argo Workflows](https://youtu.be/B8DfYnDh2F4) @ [DevOps Toolkit](https://youtube.com/c/devopstoolkit)
 - [Hands-on with Litmus 2.0 | Rawkode Live](https://youtu.be/D0t3emVLLko) @ [Rawkode Academy](https://www.youtube.com/channel/UCrber_mFvp_FEF7D9u8PDEA)
 - [Introducing LitmusChaos 2.0 / Dok Talks #74](https://youtu.be/97BiCNtJbDw) @ [DoK.community](https://www.youtube.com/channel/UCUnXJbHQ89R2uSfKsqQwGvQ)

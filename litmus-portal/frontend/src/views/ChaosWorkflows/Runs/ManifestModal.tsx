@@ -1,35 +1,35 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import YAML from 'yaml';
 import { useTranslation } from 'react-i18next';
+import YAML from 'yaml';
 import Loader from '../../../components/Loader';
 import YamlEditor from '../../../components/YamlEditor/Editor';
-import { WORKFLOW_LIST_DETAILS } from '../../../graphql';
+import { GET_WORKFLOW_DETAILS } from '../../../graphql';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   ScheduledWorkflows,
 } from '../../../models/graphql/workflowListData';
 import useStyles from './styles';
 
 interface ManifestModalProps {
-  project_id: string;
-  workflow_id: string | undefined;
+  projectID: string;
+  workflowID: string | undefined;
 }
 
 const ManifestModal: React.FC<ManifestModalProps> = ({
-  project_id,
-  workflow_id,
+  projectID,
+  workflowID,
 }) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { data, loading } = useQuery<ScheduledWorkflows, ListWorkflowsInput>(
-    WORKFLOW_LIST_DETAILS,
+  const { data, loading } = useQuery<ScheduledWorkflows, GetWorkflowsRequest>(
+    GET_WORKFLOW_DETAILS,
     {
       variables: {
-        workflowInput: {
-          project_id,
-          workflow_ids: [workflow_id ?? ''],
+        request: {
+          projectID,
+          workflowIDs: [workflowID ?? ''],
         },
       },
     }
@@ -47,7 +47,7 @@ const ManifestModal: React.FC<ManifestModalProps> = ({
           <YamlEditor
             content={YAML.stringify(
               YAML.parse(
-                data?.ListWorkflow.workflows[0].workflow_manifest as string
+                data?.listWorkflows.workflows[0].workflowManifest as string
               )
             )}
             filename="Workflow Template"

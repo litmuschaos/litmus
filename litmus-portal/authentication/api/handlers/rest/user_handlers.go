@@ -1,12 +1,13 @@
 package rest
 
 import (
+	"strconv"
+	"time"
+
 	"litmus/litmus-portal/authentication/api/presenter"
 	"litmus/litmus-portal/authentication/pkg/entities"
 	"litmus/litmus-portal/authentication/pkg/services"
 	"litmus/litmus-portal/authentication/pkg/utils"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -14,19 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Status will request users list and return, if successful,
-// an http code 200
-func Status(service services.ApplicationService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		_, err := service.GetUsers()
-		if err != nil {
-			log.Error(err)
-			c.JSON(500, entities.APIStatus{"down"})
-			return
-		}
-		c.JSON(200, entities.APIStatus{"up"})
-	}
-}
+const BearerSchema = "Bearer "
 
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -63,17 +52,26 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
 		if err != nil {
-			log.Println("Error generating password")
+			log.Error("auth error: Error generating password")
 		}
 		password := string(hashedPassword)
 		userRequest.Password = password
+
+		// Validating email address
+		if userRequest.Email != "" {
+			if !userRequest.IsEmailValid(userRequest.Email) {
+				log.Error("auth error: invalid email")
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidEmail], presenter.CreateErrorResponse(utils.ErrInvalidEmail))
+				return
+			}
+		}
 
 		createdAt := strconv.FormatInt(time.Now().Unix(), 10)
 		userRequest.CreatedAt = &createdAt
 
 		userResponse, err := service.CreateUser(&userRequest)
 		if err == utils.ErrUserExists {
-			log.Info(err)
+			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUserExists], presenter.CreateErrorResponse(utils.ErrUserExists))
 			return
 		}
@@ -179,7 +177,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := user.GetSignedJWT()
+		token, err := service.GetSignedJWT(user)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -190,6 +188,28 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			"access_token": token,
 			"expires_in":   expiryTime,
 			"type":         "Bearer",
+		})
+	}
+}
+
+// LogoutUser revokes the token passed in the Authorization header
+func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+		tokenString := authHeader[len(BearerSchema):]
+		// revoke token
+		err := service.RevokeToken(tokenString)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(200, gin.H{
+			"message": "successfully logged out",
 		})
 	}
 }
@@ -277,6 +297,10 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		err := c.BindJSON(&userRequest)
 		if err != nil {
 			log.Info(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		if userRequest.IsDeactivate == nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}

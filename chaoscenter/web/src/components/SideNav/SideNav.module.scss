@@ -1,0 +1,210 @@
+.main {
+  background: var(--primary-9);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  /* sticky positioning */
+  height: var(--page-min-height);
+  position: sticky;
+  bottom: 0;
+  align-self: flex-end;
+  z-index: 10;
+  width: 12px;
+  transition: width 300ms cubic-bezier(0.2, 0, 0, 1) 0s;
+  box-shadow: 4px 8px 16px rgba(96, 97, 112, 0.25);
+
+  &.newNav {
+    height: 100%;
+    min-height: 100vh;
+  }
+
+  & > * {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &.sideNavExpanded {
+    width: 184px;
+    flex-shrink: 0;
+    & > * {
+      opacity: 1;
+      pointer-events: unset;
+      transition: opacity 300ms linear;
+    }
+  }
+
+  .bottomContainer[data-isroutepresent='false'] {
+    border-top: none;
+  }
+
+  .bottomContainer {
+    position: relative;
+    min-height: 60px;
+    border-top: 1px solid var(--grey-600);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    .titleContainer {
+      margin-left: var(--spacing-medium);
+      .title {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.13px;
+        opacity: 0.9;
+      }
+
+      .subTitle {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--grey-200);
+        letter-spacing: 0.13px;
+      }
+    }
+
+    .iconContainer {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      left: 0;
+      overflow: hidden;
+      width: 100%;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .icon {
+        opacity: 0.08;
+      }
+    }
+  }
+}
+
+.link {
+  display: block;
+  margin-left: var(--spacing-medium);
+  padding: var(--spacing-small) var(--spacing-medium);
+  opacity: 0.8;
+  z-index: 1;
+
+  &:hover {
+    text-decoration: none;
+    opacity: 1;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    background-color: var(--primary-7);
+  }
+
+  &.selected {
+    background-color: var(--primary-7);
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    opacity: 1;
+  }
+
+  .text {
+    color: var(--white) !important;
+    font-size: 13px !important;
+  }
+}
+
+.popover {
+  :global {
+    .bp3-transition-container {
+      z-index: 100;
+    }
+    .bp3-popover {
+      z-index: 100;
+    }
+  }
+}
+
+.sideNavResizeBtn {
+  width: 12px;
+  height: 56px;
+  position: absolute;
+  bottom: 5px;
+  z-index: 100;
+  opacity: 0.4 !important;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid transparent;
+  cursor: pointer;
+  display: block !important;
+  border-bottom-left-radius: 100%;
+  border-top-left-radius: 100%;
+  pointer-events: unset !important;
+
+  .triangle {
+    transform: rotate(-90deg);
+    color: var(--primary-8);
+  }
+  &.collapse {
+    right: 0px;
+    border-right: 14px solid var(--primary-1);
+    &:hover {
+      border-right: 18px solid var(--primary-1);
+      transition: all 100ms ease-out;
+    }
+  }
+
+  &.expand {
+    transform: rotate(180deg);
+    border-right: 14px solid var(--grey-900);
+    right: -14px;
+    &:hover {
+      border-right: 18px solid var(--grey-900);
+      transition: all 100ms ease-out;
+      right: -18px;
+    }
+    .triangle {
+      color: var(--grey-400);
+    }
+  }
+}
+
+.popoverTarget {
+  border-radius: 0;
+  height: 24px !important;
+  width: 100%;
+  min-height: unset;
+  padding: var(--spacing-none) !important;
+  color: white !important;
+
+  &:active,
+  &[class*='active'] {
+    border: 0.5px solid var(--primary-5) !important;
+    color: var(--primary-5) !important;
+    box-shadow: none !important;
+  }
+}
+
+.selectButton {
+  width: 100%;
+  justify-content: space-between;
+  color: var(--white) !important;
+  border: 0.5px solid var(--grey-500) !important;
+  border-radius: 2px;
+  height: 26px !important;
+  padding: 0 var(--spacing-xsmall) !important;
+  &:hover {
+    border: 0.5px solid var(--primary-5) !important;
+    color: var(--primary-5) !important;
+    box-shadow: none !important;
+  }
+}
+
+.logOutContainer {
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0 !important;
+  width: 100%;
+  > * {
+    opacity: 0.5;
+    transition: all 90ms ease-in-out;
+  }
+  &:hover {
+    > * {
+      opacity: 1;
+    }
+  }
+}

@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
   // Section divided into 4 parts in flex display.
   section: {
     display: 'flex',
+    justifyContent: 'space-between',
   },
 
   // Division in 4 parts
@@ -44,9 +45,10 @@ const useStyles = makeStyles((theme) => ({
 
   // Sub Section Title
   subSectionTitle: {
-    fontSize: '1.3rem',
-    fontWeight: 'bold',
+    fontSize: '0.875rem',
+    fontWeight: 500,
     marginBottom: theme.spacing(2),
+    color: theme.palette.text.hint,
   },
 
   // Sub category Section Title
@@ -55,9 +57,14 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1rem',
   },
 
+  subCategorySectionText: {
+    color: theme.palette.text.primary,
+    fontSize: '1rem',
+  },
+
   resiliencyScore: {
     color: theme.palette.highlight,
-    fontSize: '1.5rem',
+    fontSize: '1rem',
   },
 
   closeButton: {

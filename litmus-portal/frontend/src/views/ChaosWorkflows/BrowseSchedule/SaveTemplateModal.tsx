@@ -47,11 +47,11 @@ const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
     ADD_WORKFLOW_TEMPLATE,
     {
       variables: {
-        data: {
+        request: {
           manifest: editManifest,
-          template_name: templateName,
-          template_description: templateDesc,
-          project_id: getProjectID(),
+          templateName,
+          templateDescription: templateDesc,
+          projectID: getProjectID(),
           isCustomWorkflow,
         },
       },

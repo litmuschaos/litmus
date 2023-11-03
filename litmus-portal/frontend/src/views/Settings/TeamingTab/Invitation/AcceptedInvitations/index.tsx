@@ -91,7 +91,7 @@ const AcceptedInvitations: React.FC<AcceptedInvitationsProps> = ({
   useEffect(() => {
     const otherProject: OtherProjectsType[] = [];
     projects.map((project) => {
-      return project.Members.forEach((member: Member) => {
+      return project.Members?.forEach((member: Member) => {
         if (
           member.UserID === userID &&
           member.Role !== 'Owner' &&

@@ -58,6 +58,7 @@ const GetStarted: React.FC = () => {
       .then((data) => {
         if ('error' in data) {
           console.error(data);
+          // eslint-disable-next-line no-alert
           window.alert('Token expired, please login again');
           logout();
         }

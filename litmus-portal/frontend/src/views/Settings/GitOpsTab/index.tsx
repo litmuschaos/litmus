@@ -18,8 +18,8 @@ import {
   UPDATE_GITOPS,
 } from '../../../graphql/mutations';
 import { GET_GITOPS_DATA } from '../../../graphql/queries';
-import { GitOpsDetail } from '../../../models/graphql/gitOps';
-import { MyHubType, SSHKey, SSHKeys } from '../../../models/graphql/user';
+import { SSHKey, SSHKeys, AuthType } from '../../../models/graphql/chaoshub';
+import { GetGitOpsDetailRequest } from '../../../models/graphql/gitOps';
 import { getProjectID } from '../../../utils/getSearchParams';
 import { validateStartEmptySpacing } from '../../../utils/validate';
 import GitOpsInfo from './gitOpsInfo';
@@ -84,10 +84,13 @@ const GitOpsTab = () => {
   };
 
   // Query to fetch GitOps Data
-  const { data, refetch, loading } = useQuery<GitOpsDetail>(GET_GITOPS_DATA, {
-    variables: { data: projectID },
-    fetchPolicy: 'cache-and-network',
-  });
+  const { data, refetch, loading } = useQuery<GetGitOpsDetailRequest>(
+    GET_GITOPS_DATA,
+    {
+      variables: { projectID },
+      fetchPolicy: 'cache-and-network',
+    }
+  );
 
   // Mutation to generate SSH key
   const [generateSSHKey, { loading: sshLoading }] = useMutation<SSHKeys>(
@@ -95,8 +98,8 @@ const GitOpsTab = () => {
     {
       onCompleted: (data) => {
         setSshKey({
-          privateKey: data.generaterSSHKey.privateKey,
-          publicKey: data.generaterSSHKey.publicKey,
+          privateKey: data.generateSSHKey.privateKey,
+          publicKey: data.generateSSHKey.publicKey,
         });
       },
     }
@@ -201,8 +204,8 @@ const GitOpsTab = () => {
   const onConfirmEdit = () => {
     setIsGitOpsEnabled(false);
     setGitHub({
-      GitURL: data?.getGitOpsDetails.RepoURL || '',
-      GitBranch: data?.getGitOpsDetails.Branch || '',
+      GitURL: data?.getGitOpsDetails.repoURL || '',
+      GitBranch: data?.getGitOpsDetails.branch || '',
     });
     setPrivateHub('');
     setAccessToken('');
@@ -220,7 +223,7 @@ const GitOpsTab = () => {
   // UseEffect to set the initial state of radio-buttons
   useEffect(() => {
     if (data !== undefined) {
-      if (data.getGitOpsDetails.Enabled) {
+      if (data.getGitOpsDetails.enabled) {
         setValue('enabled');
         setIsGitOpsEnabled(true);
       } else {
@@ -234,49 +237,49 @@ const GitOpsTab = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (value === 'enabled') {
-      if (data?.getGitOpsDetails.Enabled === false) {
+      if (data?.getGitOpsDetails.enabled === false) {
         enableGitOps({
           variables: {
-            gitConfig: {
-              ProjectID: projectID,
-              RepoURL: gitHub.GitURL,
-              Branch: gitHub.GitBranch,
-              AuthType:
+            config: {
+              projectID,
+              repoURL: gitHub.GitURL,
+              branch: gitHub.GitBranch,
+              authType:
                 privateHub === 'token'
-                  ? MyHubType.token
+                  ? AuthType.TOKEN
                   : privateHub === 'ssh'
-                  ? MyHubType.ssh
-                  : MyHubType.none,
-              Token: accessToken,
-              UserName: 'user',
-              Password: 'user',
-              SSHPrivateKey: sshKey.privateKey,
+                  ? AuthType.SSH
+                  : AuthType.NONE,
+              token: accessToken,
+              userName: 'user',
+              password: 'user',
+              sshPrivateKey: sshKey.privateKey,
             },
           },
         });
       }
-      if (data?.getGitOpsDetails.Enabled === true) {
+      if (data?.getGitOpsDetails.enabled === true) {
         updateGitOps({
           variables: {
-            gitConfig: {
-              ProjectID: projectID,
-              RepoURL: gitHub.GitURL,
-              Branch: gitHub.GitBranch,
-              AuthType:
+            config: {
+              projectID,
+              repoURL: gitHub.GitURL,
+              branch: gitHub.GitBranch,
+              authType:
                 privateHub === ''
-                  ? data?.getGitOpsDetails.AuthType
+                  ? data?.getGitOpsDetails.authType
                   : privateHub === 'token'
-                  ? MyHubType.token
+                  ? AuthType.TOKEN
                   : privateHub === 'ssh'
-                  ? MyHubType.ssh
-                  : MyHubType.none,
-              Token:
-                privateHub === '' ? data?.getGitOpsDetails.Token : accessToken,
-              UserName: 'user',
-              Password: 'user',
-              SSHPrivateKey:
+                  ? AuthType.SSH
+                  : AuthType.NONE,
+              token:
+                privateHub === '' ? data?.getGitOpsDetails.token : accessToken,
+              userName: 'user',
+              password: 'user',
+              sshPrivateKey:
                 privateHub === ''
-                  ? data?.getGitOpsDetails.SSHPrivateKey
+                  ? data?.getGitOpsDetails.sshPrivateKey
                   : sshKey.privateKey,
             },
           },
@@ -316,7 +319,7 @@ const GitOpsTab = () => {
                     }
                   />
                   {value === 'disabled' &&
-                  data?.getGitOpsDetails.Enabled === true ? (
+                  data?.getGitOpsDetails.enabled === true ? (
                     <div>
                       <Typography className={classes.disconnectText}>
                         {t('settings.gitopsTab.disconnect')}
@@ -327,7 +330,7 @@ const GitOpsTab = () => {
                         onClick={() =>
                           disableGitOps({
                             variables: {
-                              data: projectID,
+                              projectID,
                             },
                           })
                         }
@@ -450,12 +453,18 @@ const GitOpsTab = () => {
                                     }
                                   />
                                   {privateHub === 'ssh' ? (
-                                    <SSHField
-                                      sshLoading={sshLoading}
-                                      copying={copying}
-                                      publicKey={sshKey.publicKey}
-                                      copyPublicKey={copyTextToClipboard}
-                                    />
+                                    <>
+                                      <Typography className={classes.sshAlert}>
+                                        Warning: SSH method won’t work with
+                                        GitHub in this version.
+                                      </Typography>
+                                      <SSHField
+                                        sshLoading={sshLoading}
+                                        copying={copying}
+                                        publicKey={sshKey.publicKey}
+                                        copyPublicKey={copyTextToClipboard}
+                                      />
+                                    </>
                                   ) : null}
                                   <div
                                     className={classes.submitBtnDiv}
@@ -471,7 +480,7 @@ const GitOpsTab = () => {
                                         <Loader size={20} />
                                       ) : (
                                         <Typography>
-                                          {data?.getGitOpsDetails.Enabled
+                                          {data?.getGitOpsDetails.enabled
                                             ? 'Update'
                                             : t('settings.gitopsTab.connect')}
                                         </Typography>

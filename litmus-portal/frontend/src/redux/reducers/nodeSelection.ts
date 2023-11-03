@@ -10,7 +10,7 @@ const initialState: SelectedNode = {
   finishedAt: '',
   message: '',
   name: '',
-  pod_name: '',
+  podName: '',
   phase: '',
   startedAt: '',
   type: '',

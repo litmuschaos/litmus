@@ -1,0 +1,24 @@
+## provide the port of the targeted service
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-chaos-sa
+  experiments:
+  - name: pod-http-chaos
+    spec:
+      components:
+        env:
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"
+        # map of headers to modify/add
+        - name: HEADERS_MAP
+          value: '{"X-Litmus-Test-Header": "X-Litmus-Test-Value"}'

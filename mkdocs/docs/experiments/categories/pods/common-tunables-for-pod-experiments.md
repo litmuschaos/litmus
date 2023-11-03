@@ -30,7 +30,7 @@ spec:
         - name: TARGET_PODS
           value: 'pod1,pod2'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pod Affected Percentage
@@ -64,7 +64,7 @@ spec:
         - name: PODS_AFFECTED_PERC
           value: '100'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Specific Container
@@ -98,5 +98,108 @@ spec:
         - name: TARGET_CONTAINER
           value: 'nginx'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
+```
+
+### Default Application Health Check
+
+It defines the default application status checks as a tunable. It is helpful for the scenarios where you don’t want to validate the application status as a mandatory check during pre & post chaos. It can be tuned via `DEFAULT_APP_HEALTH_CHECK` ENV. If `DEFAULT_APP_HEALTH_CHECK` is not provided by default it is set to `true`.
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/default-app-health-check.yaml yaml)
+```yaml
+## application status check as tunable
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        - name: DEFAULT_APP_HEALTH_CHECK
+          value: 'false'
+```
+
+### Node Label Filter For Selecting The Target Pods
+
+It defines the target application pod selection from a specific node. It is helpful for the scenarios where you want to select the pods scheduled on specific nodes as chaos candidates considering the pod affected percentage. It can be tuned via `NODE_LABEL` ENV.
+
+<b>NOTE: This feature requires having node-level permission or clusterrole service account for filtering pods on a specific node.</b>
+
+
+<table>
+  <tr>
+    <th>APP_LABEL</th>
+    <th>TARGET_PODS</th>
+    <th>NODE_LABEL</th>
+    <th>SELECTED PODS</th>
+  </tr>
+  <tr>
+    <td>Provided</td>
+    <td>Provided</td>
+    <td>Provided</td>
+    <td>The target pods that are filtered from applabel and resides on node containing the given node label and also provided in TARGET_PODS env is selected</td>
+  </tr>
+   <tr>
+    <td>Provided</td>
+    <td>Not Provided</td>
+    <td>Provided</td>
+    <td>The pods that are filtered from applabel and resides on node containing the given node label is selected </td>
+  </tr>
+   <tr>
+    <td>Not Provided</td>
+    <td>Provided</td>
+    <td>Provided</td>
+    <td>The target pods are selected that resides on node with given node label </td>
+  </tr>
+    </tr>
+   <tr>
+    <td>Not Provided</td>
+    <td>Not Provided</td>
+    <td>Provided</td>
+    <td>Invalid</td>
+  </tr>
+   <tr>
+    <td>Not Provided</td>
+    <td>Not Provided</td>
+    <td>Not Provided</td>
+    <td>Invalid</td>
+  </tr>
+</table>
+
+Use the following example to tune this:
+
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/common/node-label-filter.yaml yaml)
+```yaml
+## node label to filter target pods
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-delete-sa
+  experiments:
+  - name: pod-delete
+    spec:
+      components:
+        env:
+        - name: NODE_LABEL
+          value: 'kubernetes.io/hostname=worker-01'
 ```

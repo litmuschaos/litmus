@@ -1,0 +1,46 @@
+@import '~normalize.css';
+@import '~@blueprintjs/core/lib/css/blueprint.css';
+@import '~@blueprintjs/datetime/lib/css/blueprint-datetime.css';
+@import '~@harnessio/design-system/dist/style.css';
+@import '~@harnessio/uicore';
+
+html,
+body,
+#react-root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+:root {
+  --main-nav-height: 880px;
+  --page-min-height: max(100vh, var(--main-nav-height)); /* take the larger of the screen or the nav */
+  --page-header-height: 73px; /* default value. to be override per page */
+
+  /* overriding primary colors for litmus */
+  --primary-bg: #fcfbfe !important;
+  --primary-1: #efecf8 !important;
+  --primary-2: #e5e1f4 !important;
+  --primary-3: #dedaf1 !important;
+  --primary-4: #beb4e4 !important;
+  --primary-5: #9d8fd6 !important;
+  --primary-6: #7c6ac8 !important;
+  --primary-7: #5b44ba !important;
+  --primary-8: #3a2c78 !important;
+  --primary-9: #281e52 !important;
+  --primary-10: #16102d !important;
+}
+
+.ng-tooltip-native {
+  display: flex;
+  align-items: center;
+}
+
+body {
+  --font-family: 'Inter', sans-serif;
+  --font-family-mono: Monaco, 'Ubuntu Mono', 'Courier New', monospace;
+  --font-size: var(--font-size-small);
+  min-width: 1280px;
+  min-height: 100vh;
+}

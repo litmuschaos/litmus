@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-namespace-scope
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
@@ -18,7 +18,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: litmus-namespace-scope
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
@@ -70,12 +70,18 @@ rules:
         "watch",
         "deletecollection",
       ]
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines/finalizers"]
+    verbs: ["update"]
+  - apiGroups: [ "coordination.k8s.io" ]
+    resources: [ "leases" ]
+    verbs: [ "get","create","list","update","delete" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: litmus-namespace-scope
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     app.kubernetes.io/name: litmus
     # provide unique instance-id if applicable
@@ -92,4 +98,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: litmus-namespace-scope
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}

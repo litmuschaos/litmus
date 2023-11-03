@@ -1,0 +1,40 @@
+.spinner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: inherit;
+
+  @supports not ((backdrop-filter: blur(5px)) or (-webkit-backdrop-filter: blur(5px))) {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  &.fixed {
+    position: fixed;
+  }
+
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000;
+  transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
+}
+
+.content {
+  z-index: 3;
+}
+
+.noDataCardContainer {
+  height: inherit !important;
+}
+
+.noDataCard {
+  margin-top: 0 !important;
+}

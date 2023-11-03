@@ -3,7 +3,6 @@ package prometheus
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/api"
 	apiV1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	md "github.com/prometheus/common/model"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 	"github.com/litmuschaos/litmus/litmus-portal/graphql-server/pkg/analytics"
@@ -69,7 +69,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 	data, ok := value.(md.Matrix)
 	if !ok {
-		log.Printf("Unsupported result format: %s", value.Type().String())
+		log.Errorf("unsupported result format: %s", value.Type().String())
 	}
 
 	chaosEventLabels := map[string]string{
@@ -110,12 +110,12 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 		if prom.Legend == nil || *prom.Legend == "" {
 			tempLegends = append(tempLegends, func(str string) *string { return &str }(fmt.Sprint(v.Metric.String())))
 		} else {
-			if strings.Contains(prom.Queryid, "chaos-event") || strings.Contains(prom.Queryid, "chaos-verdict") {
+			if strings.Contains(prom.QueryID, "chaos-event") || strings.Contains(prom.QueryID, "chaos-verdict") {
 				var checkMap map[string]string
 
-				if strings.Contains(prom.Queryid, "chaos-event") {
+				if strings.Contains(prom.QueryID, "chaos-event") {
 					checkMap = chaosEventLabels
-				} else if strings.Contains(prom.Queryid, "chaos-verdict") {
+				} else if strings.Contains(prom.QueryID, "chaos-verdict") {
 					checkMap = chaosVerdictLabels
 				}
 
@@ -125,14 +125,14 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 				if keyValueMap["chaos_injection_time"] != "" {
 					timeStamp, err = strconv.ParseFloat(keyValueMap["chaos_injection_time"], 64)
 					timeStampInteger := int64(timeStamp)
-					if strings.Contains(prom.Queryid, "chaos-event") && timeStampInteger >= startTime && timeStampInteger <= endTime {
+					if strings.Contains(prom.QueryID, "chaos-event") && timeStampInteger >= startTime && timeStampInteger <= endTime {
 						eventValid = true
 					}
 				} else {
 					timeStamp = 0
 				}
 				if err != nil {
-					log.Printf("Error parsing chaos injection time: %v\n", err)
+					log.Errorf("error parsing chaos injection time: %v\n", err)
 				} else {
 					for key, value := range keyValueMap {
 						if nameVal, ok := checkMap[key]; ok {
@@ -144,7 +144,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 							tempSubDataArray = append(tempSubDataArray, tempSubData)
 						}
 					}
-					if strings.Contains(prom.Queryid, "chaos-event") {
+					if strings.Contains(prom.QueryID, "chaos-event") {
 						if eventValid {
 							newSubDataArray = append(newSubDataArray, tempSubDataArray)
 						}
@@ -174,7 +174,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 			tempLegends = append(tempLegends, func(str string) *string { return &str }(fmt.Sprint(filterResponse)))
 		}
 
-		if strings.Contains(prom.Queryid, "chaos-event") {
+		if strings.Contains(prom.QueryID, "chaos-event") {
 			if eventValid {
 				newLegends = append(newLegends, tempLegends...)
 			}
@@ -202,7 +202,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 				tempAnnotationsTSV = append(tempAnnotationsTSV, temp)
 			}
 
-			if strings.Contains(prom.Queryid, "chaos-event") {
+			if strings.Contains(prom.QueryID, "chaos-event") {
 				if eventValid {
 					newAnnotationsTSVs = append(newAnnotationsTSVs, tempAnnotationsTSV)
 				}
@@ -214,7 +214,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 	if queryType == "metrics" {
 		newMetrics.Tsvs = newMetricsTSVs
-		newMetrics.Queryid = prom.Queryid
+		newMetrics.QueryID = prom.QueryID
 		newMetrics.Legends = newLegends
 
 		var resp model.MetricsPromResponse
@@ -229,7 +229,7 @@ func Query(prom analytics.PromQuery, queryType string) (interface{}, error) {
 
 	} else {
 		newAnnotations.Tsvs = newAnnotationsTSVs
-		newAnnotations.Queryid = prom.Queryid
+		newAnnotations.QueryID = prom.QueryID
 		newAnnotations.Legends = newLegends
 		newAnnotations.SubDataArray = newSubDataArray
 

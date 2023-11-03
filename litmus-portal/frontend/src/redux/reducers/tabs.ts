@@ -5,6 +5,7 @@ import createReducer from './createReducer';
 const initialState: TabState = {
   workflows: 0,
   settings: 0,
+  invitation: 0,
   node: 0,
   observability: 0,
   myhub: 0,
@@ -21,6 +22,12 @@ export const tabNumber = createReducer<TabState>(initialState, {
     return {
       ...state,
       settings: action.payload,
+    };
+  },
+  [TabActions.CHANGE_INVITATIONS_TAB](state: TabState, action: TabAction) {
+    return {
+      ...state,
+      invitation: action.payload,
     };
   },
   [TabActions.CHANGE_WORKFLOW_DETAILS_TAB](state: TabState, action: TabAction) {

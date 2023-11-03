@@ -175,12 +175,12 @@
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
-        <td> Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+        <td> Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
       </tr>
       <tr>
         <td> SOCKET_PATH </td>
         <td> Path of the containerd/crio/docker socket file </td>
-        <td> Defaults to </code>/var/run/docker.sock</code> </td>
+        <td> Defaults to </code>/run/containerd/containerd.sock</code> </td>
       </tr>    
       <tr>
         <td> RAMP_TIME </td>
@@ -232,7 +232,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_PERCENTAGE
           value: '10' #in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Filesystem Utilization Bytes
@@ -268,7 +268,7 @@ spec:
         - name: FILESYSTEM_UTILIZATION_BYTES
           value: '1' #in GB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -276,7 +276,7 @@ spec:
 It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container runtime and socket file path.
 
 - `CONTAINER_RUNTIME`: It supports `docker`, `containerd`, and `crio` runtimes. The default value is `docker`.
-- `SOCKET_PATH`: It contains path of docker socket file by default(`/var/run/docker.sock`). For other runtimes provide the appropriate path.
+- `SOCKET_PATH`: It contains path of docker socket file by default(`/run/containerd/containerd.sock`). For other runtimes provide the appropriate path.
 
 Use the following example to tune this:
 
@@ -303,12 +303,12 @@ spec:
         # runtime for the container
         # supports docker, containerd, crio
         - name: CONTAINER_RUNTIME
-          value: 'docker'
+          value: 'containerd'
         # path of the socket file
         - name: SOCKET_PATH
-          value: '/var/run/docker.sock'
+          value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mount Path
@@ -339,9 +339,9 @@ spec:
         env:
         # path need to be stressed/filled
         - name: VOLUME_MOUNT_PATH
-          value: '10'
+          value: '/some-dir-in-container'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Workers For Stress
@@ -374,7 +374,7 @@ spec:
         - name: NUMBER_OF_WORKERS
           value: '4'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pumba Chaos Library
@@ -408,5 +408,5 @@ spec:
         - name: LIB
           value: 'pumba'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

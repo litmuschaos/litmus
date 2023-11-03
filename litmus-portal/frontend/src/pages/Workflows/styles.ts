@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     background: 'transparent',
     boxShadow: 'none',
     marginBottom: theme.spacing(1),
+    borderBottom: `1px solid ${theme.palette.border.main}`,
   },
 }));
 

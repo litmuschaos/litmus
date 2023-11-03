@@ -1,0 +1,118 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: subscriber-config
+  namespace: #{INFRA_NAMESPACE}
+data:
+  SERVER_ADDR: #{SERVER_ADDR}
+  INFRA_SCOPE: #{INFRA_SCOPE}
+  VERSION: #{VERSION}
+  START_TIME: #{START_TIME}
+  SKIP_SSL_VERIFY: "#{SKIP_SSL_VERIFY}"
+  CUSTOM_TLS_CERT: "#{CUSTOM_TLS_CERT}"
+  IS_INFRA_CONFIRMED: #{IS_INFRA_CONFIRMED}
+  COMPONENTS: |
+    DEPLOYMENTS: #{INFRA_DEPLOYMENTS}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: subscriber-secret
+  namespace: #{INFRA_NAMESPACE}
+stringData:
+  INFRA_ID: #{INFRA_ID}
+  ACCESS_KEY: #{ACCESS_KEY}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriber
+  namespace: #{INFRA_NAMESPACE}
+  labels:
+    app: subscriber
+spec:
+  selector:
+    matchLabels:
+      app: subscriber
+  template:
+    metadata:
+      labels:
+        app: subscriber
+    spec:
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      serviceAccountName: #{SUBSCRIBER_SERVICE_ACCOUNT}
+      containers:
+        - name: subscriber
+          image: #{SUBSCRIBER_IMAGE}
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          envFrom:
+            - configMapRef:
+                name: subscriber-config
+            - secretRef:
+                name: subscriber-secret
+          env:
+            - name: INFRA_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: event-tracker
+  name: event-tracker
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-tracker
+  template:
+    metadata:
+      labels:
+        app: event-tracker
+    spec:
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      serviceAccountName: event-tracker-sa
+      containers:
+        - image: #{EVENT_TRACKER_IMAGE}
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          name: litmus-event-tracker
+          envFrom:
+            - configMapRef:
+                name: subscriber-config
+            - secretRef:
+                name: subscriber-secret
+          env:
+            - name: INFRA_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
