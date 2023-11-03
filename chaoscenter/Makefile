@@ -110,7 +110,7 @@ web-unit-tests:
 	@echo "------------------"
 	@echo "--> Running frontend unit tests"
 	@echo "------------------"
-	@cd web &&  yarn test
+	@cd web &&  yarn -s && yarn test --coverage
 
 .PHONY: docker.buildx
 docker.buildx:

@@ -110,7 +110,7 @@ jobs:
        - uses: actions/setup-node@v3
          with:
            node-version: 16
-       - name: Chaos-center web unit tests
+       - name: Chaoscenter web unit tests
          shell: bash
          run: |
            cd chaoscenter
