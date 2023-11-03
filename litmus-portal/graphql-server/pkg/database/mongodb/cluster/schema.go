@@ -29,9 +29,9 @@ type Cluster struct {
 }
 
 type Toleration struct {
-	TolerationSeconds *int    `bson:"tolerationSeconds,omitempty" yaml:"tolerationSeconds,omitempty"`
-	Key               *string `bson:"key,omitempty" yaml:"key,omitempty"`
-	Operator          *string `bson:"operator,omitempty" yaml:"operator,omitempty"`
-	Effect            *string `bson:"effect,omitempty" yaml:"effect,omitempty"`
-	Value             *string `bson:"value,omitempty" yaml:"value,omitempty"`
+	Key               *string `bson:"key,omitempty" yaml:"key,omitempty" json:"key,omitempty"`
+	Operator          *string `bson:"operator,omitempty" yaml:"operator,omitempty" json:"operator,omitempty"`
+	Effect            *string `bson:"effect,omitempty" yaml:"effect,omitempty" json:"effect,omitempty"`
+	Value             *string `bson:"value,omitempty" yaml:"value,omitempty" json:"value,omitempty"`
+	TolerationSeconds *int    `bson:"toleration_seconds,omitempty" yaml:"tolerationSeconds,omitempty" json:"tolerationSeconds,omitempty"`
 }

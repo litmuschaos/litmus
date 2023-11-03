@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// DatabaseConnection creates a connection to the mongo database
-func DatabaseConnection() (*mongo.Database, error) {
+// MongoConnection creates a connection to the mongo
+func MongoConnection() (*mongo.Client, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	mongoCredentials := options.Credential{
 		Username: DBUser,
@@ -22,8 +22,8 @@ func DatabaseConnection() (*mongo.Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	db := client.Database(DBName)
-	return db, nil
+
+	return client, nil
 }
 
 // CreateIndex creates a unique index for the given field in the collectionName
@@ -31,6 +31,24 @@ func CreateIndex(collectionName string, field string, db *mongo.Database) error 
 	mod := mongo.IndexModel{
 		Keys:    bson.M{field: 1},
 		Options: options.Index().SetUnique(true),
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	collection := db.Collection(collectionName)
+	_, err := collection.Indexes().CreateOne(ctx, mod)
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
+
+// CreateTTLIndex creates a TTL index for the given field in the collectionName
+func CreateTTLIndex(collectionName string, db *mongo.Database) error {
+	// more info: https://www.mongodb.com/docs/manual/tutorial/expire-data/#expire-documents-at-a-specific-clock-time
+	mod := mongo.IndexModel{
+		Keys:    bson.M{ExpireOnField: 1},
+		Options: options.Index().SetExpireAfterSeconds(0),
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

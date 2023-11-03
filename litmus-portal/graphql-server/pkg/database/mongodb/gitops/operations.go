@@ -9,9 +9,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Operator is the struct for gitOps operator
+type Operator struct {
+	operator mongodb.MongoOperator
+}
+
+// NewGitOpsOperator returns a new instance of gitOps operator
+func NewGitOpsOperator(mongodbOperator mongodb.MongoOperator) *Operator {
+	return &Operator{
+		operator: mongodbOperator,
+	}
+}
+
 // AddGitConfig inserts new git config for project
-func AddGitConfig(ctx context.Context, config *GitConfigDB) error {
-	err := mongodb.Operator.Create(ctx, mongodb.GitOpsCollection, config)
+func (g *Operator) AddGitConfig(ctx context.Context, config *GitConfigDB) error {
+	err := g.operator.Create(ctx, mongodb.GitOpsCollection, config)
 	if err != nil {
 		return err
 	}
@@ -19,10 +31,10 @@ func AddGitConfig(ctx context.Context, config *GitConfigDB) error {
 }
 
 // GetGitConfig retrieves git config using project id
-func GetGitConfig(ctx context.Context, projectID string) (*GitConfigDB, error) {
+func (g *Operator) GetGitConfig(ctx context.Context, projectID string) (*GitConfigDB, error) {
 	query := bson.D{{"project_id", projectID}}
 	var res GitConfigDB
-	result, err := mongodb.Operator.Get(ctx, mongodb.GitOpsCollection, query)
+	result, err := g.operator.Get(ctx, mongodb.GitOpsCollection, query)
 	err = result.Decode(&res)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -35,9 +47,9 @@ func GetGitConfig(ctx context.Context, projectID string) (*GitConfigDB, error) {
 }
 
 // GetAllGitConfig retrieves all git configs from db
-func GetAllGitConfig(ctx context.Context) ([]GitConfigDB, error) {
+func (g *Operator) GetAllGitConfig(ctx context.Context) ([]GitConfigDB, error) {
 	query := bson.D{{}}
-	results, err := mongodb.Operator.List(ctx, mongodb.GitOpsCollection, query)
+	results, err := g.operator.List(ctx, mongodb.GitOpsCollection, query)
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +62,8 @@ func GetAllGitConfig(ctx context.Context) ([]GitConfigDB, error) {
 }
 
 // ReplaceGitConfig updates git config matching the query
-func ReplaceGitConfig(ctx context.Context, query bson.D, update *GitConfigDB) error {
-	updateResult, err := mongodb.Operator.Replace(ctx, mongodb.GitOpsCollection, query, update)
+func (g *Operator) ReplaceGitConfig(ctx context.Context, query bson.D, update *GitConfigDB) error {
+	updateResult, err := g.operator.Replace(ctx, mongodb.GitOpsCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -64,8 +76,8 @@ func ReplaceGitConfig(ctx context.Context, query bson.D, update *GitConfigDB) er
 }
 
 // UpdateGitConfig update git config matching the query
-func UpdateGitConfig(ctx context.Context, query bson.D, update bson.D) error {
-	updateResult, err := mongodb.Operator.Update(ctx, mongodb.GitOpsCollection, query, update)
+func (g *Operator) UpdateGitConfig(ctx context.Context, query bson.D, update bson.D) error {
+	updateResult, err := g.operator.Update(ctx, mongodb.GitOpsCollection, query, update)
 	if err != nil {
 		return err
 	}
@@ -78,9 +90,9 @@ func UpdateGitConfig(ctx context.Context, query bson.D, update bson.D) error {
 }
 
 // DeleteGitConfig removes git config corresponding to the given project id
-func DeleteGitConfig(ctx context.Context, projectID string) error {
+func (g *Operator) DeleteGitConfig(ctx context.Context, projectID string) error {
 	query := bson.D{{"project_id", projectID}}
-	_, err := mongodb.Operator.Delete(ctx, mongodb.GitOpsCollection, query)
+	_, err := g.operator.Delete(ctx, mongodb.GitOpsCollection, query)
 
 	if err != nil {
 		return err

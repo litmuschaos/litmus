@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   predefinedWorkflowDiv: {
     maxHeight: '15rem',
     overflowY: 'auto',
-    padding: theme.spacing(3, 0, 3, 0),
+    padding: theme.spacing(2, 0, 2, 0),
   },
   MuiAccordionroot: {
     '&.MuiAccordion-root:before': {
@@ -159,8 +159,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: theme.spacing(4),
     marginTop: theme.spacing(1.5),
   },
+  morePredefined: {
+    padding: theme.spacing(2.5, 0, 2, 0.625),
+  },
+  morePredefinedText: {
+    color: theme.palette.primary.main,
+  },
   blur: {
-    height: '4rem',
+    height: '2rem',
     width: '100%',
     position: 'absolute',
     bottom: 0,

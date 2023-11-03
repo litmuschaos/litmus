@@ -255,7 +255,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
           color: palette.primary.main,
           width: 3,
         },
-        name: 'Average Workflows',
+        name: 'Average Chaos Scenario',
       };
       data.push(avgResult);
       const normalized = Array(labels?.length).fill(0);
@@ -350,7 +350,7 @@ const ResilienceScoreComparisonPlot: React.FC<ResilienceScoreComparisonPlotProps
     }, [currentGranularity]);
 
     return (
-      <div style={{ alignContent: 'center', width: '100%' }}>
+      <div>
         <div className={classes.flexDisplay}>
           <div className={classes.adjust}>
             <Score

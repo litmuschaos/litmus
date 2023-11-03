@@ -10,9 +10,9 @@ import (
 
 // UserRouter creates all the required routes for user authentications purposes.
 func UserRouter(router *gin.Engine, service services.ApplicationService) {
-	router.GET("/status", rest.Status(service))
 	router.POST("/login", rest.LoginUser(service))
-	router.Use(middleware.JwtMiddleware())
+	router.Use(middleware.JwtMiddleware(service))
+	router.POST("/logout", rest.LogoutUser(service))
 	router.POST("/update/password", rest.UpdatePassword(service))
 	router.POST("/reset/password", rest.ResetPassword(service))
 	router.POST("/create", rest.CreateUser(service))

@@ -40,7 +40,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
           alt: 'data source',
           onClick: () =>
             history.push({
-              pathname: '/observability/datasource/select',
+              pathname: '/analytics/datasource/select',
               search: `?projectID=${projectID}&projectRole=${userRole}`,
             }),
           text: t('quickActionCard.addDataSource'),
@@ -49,10 +49,10 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     returningHome
       ? {
           src: './icons/calendarWorkflowIcon.svg',
-          alt: 'workflow',
+          alt: 'Chaos Scenario',
           onClick: () =>
             history.push({
-              pathname: '/create-workflow',
+              pathname: '/create-scenario',
               search: `?projectID=${projectID}&projectRole=${userRole}`,
             }),
           text: t('quickActionCard.scheduleWorkflow'),
@@ -61,7 +61,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
     homePage || returningHome || observability
       ? {
           src: './icons/target.svg',
-          alt: 'agent',
+          alt: 'delegate',
           onClick: () =>
             history.push({
               pathname: '/target-connect',
@@ -73,7 +73,7 @@ const LocalQuickActionCard: React.FC<LocalQuickActionCardProps> = ({
 
     // TODO: settings only accessible by Owner
     (homePage || returningHome || community || observability) &&
-    getProjectRole() === Role.owner
+    getProjectRole() === Role.OWNER
       ? {
           src: './icons/teamMember.svg',
           alt: 'team',

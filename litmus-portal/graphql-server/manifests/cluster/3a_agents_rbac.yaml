@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: litmus-admin
 ---
@@ -127,13 +127,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: litmus-admin
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: argo-chaos
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -171,18 +171,18 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: argo-chaos
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: subscriber-cluster-role
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
   labels:
     name: subscriber-cluster-role
 rules:
 - apiGroups: [""]
-  resources: ["configmaps"]
+  resources: ["configmaps", "secrets"]
   verbs: ["get","create","delete","update"]
 
 - apiGroups: [""]
@@ -203,7 +203,7 @@ rules:
 
 - apiGroups: ["apps"]
   resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-  verbs: ["get","list", "delete"]
+  verbs: ["get","list", "delete","deletecollection"]
 
 - apiGroups: ["argoproj.io"]
   resources: ["workflows","workflows/finalizers","workflowtemplates", "workflowtemplates/finalizers","cronworkflows","cronworkflows/finalizers","clusterworkflowtemplates","clusterworkflowtemplates/finalizers","rollouts"]
@@ -213,11 +213,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: subscriber-cluster-role-binding
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 subjects:
   - kind: ServiceAccount
-    name: #{SUBSCRIBER-SERVICE-ACCOUNT}
-    namespace: #{AGENT-NAMESPACE}
+    name: #{SUBSCRIBER_SERVICE_ACCOUNT}
+    namespace: #{AGENT_NAMESPACE}
 roleRef:
   kind: ClusterRole
   name: subscriber-cluster-role
@@ -227,7 +227,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: event-tracker-sa
-  namespace: #{AGENT-NAMESPACE}
+  namespace: #{AGENT_NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -264,6 +264,7 @@ rules:
       - statefulsets
       - pods
       - configmaps
+      - secrets
     verbs:
       - get
       - list
@@ -280,4 +281,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: event-tracker-sa
-    namespace: #{AGENT-NAMESPACE}
+    namespace: #{AGENT_NAMESPACE}

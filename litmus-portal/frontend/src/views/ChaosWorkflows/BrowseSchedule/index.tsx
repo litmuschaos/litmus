@@ -27,19 +27,19 @@ import Loader from '../../../components/Loader';
 import {
   DELETE_WORKFLOW,
   GET_CLUSTER_NAMES,
+  GET_WORKFLOW_DETAILS,
   UPDATE_SCHEDULE,
-  WORKFLOW_LIST_DETAILS,
 } from '../../../graphql';
-import { Clusters, ClusterVars } from '../../../models/graphql/clusterData';
+import { ClusterRequest, Clusters } from '../../../models/graphql/clusterData';
 import { WeightMap } from '../../../models/graphql/createWorkflowData';
 import { DeleteSchedule } from '../../../models/graphql/scheduleData';
 import {
-  ListWorkflowsInput,
+  GetWorkflowsRequest,
   Pagination,
   ScheduledWorkflow,
   ScheduledWorkflows,
-  SortInput,
-  WorkflowFilterInput,
+  SortRequest,
+  WorkflowFilterRequest,
 } from '../../../models/graphql/workflowListData';
 import { getProjectID } from '../../../utils/getSearchParams';
 import useStyles from './styles';
@@ -49,8 +49,9 @@ interface BrowseScheduleProps {
   setWorkflowName: React.Dispatch<React.SetStateAction<string>>;
 }
 
-interface FilterOption extends WorkflowFilterInput {
+interface FilterOption extends WorkflowFilterRequest {
   suspended?: string;
+  workflowType?: string;
 }
 
 const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
@@ -66,33 +67,34 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
   // States for filters
   const [filters, setFilters] = useState<FilterOption>({
-    workflow_name: '',
-    cluster_name: 'All',
+    workflowName: '',
+    clusterName: 'All',
     suspended: 'All',
+    workflowType: 'All',
   });
 
   // State for sorting
-  const [sortData, setSortData] = useState<SortInput>({
-    field: 'Time',
+  const [sortData, setSortData] = useState<SortRequest>({
+    field: 'TIME',
     descending: true,
   });
 
   // Apollo query to get the scheduled data
   const { data, refetch, loading, error } = useQuery<
     ScheduledWorkflows,
-    ListWorkflowsInput
-  >(WORKFLOW_LIST_DETAILS, {
+    GetWorkflowsRequest
+  >(GET_WORKFLOW_DETAILS, {
     variables: {
-      workflowInput: {
-        project_id: projectID,
+      request: {
+        projectID,
         pagination: {
           page: paginationData.page,
           limit: paginationData.limit,
         },
         sort: sortData,
         filter: {
-          workflow_name: filters.workflow_name,
-          cluster_name: filters.cluster_name,
+          workflowName: filters.workflowName,
+          clusterName: filters.clusterName,
         },
       },
     },
@@ -112,7 +114,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
   // Disable and re-enable a schedule
   const handleToggleSchedule = (schedule: ScheduledWorkflow) => {
-    const yaml = YAML.parse(schedule.workflow_manifest);
+    const yaml = YAML.parse(schedule.workflowManifest);
     if (yaml.spec.suspend === undefined || yaml.spec.suspend === false) {
       yaml.spec.suspend = true;
     } else {
@@ -123,22 +125,22 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
     schedule.weightages.forEach((weightEntry) => {
       weightData.push({
-        experiment_name: weightEntry.experiment_name,
+        experimentName: weightEntry.experimentName,
         weightage: weightEntry.weightage,
       });
     });
 
     updateSchedule({
       variables: {
-        ChaosWorkFlowInput: {
-          workflow_id: schedule.workflow_id,
-          workflow_name: schedule.workflow_name,
-          workflow_description: schedule.workflow_description,
+        request: {
+          workflowID: schedule.workflowID,
+          workflowName: schedule.workflowName,
+          workflowDescription: schedule.workflowDescription,
           isCustomWorkflow: schedule.isCustomWorkflow,
           cronSyntax: schedule.cronSyntax,
-          workflow_manifest: JSON.stringify(yaml, null, 2),
-          project_id: schedule.project_id,
-          cluster_id: schedule.cluster_id,
+          workflowManifest: JSON.stringify(yaml, null, 2),
+          projectID: schedule.projectID,
+          clusterID: schedule.clusterID,
           weightages: weightData,
         },
       },
@@ -146,28 +148,42 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
   };
 
   // Query to get list of Clusters
-  const { data: clusterList } = useQuery<Partial<Clusters>, ClusterVars>(
+  const { data: clusterList } = useQuery<Partial<Clusters>, ClusterRequest>(
     GET_CLUSTER_NAMES,
     {
       variables: {
-        project_id: projectID,
+        projectID,
       },
     }
   );
 
-  const filteredWorkflows = data?.ListWorkflow.workflows.filter((dataRow) =>
-    filters.suspended === 'All'
-      ? true
-      : filters.suspended === 'true'
-      ? YAML.parse(dataRow.workflow_manifest).spec.suspend === true
-      : filters.suspended === 'false'
-      ? YAML.parse(dataRow.workflow_manifest).spec.suspend === undefined
-      : false
-  );
+  const filteredWorkflows = data?.listWorkflows.workflows
+    .filter((dataRow) =>
+      filters.suspended === 'All'
+        ? true
+        : filters.suspended === 'true'
+        ? YAML.parse(dataRow.workflowManifest).spec.suspend === true
+        : filters.suspended === 'false'
+        ? YAML.parse(dataRow.workflowManifest).spec.suspend === undefined
+        : false
+    )
+    .filter((dataRow) =>
+      filters.workflowType === 'All'
+        ? true
+        : filters.workflowType === 'workflow'
+        ? dataRow.cronSyntax.length === 0 || dataRow.cronSyntax === ''
+        : filters.workflowType === 'cronworkflow'
+        ? dataRow.cronSyntax.length > 0
+        : false
+    );
 
   const deleteRow = (wfid: string) => {
     deleteSchedule({
-      variables: { workflowid: wfid, workflow_run_id: '' },
+      variables: {
+        projectID: getProjectID(),
+        workflowID: wfid,
+        workflowRunID: '',
+      },
     });
   };
   return (
@@ -179,11 +195,11 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
             id="input-with-icon-adornment"
             placeholder="Search"
             className={classes.search}
-            value={filters.workflow_name}
+            value={filters.workflowName}
             onChange={(event) =>
               setFilters({
                 ...filters,
-                workflow_name: event.target.value as string,
+                workflowName: event.target.value as string,
               })
             }
             startAdornment={
@@ -194,7 +210,36 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
           />
 
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel className={classes.selectText}>Name</InputLabel>
+            <InputLabel className={classes.selectText}>
+              Schedule Type
+            </InputLabel>
+            <Select
+              value={filters.workflowType}
+              onChange={(event) =>
+                setFilters({
+                  ...filters,
+                  workflowType: event.target.value as string,
+                })
+              }
+              label="Schedule Type"
+              className={classes.selectText}
+            >
+              <MenuItem value="All">
+                {t('chaosWorkflows.browseSchedules.options.all')}
+              </MenuItem>
+              <MenuItem value="workflow">
+                {t('chaosWorkflows.browseSchedules.options.workflow')}
+              </MenuItem>
+              <MenuItem value="cronworkflow">
+                {t('chaosWorkflows.browseSchedules.options.cronworkflow')}
+              </MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel className={classes.selectText}>
+              Schedule Status
+            </InputLabel>
             <Select
               value={filters.suspended}
               onChange={(event) =>
@@ -203,7 +248,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                   suspended: event.target.value as string,
                 })
               }
-              label="Name"
+              label="Schedule Status"
               className={classes.selectText}
             >
               <MenuItem value="All">
@@ -220,25 +265,24 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
 
           {/* Select Cluster */}
           <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel className={classes.selectText}>Target Agent</InputLabel>
+            <InputLabel className={classes.selectText}>
+              Chaos Delegate
+            </InputLabel>
             <Select
-              value={filters.cluster_name}
+              value={filters.clusterName}
               onChange={(event) =>
                 setFilters({
                   ...filters,
-                  cluster_name: event.target.value as string,
+                  clusterName: event.target.value as string,
                 })
               }
-              label="Target Cluster"
+              label="Chaos Delegate"
               className={classes.selectText}
             >
               <MenuItem value="All">All</MenuItem>
-              {clusterList?.getCluster?.map((cluster) => (
-                <MenuItem
-                  key={cluster.cluster_name}
-                  value={cluster.cluster_name}
-                >
-                  {cluster.cluster_name}
+              {clusterList?.listClusters?.map((cluster) => (
+                <MenuItem key={cluster.clusterName} value={cluster.clusterName}>
+                  {cluster.clusterName}
                 </MenuItem>
               ))}
             </Select>
@@ -266,7 +310,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                             descending: false,
                           })
                         }
@@ -278,7 +322,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                         size="small"
                         onClick={() =>
                           setSortData({
-                            field: 'Name',
+                            field: 'NAME',
                             descending: true,
                           })
                         }
@@ -349,7 +393,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
                 filteredWorkflows.map((data) => (
                   <TableRow
                     data-cy="workflowSchedulesTableRow"
-                    key={data.workflow_id}
+                    key={data.workflowID}
                   >
                     <TableData
                       data={data}
@@ -374,7 +418,7 @@ const BrowseSchedule: React.FC<BrowseScheduleProps> = ({ setWorkflowName }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data?.ListWorkflow.total_no_of_workflows ?? 0}
+          count={data?.listWorkflows.totalNoOfWorkflows ?? 0}
           rowsPerPage={paginationData.limit}
           page={paginationData.page}
           onChangePage={(_, page) =>

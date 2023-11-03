@@ -10,12 +10,12 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { UserRole } from '../../models/graphql/user';
 import { history } from '../../redux/configureStore';
-import { ReactComponent as ObservabilityIcon } from '../../svg/observability-sidebar.svg';
 import { ReactComponent as CodeIcon } from '../../svg/code.svg';
 import { ReactComponent as CommunityIcon } from '../../svg/community.svg';
 import { ReactComponent as DocsIcon } from '../../svg/docs.svg';
 import { ReactComponent as HomeIcon } from '../../svg/home.svg';
 import { ReactComponent as MyHubIcon } from '../../svg/myhub.svg';
+import { ReactComponent as ObservabilityIcon } from '../../svg/observability-sidebar.svg';
 import { ReactComponent as SettingsIcon } from '../../svg/settings.svg';
 import { ReactComponent as TargetsIcon } from '../../svg/targets.svg';
 import { ReactComponent as UsageIcon } from '../../svg/usage.svg';
@@ -91,12 +91,12 @@ const SideBar: React.FC = () => {
             key="workflow"
             handleClick={() => {
               history.push({
-                pathname: `/workflows`,
+                pathname: `/scenarios`,
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="Litmus Workflows"
-            selected={['workflows', 'create-workflow'].includes(pathName)}
+            label="Chaos Scenarios"
+            selected={['scenarios', 'create-scenario'].includes(pathName)}
           >
             <WorkflowsIcon />
           </CustomisedListItem>
@@ -110,7 +110,7 @@ const SideBar: React.FC = () => {
                 search: `?projectID=${projectID}&projectRole=${projectRole}`,
               });
             }}
-            label="ChaosAgents"
+            label="Chaos Delegates"
             selected={['targets', 'target-connect'].includes(pathName)}
           >
             <TargetsIcon />
@@ -132,15 +132,15 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         </div>
         <CustomisedListItem
-          key="observability"
+          key="analytics"
           handleClick={() => {
             history.push({
-              pathname: `/observability`,
+              pathname: `/analytics`,
               search: `?projectID=${projectID}&projectRole=${projectRole}`,
             });
           }}
-          label="Observability"
-          selected={pathName === 'observability'}
+          label="Analytics"
+          selected={pathName === 'Analytics'}
         >
           <ObservabilityIcon />
         </CustomisedListItem>
@@ -161,7 +161,7 @@ const SideBar: React.FC = () => {
           </CustomisedListItem>
         )}
 
-        {role === UserRole.admin && projectRole === 'Owner' && (
+        {role === UserRole.ADMIN && projectRole === 'Owner' && (
           <CustomisedListItem
             key="usage-statistics"
             handleClick={() => {

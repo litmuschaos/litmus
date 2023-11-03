@@ -1,0 +1,168 @@
+.logSectionContainer {
+  height: calc(100vh - 120px);
+  width: 550px;
+  box-shadow: 0px 2px 4px 0px #60617029, 0px 0px 1px 0px #28293d0a;
+
+  .upperContainer {
+    padding: var(--spacing-medium) var(--spacing-medium) var(--spacing-small) var(--spacing-medium);
+  }
+}
+.resetFontColor {
+  color: var(--black);
+}
+.cursorPointer {
+  cursor: pointer;
+}
+.gridGroup {
+  display: grid;
+  grid-template-columns: 120px auto;
+}
+.naBox {
+  background-color: var(--grey-100);
+  .boxHeading {
+    color: var(--grey-600);
+    font-weight: 500;
+    font-size: 13px;
+  }
+}
+.tabsMainContainer {
+  height: 100%;
+  .simpleLogViewerContainer {
+    flex-grow: 1;
+    background-color: var(--grey-900);
+    overflow: auto;
+  }
+  :global {
+    .bp3-tabs {
+      flex-grow: 1;
+      margin-top: 0 !important;
+      overflow: auto;
+    }
+    .bp3-tab-list {
+      border-top: 1px solid var(--grey-200) !important;
+      border-bottom: 1px solid var(--grey-200) !important;
+      padding-left: var(--spacing-medium);
+      filter: drop-shadow(0px 0px 1px rgba(40, 41, 61, 0.08)) drop-shadow(0px 0.5px 2px rgba(96, 97, 112, 0.16));
+    }
+    .bp3-tab-panel {
+      height: calc(100% - 44.1px);
+      margin-top: 0 !important;
+      overflow: auto;
+      > * {
+        height: 100%;
+      }
+    }
+  }
+
+  .probeResults {
+    margin-top: 30px;
+    background-color: var(--grey-50);
+    width: 100%;
+    border-radius: 4px;
+    height: fit-content;
+    padding: 10px;
+    position: relative;
+    .tooltip {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      svg {
+        height: 15px;
+        width: 15px;
+        color: #9293ab;
+      }
+    }
+  }
+
+  .probeTab {
+    overflow: auto;
+  }
+
+  .probeBox {
+    border: 1px solid var(--grey-100);
+    box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.18), 0px 0.5px 2px rgba(96, 97, 112, 0.16) !important;
+    border-radius: 4px;
+    margin-bottom: 10px;
+
+    .detailsBox {
+      margin: var(--spacing-4) 0;
+    }
+
+    .boxPadding {
+      padding: 10px;
+    }
+
+    .errorBox {
+      background-color: var(--orange-100);
+      .boxHeading {
+        color: #ff5c5c;
+        font-weight: 500;
+        font-size: 13px;
+      }
+    }
+
+    .successBox {
+      background-color: var(--green-100);
+      .boxHeading {
+        color: var(--green-600);
+        font-weight: 500;
+        font-size: 13px;
+      }
+    }
+
+    h2 {
+      font-weight: 600 !important;
+      font-size: 16px !important;
+      color: var(--black);
+    }
+
+    span {
+      color: var(--grey-600);
+    }
+
+    .probeType {
+      width: fit-content;
+      position: absolute;
+      left: 52%;
+    }
+
+    .badge {
+      margin-right: 10px;
+    }
+
+    .subPanel {
+      background-color: var(--primary-bg) !important;
+      padding: 10px 0 !important;
+    }
+
+    .chevron {
+      position: absolute;
+      left: 0;
+    }
+
+    .subPanelSummary {
+      padding: 12px 0 3px 0;
+      padding-left: 30px;
+      color: var(--grey-500) !important;
+    }
+
+    :global {
+      .Accordion--panel {
+        padding: 5px 10px !important;
+        position: relative;
+
+        .Accordion--summary {
+          & > div:first-child {
+            width: 100%;
+          }
+
+          .Accordion--label {
+            color: var(--grey-500) !important;
+            font-weight: 400 !important;
+            font-size: 12px !important;
+          }
+        }
+      }
+    }
+  }
+}

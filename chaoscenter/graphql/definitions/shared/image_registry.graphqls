@@ -1,0 +1,144 @@
+"""
+Defines details for image registry
+"""
+type ImageRegistry {
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean
+  """
+  Name of Image Registry
+  """
+  imageRegistryName: String!
+  """
+  Name of image repository
+  """
+  imageRepoName: String!
+  """
+  Type of the image registry: public/private
+  """
+  imageRegistryType: String!
+  """
+  Secret which is used for private registry
+  """
+  secretName: String
+  """
+  Namespace where the secret is available
+  """
+  secretNamespace: String
+  """
+  Bool value indicating if image registry is enabled or not
+  """
+  enableRegistry: Boolean
+}
+
+"""
+Defines input data for querying the details of an image registry
+"""
+input ImageRegistryInput {
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean!
+  """
+  Name of Image Registry
+  """
+  imageRegistryName: String!
+  """
+  Name of image repository
+  """
+  imageRepoName: String!
+  """
+  Type of the image registry: public/private
+  """
+  imageRegistryType: String!
+  """
+  Secret which is used for private registry
+  """
+  secretName: String
+  """
+  Namespace where the secret is available
+  """
+  secretNamespace: String
+  """
+  Bool value indicating if image registry is enabled or not
+  """
+  enableRegistry: Boolean
+}
+
+"""
+Defines response data for image registry
+"""
+type ImageRegistryResponse implements Audit {
+  """
+  Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
+  """
+  isDefault: Boolean!
+  """
+  Information Image Registry
+  """
+  imageRegistryInfo: ImageRegistry
+  """
+  ID of the image registry
+  """
+  imageRegistryID: String!
+  """
+  ID of the project in which image registry is created
+  """
+  projectID: String!
+  """
+  Timestamp when the image registry was last updated
+  """
+  updatedAt: String
+  """
+  Timestamp when the image registry was created
+  """
+  createdAt: String
+  """
+  User who created the infra
+  """
+  createdBy: UserDetails
+  """
+  User who has updated the infra
+  """
+  updatedBy: UserDetails
+  """
+  Bool value indicating if the image registry has been removed
+  """
+  isRemoved: Boolean
+}
+
+extend type Query {
+  # IMAGE REGISTRY OPERATIONS
+  listImageRegistry(projectID: String!): [ImageRegistryResponse!] @authorized
+
+  getImageRegistry(
+    projectID: String!
+  ): ImageRegistryResponse! @authorized
+}
+
+extend type Mutation {
+  # IMAGE REGISTRY OPERATIONS
+  """
+  Create an Image Registry configuration
+  """
+  createImageRegistry(
+    projectID: String!
+    imageRegistryInfo: ImageRegistryInput!
+  ): ImageRegistryResponse! @authorized
+
+  """
+  Update the Image Registry configuration
+  """
+  updateImageRegistry(
+    imageRegistryID: String!
+    projectID: String!
+    imageRegistryInfo: ImageRegistryInput!
+  ): ImageRegistryResponse! @authorized
+
+  """
+  Delete the Image Registry
+  """
+  deleteImageRegistry(imageRegistryID: String!, projectID: String!): String!
+  @authorized
+}

@@ -1,0 +1,841 @@
+### RBAC Manifests
+## If SELF_AGENT="true" then these permissions are required to apply
+## https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/1b_argo_rbac.yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argo-role-for-litmusportal-server
+rules:
+  - apiGroups: [""]
+    resources: [pods, pods/exec]
+    verbs: [create, get, list, watch, update, patch, delete]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, watch, list]
+  - apiGroups: [""]
+    resources: [persistentvolumeclaims]
+    verbs: [create, delete]
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers]
+    verbs: [get, list, watch, update, patch, delete, create]
+  - apiGroups: [argoproj.io]
+    resources: [workflowtemplates, workflowtemplates/finalizers,workflowtasksets]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [serviceaccounts]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get]
+  - apiGroups: [argoproj.io]
+    resources: [cronworkflows, cronworkflows/finalizers]
+    verbs: [get, list, watch, update, patch, delete]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, patch]
+  - apiGroups: [policy]
+    resources: [poddisruptionbudgets]
+    verbs: [create, get, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argo-rb-for-litmusportal-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: argo-role-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: litmus-namespace-scope-for-litmusportal-server
+  labels:
+    app.kubernetes.io/name: litmus
+    # provide unique instance-id if applicable
+    # app.kubernetes.io/instance: litmus-abcxzy
+    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/component: operator-role
+    app.kubernetes.io/part-of: litmus
+    app.kubernetes.io/managed-by: kubectl
+    name: litmus-namespace-scope-for-litmusportal-server
+rules:
+  - apiGroups: [""]
+    resources: [replicationcontrollers, secrets]
+    verbs: [get, list]
+  - apiGroups: [apps.openshift.io]
+    resources: [deploymentconfigs]
+    verbs: [get, list]
+  - apiGroups: [apps]
+    resources: [deployments, daemonsets, replicasets, statefulsets]
+    verbs: [get, list, update]
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [get, list, create, deletecollection]
+  - apiGroups: [argoproj.io]
+    resources: [rollouts]
+    verbs: [get, list]
+  - apiGroups: [""]
+    resources: [pods, pods/exec, configmaps, events, services]
+    verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+  - apiGroups: [litmuschaos.io]
+    resources: [chaosengines, chaosexperiments, chaosresults]
+    verbs: [get, create, update, patch, delete, list, watch, deletecollection]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litmus-namespace-scope-rb-for-litmusportal-server
+  labels:
+    app.kubernetes.io/name: litmus
+    # provide unique instance-id if applicable
+    # app.kubernetes.io/instance: litmus-abcxzy
+    app.kubernetes.io/version: v2.0.0
+    app.kubernetes.io/component: operator-rolebinding
+    app.kubernetes.io/part-of: litmus
+    app.kubernetes.io/managed-by: kubectl
+    name: litmus-namespace-scope-rb-for-litmusportal-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-namespace-scope-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+#these permissions are required to apply https://github.com/litmuschaos/litmus/blob/master/litmus-portal/graphql-server/manifests/namespace/3a_agents_rbac.yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: subscriber-role-for-litmusportal-server
+  labels:
+    name: subscriber-role-for-litmusportal-server
+rules:
+  - apiGroups: [""]
+    resources: [configmaps, secrets]
+    verbs: [get, create, delete, update]
+
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get, list, watch]
+
+  - apiGroups: [""]
+    resources: [pods, namespaces, nodes, services]
+    verbs: [get, list, watch]
+
+  - apiGroups: [litmuschaos.io]
+    resources: [chaosengines, chaosschedules, chaosresults]
+    verbs: [get, list, create, delete, update, watch]
+
+  - apiGroups: [apps.openshift.io]
+    resources: [deploymentconfigs]
+    verbs: [get, list]
+
+  - apiGroups: [apps]
+    resources: [deployments, daemonsets, replicasets, statefulsets]
+    verbs: [get, list, delete]
+
+  - apiGroups: [argoproj.io]
+    resources: [workflows, workflows/finalizers, workflowtemplates, workflowtemplates/finalizers, cronworkflows, cronworkflows/finalizers, rollouts]
+    verbs: [get, list, create, delete, update, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: subscriber-rb-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+roleRef:
+  kind: Role
+  name: subscriber-role-for-litmusportal-server
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: litmus-admin-role-for-litmusportal-server
+  labels:
+    name: litmus-admin-role-for-litmusportal-server
+rules:
+  # ***************************************************************************************
+  # Permissions needed for preparing and monitor the chaos resources by chaos-runner
+  # ***************************************************************************************
+
+  # The chaos operator watches the chaosengine resource and orchestartes the chaos experiment..
+  ## .. by creating the chaos-runner
+
+  # for creating and monitoring the chaos-runner pods
+  - apiGroups: [""]
+    resources: [pods, events]
+    verbs: [create, delete, get, list, patch, update, deletecollection]
+
+    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
+  - apiGroups: [""]
+    resources: [secrets, configmaps]
+    verbs: [get, list]
+
+    # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get, list, watch]
+
+    # for configuring and monitor the experiment job by chaos-runner pod
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [create, list, get, delete, deletecollection]
+
+    # ********************************************************************
+    # Permissions needed for creation and discovery of chaos experiments
+    # ********************************************************************
+
+    # The helper pods are created by experiment to perform the actual chaos injection ...
+    # ... for a period of chaos duration
+
+    # for creating and deleting the helper or target app pod and events by experiment
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [create, delete, deletecollection]
+
+    # for creating and monitoring the events for chaos operations
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, delete, get, list, patch, update, deletecollection]
+
+    # for monitoring the helper and target app pod
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, patch, update]
+
+    # for creating and managing to execute comands inside target container
+  - apiGroups: [""]
+    resources: [pods/exec, pods/eviction, replicationcontrollers]
+    verbs: [get, list, create]
+
+    # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get, list, watch]
+
+    # for creating and monitoring liveness services or monitoring target app services during chaos injection
+  - apiGroups: [""]
+    resources: [services]
+    verbs: [create, delete, get, list, delete, deletecollection]
+
+    # for checking the app parent resources as deployments or sts and are eligible chaos candidates
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets]
+    verbs: [list, get, patch, update, create, delete]
+
+    # for checking the app parent resources as replicasets and are eligible chaos candidates
+  - apiGroups: [apps]
+    resources: [replicasets]
+    verbs: [list, get]
+
+    # for checking the app parent resources as deamonsets and are eligible chaos candidates
+  - apiGroups: [apps]
+    resources: [daemonsets]
+    verbs: [list, get, delete]
+
+    # for checking (openshift) app parent resources if they are eligible chaos candidates
+  - apiGroups: [apps.openshift.io]
+    resources: [deploymentconfigs]
+    verbs: [list, get]
+
+    # for checking (argo) app parent resources if they are eligible chaos candidates
+  - apiGroups: [argoproj.io]
+    resources: [rollouts]
+    verbs: [list, get]
+
+    # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+  - apiGroups: [litmuschaos.io]
+    resources: [chaosengines, chaosexperiments, chaosresults]
+    verbs: [create, list, get, patch, update, delete]
+
+    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
+  - apiGroups: [""]
+    resources: [nodes]
+    verbs: [patch, get, list, update]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litmus-admin-rb-for-litmusportal-server
+  labels:
+    name: litmus-admin-rb-for-litmusportal-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-admin-role-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: chaos-role-for-litmusportal-server
+rules:
+  # for managing the pods created by workflow controller to implement individual steps in the workflow
+  - apiGroups: [""]
+    resources: [pods, services]
+    verbs: [create, get, watch, patch, delete, list]
+
+  # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
+  - apiGroups: [""]
+    resources: [pods/log, secrets, configmaps]
+    verbs: [get, watch, create, delete, patch]
+
+  # for creation & deletion of application in predefined workflows
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets]
+    verbs: [get, watch, patch , create, delete]
+
+  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+  - apiGroups: [litmuschaos.io]
+    resources:
+      [chaosengines, chaosexperiments, chaosresults, chaosschedules]
+    verbs: [create, list, get, patch, delete, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: chaos-rb-for-litmusportal-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: chaos-role-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: event-tracker-role-for-litmusportal-server
+rules:
+  - apiGroups: [eventtracker.litmuschaos.io]
+    resources: [eventtrackerpolicies]
+    verbs: [create, delete, get, list, patch, update, watch]
+  - apiGroups: [eventtracker.litmuschaos.io]
+    resources: [eventtrackerpolicies/status]
+    verbs: [get, patch, update]
+  - apiGroups: ["", extensions, apps]
+    resources: [deployments, daemonsets, statefulsets, pods, configmaps, secrets]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: event-tracker-rb-for-litmusportal-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: event-tracker-role-for-litmusportal-server
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+# litmus-server-role is used by the litmusportal-server
+# If SELF_AGENT=false, then only litmus-server-role and litmus-server-rb are required.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: litmus-server-role
+rules:
+  - apiGroups: [networking.k8s.io, extensions]
+    resources: [ingresses]
+    verbs: [get]
+  - apiGroups: [""]
+    resources: [services,  pods/log]
+    verbs: [get, watch]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [create]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get]
+  - apiGroups: [""]
+    resources: [serviceaccounts]
+    verbs: [create]
+  - apiGroups: [rbac.authorization.k8s.io]
+    resources: [rolebindings, roles]
+    verbs: [create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litmus-server-rb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: litmus-server-role
+subjects:
+  - kind: ServiceAccount
+    name: litmus-server-account
+    namespace: ${LITMUS_PORTAL_NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-server-account
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: litmus-portal-admin-secret
+stringData:
+  JWT_SECRET: "litmus-portal@123"
+  DB_USER: "admin"
+  DB_PASSWORD: "1234"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmus-portal-admin-config
+data:
+  AGENT_SCOPE: namespace
+  AGENT_NAMESPACE: ${LITMUS_PORTAL_NAMESPACE}
+  DB_SERVER: "mongodb://mongo-service:27017"
+  VERSION: "2.8.0"
+  SKIP_SSL_VERIFY: "false"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litmusportal-frontend-nginx-configuration
+data:
+  default.conf: |
+    server {
+        listen       8080;
+        server_name  localhost;
+        #charset koi8-r;
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+            try_files $uri /index.html;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+
+        location /auth/ {
+            proxy_set_header   Host                 $host;
+            proxy_set_header   X-Real-IP            $remote_addr;
+            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Proto    $scheme;
+            proxy_pass "http://litmusportal-auth-server-service:9003/";
+        }
+
+        location /api/ {
+            proxy_set_header   Host                 $host;
+            proxy_set_header   X-Real-IP            $remote_addr;
+            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Proto    $scheme;
+            proxy_pass "http://litmusportal-server-service:9002/";
+        }
+
+        location /ws/ {
+            proxy_set_header   Upgrade              $http_upgrade;
+            proxy_set_header   Connection           "Upgrade";
+            proxy_set_header   Host                 $host;
+            proxy_set_header   X-Real-IP            $remote_addr;
+            proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+            proxy_set_header   X-Forwarded-Proto    $scheme;
+            proxy_pass "http://litmusportal-server-service:9002/";
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-frontend
+  labels:
+    component: litmusportal-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-frontend
+  template:
+    metadata:
+      labels:
+        component: litmusportal-frontend
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: litmusportal-frontend
+          image: litmuschaos/litmusportal-frontend:2.8.0
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: AGENT_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: litmus-portal-admin-config
+                  key: AGENT_SCOPE
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: litmusportal-frontend-nginx-configuration
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-frontend-service
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 9091
+      targetPort: 8080
+  selector:
+    component: litmusportal-frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-server
+  labels:
+    component: litmusportal-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-server
+    spec:
+      initContainers:
+        - name: wait-for-mongodb
+          image: litmuschaos/curl:2.7.0
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+            ]
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+              ephemeral-storage: "1Gi"
+      volumes:
+        - name: gitops-storage
+          emptyDir: {}
+        - name: hub-storage
+          emptyDir: {}
+      containers:
+        - name: graphql-server
+          image: litmuschaos/litmusportal-server:2.8.0
+          volumeMounts:
+            - mountPath: /tmp/gitops
+              name: gitops-storage
+            - mountPath: /tmp/version
+              name: hub-storage
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
+          env:
+            - name: LITMUS_PORTAL_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SELF_AGENT
+              value: "true"
+            # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
+            - name: TLS_CERT_B64
+              value: ""
+            - name: PORTAL_SCOPE
+              value: "namespace"
+            - name: AGENT_DEPLOYMENTS
+              value: "[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
+            - name: SELF_AGENT_NODE_SELECTOR
+              value: ""
+            - name: SELF_AGENT_TOLERATIONS
+              value: ""
+            - name: PORTAL_ENDPOINT
+              value: "http://litmusportal-server-service:9002"
+            - name: SUBSCRIBER_IMAGE
+              value: "litmuschaos/litmusportal-subscriber:2.8.0"
+            - name: EVENT_TRACKER_IMAGE
+              value: "litmuschaos/litmusportal-event-tracker:2.8.0"
+            - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
+              value: "litmuschaos/workflow-controller:v3.2.9"
+            - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
+              value: "litmuschaos/argoexec:v3.2.9"
+            - name: LITMUS_CHAOS_OPERATOR_IMAGE
+              value: "litmuschaos/chaos-operator:2.7.0"
+            - name: LITMUS_CHAOS_RUNNER_IMAGE
+              value: "litmuschaos/chaos-runner:2.7.0"
+            - name: LITMUS_CHAOS_EXPORTER_IMAGE
+              value: "litmuschaos/chaos-exporter:2.7.0"
+            - name: CONTAINER_RUNTIME_EXECUTOR
+              value: "k8sapi"
+            - name: HUB_BRANCH_NAME
+              value: "v2.7.x"
+            - name: LITMUS_AUTH_GRPC_ENDPOINT
+              value: "litmusportal-auth-server-service"
+            - name: LITMUS_AUTH_GRPC_PORT
+              value: ":3030"
+          ports:
+            - containerPort: 8080
+            - containerPort: 8000
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "225m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "712Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
+      serviceAccountName: litmus-server-account
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-server-service
+spec:
+  type: NodePort
+  ports:
+    - name: graphql-server
+      port: 9002
+      targetPort: 8080
+    - name: graphql-rpc-server
+      port: 8000
+      targetPort: 8000
+  selector:
+    component: litmusportal-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litmusportal-auth-server
+  labels:
+    component: litmusportal-auth-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: litmusportal-auth-server
+  template:
+    metadata:
+      labels:
+        component: litmusportal-auth-server
+    spec:
+      automountServiceAccountToken: false
+      initContainers:
+        - name: wait-for-mongodb
+          image: litmuschaos/curl:2.7.0
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "while [[ $(curl -sw '%{http_code}' http://mongo-service:27017 -o /dev/null) -ne 200 ]]; do sleep 5; echo 'Waiting for the MongoDB to be ready...'; done; echo 'Connection with MongoDB established'",
+            ]
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "25m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
+              ephemeral-storage: "1Gi"
+      containers:
+        - name: auth-server
+          image: litmuschaos/litmusportal-auth-server:2.8.0
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          envFrom:
+            - configMapRef:
+                name: litmus-portal-admin-config
+            - secretRef:
+                name: litmus-portal-admin-secret
+          env:
+            - name: STRICT_PASSWORD_POLICY
+              value: "false"
+            - name: ADMIN_USERNAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "litmus"
+            - name: LITMUS_GQL_GRPC_ENDPOINT
+              value: "litmusportal-server-service"
+            - name: LITMUS_GQL_GRPC_PORT
+              value: ":8000"
+          ports:
+            - containerPort: 3000
+            - containerPort: 3030
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "712Mi"
+              cpu: "550m"
+              ephemeral-storage: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litmusportal-auth-server-service
+spec:
+  type: NodePort
+  ports:
+    - name: auth-server
+      port: 9003
+      targetPort: 3000
+    - name: auth-rpc-server
+      port: 3030
+      targetPort: 3030
+  selector:
+    component: litmusportal-auth-server
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  selector:
+    matchLabels:
+      component: database
+  serviceName: mongo-headless-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: database
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: mongo
+          image: litmuschaos/mongo:4.2.8
+          securityContext:
+            #            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          args: ["--ipv6"]
+          ports:
+            - containerPort: 27017
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: litmus-portal-admin-secret
+                  key: DB_USER
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litmus-portal-admin-secret
+                  key: DB_PASSWORD
+          resources:
+            requests:
+              memory: "250Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "712Mi"
+              cpu: "550m"
+              ephemeral-storage: "3Gi"
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo
+  name: mongo-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    component: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo
+  name: mongo-headless-service
+spec:
+  clusterIP: None
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    component: database

@@ -3,18 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
-	grpcHandler "litmus/litmus-portal/authentication/api/handlers/grpc"
-	grpcPresenter "litmus/litmus-portal/authentication/api/presenter/protos"
-	"litmus/litmus-portal/authentication/api/routes"
-	"litmus/litmus-portal/authentication/pkg/entities"
-	"litmus/litmus-portal/authentication/pkg/project"
-	"litmus/litmus-portal/authentication/pkg/services"
-	"litmus/litmus-portal/authentication/pkg/user"
-	"litmus/litmus-portal/authentication/pkg/utils"
 	"net"
 	"runtime"
 	"strconv"
 	"time"
+
+	grpcHandler "litmus/litmus-portal/authentication/api/handlers/grpc"
+	grpcPresenter "litmus/litmus-portal/authentication/api/presenter/protos"
+	"litmus/litmus-portal/authentication/api/routes"
+	"litmus/litmus-portal/authentication/pkg/entities"
+	"litmus/litmus-portal/authentication/pkg/misc"
+	"litmus/litmus-portal/authentication/pkg/project"
+	"litmus/litmus-portal/authentication/pkg/services"
+	"litmus/litmus-portal/authentication/pkg/session"
+	"litmus/litmus-portal/authentication/pkg/user"
+	"litmus/litmus-portal/authentication/pkg/utils"
 
 	"google.golang.org/grpc"
 
@@ -53,26 +56,37 @@ func main() {
 
 	flag.Parse()
 
-	db, err := utils.DatabaseConnection()
+	client, err := utils.MongoConnection()
 	if err != nil {
 		log.Fatal("database connection error $s", err)
 	}
 
+	db := client.Database(utils.DBName)
+
 	// Creating User Collection
 	err = utils.CreateCollection(utils.UserCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
 	}
 
 	err = utils.CreateIndex(utils.UserCollection, utils.UsernameField, db)
 	if err != nil {
-		log.Fatalf("failed to create index  %s", err)
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	// Creating Project Collection
 	err = utils.CreateCollection(utils.ProjectCollection, db)
 	if err != nil {
-		log.Fatalf("failed to create collection  %s", err)
+		log.Errorf("failed to create collection  %s", err)
+	}
+
+	// Creating Session Collection
+	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
+		log.Errorf("failed to create collection  %s", err)
+	}
+
+	if err = utils.CreateTTLIndex(utils.RevokedTokenCollection, db); err != nil {
+		log.Errorf("failed to create index  %s", err)
 	}
 
 	userCollection := db.Collection(utils.UserCollection)
@@ -81,7 +95,12 @@ func main() {
 	projectCollection := db.Collection(utils.ProjectCollection)
 	projectRepo := project.NewRepo(projectCollection)
 
-	applicationService := services.NewService(userRepo, projectRepo, db)
+	revokedTokenCollection := db.Collection(utils.RevokedTokenCollection)
+	sessionRepo := session.NewRepo(revokedTokenCollection)
+
+	miscRepo := misc.NewRepo(db, client)
+
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, sessionRepo, db)
 
 	validatedAdminSetup(applicationService)
 
@@ -145,6 +164,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	if utils.DexEnabled {
 		routes.DexRouter(app, applicationService)
 	}
+	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
 

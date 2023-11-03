@@ -15,4 +15,3 @@ spec:
   chaosServiceAccount: pod-delete-sa
   experiments:
   - name: pod-delete
-  

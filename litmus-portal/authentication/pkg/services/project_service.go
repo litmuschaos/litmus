@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"litmus/litmus-portal/authentication/pkg/entities"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,6 +21,8 @@ type projectService interface {
 	UpdateProjectName(projectID string, projectName string) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(userID string, deactivateTime string) error
+	GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error)
+	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 }
 
 func (a applicationService) GetProjectByProjectID(projectID string) (*entities.Project, error) {
@@ -64,4 +67,10 @@ func (a applicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *
 
 func (a applicationService) UpdateProjectState(userID string, deactivateTime string) error {
 	return a.projectRepository.UpdateProjectState(userID, deactivateTime)
+}
+func (a applicationService) GetOwnerProjectIDs(ctx context.Context, userID string) ([]string, error) {
+	return a.projectRepository.GetOwnerProjectIDs(ctx, userID)
+}
+func (a applicationService) GetProjectRole(projectID string, userID string) (*entities.MemberRole, error) {
+	return a.projectRepository.GetProjectRole(projectID, userID)
 }

@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client';
-import { Divider, Tooltip, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import InfoIcon from '@material-ui/icons/Info';
 import cronstrue from 'cronstrue';
 import { ButtonFilled, ButtonOutlined, EditableText, Modal } from 'litmus-ui';
 import localforage from 'localforage';
@@ -20,7 +19,7 @@ import YamlEditor from '../../../components/YamlEditor/Editor';
 import { parseYamlValidations } from '../../../components/YamlEditor/Validations';
 import { CREATE_WORKFLOW } from '../../../graphql';
 import {
-  CreateWorkFlowInput,
+  CreateWorkFlowRequest,
   CreateWorkflowResponse,
   WeightMap,
 } from '../../../models/graphql/createWorkflowData';
@@ -90,7 +89,7 @@ const VerifyCommit = forwardRef(
       (state: RootState) => state.workflowData
     );
 
-    const { clusterid, cronSyntax, clustername } = workflowData;
+    const { clusterID, cronSyntax, clusterName } = workflowData;
 
     const { manifest, isCustomWorkflow, isUploaded } = useSelector(
       (state: RootState) => state.workflowManifest
@@ -194,21 +193,6 @@ const VerifyCommit = forwardRef(
       });
     };
 
-    const handleSubjectChange = ({
-      changedSubject,
-    }: {
-      changedSubject: string;
-    }) => {
-      setSubject(changedSubject);
-      const parsedManifest = YAML.parse(manifest);
-      parsedManifest.metadata['labels'] = {
-        subject: changedSubject,
-      };
-      workflowAction.setWorkflowManifest({
-        manifest: YAML.stringify(parsedManifest),
-      });
-    };
-
     const WorkflowTestData: experimentMap[] = weights as any;
 
     useEffect(() => {
@@ -226,7 +210,7 @@ const VerifyCommit = forwardRef(
 
     // Create Workflow Mutation
     const [createChaosWorkFlow, { loading, error: workflowError }] =
-      useMutation<CreateWorkflowResponse, CreateWorkFlowInput>(
+      useMutation<CreateWorkflowResponse, CreateWorkFlowRequest>(
         CREATE_WORKFLOW,
         {
           onError: () => {
@@ -246,7 +230,7 @@ const VerifyCommit = forwardRef(
 
         weights.forEach((data) => {
           weightData.push({
-            experiment_name: data.experimentName,
+            experimentName: data.experimentName,
             weightage: data.weight,
           });
         });
@@ -261,17 +245,17 @@ const VerifyCommit = forwardRef(
         const yamlJson = JSON.stringify(updatedYaml, null, 2); // Converted to Stringified JSON
 
         const chaosWorkFlowInputs = {
-          workflow_manifest: yamlJson,
+          workflowManifest: yamlJson,
           cronSyntax,
-          workflow_name: fetchWorkflowNameFromManifest(manifest),
-          workflow_description: workflow.description,
+          workflowName: fetchWorkflowNameFromManifest(manifest),
+          workflowDescription: workflow.description,
           isCustomWorkflow,
           weightages: weightData,
-          project_id: getProjectID(),
-          cluster_id: clusterid,
+          projectID: getProjectID(),
+          clusterID,
         };
         createChaosWorkFlow({
-          variables: { ChaosWorkFlowInput: chaosWorkFlowInputs },
+          variables: { request: chaosWorkFlowInputs },
         });
       }
     };
@@ -290,9 +274,9 @@ const VerifyCommit = forwardRef(
       localforage.removeItem('editSchedule');
       setFinishModalOpen(false);
 
-      tabs.changeWorkflowsTabs(0);
+      tabs.changeWorkflowsTabs(1);
       history.push({
-        pathname: '/workflows',
+        pathname: '/scenarios',
         search: `?projectID=${getProjectID()}&projectRole=${getProjectRole()}`,
       });
     };
@@ -415,7 +399,7 @@ const VerifyCommit = forwardRef(
                   </Typography>
 
                   <Typography className={classes.right}>
-                    {clustername}
+                    {clusterName}
                   </Typography>
                 </div>
                 <div className={classes.itemWrapper}>
@@ -436,46 +420,6 @@ const VerifyCommit = forwardRef(
                           multiline
                           onSave={(value: any) =>
                             handleDescChange({ changedDesc: value })
-                          }
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-                <div className={classes.itemWrapper}>
-                  <div className={classes.leftFlex}>
-                    <Typography className={classes.verticalAlign}>
-                      {t('createWorkflow.verifyCommit.summary.subject')}:
-                    </Typography>
-                    <Tooltip
-                      title={
-                        <Typography className={classes.subjectDesc}>
-                          {t('createWorkflow.verifyCommit.summary.subjectDesc')}
-                        </Typography>
-                      }
-                    >
-                      <InfoIcon className={classes.info} />
-                    </Tooltip>
-                  </div>
-
-                  <div className={classes.right} data-cy="WorkflowSubject">
-                    {subject !== '' ? (
-                      <div style={{ width: '100%' }}>
-                        <EditableText
-                          defaultValue={subject}
-                          id="subject"
-                          fullWidth
-                          multiline
-                          error={checkSubjectValidation()}
-                          onSave={(value: any) =>
-                            handleSubjectChange({ changedSubject: value })
-                          }
-                          helperText={
-                            checkSubjectValidation()
-                              ? `${t(
-                                  'createWorkflow.verifyCommit.subjectValidationMessage'
-                                )}`
-                              : undefined
                           }
                         />
                       </div>

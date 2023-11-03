@@ -2,7 +2,7 @@ package workflowtemplate
 
 import "github.com/litmuschaos/litmus/litmus-portal/graphql-server/graph/model"
 
-type ManifestTemplate struct {
+type WorkflowTemplate struct {
 	TemplateID          string `bson:"template_id"`
 	ProjectID           string `bson:"project_id"`
 	Manifest            string `bson:"manifest"`
@@ -14,8 +14,8 @@ type ManifestTemplate struct {
 	IsCustomWorkflow    bool   `bson:"is_custom_workflow"`
 }
 
-func (template ManifestTemplate) GetManifestTemplateOutput() *model.ManifestTemplate {
-	return &model.ManifestTemplate{
+func (template WorkflowTemplate) GetWorkflowTemplateOutput() *model.WorkflowTemplate {
+	return &model.WorkflowTemplate{
 		TemplateID:          template.TemplateID,
 		TemplateName:        template.TemplateName,
 		TemplateDescription: template.TemplateDescription,

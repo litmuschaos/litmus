@@ -53,9 +53,11 @@ func main() {
 	if err != nil {
 		logger.Fatal("failed to create upgrade manager", zap.Error(err))
 	}
-
-	// execute upgrade manager
-	if err = mg.Run(); err != nil {
-		logger.Fatal("failed to run upgrade manager", zap.Error(err))
+	if mg != nil {
+		// execute upgrade manager
+		if err = mg.Run(); err != nil {
+			logger.Fatal("failed to run upgrade manager", zap.Error(err))
+		}
 	}
+
 }

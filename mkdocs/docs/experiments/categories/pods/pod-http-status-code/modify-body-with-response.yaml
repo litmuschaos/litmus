@@ -1,0 +1,30 @@
+## provide the response body value
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: engine-nginx
+spec:
+  engineState: "active"
+  annotationCheck: "false"
+  appinfo:
+    appns: "default"
+    applabel: "app=nginx"
+    appkind: "deployment"
+  chaosServiceAccount: pod-http-status-code-sa
+  experiments:
+  - name: pod-http-status-code
+    spec:
+      components:
+        env:
+        # provide the body string to overwrite the response body. This will be used only if MODIFY_RESPONSE_BODY is set to true
+        - name: RESPONSE_BODY
+          value: '<h1>Hello World</h1>'
+        #  whether to modify the body as per the status code provided
+        - name: "MODIFY_RESPONSE_BODY"
+          value: "true"
+        # modified status code for the http response
+        - name: STATUS_CODE
+          value: '500'
+        # provide the port of the targeted service
+        - name: TARGET_SERVICE_PORT
+          value: "80"

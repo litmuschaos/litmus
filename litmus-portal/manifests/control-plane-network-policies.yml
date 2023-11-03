@@ -1,0 +1,173 @@
+---
+# Policy for Mongo Database
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: database
+  policyTypes:
+    - Ingress
+    - Egress
+  # No outbound connection allowed for DB
+  egress: []
+  ingress:
+    - from:
+        # Accepts connections from gql-server pod
+        - podSelector:
+            matchLabels:
+              component: litmusportal-server
+
+        # Accepts connections from authg-server pod
+        - podSelector:
+            matchLabels:
+              component: litmusportal-auth-server
+
+      ports:
+        - protocol: TCP
+          port: 27017
+---
+# Policy for Gql-Server (Needs Egress access to subscriber)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: server-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: litmusportal-server
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Normal Query/Mutations/Subscriptions ---
+    - from:
+        # frontend --> gql-server connection
+        - podSelector:
+            matchLabels:
+              component: litmusportal-frontend
+
+        # self-agent --> gql-server, websocket connections
+        - podSelector:
+            matchLabels:
+              app: subscriber
+
+      #External Agent rules, please commentout & update as per requirements
+      # - from:
+      #     - ipBlock:
+      #         cidr: 10.0.0.0/24
+
+      ports:
+        - protocol: TCP
+          port: 8080
+
+    # GRPC connections -------
+    - from:
+        # auth-server --> gql-server, grpc connection
+        - podSelector:
+            matchLabels:
+              app: litmusportal-auth-server
+
+      ports:
+        - protocol: TCP
+          port: 8000
+
+  egress:
+    - to:
+        # gql-server --> auth-server, grpc connection
+        - podSelector:
+            matchLabels:
+              app: litmusportal-auth-server
+
+        # Server -> database connection
+        - podSelector:
+            matchLabels:
+              component: database
+
+        # Server --> Self-agent, workflow CRUD Ops
+        - podSelector:
+            matchLabels:
+              app: subscriber
+
+        # Server --> External Agent connection, please commentout & update as per requirements
+        # - ipBlock:
+        #     cidr: 10.0.0.0/24
+
+        # Needs access to kube-api-server as well for Ingress related operations
+---
+# Policy for Auth-Server (Needs Egress access to subscriber)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: auth-server-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: litmusportal-auth-server
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    #normal connections
+    - from:
+        # Frontend --> auth-Server connection
+        - podSelector:
+            matchLabels:
+              component: litmusportal-frontend
+
+      ports:
+        - protocol: TCP
+          port: 3000
+
+    # GRPC connections
+    - from:
+        # gql-server --> auth-server, grpc connection
+        - podSelector:
+            matchLabels:
+              app: litmusportal-server
+      ports:
+        - protocol: TCP
+          port: 3030
+
+  egress:
+    - to:
+        # Auth-Server -> database connection
+        - podSelector:
+            matchLabels:
+              component: database
+
+        # auth-server --> gql-server, grpc connection
+        - podSelector:
+            matchLabels:
+              app: litmusportal-server
+
+---
+#Policy for Frontend pod (Allows External/Internal Traffic & egress only to server pod)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      component: litmusportal-frontend
+  # Allowed all Ingress connections, customize according to requirements
+  ingress:
+    - {}
+  egress:
+    - to:
+        # frontend --> gql-server connection
+        - podSelector:
+            matchLabels:
+              component: litmusportal-server
+
+        # frontend --> auth-server connection
+        - podSelector:
+            matchLabels:
+              component: litmusportal-auth-server
+
+  policyTypes:
+    - Ingress
+    - Egress

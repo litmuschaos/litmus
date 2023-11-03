@@ -1,0 +1,303 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: litmus-admin
+  namespace: #{INFRA_NAMESPACE}
+  labels:
+    name: litmus-admin
+---
+# Source: openebs/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: litmus-admin
+  labels:
+    name: litmus-admin
+rules:
+  # ***************************************************************************************
+  # Permissions needed for preparing and monitor the chaos resources by chaos-runner
+  # ***************************************************************************************
+
+  # The chaos operator watches the chaosengine resource and orchestartes the chaos experiment..
+  ## .. by creating the chaos-runner
+
+  # for creating and monitoring the chaos-runner pods
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create","delete","get","list","patch","update", "deletecollection"]
+
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create","get","list","patch","update"]
+
+    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list"]
+
+    # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list", "watch"]
+
+    # for configuring and monitor the experiment job by chaos-runner pod
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "list", "get", "delete", "deletecollection"]
+
+  # ********************************************************************
+  # Permissions needed for creation and discovery of chaos experiments 
+  # ********************************************************************
+
+  # The helper pods are created by experiment to perform the actual chaos injection ...
+  # ... for a period of chaos duration
+
+  # for creating and managing to execute comands inside target container
+  - apiGroups: [""]
+    resources: ["pods/exec","pods/eviction","replicationcontrollers"]
+    verbs: ["get","list","create"]
+
+    # for tracking & getting logs of the pods created by experiment pod to implement individual steps in the experiment
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list", "watch"]
+
+  # for creating and monitoring liveness services or monitoring target app services during chaos injection
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create","get","list"]
+
+    # for checking the app parent resources as deployments or sts and are eligible chaos candidates
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets"]
+    verbs: ["list", "get", "patch", "update"]
+
+    # for checking the app parent resources as replicasets and are eligible chaos candidates
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["list", "get"]
+
+  # for checking the app parent resources as deamonsets and are eligible chaos candidates  
+  - apiGroups: ["apps"]
+    resources: ["daemonsets"]
+    verbs: ["list","get"]
+
+    # for checking (openshift) app parent resources if they are eligible chaos candidates
+  - apiGroups: ["apps.openshift.io"]
+    resources: ["deploymentconfigs"]
+    verbs: ["list", "get"]
+
+    # for checking (argo) app parent resources if they are eligible chaos candidates
+  - apiGroups: ["argoproj.io"]
+    resources: ["rollouts"]
+    verbs: ["list", "get"]
+
+  # performs CRUD operations on the network policies
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["create","delete","list","get"]
+
+  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines","chaosexperiments","chaosresults"]
+    verbs: ["create","list","get","patch","update","delete"]
+
+    # for experiment to perform node status checks and other node level operations like taint, drain in the experiment.
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["patch", "get", "list", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: litmus-admin
+  labels:
+    name: litmus-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: litmus-admin
+subjects:
+- kind: ServiceAccount
+  name: litmus-admin
+  namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argo-chaos
+  namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: chaos-cluster-role
+rules:
+  # for managing the pods created by workflow controller to implement individual steps in the workflow
+  - apiGroups: ['']
+    resources: ['pods', 'services']
+    verbs: ['create', 'get', 'watch', 'patch', 'delete', 'list']
+
+  - apiGroups: ['']
+    resources: ['namespaces']
+    verbs: ['get', 'watch', 'patch', 'list']
+
+  # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
+  - apiGroups: ['']
+    resources: ['pods/log']
+    verbs: ['get', 'watch', 'create', 'delete', 'patch']
+  - apiGroups: ['']
+    resources: ['secrets', 'configmaps']
+    verbs: ['get', 'watch', 'create', 'patch']
+  # for creation & deletion of application in predefined workflows
+  - apiGroups: ['apps']
+    resources: ['deployments']
+    verbs: ['delete']
+  - apiGroups: ['apps']
+    resources: ['deployments', 'statefulsets']
+    verbs: ['get', 'watch', 'patch' , 'create']
+    
+  # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
+  - apiGroups: ["litmuschaos.io"]
+    resources:
+      ["chaosengines", "chaosexperiments", "chaosresults", "chaosschedules"]
+    verbs: ["create", "list", "get", "patch", "delete", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: chaos-cluster-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: chaos-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: argo-chaos
+    namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: subscriber-cluster-role
+  namespace: #{INFRA_NAMESPACE}
+  labels:
+    name: subscriber-cluster-role
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "create", "delete", "update"]
+
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: [""]
+    resources: ["pods", "namespaces", "nodes", "services"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["litmuschaos.io"]
+    resources: ["chaosengines", "chaosschedules", "chaosresults"]
+    verbs: ["get", "list", "create", "delete", "update", "watch", "patch"]
+
+  - apiGroups: ["apps.openshift.io"]
+    resources: ["deploymentconfigs"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["delete"]
+    
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+    verbs: ["get","list"]
+
+  - apiGroups: ["argoproj.io"]
+    resources:
+      [
+        "workflows",
+        "workflows/finalizers",
+        "workflowtemplates",
+        "workflowtemplates/finalizers",
+        "cronworkflows",
+        "cronworkflows/finalizers",
+        "clusterworkflowtemplates",
+        "clusterworkflowtemplates/finalizers",
+        "rollouts",
+      ]
+    verbs: ["get", "list", "create", "delete", "update", "watch", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: subscriber-cluster-role-binding
+  namespace: #{INFRA_NAMESPACE}
+subjects:
+  - kind: ServiceAccount
+    name: #{SUBSCRIBER_SERVICE_ACCOUNT}
+    namespace: #{INFRA_NAMESPACE}
+roleRef:
+  kind: ClusterRole
+  name: subscriber-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: event-tracker-sa
+  namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: event-tracker-cluster-role
+rules:
+  - apiGroups:
+      - eventtracker.litmuschaos.io
+    resources:
+      - eventtrackerpolicies
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - eventtracker.litmuschaos.io
+    resources:
+      - eventtrackerpolicies/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - ""
+      - extensions
+      - apps
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+      - pods
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: event-tracker-clusterole-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: event-tracker-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: event-tracker-sa
+    namespace: #{INFRA_NAMESPACE}

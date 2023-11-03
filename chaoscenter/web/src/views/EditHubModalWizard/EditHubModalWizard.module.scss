@@ -1,0 +1,92 @@
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.horizontalFlex {
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.hubWizard {
+  :global {
+    .StepWizard--navBarList {
+      background-color: var(--primary-9) !important;
+    }
+  }
+}
+
+.repoType {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 4px 6px;
+  background: var(--grey-50);
+  color: var(--primary-9);
+  border-radius: 4px;
+  font-size: 10px;
+  border: 1px solid var(--grey-200);
+}
+
+.card {
+  width: 98px;
+  height: 40px;
+  margin: 1rem 0;
+  margin-right: 1rem;
+}
+
+.cardBody {
+  width: 300px;
+  height: 100%;
+}
+
+.menuItem {
+  cursor: pointer;
+  padding: 10px !important;
+  width: 100%;
+  color: var(--white) !important;
+  text-decoration: none !important;
+}
+
+.hubStatus {
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+  border-radius: 999px;
+  background: #0ab000;
+}
+
+.successMessage {
+  img {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.spaceTop {
+  margin-top: 2rem !important;
+}
+
+.overlayContainer {
+  height: calc(100vh - 177px);
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  :global {
+    .bp3-card {
+      padding: 0 !important;
+    }
+  }
+}
+
+.textInputContainer {
+  :global {
+    .bp3-input-action {
+      height: 100% !important;
+      right: 5px !important;
+    }
+  }
+}

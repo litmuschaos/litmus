@@ -1,0 +1,40 @@
+extend type Query {
+  """
+  Returns experiment run based on experiment run ID
+  """
+  getExperimentRun(projectID: ID!, experimentRunID: ID,   notifyID: ID): ExperimentRun!
+
+  """
+  Returns the list of experiment run based on various filter parameters
+  """
+  listExperimentRun(
+    projectID: ID!
+    request: ListExperimentRunRequest!
+  ): ListExperimentRunResponse!
+
+  """
+  Query to get experiment run stats
+  """
+  getExperimentRunStats(projectID: ID!): GetExperimentRunStatsResponse!
+}
+
+extend type Mutation {
+  """
+  Creates a new experiment run and sends it to subscriber
+  """
+  # authorized directive not required
+  chaosExperimentRun(request: ExperimentRunRequest!): String!
+
+  """
+  Run the chaos experiment (used by frontend)
+  """
+  runChaosExperiment(
+    experimentID: String!
+    projectID: ID!
+  ): RunChaosExperimentResponse!
+
+  """
+  stopExperiment will halt all the ongoing runs of a particular experiment
+  """
+  stopExperimentRuns(projectID: ID!, experimentID:String!, experimentRunID: String, notifyID: String): Boolean! @authorized
+}

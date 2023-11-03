@@ -33,7 +33,34 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
-
+  hubName: {
+    width: '91%',
+  },
+  inputDivRemote: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  topMargin: {
+    marginTop: theme.spacing(0.5),
+  },
+  connectHubBtn: {
+    padding: theme.spacing(2),
+    width: '100%',
+    height: '5rem',
+    border: 'none',
+    boxShadow:
+      '0px 0.3px 0.9px rgba(0, 0, 0, 0.1), 0px 1.6px 3.6px rgba(0, 0, 0, 0.13)',
+  },
+  connectHubIconDiv: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: 'auto',
+  },
+  btnDivRemote: {
+    marginLeft: 'auto',
+    marginTop: theme.spacing(2.5),
+  },
   copyBtnImg: {
     paddingRight: '0.625rem',
   },
@@ -119,7 +146,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   drawerPaper: {
-    width: 'fit-content',
+    width: '40%',
   },
   btnDiv: {
     marginLeft: 'auto',
@@ -128,6 +155,18 @@ const useStyles = makeStyles((theme) => ({
   },
   cancelBtn: {
     marginRight: theme.spacing(2.5),
+  },
+  gitopsIcon: {
+    width: '3.125rem',
+    height: '3.125rem',
+  },
+  connectHubText: {
+    fontSize: '1.25rem',
+    marginLeft: theme.spacing(2.5),
+  },
+  warningText: {
+    color: theme.palette.warning.main,
+    marginBottom: theme.spacing(2),
   },
 }));
 

@@ -1,11 +1,7 @@
 package entities
 
 import (
-	"litmus/litmus-portal/authentication/pkg/utils"
-	"time"
-
-	"github.com/golang-jwt/jwt"
-	"github.com/sirupsen/logrus"
+	"net/mail"
 )
 
 // Role states the role of the user in the portal
@@ -50,7 +46,7 @@ type UserPassword struct {
 // UpdateUserState defines structure to deactivate or reactivate user
 type UpdateUserState struct {
 	Username     string `json:"username"`
-	IsDeactivate bool   `json:"is_deactivate"`
+	IsDeactivate *bool  `json:"is_deactivate"`
 }
 
 // APIStatus defines structure for APIroute status
@@ -84,21 +80,8 @@ func (user *User) SanitizedUser() *User {
 	return user
 }
 
-// GetSignedJWT generates the JWT Token for the user object
-func (user *User) GetSignedJWT() (string, error) {
-
-	token := jwt.New(jwt.SigningMethodHS512)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["uid"] = user.ID
-	claims["role"] = user.Role
-	claims["username"] = user.UserName
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
-
-	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
-	if err != nil {
-		logrus.Info(err)
-		return "", err
-	}
-
-	return tokenString, nil
+// IsEmailValid validates the email
+func (user *User) IsEmailValid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }

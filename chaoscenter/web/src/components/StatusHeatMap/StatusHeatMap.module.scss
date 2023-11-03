@@ -1,0 +1,99 @@
+.statusHeatMap {
+  display: flex;
+  align-items: end;
+  column-gap: var(--spacing-2);
+  line-height: 0;
+  &Cell {
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
+    flex: 0 0 auto;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &[data-state='completed'] {
+      background-color: var(--green-500);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--green-100) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='completed_with_error'] {
+      background-color: var(--orange-500);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--orange-100) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='completed_with_probe_failure'] {
+      background-color: var(--orange-500);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--orange-100) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='error'] {
+      background-color: var(--red-50);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--red-100) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='timeout'] {
+      background-color: var(--red-50);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--red-100) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='running'] {
+      background-color: var(--primary-7);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--primary-2) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='queued'] {
+      background-color: var(--primary-2);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--primary-2) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='stopped'] {
+      background-color: var(--grey-200);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--grey-200) 0px 0px 0px 2px;
+      }
+    }
+
+    &[data-state='na'] {
+      height: 12px;
+      background-color: var(--grey-200);
+      &:hover,
+      &:focus {
+        box-shadow: var(--white) 0px 0px 0px 1px, var(--grey-200) 0px 0px 0px 2px;
+      }
+    }
+  }
+}
+
+.resilienceScoreContainer {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  .byNumber {
+    margin-left: 2px !important;
+    margin-bottom: -4px;
+  }
+}

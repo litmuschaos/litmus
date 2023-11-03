@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	chaosTypes "github.com/litmuschaos/chaos-operator/pkg/apis/litmuschaos/v1alpha1"
+	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned"
 	litmusV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned/typed/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/chaos-operator/pkg/client/informers/externalversions"
@@ -26,7 +26,7 @@ func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, cl
 
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get config")
+		logrus.WithError(err).Fatal("could not get kube config")
 	}
 
 	// ClientSet to create Informer
@@ -86,7 +86,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 
 	cfg, err := k8s.GetKubeConfig()
 	if err != nil {
-		logrus.WithError(err).Fatal("could not get config")
+		logrus.WithError(err).Fatal("could not get kube config")
 	}
 
 	chaosClient, err := litmusV1alpha1.NewForConfig(cfg)

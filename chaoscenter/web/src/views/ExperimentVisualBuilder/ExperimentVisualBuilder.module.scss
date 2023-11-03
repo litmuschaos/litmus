@@ -1,0 +1,38 @@
+.graphContainer {
+  max-height: calc(100vh - 128px);
+  overflow: hidden;
+}
+
+.options {
+  margin-top: 17px !important;
+  margin-right: 33px !important;
+  width: 270px !important;
+  float: right;
+  background-color: var(--white) !important;
+  box-shadow: 0px 0px 1px rgba(40, 41, 61, 0.04), 0px 2px 4px rgba(96, 97, 112, 0.16) !important;
+  border-radius: 4px;
+  padding: 10px !important;
+
+  .preview {
+    :global {
+      .bp3-control-indicator {
+        --oval-border: none !important;
+      }
+    }
+  }
+
+  .greyText {
+    color: var(--grey-300) !important;
+  }
+
+  .activeText {
+    color: var(--black) !important;
+  }
+
+  .advanced {
+    cursor: pointer;
+    color: var(--primary-7) !important;
+    font-weight: 600 !important;
+    font-size: 10px;
+  }
+}

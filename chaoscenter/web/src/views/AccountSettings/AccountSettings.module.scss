@@ -1,0 +1,27 @@
+.tabsContainerMain {
+  :global {
+    .bp3-tabs {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .bp3-tab-list {
+      background: var(--white);
+      padding: 1rem var(--spacing-medium) 0 var(--spacing-medium);
+      box-shadow: 0px 2px 4px 0px #60617029, 0px 0px 1px 0px #28293d0a;
+    }
+    .bp3-tab-panel {
+      margin-top: 0 !important;
+      height: calc(100% - 59px);
+    }
+  }
+}
+.tabsContaineUserManagement {
+  :global {
+    .bp3-tab-list {
+      box-shadow: none !important;
+      border-bottom: 1px solid var(--grey-200);
+    }
+  }
+}

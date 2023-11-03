@@ -14,6 +14,13 @@ export function changeSettingsTabs(tabNumber: number): TabAction {
   };
 }
 
+export function changeInvitationTabs(tabNumber: number): TabAction {
+  return {
+    type: TabActions.CHANGE_INVITATIONS_TAB,
+    payload: tabNumber,
+  };
+}
+
 export function changeWorkflowDetailsTabs(tabNumber: number): TabAction {
   return {
     type: TabActions.CHANGE_WORKFLOW_DETAILS_TAB,

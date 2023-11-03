@@ -1,15 +1,15 @@
 export interface GitOpsData {
-  Enabled: boolean;
-  ProjectID: string | null;
-  Branch: string | null;
-  RepoURL: string | null;
-  AuthType: string | null;
-  Token: string | null;
-  UserName: string | null;
-  Password: string | null;
-  SSHPrivateKey: string | null;
+  enabled: boolean;
+  projectID: string | null;
+  branch: string | null;
+  repoURL: string | null;
+  authType: string | null;
+  token: string | null;
+  userName: string | null;
+  password: string | null;
+  sshPrivateKey: string | null;
 }
 
-export interface GitOpsDetail {
+export interface GetGitOpsDetailRequest {
   getGitOpsDetails: GitOpsData;
 }

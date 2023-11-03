@@ -15,8 +15,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../../../config';
 import { GET_HUB_STATUS, GET_PREDEFINED_WORKFLOW_LIST } from '../../../graphql';
+import { HubStatus } from '../../../models/graphql/chaoshub';
 import { MyHubDetail } from '../../../models/graphql/user';
-import { HubStatus } from '../../../models/redux/myhub';
 import { getProjectID } from '../../../utils/getSearchParams';
 import PreDefinedRadio from './PreDefinedRadio';
 import useStyles, { MenuProps } from './styles';
@@ -43,11 +43,11 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const selectedProjectID = getProjectID();
     const [selectedHub, setSelectedHub] = useState('');
     const [availableHubs, setAvailableHubs] = useState<MyHubDetail[]>([]);
-    const [workflowList, setWorkflowlist] = useState([]);
+    const [workflowList, setWorkflowlist] = useState<string[]>([]);
 
     // Get all MyHubs with status
     const { data } = useQuery<HubStatus>(GET_HUB_STATUS, {
-      variables: { data: selectedProjectID },
+      variables: { projectID: selectedProjectID },
       fetchPolicy: 'cache-and-network',
     });
 
@@ -57,8 +57,12 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
     const [getPredefinedWorkflow] = useLazyQuery(GET_PREDEFINED_WORKFLOW_LIST, {
       fetchPolicy: 'network-only',
       onCompleted: (data) => {
-        if (data.GetPredefinedWorkflowList !== undefined) {
-          setWorkflowlist(data.GetPredefinedWorkflowList);
+        const wfList: string[] = [];
+        if (data.listPredefinedWorkflows !== undefined) {
+          data.listPredefinedWorkflows.forEach((workflow: any) => {
+            wfList.push(workflow.workflowName);
+          });
+          setWorkflowlist(wfList);
         }
       },
       onError: () => {
@@ -98,8 +102,8 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
       setSelectedHub(event.target.value as string);
       getPredefinedWorkflow({
         variables: {
-          hubname: event.target.value as string,
-          projectid: selectedProjectID,
+          hubName: event.target.value as string,
+          projectID: selectedProjectID,
         },
       });
       localforage.setItem('selectedHub', event.target.value as string);
@@ -110,32 +114,32 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
      * fetch the pre-defined workflows
      */
     useEffect(() => {
-      if (data?.getHubStatus !== undefined) {
-        if (data.getHubStatus.length) {
+      if (data?.listHubStatus !== undefined) {
+        if (data.listHubStatus.length) {
           const hubDetails: MyHubDetail[] = [];
-          data.getHubStatus.forEach((hub) => {
+          data.listHubStatus.forEach((hub) => {
             /**
              * Push only available hub
              */
-            if (hub.IsAvailable) {
+            if (hub.isAvailable) {
               hubDetails.push({
                 id: hub.id,
-                HubName: hub.HubName,
-                RepoBranch: hub.RepoBranch,
-                RepoURL: hub.RepoURL,
+                hubName: hub.hubName,
+                repoBranch: hub.repoBranch,
+                repoURL: hub.repoURL,
               });
             }
           });
           setAvailableHubs(hubDetails);
         }
-        data.getHubStatus.forEach((hubData) => {
-          if (hubData.HubName.toLowerCase() === 'litmus chaoshub') {
+        data.listHubStatus.forEach((hubData) => {
+          if (hubData.hubName.toLowerCase() === 'litmus chaoshub') {
             setSelectedHub('Litmus ChaosHub');
             localforage.setItem('selectedHub', 'Litmus ChaosHub');
             getPredefinedWorkflow({
               variables: {
-                hubname: 'Litmus ChaosHub',
-                projectid: selectedProjectID,
+                hubName: 'Litmus ChaosHub',
+                projectID: selectedProjectID,
               },
             });
           }
@@ -163,9 +167,9 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
                   MenuProps={MenuProps}
                 >
                   {availableHubs.map((hubs) => (
-                    <MenuItem key={hubs.HubName} value={hubs.HubName}>
+                    <MenuItem key={hubs.hubName} value={hubs.hubName}>
                       <Typography data-cy="PreDefinedHubOption">
-                        {hubs.HubName}
+                        {hubs.hubName}
                       </Typography>
                     </MenuItem>
                   ))}
@@ -243,6 +247,19 @@ const ChoosePreDefinedExperiments: React.FC<ChoosePreDefinedExperimentsProps> =
                 )}
               </RadioGroup>
             )}
+            <div className={classes.morePredefined}>
+              <Typography className={classes.morePredefinedText}>
+                {t('createWorkflow.chooseWorkflow.morePredefined')}{' '}
+                <a
+                  href="https://github.com/chaoscarnival/bootcamps/tree/main/workflows"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  here
+                </a>
+                .
+              </Typography>
+            </div>
           </div>
           {/* Bottom Blur */}
           <div className={classes.blur} />

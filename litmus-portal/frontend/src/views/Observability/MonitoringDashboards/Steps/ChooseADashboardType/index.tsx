@@ -11,10 +11,10 @@ import Loader from '../../../../../components/Loader';
 import { GET_HUB_STATUS, GET_PORTAL_DASHBOARDS } from '../../../../../graphql';
 import { DashboardData } from '../../../../../models/dashboardsData';
 import {
-  PortalDashboardList,
-  PortalDashboardsVars,
+  GetPortalDashboard,
+  PortalDashboardsRequest,
 } from '../../../../../models/graphql/dashboardsDetails';
-import { HubStatus } from '../../../../../models/redux/myhub';
+import { HubStatus } from '../../../../../models/graphql/chaoshub';
 import { DEFAULT_HUB_NAME } from '../../../../../pages/MonitoringDashboard/constants';
 import useActions from '../../../../../redux/actions';
 import * as AlertActions from '../../../../../redux/actions/alert';
@@ -60,7 +60,7 @@ const ChooseADashboardType = forwardRef(
       GET_HUB_STATUS,
       {
         variables: {
-          data: projectID,
+          projectID,
           onError: () => {
             alert.changeAlertState(true);
           },
@@ -70,13 +70,13 @@ const ChooseADashboardType = forwardRef(
 
     // Query to get dashboards of the selected hub
     const [getPortalDashboards, { loading: loadingDashboards }] = useLazyQuery<
-      PortalDashboardList,
-      PortalDashboardsVars
+      GetPortalDashboard,
+      PortalDashboardsRequest
     >(GET_PORTAL_DASHBOARDS, {
       onCompleted: (data) => {
         let dashboards: DashboardData[] = [];
-        (data.PortalDashboardData ?? []).forEach((dashboard) => {
-          const parsedDashboardData = JSON.parse(dashboard.dashboard_data);
+        (data.listPortalDashboardData ?? []).forEach((dashboard) => {
+          const parsedDashboardData = JSON.parse(dashboard.dashboardData);
           dashboards.push({
             dashboardTypeID: parsedDashboardData.dashboardID,
             typeName: parsedDashboardData.name,
@@ -112,9 +112,9 @@ const ChooseADashboardType = forwardRef(
     useEffect(() => {
       if (!loadingHubs) {
         const availableHubNames =
-          hubs?.getHubStatus
-            .filter((hubs) => hubs.IsAvailable === true)
-            .map((hub) => hub.HubName) ?? [];
+          hubs?.listHubStatus
+            .filter((hubs) => hubs.isAvailable === true)
+            .map((hub) => hub.hubName) ?? [];
 
         if (availableHubNames.length) {
           getPortalDashboards({

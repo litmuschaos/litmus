@@ -181,12 +181,12 @@
       <tr>
         <td> SOCKET_PATH </td>
         <td> Path of the containerd/crio/docker socket file </td>
-        <td> Defaults to `/var/run/docker.sock` </td>
+        <td> Defaults to `/run/containerd/containerd.sock` </td>
       </tr>
       <tr>
         <td> CONTAINER_RUNTIME  </td>
         <td> container runtime interface for the cluster</td>
-        <td>  Defaults to docker, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
+        <td>  Defaults to containerd, supported values: docker, containerd and crio for litmus and only docker for pumba LIB </td>
       </tr>
     </table>
 
@@ -224,7 +224,7 @@ spec:
         - name: TARGET_CONTAINER
           value: 'nginx'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Multiple Iterations Of Chaos
@@ -256,7 +256,7 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -264,7 +264,7 @@ spec:
 It defines the `CONTAINER_RUNTIME` and `SOCKET_PATH` ENV to set the container runtime and socket file path:
 
 - `CONTAINER_RUNTIME`: It supports `docker`, `containerd`, and `crio` runtimes. The default value is `docker`.
-- `SOCKET_PATH`: It contains path of docker socket file by default(`/var/run/docker.sock`). For other runtimes provide the appropriate path.
+- `SOCKET_PATH`: It contains path of docker socket file by default(`/run/containerd/containerd.sock`). For other runtimes provide the appropriate path.
 
 [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/pods/container-kill/container-runtime-and-socket-path.yaml yaml)
 ```yaml
@@ -289,12 +289,12 @@ spec:
         # runtime for the container
         # supports docker, containerd, crio
         - name: CONTAINER_RUNTIME
-          value: 'docker'
+          value: 'containerd'
         # path of the socket file
         - name: SOCKET_PATH
-          value: '/var/run/docker.sock'
+          value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Signal For Kill
@@ -326,7 +326,7 @@ spec:
         - name: SIGNAL
           value: 'SIGKILL'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pumba Chaos Library
@@ -358,5 +358,5 @@ spec:
         - name: LIB
           value: 'pumba'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

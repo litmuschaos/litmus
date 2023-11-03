@@ -1,5 +1,5 @@
-This is a list of users that are using & benefited by LitmusChaos. Please send a PR to this file (along with details [here](./adopters/users)) 
-to add yourselves. 
+This is a list of users that are using & benefited by LitmusChaos. Please send a PR to this file (along with details [here](./adopters/users))
+to add yourselves.
 
 
 | User | Usecase | Details |

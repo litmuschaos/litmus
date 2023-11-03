@@ -1,0 +1,34 @@
+.mainContainer {
+  min-height: calc(100% - 118px);
+  height: 100%;
+  :global {
+    .OverlaySpinner--overlaySpinner {
+      height: 100%;
+    }
+  }
+}
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+
+.errorMessage {
+  font-size: var(--font-size-normal) !important;
+  color: var(--red-600) !important;
+  margin-left: var(--spacing-xsmall) !important;
+  word-break: break-word !important;
+}
+
+.nameDescriptionField {
+  max-width: 340px;
+}

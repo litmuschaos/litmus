@@ -1,0 +1,21 @@
+.gap-4 {
+  gap: 1rem;
+  max-width: 500px;
+  :global {
+    .bp3-popover-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.subHeader {
+  overflow: auto;
+  height: 44px !important;
+}
+
+.leftSideBar {
+  height: 100vh;
+  border-right: 1px solid var(--grey-200);
+}
