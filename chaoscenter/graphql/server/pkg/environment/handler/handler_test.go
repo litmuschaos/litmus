@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
+	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
@@ -72,16 +75,59 @@ func (m *MockEnvironmentOperator) GetEnvironmentDetails(ctx context.Context, env
 	return environments.Environment{}, nil
 }
 
+const JwtSecret = "testsecret"
+
+func getsignedJWT(name string) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS512)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["uid"] = uuid.NewString()
+	claims["role"] = uuid.NewString()
+	claims["username"] = uuid.NewString()
+	claims["exp"] = time.Now().Add(time.Minute).Unix()
+
+	tokenString, err := token.SignedString([]byte(JwtSecret))
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
+func pointerToString(s string) *string {
+	return &s
+}
+func pointerToBool(s bool) *bool {
+	return &s
+}
+
 func TestCreateEnvironment(t *testing.T) {
 	testCases := []struct {
 		name           string
 		projectID      string
 		input          *model.CreateEnvironmentRequest
-		token          string
 		mockInsertFunc func(ctx context.Context, env environments.Environment) error
 		expectedEnv    *model.Environment
 		expectedErr    error
+		given          func() string
 	}{
+		{
+			name:      "success",
+			projectID: "testProject",
+			input: &model.CreateEnvironmentRequest{
+				EnvironmentID: "testEnvID",
+				Name:          "testName",
+			},
+			mockInsertFunc: func(ctx context.Context, env environments.Environment) error {
+				return nil
+			},
+			expectedEnv: nil,
+			expectedErr: errors.New("invalid Token"),
+			given: func() string {
+				token, err := getsignedJWT("testUser")
+				if err != nil {
+					return token
+				}
+				return "invalid Token"
+			},
+		},
 		{
 			name:      "Failed environment creation due to invalid token",
 			projectID: "testProject",
@@ -89,18 +135,21 @@ func TestCreateEnvironment(t *testing.T) {
 				EnvironmentID: "testEnvID",
 				Name:          "testName",
 			},
-			token: "invalidToken",
 			mockInsertFunc: func(ctx context.Context, env environments.Environment) error {
 				return nil
 			},
 			expectedEnv: nil,
 			expectedErr: errors.New("invalid Token"),
+			given: func() string {
+				return "invalid Token"
+			},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := context.WithValue(context.Background(), authorization.AuthKey, tc.token)
+			token := tc.given()
+			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 			mockOperator := &MockEnvironmentOperator{
 				InsertEnvironmentFunc: tc.mockInsertFunc,
 			}
@@ -126,17 +175,16 @@ func TestDeleteEnvironment(t *testing.T) {
 		name                   string
 		projectID              string
 		environmentID          string
-		token                  string
 		mockGetEnvironmentFunc func(query bson.D) (environments.Environment, error)
 		mockUpdateFunc         func(ctx context.Context, query bson.D, update bson.D) error
 		expectedResult         string
 		expectedErr            error
+		given                  func() string
 	}{
 		{
-			name:          "Failed environment deletion due to invalid token",
+			name:          "success",
 			projectID:     "testProject",
 			environmentID: "testEnvID",
-			token:         "invalidToken",
 			mockGetEnvironmentFunc: func(query bson.D) (environments.Environment, error) {
 				return environments.Environment{
 					EnvironmentID: "testEnvID",
@@ -146,12 +194,37 @@ func TestDeleteEnvironment(t *testing.T) {
 				return nil
 			},
 			expectedErr: errors.New("invalid Token"),
+			given: func() string {
+				token, err := getsignedJWT("testUser")
+				if err != nil {
+					return token
+				}
+				return "invalid Token"
+			},
+		},
+		{
+			name:          "Failed environment",
+			projectID:     "testProject",
+			environmentID: "testEnvID",
+			mockGetEnvironmentFunc: func(query bson.D) (environments.Environment, error) {
+				return environments.Environment{
+					EnvironmentID: "testEnvID",
+				}, nil
+			},
+			mockUpdateFunc: func(ctx context.Context, query, update bson.D) error {
+				return nil
+			},
+			expectedErr: errors.New("invalid Token"),
+			given: func() string {
+				return "invalid Token"
+			},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx := context.WithValue(context.Background(), authorization.AuthKey, tc.token)
+			token := tc.given()
+			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
 			mockOperator := &MockEnvironmentOperator{
 				UpdateEnvironmentFunc: tc.mockUpdateFunc,
@@ -163,6 +236,68 @@ func TestDeleteEnvironment(t *testing.T) {
 				(err == nil && tc.expectedErr != nil) ||
 				(err != nil && tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {
 				t.Fatalf("Expected error %v, but got %v", tc.expectedErr, err)
+			}
+		})
+	}
+}
+
+func TestGetEnvironment(t *testing.T) {
+	testCases := []struct {
+		name          string
+		projectID     string
+		environmentID string
+		mockFunc      func(query bson.D) (environments.Environment, error)
+		expectedEnv   *model.Environment
+		expectError   bool
+	}{
+		{
+			name:          "success",
+			projectID:     "proj123",
+			environmentID: "env123",
+			mockFunc: func(query bson.D) (environments.Environment, error) {
+				return environments.Environment{
+					EnvironmentID: "env123",
+					ProjectID:     "proj123",
+				}, nil
+			},
+			expectedEnv: &model.Environment{
+				EnvironmentID: "env123",
+				ProjectID:     "proj123",
+				Name:          "Test Environment",
+			},
+			expectError: false,
+		},
+		{
+			name:          "failure - environment not found",
+			projectID:     "proj123",
+			environmentID: "env999",
+			mockFunc: func(query bson.D) (environments.Environment, error) {
+				return environments.Environment{}, errors.New("environment not found")
+			},
+			expectedEnv: nil,
+			expectError: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockOperator := &MockEnvironmentOperator{
+				GetEnvironmentFunc: tc.mockFunc,
+			}
+			service := handler.NewEnvironmentService(mockOperator)
+
+			env, err := service.GetEnvironment(tc.projectID, tc.environmentID)
+			if tc.expectError {
+				if err == nil {
+					t.Errorf("Expected an error but didn't get one")
+				}
+			} else {
+				if err != nil {
+					t.Errorf("Did not expect an error but got one: %v", err)
+				}
+				if env.EnvironmentID != tc.expectedEnv.EnvironmentID {
+					t.Errorf("Expected environment ID %v, got %v", tc.expectedEnv.EnvironmentID, env.EnvironmentID)
+				}
 			}
 		})
 	}
