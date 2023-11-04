@@ -12,6 +12,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -93,6 +94,7 @@ func getsignedJWT(name string) (string, error) {
 }
 
 func TestCreateEnvironment(t *testing.T) {
+	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		name           string
 		projectID      string
@@ -165,6 +167,7 @@ func TestCreateEnvironment(t *testing.T) {
 }
 
 func TestDeleteEnvironment(t *testing.T) {
+	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		name                   string
 		projectID              string
