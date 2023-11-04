@@ -91,12 +91,6 @@ func getsignedJWT(name string) (string, error) {
 	}
 	return tokenString, nil
 }
-func pointerToString(s string) *string {
-	return &s
-}
-func pointerToBool(s bool) *bool {
-	return &s
-}
 
 func TestCreateEnvironment(t *testing.T) {
 	testCases := []struct {
