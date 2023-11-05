@@ -66,7 +66,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>{getString('udpatePassword')}</Text>
+        <Text font={{ variation: FontVariation.H4 }}>{getString('updatePassword')}</Text>
         <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
       </Layout.Horizontal>
       <Container>

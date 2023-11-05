@@ -16,7 +16,7 @@ spec:
       containers:
         - name: chaos-scheduler
           # Replace this with the built image name
-          image: litmuschaos/chaos-scheduler:3.0.0
+          image: litmuschaos/chaos-scheduler:3.1.0
           command:
           - chaos-scheduler
           imagePullPolicy: IfNotPresent

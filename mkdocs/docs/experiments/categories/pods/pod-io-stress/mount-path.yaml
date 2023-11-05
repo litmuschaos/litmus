@@ -20,4 +20,4 @@ spec:
         - name: VOLUME_MOUNT_PATH
           value: '/some-dir-in-container'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

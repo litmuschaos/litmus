@@ -1,17 +1,25 @@
 import React from 'react';
 import { Color, PopoverProps } from '@harnessio/design-system';
-import { useToaster, ButtonVariation, ButtonProps } from '@harnessio/uicore';
+import {
+  useToaster,
+  ButtonVariation,
+  ButtonProps,
+  ConfirmationDialog,
+  ConfirmationDialogProps,
+  useToggleOpen
+} from '@harnessio/uicore';
 import cx from 'classnames';
-import { Position } from '@blueprintjs/core';
+import { Intent, Position } from '@blueprintjs/core';
 import { useHistory } from 'react-router-dom';
 import { parse } from 'yaml';
 import { useStrings } from '@strings';
-import { listExperiment, runChaosExperiment } from '@api/core';
+import { listExperiment, runChaosExperiment, stopExperiment, stopExperimentRun } from '@api/core';
 import { useRouteWithBaseUrl } from '@hooks';
-import type { RefetchExperiments } from '@controllers/ExperimentDashboardV2';
+import type { RefetchExperimentRuns, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
 import { PermissionGroup, StudioTabs } from '@models';
 import RbacButton from '@components/RbacButton';
 import { downloadYamlAsFile, getScope, yamlStringify } from '@utils';
+import type { InfrastructureType } from '@api/entities';
 import css from './ExperimentActionButton.module.scss';
 
 interface ActionButtonProps {
@@ -21,6 +29,12 @@ interface ActionButtonProps {
 
 interface RunExperimentButtonProps extends ActionButtonProps, Partial<RefetchExperiments> {
   buttonProps?: ButtonProps;
+  disabled?: boolean;
+}
+
+interface StopExperimentButtonProps extends ActionButtonProps, Partial<RefetchExperiments> {
+  buttonProps?: ButtonProps;
+  infrastructureType: InfrastructureType | undefined;
   disabled?: boolean;
 }
 
@@ -70,13 +84,6 @@ export const RunExperimentButton = ({
         withoutCurrentColor
         variation={ButtonVariation.ICON}
         permission={PermissionGroup.EDITOR}
-        // permission={{
-        //   resourceScope: scope,
-        //   resource: {
-        //     resourceType: ResourceType.CHAOS_EXPERIMENT
-        //   },
-        //   permission: PermissionIdentifier.EXECUTE_CHAOS_EXPERIMENT
-        // }}
         onClick={() => {
           runChaosExperimentMutation({
             variables: { projectID: scope.projectID, experimentID: experimentID }
@@ -84,6 +91,154 @@ export const RunExperimentButton = ({
         }}
         {...buttonProps}
       />
+    </div>
+  );
+};
+
+export const StopExperimentButton = ({
+  experimentID,
+  tooltipProps,
+  refetchExperiments,
+  disabled
+}: StopExperimentButtonProps): React.ReactElement => {
+  const scope = getScope();
+  const { getString } = useStrings();
+  const { showSuccess, showError } = useToaster();
+  const {
+    isOpen: isOpenStopExperimentDialog,
+    open: openStopExperimentDialog,
+    close: closeStopExperimentDialog
+  } = useToggleOpen();
+
+  const [stopExperimentMutation] = stopExperiment({
+    onCompleted: () => {
+      showSuccess(getString('experimentStopSuccessMessage'));
+      refetchExperiments?.();
+    },
+    onError: err => showError(err.message)
+  });
+
+  const stopExperimentDialogProps: ConfirmationDialogProps = {
+    isOpen: isOpenStopExperimentDialog,
+    contentText: getString('stopExperimentDesc'),
+    titleText: getString('stopExperimentHeading'),
+    cancelButtonText: getString('cancel'),
+    confirmButtonText: getString('confirm'),
+    intent: Intent.DANGER,
+    buttonIntent: Intent.DANGER,
+    onClose: (isConfirmed: boolean) => {
+      if (isConfirmed) {
+        stopExperimentMutation({
+          variables: {
+            projectID: scope.projectID,
+            experimentID
+          }
+        });
+      }
+      closeStopExperimentDialog();
+    }
+  };
+
+  const stopExperimentDialog = <ConfirmationDialog {...stopExperimentDialogProps} />;
+
+  return (
+    <div className={cx(css.actionButtons, css.withBg, css.hoverRed)}>
+      <div>
+        <RbacButton
+          tooltip={getString('stopExpRuns')}
+          iconProps={{ size: 18 }}
+          withoutCurrentColor
+          disabled={disabled}
+          tooltipProps={{
+            position: Position.TOP,
+            usePortal: true,
+            isDark: true,
+            ...tooltipProps
+          }}
+          permission={PermissionGroup.EDITOR}
+          variation={ButtonVariation.ICON}
+          icon={'stop'}
+          onClick={openStopExperimentDialog}
+        />
+      </div>
+      {stopExperimentDialog}
+    </div>
+  );
+};
+
+interface StopExperimentRunButtonProps extends ActionButtonProps, Partial<RefetchExperimentRuns> {
+  experimentRunID?: string;
+  notifyID?: string;
+  infrastructureType: InfrastructureType | undefined;
+}
+
+export const StopExperimentRunButton = ({
+  experimentID,
+  experimentRunID,
+  tooltipProps,
+  refetchExperimentRuns
+}: StopExperimentRunButtonProps): React.ReactElement => {
+  const scope = getScope();
+  const { getString } = useStrings();
+  const { showSuccess, showError } = useToaster();
+  const {
+    isOpen: isOpenStopExperimentRunModal,
+    open: openStopExperimentRunDialog,
+    close: closeStopExperimentRunDialog
+  } = useToggleOpen();
+
+  const [stopExperimentRunMutation] = stopExperimentRun({
+    onCompleted: () => {
+      showSuccess(getString('experimentStopSuccessMessage'));
+      refetchExperimentRuns?.();
+    },
+    onError: err => showError(err.message)
+  });
+
+  const stopExperimentRunDialogProps: ConfirmationDialogProps = {
+    isOpen: isOpenStopExperimentRunModal,
+    contentText: getString('stopExpRunDesc'),
+    titleText: `${getString('stopExpRun')}?`,
+    cancelButtonText: getString('cancel'),
+    confirmButtonText: getString('confirm'),
+    intent: Intent.DANGER,
+    buttonIntent: Intent.DANGER,
+    onClose: (isConfirmed: boolean) => {
+      if (isConfirmed) {
+        stopExperimentRunMutation({
+          variables: {
+            experimentID,
+            projectID: scope.projectID,
+            experimentRunID
+          }
+        });
+      }
+      closeStopExperimentRunDialog();
+    }
+  };
+
+  const stopExperimentRunDialog = <ConfirmationDialog {...stopExperimentRunDialogProps} />;
+
+  return (
+    <div className={cx(css.actionButtons, css.withBg, css.hoverRed)}>
+      <div>
+        <RbacButton
+          tooltip={getString('stopExpRun')}
+          iconProps={{ size: 18 }}
+          withoutCurrentColor
+          tooltipProps={{
+            position: Position.TOP,
+            usePortal: true,
+            isDark: true,
+            ...tooltipProps
+          }}
+          variation={ButtonVariation.ICON}
+          icon={'stop'}
+          permission={PermissionGroup.EDITOR}
+          onClick={openStopExperimentRunDialog}
+        />
+      </div>
+      {stopExperimentRunDialog}
     </div>
   );
 };

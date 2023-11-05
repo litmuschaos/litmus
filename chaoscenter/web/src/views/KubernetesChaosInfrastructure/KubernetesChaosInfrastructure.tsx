@@ -169,7 +169,7 @@ export default function KubernetesChaosInfrastructureView({
                     icon="reset"
                     minimal
                     color={Color.PRIMARY_7}
-                    text="Clear search"
+                    text={getString('clearSearch')}
                     onClick={() => setSearchTerm('')}
                   />
                 </Layout.Vertical>

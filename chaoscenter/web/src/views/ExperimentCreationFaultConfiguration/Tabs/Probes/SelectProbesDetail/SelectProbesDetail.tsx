@@ -51,18 +51,23 @@ function SelectProbesDetailView({
       }}
     >
       {probe ? (
-        <Layout.Horizontal padding={{ top: 'large', left: 'medium', right: 'medium', bottom: 'large' }} flex>
-          <Layout.Vertical padding={{ left: 'large', right: 'large' }}>
-            <Text lineClamp={1} font={{ variation: FontVariation.H5, weight: 'bold' }} color={Color.WHITE}>
+        <Layout.Horizontal
+          padding={{ top: 'large', left: 'medium', right: 'medium', bottom: 'large' }}
+          flex={{ alignItems: 'center', justifyContent: 'space-between' }}
+          style={{ gap: '1rem' }}
+        >
+          <Layout.Vertical style={{ flexGrow: 1 }}>
+            <Text lineClamp={1} width={150} font={{ variation: FontVariation.H5, weight: 'bold' }} color={Color.WHITE}>
               {probe.probeName}
             </Text>
             <Text
               lineClamp={1}
+              width={150}
               font={{ variation: FontVariation.TINY_SEMI, weight: 'light' }}
               margin={{ top: 'xsmall' }}
               color={Color.WHITE}
             >
-              {`ID: ${probe.probeName}`}
+              {`${getString('id')}: ${probe.probeName}`}
             </Text>
           </Layout.Vertical>
           {probe?.probeName && (
