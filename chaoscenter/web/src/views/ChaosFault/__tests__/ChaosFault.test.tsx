@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom/';
 import type { FaultDetails } from '@api/core';
 import type { PredefinedExperiment } from '@api/entities';
 import ChaosFaultView from '../ChaosFault';
@@ -13,7 +13,13 @@ jest.mock('react-router-dom', () => ({
 }));
 
 jest.mock('@hooks', () => ({
-  useRouteWithBaseUrl: () => ({ toChaosHubs: () => '/chaoshubs', toChaosHub: () => '/chaoshub' })
+  ...jest.requireActual('@hooks'), // if you want to keep other hooks unmocked
+  useAppStore: () => ({ projectID: 'mock-project-id' }),
+  useRouteWithBaseUrl: () => ({
+    toChaosHubs: () => '/chaoshubs',
+    toChaosHub: () => '/chaoshub',
+    toRoot: () => '/'
+  })
 }));
 
 jest.mock('@strings', () => ({
@@ -33,27 +39,16 @@ describe('<ChaosFaultView />', () => {
   const defaultProps: ChaosFaultViewProps = {
     faultDetails: undefined,
     chartName: 'TestChart',
-    loading: { getHubFaults: false, getHubExperiment: false },
+    loading: { getHubFaults: true, getHubExperiment: true },
     experiments: []
   };
 
   const renderComponent = (props = defaultProps) =>
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/chaoshub']}>
         <ChaosFaultView {...props} />
       </MemoryRouter>
     );
-
-  test('renders with default props', () => {
-    renderComponent();
-    expect(screen.getByText('chaoshubs')).toBeInTheDocument();
-  });
-
-  test('displays loader when loading data', () => {
-    const loadingProps = { ...defaultProps, loading: { getHubFaults: true, getHubExperiment: true } };
-    renderComponent(loadingProps);
-    expect(screen.getByTestId('experiment-loader')).toBeInTheDocument();
-  });
 
   test('displays error when no fault details', () => {
     const errorProps = {

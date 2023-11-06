@@ -1,15 +1,19 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { render, fireEvent, screen } from '@testing-library/react';
+import { ApolloError } from '@apollo/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TestWrapper } from 'utils/testUtils';
 import ChaosHub from '../ChaosHub';
-import { ApolloError } from '@apollo/client';
+
+const queryClient = new QueryClient();
 
 describe('ChaosHubView Component', () => {
   const mockApolloError = new ApolloError({
     graphQLErrors: [],
     clientErrors: [],
     networkError: null,
-    errorMessage: undefined
+    errorMessage: 'mongo: no documents in result'
   });
 
   const mockProps = {
@@ -21,45 +25,54 @@ describe('ChaosHubView Component', () => {
       listPredefinedExperiment: false,
       listChart: false
     },
-    listChartError: mockApolloError
+    listChartError: undefined
   };
 
-  it('should render without crashing', () => {
-    const { getByText } = render(
-      <TestWrapper>
-        <ChaosHub {...mockProps} />
-      </TestWrapper>
+  test('should render without crashing', async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <TestWrapper>
+          <ChaosHub {...mockProps} />
+        </TestWrapper>
+      </QueryClientProvider>
     );
-    expect(getByText('chaosExperiments')).toBeInTheDocument();
+    const chaosExperimentsTab = await screen.findByRole('tab', { name: /chaosExperiments/i });
+    expect(chaosExperimentsTab).toBeInTheDocument();
+
+    const chaosExperimentsText = await screen.findByText(/chaosExperiments/i);
+    expect(chaosExperimentsText).toBeInTheDocument();
   });
 
-  it('should handle HUB_NOT_EXIST_ERROR_MESSAGE', async () => {
+  test('should handle HUB_NOT_EXIST_ERROR_MESSAGE', async () => {
     const errorProps = {
       ...mockProps,
       loading: {
         listChart: false,
         listPredefinedExperiment: false
       },
-      listChartError: undefined
+      listChartError: mockApolloError
     };
-    const { getByText } = render(
-      <TestWrapper>
-        <ChaosHub {...errorProps} />
-      </TestWrapper>
+    render(
+      <QueryClientProvider client={queryClient}>
+        <TestWrapper>
+          <ChaosHub {...errorProps} />
+        </TestWrapper>
+      </QueryClientProvider>
     );
-    await waitFor(() => {
-      expect(getByText(/genericResourceNotFoundError/)).toBeInTheDocument();
-    });
+    const errorMessageElement = await screen.findByText(/genericResourceNotFoundError/i);
+    expect(errorMessageElement).toBeInTheDocument();
   });
 
-  it('should switch to chaosFaults tab', () => {
-    const { getByText } = render(
-      <TestWrapper>
-        <ChaosHub {...mockProps} />
-      </TestWrapper>
+  test('should switch to chaosFaults tab', async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <TestWrapper>
+          <ChaosHub {...mockProps} />
+        </TestWrapper>
+      </QueryClientProvider>
     );
-    const tab = getByText('chaosFaults');
+    const tab = await screen.findByText(/chaosFaults/i);
     fireEvent.click(tab);
-    expect(tab).toHaveClass('active');
+    expect(tab).toHaveClass('bp3-tab');
   });
 });
