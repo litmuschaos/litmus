@@ -1427,15 +1427,6 @@ func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, project
 	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
 	if experimentRunID == nil {
 
-		// if experiment is of cron type, disable it
-		if experiment.CronSyntax != "" {
-
-			err = c.DisableCronExperiment(username, experiment, projectID, r)
-			if err != nil {
-				return false, err
-			}
-		}
-
 		// Fetching all the experiment runs in the experiment
 		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
 			{"experiment_id", experimentID},
