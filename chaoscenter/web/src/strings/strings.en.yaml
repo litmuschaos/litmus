@@ -657,7 +657,9 @@ noKubernetesChaosInfrastructureFound: >-
 noLogs: Sorry, Logs are currently not available
 noMonitoredService: No monitoring services found for
 noProbeDescription: >-
-  Probes are lightweight, self-contained scripts that can be run against Kubernetes applications to gather information about their behavior under stress and failure conditions.
+  Probes are lightweight, self-contained scripts that can be run against
+  Kubernetes applications to gather information about their behavior under
+  stress and failure conditions.
 noProbeExecution: No Probe executions found
 noProbeExecutionDetails:
   subtitle: >-
