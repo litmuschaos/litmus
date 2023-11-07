@@ -8,48 +8,48 @@ import (
 type RoleQuery string
 
 const (
-	UserInfrastructureReg        RoleQuery = "userInfrastructureReg"
-	CreateChaosWorkFlow          RoleQuery = "CreateChaosWorkFlow"
-	ReRunChaosWorkFlow           RoleQuery = "ReRunChaosWorkFlow"
-	DeleteChaosWorkflow          RoleQuery = "DeleteChaosWorkflow"
-	StopChaosExperiment          RoleQuery = "StopChaosExperiment"
-	AddChaosHub                  RoleQuery = "AddChaosHub"
-	UpdateChaosWorkflow          RoleQuery = "UpdateChaosWorkflow"
-	DeleteInfrastructures        RoleQuery = "DeleteInfrastructures"
-	UpdateChaosHub               RoleQuery = "UpdateChaosHub"
-	DeleteChaosHub               RoleQuery = "DeleteChaosHub"
-	EnableGitOps                 RoleQuery = "EnableGitOps"
-	DisableGitOps                RoleQuery = "DisableGitOps"
-	UpdateGitOps                 RoleQuery = "UpdateGitOps"
-	ListWorkflowRuns             RoleQuery = "ListWorkflowRuns"
-	GetWorkflowRun               RoleQuery = "GetWorkflowRun"
-	ListInfrastructures          RoleQuery = "ListInfrastructures"
-	GetInfrastructure            RoleQuery = "GetInfrastructure "
-	GetManifest                  RoleQuery = "GetManifest"
-	GetInfraDetails              RoleQuery = "GetInfraDetails"
-	ListCharts                   RoleQuery = "ListCharts"
-	ListWorkflow                 RoleQuery = "ListWorkflow"
-	SaveChaosHub                 RoleQuery = "SaveChaosHub"
-	CreateWorkflowTemplate       RoleQuery = "CreateWorkflowTemplate"
-	CreateImageRegistry          RoleQuery = "CreateImageRegistry"
-	UpdateImageRegistry          RoleQuery = "UpdateImageRegistry"
-	DeleteImageRegistry          RoleQuery = "DeleteImageRegistry"
-	GetGitOpsDetails             RoleQuery = "GetGitOpsDetails"
-	ListImageRegistry            RoleQuery = "ListImageRegistry"
-	GetImageRegistry             RoleQuery = "GetImageRegistry"
-	CreateEnvironment            RoleQuery = "CreateEnvironment"
-	UpdateEnvironment            RoleQuery = "UpdateEnvironment"
-	DeleteEnvironment            RoleQuery = "DeleteEnvironment"
-	GetEnvironment               RoleQuery = "GetEnvironment"
-	ListEnvironments             RoleQuery = "ListEnvironments"
-	AddProbe                     RoleQuery = "AddProbe"
-	DeleteProbe                  RoleQuery = "DeleteProbe"
-	UpdateProbe                  RoleQuery = "UpdateProbe"
-	GetProbe                     RoleQuery = "GetProbe"
-	ListProbes                   RoleQuery = "ListProbes"
-	MemberRoleOwnerString                  = string(model.MemberRoleOwner)
-	MemberRoleEditorString                 = string(model.MemberRoleEditor)
-	MemberRoleViewerString                 = string(model.MemberRoleViewer)
+	UserInfrastructureReg  RoleQuery = "userInfrastructureReg"
+	CreateChaosWorkFlow    RoleQuery = "CreateChaosWorkFlow"
+	ReRunChaosWorkFlow     RoleQuery = "ReRunChaosWorkFlow"
+	DeleteChaosWorkflow    RoleQuery = "DeleteChaosWorkflow"
+	StopChaosExperiment    RoleQuery = "StopChaosExperiment"
+	AddChaosHub            RoleQuery = "AddChaosHub"
+	UpdateChaosWorkflow    RoleQuery = "UpdateChaosWorkflow"
+	DeleteInfrastructures  RoleQuery = "DeleteInfrastructures"
+	UpdateChaosHub         RoleQuery = "UpdateChaosHub"
+	DeleteChaosHub         RoleQuery = "DeleteChaosHub"
+	EnableGitOps           RoleQuery = "EnableGitOps"
+	DisableGitOps          RoleQuery = "DisableGitOps"
+	UpdateGitOps           RoleQuery = "UpdateGitOps"
+	ListWorkflowRuns       RoleQuery = "ListWorkflowRuns"
+	GetWorkflowRun         RoleQuery = "GetWorkflowRun"
+	ListInfrastructures    RoleQuery = "ListInfrastructures"
+	GetInfrastructure      RoleQuery = "GetInfrastructure "
+	GetManifest            RoleQuery = "GetManifest"
+	GetInfraDetails        RoleQuery = "GetInfraDetails"
+	ListCharts             RoleQuery = "ListCharts"
+	ListWorkflow           RoleQuery = "ListWorkflow"
+	SaveChaosHub           RoleQuery = "SaveChaosHub"
+	CreateWorkflowTemplate RoleQuery = "CreateWorkflowTemplate"
+	CreateImageRegistry    RoleQuery = "CreateImageRegistry"
+	UpdateImageRegistry    RoleQuery = "UpdateImageRegistry"
+	DeleteImageRegistry    RoleQuery = "DeleteImageRegistry"
+	GetGitOpsDetails       RoleQuery = "GetGitOpsDetails"
+	ListImageRegistry      RoleQuery = "ListImageRegistry"
+	GetImageRegistry       RoleQuery = "GetImageRegistry"
+	CreateEnvironment      RoleQuery = "CreateEnvironment"
+	UpdateEnvironment      RoleQuery = "UpdateEnvironment"
+	DeleteEnvironment      RoleQuery = "DeleteEnvironment"
+	GetEnvironment         RoleQuery = "GetEnvironment"
+	ListEnvironments       RoleQuery = "ListEnvironments"
+	AddProbe               RoleQuery = "AddProbe"
+	DeleteProbe            RoleQuery = "DeleteProbe"
+	UpdateProbe            RoleQuery = "UpdateProbe"
+	GetProbe               RoleQuery = "GetProbe"
+	ListProbes             RoleQuery = "ListProbes"
+	MemberRoleOwnerString            = string(model.MemberRoleOwner)
+	MemberRoleEditorString           = string(model.MemberRoleEditor)
+	MemberRoleViewerString           = string(model.MemberRoleViewer)
 )
 
 var MutationRbacRules = map[RoleQuery][]string{
@@ -72,26 +72,26 @@ var MutationRbacRules = map[RoleQuery][]string{
 		MemberRoleViewerString},
 	GetInfrastructure: {MemberRoleOwnerString, MemberRoleEditorString,
 		MemberRoleViewerString},
-	GetManifest:     {MemberRoleOwnerString, MemberRoleEditorString},
-	GetInfraDetails: {MemberRoleOwnerString, MemberRoleEditorString},
-	ListCharts:                   {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	ListWorkflow:                 {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	SaveChaosHub:                 {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateWorkflowTemplate:       {MemberRoleOwnerString, MemberRoleEditorString},
-	CreateImageRegistry:          {MemberRoleOwnerString},
-	UpdateImageRegistry:          {MemberRoleOwnerString},
-	DeleteImageRegistry:          {MemberRoleOwnerString},
-	GetGitOpsDetails:             {MemberRoleOwnerString},
-	ListImageRegistry:            {MemberRoleOwnerString},
-	GetImageRegistry:             {MemberRoleOwnerString},
-	CreateEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
-	UpdateEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
-	DeleteEnvironment:            {MemberRoleOwnerString, MemberRoleEditorString},
-	GetEnvironment:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	ListEnvironments:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	AddProbe:                     {MemberRoleOwnerString, MemberRoleEditorString},
-	UpdateProbe:                  {MemberRoleOwnerString, MemberRoleEditorString},
-	GetProbe:                     {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	ListProbes:                   {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	DeleteProbe:                  {MemberRoleOwnerString, MemberRoleEditorString},
+	GetManifest:            {MemberRoleOwnerString, MemberRoleEditorString},
+	GetInfraDetails:        {MemberRoleOwnerString, MemberRoleEditorString},
+	ListCharts:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListWorkflow:           {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	SaveChaosHub:           {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateWorkflowTemplate: {MemberRoleOwnerString, MemberRoleEditorString},
+	CreateImageRegistry:    {MemberRoleOwnerString},
+	UpdateImageRegistry:    {MemberRoleOwnerString},
+	DeleteImageRegistry:    {MemberRoleOwnerString},
+	GetGitOpsDetails:       {MemberRoleOwnerString},
+	ListImageRegistry:      {MemberRoleOwnerString},
+	GetImageRegistry:       {MemberRoleOwnerString},
+	CreateEnvironment:      {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateEnvironment:      {MemberRoleOwnerString, MemberRoleEditorString},
+	DeleteEnvironment:      {MemberRoleOwnerString, MemberRoleEditorString},
+	GetEnvironment:         {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListEnvironments:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	AddProbe:               {MemberRoleOwnerString, MemberRoleEditorString},
+	UpdateProbe:            {MemberRoleOwnerString, MemberRoleEditorString},
+	GetProbe:               {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListProbes:             {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	DeleteProbe:            {MemberRoleOwnerString, MemberRoleEditorString},
 }
