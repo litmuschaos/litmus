@@ -1,12 +1,13 @@
 import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import type { ExecutionData } from '@api/entities';
+import { ExecutionData, ExperimentType } from '@api/entities';
 import { ExperimentRunStatus } from '@api/entities';
 import { getScope } from '@utils';
 import ExperimentRunDetailsView from '@views/ExperimentRunDetails';
 import RightSideBarV2 from '@components/RightSideBarV2';
 import { getExperimentRun } from '@api/core/experiments/getExperimentRun';
+import type { CronWorkflow, Workflow } from '@models';
 
 export default function ExperimentRunDetailsController(): React.ReactElement {
   const { experimentID, runID, notifyID } = useParams<{ experimentID: string; runID: string; notifyID: string }>();
@@ -46,11 +47,22 @@ export default function ExperimentRunDetailsController(): React.ReactElement {
       ? (JSON.parse(specificRunData.executionData) as ExecutionData)
       : undefined;
 
+  const parsedManifest =
+    specificRunData && specificRunData?.experimentManifest ? JSON.parse(specificRunData.experimentManifest) : undefined;
+
+  const isCronEnabled =
+    specificRunExists && specificRunData?.experimentType === ExperimentType.CRON
+      ? (parsedManifest as CronWorkflow)?.spec?.suspend === undefined
+      : true
+      ? (parsedManifest as CronWorkflow)?.spec?.suspend !== undefined
+      : (parsedManifest as CronWorkflow)?.spec?.suspend;
+
   const rightSideBarV2 = (
     <RightSideBarV2
       experimentID={experimentID}
       experimentRunID={runID}
       notifyID={notifyID}
+      isCronEnabled={isCronEnabled}
       phase={specificRunData?.phase}
       experimentType={specificRunData?.experimentType}
     />

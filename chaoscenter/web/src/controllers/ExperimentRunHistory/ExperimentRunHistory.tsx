@@ -7,7 +7,7 @@ import { listExperimentRunForHistory } from '@api/core';
 import { getScope, getColorBasedOnResilienceScore } from '@utils';
 import ExperimentRunHistoryView from '@views/ExperimentRunHistory';
 import { useStrings } from '@strings';
-import type { ExperimentRun } from '@api/entities';
+import { ExperimentRun, ExperimentType } from '@api/entities';
 import type { ColumnData } from '@components/ColumnChart/ColumnChart.types';
 import {
   initialExperimentRunFilterState,
@@ -27,6 +27,7 @@ import {
 } from './ExperimentRunFilter';
 import type { ExperimentRunHistoryTableProps } from './types';
 import { generateExperimentRunTableContent } from './helpers';
+import type { CronWorkflow } from '@models';
 
 const Tooltip = ({ experimentRun }: { experimentRun: ExperimentRun }): React.ReactElement => {
   const { getString } = useStrings();
@@ -119,6 +120,7 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
   const experimentName = experimentRunsWithExecutionData?.[0]?.experimentName;
   const experimentPhase = experimentRunsWithExecutionData?.[0]?.phase;
   const experimentType = experimentRunsWithExecutionData?.[0]?.experimentType;
+  const experimentManifest = experimentRunsWithExecutionData?.[0]?.experimentManifest;
 
   React.useEffect(() => {
     if (experimentName) setExperimentNamePersistent(experimentName);
@@ -149,11 +151,21 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
 
   const areFiltersSet = !(isEqual(state, initialExperimentRunFilterState) && page === 0);
 
+  const parsedManifest = experimentManifest && JSON.parse(experimentManifest);
+
+  const isCronEnabled =
+    experimentRunsWithExecutionData && experimentType === ExperimentType.CRON
+      ? (parsedManifest as CronWorkflow)?.spec?.suspend === undefined
+      : true
+      ? (parsedManifest as CronWorkflow)?.spec?.suspend !== undefined
+      : (parsedManifest as CronWorkflow)?.spec?.suspend;
+
   const rightSideBarV2 = (
     <RightSideBarV2
       refetchExperimentRuns={refetchExperimentRuns}
       experimentID={experimentID}
       phase={experimentPhase}
+      isCronEnabled={isCronEnabled}
       experimentType={experimentType}
     />
   );
