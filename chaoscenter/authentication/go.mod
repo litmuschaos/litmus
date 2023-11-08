@@ -8,9 +8,10 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/golang-jwt/jwt v3.2.1+incompatible
 	github.com/golang/protobuf v1.5.2
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.9.2
+	github.com/stretchr/testify v1.7.0
 	go.mongodb.org/mongo-driver v1.5.3
 	golang.org/x/crypto v0.13.0
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
@@ -37,6 +38,7 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
