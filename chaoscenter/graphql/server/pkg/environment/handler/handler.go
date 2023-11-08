@@ -24,10 +24,10 @@ type EnvironmentHandler interface {
 }
 
 type EnvironmentService struct {
-	EnvironmentOperator dbOperationsEnvironment.EnvironmentOperatorInterface
+	EnvironmentOperator *dbOperationsEnvironment.Operator
 }
 
-func NewEnvironmentService(EnvironmentOperator dbOperationsEnvironment.EnvironmentOperatorInterface) EnvironmentHandler {
+func NewEnvironmentService(EnvironmentOperator *dbOperationsEnvironment.Operator) EnvironmentHandler {
 	return &EnvironmentService{
 		EnvironmentOperator: EnvironmentOperator,
 	}

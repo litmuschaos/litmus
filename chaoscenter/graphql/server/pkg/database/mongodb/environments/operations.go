@@ -25,18 +25,6 @@ func NewEnvironmentOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 	}
 }
 
-// Inside the dbOperationsEnvironment package
-
-type EnvironmentOperatorInterface interface {
-	InsertEnvironment(ctx context.Context, env Environment) error
-	GetEnvironments(ctx context.Context, query bson.D) ([]Environment, error)
-	UpdateEnvironment(ctx context.Context, query bson.D, update bson.D) error
-	GetEnvironment(query bson.D) (Environment, error)
-	GetAggregateEnvironments(pipeline mongo.Pipeline) (*mongo.Cursor, error)
-	GetEnvironmentDetails(ctx context.Context, environmentID string, projectID string) (Environment, error)
-	GetEnvironmentWithProjectID(projectID string) ([]*Environment, error)
-}
-
 // InsertEnvironment takes details of a chaos_environment and inserts into the database collection
 func (e *Operator) InsertEnvironment(ctx context.Context, environment Environment) error {
 	err := e.operator.Create(ctx, mongodb.EnvironmentCollection, environment)
