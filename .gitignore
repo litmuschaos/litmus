@@ -14,10 +14,11 @@ main
 out/
 vendor/
 _vendor-*
-tmp/
 .env
 litmus-portal-service
 litmus-portal-app
 litmus-portal/graphql-server/server
+
+# tmp/
 
 **/client_id
