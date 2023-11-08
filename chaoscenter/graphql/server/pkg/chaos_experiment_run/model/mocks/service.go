@@ -26,3 +26,8 @@ func (c *ChaosExperimentRunService) ProcessCompletedExperimentRun(execData types
 	args := c.Called(execData, wfID, runID)
 	return args.Get(0).(types.ExperimentRunMetrics), args.Error(1)
 }
+
+func (c *ChaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error {
+	args := c.Called(ctx, query, experimentRunID, experiment, username, projectID, r)
+	return args.Error(0)
+}

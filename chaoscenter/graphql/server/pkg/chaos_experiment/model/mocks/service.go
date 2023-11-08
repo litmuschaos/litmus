@@ -3,6 +3,7 @@ package mocks
 import (
 	"context"
 
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
@@ -32,4 +33,9 @@ func (m *ChaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 func (m *ChaosExperimentService) ProcessExperimentDelete(query bson.D, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error {
 	args := m.Called(query, workflow, username, r)
 	return args.Error(0)
+}
+
+func (m *ChaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest v1alpha1.CronWorkflow, experiment dbChaosExperiment.ChaosExperimentRequest) (v1alpha1.CronWorkflow, []string, error) {
+	args := m.Called(cronWorkflowManifest, experiment)
+	return args.Get(0).(v1alpha1.CronWorkflow), args.Get(1).([]string), args.Error(2)
 }
