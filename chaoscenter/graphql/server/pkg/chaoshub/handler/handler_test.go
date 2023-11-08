@@ -281,7 +281,7 @@ func TestGetChartsData(t *testing.T) {
 			name:      "success: url is valid",
 			projectID: uuid.New().String(),
 			repoData: model.CloningInput{
-				Name:       uuid.New().String(),
+				Name:       "container-kill",
 				RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 				RepoBranch: "master",
 				IsPrivate:  false,
@@ -368,8 +368,8 @@ func TestGetExperimentData(t *testing.T) {
 // TestListPredefinedWorkflowDetails is used to test the ListPredefinedWorkflowDetails function
 func TestListPredefinedWorkflowDetails(t *testing.T) {
 	// given
-	succeedProjectID := uuid.New().String()
-	succeedName := uuid.New().String()
+	succeedProjectID := "project-1"
+	succeedName := "workflow-hub-1"
 	t.Cleanup(func() { _ = os.RemoveAll("/tmp/version/" + succeedProjectID) })
 	err := chaosHubOps.GitClone(
 		model.CloningInput{

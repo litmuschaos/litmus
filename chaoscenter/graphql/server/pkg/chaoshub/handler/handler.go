@@ -23,7 +23,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const DefaultPath = "/tmp/"
+const DefaultPath = "./tmp/"
 
 // GetChartsPath is used to construct path for given chart.
 func GetChartsPath(chartsInput model.CloningInput, projectID string, isDefault bool) string {
