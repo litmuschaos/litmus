@@ -21,7 +21,7 @@ func (g *GitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 }
 
 // EnableGitOpsHandler provides a mock function with given fields: ctx, config
-func (g *GitOpsService) EnableGitOpsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
+func (g *GitOpsService) EnableGitOpsHandler(ctx context.Context, project_id string, config model.GitConfig) (bool, error) {
 	args := g.Called(ctx, config)
 	return args.Bool(0), args.Error(1)
 }
@@ -33,7 +33,7 @@ func (g *GitOpsService) DisableGitOpsHandler(ctx context.Context, projectID stri
 }
 
 // UpdateGitOpsDetailsHandler provides a mock function with given fields: ctx, config
-func (g *GitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, config model.GitConfig) (bool, error) {
+func (g *GitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectId string, config model.GitConfig) (bool, error) {
 	args := g.Called(ctx, config)
 	return args.Bool(0), args.Error(1)
 }

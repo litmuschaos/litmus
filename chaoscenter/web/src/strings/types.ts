@@ -51,6 +51,7 @@ export interface StringsMap {
   'allFaultsExecuted': unknown
   'allRuns': unknown
   'alreadyExists': PrimitiveObject<'value'>
+  'alreadyExistsID': PrimitiveObject<'value'>
   'apiTokens': unknown
   'appKind': unknown
   'appKindName': unknown
@@ -121,6 +122,7 @@ export interface StringsMap {
   'chooseHubAccess': unknown
   'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
+  'clearSearch': unknown
   'clickDownload': unknown
   'clone': unknown
   'cloneExperiment': unknown
@@ -136,6 +138,7 @@ export interface StringsMap {
   'comingSoon': unknown
   'command': unknown
   'comparator': unknown
+  'comparisonCriteria': unknown
   'completed': unknown
   'configure': unknown
   'configureChaosInfrastructure': unknown
@@ -173,6 +176,7 @@ export interface StringsMap {
   'createdOn': unknown
   'creationTime': unknown
   'criteria': unknown
+  'criteriaForData': unknown
   'cronExpression': unknown
   'cronExpressionRequired': unknown
   'cronSelectOption': unknown
@@ -235,6 +239,7 @@ export interface StringsMap {
   'duration': unknown
   'edit': unknown
   'editChaosHub': unknown
+  'editEnvironment': unknown
   'editExperiment': unknown
   'editExperimentCopy': unknown
   'editExperimentOptions': unknown
@@ -430,6 +435,7 @@ export interface StringsMap {
   'lastResilienceScore': unknown
   'lastRun': unknown
   'lastSyncedAt': unknown
+  'lastUpdatedBy': unknown
   'latestRun': unknown
   'latestRunFallbackText': unknown
   'launchExperiment': unknown
@@ -499,6 +505,7 @@ export interface StringsMap {
   'newChaosExperiment': unknown
   'newChaosHub': unknown
   'newChaosInfrastructure': unknown
+  'newEnvironment': unknown
   'newExperiment': unknown
   'newMember': unknown
   'newPassword': unknown
@@ -614,6 +621,7 @@ export interface StringsMap {
   'preProd': unknown
   'predefinedExperimentsNotFound': unknown
   'preview': unknown
+  'previous': unknown
   'private': unknown
   'probeAddedSuccessfully': unknown
   'probeConfiguration': unknown
@@ -694,6 +702,8 @@ export interface StringsMap {
   'query': unknown
   'queryPath': unknown
   'ranAt': unknown
+  'range': unknown
+  'rangeSliderInput': unknown
   'rbacDescription': PrimitiveObject<'permission'>
   'rbacHeader': unknown
   'reEnterNewPassword': unknown
@@ -734,6 +744,7 @@ export interface StringsMap {
   'resilienceTabDescription': unknown
   'resiliencyScore': unknown
   'resource': unknown
+  'resourceNames': unknown
   'responseCode': unknown
   'responseTimeout': unknown
   'responseType': unknown
@@ -804,6 +815,8 @@ export interface StringsMap {
   'selectHub': unknown
   'selectHubFromList': unknown
   'selectHubHeader': unknown
+  'selectMethod': unknown
+  'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
   'selectTimeframe': unknown
@@ -816,6 +829,7 @@ export interface StringsMap {
   'serviceAccountName': unknown
   'serviceHealthScore': unknown
   'setFaultWeights': unknown
+  'setSchedule': unknown
   'settings': unknown
   'setupChaosInfrastructures': unknown
   'setupProbe': unknown
@@ -908,10 +922,11 @@ export interface StringsMap {
   'tuneFaultWeight': unknown
   'tuneWeight': unknown
   'type': unknown
-  'udpatePassword': unknown
+  'typeOfData': unknown
   'unableToGetProbes': unknown
   'unhealthy': unknown
   'update': unknown
+  'updatePassword': unknown
   'updatedAt': unknown
   'updatedBy': unknown
   'upgradeChaosInfrastructure': unknown

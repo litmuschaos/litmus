@@ -7,16 +7,17 @@ import {
   CloneExperimentButton,
   DownloadExperimentButton,
   EditExperimentButton,
-  RunExperimentButton
+  RunExperimentButton,
+  StopExperimentButton,
+  StopExperimentRunButton
 } from '@components/ExperimentActionButtons';
 import type { RefetchExperimentRuns, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
 import { ExperimentRunStatus, ExperimentType, InfrastructureType } from '@api/entities';
-import { useSearchParams } from '@hooks';
 
 interface RightSideBarViewV2Props extends Partial<RefetchExperiments>, Partial<RefetchExperimentRuns> {
   experimentID: string;
   experimentRunID?: string;
-  infrastructureType?: InfrastructureType;
+  notifyID?: string;
   experimentType?: ExperimentType;
   phase: ExperimentRunStatus | undefined;
   loading?: boolean;
@@ -25,16 +26,20 @@ interface RightSideBarViewV2Props extends Partial<RefetchExperiments>, Partial<R
 
 function RightSideBarV2({
   experimentID,
+  experimentRunID,
+  notifyID,
   experimentType,
   phase,
   loading,
   isEditMode,
-  refetchExperiments
+  refetchExperiments,
+  refetchExperimentRuns
 }: RightSideBarViewV2Props): React.ReactElement {
   const { getString } = useStrings();
-  const searchParams = useSearchParams();
 
-  const internalExperimentType = (searchParams.get('experimentType') as ExperimentType | undefined) ?? experimentType;
+  const showStopButton = phase === ExperimentRunStatus.RUNNING || phase === ExperimentRunStatus.QUEUED;
+
+  const showEnableDisableCronButton = experimentType === ExperimentType.CRON;
 
   return (
     <Layout.Vertical
@@ -44,26 +49,74 @@ function RightSideBarV2({
       spacing={'xlarge'}
       className={loading ? Classes.SKELETON : ''}
     >
-      {internalExperimentType === ExperimentType.NON_CRON && (
-        <Container>
-          <Layout.Vertical flex={{ justifyContent: 'center' }} spacing={'small'}>
-            <RunExperimentButton
-              tooltipProps={{ disabled: phase === ExperimentRunStatus.RUNNING }}
-              experimentID={experimentID}
-              refetchExperiments={refetchExperiments}
-              buttonProps={{
-                disabled: phase === ExperimentRunStatus.QUEUED || phase === ExperimentRunStatus.RUNNING
-              }}
-            />
-            <Text style={{ textAlign: 'center' }} color={Color.GREY_500} font={{ variation: FontVariation.TINY_SEMI }}>
-              {getString('run')}
-            </Text>
-          </Layout.Vertical>
-        </Container>
+      {showStopButton ? (
+        experimentRunID || notifyID ? (
+          // <!-- stop button for experiment run (specific run details page) -->
+          <Container>
+            <Layout.Vertical flex={{ justifyContent: 'center' }} spacing={'small'}>
+              <StopExperimentRunButton
+                tooltipProps={{ disabled: true }}
+                notifyID={notifyID}
+                experimentID={experimentID}
+                experimentRunID={experimentRunID}
+                refetchExperimentRuns={refetchExperimentRuns}
+                infrastructureType={InfrastructureType.KUBERNETES}
+              />
+              <Text
+                style={{ textAlign: 'center' }}
+                width={40}
+                color={Color.GREY_500}
+                font={{ variation: FontVariation.TINY_SEMI }}
+              >
+                {getString('stop')}
+              </Text>
+            </Layout.Vertical>
+          </Container>
+        ) : (
+          // <!-- stop button for experiment (runs history page) -->
+          <Container>
+            <Layout.Vertical flex={{ justifyContent: 'center' }} spacing={'small'}>
+              <StopExperimentButton
+                tooltipProps={{ disabled: true }}
+                experimentID={experimentID}
+                refetchExperiments={refetchExperiments}
+                infrastructureType={InfrastructureType.KUBERNETES}
+              />
+              <Text
+                style={{ textAlign: 'center' }}
+                color={Color.GREY_500}
+                font={{ variation: FontVariation.TINY_SEMI }}
+              >
+                {getString('stop')}
+              </Text>
+            </Layout.Vertical>
+          </Container>
+        )
+      ) : (
+        // <!-- Re-run button -->
+        experimentType === ExperimentType.NON_CRON && (
+          <Container>
+            <Layout.Vertical flex={{ justifyContent: 'center' }} spacing={'small'}>
+              <RunExperimentButton
+                tooltipProps={{ disabled: true }}
+                experimentID={experimentID}
+                refetchExperiments={refetchExperiments}
+                // buttonProps={{ disabled: phase === ExperimentRunStatus.QUEUED }}
+              />
+              <Text
+                style={{ textAlign: 'center' }}
+                color={Color.GREY_500}
+                font={{ variation: FontVariation.TINY_SEMI }}
+              >
+                {getString('run')}
+              </Text>
+            </Layout.Vertical>
+          </Container>
+        )
       )}
 
       {/* <!-- divider --> */}
-      {internalExperimentType === ExperimentType.NON_CRON && (
+      {(experimentType === ExperimentType.NON_CRON || showEnableDisableCronButton) && (
         <div style={{ border: '1px solid var(--grey-200)', height: 1, width: '80%' }} />
       )}
 
@@ -79,7 +132,6 @@ function RightSideBarV2({
         </Container>
       )}
 
-      {/* <!-- clone experiment button --> */}
       <Container>
         <Layout.Vertical flex={{ justifyContent: 'center' }} spacing={'small'}>
           <CloneExperimentButton experimentID={experimentID} />

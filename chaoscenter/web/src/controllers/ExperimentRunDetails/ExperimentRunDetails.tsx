@@ -50,8 +50,8 @@ export default function ExperimentRunDetailsController(): React.ReactElement {
     <RightSideBarV2
       experimentID={experimentID}
       experimentRunID={runID}
+      notifyID={notifyID}
       phase={specificRunData?.phase}
-      // infrastructureType={specificRunData?.infra.infraType}
       experimentType={specificRunData?.experimentType}
     />
   );

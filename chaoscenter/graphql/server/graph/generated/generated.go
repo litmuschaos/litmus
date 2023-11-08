@@ -390,6 +390,7 @@ type ComplexityRoot struct {
 		ProbePollingInterval func(childComplexity int) int
 		ProbeTimeout         func(childComplexity int) int
 		Resource             func(childComplexity int) int
+		ResourceNames        func(childComplexity int) int
 		Retry                func(childComplexity int) int
 		StopOnFailure        func(childComplexity int) int
 		Version              func(childComplexity int) int
@@ -475,38 +476,40 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddChaosHub              func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
-		AddProbe                 func(childComplexity int, request model.ProbeRequest, projectID string) int
-		AddRemoteChaosHub        func(childComplexity int, projectID string, request model.CreateRemoteChaosHub) int
-		ChaosExperimentRun       func(childComplexity int, request model.ExperimentRunRequest) int
-		ConfirmInfraRegistration func(childComplexity int, request model.InfraIdentity) int
-		CreateChaosExperiment    func(childComplexity int, request model.ChaosExperimentRequest, projectID string) int
-		CreateEnvironment        func(childComplexity int, projectID string, request *model.CreateEnvironmentRequest) int
-		CreateImageRegistry      func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		DeleteChaosExperiment    func(childComplexity int, experimentID string, experimentRunID *string, projectID string) int
-		DeleteChaosHub           func(childComplexity int, projectID string, hubID string) int
-		DeleteEnvironment        func(childComplexity int, projectID string, environmentID string) int
-		DeleteImageRegistry      func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteInfra              func(childComplexity int, projectID string, infraID string) int
-		DeleteProbe              func(childComplexity int, probeName string, projectID string) int
-		DisableGitOps            func(childComplexity int, projectID string) int
-		EnableGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
-		GenerateSSHKey           func(childComplexity int) int
-		GetManifestWithInfraID   func(childComplexity int, projectID string, infraID string, accessKey string) int
-		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
-		KubeObj                  func(childComplexity int, request model.KubeObjectData) int
-		PodLog                   func(childComplexity int, request model.PodLog) int
-		RegisterInfra            func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
-		RunChaosExperiment       func(childComplexity int, experimentID string, projectID string) int
-		SaveChaosExperiment      func(childComplexity int, request model.SaveChaosExperimentRequest, projectID string) int
-		SaveChaosHub             func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
-		SyncChaosHub             func(childComplexity int, id string, projectID string) int
-		UpdateChaosExperiment    func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
-		UpdateChaosHub           func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
-		UpdateEnvironment        func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
-		UpdateGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
-		UpdateImageRegistry      func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		UpdateProbe              func(childComplexity int, request model.ProbeRequest, projectID string) int
+		AddChaosHub               func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
+		AddProbe                  func(childComplexity int, request model.ProbeRequest, projectID string) int
+		AddRemoteChaosHub         func(childComplexity int, projectID string, request model.CreateRemoteChaosHub) int
+		ChaosExperimentRun        func(childComplexity int, request model.ExperimentRunRequest) int
+		ConfirmInfraRegistration  func(childComplexity int, request model.InfraIdentity) int
+		CreateChaosExperiment     func(childComplexity int, request model.ChaosExperimentRequest, projectID string) int
+		CreateEnvironment         func(childComplexity int, projectID string, request *model.CreateEnvironmentRequest) int
+		CreateImageRegistry       func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		DeleteChaosExperiment     func(childComplexity int, experimentID string, experimentRunID *string, projectID string) int
+		DeleteChaosHub            func(childComplexity int, projectID string, hubID string) int
+		DeleteEnvironment         func(childComplexity int, projectID string, environmentID string) int
+		DeleteImageRegistry       func(childComplexity int, imageRegistryID string, projectID string) int
+		DeleteInfra               func(childComplexity int, projectID string, infraID string) int
+		DeleteProbe               func(childComplexity int, probeName string, projectID string) int
+		DisableGitOps             func(childComplexity int, projectID string) int
+		EnableGitOps              func(childComplexity int, projectID string, configurations model.GitConfig) int
+		GenerateSSHKey            func(childComplexity int) int
+		GetManifestWithInfraID    func(childComplexity int, projectID string, infraID string, accessKey string) int
+		GitopsNotifier            func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
+		KubeObj                   func(childComplexity int, request model.KubeObjectData) int
+		PodLog                    func(childComplexity int, request model.PodLog) int
+		RegisterInfra             func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
+		RunChaosExperiment        func(childComplexity int, experimentID string, projectID string) int
+		SaveChaosExperiment       func(childComplexity int, request model.SaveChaosExperimentRequest, projectID string) int
+		SaveChaosHub              func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
+		StopExperimentRuns        func(childComplexity int, projectID string, experimentID string, experimentRunID *string, notifyID *string) int
+		SyncChaosHub              func(childComplexity int, id string, projectID string) int
+		UpdateChaosExperiment     func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
+		UpdateChaosHub            func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
+		UpdateCronExperimentState func(childComplexity int, experimentID string, disable bool, projectID string) int
+		UpdateEnvironment         func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
+		UpdateGitOps              func(childComplexity int, projectID string, configurations model.GitConfig) int
+		UpdateImageRegistry       func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		UpdateProbe               func(childComplexity int, request model.ProbeRequest, projectID string) int
 	}
 
 	ObjectData struct {
@@ -712,8 +715,10 @@ type MutationResolver interface {
 	SaveChaosExperiment(ctx context.Context, request model.SaveChaosExperimentRequest, projectID string) (string, error)
 	UpdateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error)
 	DeleteChaosExperiment(ctx context.Context, experimentID string, experimentRunID *string, projectID string) (bool, error)
+	UpdateCronExperimentState(ctx context.Context, experimentID string, disable bool, projectID string) (bool, error)
 	ChaosExperimentRun(ctx context.Context, request model.ExperimentRunRequest) (string, error)
 	RunChaosExperiment(ctx context.Context, experimentID string, projectID string) (*model.RunChaosExperimentResponse, error)
+	StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string) (bool, error)
 	RegisterInfra(ctx context.Context, projectID string, request model.RegisterInfraRequest) (*model.RegisterInfraResponse, error)
 	ConfirmInfraRegistration(ctx context.Context, request model.InfraIdentity) (*model.ConfirmInfraRegistrationResponse, error)
 	DeleteInfra(ctx context.Context, projectID string, infraID string) (string, error)
@@ -2518,6 +2523,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.K8SProbe.Resource(childComplexity), true
 
+	case "K8SProbe.resourceNames":
+		if e.complexity.K8SProbe.ResourceNames == nil {
+			break
+		}
+
+		return e.complexity.K8SProbe.ResourceNames(childComplexity), true
+
 	case "K8SProbe.retry":
 		if e.complexity.K8SProbe.Retry == nil {
 			break
@@ -3135,6 +3147,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.SaveChaosHub(childComplexity, args["projectID"].(string), args["request"].(model.CreateChaosHubRequest)), true
 
+	case "Mutation.stopExperimentRuns":
+		if e.complexity.Mutation.StopExperimentRuns == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_stopExperimentRuns_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.StopExperimentRuns(childComplexity, args["projectID"].(string), args["experimentID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string)), true
+
 	case "Mutation.syncChaosHub":
 		if e.complexity.Mutation.SyncChaosHub == nil {
 			break
@@ -3170,6 +3194,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateChaosHub(childComplexity, args["projectID"].(string), args["request"].(model.UpdateChaosHubRequest)), true
+
+	case "Mutation.updateCronExperimentState":
+		if e.complexity.Mutation.UpdateCronExperimentState == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateCronExperimentState_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateCronExperimentState(childComplexity, args["experimentID"].(string), args["disable"].(bool), args["projectID"].(string)), true
 
 	case "Mutation.updateEnvironment":
 		if e.complexity.Mutation.UpdateEnvironment == nil {
@@ -5136,6 +5172,14 @@ extend type Mutation {
     experimentRunID: String
     projectID: ID!
   ): Boolean!
+
+  """
+  Enable/Disable cron experiment state
+  """
+  updateCronExperimentState(experimentID: String!
+    disable: Boolean!
+    projectID: ID!
+  ): Boolean! @authorized
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/chaos_experiment_run.graphqls", Input: `extend type Query {
@@ -5172,6 +5216,11 @@ extend type Mutation {
     experimentID: String!
     projectID: ID!
   ): RunChaosExperimentResponse!
+
+  """
+  stopExperiment will halt all the ongoing runs of a particular experiment
+  """
+  stopExperimentRuns(projectID: ID!, experimentID:String!, experimentRunID: String, notifyID: String): Boolean! @authorized
 }`, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/chaos_infrastructure.graphqls", Input: `directive @authorized on FIELD_DEFINITION
 
@@ -7188,7 +7237,6 @@ input KubernetesHTTPProbeRequest {
   insecureSkipVerify: Boolean
 }
 
-
 """
 Defines the properties of the comparator
 """
@@ -7225,8 +7273,6 @@ input ComparatorInput {
   criteria: String!
 }
 
-
-
 """
 Defines the Executed by which experiment details for Probes
 """
@@ -7249,27 +7295,26 @@ type ExecutedByExperiment {
   updatedBy: UserDetails
 }
 
-
 """
 Defines the Execution History of experiment referenced by the Probe
 """
 type ExecutionHistory {
-"""
-Probe Mode
-"""
-mode: Mode!
-"""
-Fault Name
-"""
-faultName: String!
-"""
-Fault Status
-"""
-status: Status!
-"""
-Fault executed by which experiment
-"""
-executedByExperiment: ExecutedByExperiment!
+  """
+  Probe Mode
+  """
+  mode: Mode!
+  """
+  Fault Name
+  """
+  faultName: String!
+  """
+  Fault Status
+  """
+  status: Status!
+  """
+  Fault executed by which experiment
+  """
+  executedByExperiment: ExecutedByExperiment!
 }
 """
 Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
@@ -7624,6 +7669,10 @@ input K8SProbeRequest {
   """
   namespace: String
   """
+  Resource Names of the Probe
+  """
+  resourceNames: String
+  """
   Field Selector of the Probe
   """
   fieldSelector: String
@@ -7741,7 +7790,6 @@ input KubernetesCMDProbeRequest {
   source: String
 }
 
-
 """
 Defines the Kubernetes HTTP probe properties
 """
@@ -7792,7 +7840,6 @@ type KubernetesHTTPProbe implements CommonProbeProperties {
   insecureSkipVerify: Boolean
 }
 
-
 """
 Defines the input for CMD probe properties
 """
@@ -7842,7 +7889,6 @@ input CMDProbeRequest {
   """
   source: String
 }
-
 
 """
 Defines the K8S probe properties
@@ -7896,6 +7942,10 @@ type K8SProbe implements CommonProbeProperties {
   Namespace of the Probe
   """
   namespace: String
+  """
+  Resource Names of the Probe
+  """
+  resourceNames: String
   """
   Field Selector of the Probe
   """
@@ -7960,8 +8010,12 @@ extend type Query {
   """
   Returns the list of Probes based on various filter parameters
   """
-  listProbes(projectID: ID!,  infrastructureType: InfrastructureType, probeNames: [ID!], filter: ProbeFilterInput): [Probe]!
-    @authorized
+  listProbes(
+    projectID: ID!
+    infrastructureType: InfrastructureType
+    probeNames: [ID!]
+    filter: ProbeFilterInput
+  ): [Probe]! @authorized
 
   """
   Returns a single Probe based on ProbeName and various filter parameters
@@ -7971,18 +8025,14 @@ extend type Query {
   """
   Returns the Probe YAML based on ProbeName which can be used in ChaosEngine manifest
   """
-  getProbeYAML(
-    projectID: ID!
-    request: GetProbeYAMLRequest!
-  ): String! @authorized
+  getProbeYAML(projectID: ID!, request: GetProbeYAMLRequest!): String!
+    @authorized
 
   """
   Returns all the reference of the Probe based on ProbeName
   """
-  getProbeReference(
-    projectID: ID!
-    probeName: ID!
-  ): GetProbeReferenceResponse! @authorized
+  getProbeReference(projectID: ID!, probeName: ID!): GetProbeReferenceResponse!
+    @authorized
 
   """
   Returns all the Probes attached to the requested Experiment Run
@@ -7996,32 +8046,24 @@ extend type Query {
   """
   Validates if a probe is already present, returns true if unique
   """
-  validateUniqueProbe(
-    projectID: ID!
-    probeName: ID!
-  ): Boolean! @authorized
+  validateUniqueProbe(projectID: ID!, probeName: ID!): Boolean! @authorized
 }
 
 extend type Mutation {
   """
   Creates a new Probe
   """
-  addProbe(request: ProbeRequest!, projectID: ID!): Probe!
-    @authorized
+  addProbe(request: ProbeRequest!, projectID: ID!): Probe! @authorized
 
   """
   Update the configuration of a Probe
   """
-  updateProbe(
-    request: ProbeRequest!
-    projectID: ID!
-  ): String! @authorized
+  updateProbe(request: ProbeRequest!, projectID: ID!): String! @authorized
 
   """
   Delete a Probe
   """
-  deleteProbe(probeName: ID!, projectID: ID!): Boolean!
-    @authorized
+  deleteProbe(probeName: ID!, projectID: ID!): Boolean! @authorized
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/project.graphqls", Input: `enum Invitation {
@@ -8546,6 +8588,44 @@ func (ec *executionContext) field_Mutation_saveChaosHub_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_stopExperimentRuns_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["experimentID"]; ok {
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentID"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["experimentRunID"]; ok {
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentRunID"] = arg2
+	var arg3 *string
+	if tmp, ok := rawArgs["notifyID"]; ok {
+		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["notifyID"] = arg3
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_syncChaosHub_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -8609,6 +8689,36 @@ func (ec *executionContext) field_Mutation_updateChaosHub_args(ctx context.Conte
 		}
 	}
 	args["request"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateCronExperimentState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["experimentID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentID"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["disable"]; ok {
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["disable"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg2, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg2
 	return args, nil
 }
 
@@ -17564,6 +17674,37 @@ func (ec *executionContext) _K8SProbe_namespace(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _K8SProbe_resourceNames(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "K8SProbe",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceNames, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _K8SProbe_fieldSelector(ctx context.Context, field graphql.CollectedField, obj *model.K8SProbe) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19235,6 +19376,67 @@ func (ec *executionContext) _Mutation_deleteChaosExperiment(ctx context.Context,
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updateCronExperimentState(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateCronExperimentState_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateCronExperimentState(rctx, args["experimentID"].(string), args["disable"].(bool), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_chaosExperimentRun(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19315,6 +19517,67 @@ func (ec *executionContext) _Mutation_runChaosExperiment(ctx context.Context, fi
 	res := resTmp.(*model.RunChaosExperimentResponse)
 	fc.Result = res
 	return ec.marshalNRunChaosExperimentResponse2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐRunChaosExperimentResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_stopExperimentRuns(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_stopExperimentRuns_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().StopExperimentRuns(rctx, args["projectID"].(string), args["experimentID"].(string), args["experimentRunID"].(*string), args["notifyID"].(*string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_registerInfra(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -28131,6 +28394,12 @@ func (ec *executionContext) unmarshalInputK8SProbeRequest(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "resourceNames":
+			var err error
+			it.ResourceNames, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "fieldSelector":
 			var err error
 			it.FieldSelector, err = ec.unmarshalOString2ᚖstring(ctx, v)
@@ -31228,6 +31497,8 @@ func (ec *executionContext) _K8SProbe(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "namespace":
 			out.Values[i] = ec._K8SProbe_namespace(ctx, field, obj)
+		case "resourceNames":
+			out.Values[i] = ec._K8SProbe_resourceNames(ctx, field, obj)
 		case "fieldSelector":
 			out.Values[i] = ec._K8SProbe_fieldSelector(ctx, field, obj)
 		case "labelSelector":
@@ -31711,6 +31982,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updateCronExperimentState":
+			out.Values[i] = ec._Mutation_updateCronExperimentState(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "chaosExperimentRun":
 			out.Values[i] = ec._Mutation_chaosExperimentRun(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -31718,6 +31994,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "runChaosExperiment":
 			out.Values[i] = ec._Mutation_runChaosExperiment(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "stopExperimentRuns":
+			out.Values[i] = ec._Mutation_stopExperimentRuns(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

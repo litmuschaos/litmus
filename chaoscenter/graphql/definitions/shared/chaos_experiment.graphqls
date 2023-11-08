@@ -768,4 +768,12 @@ extend type Mutation {
     experimentRunID: String
     projectID: ID!
   ): Boolean!
+
+  """
+  Enable/Disable cron experiment state
+  """
+  updateCronExperimentState(experimentID: String!
+    disable: Boolean!
+    projectID: ID!
+  ): Boolean! @authorized
 }

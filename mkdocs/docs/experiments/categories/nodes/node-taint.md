@@ -193,5 +193,5 @@ spec:
         - name: TAINT_LABEL
           value: 'key=value:effect'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
