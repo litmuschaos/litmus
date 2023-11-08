@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -64,6 +65,21 @@ func NewChaosWorkflowHandler(
 
 // CreateChaosWorkflow creates a new chaos workflow
 func (c *ChaosWorkflowHandler) CreateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
+
+	// Check if the experiment_name exists under same project
+	expDetails, err := c.chaosWorkflowOperator.GetWorkflow(bson.D{
+		{"name", request.WorkflowName},
+		{"project_id", request.ProjectID},
+		{"is_removed", false},
+	})
+	if err != nil && err != mongo.ErrNoDocuments {
+		return nil, err
+	}
+	if expDetails.WorkflowID == "" {
+		log.Errorf("experiment with name %s already exists", request.WorkflowName)
+		return nil, fmt.Errorf("experiment with name %s already exists", request.WorkflowName)
+	}
+
 	request, wfType, err := c.chaosWorkflowService.ProcessWorkflow(request)
 	if err != nil {
 		log.Error("error processing workflow: ", err)
@@ -198,6 +214,20 @@ func (c *ChaosWorkflowHandler) TerminateChaosWorkflow(ctx context.Context, proje
 }
 
 func (c *ChaosWorkflowHandler) UpdateChaosWorkflow(ctx context.Context, request *model.ChaosWorkFlowRequest, r *store.StateData) (*model.ChaosWorkFlowResponse, error) {
+	// Check if the experiment_name exists under same project
+	expDetails, err := c.chaosWorkflowOperator.GetWorkflow(bson.D{
+		{"name", request.WorkflowName},
+		{"project_id", request.ProjectID},
+		{"is_removed", false},
+	})
+	if err != nil && err != mongo.ErrNoDocuments {
+		return nil, err
+	}
+	if expDetails.WorkflowID == "" {
+		log.Errorf("experiment with name %s already exists", request.WorkflowName)
+		return nil, fmt.Errorf("experiment with name %s already exists", request.WorkflowName)
+	}
+
 	request, wfType, err := c.chaosWorkflowService.ProcessWorkflow(request)
 	if err != nil {
 		log.Error("error processing workflow update: ", err)

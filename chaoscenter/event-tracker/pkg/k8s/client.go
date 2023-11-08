@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"fmt"
 	"os"
 
 	"k8s.io/client-go/kubernetes"
@@ -21,7 +22,7 @@ func GetKubeConfig() (*rest.Config, error) {
 func K8sClient() (*kubernetes.Clientset, error) {
 	config, err := GetKubeConfig()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get kubernetes config: %v", err)
 	}
 
 	return kubernetes.NewForConfig(config)

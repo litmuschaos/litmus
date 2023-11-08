@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"subscriber/pkg/graphql"
 	"subscriber/pkg/types"
 
 	"github.com/sirupsen/logrus"
@@ -16,9 +15,9 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func GetLogs(podName, namespace, container string) (string, error) {
+func (k8s *k8sSubscriber) GetLogs(podName, namespace, container string) (string, error) {
 	ctx := context.TODO()
-	conf, err := GetKubeConfig()
+	conf, err := k8s.GetKubeConfig()
 	if err != nil {
 		return "", err
 	}
@@ -54,9 +53,9 @@ func GetLogs(podName, namespace, container string) (string, error) {
 }
 
 // create pod log for normal pods and chaos-engine pods
-func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
+func (k8s *k8sSubscriber) CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	logDetails := types.PodLog{}
-	mainLog, err := GetLogs(podLog.PodName, podLog.PodNamespace, "main")
+	mainLog, err := k8s.GetLogs(podLog.PodName, podLog.PodNamespace, "main")
 	// try getting argo pod logs
 	if err != nil {
 		logrus.Errorf("Failed to get argo pod %v logs, err: %v", podLog.PodName, err)
@@ -69,7 +68,7 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 	if strings.ToLower(podLog.PodType) == "chaosengine" && podLog.ChaosNamespace != nil {
 		chaosLog := make(map[string]string)
 		if podLog.ExpPod != nil {
-			expLog, err := GetLogs(*podLog.ExpPod, *podLog.ChaosNamespace, "")
+			expLog, err := k8s.GetLogs(*podLog.ExpPod, *podLog.ChaosNamespace, "")
 			if err == nil {
 				chaosLog[*podLog.ExpPod] = strconv.Quote(strings.Replace(expLog, `"`, `'`, -1))
 				chaosLog[*podLog.ExpPod] = chaosLog[*podLog.ExpPod][1 : len(chaosLog[*podLog.ExpPod])-1]
@@ -78,7 +77,7 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 			}
 		}
 		if podLog.RunnerPod != nil {
-			runnerLog, err := GetLogs(*podLog.RunnerPod, *podLog.ChaosNamespace, "")
+			runnerLog, err := k8s.GetLogs(*podLog.RunnerPod, *podLog.ChaosNamespace, "")
 			if err == nil {
 				chaosLog[*podLog.RunnerPod] = strconv.Quote(strings.Replace(runnerLog, `"`, `'`, -1))
 				chaosLog[*podLog.RunnerPod] = chaosLog[*podLog.RunnerPod][1 : len(chaosLog[*podLog.RunnerPod])-1]
@@ -96,28 +95,28 @@ func CreatePodLog(podLog types.PodLogRequest) (types.PodLog, error) {
 }
 
 // SendPodLogs generates graphql mutation to send events updates to graphql server
-func SendPodLogs(infraData map[string]string, podLog types.PodLogRequest) {
+func (k8s *k8sSubscriber) SendPodLogs(infraData map[string]string, podLog types.PodLogRequest) {
 	// generate graphql payload
-	payload, err := GenerateLogPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], podLog)
+	payload, err := k8s.GenerateLogPayload(infraData["INFRA_ID"], infraData["ACCESS_KEY"], infraData["VERSION"], podLog)
 	if err != nil {
 		logrus.WithError(err).Print("Error while retrieving the workflow logs")
 	}
-	body, err := graphql.SendRequest(infraData["SERVER_ADDR"], payload)
+	body, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], payload)
 	if err != nil {
 		logrus.Print(err.Error())
 	}
 	logrus.Print("Response from the server: ", body)
 }
 
-func GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error) {
+func (k8s *k8sSubscriber) GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error) {
 	infraID := `{infraID: \"` + cid + `\", version: \"` + version + `\", accessKey: \"` + accessKey + `\"}`
 	processed := " Could not get logs "
 
 	// get the logs
-	logDetails, err := CreatePodLog(podLog)
+	logDetails, err := k8s.CreatePodLog(podLog)
 	if err == nil {
 		// process log data
-		processed, err = graphql.MarshalGQLData(logDetails)
+		processed, err = k8s.gqlSubscriberServer.MarshalGQLData(logDetails)
 		if err != nil {
 			processed = " Could not get logs "
 		}

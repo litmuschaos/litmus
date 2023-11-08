@@ -982,7 +982,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
   ): Promise<ChaosEngine | undefined> {
     try {
       const experiment = await (await this.db).get(ChaosObjectStoreNameMap.EXPERIMENTS, key);
-      const imageRegistry = experiment?.imageRegistry?.repo ?? 'chaosnative';
+      const imageRegistry = experiment?.imageRegistry?.repo ?? 'litmuschaos';
       const experimentImagePullSecrets = experiment?.imageRegistry?.secret
         ? {
             experimentImagePullSecrets: [{ name: experiment.imageRegistry.secret }]
@@ -1013,7 +1013,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
             ...envs,
             {
               name: 'LIB_IMAGE',
-              value: defaultCMDProbe?.['source']?.image?.replace('chaosnative', imageRegistry)
+              value: defaultCMDProbe?.['source']?.image?.replace('litmuschaos', imageRegistry)
             }
           ],
           ...experimentImagePullSecrets
@@ -1023,7 +1023,7 @@ export class KubernetesYamlService extends ExperimentYamlService {
           defaultCMDProbe['source'] = {
             ...defaultCMDProbe['source'],
             ...probeImagePullSecrets,
-            image: defaultCMDProbe['source']?.image?.replace('chaosnative', imageRegistry)
+            image: defaultCMDProbe['source']?.image?.replace('litmuschaos', imageRegistry)
           };
       }
 
