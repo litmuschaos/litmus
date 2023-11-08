@@ -5,19 +5,19 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import * as stringUtils from '@strings';
 import { TestWrapper } from 'utils/testUtils';
 import ResetPasswordView from '../ResetPassword';
+
+beforeEach(() => {
+  jest.spyOn(stringUtils, 'useStrings').mockReturnValue({
+    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`)
+  });
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 describe('ResetPasswordView Component', () => {
   const mockClose = jest.fn();
   const mockRestPasswordMutation = jest.fn();
-
-  beforeEach(() => {
-    jest.spyOn(stringUtils, 'useStrings').mockReturnValue({
-      getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`)
-    });
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
 
   test('should render without crashing', () => {
     render(

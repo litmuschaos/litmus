@@ -3,10 +3,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import ErrorCheckView from '../ErrorCheck';
 
+beforeEach(() => {
+  render(<ErrorCheckView />);
+});
+
 describe('ErrorCheckView Component Tests', () => {
-  beforeEach(() => {
-    render(<ErrorCheckView />);
-  });
   test('initial render of ErrorCheckView', () => {
     const counters = screen.getAllByRole('heading');
     counters.forEach(counter => {
@@ -41,13 +42,13 @@ describe('ErrorCheckView Component Tests', () => {
     const counters = screen.getAllByRole('heading');
     const isolatedCounter1 = counters[counters.length - 2];
     const isolatedCounter2 = counters[counters.length - 1];
-  
+
     fireEvent.click(isolatedCounter1);
     fireEvent.click(isolatedCounter1);
     fireEvent.click(isolatedCounter1);
-    
+
     expect(await screen.findByText('Something went wrong:')).toBeInTheDocument();
-  
+
     expect(isolatedCounter2).toHaveTextContent('0');
   });
 });
