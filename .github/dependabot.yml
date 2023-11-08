@@ -19,8 +19,3 @@ updates:
     directory: "chaoscenter/graphql"
     schedule:
       interval: "daily"
-
-  - package-ecosystem: "npm"
-    directory: "chaoscenter/web"
-    schedule:
-      interval: "daily"
