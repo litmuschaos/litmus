@@ -35,7 +35,7 @@ func TestGetChartsPath(t *testing.T) {
 	// when
 	path := handler.GetChartsPath(chartsInput, projectID, true)
 	// then
-	assert.Equal(t, "/tmp/default/test/faults/", path)
+	assert.Equal(t, "./tmp/default/test/faults/", path)
 }
 
 func TestGetChartsPathFalse(t *testing.T) {
