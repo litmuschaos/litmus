@@ -216,6 +216,7 @@ export function listLazyProbes({
             group
             version
             resource
+            resourceNames
             namespace
             fieldSelector
             labelSelector

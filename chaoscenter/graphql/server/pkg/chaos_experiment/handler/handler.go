@@ -4,8 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"sort"
 	"strconv"
 	"time"
+
+	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
 
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
@@ -105,6 +111,12 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
+		if wfDetails.Name != request.Name {
+			err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
+			if err != nil {
+				return "", err
+			}
+		}
 
 		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
 		if err != nil {
@@ -114,10 +126,15 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		return "experiment updated successfully", nil
 	}
 
+	err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
+	if err != nil {
+		return "", err
+	}
+
 	// Saving chaos experiment in the DB
 	logrus.WithFields(logFields).Info("request received to save k8s chaos experiment")
 
-	err = c.chaosExperimentService.ProcessExperimentCreation(context.TODO(), newRequest, username, projectID, wfType, revID, nil)
+	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
 		return "", err
 	}
@@ -129,19 +146,10 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	var revID = uuid.New().String()
 
-	// Check if the workflow_name exists under same project
-	wfDetails, err := c.chaosExperimentOperator.GetExperiments(bson.D{
-		{"name", request.ExperimentName},
-		{"project_id", projectID},
-		{"tags", request.Tags},
-		{"is_removed", false},
-	})
+	// Check if the experiment_name exists under same project
+	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
 	if err != nil {
 		return nil, err
-	}
-
-	if wfDetails != nil || len(wfDetails) > 0 {
-		return nil, errors.New("experiment name already exists in this project")
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
@@ -225,6 +233,12 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 	var (
 		revID = uuid.New().String()
 	)
+
+	// Check if the experiment_name exists under same project
+	err := c.validateDuplicateExperimentName(ctx, projectID, request.ExperimentName)
+	if err != nil {
+		return nil, err
+	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
 	if err != nil {
@@ -1199,7 +1213,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		probeDetails        []*model.GetProbesInExperimentRunResponse
 		probeStatusMap      = make(map[string]model.ProbeVerdict)
 		probeDescriptionMap = make(map[string]*string)
-		executionData       types.ExecutionData
+		probeModeMap        = make(map[string]model.Mode)
 	)
 
 	wfRun, err := c.chaosExperimentRunOperator.GetExperimentRun(bson.D{
@@ -1211,16 +1225,12 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 		return nil, err
 	}
 
-	if err = json.Unmarshal([]byte(wfRun.ExecutionData), &executionData); err != nil {
-		return nil, errors.New("failed to unmarshal workflow manifest")
-	}
-
 	for _, _probe := range wfRun.Probes {
 		if _probe.FaultName == faultName {
-
-			mode := "SOT"
 			for _, probeName := range _probe.ProbeNames {
+				var executionData types.ExecutionData
 				probeStatusMap[probeName] = model.ProbeVerdictNa
+				probeModeMap[probeName] = model.ModeSot
 				description := "Either probe is not executed or not evaluated"
 				probeDescriptionMap[probeName] = &description
 
@@ -1241,7 +1251,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 
 									for _, probeStatus := range probeStatuses {
 										if probeStatus.Name == probeName {
-											mode = probeStatus.Mode
+											probeModeMap[probeName] = model.Mode(probeStatus.Mode)
 
 											description := probeStatus.Status.Description
 											probeDescriptionMap[probeStatus.Name] = &description
@@ -1277,7 +1287,7 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 
 				probeDetails = append(probeDetails, &model.GetProbesInExperimentRunResponse{
 					Probe: singleProbe.GetOutputProbe(),
-					Mode:  model.Mode(mode),
+					Mode:  probeModeMap[probeName],
 					Status: &model.Status{
 						Verdict:     probeStatusMap[probeName],
 						Description: probeDescriptionMap[probeName],
@@ -1289,4 +1299,163 @@ func (c *ChaosExperimentHandler) GetProbesInExperimentRun(ctx context.Context, p
 	}
 
 	return probeDetails, nil
+}
+
+// validateDuplicateExperimentName validates if the name of experiment is duplicate
+func (c *ChaosExperimentHandler) validateDuplicateExperimentName(ctx context.Context, projectID, name string) error {
+	filterQuery := bson.D{
+		{"project_id", projectID},
+		{"name", name},
+		{"is_removed", false},
+	}
+	experimentCount, err := c.chaosExperimentOperator.CountChaosExperiments(ctx, filterQuery)
+	if err != nil {
+		return err
+	}
+	if experimentCount > 0 {
+		return errors.New("experiment name should be unique, duplicate experiment found with name: " + name)
+	}
+
+	return nil
+}
+
+func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, workflowID string, disable bool, projectID string, r *store.StateData) (bool, error) {
+	var (
+		cronWorkflowManifest v1alpha1.CronWorkflow
+	)
+
+	//Fetching the experiment details
+	query := bson.D{
+		{"project_id", projectID},
+		{"experiment_id", workflowID},
+		{"is_removed", false},
+	}
+	experiment, err := c.chaosExperimentOperator.GetExperiment(ctx, query)
+	if err != nil {
+		return false, fmt.Errorf("could not get experiment run, error: %v", err)
+	}
+
+	//Fetching infra details to check infra upgrade status and infra active status
+	infra, err := dbChaosInfra.NewInfrastructureOperator(c.mongodbOperator).GetInfra(experiment.InfraID)
+	if err != nil {
+		return false, fmt.Errorf("failed to get infra for infraID: %s, error: %v", experiment.InfraID, err)
+	}
+
+	if !infra.IsActive {
+		return false, fmt.Errorf("cron experiement updation failed due to inactive infra, err: %v", err)
+	}
+
+	//Validate if revisions are available
+	if len(experiment.Revision) == 0 {
+		return false, fmt.Errorf("no revisions found")
+	}
+	sort.Slice(experiment.Revision, func(i, j int) bool {
+		return experiment.Revision[i].UpdatedAt > experiment.Revision[j].UpdatedAt
+	})
+
+	//Parsing the manifest to cron experiment structure
+	if err := json.Unmarshal([]byte(experiment.Revision[0].ExperimentManifest), &cronWorkflowManifest); err != nil {
+		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %s", err.Error())
+	}
+
+	cronWorkflowManifest, err = probe.GenerateCronExperimentManifestWithProbes(experiment.Revision[0].ExperimentManifest, experiment.ProjectID)
+	if err != nil {
+		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
+	}
+
+	//state of the cron experiment state
+	cronWorkflowManifest.Spec.Suspend = disable
+
+	updatedManifest, err := json.Marshal(cronWorkflowManifest)
+	if err != nil {
+		return false, fmt.Errorf("failed to marshal workflow manifest, error: %v", err)
+	}
+
+	//Update the revision in database
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	err = c.chaosExperimentService.ProcessExperimentUpdate(&model.ChaosExperimentRequest{
+		ExperimentID:       &workflowID,
+		ExperimentManifest: string(updatedManifest),
+		ExperimentName:     experiment.Name,
+	}, username, &experiment.ExperimentType, experiment.Revision[0].RevisionID, true, experiment.ProjectID, nil)
+
+	if err != nil {
+		return false, err
+	}
+
+	//Update the runtime values in cron experiment manifest
+
+	cronWorkflowManifest, _, err = c.chaosExperimentService.UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest, experiment)
+	if err != nil {
+		return false, err
+	}
+
+	updatedManifest, err = json.Marshal(cronWorkflowManifest)
+	if err != nil {
+		return false, errors.New("failed to marshal workflow manifest")
+	}
+	if r != nil {
+		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
+			ExperimentID:       &workflowID,
+			ExperimentManifest: string(updatedManifest),
+			ExperimentName:     experiment.Name,
+			InfraID:            experiment.InfraID,
+		}, &username, nil, "update", r)
+	}
+
+	return true, err
+}
+func (c *ChaosExperimentHandler) StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, r *store.StateData) (bool, error) {
+
+	var experimentRunsID []string
+
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+
+	query := bson.D{
+		{"experiment_id", experimentID},
+		{"project_id", projectID},
+		{"is_removed", false},
+	}
+	experiment, err := c.chaosExperimentOperator.GetExperiment(context.TODO(), query)
+	if err != nil {
+		return false, err
+	}
+
+	// if experimentID is provided & no expRunID is present (stop all the corresponding experiment runs)
+	if experimentRunID == nil {
+
+		// Fetching all the experiment runs in the experiment
+		expRuns, err := dbChaosExperimentRun.NewChaosExperimentRunOperator(c.mongodbOperator).GetExperimentRuns(bson.D{
+			{"experiment_id", experimentID},
+			{"is_removed", false},
+		})
+		if err != nil {
+			return false, err
+		}
+
+		for _, runs := range expRuns {
+			if (runs.Phase == string(model.ExperimentRunStatusRunning) || runs.Phase == string(model.ExperimentRunStatusTimeout)) && !runs.Completed {
+				experimentRunsID = append(experimentRunsID, runs.ExperimentRunID)
+			}
+		}
+
+		// Check if experiment run count is 0 and if it's not a cron experiment
+		if len(experimentRunsID) == 0 && experiment.CronSyntax == "" {
+			return false, fmt.Errorf("no running or timeout experiments found")
+		}
+	} else if experimentRunID != nil && *experimentRunID != "" {
+		experimentRunsID = []string{*experimentRunID}
+	}
+
+	for _, runID := range experimentRunsID {
+		err = c.chaosExperimentRunService.ProcessExperimentRunStop(ctx, query, &runID, experiment, username, projectID, r)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
 }

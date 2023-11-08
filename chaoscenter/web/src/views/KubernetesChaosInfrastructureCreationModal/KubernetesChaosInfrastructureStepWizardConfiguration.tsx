@@ -202,11 +202,12 @@ function AdvancedChaosInfrastructureConfig({
                       className={css.addRowButton}
                     />
                   </Layout.Horizontal>
-                  {tolerationEntities.map((_, index) => (
+                  {tolerationEntities.map((toleration, index) => (
                     <Layout.Horizontal key={index} className={css.keyValueContainer}>
                       <FormInput.Text
                         inputGroup={{ type: 'number' }}
                         className={css.textCss}
+                        disabled={toleration.effect === 'NoSchedule' || toleration.effect === ''}
                         name={`${'tolerationValues'}[${index}].tolerationSeconds`}
                         placeholder={getString('tolerationSeconds')}
                       />
@@ -468,7 +469,7 @@ const ConfigureStep: React.FC<
                     noAutoScroll
                     isDefaultOpen
                     addDomId
-                    id="Basic"
+                    id={getString('basic')}
                     summary={
                       <Text font={{ variation: FontVariation.CARD_TITLE }} color={Color.GREY_1000}>
                         {getString('chaosComponentInstallation')}

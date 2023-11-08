@@ -180,5 +180,5 @@ spec:
         - name: REPLICA_COUNT
           value: '3'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

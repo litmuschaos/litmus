@@ -210,7 +210,7 @@ spec:
         - name: REGION
           value: '<region for EBS_VOLUME_TAG>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Percent of volumes
@@ -245,5 +245,5 @@ spec:
         - name: REGION
           value: '<region for EBS_VOLUME_TAG>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

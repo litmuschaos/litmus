@@ -219,5 +219,5 @@ spec:
         - name: REGION
           value: '<region for EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

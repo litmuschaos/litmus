@@ -15,7 +15,9 @@ import (
 	"github.com/gorilla/websocket"
 
 	"subscriber/pkg/events"
+	"subscriber/pkg/graphql"
 	"subscriber/pkg/requests"
+	"subscriber/pkg/utils"
 
 	"github.com/kelseyhightower/envconfig"
 
@@ -62,6 +64,9 @@ func init() {
 
 	var c Config
 
+	subscriberGraphql := graphql.NewSubscriberGql()
+	subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
+
 	err := envconfig.Process("", &c)
 	if err != nil {
 		logrus.Fatal(err)
@@ -86,14 +91,14 @@ func init() {
 	flag.Parse()
 
 	// check agent component status
-	err = k8s.CheckComponentStatus(infraData["COMPONENTS"])
+	err = subscriberK8s.CheckComponentStatus(infraData["COMPONENTS"])
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
 	logrus.Info("Starting the subscriber")
 
-	isConfirmed, newKey, err := k8s.IsAgentConfirmed()
+	isConfirmed, newKey, err := subscriberK8s.IsAgentConfirmed()
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to check agent confirmed status")
 	}
@@ -101,7 +106,7 @@ func init() {
 	if isConfirmed {
 		infraData["ACCESS_KEY"] = newKey
 	} else if !isConfirmed {
-		infraConfirmByte, err := k8s.AgentConfirm(infraData)
+		infraConfirmByte, err := subscriberK8s.AgentConfirm(infraData)
 		if err != nil {
 			logrus.WithError(err).WithField("data", string(infraConfirmByte)).Fatal("Failed to confirm agent")
 		}
@@ -116,7 +121,7 @@ func init() {
 			infraData["ACCESS_KEY"] = infraConfirmInterface.Data.InfraConfirm.NewAccessKey
 			infraData["IS_INFRA_CONFIRMED"] = "true"
 
-			_, err = k8s.AgentRegister(infraData)
+			_, err = subscriberK8s.AgentRegister(infraData)
 			if err != nil {
 				logrus.Fatal(err)
 			}
@@ -132,16 +137,23 @@ func main() {
 	sigCh := make(chan os.Signal)
 	stream := make(chan types.WorkflowEvent, 10)
 
+	subscriberGraphql := graphql.NewSubscriberGql()
+	subscriberK8s := k8s.NewK8sSubscriber(subscriberGraphql)
+	subscriberEvents := events.NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
+	subscriberUtils := utils.NewSubscriberUtils(subscriberEvents, subscriberK8s)
+	subscriberEventOperations := events.NewSubscriberEventsOperator(subscriberGraphql, subscriberK8s)
+	subscriberRequests := requests.NewSubscriberRequests(subscriberK8s, subscriberUtils)
 	//start events event watcher
-	events.WorkflowEventWatcher(stopCh, stream, infraData)
+
+	subscriberEventOperations.WorkflowEventWatcher(stopCh, stream, infraData)
 
 	//start events event watcher
-	events.ChaosEventWatcher(stopCh, stream, infraData)
+	subscriberEventOperations.ChaosEventWatcher(stopCh, stream, infraData)
 	//streams the event data to graphql server
-	go events.WorkflowUpdates(infraData, stream)
+	go subscriberEventOperations.WorkflowUpdates(infraData, stream)
 
 	// listen for agent actions
-	go requests.AgentConnect(infraData)
+	go subscriberRequests.AgentConnect(infraData)
 
 	signal.Notify(sigCh, os.Kill, os.Interrupt)
 	<-sigCh

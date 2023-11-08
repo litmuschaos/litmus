@@ -11,7 +11,6 @@ import (
 
 	"k8s.io/apimachinery/pkg/labels"
 
-	"subscriber/pkg/graphql"
 	"subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
@@ -47,12 +46,12 @@ var (
 	dr              dynamic.ResourceInterface
 )
 
-func CheckComponentStatus(componentEnv string) error {
+func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
 	if componentEnv == "" {
 		return errors.New("components not found in infra config")
 	}
 
-	clientset, err := GetGenericK8sClient()
+	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
 		return err
 	}
@@ -71,7 +70,7 @@ func CheckComponentStatus(componentEnv string) error {
 
 	// add all agent components to waitgroup
 	wait.Add(1)
-	go checkDeploymentStatus(&components, clientset, &wait)
+	go k8s.checkDeploymentStatus(&components, clientset, &wait)
 
 	wait.Wait()
 	if !components.LiveStatus {
@@ -80,7 +79,7 @@ func CheckComponentStatus(componentEnv string) error {
 	return nil
 }
 
-func checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
+func (k8s *k8sSubscriber) checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
 	ctx := context.TODO()
 	downCount := 0
 	retries := 0
@@ -128,8 +127,8 @@ func checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Cl
 	components.LiveStatus = false
 }
 
-func IsAgentConfirmed() (bool, string, error) {
-	clientset, err := GetGenericK8sClient()
+func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
+	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
 		return false, "", err
 	}
@@ -156,8 +155,8 @@ func IsAgentConfirmed() (bool, string, error) {
 }
 
 // AgentRegister function creates litmus-portal config map in the litmus namespace
-func AgentRegister(infraData map[string]string) (bool, error) {
-	clientset, err := GetGenericK8sClient()
+func (k8s *k8sSubscriber) AgentRegister(infraData map[string]string) (bool, error) {
+	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
@@ -207,11 +206,12 @@ func AgentRegister(infraData map[string]string) (bool, error) {
 
 func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstructured.Unstructured, error) {
 	ctx := context.TODO()
+
 	logrus.Info("Applying request for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 	if requestType == "create" {
 		response, err := dr.Create(ctx, obj, metav1.CreateOptions{})
 		if k8s_errors.IsAlreadyExists(err) {
-			// This doesnt ever happen even if it does already exist
+			// This doesn't ever happen even if it does already exist
 			logrus.Info("Already exists")
 			return nil, nil
 		}
@@ -254,7 +254,6 @@ func applyRequest(requestType string, obj *unstructured.Unstructured) (*unstruct
 			}
 			logrus.Info("successfully deleted for kind: ", obj.GetKind(), ", resource name: ", obj.GetName(), ", and namespace: ", obj.GetNamespace())
 		} else if obj.GetLabels() != nil {
-			fmt.Println(obj)
 			objLabels := obj.GetLabels()
 			delete(objLabels, "updated_by")
 			err = dr.DeleteCollection(ctx, metav1.DeleteOptions{}, metav1.ListOptions{LabelSelector: labels.FormatLabels(objLabels)})
@@ -306,7 +305,7 @@ func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]str
 }
 
 // AgentOperations This function handles agent operations
-func AgentOperations(infraAction types.Action) (*unstructured.Unstructured, error) {
+func (k8s *k8sSubscriber) AgentOperations(infraAction types.Action) (*unstructured.Unstructured, error) {
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(infraAction.K8SManifest))
 	if err != nil {
@@ -314,7 +313,7 @@ func AgentOperations(infraAction types.Action) (*unstructured.Unstructured, erro
 	}
 
 	// Getting dynamic and discovery client
-	discoveryClient, dynamicClient, err := GetDynamicAndDiscoveryClient()
+	discoveryClient, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +337,6 @@ func AgentOperations(infraAction types.Action) (*unstructured.Unstructured, erro
 	if err != nil {
 		return nil, err
 	}
-
 	// Obtain REST interface for the GVR
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 		// namespaced resources should specify the namespace
@@ -351,9 +349,9 @@ func AgentOperations(infraAction types.Action) (*unstructured.Unstructured, erro
 	return applyRequest(infraAction.RequestType, obj)
 }
 
-func AgentConfirm(infraData map[string]string) ([]byte, error) {
+func (k8s *k8sSubscriber) AgentConfirm(infraData map[string]string) ([]byte, error) {
 	payload := `{"query":"mutation{ confirmInfraRegistration(request: {infraID: \"` + infraData["INFRA_ID"] + `\", version: \"` + infraData["VERSION"] + `\", accessKey: \"` + infraData["ACCESS_KEY"] + `\"}){isInfraConfirmed newAccessKey infraID}}"}`
-	resp, err := graphql.SendRequest(infraData["SERVER_ADDR"], []byte(payload))
+	resp, err := k8s.gqlSubscriberServer.SendRequest(infraData["SERVER_ADDR"], []byte(payload))
 	if err != nil {
 		return nil, err
 	}

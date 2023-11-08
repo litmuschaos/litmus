@@ -7,7 +7,7 @@ import { listExperimentRunForHistory } from '@api/core';
 import { getScope, getColorBasedOnResilienceScore } from '@utils';
 import ExperimentRunHistoryView from '@views/ExperimentRunHistory';
 import { useStrings } from '@strings';
-import { ExperimentRun, InfrastructureType } from '@api/entities';
+import type { ExperimentRun } from '@api/entities';
 import type { ColumnData } from '@components/ColumnChart/ColumnChart.types';
 import {
   initialExperimentRunFilterState,
@@ -154,7 +154,6 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
       refetchExperimentRuns={refetchExperimentRuns}
       experimentID={experimentID}
       phase={experimentPhase}
-      infrastructureType={InfrastructureType.KUBERNETES}
       experimentType={experimentType}
     />
   );

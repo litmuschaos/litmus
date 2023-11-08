@@ -955,6 +955,8 @@ type K8SProbe struct {
 	Resource string `json:"resource"`
 	// Namespace of the Probe
 	Namespace *string `json:"namespace"`
+	// Resource Names of the Probe
+	ResourceNames *string `json:"resourceNames"`
 	// Field Selector of the Probe
 	FieldSelector *string `json:"fieldSelector"`
 	// Label Selector of the Probe
@@ -991,6 +993,8 @@ type K8SProbeRequest struct {
 	Resource string `json:"resource"`
 	// Namespace of the Probe
 	Namespace *string `json:"namespace"`
+	// Resource Names of the Probe
+	ResourceNames *string `json:"resourceNames"`
 	// Field Selector of the Probe
 	FieldSelector *string `json:"fieldSelector"`
 	// Label Selector of the Probe

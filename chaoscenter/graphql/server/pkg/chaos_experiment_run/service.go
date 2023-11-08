@@ -27,6 +27,7 @@ import (
 type Service interface {
 	ProcessExperimentRunDelete(ctx context.Context, query bson.D, workflowRunID *string, experimentRun dbChaosExperimentRun.ChaosExperimentRun, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error
 	ProcessCompletedExperimentRun(execData ExecutionData, wfID string, runID string) (ExperimentRunMetrics, error)
+	ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error
 }
 
 // chaosWorkflowService is the implementation of the chaos workflow service
@@ -65,6 +66,30 @@ func (c *chaosExperimentRunService) ProcessExperimentRunDelete(ctx context.Conte
 		chaos_infrastructure.SendExperimentToSubscriber(experimentRun.ProjectID, &model.ChaosExperimentRequest{
 			InfraID: workflow.InfraID,
 		}, &username, workflowRunID, "workflow_run_delete", r)
+	}
+
+	return nil
+}
+
+// ProcessExperimentRunStop deletes a workflow entry and updates the database
+func (c *chaosExperimentRunService) ProcessExperimentRunStop(ctx context.Context, query bson.D, experimentRunID *string, experiment dbChaosExperiment.ChaosExperimentRequest, username string, projectID string, r *store.StateData) error {
+	update := bson.D{
+		{"$set", bson.D{
+			{"updated_at", time.Now().UnixMilli()},
+			{"updated_by", mongodb.UserDetailResponse{
+				Username: username,
+			}},
+		}},
+	}
+
+	err := c.chaosExperimentRunOperator.UpdateExperimentRunWithQuery(ctx, query, update)
+	if err != nil {
+		return err
+	}
+	if r != nil {
+		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
+			InfraID: experiment.InfraID,
+		}, &username, experimentRunID, "workflow_run_stop", r)
 	}
 
 	return nil

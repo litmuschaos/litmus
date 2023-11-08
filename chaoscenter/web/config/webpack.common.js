@@ -7,6 +7,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const { GenerateStringTypesPlugin } = require('../scripts/GenerateStringTypesPlugin');
 const { RetryChunkLoadPlugin } = require('webpack-retry-chunk-load-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const CONTEXT = process.cwd();
 
@@ -155,6 +156,13 @@ module.exports = {
             id: 'monaco-yaml/yamlWorker',
             entry: 'monaco-yaml/yaml.worker'
           }
+        }
+      ]
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'src/static'
         }
       ]
     })

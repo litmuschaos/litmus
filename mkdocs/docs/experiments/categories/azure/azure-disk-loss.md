@@ -203,7 +203,7 @@ spec:
         - name: RESOURCE_GROUP
           value: '<resource group of VIRTUAL_DISK_NAMES>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 
@@ -239,7 +239,7 @@ spec:
         - name: SCALE_SET
           value: 'enable'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Multiple Iterations Of Chaos
@@ -269,7 +269,7 @@ spec:
           value: '10'
          # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: VIRTUAL_DISK_NAMES
           value: 'disk-01,disk-02'
         - name: RESOURCE_GROUP

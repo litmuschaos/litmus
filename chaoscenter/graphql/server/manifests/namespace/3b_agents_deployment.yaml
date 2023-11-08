@@ -69,3 +69,50 @@ spec:
               memory: "500Mi"
               cpu: "225m"
               ephemeral-storage: "1Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: event-tracker
+  name: event-tracker
+  namespace: #{INFRA_NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-tracker
+  template:
+    metadata:
+      labels:
+        app: event-tracker
+    spec:
+      #{TOLERATIONS}
+      #{NODE_SELECTOR}
+      serviceAccountName: event-tracker-sa
+      containers:
+        - image: #{EVENT_TRACKER_IMAGE}
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 2000
+            allowPrivilegeEscalation: false
+          name: litmus-event-tracker
+          envFrom:
+            - configMapRef:
+                name: subscriber-config
+            - secretRef:
+                name: subscriber-secret
+          env:
+            - name: INFRA_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "125m"
+              ephemeral-storage: "500Mi"
+            limits:
+              memory: "500Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
