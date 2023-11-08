@@ -6,10 +6,10 @@ type Response struct {
 
 type ApiTokenResponse struct {
 	UserID    string
-    Name      string
-    Token     string
-    ExpiresAt int64
-    CreatedAt int64
+	Name      string
+	Token     string
+	ExpiresAt int64
+	CreatedAt int64
 }
 
 type Role string
@@ -35,5 +35,5 @@ type LoginResponse struct {
 	accessToken string
 	projectID   string
 	projectRole string
-	expiresIn  string
+	expiresIn   string
 }
