@@ -19,6 +19,6 @@ litmus-portal-service
 litmus-portal-app
 litmus-portal/graphql-server/server
 
-# tmp/
+tmp/
 
 **/client_id
