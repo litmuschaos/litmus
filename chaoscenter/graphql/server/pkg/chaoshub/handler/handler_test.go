@@ -48,7 +48,7 @@ func TestGetChartsPathFalse(t *testing.T) {
 	// when
 	path := handler.GetChartsPath(chartsInput, projectID, false)
 	// then
-	assert.Equal(t, "/tmp/test/test/faults/", path)
+	assert.Equal(t, "./tmp/test/test/faults/", path)
 }
 
 // TestReadExperimentFile is used to test the ReadExperimentFile function
