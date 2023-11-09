@@ -30,6 +30,7 @@ require (
 	k8s.io/api v0.26.0
 	k8s.io/apimachinery v0.26.0
 	k8s.io/client-go v12.0.0+incompatible
+	sigs.k8s.io/yaml v1.3.0
 
 )
 
@@ -111,7 +112,6 @@ require (
 	k8s.io/utils v0.0.0-20221107191617-1a15be271d1d // indirect
 	sigs.k8s.io/controller-runtime v0.11.1 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
 // Pinned to kubernetes-1.21.2

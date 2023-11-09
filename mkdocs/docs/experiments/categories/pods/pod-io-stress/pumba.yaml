@@ -21,4 +21,4 @@ spec:
         - name: LIB
           value: 'pumba'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

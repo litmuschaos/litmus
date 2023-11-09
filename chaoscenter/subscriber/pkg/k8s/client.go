@@ -13,7 +13,7 @@ import (
 var KubeConfig *string
 
 // getKubeConfig setup the config for access cluster resource
-func GetKubeConfig() (*rest.Config, error) {
+func (k8s *k8sSubscriber) GetKubeConfig() (*rest.Config, error) {
 	// Use in-cluster config if kubeconfig path is not specified
 	if *KubeConfig == "" {
 		return rest.InClusterConfig()
@@ -21,8 +21,8 @@ func GetKubeConfig() (*rest.Config, error) {
 	return clientcmd.BuildConfigFromFlags("", *KubeConfig)
 }
 
-func GetGenericK8sClient() (*kubernetes.Clientset, error) {
-	config, err := GetKubeConfig()
+func (k8s *k8sSubscriber) GetGenericK8sClient() (*kubernetes.Clientset, error) {
+	config, err := k8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -31,9 +31,9 @@ func GetGenericK8sClient() (*kubernetes.Clientset, error) {
 }
 
 // This function returns dynamic client and discovery client
-func GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
+func (k8s *k8sSubscriber) GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Interface, error) {
 	// returns a config object which uses the service account kubernetes gives to pods
-	config, err := GetKubeConfig()
+	config, err := k8s.GetKubeConfig()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -53,10 +53,10 @@ func GetDynamicAndDiscoveryClient() (discovery.DiscoveryInterface, dynamic.Inter
 	return discoveryClient, dynamicClient, nil
 }
 
-func GenerateArgoClient(namespace string) (v1alpha12.WorkflowInterface, error) {
+func (k8s *k8sSubscriber) GenerateArgoClient(namespace string) (v1alpha12.WorkflowInterface, error) {
 
 	//List all chaosEngines present in the particular namespace
-	conf, err := GetKubeConfig()
+	conf, err := k8s.GetKubeConfig()
 	if err != nil {
 		return nil, err
 	}
