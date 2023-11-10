@@ -20,9 +20,9 @@ metadata:
   name: subscriber-secret
   namespace: #{INFRA_NAMESPACE}
 stringData:
-  CUSTOM_TLS_CERT: "#{CUSTOM_TLS_CERT}"
   INFRA_ID: #{INFRA_ID}
   ACCESS_KEY: #{ACCESS_KEY}
+  CUSTOM_TLS_CERT: "#{CUSTOM_TLS_CERT}"
 ---
 apiVersion: apps/v1
 kind: Deployment
