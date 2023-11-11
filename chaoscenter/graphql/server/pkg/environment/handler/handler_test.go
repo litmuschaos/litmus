@@ -21,7 +21,7 @@ import (
 
 var (
 	mongodbMockOperator = new(dbMocks.MongoOperator)
-	EnvironmentOperator = dbOperationsEnvironment.NewEnvironmentOperator(mongodbMockOperator)
+	environmentOperator = dbOperationsEnvironment.NewEnvironmentOperator(mongodbMockOperator)
 )
 
 const JwtSecret = "testsecret"
