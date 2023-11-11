@@ -140,7 +140,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			},
 			expectedErr: errors.New("invalid Token"),
 			given: func() string {
-				token, err := getsignedJWT("testUser")
+				token, err := getSignedJWT("testUser")
 				if err != nil {
 					return token
 				}
