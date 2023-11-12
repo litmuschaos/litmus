@@ -20,8 +20,6 @@ import (
 
 	"google.golang.org/grpc"
 
-	_ "github.com/golang-crud-gin/docs"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
