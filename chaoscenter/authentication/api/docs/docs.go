@@ -16,34 +16,70 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/accept_invitation": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Accept inviation to a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Accept invitaion.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
         },
         "/create_project": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Create a new project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Create project.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -52,6 +88,12 @@ const docTemplate = `{
         "/create_token": {
             "post": {
                 "description": "Creates a new api token for the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -61,6 +103,18 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.NewApiToken"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUserNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
@@ -68,6 +122,12 @@ const docTemplate = `{
         "/create_user": {
             "post": {
                 "description": "Create new user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -77,22 +137,64 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.UserResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidEmail"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUserExists"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
         },
         "/decline_invitation": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Deecline invitation to a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Decline invitation.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -101,6 +203,12 @@ const docTemplate = `{
         "/dex/callback": {
             "get": {
                 "description": "DexRouter creates all the required routes for OAuth purposes. .",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "DexRouter"
                 ],
@@ -108,7 +216,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "obejct"
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -117,6 +231,12 @@ const docTemplate = `{
         "/dex/login": {
             "get": {
                 "description": "DexRouter creates all the required routes for OAuth purposes. .",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "DexRouter"
                 ],
@@ -126,22 +246,52 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
         },
         "/get_owner_projects": {
             "get": {
-                "description": "Return stats of a project.",
+                "description": "Return owner of projects.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Get projects owner.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -149,16 +299,37 @@ const docTemplate = `{
         },
         "/get_project_members/:project_id/:state": {
             "get": {
-                "description": "Return stats of a project.",
+                "description": "Return list of active project members.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Get active project members.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "State",
+                        "name": "state",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -166,16 +337,43 @@ const docTemplate = `{
         },
         "/get_project_role/:project_id": {
             "get": {
-                "description": "Return stats of a project.",
+                "description": "Return role of a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Get project Role.",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Project ID",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrProjectNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -184,6 +382,12 @@ const docTemplate = `{
         "/get_projects_stats": {
             "get": {
                 "description": "Return stats of a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
@@ -193,6 +397,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -201,6 +411,12 @@ const docTemplate = `{
         "/get_user/:uid": {
             "get": {
                 "description": "Get user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -209,6 +425,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUserNotFound"
                         }
                     }
                 }
@@ -217,6 +439,12 @@ const docTemplate = `{
         "/invite_users/:project_id": {
             "get": {
                 "description": "Invite users.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -226,22 +454,58 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.UserResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
         },
         "/leave_project": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Leave project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Leave project.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -249,16 +513,37 @@ const docTemplate = `{
         },
         "/list_invitations_with_filters/:invitation_state": {
             "get": {
-                "description": "Return stats of a project.",
+                "description": "Return list of invitations.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "List invitations.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Invitation State",
+                        "name": "invitation_state",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -267,6 +552,12 @@ const docTemplate = `{
         "/list_projects": {
             "get": {
                 "description": "Return stats of a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
@@ -277,6 +568,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
@@ -284,6 +581,12 @@ const docTemplate = `{
         "/login": {
             "post": {
                 "description": "User Login.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -293,6 +596,18 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.LoginResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidCredentials"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
@@ -300,6 +615,12 @@ const docTemplate = `{
         "/logout": {
             "post": {
                 "description": "Revokes the token passed in the Authorization header.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -308,6 +629,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -316,6 +649,12 @@ const docTemplate = `{
         "/readiness": {
             "get": {
                 "description": "Return list of tags.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "MiscRouter"
                 ],
@@ -325,22 +664,52 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
         },
         "/remove_invitation": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Remove invitation of a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Remove invitation.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "obejct"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -349,6 +718,12 @@ const docTemplate = `{
         "/remove_token": {
             "post": {
                 "description": "Delete api token for the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -357,6 +732,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -365,6 +752,12 @@ const docTemplate = `{
         "/reset/password": {
             "post": {
                 "description": "Reset user password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -374,22 +767,64 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.MessageResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrStrictPasswordPolicyViolation"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
         },
         "/send_invitation": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Send invitation to a project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Send invitation.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUserNotFound"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -398,6 +833,12 @@ const docTemplate = `{
         "/status": {
             "get": {
                 "description": "Status will request users list and return, if successful, an http code 200.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "MiscRouter"
                 ],
@@ -407,6 +848,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
@@ -414,6 +861,12 @@ const docTemplate = `{
         "/token/:uid": {
             "post": {
                 "description": "Returns all the api tokens for the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -423,6 +876,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.ApiTokenResponse"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
                     }
                 }
             }
@@ -430,6 +889,12 @@ const docTemplate = `{
         "/update/details": {
             "post": {
                 "description": "Update users details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -438,6 +903,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -446,6 +923,12 @@ const docTemplate = `{
         "/update/password": {
             "post": {
                 "description": "Update user password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -454,6 +937,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidCredentials"
                         }
                     }
                 }
@@ -462,6 +957,12 @@ const docTemplate = `{
         "/update/state": {
             "post": {
                 "description": "Updates the user state.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -471,22 +972,58 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.MessageResponse"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
                     }
                 }
             }
         },
         "/update_project_name": {
-            "get": {
-                "description": "Return stats of a project.",
+            "post": {
+                "description": "Return updated project name.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "ProjectRouter"
                 ],
-                "summary": "Get stats of a project.",
+                "summary": "Update project name.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -495,6 +1032,12 @@ const docTemplate = `{
         "/users": {
             "get": {
                 "description": "Fetch users.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "UserRouter"
                 ],
@@ -503,6 +1046,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.UserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
                         }
                     }
                 }
@@ -527,6 +1082,149 @@ const docTemplate = `{
                 },
                 "userID": {
                     "type": "string"
+                }
+            }
+        },
+        "response.ErrInvalidCredentials": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Invalid Credentials"
+                }
+            }
+        },
+        "response.ErrInvalidEmail": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Email address is invalid"
+                }
+            }
+        },
+        "response.ErrInvalidRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed"
+                }
+            }
+        },
+        "response.ErrInvalidRole": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Role is invalid"
+                }
+            }
+        },
+        "response.ErrProjectNotFound": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "This project does not exist"
+                }
+            }
+        },
+        "response.ErrServerError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The authorization server encountered an unexpected condition that prevented it from fulfi"
+                }
+            }
+        },
+        "response.ErrStrictPasswordPolicyViolation": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
+                }
+            }
+        },
+        "response.ErrUnauthorized": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The user does not have requested authorization to access this resource"
+                }
+            }
+        },
+        "response.ErrUserDeactivated": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "your account has been deactivated"
+                }
+            }
+        },
+        "response.ErrUserExists": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "This username is already assigned to another user"
+                }
+            }
+        },
+        "response.ErrUserNotFound": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "user does not exist"
                 }
             }
         },
