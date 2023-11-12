@@ -26,7 +26,7 @@ var (
 
 const JwtSecret = "testsecret"
 
-func getsignedJWT(name string) (string, error) {
+func getSignedJWT(name string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = uuid.NewString()
@@ -96,7 +96,7 @@ func TestCreateEnvironment(t *testing.T) {
 				Return(tc.mockInsertFunc)
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
-			mockOperator := EnvironmentOperator
+			mockOperator := environmentOperator
 			service := handler.NewEnvironmentService(mockOperator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
@@ -173,7 +173,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
-			mockOperator := EnvironmentOperator
+			mockOperator := environmentOperator
 			service := handler.NewEnvironmentService(mockOperator)
 
 			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
