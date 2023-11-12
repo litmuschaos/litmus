@@ -18,10 +18,17 @@ import (
 const BearerSchema = "Bearer "
 
 // CreateUser		godoc
-// @Description		Create new user.
-// @Tags			UserRouter
-// @Success			200 {object} response.UserResponse{}
-// @Router			/create_user [post]
+//	@Description	Create new user.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		400	{object}	response.ErrInvalidEmail
+//	@Failure		401	{object}	response.ErrUserExists
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.UserResponse{}
+//	@Router			/create_user [post]
 func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -91,10 +98,14 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // UpdateUser		godoc
-// @Description		Update users details.
-// @Tags			UserRouter
-// @Success			200 {object} response.MessageResponse{}
-// @Router			/update/details [post]
+//	@Description	Update users details.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.MessageResponse{}
+//	@Router			/update/details [post]
 func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.UserDetails
@@ -126,10 +137,13 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // GetUser		godoc
-// @Description		Get user.
-// @Tags			UserRouter
-// @Success			200 {object} response.UserResponse{}
-// @Router			/get_user/:uid [get]
+//	@Description	Get user.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrUserNotFound
+//	@Success		200	{object}	response.UserResponse{}
+//	@Router			/get_user/:uid [get]
 // GetUser returns the user that matches the uid passed in parameter
 func GetUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -145,10 +159,14 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // FetchUsers		godoc
-// @Description		Fetch users.
-// @Tags			UserRouter
-// @Success			200 {object} response.UserResponse{}
-// @Router			/users [get]
+//	@Description	Fetch users.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.UserResponse{}
+//	@Router			/users [get]
 func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -168,10 +186,14 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // InviteUsers		godoc
-// @Description		Invite users.
-// @Tags			UserRouter
-// @Success			200 {object} response.UserResponse{}
-// @Router			/invite_users/:project_id [get]
+//	@Description	Invite users.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.UserResponse{}
+//	@Router			/invite_users/:project_id [get]
 func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -196,10 +218,17 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // LoginUser		godoc
-// @Description		User Login.
-// @Tags			UserRouter
-// @Success			200 {object} response.LoginResponse{}
-// @Router			/login [post]
+//	@Description	User Login.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		400	{object}	response.ErrUserNotFound
+//	@Failure		400	{object}	response.ErrUserDeactivated
+//	@Failure		400	{object}	response.ErrInvalidCredentials
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.LoginResponse{}
+//	@Router			/login [post]
 func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.User
@@ -303,10 +332,14 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // LogoutUser		godoc
-// @Description		Revokes the token passed in the Authorization header.
-// @Tags			UserRouter
-// @Success			200 {object} response.MessageResponse{}
-// @Router			/logout [post]
+//	@Description	Revokes the token passed in the Authorization header.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.MessageResponse{}
+//	@Router			/logout [post]
 // LogoutUser revokes the token passed in the Authorization header
 func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -330,10 +363,15 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // UpdatePassword		godoc
-// @Description		Update user password.
-// @Tags			UserRouter
-// @Success			200 {object} response.MessageResponse{}
-// @Router			/update/password [post]
+//	@Description	Update user password.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrStrictPasswordPolicyViolation
+//	@Failure		401	{object}	response.ErrInvalidCredentials
+//	@Success		200	{object}	response.MessageResponse{}
+//	@Router			/update/password [post]
 func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userPasswordRequest entities.UserPassword
@@ -369,10 +407,16 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // ResetPassword		godoc
-// @Description		Reset user password.
-// @Tags			UserRouter
-// @Success			200 {object} response.MessageResponse{}
-// @Router			/reset/password [post]
+//	@Description	Reset user password.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrStrictPasswordPolicyViolation
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.MessageResponse{}
+//	@Router			/reset/password [post]
 func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole := c.MustGet("role").(string)
@@ -424,10 +468,14 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // UpdateUserState		godoc
-// @Description		Updates the user state.
-// @Tags			UserRouter
-// @Success			200 {object} response.MessageResponse{}
-// @Router			/update/state [post]
+//	@Description	Updates the user state.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Success		200	{object}	response.MessageResponse{}
+//	@Router			/update/state [post]
 func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -477,10 +525,15 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // CreateApiToken		godoc
-// @Description		Creates a new api token for the user.
-// @Tags			UserRouter
-// @Success			200 {object} response.NewApiToken{}
-// @Router			/create_token [post]
+//	@Description	Creates a new api token for the user.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		400	{object}	response.ErrUserNotFound
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.NewApiToken{}
+//	@Router			/create_token [post]
 // CreateApiToken creates a new api token for the user
 func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -514,10 +567,13 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // GetApiTokens		godoc
-// @Description		Returns all the api tokens for the user.
-// @Tags			UserRouter
-// @Success			200 {object} response.ApiTokenResponse{}
-// @Router			/token/:uid [post]
+//	@Description	Returns all the api tokens for the user.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.ApiTokenResponse{}
+//	@Router			/token/:uid [post]
 // GetApiTokens returns all the api tokens for the user
 func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -535,10 +591,14 @@ func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // DeleteApiToken		godoc
-// @Description		Delete api token for the user.
-// @Tags			UserRouter
-// @Success			200 {object} response.MessageResponse{}
-// @Router			/remove_token [post]
+//	@Description	Delete api token for the user.
+//	@Tags			UserRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.MessageResponse{}
+//	@Router			/remove_token [post]
 // DeleteApiToken deletes the api token for the user
 func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
