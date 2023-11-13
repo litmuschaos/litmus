@@ -1,5 +1,5 @@
-import type { CronWorkflow } from '@models';
 import { CreateNodeOptions, Document, DocumentOptions, ParseOptions, SchemaOptions } from 'yaml';
+import type { CronWorkflow } from '@models';
 
 // https://github.com/eemeli/yaml/issues/211
 export function yamlStringify(
