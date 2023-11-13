@@ -1,6 +1,5 @@
 import type { CronWorkflow } from '@models';
 import { CreateNodeOptions, Document, DocumentOptions, ParseOptions, SchemaOptions } from 'yaml';
-import { bool, boolean } from 'yup';
 
 // https://github.com/eemeli/yaml/issues/211
 export function yamlStringify(
