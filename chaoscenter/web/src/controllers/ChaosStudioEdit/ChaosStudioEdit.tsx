@@ -10,7 +10,8 @@ import { ExperimentType, InfrastructureType, RecentExperimentRun } from '@api/en
 import Loader from '@components/Loader';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import RightSideBarV2 from '@components/RightSideBarV2';
-import { CronWorkflow, StudioMode } from '@models';
+import { StudioMode } from '@models';
+import { cronEnabled } from 'utils';
 
 export default function ChaosStudioEditController(): React.ReactElement {
   const scope = getScope();
@@ -40,7 +41,8 @@ export default function ChaosStudioEditController(): React.ReactElement {
   )[0];
 
   const [lastExperimentRun, setLastExperimentRun] = React.useState<RecentExperimentRun | undefined>();
-  let isCronEnabled: boolean | undefined = false;
+  const [isCronEnabled, setIsCronEnabled] = React.useState<boolean>();
+
   React.useEffect(() => {
     if (experimentData && showStudio < 2 && !hasUnsavedChangesInURL) {
       const infrastructureType = InfrastructureType.KUBERNETES;
@@ -68,13 +70,9 @@ export default function ChaosStudioEditController(): React.ReactElement {
       setLastExperimentRun(experimentData.recentExperimentRunDetails?.[0]);
 
       const parsedManifest = JSON.parse(experimentData.experimentManifest);
-
-      isCronEnabled =
-        experimentData && experimentData?.experimentType === ExperimentType.CRON
-          ? (parsedManifest as CronWorkflow)?.spec?.suspend === undefined
-          : true
-          ? (parsedManifest as CronWorkflow)?.spec?.suspend === undefined
-          : (parsedManifest as CronWorkflow)?.spec?.suspend;
+      const validateCron =
+        experimentData && experimentData?.experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
+      setIsCronEnabled(validateCron);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experimentData, experimentID, hasUnsavedChangesInURL]);

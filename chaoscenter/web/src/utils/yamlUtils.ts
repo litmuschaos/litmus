@@ -1,4 +1,6 @@
+import type { CronWorkflow } from '@models';
 import { CreateNodeOptions, Document, DocumentOptions, ParseOptions, SchemaOptions } from 'yaml';
+import { bool, boolean } from 'yup';
 
 // https://github.com/eemeli/yaml/issues/211
 export function yamlStringify(
@@ -39,3 +41,11 @@ export const downloadYamlAsFile = async (yamlResponse: any, fileName: string): P
     return { status: false };
   }
 };
+
+export function cronEnabled(workflowManifest: CronWorkflow) {
+  if ((workflowManifest as CronWorkflow)?.spec?.suspend === undefined) {
+    return true;
+  } else if (workflowManifest && (workflowManifest as CronWorkflow)?.spec?.suspend !== undefined) {
+    return !(workflowManifest as CronWorkflow)?.spec?.suspend;
+  }
+}

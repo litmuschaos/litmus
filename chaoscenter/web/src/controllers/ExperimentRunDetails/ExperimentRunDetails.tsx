@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { ExecutionData, ExperimentType } from '@api/entities';
 import { ExperimentRunStatus } from '@api/entities';
-import { getScope } from '@utils';
+import { cronEnabled, getScope } from '@utils';
 import ExperimentRunDetailsView from '@views/ExperimentRunDetails';
 import RightSideBarV2 from '@components/RightSideBarV2';
 import { getExperimentRun } from '@api/core/experiments/getExperimentRun';
@@ -49,13 +49,8 @@ export default function ExperimentRunDetailsController(): React.ReactElement {
 
   const parsedManifest =
     specificRunData && specificRunData?.experimentManifest ? JSON.parse(specificRunData.experimentManifest) : undefined;
-
   const isCronEnabled =
-    specificRunExists && specificRunData?.experimentType === ExperimentType.CRON
-      ? (parsedManifest as CronWorkflow)?.spec?.suspend === undefined
-      : true
-      ? (parsedManifest as CronWorkflow)?.spec?.suspend !== undefined
-      : (parsedManifest as CronWorkflow)?.spec?.suspend;
+    specificRunExists && specificRunData?.experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
 
   const rightSideBarV2 = (
     <RightSideBarV2

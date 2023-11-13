@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Color } from '@harnessio/design-system';
 import { isEqual } from 'lodash-es';
 import { listExperimentRunForHistory } from '@api/core';
-import { getScope, getColorBasedOnResilienceScore } from '@utils';
+import { getScope, getColorBasedOnResilienceScore, cronEnabled } from '@utils';
 import ExperimentRunHistoryView from '@views/ExperimentRunHistory';
 import { useStrings } from '@strings';
 import { ExperimentRun, ExperimentType } from '@api/entities';
@@ -154,11 +154,7 @@ export default function ExperimentRunHistoryController(): React.ReactElement {
   const parsedManifest = experimentManifest && JSON.parse(experimentManifest);
 
   const isCronEnabled =
-    experimentRunsWithExecutionData && experimentType === ExperimentType.CRON
-      ? (parsedManifest as CronWorkflow)?.spec?.suspend === undefined
-      : true
-      ? (parsedManifest as CronWorkflow)?.spec?.suspend !== undefined
-      : (parsedManifest as CronWorkflow)?.spec?.suspend;
+    experimentRunsWithExecutionData && experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
 
   const rightSideBarV2 = (
     <RightSideBarV2
