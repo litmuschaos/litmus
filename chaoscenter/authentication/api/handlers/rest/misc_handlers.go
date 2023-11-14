@@ -26,6 +26,7 @@ type ReadinessAPIStatus struct {
 }
 
 // Status 		godoc
+//
 //	@Description	Status will request users list and return, if successful, an http code 200.
 //	@Tags			MiscRouter
 //	@Accept			json
@@ -33,6 +34,7 @@ type ReadinessAPIStatus struct {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
 //	@Router			/status [get]
+//
 // Status will request users list and return, if successful,
 // an http code 200
 func Status(service services.ApplicationService) gin.HandlerFunc {
@@ -48,6 +50,7 @@ func Status(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // Readiness 		godoc
+//
 //	@Description	Return list of tags.
 //	@Tags			MiscRouter
 //	@Accept			json

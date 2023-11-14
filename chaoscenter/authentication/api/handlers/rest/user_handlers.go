@@ -18,6 +18,7 @@ import (
 const BearerSchema = "Bearer "
 
 // CreateUser		godoc
+//
 //	@Description	Create new user.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -98,6 +99,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // UpdateUser		godoc
+//
 //	@Description	Update users details.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -137,6 +139,7 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // GetUser		godoc
+//
 //	@Description	Get user.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -144,6 +147,7 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrUserNotFound
 //	@Success		200	{object}	response.UserResponse{}
 //	@Router			/get_user/:uid [get]
+//
 // GetUser returns the user that matches the uid passed in parameter
 func GetUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -159,6 +163,7 @@ func GetUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // FetchUsers		godoc
+//
 //	@Description	Fetch users.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -186,6 +191,7 @@ func FetchUsers(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // InviteUsers		godoc
+//
 //	@Description	Invite users.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -218,6 +224,7 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // LoginUser		godoc
+//
 //	@Description	User Login.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -332,6 +339,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // LogoutUser		godoc
+//
 //	@Description	Revokes the token passed in the Authorization header.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -340,6 +348,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/logout [post]
+//
 // LogoutUser revokes the token passed in the Authorization header
 func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -363,6 +372,7 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // UpdatePassword		godoc
+//
 //	@Description	Update user password.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -407,6 +417,7 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // ResetPassword		godoc
+//
 //	@Description	Reset user password.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -468,6 +479,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // UpdateUserState		godoc
+//
 //	@Description	Updates the user state.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -525,6 +537,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // CreateApiToken		godoc
+//
 //	@Description	Creates a new api token for the user.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -534,6 +547,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.NewApiToken{}
 //	@Router			/create_token [post]
+//
 // CreateApiToken creates a new api token for the user
 func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -567,6 +581,7 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // GetApiTokens		godoc
+//
 //	@Description	Returns all the api tokens for the user.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -574,6 +589,7 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.ApiTokenResponse{}
 //	@Router			/token/:uid [post]
+//
 // GetApiTokens returns all the api tokens for the user
 func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -591,6 +607,7 @@ func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 }
 
 // DeleteApiToken		godoc
+//
 //	@Description	Delete api token for the user.
 //	@Tags			UserRouter
 //	@Accept			json
@@ -599,6 +616,7 @@ func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/remove_token [post]
+//
 // DeleteApiToken deletes the api token for the user
 func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
