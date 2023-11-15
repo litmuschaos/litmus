@@ -28,7 +28,7 @@ export const findPopoverContainer = (): HTMLElement | null => document.querySele
 
 export function TestWrapper({ children }: TestWrapperProps): React.ReactElement {
   const getString = (key: string): string => key;
-  const appoloClient = new ApolloClient({ cache: new InMemoryCache() });
+  const apolloClient = new ApolloClient({ cache: new InMemoryCache() });
   return (
     <ReactQueryProvider>
       <ApolloProvider client={appoloClient}>
