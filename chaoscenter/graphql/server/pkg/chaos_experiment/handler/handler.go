@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
 	"sort"
 	"strconv"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
