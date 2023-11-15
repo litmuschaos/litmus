@@ -177,8 +177,12 @@ export interface StringsMap {
   'creationTime': unknown
   'criteria': unknown
   'criteriaForData': unknown
+  'cron': unknown
+  'cronDisabled': unknown
   'cronExpression': unknown
   'cronExpressionRequired': unknown
+  'cronHalted': unknown
+  'cronResumed': unknown
   'cronSelectOption': unknown
   'cronText': unknown
   'currentRun': unknown
@@ -219,6 +223,8 @@ export interface StringsMap {
   'detailsAndProperties': unknown
   'disable': unknown
   'disableChaosInfrastructure': unknown
+  'disableCron': unknown
+  'disableCronDesc': unknown
   'disableUser': unknown
   'disableUserDescription': unknown
   'discard': unknown
@@ -260,6 +266,8 @@ export interface StringsMap {
   'enableChaosInfraButton': unknown
   'enableChaosInfrastructure': unknown
   'enableChaosInfrastructureDesc': unknown
+  'enableCron': unknown
+  'enableCronDesc': unknown
   'enableImageRegistryChanges': unknown
   'enableSSLCheck': unknown
   'enableUser': unknown
@@ -569,6 +577,7 @@ export interface StringsMap {
   'nodeSelectorPlaceholderForKey': unknown
   'nodeSelectorPlaceholderForValue': unknown
   'nodeSelectorText': unknown
+  'nonCron': unknown
   'nonCronSelectOption': unknown
   'nonCronText': unknown
   'nonProd': unknown
