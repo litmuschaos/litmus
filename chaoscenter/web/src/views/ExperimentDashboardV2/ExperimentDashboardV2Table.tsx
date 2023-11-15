@@ -216,7 +216,7 @@ const ExperimentDashboardV2Table = ({
               case ExperimentRunStatus.QUEUED:
                 return (
                   <RunExperimentButton
-                    buttonProps={{ disabled: lastExperimentRunStatus === ExperimentRunStatus.QUEUED }}
+                    buttonProps={{ disabled: true }}
                     experimentID={data.experimentID}
                     refetchExperiments={refetchExperiments}
                   />
