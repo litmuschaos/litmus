@@ -686,7 +686,7 @@ spec:
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
-              value: '["ci"]'
+              value: '["3.1.0"]'
           ports:
             - containerPort: 8080
             - containerPort: 8000
