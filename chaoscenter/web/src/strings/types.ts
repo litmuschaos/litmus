@@ -298,6 +298,7 @@ export interface StringsMap {
   'error': unknown
   'errorApplyChanges': unknown
   'errorFetchName': unknown
+  'errorInYamlDescription': unknown
   'evaluationTimeout': unknown
   'executedBy': unknown
   'executedOn': unknown

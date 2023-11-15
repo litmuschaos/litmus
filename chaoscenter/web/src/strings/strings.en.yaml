@@ -211,15 +211,10 @@ criteria: Criteria
 criteriaForData: Criteria for data
 cron: Cron
 cronDisabled: Cron Schedule is disabled
-cronHalted: This cron experiment as been halted successfully.
-cronResumed: This cron experiment has re-scheduled successfully.
-disableCron: Disable Cron
-disableCronDesc: This will disable the cron schedule for this experiment.
-enableCron: Enable Cron
-enableCronDesc: This will enable the cron schedule for this experiment.
-nonCron: Non-Cron
 cronExpression: Cron Expression
 cronExpressionRequired: Cron Expression required
+cronHalted: This cron experiment as been halted successfully.
+cronResumed: This cron experiment has re-scheduled successfully.
 cronSelectOption: Cron (Recurring run)
 cronText: >-
   The experiment will run periodically according to the cron provided below. You
@@ -269,6 +264,8 @@ details: Details
 detailsAndProperties: Details & Properties
 disable: Disable
 disableChaosInfrastructure: Disable Chaos Infrastructure
+disableCron: Disable Cron
+disableCronDesc: This will disable the cron schedule for this experiment.
 disableUser: Disable User
 disableUserDescription: Are you sure you want to disable this user?
 discard: Discard
@@ -318,6 +315,8 @@ enableChaosInfrastructure: Enable chaos infrastructure to run your first chaos e
 enableChaosInfrastructureDesc: >-
   In order to run Chaos Experiments, you need to enable chaos infrastructure in
   the Environments
+enableCron: Enable Cron
+enableCronDesc: This will enable the cron schedule for this experiment.
 enableImageRegistryChanges: Enable Image Registry Changes
 enableSSLCheck: Enable SSL/TLS check
 enableUser: Enable User
@@ -350,6 +349,7 @@ environments: Environments
 error: Error
 errorApplyChanges: Error in Applying the Changes. Please enter correct input values.
 errorFetchName: Error in fetching the name.
+errorInYamlDescription: There are some errors in the file, please check YAML file for errors.
 evaluationTimeout: Evaluation timeout
 executedBy: Executed by
 executedOn: Executed on
@@ -698,6 +698,7 @@ nodeSelectorPlaceholderForValue: Enter the value
 nodeSelectorText: >-
   Node Selector is a selector which will result in all pods of the experiment to
   be scheduled on the selected node.
+nonCron: Non-Cron
 nonCronSelectOption: Non-Cron (Single run)
 nonCronText: >-
   The experiment will run once after you click on Run. If you want to run it
