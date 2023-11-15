@@ -57,7 +57,7 @@ type HTTPError struct {
 
 type ErrServerError struct {
 	Code    int    `json:"code" example:"500"`
-	Message string `json:"message" example:"The authorization server encountered an unexpected condition that prevented it from fulfi"`
+	Message string `json:"message" example:"The authorization server encountered an unexpected condition that prevented it from fulfilling the request"`
 }
 type ErrInvalidCredentials struct {
 	Code    int    `json:"code" example:"401"`
