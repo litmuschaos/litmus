@@ -1,13 +1,11 @@
 import { useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { ExecutionData, ExperimentType } from '@api/entities';
-import { ExperimentRunStatus } from '@api/entities';
+import { ExecutionData, ExperimentType, ExperimentRunStatus } from '@api/entities';
 import { cronEnabled, getScope } from '@utils';
 import ExperimentRunDetailsView from '@views/ExperimentRunDetails';
 import RightSideBarV2 from '@components/RightSideBarV2';
 import { getExperimentRun } from '@api/core/experiments/getExperimentRun';
-import type { CronWorkflow, Workflow } from '@models';
 
 export default function ExperimentRunDetailsController(): React.ReactElement {
   const { experimentID, runID, notifyID } = useParams<{ experimentID: string; runID: string; notifyID: string }>();

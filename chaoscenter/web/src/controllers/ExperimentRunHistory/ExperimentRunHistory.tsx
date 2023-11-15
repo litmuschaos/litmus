@@ -27,7 +27,6 @@ import {
 } from './ExperimentRunFilter';
 import type { ExperimentRunHistoryTableProps } from './types';
 import { generateExperimentRunTableContent } from './helpers';
-import type { CronWorkflow } from '@models';
 
 const Tooltip = ({ experimentRun }: { experimentRun: ExperimentRun }): React.ReactElement => {
   const { getString } = useStrings();
