@@ -104,13 +104,13 @@ This command scans your project and creates a Swagger specification from your an
 
 ### Step 5: Serve the Swagger Specification
 
-Finally, use GoSwagger to serve your Swagger specification file. This allows you to view your API documentation in a web browser.
+Finally, use GoSwagger to serve your Swagger specification file. This allows you to view your API documentation in a web browser. By default the API docs will be generated with Redocly.
 
 ```bash
 swagger serve swagger.yaml
 ```
 
-By default the API docs will be generated
+To run the orginal swagger format
 
 ```bash
 swagger serve -F=swagger swagger.yaml
