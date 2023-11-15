@@ -70,8 +70,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
       setLastExperimentRun(experimentData.recentExperimentRunDetails?.[0]);
 
       const parsedManifest = JSON.parse(experimentData.experimentManifest);
-      const validateCron =
-        experimentData && experimentData?.experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
+      const validateCron = experimentData?.experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
       setIsCronEnabled(validateCron);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
