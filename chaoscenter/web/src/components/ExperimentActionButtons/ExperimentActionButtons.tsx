@@ -352,7 +352,7 @@ export const DownloadExperimentButton = ({
         }}
         variation={ButtonVariation.ICON}
         icon={'import'}
-        permission={PermissionGroup.EDITOR}
+        permission={PermissionGroup.VIEWER}
       />
     </div>
   );
