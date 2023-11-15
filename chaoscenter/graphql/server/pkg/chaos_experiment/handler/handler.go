@@ -5,16 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
 	"sort"
 	"strconv"
 	"time"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
-
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
 
@@ -1358,11 +1357,6 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %s", err.Error())
 	}
 
-	cronWorkflowManifest, err = probe.GenerateCronExperimentManifestWithProbes(experiment.Revision[0].ExperimentManifest, experiment.ProjectID)
-	if err != nil {
-		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
-	}
-
 	//state of the cron experiment state
 	cronWorkflowManifest.Spec.Suspend = disable
 
@@ -1386,7 +1380,6 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 	}
 
 	//Update the runtime values in cron experiment manifest
-
 	cronWorkflowManifest, _, err = c.chaosExperimentService.UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest, experiment)
 	if err != nil {
 		return false, err
@@ -1396,6 +1389,17 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 	if err != nil {
 		return false, errors.New("failed to marshal workflow manifest")
 	}
+
+	cronWorkflowManifest, err = probe.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
+	if err != nil {
+		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
+	}
+
+	updatedManifest, err = json.Marshal(cronWorkflowManifest)
+	if err != nil {
+		return false, errors.New("failed to marshal workflow manifest")
+	}
+
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
 			ExperimentID:       &workflowID,
