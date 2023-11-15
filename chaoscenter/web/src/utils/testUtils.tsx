@@ -31,7 +31,7 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
   const apolloClient = new ApolloClient({ cache: new InMemoryCache() });
   return (
     <ReactQueryProvider>
-      <ApolloProvider client={appoloClient}>
+      <ApolloProvider client={apolloClient}>
         <BrowserRouter>
           <AppStoreContext.Provider
             value={{
