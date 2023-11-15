@@ -6,11 +6,12 @@ import { getScope } from '@utils';
 import ChaosStudioView from '@views/ChaosStudio';
 import { listExperiment, runChaosExperiment, saveChaosExperiment } from '@api/core';
 import experimentYamlService from '@services/experiment';
-import { InfrastructureType, RecentExperimentRun } from '@api/entities';
+import { ExperimentType, InfrastructureType, RecentExperimentRun } from '@api/entities';
 import Loader from '@components/Loader';
 import { useSearchParams, useUpdateSearchParams } from '@hooks';
 import RightSideBarV2 from '@components/RightSideBarV2';
 import { StudioMode } from '@models';
+import { cronEnabled } from 'utils';
 
 export default function ChaosStudioEditController(): React.ReactElement {
   const scope = getScope();
@@ -18,6 +19,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
   const hasUnsavedChangesInURL = searchParams.get('unsavedChanges') === 'true';
+  const experimentType = searchParams.get('experimentType');
 
   // <!-- counting state since we have 2 async functions and need to flip state when both of said functions have resolved their promises -->
   const [showStudio, setShowStudio] = React.useState<number>(0);
@@ -39,6 +41,7 @@ export default function ChaosStudioEditController(): React.ReactElement {
   )[0];
 
   const [lastExperimentRun, setLastExperimentRun] = React.useState<RecentExperimentRun | undefined>();
+  const [isCronEnabled, setIsCronEnabled] = React.useState<boolean>();
 
   React.useEffect(() => {
     if (experimentData && showStudio < 2 && !hasUnsavedChangesInURL) {
@@ -65,6 +68,10 @@ export default function ChaosStudioEditController(): React.ReactElement {
         ?.updateExperimentManifest(experimentID, parse(experimentData.experimentManifest))
         .then(() => setShowStudio(oldState => oldState + 1));
       setLastExperimentRun(experimentData.recentExperimentRunDetails?.[0]);
+
+      const parsedManifest = JSON.parse(experimentData.experimentManifest);
+      const validateCron = experimentData?.experimentType === ExperimentType.CRON && cronEnabled(parsedManifest);
+      setIsCronEnabled(validateCron);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experimentData, experimentID, hasUnsavedChangesInURL]);
@@ -78,7 +85,15 @@ export default function ChaosStudioEditController(): React.ReactElement {
     onCompleted: () => listExperimentRefetch()
   });
 
-  const rightSideBarV2 = <RightSideBarV2 experimentID={experimentID} isEditMode phase={lastExperimentRun?.phase} />;
+  const rightSideBarV2 = (
+    <RightSideBarV2
+      experimentID={experimentID}
+      isCronEnabled={isCronEnabled}
+      isEditMode
+      phase={lastExperimentRun?.phase}
+      experimentType={experimentType as ExperimentType}
+    />
+  );
 
   return (
     <Loader loading={showStudio < 2 && !hasUnsavedChangesInURL} height="var(--page-min-height)">

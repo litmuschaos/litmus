@@ -13,7 +13,13 @@ import { Intent, Position } from '@blueprintjs/core';
 import { useHistory } from 'react-router-dom';
 import { parse } from 'yaml';
 import { useStrings } from '@strings';
-import { listExperiment, runChaosExperiment, stopExperiment, stopExperimentRun } from '@api/core';
+import {
+  listExperiment,
+  runChaosExperiment,
+  stopExperiment,
+  stopExperimentRun,
+  useUpdateCronExperimentStateMutation
+} from '@api/core';
 import { useRouteWithBaseUrl } from '@hooks';
 import type { RefetchExperimentRuns, RefetchExperiments } from '@controllers/ExperimentDashboardV2';
 import { PermissionGroup, StudioTabs } from '@models';
@@ -348,6 +354,81 @@ export const DownloadExperimentButton = ({
         icon={'import'}
         permission={PermissionGroup.EDITOR}
       />
+    </div>
+  );
+};
+
+interface EnableDisableCronButtonProps extends ActionButtonProps, Partial<RefetchExperiments> {
+  isCronEnabled: boolean;
+}
+
+export const EnableDisableCronButton = ({
+  experimentID,
+  tooltipProps,
+  isCronEnabled,
+  refetchExperiments
+}: EnableDisableCronButtonProps): React.ReactElement => {
+  const scope = getScope();
+  const { getString } = useStrings();
+  const { showSuccess, showError } = useToaster();
+  const {
+    isOpen: isOpenCronEnableDisableDialog,
+    open: openCronEnableDisableDialog,
+    close: closeCronEnableDisableDialog
+  } = useToggleOpen();
+
+  const [updateCronExperimentStateMutation] = useUpdateCronExperimentStateMutation({
+    onCompleted: () => {
+      showSuccess(isCronEnabled ? getString('cronHalted') : getString('cronResumed'));
+      refetchExperiments?.();
+    },
+    onError: err => showError(err.message)
+  });
+
+  const cronEnableDisableDialogProps: ConfirmationDialogProps = {
+    isOpen: isOpenCronEnableDisableDialog,
+    contentText: isCronEnabled ? getString('disableCronDesc') : getString('enableCronDesc'),
+    titleText: isCronEnabled ? `${getString('disableCron')}?` : `${getString('enableCron')}?`,
+    cancelButtonText: getString('cancel'),
+    confirmButtonText: getString('confirm'),
+    intent: Intent.WARNING,
+    onClose: (isConfirmed: boolean) => {
+      if (isConfirmed) {
+        updateCronExperimentStateMutation({
+          variables: {
+            projectID: scope.projectID,
+            experimentID: experimentID,
+            disable: isCronEnabled ? true : false
+          }
+        });
+      }
+      closeCronEnableDisableDialog();
+    }
+  };
+
+  const cronEnableDisableDialog = <ConfirmationDialog {...cronEnableDisableDialogProps} />;
+
+  return (
+    <div className={cx(css.actionButtons, css.withBg)}>
+      <div>
+        <RbacButton
+          tooltip={isCronEnabled ? getString('disableCron') : getString('enableCron')}
+          iconProps={{ size: 18 }}
+          withoutCurrentColor
+          intent={isCronEnabled ? 'danger' : 'success'}
+          tooltipProps={{
+            position: Position.TOP,
+            usePortal: true,
+            isDark: true,
+            ...tooltipProps
+          }}
+          variation={ButtonVariation.ICON}
+          icon={'time'}
+          onClick={openCronEnableDisableDialog}
+          permission={PermissionGroup.EDITOR}
+        />
+      </div>
+      {cronEnableDisableDialog}
     </div>
   );
 };
