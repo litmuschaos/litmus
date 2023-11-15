@@ -209,6 +209,15 @@ createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
 criteriaForData: Criteria for data
+cron: Cron
+cronDisabled: Cron Schedule is disabled
+cronHalted: This cron experiment as been halted successfully.
+cronResumed: This cron experiment has re-scheduled successfully.
+disableCron: Disable Cron
+disableCronDesc: This will disable the cron schedule for this experiment.
+enableCron: Enable Cron
+enableCronDesc: This will enable the cron schedule for this experiment.
+nonCron: Non-Cron
 cronExpression: Cron Expression
 cronExpressionRequired: Cron Expression required
 cronSelectOption: Cron (Recurring run)
