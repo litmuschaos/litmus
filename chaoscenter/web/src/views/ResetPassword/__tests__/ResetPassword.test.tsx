@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -8,7 +7,7 @@ import ResetPasswordView from '../ResetPassword';
 
 beforeEach(() => {
   jest.spyOn(stringUtils, 'useStrings').mockReturnValue({
-    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`)
+    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`),
   });
 });
 
@@ -35,7 +34,17 @@ describe('ResetPasswordView Component', () => {
   });
 
   test('submit button should be disabled when input fields are empty', () => {
-    render(<ResetPasswordView handleClose={() => {}} resetPasswordMutation={() => {}} username="testUser" />);
+    render(
+      <ResetPasswordView
+        handleClose={() => {
+          /* noop */
+        }}
+        resetPasswordMutation={() => {
+          /* noop */
+        }}
+        username="testUser"
+      />
+    );
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });
     expect(submitButton).toBeDisabled();
@@ -52,10 +61,10 @@ describe('ResetPasswordView Component', () => {
       </TestWrapper>
     );
     fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
-      target: { value: 'password123' }
+      target: { value: 'password123' },
     });
     fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
-      target: { value: 'password123' }
+      target: { value: 'password123' },
     });
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });
@@ -73,10 +82,10 @@ describe('ResetPasswordView Component', () => {
       </TestWrapper>
     );
     fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
-      target: { value: 'password123' }
+      target: { value: 'password123' },
     });
     fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
-      target: { value: 'differentPassword123' }
+      target: { value: 'differentPassword123' },
     });
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });

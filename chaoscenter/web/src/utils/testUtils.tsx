@@ -30,27 +30,27 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
   const getString = (key: string): string => key;
   const apolloClient = new ApolloClient({ cache: new InMemoryCache() });
   return (
-    <ReactQueryProvider>
-      <ApolloProvider client={apolloClient}>
-        <BrowserRouter>
-          <AppStoreContext.Provider
-            value={{
-              projectID: 'litmuschaos-test-project',
-              projectRole: 'Owner',
-              currentUserInfo: {
-                ID: 'uid',
-                username: 'admin',
-                userRole: 'admin'
-              },
-              renderUrl: `/account/uid`,
-              matchPath: '/account/:accountID',
-              updateAppStore: () => void 0
-            }}
-          >
-            <StringsContext.Provider value={{ data: strings as any, getString }}>{children}</StringsContext.Provider>
-          </AppStoreContext.Provider>
-        </BrowserRouter>
-      </ApolloProvider>
-    </ReactQueryProvider>
+    <AppStoreContext.Provider
+      value={{
+        projectID: 'litmuschaos-test-project',
+        projectRole: 'Owner',
+        currentUserInfo: {
+          ID: 'uid',
+          username: 'admin',
+          userRole: 'admin',
+        },
+        renderUrl: `/account/uid`,
+        matchPath: '/account/:accountID',
+        updateAppStore: () => void 0,
+      }}
+    >
+      <StringsContext.Provider value={{ data: strings as any, getString }}>
+        <ReactQueryProvider>
+          <ApolloProvider client={apolloClient}>
+            <BrowserRouter>{children}</BrowserRouter>
+          </ApolloProvider>
+        </ReactQueryProvider>
+      </StringsContext.Provider>
+    </AppStoreContext.Provider>
   );
 }
