@@ -35,9 +35,9 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
         projectID: 'litmuschaos-test-project',
         projectRole: 'Owner',
         currentUserInfo: {
+          userRole: 'admin',
           ID: 'uid',
           username: 'admin',
-          userRole: 'admin',
         },
         renderUrl: `/account/uid`,
         matchPath: '/account/:accountID',

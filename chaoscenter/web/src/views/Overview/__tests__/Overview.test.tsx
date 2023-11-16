@@ -1,35 +1,35 @@
+import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { TestWrapper } from 'utils/testUtils';
 import OverviewView from '../Overview';
 
 const NoExperimentProps = {
-  experimentDashboardTableData: { content: [] },
   chaosHubStats: undefined,
-  infraStats: undefined,
+  experimentDashboardTableData: { content: [] },
   experimentStats: undefined,
+  infraStats: undefined,
   loading: {
+    experimentStats: false,
     chaosHubStats: false,
     infraStats: false,
-    experimentStats: false,
-    recentExperimentsTable: false
+    recentExperimentsTable: false,
   },
-  refetchExperiments: Promise.resolve
+  refetchExperiments: Promise.resolve,
 };
 
 const props = {
   loading: {
     chaosHubStats: true,
-    infraStats: true,
     experimentStats: true,
-    recentExperimentsTable: true
+    infraStats: true,
+    recentExperimentsTable: true,
   },
   chaosHubStats: undefined,
   infraStats: undefined,
   experimentStats: undefined,
   experimentDashboardTableData: undefined,
-  refetchExperiments: Promise.resolve
+  refetchExperiments: Promise.resolve,
 };
 describe('OverviewView Component', () => {
   test('shows loading state', async () => {
