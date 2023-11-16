@@ -22,6 +22,7 @@ export interface APIConfig {
     chaosManagerUri: string;
   };
 }
+const NO_OPERATION = 0;
 
 export const findDialogContainer = (): HTMLElement | null => document.querySelector('.bp3-dialog');
 export const findPopoverContainer = (): HTMLElement | null => document.querySelector('.bp3-popover-content');
@@ -41,10 +42,10 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
         },
         renderUrl: `/account/uid`,
         matchPath: '/account/:accountID',
-        updateAppStore: () => void 0,
+        updateAppStore: () => void NO_OPERATION,
       }}
     >
-      <StringsContext.Provider value={{ data: strings as any, getString }}>
+      <StringsContext.Provider value={{ data: strings as never, getString }}>
         <ReactQueryProvider>
           <ApolloProvider client={apolloClient}>
             <BrowserRouter>{children}</BrowserRouter>
