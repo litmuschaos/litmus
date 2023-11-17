@@ -67,7 +67,6 @@ rules:
   '@typescript-eslint/no-shadow': 2
   '@typescript-eslint/no-extra-semi': 0
   '@typescript-eslint/no-duplicate-imports': 2
-  '@typescript-eslint/no-import-side-effect'
 
   #import
   import/order:
