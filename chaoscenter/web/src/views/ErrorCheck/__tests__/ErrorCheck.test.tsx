@@ -3,6 +3,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import ErrorCheckView from '../ErrorCheck';
 
+const operationTime = 2500;
+const operationValue = 0;
+
 beforeEach(() => {
   render(<ErrorCheckView />);
 });
@@ -16,7 +19,7 @@ describe('ErrorCheckView Component Tests', () => {
   });
 
   test('counter throws an error when reaching 3 and ErrorBoundary renders fallback', async () => {
-    const counter = screen.getAllByRole('heading')[0];
+    const counter = screen.getAllByRole('heading')[operationValue];
 
     fireEvent.click(counter);
     fireEvent.click(counter);
@@ -26,11 +29,11 @@ describe('ErrorCheckView Component Tests', () => {
 
   test('counter throws a Set Timeout error after 2 seconds', async () => {
     jest.useFakeTimers();
-    const counter = screen.getAllByRole('heading')[0];
+    const counter = screen.getAllByRole('heading')[operationValue];
 
     fireEvent.click(counter);
 
-    jest.advanceTimersByTime(2500);
+    jest.advanceTimersByTime(operationTime);
 
     await waitFor(() => {
       expect(screen.getByText('Something went wrong:')).toBeInTheDocument();

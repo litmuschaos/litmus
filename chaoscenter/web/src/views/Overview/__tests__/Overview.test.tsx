@@ -10,8 +10,8 @@ const NoExperimentProps = {
   experimentStats: undefined,
   infraStats: undefined,
   loading: {
-    experimentStats: false,
     chaosHubStats: false,
+    experimentStats: false,
     infraStats: false,
     recentExperimentsTable: false,
   },
@@ -19,16 +19,17 @@ const NoExperimentProps = {
 };
 
 const props = {
+  chaosHubStats: undefined,
+  experimentStats: undefined,
+  experimentDashboardTableData: undefined,
+  infraStats: undefined,
   loading: {
     chaosHubStats: true,
     experimentStats: true,
     infraStats: true,
     recentExperimentsTable: true,
   },
-  chaosHubStats: undefined,
-  infraStats: undefined,
-  experimentStats: undefined,
-  experimentDashboardTableData: undefined,
+
   refetchExperiments: Promise.resolve,
 };
 describe('OverviewView Component', () => {
