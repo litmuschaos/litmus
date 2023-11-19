@@ -116,7 +116,7 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          image: litmuschaos/chaos-operator:latest
+          image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:latest
           command:
           - chaos-operator
           args:
@@ -124,7 +124,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:latest"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:latest"
             - name: WATCH_NAMESPACE
               value: ""
             - name: POD_NAME
