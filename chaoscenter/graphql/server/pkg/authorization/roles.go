@@ -21,7 +21,7 @@ const (
 	ReRunChaosExperiment  RoleQuery = "ReRunChaosExperiment"
 	DeleteChaosExperiment RoleQuery = "DeleteChaosEnvironment"
 	UpdateChaosExperiment RoleQuery = "UpdateChaosExperiment"
-	ListEnvironment       RoleQuery = "ListEnvironment"
+	ListExperiment        RoleQuery = "ListExperiment"
 	CreateEnvironment     RoleQuery = "CreateEnvironment"
 
 	// Chaos_Experiment_run
@@ -87,7 +87,7 @@ var MutationRbacRules = map[RoleQuery][]string{
 	GetManifest:           {MemberRoleOwnerString, MemberRoleEditorString},
 	GetInfraDetails:       {MemberRoleOwnerString, MemberRoleEditorString},
 	ListCharts:            {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
-	ListEnvironment:       {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
+	ListExperiment:        {MemberRoleOwnerString, MemberRoleEditorString, MemberRoleViewerString},
 	SaveChaosHub:          {MemberRoleOwnerString, MemberRoleEditorString},
 	CreateImageRegistry:   {MemberRoleOwnerString},
 	UpdateImageRegistry:   {MemberRoleOwnerString},

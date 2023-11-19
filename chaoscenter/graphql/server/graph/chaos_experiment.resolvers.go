@@ -165,7 +165,7 @@ func (r *queryResolver) GetExperiment(ctx context.Context, projectID string, exp
 	}
 	logrus.WithFields(logFields).Info("request received to get chaos experiment")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListEnvironment],
+		authorization.MutationRbacRules[authorization.ListExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -187,7 +187,7 @@ func (r *queryResolver) ListExperiment(ctx context.Context, projectID string, re
 	logrus.WithFields(logFields).Info("request received to list chaos experiments")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListEnvironment],
+		authorization.MutationRbacRules[authorization.ListExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (r *queryResolver) GetExperimentStats(ctx context.Context, projectID string
 	logrus.WithFields(logFields).Info("request received to get chaos experiment stats")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListEnvironment],
+		authorization.MutationRbacRules[authorization.ListExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
