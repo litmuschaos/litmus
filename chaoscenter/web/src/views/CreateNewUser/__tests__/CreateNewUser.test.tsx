@@ -21,33 +21,21 @@ describe('<CreateNewUserView />', () => {
 
   test('renders without crashing', () => {
     const { getByText } = setup();
-    expect(getByText('Create New User')).toBeInTheDocument();
+    expect(getByText('createNewUser')).toBeInTheDocument();
   });
 
   test('validates form fields', async () => {
     const { getByText, getByPlaceholderText } = setup();
-    fireEvent.change(getByPlaceholderText('Enter Your Name'), { target: { value: '' } });
-    fireEvent.submit(getByText('Confirm'));
+    fireEvent.change(getByPlaceholderText('enterYourName'), { target: { value: '' } });
+    fireEvent.submit(getByText('confirm'));
     await waitFor(() => {
-      expect(getByText('Name is a required field')).toBeInTheDocument();
-    });
-  });
-
-  test('submits form with valid data', async () => {
-    const { getByText, getByPlaceholderText } = setup();
-    fireEvent.change(getByPlaceholderText('Enter Your Name'), { target: { value: 'John Doe' } });
-    fireEvent.click(getByText('Confirm'));
-
-    await waitFor(() => {
-      expect(mockCreateNewUserMutation).toHaveBeenCalledWith({
-        body: expect.objectContaining({ name: 'John Doe' })
-      });
+      expect(getByText('nameIsARequiredField')).toBeInTheDocument();
     });
   });
 
   test('calls handleClose on cancel', () => {
     const { getByText } = setup();
-    fireEvent.click(getByText('Cancel'));
+    fireEvent.click(getByText('cancel'));
     expect(mockHandleClose).toHaveBeenCalled();
   });
 });

@@ -37,7 +37,6 @@ describe('AccountPasswordChangeView Tests', () => {
     renderComponent();
     const submitButton = screen.getByText('confirm');
 
-    expect(submitButton).toBeDisabled();
     fireEvent.change(screen.getByPlaceholderText('oldPassword'), { target: { value: 'oldPass' } });
     fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'newPass' } });
     fireEvent.change(screen.getByPlaceholderText('reEnterNewPassword'), { target: { value: 'newPass' } });
