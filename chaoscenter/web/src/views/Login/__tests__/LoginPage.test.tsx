@@ -16,9 +16,9 @@ describe('LoginPageView', () => {
     );
 
     expect(screen.getByText('loginDescription')).toBeInTheDocument();
-    expect(screen.getByText('Username')).toBeInTheDocument();
-    expect(screen.getByText('Password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
+    expect(screen.getByText('username')).toBeInTheDocument();
+    expect(screen.getByText('password')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'signIn' })).toBeInTheDocument();
   });
 
   test('failed to change input', async () => {
@@ -27,8 +27,8 @@ describe('LoginPageView', () => {
         <LoginPageView handleLogin={mockHandleLogin} loading={false} />
       </TestWrapper>
     );
-    const usernameInput = screen.getByText('Username') as HTMLInputElement;
-    const passwordInput = screen.getByText('Password') as HTMLInputElement;
+    const usernameInput = screen.getByText('username') as HTMLInputElement;
+    const passwordInput = screen.getByText('password') as HTMLInputElement;
 
     await userEvent.type(usernameInput, 'testuser');
     await userEvent.type(passwordInput, 'password');
