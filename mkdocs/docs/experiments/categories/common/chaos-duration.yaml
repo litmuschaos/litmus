@@ -18,4 +18,4 @@ spec:
         env:
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

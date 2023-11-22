@@ -227,7 +227,7 @@ spec:
         - name: GCP_PROJECT_ID
           value: 'project-id'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Managed Instance Group
@@ -267,7 +267,7 @@ spec:
         - name: GCP_PROJECT_ID
           value: 'project-id'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mutiple Iterations Of Chaos
@@ -297,7 +297,7 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         - name: VM_INSTANCE_NAMES
           value: 'instance-01,instance-02'
         - name: ZONES

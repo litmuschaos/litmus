@@ -17,6 +17,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// GetUserWithProject 		godoc
+//	@Summary		Get user with project.
+//	@Description	Return users who has a project.
+//	@Tags			ProjectRouter
+//	@Param			username	path	string	true	"Username"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		400	{object}	response.ErrUserNotFound
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_user_with_project/:username [get]
+
 // GetUserWithProject returns user and project details based on username
 func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -52,6 +65,18 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProject 		godoc
+//	@Summary		Get user with project.
+//	@Description	Return a project.
+//	@Tags			ProjectRouter
+//	@Param			project_id	path	string	true	"Project ID"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_project/:project_id [get]
+
 // GetProject queries the project with a given projectID from the database
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -77,6 +102,17 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectsByUserID 		godoc
+//
+//	@Summary		Get stats of a project.
+//	@Description	Return stats of a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/list_projects [get]
+//
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -97,6 +133,17 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectStats 		godoc
+//
+//	@Summary		Get stats of a project.
+//	@Description	Return stats of a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_projects_stats [get]
+//
 // GetProjectStats is used to retrive stats related to projects in the DB
 func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -121,6 +168,17 @@ func GetProjectStats(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetActiveProjectMembers 		godoc
+//
+//	@Summary		Get active project members.
+//	@Description	Return list of active project members.
+//	@Tags			ProjectRouter
+//	@Param			state	path	string	true	"State"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_project_members/:project_id/:state [get]
 func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
@@ -149,6 +207,18 @@ func getInvitation(service services.ApplicationService, member entities.MemberIn
 	return "", nil
 }
 
+// ListInvitations 		godoc
+//
+//	@Summary		List invitations.
+//	@Description	Return list of invitations.
+//	@Tags			ProjectRouter
+//	@Param			invitation_state	path	string	true	"Invitation State"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/list_invitations_with_filters/:invitation_state [get]
+//
 // ListInvitations returns the Invitation status
 func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -179,6 +249,16 @@ func ListInvitations(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// CreateProject 		godoc
+//
+//	@Summary		Create project.
+//	@Description	Create a new project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/create_project [post]
 func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userRequest entities.CreateProjectInput
@@ -261,6 +341,21 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 
 }
 
+// SendInvitation 		godoc
+//
+//	@Summary		Send invitation.
+//	@Description	Send invitation to a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		400	{object}	response.ErrInvalidRole
+//	@Failure		400	{object}	response.ErrUserNotFound
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/send_invitation [post]
+//
 // SendInvitation sends an invitation to a new user and
 // returns an error if the member is already part of the project
 func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
@@ -351,6 +446,19 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// AcceptInvitation 		godoc
+//
+//	@Summary		Accept invitaion.
+//	@Description	Accept inviation to a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/accept_invitation [post]
+//
 // AcceptInvitation is used to accept an invitation
 func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -386,6 +494,19 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// DeclineInvitation 		godoc
+//
+//	@Summary		Decline invitation.
+//	@Description	Deecline invitation to a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/decline_invitation [post]
+//
 // DeclineInvitation is used to decline an invitation
 func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -421,6 +542,19 @@ func DeclineInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// LeaveProject 		godoc
+//
+//	@Summary		Leave project.
+//	@Description	Leave project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/leave_project [post]
+//
 // LeaveProject is used to leave a project
 func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -456,6 +590,19 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// RemoveInvitation 		godoc
+//
+//	@Summary		Remove invitation.
+//	@Description	Remove invitation of a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{obejct}	response.Response{}
+//	@Router			/remove_invitation [post]
+//
 // RemoveInvitation removes member or cancels invitation
 func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -513,6 +660,19 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// UpdateProjectName 		godoc
+//
+//	@Summary		Update project name.
+//	@Description	Return updated project name.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/update_project_name [post]
+//
 // UpdateProjectName is used to update a project's name
 func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -563,6 +723,19 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetOwnerProjects 		godoc
+//
+//	@Summary		Get projects owner.
+//	@Description	Return owner of projects.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_owner_projects [get]
+//
 // GetOwnerProjects returns an array of projects in which user is an owner
 func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -581,6 +754,19 @@ func GetOwnerProjects(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// GetProjectRole 		godoc
+//
+//	@Summary		Get project Role.
+//	@Description	Return role of a project.
+//	@Tags			ProjectRouter
+//	@Param			project_id	path	int	true	"Project ID"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrProjectNotFound
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_project_role/:project_id [get]
+//
 // GetProjectRole returns the role of a user in the project
 func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {

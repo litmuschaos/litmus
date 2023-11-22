@@ -476,39 +476,40 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddChaosHub              func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
-		AddProbe                 func(childComplexity int, request model.ProbeRequest, projectID string) int
-		AddRemoteChaosHub        func(childComplexity int, projectID string, request model.CreateRemoteChaosHub) int
-		ChaosExperimentRun       func(childComplexity int, request model.ExperimentRunRequest) int
-		ConfirmInfraRegistration func(childComplexity int, request model.InfraIdentity) int
-		CreateChaosExperiment    func(childComplexity int, request model.ChaosExperimentRequest, projectID string) int
-		CreateEnvironment        func(childComplexity int, projectID string, request *model.CreateEnvironmentRequest) int
-		CreateImageRegistry      func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		DeleteChaosExperiment    func(childComplexity int, experimentID string, experimentRunID *string, projectID string) int
-		DeleteChaosHub           func(childComplexity int, projectID string, hubID string) int
-		DeleteEnvironment        func(childComplexity int, projectID string, environmentID string) int
-		DeleteImageRegistry      func(childComplexity int, imageRegistryID string, projectID string) int
-		DeleteInfra              func(childComplexity int, projectID string, infraID string) int
-		DeleteProbe              func(childComplexity int, probeName string, projectID string) int
-		DisableGitOps            func(childComplexity int, projectID string) int
-		EnableGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
-		GenerateSSHKey           func(childComplexity int) int
-		GetManifestWithInfraID   func(childComplexity int, projectID string, infraID string, accessKey string) int
-		GitopsNotifier           func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
-		KubeObj                  func(childComplexity int, request model.KubeObjectData) int
-		PodLog                   func(childComplexity int, request model.PodLog) int
-		RegisterInfra            func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
-		RunChaosExperiment       func(childComplexity int, experimentID string, projectID string) int
-		SaveChaosExperiment      func(childComplexity int, request model.SaveChaosExperimentRequest, projectID string) int
-		SaveChaosHub             func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
-		StopExperimentRuns       func(childComplexity int, projectID string, experimentID string, experimentRunID *string, notifyID *string) int
-		SyncChaosHub             func(childComplexity int, id string, projectID string) int
-		UpdateChaosExperiment    func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
-		UpdateChaosHub           func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
-		UpdateEnvironment        func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
-		UpdateGitOps             func(childComplexity int, projectID string, configurations model.GitConfig) int
-		UpdateImageRegistry      func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
-		UpdateProbe              func(childComplexity int, request model.ProbeRequest, projectID string) int
+		AddChaosHub               func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
+		AddProbe                  func(childComplexity int, request model.ProbeRequest, projectID string) int
+		AddRemoteChaosHub         func(childComplexity int, projectID string, request model.CreateRemoteChaosHub) int
+		ChaosExperimentRun        func(childComplexity int, request model.ExperimentRunRequest) int
+		ConfirmInfraRegistration  func(childComplexity int, request model.InfraIdentity) int
+		CreateChaosExperiment     func(childComplexity int, request model.ChaosExperimentRequest, projectID string) int
+		CreateEnvironment         func(childComplexity int, projectID string, request *model.CreateEnvironmentRequest) int
+		CreateImageRegistry       func(childComplexity int, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		DeleteChaosExperiment     func(childComplexity int, experimentID string, experimentRunID *string, projectID string) int
+		DeleteChaosHub            func(childComplexity int, projectID string, hubID string) int
+		DeleteEnvironment         func(childComplexity int, projectID string, environmentID string) int
+		DeleteImageRegistry       func(childComplexity int, imageRegistryID string, projectID string) int
+		DeleteInfra               func(childComplexity int, projectID string, infraID string) int
+		DeleteProbe               func(childComplexity int, probeName string, projectID string) int
+		DisableGitOps             func(childComplexity int, projectID string) int
+		EnableGitOps              func(childComplexity int, projectID string, configurations model.GitConfig) int
+		GenerateSSHKey            func(childComplexity int) int
+		GetManifestWithInfraID    func(childComplexity int, projectID string, infraID string, accessKey string) int
+		GitopsNotifier            func(childComplexity int, clusterInfo model.InfraIdentity, experimentID string) int
+		KubeObj                   func(childComplexity int, request model.KubeObjectData) int
+		PodLog                    func(childComplexity int, request model.PodLog) int
+		RegisterInfra             func(childComplexity int, projectID string, request model.RegisterInfraRequest) int
+		RunChaosExperiment        func(childComplexity int, experimentID string, projectID string) int
+		SaveChaosExperiment       func(childComplexity int, request model.SaveChaosExperimentRequest, projectID string) int
+		SaveChaosHub              func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
+		StopExperimentRuns        func(childComplexity int, projectID string, experimentID string, experimentRunID *string, notifyID *string) int
+		SyncChaosHub              func(childComplexity int, id string, projectID string) int
+		UpdateChaosExperiment     func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
+		UpdateChaosHub            func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
+		UpdateCronExperimentState func(childComplexity int, experimentID string, disable bool, projectID string) int
+		UpdateEnvironment         func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
+		UpdateGitOps              func(childComplexity int, projectID string, configurations model.GitConfig) int
+		UpdateImageRegistry       func(childComplexity int, imageRegistryID string, projectID string, imageRegistryInfo model.ImageRegistryInput) int
+		UpdateProbe               func(childComplexity int, request model.ProbeRequest, projectID string) int
 	}
 
 	ObjectData struct {
@@ -714,6 +715,7 @@ type MutationResolver interface {
 	SaveChaosExperiment(ctx context.Context, request model.SaveChaosExperimentRequest, projectID string) (string, error)
 	UpdateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error)
 	DeleteChaosExperiment(ctx context.Context, experimentID string, experimentRunID *string, projectID string) (bool, error)
+	UpdateCronExperimentState(ctx context.Context, experimentID string, disable bool, projectID string) (bool, error)
 	ChaosExperimentRun(ctx context.Context, request model.ExperimentRunRequest) (string, error)
 	RunChaosExperiment(ctx context.Context, experimentID string, projectID string) (*model.RunChaosExperimentResponse, error)
 	StopExperimentRuns(ctx context.Context, projectID string, experimentID string, experimentRunID *string, notifyID *string) (bool, error)
@@ -3193,6 +3195,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateChaosHub(childComplexity, args["projectID"].(string), args["request"].(model.UpdateChaosHubRequest)), true
 
+	case "Mutation.updateCronExperimentState":
+		if e.complexity.Mutation.UpdateCronExperimentState == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateCronExperimentState_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateCronExperimentState(childComplexity, args["experimentID"].(string), args["disable"].(bool), args["projectID"].(string)), true
+
 	case "Mutation.updateEnvironment":
 		if e.complexity.Mutation.UpdateEnvironment == nil {
 			break
@@ -5158,6 +5172,14 @@ extend type Mutation {
     experimentRunID: String
     projectID: ID!
   ): Boolean!
+
+  """
+  Enable/Disable cron experiment state
+  """
+  updateCronExperimentState(experimentID: String!
+    disable: Boolean!
+    projectID: ID!
+  ): Boolean! @authorized
 }
 `, BuiltIn: false},
 	&ast.Source{Name: "../definitions/shared/chaos_experiment_run.graphqls", Input: `extend type Query {
@@ -8667,6 +8689,36 @@ func (ec *executionContext) field_Mutation_updateChaosHub_args(ctx context.Conte
 		}
 	}
 	args["request"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateCronExperimentState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["experimentID"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["experimentID"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["disable"]; ok {
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["disable"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		arg2, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg2
 	return args, nil
 }
 
@@ -19308,6 +19360,67 @@ func (ec *executionContext) _Mutation_deleteChaosExperiment(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().DeleteChaosExperiment(rctx, args["experimentID"].(string), args["experimentRunID"].(*string), args["projectID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateCronExperimentState(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateCronExperimentState_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateCronExperimentState(rctx, args["experimentID"].(string), args["disable"].(bool), args["projectID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authorized == nil {
+				return nil, errors.New("directive authorized is not implemented")
+			}
+			return ec.directives.Authorized(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -31866,6 +31979,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deleteChaosExperiment":
 			out.Values[i] = ec._Mutation_deleteChaosExperiment(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "updateCronExperimentState":
+			out.Values[i] = ec._Mutation_updateCronExperimentState(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

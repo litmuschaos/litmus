@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    directory: "chaoscenter/authentication"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gomod"
+    directory: "chaoscenter/event-tracker"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gomod"
+    directory: "chaoscenter/subscriber"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "gomod"
+    directory: "chaoscenter/graphql"
+    schedule:
+      interval: "daily"

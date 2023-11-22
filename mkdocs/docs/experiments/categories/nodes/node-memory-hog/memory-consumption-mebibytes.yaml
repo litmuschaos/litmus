@@ -18,4 +18,4 @@ spec:
         - name: MEMORY_CONSUMPTION_MEBIBYTES
           value: '500' # in MiBi
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

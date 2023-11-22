@@ -70,7 +70,7 @@ export const MenuCell = ({
             }}
             permission={PermissionGroup.EDITOR}
           />
-          {/* */}
+          {/* <!-- clone experiment button --> */}
           <RbacMenuItem
             icon={'copy-alt'}
             text={getString('cloneExperiment')}
@@ -91,7 +91,7 @@ export const MenuCell = ({
                 pathname: paths.toExperimentRunHistory({ experimentID: data.experimentID })
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.VIEWER}
           />
           {/* <!-- download manifest button --> */}
           <RbacMenuItem
@@ -100,7 +100,7 @@ export const MenuCell = ({
             onClick={() => {
               downloadYamlAsFile(yamlStringify(parse(data.experimentManifest)), `${data.experimentName}.yml`);
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.VIEWER}
           />
           <MenuDivider />
           {/* <!-- delete experiment button --> */}

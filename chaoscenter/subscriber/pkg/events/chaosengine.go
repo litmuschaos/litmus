@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
 
 	wfclientset "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
@@ -23,13 +22,13 @@ import (
 )
 
 // ChaosEventWatcher initializes the Litmus ChaosEngine event watcher
-func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
+func (ev *subscriberEvents) ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, infraData map[string]string) {
 	startTime, err := strconv.Atoi(infraData["START_TIME"])
 	if err != nil {
 		logrus.WithError(err).Fatal("failed to parse startTime")
 	}
 
-	cfg, err := k8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get kube config")
 	}
@@ -55,17 +54,17 @@ func ChaosEventWatcher(stopCh chan struct{}, stream chan types.WorkflowEvent, in
 		informer = f.Litmuschaos().V1alpha1().ChaosEngines().Informer()
 	}
 
-	go startWatchEngine(stopCh, informer, stream, int64(startTime))
+	go ev.startWatchEngine(stopCh, informer, stream, int64(startTime))
 }
 
-// handles the different events events - add, update and delete
-func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
+// handles the different*subscriberEvents - add, update and delete
+func (ev *subscriberEvents) startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, stream chan types.WorkflowEvent, startTime int64) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			chaosEventHandler(obj, "ADD", stream, startTime)
+			ev.chaosEventHandler(obj, "ADD", stream, startTime)
 		},
 		UpdateFunc: func(oldObj, obj interface{}) {
-			chaosEventHandler(obj, "UPDATE", stream, startTime)
+			ev.chaosEventHandler(obj, "UPDATE", stream, startTime)
 		},
 	}
 
@@ -74,7 +73,7 @@ func startWatchEngine(stopCh <-chan struct{}, s cache.SharedIndexInformer, strea
 }
 
 // responsible for extracting the required data from the event and streaming
-func chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
+func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string, stream chan types.WorkflowEvent, startTime int64) {
 	workflowObj := obj.(*chaosTypes.ChaosEngine)
 	if workflowObj.Labels["workflow_id"] == "" {
 		logrus.WithFields(map[string]interface{}{
@@ -89,7 +88,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 		return
 	}
 
-	cfg, err := k8s.GetKubeConfig()
+	cfg, err := ev.subscriberK8s.GetKubeConfig()
 	if err != nil {
 		logrus.WithError(err).Fatal("could not get kube config")
 	}
@@ -104,12 +103,12 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 	var cd *types.ChaosData = nil
 
 	//extracts chaos data
-	cd, err = getChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
+	cd, err = ev.getChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
 	if err != nil {
 		logrus.WithError(err).Print("FAILED PARSING CHAOS ENGINE CRD")
 	}
 
-	// considering chaos events has only 1 artifact with manifest as raw data
+	// considering chaos*subscriberEvents has only 1 artifact with manifest as raw data
 	finTime := int64(-1)
 	if workflowObj.Status.EngineStatus == chaosTypes.EngineStatusCompleted || workflowObj.Status.EngineStatus == chaosTypes.EngineStatusStopped {
 		if len(workflowObj.Status.Experiments) > 0 {
@@ -157,7 +156,7 @@ func chaosEventHandler(obj interface{}, eventType string, stream chan types.Work
 }
 
 // StopChaosEngineState is used to patch all the chaosEngines with engineState=stop
-func StopChaosEngineState(namespace string, workflowRunID *string) error {
+func (ev *subscriberEvents) StopChaosEngineState(namespace string, workflowRunID *string) error {
 	ctx := context.TODO()
 
 	//Define the GVR
@@ -168,7 +167,7 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 	}
 
 	//Generate the dynamic client
-	_, dynamicClient, err := k8s.GetDynamicAndDiscoveryClient()
+	_, dynamicClient, err := ev.subscriberK8s.GetDynamicAndDiscoveryClient()
 	if err != nil {
 		return errors.New("failed to get dynamic client, error: " + err.Error())
 	}
@@ -185,7 +184,7 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 		return errors.New("failed to list chaosengines: " + err.Error())
 	}
 
-	//Foe every chaosEngine patch the engineState to Stop
+	//Foe every subscriber patch the engineState to Stop
 	for _, val := range chaosEngines.Items {
 		patch := []byte(`{"spec":{"engineState":"stop"}}`)
 		patched, err := dynamicClient.Resource(resourceType).Namespace(namespace).Patch(ctx, val.GetName(), mergeType.MergePatchType, patch, v1.PatchOptions{})
@@ -200,9 +199,9 @@ func StopChaosEngineState(namespace string, workflowRunID *string) error {
 }
 
 // StopWorkflow will patch the workflow based on workflow name using the shutdown strategy
-func StopWorkflow(wfName string, namespace string) error {
+func (ev *subscriberEvents) StopWorkflow(wfName string, namespace string) error {
 
-	conf, err := k8s.GetKubeConfig()
+	conf, err := ev.subscriberK8s.GetKubeConfig()
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(namespace)
 	patch := []byte(`{"spec":{"shutdown":"Stop"}}`)
 	wf, err := wfClient.Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})

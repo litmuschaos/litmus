@@ -106,13 +106,13 @@ spec:
       serviceAccountName: litmus
       containers:
         - name: chaos-operator
-          image: litmuschaos/chaos-operator:3.1.0
+          image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.1.0
           command:
           - chaos-operator
           imagePullPolicy: Always
           env:
             - name: CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.1.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.1.0"
             - name: WATCH_NAMESPACE
               valueFrom:
                 fieldRef:
