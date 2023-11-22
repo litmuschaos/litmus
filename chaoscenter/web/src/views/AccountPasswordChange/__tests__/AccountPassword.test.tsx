@@ -1,14 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { TestWrapper } from 'utils/testUtils';
 import AccountPasswordChangeView from '../AccountPasswordChange';
-
-jest.mock('@harnessio/uicore', () => ({}));
-jest.mock('@strings', () => ({
-  useStrings: () => ({
-    getString: jest.fn().mockImplementation(key => key)
-  })
-}));
 
 describe('AccountPasswordChangeView Tests', () => {
   const mockClose = jest.fn();
@@ -20,12 +14,14 @@ describe('AccountPasswordChangeView Tests', () => {
 
   const renderComponent = () =>
     render(
-      <AccountPasswordChangeView
-        handleClose={mockClose}
-        username="testuser"
-        updatePasswordMutation={mockUpdatePasswordMutation}
-        updatePasswordMutationLoading={false}
-      />
+      <TestWrapper>
+        <AccountPasswordChangeView
+          handleClose={mockClose}
+          username="testuser"
+          updatePasswordMutation={mockUpdatePasswordMutation}
+          updatePasswordMutationLoading={false}
+        />
+      </TestWrapper>
     );
 
   test('renders all form fields and buttons', () => {

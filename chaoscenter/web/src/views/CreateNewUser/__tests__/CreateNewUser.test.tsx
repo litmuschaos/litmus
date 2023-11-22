@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
+import { TestWrapper } from 'utils/testUtils';
 import CreateNewUserView from '../CreateNewUser';
 import '@testing-library/jest-dom';
 
@@ -9,11 +10,13 @@ describe('<CreateNewUserView />', () => {
 
   const setup = () =>
     render(
-      <CreateNewUserView
-        createNewUserMutation={mockCreateNewUserMutation}
-        createNewUserMutationLoading={false}
-        handleClose={mockHandleClose}
-      />
+      <TestWrapper>
+        <CreateNewUserView
+          createNewUserMutation={mockCreateNewUserMutation}
+          createNewUserMutationLoading={false}
+          handleClose={mockHandleClose}
+        />
+      </TestWrapper>
     );
 
   test('renders without crashing', () => {
@@ -32,9 +35,7 @@ describe('<CreateNewUserView />', () => {
 
   test('submits form with valid data', async () => {
     const { getByText, getByPlaceholderText } = setup();
-    // Fill form and submit
     fireEvent.change(getByPlaceholderText('Enter Your Name'), { target: { value: 'John Doe' } });
-    // ... fill other fields ...
     fireEvent.click(getByText('Confirm'));
 
     await waitFor(() => {
