@@ -19,4 +19,4 @@ spec:
         - name: VM_WORKERS
           value: '1'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

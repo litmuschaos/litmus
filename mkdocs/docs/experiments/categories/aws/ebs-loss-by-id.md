@@ -205,5 +205,5 @@ spec:
         - name: REGION
           value: '<region for EBS_VOLUME_ID>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

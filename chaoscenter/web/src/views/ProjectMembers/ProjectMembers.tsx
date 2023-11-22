@@ -69,7 +69,7 @@ export default function ProjectMembersView(): React.ReactElement {
                         icon="plus"
                         iconProps={{ size: 10 }}
                         text={getString('newMember')}
-                        permission={PermissionGroup.EDITOR}
+                        permission={PermissionGroup.OWNER}
                         onClick={() => {
                           open();
                         }}

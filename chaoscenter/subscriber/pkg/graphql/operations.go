@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func SendRequest(server string, payload []byte) (string, error) {
+func (gql *subscriberGql) SendRequest(server string, payload []byte) (string, error) {
 	req, err := http.NewRequest("POST", server, bytes.NewBuffer(payload))
 	if err != nil {
 		return "", err
@@ -30,7 +30,7 @@ func SendRequest(server string, payload []byte) (string, error) {
 }
 
 // MarshalGQLData processes event data into proper format acceptable by graphql
-func MarshalGQLData(gqlData interface{}) (string, error) {
+func (gql *subscriberGql) MarshalGQLData(gqlData interface{}) (string, error) {
 	data, err := json.Marshal(gqlData)
 	if err != nil {
 		return "", err

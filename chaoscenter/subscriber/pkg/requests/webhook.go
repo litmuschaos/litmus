@@ -7,15 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
-	"subscriber/pkg/utils"
 
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 )
 
-func AgentConnect(infraData map[string]string) {
+func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 	query := `{"query":"subscription {\n    infraConnect(request: {infraID: \"` + infraData["INFRA_ID"] + `\", version: \"` + infraData["VERSION"] + `\", accessKey: \"` + infraData["ACCESS_KEY"] + `\"}) {\n     action{\n      k8sManifest,\n      externalData,\n      requestID\n requestType\n     username\n     namespace\n     }\n  }\n}\n"}`
 	serverURL, err := url.Parse(infraData["SERVER_ADDR"])
 	if err != nil {
@@ -92,14 +90,14 @@ func AgentConnect(infraData map[string]string) {
 			continue
 		}
 
-		err = RequestProcessor(infraData, r)
+		err = req.RequestProcessor(infraData, r)
 		if err != nil {
 			logrus.WithError(err).Error("Error on processing request")
 		}
 	}
 }
 
-func RequestProcessor(infraData map[string]string, r types.RawData) error {
+func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r types.RawData) error {
 	if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 		KubeObjRequest := types.KubeObjRequest{
 			RequestID: r.Payload.Data.InfraConnect.Action.RequestID,
@@ -110,7 +108,7 @@ func RequestProcessor(infraData map[string]string, r types.RawData) error {
 			return errors.New("failed to json unmarshal: " + err.Error())
 		}
 
-		err = k8s.SendKubeObjects(infraData, KubeObjRequest)
+		err = req.subscriberK8s.SendKubeObjects(infraData, KubeObjRequest)
 		if err != nil {
 			return errors.New("error getting kubernetes object data: " + err.Error())
 		}
@@ -125,15 +123,15 @@ func RequestProcessor(infraData map[string]string, r types.RawData) error {
 		}
 
 		logrus.Print("Log Request: ", r.Payload.Data.InfraConnect.Action.ExternalData)
-		k8s.SendPodLogs(infraData, podRequest)
+		req.subscriberK8s.SendPodLogs(infraData, podRequest)
 	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
-		_, err := k8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
+		_, err := req.subscriberK8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
 		if err != nil {
 			return errors.New("error performing infra operation: " + err.Error())
 		}
 	} else if strings.Index("workflow_delete workflow_run_delete workflow_run_stop ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
 
-		err := utils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
+		err := req.subscriberUtils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
 		if err != nil {
 			return errors.New("error performing events operation: " + err.Error())
 		}
