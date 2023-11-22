@@ -45,7 +45,18 @@ describe('<ChaosFaultView />', () => {
 
   const renderComponent = (props = defaultProps) =>
     render(
-      <MemoryRouter initialEntries={['/chaoshub']}>
+const breadcrumbs = [
+     {
+        label: 'ChaosHub',
+        url: '/chaoshub'
+      },
+      {
+        label: 'Faults',
+        url: '/faults'
+      }
+    ];
+    
+      <DefaultLayoutTemplate title={"Chaos Fault"} breadcrumbs={breadcrumbs}>
         <ChaosFaultView {...props} />
       </MemoryRouter>
     );
