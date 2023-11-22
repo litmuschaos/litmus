@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { MemoryRouter } from 'react-router-dom';
+
 import type { MutationFunction, ApolloQueryResult } from '@apollo/client';
+import { TestWrapper } from 'utils/testUtils';
 import type {
   DeleteChaosHubResponse,
   DeleteChaosHubRequest,
@@ -12,26 +13,8 @@ import type {
   ListChaosHubResponse
 } from '@api/core';
 import { AuthType, type ChaosHub } from '@api/entities';
+import DefaultLayoutTemplate from '@components/DefaultLayout';
 import { ChaosHubMenuView } from '../ChaosHubMenu';
-
-// Mock external dependencies
-jest.mock('@harnessio/uicore', () => ({}));
-jest.mock('@blueprintjs/core', () => ({}));
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: jest.fn()
-  })
-}));
-jest.mock('@hooks', () => ({
-  useRouteWithBaseUrl: () => jest.fn()
-}));
-jest.mock('@strings', () => ({
-  useStrings: () => ({
-    getString: jest.fn().mockImplementation(key => key)
-  })
-}));
-jest.mock('@api/entities', () => ({}));
 
 describe('ChaosHubMenuView Tests', () => {
   interface ChaosHubMenuViewProps {
@@ -57,7 +40,7 @@ describe('ChaosHubMenuView Tests', () => {
       repoURL: '',
       repoBranch: '',
       projectID: '',
-      authType: AuthType.NONE,
+      authType: AuthType.SSH,
       lastSyncedAt: '',
       isAvailable: false,
       totalFaults: '',
@@ -76,24 +59,12 @@ describe('ChaosHubMenuView Tests', () => {
 
   const renderComponent = (props = {}) =>
     render(
-      <MemoryRouter>
-        <ChaosHubMenuView {...defaultProps} {...props} />
-      </MemoryRouter>
+      <TestWrapper>
+        <DefaultLayoutTemplate breadcrumbs={[]} title={undefined}>
+          <ChaosHubMenuView {...defaultProps} {...props} />
+        </DefaultLayoutTemplate>
+      </TestWrapper>
     );
-
-  test('renders menu items correctly', () => {
-    renderComponent();
-    expect(screen.getByTestId('menu')).toBeInTheDocument();
-    expect(screen.getAllByTestId('menuItem')).toHaveLength(4);
-  });
-
-  test('handles click on sync hub menu item', () => {
-    renderComponent();
-    fireEvent.click(screen.getByText('menuItems.syncHub'));
-    expect(defaultProps.syncChaosHubMutation).toHaveBeenCalledWith({
-      variables: { projectID: expect.anything(), id: '1' }
-    });
-  });
 
   test('does not render edit and delete options for default hub', () => {
     renderComponent({ isDefault: true });

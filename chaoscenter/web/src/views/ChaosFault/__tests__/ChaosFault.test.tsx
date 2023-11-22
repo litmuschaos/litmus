@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import '@testing-library/jest-dom/';
 import type { FaultDetails } from '@api/core';
 import type { PredefinedExperiment } from '@api/entities';
+import { TestWrapper } from 'utils/testUtils';
+import DefaultLayoutTemplate from '@components/DefaultLayout';
 import ChaosFaultView from '../ChaosFault';
 
 jest.mock('react-router-dom', () => ({
@@ -12,20 +13,13 @@ jest.mock('react-router-dom', () => ({
   useSearchParams: () => new URLSearchParams('hubName=testHub&isDefault=true')
 }));
 
-jest.mock('@hooks', () => ({
-  ...jest.requireActual('@hooks'), // if you want to keep other hooks unmocked
-  useAppStore: () => ({ projectID: 'mock-project-id' }),
-  useRouteWithBaseUrl: () => ({
-    toChaosHubs: () => '/chaoshubs',
-    toChaosHub: () => '/chaoshub',
-    toRoot: () => '/'
-  })
-}));
-
-jest.mock('@strings', () => ({
-  useStrings: () => ({ getString: (key: any) => key })
-}));
-
+beforeAll(() =>
+  window.history.pushState(
+    {},
+    'Chaos Fault',
+    '/chaos-hubs/6f39cea9-6264-4951-83a8-29976b614289/fault/aws/ecs-instance-stop'
+  )
+);
 describe('<ChaosFaultView />', () => {
   interface ChaosFaultViewProps {
     faultDetails: FaultDetails | undefined;
@@ -42,23 +36,23 @@ describe('<ChaosFaultView />', () => {
     loading: { getHubFaults: true, getHubExperiment: true },
     experiments: []
   };
-
+  const breadcrumbs = [
+    {
+      label: 'ChaosHub',
+      url: '/chaoshub'
+    },
+    {
+      label: 'Faults',
+      url: '/faults'
+    }
+  ];
   const renderComponent = (props = defaultProps) =>
     render(
-const breadcrumbs = [
-     {
-        label: 'ChaosHub',
-        url: '/chaoshub'
-      },
-      {
-        label: 'Faults',
-        url: '/faults'
-      }
-    ];
-    
-      <DefaultLayoutTemplate title={"Chaos Fault"} breadcrumbs={breadcrumbs}>
-        <ChaosFaultView {...props} />
-      </MemoryRouter>
+      <TestWrapper>
+        <DefaultLayoutTemplate title={'Chaos Fault'} breadcrumbs={breadcrumbs}>
+          <ChaosFaultView {...props} />
+        </DefaultLayoutTemplate>
+      </TestWrapper>
     );
 
   test('displays error when no fault details', () => {

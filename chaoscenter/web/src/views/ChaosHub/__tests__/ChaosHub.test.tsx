@@ -2,11 +2,8 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, fireEvent, screen } from '@testing-library/react';
 import { ApolloError } from '@apollo/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TestWrapper } from 'utils/testUtils';
 import ChaosHub from '../ChaosHub';
-
-const queryClient = new QueryClient();
 
 describe('ChaosHubView Component', () => {
   const mockApolloError = new ApolloError({
@@ -30,11 +27,9 @@ describe('ChaosHubView Component', () => {
 
   test('should render without crashing', async () => {
     render(
-      <QueryClientProvider client={queryClient}>
-        <TestWrapper>
-          <ChaosHub {...mockProps} />
-        </TestWrapper>
-      </QueryClientProvider>
+      <TestWrapper>
+        <ChaosHub {...mockProps} />
+      </TestWrapper>
     );
     const chaosExperimentsTab = await screen.findByRole('tab', { name: /chaosExperiments/i });
     expect(chaosExperimentsTab).toBeInTheDocument();
@@ -53,11 +48,9 @@ describe('ChaosHubView Component', () => {
       listChartError: mockApolloError
     };
     render(
-      <QueryClientProvider client={queryClient}>
-        <TestWrapper>
-          <ChaosHub {...errorProps} />
-        </TestWrapper>
-      </QueryClientProvider>
+      <TestWrapper>
+        <ChaosHub {...errorProps} />
+      </TestWrapper>
     );
     const errorMessageElement = await screen.findByText(/genericResourceNotFoundError/i);
     expect(errorMessageElement).toBeInTheDocument();
@@ -65,11 +58,9 @@ describe('ChaosHubView Component', () => {
 
   test('should switch to chaosFaults tab', async () => {
     render(
-      <QueryClientProvider client={queryClient}>
-        <TestWrapper>
-          <ChaosHub {...mockProps} />
-        </TestWrapper>
-      </QueryClientProvider>
+      <TestWrapper>
+        <ChaosHub {...mockProps} />
+      </TestWrapper>
     );
     const tab = await screen.findByText(/chaosFaults/i);
     fireEvent.click(tab);
