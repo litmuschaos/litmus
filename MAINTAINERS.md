@@ -23,6 +23,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Chandan Kumar",@chandankumar4,chandan.kumar@zopsmart.com
 "Karthik Satchitanand",@ksatchit,karthik.s@harness.io
 "Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com
+"Namkyu Park",namkyu1999,lak9348@gmail.com
 "Neelanjan Manna",@neelanjan00,neelanjan.manna@harness.io
 "Oum Nivrati Kale",@oumkale,imkaleoum@gmail.com
 "Raj Das",@imrajdas,rajbabu.das@harness.io
