@@ -848,6 +848,7 @@ export interface StringsMap {
   'showLess': unknown
   'showingAll': unknown
   'showingLastRuns': unknown
+  'signIn': unknown
   'signOut': unknown
   'singleRun': unknown
   'source': unknown
