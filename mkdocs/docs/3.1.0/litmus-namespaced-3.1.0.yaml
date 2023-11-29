@@ -530,7 +530,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: litmusportal-frontend
-          image: litmuschaos/litmusportal-frontend:3.1.0
+          image: litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-frontend:3.1.0
           # securityContext:
           #   runAsUser: 2000
           #   allowPrivilegeEscalation: false
@@ -592,7 +592,7 @@ spec:
           emptyDir: {}
       containers:
         - name: graphql-server
-          image: litmuschaos/litmusportal-server:3.1.0
+          image: litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-server:3.1.0
           volumeMounts:
             - mountPath: /tmp/
               name: gitops-storage
@@ -629,19 +629,19 @@ spec:
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: SUBSCRIBER_IMAGE
-              value: "litmuschaos/litmusportal-subscriber:3.1.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-subscriber:3.1.0"
             - name: EVENT_TRACKER_IMAGE
-              value: "litmuschaos/litmusportal-event-tracker:3.1.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-event-tracker:3.1.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos/workflow-controller:v3.3.1"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos/argoexec:v3.3.1"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos/chaos-operator:3.1.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.1.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos/chaos-runner:3.1.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.1.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos/chaos-exporter:3.1.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-exporter:3.1.0"
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
@@ -710,7 +710,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: auth-server
-          image: litmuschaos/litmusportal-auth-server:3.1.0
+          image: litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-auth-server:3.1.0
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
