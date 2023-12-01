@@ -20,7 +20,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 ```
 "Amit Kumar Das",@amityt,amit.das@harness.io
 "Arkojyoti Mukherjee",@arkajyotiMukherjee,arko@harness.io
-"Chandan Kumar",@chandankumar4,chandan.kumar@zopsmart.com
+"Chandan Kumar",@chandankumar4,ckamtaprasad@msystechnologies.com
 "Karthik Satchitanand",@ksatchit,karthik.s@harness.io
 "Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com
 "Namkyu Park",namkyu1999,lak9348@gmail.com
