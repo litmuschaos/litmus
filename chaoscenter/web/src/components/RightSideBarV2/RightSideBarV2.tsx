@@ -7,6 +7,7 @@ import {
   CloneExperimentButton,
   DownloadExperimentButton,
   EditExperimentButton,
+  EnableDisableCronButton,
   RunExperimentButton,
   StopExperimentButton,
   StopExperimentRunButton
@@ -21,6 +22,7 @@ interface RightSideBarViewV2Props extends Partial<RefetchExperiments>, Partial<R
   experimentType?: ExperimentType;
   phase: ExperimentRunStatus | undefined;
   loading?: boolean;
+  isCronEnabled?: boolean;
   isEditMode?: boolean;
 }
 
@@ -32,14 +34,15 @@ function RightSideBarV2({
   phase,
   loading,
   isEditMode,
+  isCronEnabled,
   refetchExperiments,
   refetchExperimentRuns
 }: RightSideBarViewV2Props): React.ReactElement {
   const { getString } = useStrings();
-
   const showStopButton = phase === ExperimentRunStatus.RUNNING || phase === ExperimentRunStatus.QUEUED;
 
-  const showEnableDisableCronButton = experimentType === ExperimentType.CRON;
+  const showEnableDisableCronButton =
+    experimentType && experimentType === ExperimentType.CRON && isCronEnabled !== undefined;
 
   return (
     <Layout.Vertical
@@ -49,6 +52,28 @@ function RightSideBarV2({
       spacing={'xlarge'}
       className={loading ? Classes.SKELETON : ''}
     >
+      {showEnableDisableCronButton && (
+        // <!-- enable/disable button for cron experiments -->
+        <Container>
+          <Layout.Vertical flex={{ justifyContent: 'center' }} spacing={'small'}>
+            <EnableDisableCronButton
+              tooltipProps={{ disabled: true }}
+              experimentID={experimentID}
+              refetchExperiments={refetchExperiments}
+              isCronEnabled={isCronEnabled}
+            />
+            <Text
+              style={{ textAlign: 'center' }}
+              width={40}
+              color={Color.GREY_500}
+              font={{ variation: FontVariation.TINY_SEMI }}
+            >
+              {isCronEnabled ? getString('disableCron') : getString('enableCron')}
+            </Text>
+          </Layout.Vertical>
+        </Container>
+      )}
+
       {showStopButton ? (
         experimentRunID || notifyID ? (
           // <!-- stop button for experiment run (specific run details page) -->

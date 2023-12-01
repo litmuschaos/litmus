@@ -50,6 +50,7 @@ func init() {
 	}
 }
 
+// @title Chaoscenter API documentation
 func main() {
 	// send logs to stderr, so we can use 'kubectl logs'
 	_ = flag.Set("logtostderr", "true")
