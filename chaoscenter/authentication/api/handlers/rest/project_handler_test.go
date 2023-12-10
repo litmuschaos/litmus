@@ -9,6 +9,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,6 +39,12 @@ func TestGetUserWithProject(t *testing.T) {
 				service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, nil)
 			},
 			expectedCode: http.StatusOK,
+		},
+		{
+			name:     "Failed to retrieve user with project",
+			username: "testUser",
+			given: func() {},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUserNotFound],
 		},
 	}
 
@@ -81,6 +88,14 @@ func TestGetProjectsByUserID(t *testing.T) {
 					},
 				}
 				service.On("GetProjectsByUserID", "testUserID", false).Return(projects, nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name: "No Projects found",
+			uid:  "testUserID",
+			given: func() {
+				service.On("GetProjectsByUserID", "testUserID", false).Return(nil, nil)
 			},
 			expectedCode: http.StatusOK,
 		},
