@@ -1,6 +1,7 @@
 package rest_test
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,104 +12,187 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestGetUserWithProject(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	service := new(mocks.MockedApplicationService)
+	t.Run("Failed to retrieve user with projects", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		username := "testUser"
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Params = gin.Params{
+			{"username", username},
+		}
+		c.Set("username", username)
 
-	tests := []struct {
-		name         string
-		username     string
-		given        func()
-		expectedCode int
-	}{
-		{
-			name:     "Successfully retrieve user with projects",
-			username: "testUser",
-			given: func() {
-				user := &entities.User{
-					ID:       "testUID",
-					Username: "testUser",
-					Email:    "test@example.com",
-				}
-				project := &entities.Project{}
+		user := &entities.User{
+			ID:       "testUID",
+			Username: "testUser",
+			Email:    "test@example.com",
+		}
+		project := &entities.Project{}
 
-				service.On("FindUserByUsername", "testUser").Return(user, nil)
-				service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, nil)
-			},
-			expectedCode: http.StatusOK,
-		},
-		{
-			name:     "Failed to retrieve user with project",
-			username: "testUser",
-			given: func() {},
-			expectedCode: utils.ErrorStatusCodes[utils.ErrUserNotFound],
-		},
-	}
+		service.On("FindUserByUsername", "testUser").Return(user, errors.New("failed"))
+		service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, errors.New("failed"))
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
-			c.Params = gin.Params{
-				{"username", tt.username},
-			}
-			c.Set("username", tt.username)
+		rest.GetUserWithProject(service)(c)
 
-			tt.given()
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
 
-			rest.GetUserWithProject(service)(c)
+	t.Run("Successfully retrieve user with projects", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		username := "testUser1"
+		f := httptest.NewRecorder()
+		c := GetTestGinContext(f)
+		c.Params = gin.Params{
+			{"username", username},
+		}
+		c.Set("username", username)
 
-			assert.Equal(t, tt.expectedCode, w.Code)
-		})
-	}
+		user := &entities.User{
+			ID:       "testUID",
+			Username: "testUser1",
+			Email:    "test@example.com",
+		}
+		project := &entities.Project{}
+
+		service.On("FindUserByUsername", "testUser1").Return(user, nil)
+		service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, nil)
+
+		rest.GetUserWithProject(service)(c)
+
+		assert.Equal(t, http.StatusOK, f.Code)
+	})
+
 }
 
 func TestGetProjectsByUserID(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	service := new(mocks.MockedApplicationService)
+	t.Run("Failed with invalid data", func(t *testing.T) {
 
-	tests := []struct {
-		name         string
-		uid          string
-		given        func()
-		expectedCode int
-	}{
-		{
-			name: "Successfully retrieve projects by user ID",
-			uid:  "testUserID",
-			given: func() {
-				projects := []*entities.Project{
-					{
-						ID:   "testProjectID",
-						Name: "Test Project",
+		w := httptest.NewRecorder()
+		ctx := GetTestGinContext(w)
+		ctx.Set("uid", "testUserID")
+		projects := []*entities.Project{
+			{
+				ID:   "testProjectID",
+				Name: "Test Project",
+			},
+		}
+		service := new(mocks.MockedApplicationService)
+		service.On("GetProjectsByUserID", "testUserID", false).Return(projects, errors.New("Failed"))
+		rest.GetProjectsByUserID(service)(ctx)
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrServerError], w.Code)
+	})
+
+	t.Run("Successful retrieve of project", func(t *testing.T) {
+
+		w := httptest.NewRecorder()
+		ctx := GetTestGinContext(w)
+		ctx.Set("uid", "testUserID")
+		projects := []*entities.Project{
+			{
+				ID:   "testProjectID",
+				Name: "Test Project",
+			},
+		}
+		service := new(mocks.MockedApplicationService)
+		service.On("GetProjectsByUserID", "testUserID", false).Return(projects, nil)
+		rest.GetProjectsByUserID(service)(ctx)
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+}
+
+func TestGetProject(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	t.Run("unauthorized request to Project", func(t *testing.T) {
+		projectID := "testUserID"
+		w := httptest.NewRecorder()
+		ctx := GetTestGinContext(w)
+		ctx.Set("uid", projectID)
+		service := new(mocks.MockedApplicationService)
+		project := &entities.Project{
+			ID:   "testProjectID",
+			Name: "Test Project",
+		}
+		user := &entities.User{
+			ID:   "testProjectID",
+			Name: "Test Project",
+		}
+
+		service.On("GetProjectByProjectID", projectID).Return(project, errors.New("Failed"))
+		service.On("GetUser", projectID).Return(user, errors.New("Failed"))
+		rest.GetProject(service)(ctx)
+
+		assert.Equal(t, utils.ErrorStatusCodes[utils.ErrUnauthorized], w.Code)
+	})
+
+	t.Run("Successful to find Project", func(t *testing.T) {
+		projectID := "testUserID"
+		w := httptest.NewRecorder()
+		ctx := GetTestGinContext(w)
+		ctx.Set("uid", projectID)
+		service := new(mocks.MockedApplicationService)
+		project := &entities.Project{
+			ID:   "testProjectID",
+			Name: "Test Project",
+		}
+		user := &entities.User{
+			ID:   "testUserID",
+			Name: "Test User",
+		}
+		projects := []*entities.Project{
+			{
+				ID:   "testProjectID",
+				Name: "Test Project",
+			},
+		}
+		expectedFilter := primitive.D{
+			primitive.E{
+				Key:   "_id",
+				Value: "",
+			},
+			primitive.E{
+				Key: "members",
+				Value: primitive.D{
+					primitive.E{
+						Key: "$elemMatch",
+						Value: primitive.D{
+							primitive.E{
+								Key:   "user_id",
+								Value: "testUserID",
+							},
+							primitive.E{
+								Key: "role",
+								Value: primitive.D{
+									primitive.E{
+										Key:   "$in",
+										Value: []string{"Owner", "Viewer", "Editor"},
+									},
+								},
+							},
+							primitive.E{
+								Key:   "invitation",
+								Value: "Accepted",
+							},
+						},
 					},
-				}
-				service.On("GetProjectsByUserID", "testUserID", false).Return(projects, nil)
+				},
 			},
-			expectedCode: http.StatusOK,
-		},
-		{
-			name: "No Projects found",
-			uid:  "testUserID",
-			given: func() {
-				service.On("GetProjectsByUserID", "testUserID", false).Return(nil, nil)
-			},
-			expectedCode: http.StatusOK,
-		},
-	}
+		}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			ctx := GetTestGinContext(w)
-			ctx.Set("uid", "testUserID")
-			tt.given()
-			rest.GetProjectsByUserID(service)(ctx)
-			assert.Equal(t, tt.expectedCode, w.Code)
-		})
-	}
+		service.On("GetProjectByProjectID", "").Return(project, nil)
+		service.On("GetUser", projectID).Return(user, nil)
+		service.On("GetProjects", expectedFilter).Return(projects, nil)
+		rest.GetProject(service)(ctx)
+
+		assert.Equal(t, 200, w.Code)
+	})
+
 }
