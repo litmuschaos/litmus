@@ -215,7 +215,7 @@ spec:
           value: 'my-project-4513'
         
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Mutiple Iterations Of Chaos
@@ -243,7 +243,7 @@ spec:
           value: '15'
         
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
         
         - name: DISK_VOLUME_LABEL
           value: 'disk:target-disk'

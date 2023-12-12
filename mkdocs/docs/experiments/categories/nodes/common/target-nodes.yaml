@@ -17,4 +17,4 @@ spec:
         - name: TARGET_NODES
           value: 'node01,node02'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'

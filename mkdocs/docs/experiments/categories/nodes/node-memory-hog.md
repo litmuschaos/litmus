@@ -223,7 +223,7 @@ spec:
         - name: MEMORY_CONSUMPTION_PERCENTAGE
           value: '10' # in percentage
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Memory Consumption Mebibytes
@@ -255,7 +255,7 @@ spec:
         - name: MEMORY_CONSUMPTION_MEBIBYTES
           value: '500' # in MiBi
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Workers For Stress
@@ -284,5 +284,5 @@ spec:
         - name: NUMBER_OF_WORKERS
           value: '1' 
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

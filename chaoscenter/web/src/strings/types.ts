@@ -122,6 +122,7 @@ export interface StringsMap {
   'chooseHubAccess': unknown
   'chooseMembersAddTheProject': unknown
   'chooseProbeMode': unknown
+  'clearSearch': unknown
   'clickDownload': unknown
   'clone': unknown
   'cloneExperiment': unknown
@@ -137,6 +138,7 @@ export interface StringsMap {
   'comingSoon': unknown
   'command': unknown
   'comparator': unknown
+  'comparisonCriteria': unknown
   'completed': unknown
   'configure': unknown
   'configureChaosInfrastructure': unknown
@@ -174,8 +176,13 @@ export interface StringsMap {
   'createdOn': unknown
   'creationTime': unknown
   'criteria': unknown
+  'criteriaForData': unknown
+  'cron': unknown
+  'cronDisabled': unknown
   'cronExpression': unknown
   'cronExpressionRequired': unknown
+  'cronHalted': unknown
+  'cronResumed': unknown
   'cronSelectOption': unknown
   'cronText': unknown
   'currentRun': unknown
@@ -216,6 +223,8 @@ export interface StringsMap {
   'detailsAndProperties': unknown
   'disable': unknown
   'disableChaosInfrastructure': unknown
+  'disableCron': unknown
+  'disableCronDesc': unknown
   'disableUser': unknown
   'disableUserDescription': unknown
   'discard': unknown
@@ -236,6 +245,7 @@ export interface StringsMap {
   'duration': unknown
   'edit': unknown
   'editChaosHub': unknown
+  'editEnvironment': unknown
   'editExperiment': unknown
   'editExperimentCopy': unknown
   'editExperimentOptions': unknown
@@ -256,6 +266,8 @@ export interface StringsMap {
   'enableChaosInfraButton': unknown
   'enableChaosInfrastructure': unknown
   'enableChaosInfrastructureDesc': unknown
+  'enableCron': unknown
+  'enableCronDesc': unknown
   'enableImageRegistryChanges': unknown
   'enableSSLCheck': unknown
   'enableUser': unknown
@@ -286,6 +298,7 @@ export interface StringsMap {
   'error': unknown
   'errorApplyChanges': unknown
   'errorFetchName': unknown
+  'errorInYamlDescription': unknown
   'evaluationTimeout': unknown
   'executedBy': unknown
   'executedOn': unknown
@@ -565,6 +578,7 @@ export interface StringsMap {
   'nodeSelectorPlaceholderForKey': unknown
   'nodeSelectorPlaceholderForValue': unknown
   'nodeSelectorText': unknown
+  'nonCron': unknown
   'nonCronSelectOption': unknown
   'nonCronText': unknown
   'nonProd': unknown
@@ -617,6 +631,7 @@ export interface StringsMap {
   'preProd': unknown
   'predefinedExperimentsNotFound': unknown
   'preview': unknown
+  'previous': unknown
   'private': unknown
   'probeAddedSuccessfully': unknown
   'probeConfiguration': unknown
@@ -697,6 +712,8 @@ export interface StringsMap {
   'query': unknown
   'queryPath': unknown
   'ranAt': unknown
+  'range': unknown
+  'rangeSliderInput': unknown
   'rbacDescription': PrimitiveObject<'permission'>
   'rbacHeader': unknown
   'reEnterNewPassword': unknown
@@ -808,6 +825,7 @@ export interface StringsMap {
   'selectHub': unknown
   'selectHubFromList': unknown
   'selectHubHeader': unknown
+  'selectMethod': unknown
   'selectProbe': unknown
   'selectProbes': unknown
   'selectProject': unknown
@@ -821,6 +839,7 @@ export interface StringsMap {
   'serviceAccountName': unknown
   'serviceHealthScore': unknown
   'setFaultWeights': unknown
+  'setSchedule': unknown
   'settings': unknown
   'setupChaosInfrastructures': unknown
   'setupProbe': unknown
@@ -829,6 +848,7 @@ export interface StringsMap {
   'showLess': unknown
   'showingAll': unknown
   'showingLastRuns': unknown
+  'signIn': unknown
   'signOut': unknown
   'singleRun': unknown
   'source': unknown
@@ -913,10 +933,11 @@ export interface StringsMap {
   'tuneFaultWeight': unknown
   'tuneWeight': unknown
   'type': unknown
-  'udpatePassword': unknown
+  'typeOfData': unknown
   'unableToGetProbes': unknown
   'unhealthy': unknown
   'update': unknown
+  'updatePassword': unknown
   'updatedAt': unknown
   'updatedBy': unknown
   'upgradeChaosInfrastructure': unknown

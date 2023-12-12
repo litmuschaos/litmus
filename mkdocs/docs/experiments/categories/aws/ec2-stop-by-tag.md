@@ -223,7 +223,7 @@ spec:
         - name: REGION
           value: '<region for instance>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Percent of instances
@@ -258,5 +258,5 @@ spec:
         - name: REGION
           value: '<region for instance>'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

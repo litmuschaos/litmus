@@ -48,18 +48,3 @@ export function stopExperimentRun(
 
   return [stopExperimentRunMutation, result];
 }
-
-export function stopAllExperiments(
-  options?: GqlAPIMutationRequest<StopAllExperimentResponse, StopAllExperimentRequest>
-): GqlAPIMutationResponse<StopAllExperimentResponse, StopAllExperimentRequest> {
-  const [stopAllExperimentsMutation, result] = useMutation<StopAllExperimentResponse, StopAllExperimentRequest>(
-    gql`
-      mutation stopAllExperimentRuns($projectID: ID!) {
-        stopAllExperimentRuns(projectID: $projectID)
-      }
-    `,
-    options
-  );
-
-  return [stopAllExperimentsMutation, result];
-}

@@ -230,7 +230,7 @@ spec:
         - name: TARGET_NODE
           value: 'node01'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### SSH User 
@@ -262,7 +262,7 @@ spec:
         - name: TARGET_NODE
           value: 'node01'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Target Node Internal IP
@@ -294,5 +294,5 @@ spec:
         - name: TARGET_NODE
           value: 'node01'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

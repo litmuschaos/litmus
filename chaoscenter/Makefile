@@ -97,14 +97,20 @@ backend-services-checks:
 	# 	&& exit 1; \
 	# fi
 
-unit-tests:
+backend-unit-tests:
 	@echo "------------------"
-	@echo "--> Running unit tests"
+	@echo "--> Running backend unit tests"
 	@echo "------------------"
-	@cd graphql-server && go test -cover ./...
-#	@cd authentication && go test -v ./...
-#	@cd cluster-agents/subscriber && go test -v ./...
+	@cd graphql/server && go test -cover ./...
+	@cd authentication && go test -v ./...
+	@#cd cluster-agents/subscriber && go test -v ./...
 #	@cd cluster-agents/event-tracker && go test -v ./...
+
+web-unit-tests:
+	@echo "------------------"
+	@echo "--> Running frontend unit tests"
+	@echo "------------------"
+	@cd web &&  yarn -s && yarn test --coverage
 
 .PHONY: docker.buildx
 docker.buildx:

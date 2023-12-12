@@ -256,5 +256,5 @@ spec:
         - name: SPOOF_MAP
           value: '{"abc.com":"spoofabc.com"}'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

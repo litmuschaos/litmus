@@ -127,6 +127,7 @@ chooseAuthenticationType: Choose Authentication Type
 chooseHubAccess: Choose Hub Access
 chooseMembersAddTheProject: Choose members to add to the project
 chooseProbeMode: Choose Mode for probe to be executed
+clearSearch: Clear search
 clickDownload: >-
   Click on the “Download” button below to download the YML file to a machine
   where you have kubectl installed and have access to your Kubernetes cluster.
@@ -157,6 +158,7 @@ collaborators: Collaborators
 comingSoon: Coming Soon
 command: Command
 comparator: Comparator
+comparisonCriteria: Comparison Criteria
 completed: Completed
 configure: Configure
 configureChaosInfrastructure: Configure Chaos Infrastructure
@@ -206,8 +208,13 @@ createdAt: Created At
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
+criteriaForData: Criteria for data
+cron: Cron
+cronDisabled: Cron Schedule is disabled
 cronExpression: Cron Expression
 cronExpressionRequired: Cron Expression required
+cronHalted: This cron experiment as been halted successfully.
+cronResumed: This cron experiment has re-scheduled successfully.
 cronSelectOption: Cron (Recurring run)
 cronText: >-
   The experiment will run periodically according to the cron provided below. You
@@ -257,6 +264,8 @@ details: Details
 detailsAndProperties: Details & Properties
 disable: Disable
 disableChaosInfrastructure: Disable Chaos Infrastructure
+disableCron: Disable Cron
+disableCronDesc: This will disable the cron schedule for this experiment.
 disableUser: Disable User
 disableUserDescription: Are you sure you want to disable this user?
 discard: Discard
@@ -277,6 +286,7 @@ downloadedSuccessfully: Downloaded successfully
 duration: Duration
 edit: Edit
 editChaosHub: Edit ChaosHub
+editEnvironment: Edit Environment
 editExperiment: Edit Experiment
 editExperimentCopy: Edit Copy
 editExperimentOptions: Do you want to edit the same experiment or edit a copy?
@@ -305,6 +315,8 @@ enableChaosInfrastructure: Enable chaos infrastructure to run your first chaos e
 enableChaosInfrastructureDesc: >-
   In order to run Chaos Experiments, you need to enable chaos infrastructure in
   the Environments
+enableCron: Enable Cron
+enableCronDesc: This will enable the cron schedule for this experiment.
 enableImageRegistryChanges: Enable Image Registry Changes
 enableSSLCheck: Enable SSL/TLS check
 enableUser: Enable User
@@ -337,6 +349,7 @@ environments: Environments
 error: Error
 errorApplyChanges: Error in Applying the Changes. Please enter correct input values.
 errorFetchName: Error in fetching the name.
+errorInYamlDescription: There are some errors in the file, please check YAML file for errors.
 evaluationTimeout: Evaluation timeout
 executedBy: Executed by
 executedOn: Executed on
@@ -653,7 +666,9 @@ noKubernetesChaosInfrastructureFound: >-
 noLogs: Sorry, Logs are currently not available
 noMonitoredService: No monitoring services found for
 noProbeDescription: >-
-  Probes are lightweight, self-contained scripts that can be run against Kubernetes applications to gather information about their behavior under stress and failure conditions.
+  Probes are lightweight, self-contained scripts that can be run against
+  Kubernetes applications to gather information about their behavior under
+  stress and failure conditions.
 noProbeExecution: No Probe executions found
 noProbeExecutionDetails:
   subtitle: >-
@@ -683,6 +698,7 @@ nodeSelectorPlaceholderForValue: Enter the value
 nodeSelectorText: >-
   Node Selector is a selector which will result in all pods of the experiment to
   be scheduled on the selected node.
+nonCron: Non-Cron
 nonCronSelectOption: Non-Cron (Single run)
 nonCronText: >-
   The experiment will run once after you click on Run. If you want to run it
@@ -741,6 +757,7 @@ pollingInterval: Polling Interval
 preProd: Pre-Prod
 predefinedExperimentsNotFound: No Predefined Experiments found in this hub
 preview: Preview
+previous: Previous
 private: Private
 probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
@@ -845,6 +862,8 @@ public: Public
 query: Query
 queryPath: Query path
 ranAt: Ran at
+range: range
+rangeSliderInput: rangeSliderInput
 rbacDescription: You are missing permission '{{permission}}' to perform this action.
 rbacHeader: You do not have permission to perform this action
 reEnterNewPassword: Re-enter new password
@@ -961,6 +980,7 @@ selectExperiments: Select Experiments
 selectHub: Select a ChaosHub
 selectHubFromList: Select a hub from the list
 selectHubHeader: Create or select existing ChaosHub
+selectMethod: Select Method GET / POST
 selectProbe: Select Probe
 selectProbes: Select Probes
 selectProject: Select a Project
@@ -974,6 +994,7 @@ serviceAccount: Service Account
 serviceAccountName: Service Account Name
 serviceHealthScore: Service Health Score
 setFaultWeights: Set fault weights
+setSchedule: Set Schedule
 settings: Settings
 setupChaosInfrastructures: >-
   Enabling Chaos on infrastructure helps to inject chaos by studying your
@@ -984,6 +1005,7 @@ showDisabledUsers: Include disabled users
 showLess: ' Show less'
 showingAll: Showing all
 showingLastRuns: Showing last 50 runs only
+signIn: Sign In
 signOut: Sign Out
 singleRun: Single Run
 source: Source
@@ -1078,10 +1100,11 @@ tuneFaultProperties: Tune fault properties
 tuneFaultWeight: Tune fault weightage
 tuneWeight: Tune Weight
 type: Type
-udpatePassword: Update Password
+typeOfData: Type of data
 unableToGetProbes: Unable to get probe information
 unhealthy: Unhealthy
 update: Update
+updatePassword: Update Password
 updatedAt: Updated at
 updatedBy: Updated by
 upgradeChaosInfrastructure: Upgrade Chaos Infrastructure

@@ -286,7 +286,7 @@ function ExperimentAdvancedTuningOptionsView({
       isOpen={isOpen}
       leftPanel={leftPanel}
       handleClose={() => onClose()}
-      title="Advanced Options"
+      title={getString('advancedOptions')}
       type={DrawerTypes.AdvacedOptions}
     />
   );

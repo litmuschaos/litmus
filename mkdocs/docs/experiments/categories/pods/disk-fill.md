@@ -266,7 +266,7 @@ spec:
         - name: FILL_PERCENTAGE
           value: '80' # in percentage
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Disk Fill Mebibytes
@@ -301,7 +301,7 @@ spec:
         - name: EPHEMERAL_STORAGE_MEBIBYTES
           value: '256' #in MiBi
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Data Block Size
@@ -335,7 +335,7 @@ spec:
         - name: DATA_BLOCK_SIZE
           value: '256' #in KB
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -374,5 +374,5 @@ spec:
         - name: SOCKET_PATH
           value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

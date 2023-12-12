@@ -87,7 +87,7 @@ export const AddProbeModal = ({ refetchProbes }: RefetchProbes): React.ReactElem
       <ParentComponentErrorWrapper>
         <RbacButton
           variation={ButtonVariation.PRIMARY}
-          permission={PermissionGroup.EDITOR || PermissionGroup.OWNER}
+          permission={PermissionGroup.EDITOR}
           text={getString(`newProbe`)}
           icon="plus"
           onClick={() => {

@@ -204,7 +204,7 @@ spec:
         - name: NODE_CPU_CORE
           value: '2'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Node CPU Load
@@ -237,5 +237,5 @@ spec:
         - name: NODE_CPU_CORE
           value: '0'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

@@ -223,7 +223,7 @@ spec:
         - name: TARGET_CONTAINER
           value: 'nginx'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Multiple Iterations Of Chaos
@@ -255,7 +255,7 @@ spec:
           value: '15'
         # time duration for the chaos execution
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Container Runtime Socket Path
@@ -293,7 +293,7 @@ spec:
         - name: SOCKET_PATH
           value: '/run/containerd/containerd.sock'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Signal For Kill
@@ -325,7 +325,7 @@ spec:
         - name: SIGNAL
           value: 'SIGKILL'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```
 
 ### Pumba Chaos Library
@@ -357,5 +357,5 @@ spec:
         - name: LIB
           value: 'pumba'
         - name: TOTAL_CHAOS_DURATION
-          VALUE: '60'
+          value: '60'
 ```

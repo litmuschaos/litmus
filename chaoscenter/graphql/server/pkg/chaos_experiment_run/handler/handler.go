@@ -121,6 +121,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 							{"$project", bson.D{
 								{"name", 1},
 								{"is_custom_experiment", 1},
+								{"experiment_type", 1},
 								{"revision", bson.D{{
 									"$filter", bson.D{
 										{"input", "$revision"},
@@ -229,10 +230,13 @@ func (c *ChaosExperimentRunHandler) GetExperimentRun(ctx context.Context, projec
 			}
 		}
 
+		expType := string(wfRun.ExperimentDetails[0].ExperimentType)
+
 		expRunResponse = &model.ExperimentRun{
 			ExperimentName:     wfRun.ExperimentDetails[0].ExperimentName,
 			ExperimentID:       wfRun.ExperimentID,
 			ExperimentRunID:    wfRun.ExperimentRunID,
+			ExperimentType:     &expType,
 			NotifyID:           wfRun.NotifyID,
 			Weightages:         weightages,
 			ExperimentManifest: workflowRunManifest,
