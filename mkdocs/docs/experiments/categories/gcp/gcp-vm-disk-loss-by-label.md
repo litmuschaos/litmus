@@ -15,7 +15,7 @@
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.17
     -  Ensure that the Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>gcp-vm-disk-loss-by-label</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/gcp/gcp-vm-disk-loss-by-label/experiment.yaml">here</a>
+    -  Ensure that the <code>gcp-vm-disk-loss-by-label</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/gcp/gcp-vm-disk-loss-by-label/fault.yaml">here</a>
     - Ensure that your service account has an editor access or owner access for the GCP project.
     - Ensure that the target disk volume is not a boot disk of any VM instance.
     - Ensure to create a Kubernetes secret having the GCP service account credentials in the default namespace. A sample secret file looks like:
@@ -51,7 +51,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/gcp/gcp-vm-disk-loss-by-label/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
