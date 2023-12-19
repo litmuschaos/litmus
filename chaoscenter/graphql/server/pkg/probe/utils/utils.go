@@ -1,4 +1,4 @@
-package probe
+package utils
 
 import (
 	"context"
@@ -21,7 +21,7 @@ import (
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 )
 
-func addKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+func AddKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
 	newProbe.KubernetesHTTPProperties = &dbSchemaProbe.KubernetesHTTPProbe{
 		// Common Probe Properties
 		ProbeTimeout:      request.KubernetesHTTPProperties.ProbeTimeout,
@@ -75,7 +75,7 @@ func addKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request mod
 	return newProbe
 }
 
-func addKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+func AddKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
 	newProbe.KubernetesCMDProperties = &dbSchemaProbe.KubernetesCMDProbe{
 		// Common Probe Properties
 		ProbeTimeout: request.KubernetesCMDProperties.ProbeTimeout,
@@ -137,7 +137,7 @@ func addKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request mode
 	return newProbe
 }
 
-func addPROMProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+func AddPROMProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
 	newProbe.PROMProperties = &dbSchemaProbe.PROMProbe{
 		// Common Probe Properties
 		ProbeTimeout: request.PromProperties.ProbeTimeout,
@@ -169,7 +169,7 @@ func addPROMProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRe
 	newProbe.PROMProperties.StopOnFailure = request.PromProperties.StopOnFailure
 
 	// PROM Probe -> Query
-	newProbe.PROMProperties.Query = *request.PromProperties.Query
+	newProbe.PROMProperties.Query = request.PromProperties.Query
 
 	// PROM Probe -> Query Path
 	newProbe.PROMProperties.QueryPath = request.PromProperties.QueryPath
@@ -177,7 +177,7 @@ func addPROMProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRe
 	return newProbe
 }
 
-func addK8SProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
+func AddK8SProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
 	newProbe.K8SProperties = &dbSchemaProbe.K8SProbe{
 		// Common Probe Properties
 		ProbeTimeout: request.K8sProperties.ProbeTimeout,
