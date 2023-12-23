@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/argoproj/argo-workflows/v3 v3.3.1
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
-	github.com/gorilla/websocket v1.5.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/litmuschaos/chaos-operator v0.0.0-20230718113617-6819a4be12e4
 	github.com/sirupsen/logrus v1.8.1
@@ -40,7 +40,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
-	golang.org/x/net v0.6.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
