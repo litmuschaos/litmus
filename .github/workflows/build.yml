@@ -93,11 +93,32 @@ jobs:
        - uses: actions/setup-go@v2
          with:
            go-version: "1.20" # By default, the go version is v1.15 in runner.
-       - name: Backend unit tests
+       - name: Backend unit tests with coverage
          shell: bash
          run: |
-           cd chaoscenter
-           make backend-unit-tests
+            cd chaoscenter
+            make backend-unit-tests
+       - name: Upload coverage to Codecov
+         uses: codecov/codecov-action@v1
+         with:
+           file: ./coverage.txt      
+
+  # backend-unit-tests:
+  #    runs-on: ubuntu-latest
+  #    needs:
+  #      - changes
+  #      - backend-checks
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v2
+  #      - uses: actions/setup-go@v2
+  #        with:
+  #          go-version: "1.20" # By default, the go version is v1.15 in runner.
+  #      - name: Backend unit tests
+  #        shell: bash
+  #        run: |
+  #          cd chaoscenter
+  #          make backend-unit-tests
 
   web-unit-tests:
      runs-on: ubuntu-latest
