@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 	"sort"
 	"strconv"
 	"time"
+
+	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -315,22 +316,22 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
+					bson.D{
+						{"$match", bson.D{
+							{"$expr", bson.D{
+								{"$eq", bson.A{"$infra_id", "$$infraID"}},
+							}},
 						}},
-					}},
+					},
+					bson.D{
+						{"$project", bson.D{
+							{"token", 0},
+							{"infra_ns_exists", 0},
+							{"infra_sa_exists", 0},
+							{"access_key", 0},
+						}},
+					},
 				},
-				bson.D{
-					{"$project", bson.D{
-						{"token", 0},
-						{"infra_ns_exists", 0},
-						{"infra_sa_exists", 0},
-						{"access_key", 0},
-					}},
-				},
-			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -575,22 +576,22 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-				bson.D{
-					{"$match", bson.D{
-						{"$expr", bson.D{
-							{"$eq", bson.A{"$infra_id", "$$infraID"}},
+					bson.D{
+						{"$match", bson.D{
+							{"$expr", bson.D{
+								{"$eq", bson.A{"$infra_id", "$$infraID"}},
+							}},
 						}},
-					}},
+					},
+					bson.D{
+						{"$project", bson.D{
+							{"token", 0},
+							{"infra_ns_exists", 0},
+							{"infra_sa_exists", 0},
+							{"access_key", 0},
+						}},
+					},
 				},
-				bson.D{
-					{"$project", bson.D{
-						{"token", 0},
-						{"infra_ns_exists", 0},
-						{"infra_sa_exists", 0},
-						{"access_key", 0},
-					}},
-				},
-			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -1077,11 +1078,11 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	groupByTotalCount := bson.D{
 		{
 			"$group", bson.D{
-			{"_id", nil},
-			{"count", bson.D{
-				{"$sum", 1},
-			}},
-		},
+				{"_id", nil},
+				{"count", bson.D{
+					{"$sum", 1},
+				}},
+			},
 		},
 	}
 

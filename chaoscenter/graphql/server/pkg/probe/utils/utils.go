@@ -700,13 +700,8 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 // GenerateExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template for Non Cron Workflow
 func GenerateExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.Workflow, error) {
 	var (
-		probes            []v1alpha1.ProbeAttributes
 		backgroundContext = context.Background()
 		nonCronManifest   argoTypes.Workflow
-		httpProbe         HTTPProbeAttributes
-		cmdProbe          CMDProbeAttributes
-		promProbe         PROMProbeAttributes
-		k8sProbe          K8SProbeAttributes
 	)
 
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
@@ -729,6 +724,11 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 				var (
 					meta       v1alpha1.ChaosEngine
 					annotation = make(map[string]string)
+					probes     []v1alpha1.ProbeAttributes
+					httpProbe  HTTPProbeAttributes
+					cmdProbe   CMDProbeAttributes
+					promProbe  PROMProbeAttributes
+					k8sProbe   K8SProbeAttributes
 				)
 
 				err := yaml.Unmarshal([]byte(data), &meta)
@@ -858,13 +858,8 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 // GenerateCronExperimentManifestWithProbes - uses GenerateProbeManifest to get and store the respective probe attribute into Raw Data template
 func GenerateCronExperimentManifestWithProbes(manifest string, projectID string) (argoTypes.CronWorkflow, error) {
 	var (
-		probes            []v1alpha1.ProbeAttributes
 		backgroundContext = context.Background()
 		cronManifest      argoTypes.CronWorkflow
-		httpProbe         HTTPProbeAttributes
-		cmdProbe          CMDProbeAttributes
-		promProbe         PROMProbeAttributes
-		k8sProbe          K8SProbeAttributes
 	)
 
 	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
@@ -886,6 +881,11 @@ func GenerateCronExperimentManifestWithProbes(manifest string, projectID string)
 				var (
 					meta       v1alpha1.ChaosEngine
 					annotation = make(map[string]string)
+					probes     []v1alpha1.ProbeAttributes
+					httpProbe  HTTPProbeAttributes
+					cmdProbe   CMDProbeAttributes
+					promProbe  PROMProbeAttributes
+					k8sProbe   K8SProbeAttributes
 				)
 
 				if err := yaml.Unmarshal([]byte(data), &meta); err != nil {
