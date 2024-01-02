@@ -78,7 +78,7 @@ type KubernetesHTTPProbe struct {
 
 type PROMProbe struct {
 	Endpoint          string     `bson:"endpoint"`
-	Query             string     `bson:"query"`
+	Query             *string    `bson:"query"`
 	EvaluationTimeout *string    `bson:"evaluation_timeout,omitempty"`
 	PollingInterval   *string    `bson:"polling_interval"`
 	InitialDelay      *string    `bson:"initial_delay,omitempty"`
@@ -245,7 +245,7 @@ func (probe *Probe) GetOutputProbe() *model.Probe {
 				EvaluationTimeout:    probe.PROMProperties.EvaluationTimeout,
 				StopOnFailure:        probe.PROMProperties.StopOnFailure,
 				Endpoint:             probe.PROMProperties.Endpoint,
-				Query:                &probe.PROMProperties.Query,
+				Query:                probe.PROMProperties.Query,
 				QueryPath:            probe.PROMProperties.QueryPath,
 				Comparator: &model.Comparator{
 					Type:     probe.PROMProperties.Comparator.Type,
