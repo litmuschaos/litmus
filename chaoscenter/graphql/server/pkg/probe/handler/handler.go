@@ -25,26 +25,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type ProbeInterface interface {
-	AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.Probe, error)
-	UpdateProbe(ctx context.Context, probe model.ProbeRequest) (string, error)
-	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput) ([]*model.Probe, error)
-	DeleteProbe(ctx context.Context, probeName string) (bool, error)
-	GetProbe(ctx context.Context, probeName string) (*model.Probe, error)
-	GetProbeReference(ctx context.Context, probeName string) (*model.GetProbeReferenceResponse, error)
-	GetProbeYAMLData(ctx context.Context, probe model.GetProbeYAMLRequest) (string, error)
-	ValidateUniqueProbe(ctx context.Context, probeName string) (bool, error)
+type Service interface {
+	AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error)
+	UpdateProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (string, error)
+	ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error)
+	DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error)
+	GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error)
+	GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error)
+	GetProbeYAMLData(ctx context.Context, probe model.GetProbeYAMLRequest, projectID string) (string, error)
+	ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error)
 }
 
-type probe struct {
-	ProjectID string
-}
+type probe struct{}
 
-func NewProbeRepository(projectID string) ProbeInterface {
-	return &probe{
-
-		ProjectID: projectID,
-	}
+func NewProbeService() Service {
+	return &probe{}
 }
 
 func Error(logFields logrus.Fields, message string) error {
@@ -53,7 +48,7 @@ func Error(logFields logrus.Fields, message string) error {
 }
 
 // AddProbe - Create a new Probe
-func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.Probe, error) {
+func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest, projectID string) (*model.Probe, error) {
 	// TODO: Add check if probe exists
 
 	var (
@@ -61,10 +56,12 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 	)
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	logFields := logrus.Fields{
-
-		"projectId": p.ProjectID,
+		"projectId": projectID,
 		"probeName": probe.Name,
 	}
 
@@ -77,7 +74,7 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 			Name: probe.Name,
 			Tags: probe.Tags,
 		},
-		ProjectID: p.ProjectID,
+		ProjectID: projectID,
 		Audit: mongodb.Audit{
 			CreatedAt: currTime,
 			UpdatedAt: currTime,
@@ -126,11 +123,14 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 }
 
 // UpdateProbe - Update a new Probe
-func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (string, error) {
+func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest, projectID string) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
 
-	pr, err := dbSchemaProbe.GetProbeByName(ctx, request.Name, p.ProjectID)
+	pr, err := dbSchemaProbe.GetProbeByName(ctx, request.Name, projectID)
 	if err != nil {
 		return "", err
 	}
@@ -141,7 +141,7 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 			Name: request.Name,
 			Tags: request.Tags,
 		},
-		ProjectID: p.ProjectID,
+		ProjectID: projectID,
 		Audit: mongodb.Audit{
 			CreatedAt: pr.CreatedAt,
 			UpdatedAt: time.Now().UnixMilli(),
@@ -189,7 +189,7 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 
 	filterQuery := bson.D{
 		{"name", request.Name},
-		{"project_id", p.ProjectID},
+		{"project_id", projectID},
 		{"is_removed", false},
 	}
 
@@ -202,9 +202,9 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 }
 
 // GetProbe - List a single Probe
-func (p *probe) GetProbe(ctx context.Context, probeName string) (*model.Probe, error) {
+func (p *probe) GetProbe(ctx context.Context, probeName, projectID string) (*model.Probe, error) {
 
-	probe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, p.ProjectID)
+	probe, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
 	if err != nil {
 		return nil, err
 	}
@@ -213,9 +213,9 @@ func (p *probe) GetProbe(ctx context.Context, probeName string) (*model.Probe, e
 }
 
 // GetProbeYAMLData - Get the probe yaml data compatible with the chaos engine manifest
-func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProbeYAMLRequest) (string, error) {
+func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProbeYAMLRequest, projectID string) (string, error) {
 
-	probe, err := dbSchemaProbe.GetProbeByName(ctx, probeRequest.ProbeName, p.ProjectID)
+	probe, err := dbSchemaProbe.GetProbeByName(ctx, probeRequest.ProbeName, projectID)
 	if err != nil {
 		return "", err
 	}
@@ -229,14 +229,14 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 }
 
 // ListProbes - List a single/all Probes
-func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput) ([]*model.Probe, error) {
+func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastructureType *model.InfrastructureType, filter *model.ProbeFilterInput, projectID string) ([]*model.Probe, error) {
 	var pipeline mongo.Pipeline
 
 	// Match the Probe Names from the input array
 	if probeNames != nil && len(probeNames) != 0 {
 		matchProbeName := bson.D{
 			{
-				Key: "$match", Value: bson.D{
+				"$match", bson.D{
 					{"name", bson.D{
 						{"$in", probeNames},
 					}},
@@ -251,7 +251,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	if infrastructureType != nil {
 		matchProbeInfra := bson.D{
 			{
-				Key: "$match", Value: bson.D{
+				"$match", bson.D{
 					{"infrastructure_type", *infrastructureType},
 				},
 			},
@@ -265,7 +265,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 		if filter.Type != nil && len(filter.Type) != 0 {
 			matchProbeType := bson.D{
 				{
-					Key: "$match", Value: bson.D{
+					"$match", bson.D{
 						{"type", bson.D{
 							{"$in", filter.Type},
 						}},
@@ -298,10 +298,21 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 			filterProbeDateStage := bson.D{
 				{
 					"$match",
-					bson.D{{"updated_at", bson.D{
-						{"$lte", endDate},
-						{"$gte", startDate},
-					}}},
+					bson.D{
+						{
+							"updated_at",
+							bson.D{
+								{
+									"$lte",
+									endDate,
+								},
+								{
+									"$gte",
+									startDate,
+								},
+							},
+						},
+					},
 				},
 			}
 			pipeline = append(pipeline, filterProbeDateStage)
@@ -311,10 +322,12 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{
-			Key: "$match", Value: bson.D{
-				{"project_id", p.ProjectID},
-				{"is_removed", false},
-			},
+			"project_id",
+			projectID,
+		},
+		{
+			"is_removed",
+			false,
 		},
 	}
 	pipeline = append(pipeline, matchIdentifierStage)
@@ -335,7 +348,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 
 	for _, probe := range allProbes {
 		var lastTenExecutions []*model.ProbeRecentExecutions
-		recentExecutions, err := GetProbeExecutionHistoryInExperimentRuns(p.ProjectID, probe.Name)
+		recentExecutions, err := GetProbeExecutionHistoryInExperimentRuns(projectID, probe.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -369,10 +382,12 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
-		{"$match", bson.D{
-			{"project_id", projectID},
-			{"probes.probe_names", probeName},
-		}},
+		{
+			"$match", bson.D{
+				{"project_id", projectID},
+				{"probes.probe_names", probeName},
+			},
+		},
 	}
 
 	pipeline = append(pipeline, matchIdentifierStage)
@@ -457,9 +472,9 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 }
 
 // DeleteProbe - Deletes a single Probe
-func (p *probe) DeleteProbe(ctx context.Context, probeName string) (bool, error) {
+func (p *probe) DeleteProbe(ctx context.Context, probeName, projectID string) (bool, error) {
 
-	_, err := dbSchemaProbe.GetProbeByName(ctx, probeName, p.ProjectID)
+	_, err := dbSchemaProbe.GetProbeByName(ctx, probeName, projectID)
 	if err != nil {
 		return false, err
 	}
@@ -470,7 +485,7 @@ func (p *probe) DeleteProbe(ctx context.Context, probeName string) (bool, error)
 
 	query := bson.D{
 		{"name", probeName},
-		{"project_id", p.ProjectID},
+		{"project_id", projectID},
 		{"is_removed", false},
 	}
 	update := bson.D{
@@ -492,22 +507,24 @@ func (p *probe) DeleteProbe(ctx context.Context, probeName string) (bool, error)
 }
 
 // GetProbeReference - Get the experiment details the probe is referencing to
-func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model.GetProbeReferenceResponse, error) {
+func (p *probe) GetProbeReference(ctx context.Context, probeName, projectID string) (*model.GetProbeReferenceResponse, error) {
 
 	var pipeline mongo.Pipeline
 
 	// Matching with identifiers
 	matchIdentifiersStage := bson.D{
 		{
-			"$match", bson.D{{
-				"$and", bson.A{
-					bson.D{
-						{"project_id", p.ProjectID},
-						{"name", probeName},
-						{"is_removed", false},
+			"$match", bson.D{
+				{
+					"$and", bson.A{
+						bson.D{
+							{"project_id", projectID},
+							{"name", probeName},
+							{"is_removed", false},
+						},
 					},
 				},
-			}},
+			},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifiersStage)
@@ -675,11 +692,11 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 }
 
 // ValidateUniqueProbe - Validates the uniqueness of the probe, returns true if unique
-func (p *probe) ValidateUniqueProbe(ctx context.Context, probeName string) (bool, error) {
+func (p *probe) ValidateUniqueProbe(ctx context.Context, probeName, projectID string) (bool, error) {
 
 	query := bson.D{
 		{"name", probeName},
-		{"project_id", p.ProjectID},
+		{"project_id", projectID},
 	}
 
 	isUnique, err := dbSchemaProbe.IsProbeUnique(ctx, query)

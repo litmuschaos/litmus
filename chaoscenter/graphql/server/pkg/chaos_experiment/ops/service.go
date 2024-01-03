@@ -30,6 +30,7 @@ import (
 	"github.com/google/uuid"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
 	scheduleTypes "github.com/litmuschaos/chaos-scheduler/api/litmuschaos/v1alpha1"
+	probe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"go.mongodb.org/mongo-driver/bson"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -48,14 +49,16 @@ type chaosExperimentService struct {
 	chaosExperimentOperator     *dbChaosExperiment.Operator
 	chaosInfrastructureOperator *dbChaosInfra.Operator
 	chaosExperimentRunOperator  *dbChaosExperimentRun.Operator
+	probeService                probe.Service
 }
 
 // NewChaosExperimentService returns a new instance of the chaos workflow service
-func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator, chaosExperimentRunOperator *dbChaosExperimentRun.Operator) Service {
+func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator, clusterOperator *dbChaosInfra.Operator, chaosExperimentRunOperator *dbChaosExperimentRun.Operator, probeService probe.Service) Service {
 	return &chaosExperimentService{
 		chaosExperimentOperator:     chaosWorkflowOperator,
 		chaosInfrastructureOperator: clusterOperator,
 		chaosExperimentRunOperator:  chaosExperimentRunOperator,
+		probeService:                probeService,
 	}
 }
 
@@ -105,7 +108,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	switch strings.ToLower(objMeta.GetKind()) {
 	case "workflow":
 		{
-			err = processExperimentManifest(workflow, weights, revID)
+			err = c.processExperimentManifest(workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -113,7 +116,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "cronworkflow":
 		{
 			wfType = dbChaosExperiment.CronExperiment
-			err = processCronExperimentManifest(workflow, weights, revID)
+			err = c.processCronExperimentManifest(workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -121,7 +124,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "chaosengine":
 		{
 			wfType = dbChaosExperiment.ChaosEngine
-			err = processChaosEngineManifest(workflow, weights, revID)
+			err = c.processChaosEngineManifest(workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -130,7 +133,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "chaosschedule":
 		{
 			wfType = dbChaosExperiment.ChaosEngine
-			err = processChaosScheduleManifest(workflow, weights, revID)
+			err = c.processChaosScheduleManifest(workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -259,7 +262,8 @@ func (c *chaosExperimentService) ProcessExperimentUpdate(workflow *model.ChaosEx
 		query = bson.D{
 			{"experiment_id", workflow.ExperimentID},
 			{"project_id", projectID},
-			{"revision.revision_id", revisionID}}
+			{"revision.revision_id", revisionID},
+		}
 		update = bson.D{
 			{"$set", bson.D{
 				{"updated_at", time.Now().UnixMilli()},
@@ -349,7 +353,8 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 
 	return nil
 }
-func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+
+func (c *chaosExperimentService) processExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest v1alpha1.Workflow
@@ -404,6 +409,34 @@ func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights m
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
 					}
 
+					// Check if probeRef annotation is present in chaosengine, if not then create new probes
+					if _, ok := meta.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+						// Check if probes are specified in chaosengine
+						if meta.Spec.Experiments[0].Spec.Probe != nil {
+							type probeRef struct {
+								Name string `json:"name"`
+								Mode string `json:"mode"`
+							}
+							probeRefs := []probeRef{}
+							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
+								// Generate new probes for the experiment
+								result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+								if err != nil {
+									return err
+								}
+								// If probes are created then update the probeRef annotation in chaosengine
+								probeRefs = append(probeRefs, probeRef{
+									Name: result.Name,
+									Mode: p.Mode,
+								})
+							}
+							probeRefBytes, _ := json.Marshal(probeRefs)
+							meta.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+						} else {
+							return errors.New("no probes specified in chaosengine - " + meta.Name)
+						}
+					}
+
 					if val, ok := weights[exprname]; ok {
 						workflowManifest.Spec.Templates[i].Metadata.Labels = map[string]string{
 							"weight": strconv.Itoa(val),
@@ -442,7 +475,7 @@ func processExperimentManifest(workflow *model.ChaosExperimentRequest, weights m
 	return nil
 }
 
-func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+func (c *chaosExperimentService) processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights             []*model.WeightagesInput
 		cronExperimentManifest v1alpha1.CronWorkflow
@@ -526,6 +559,33 @@ func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weigh
 					} else {
 						return errors.New("no experiments specified in chaosengine - " + meta.Name)
 					}
+					// Check if probeRef annotation is present in chaosengine, if not then create new probes
+					if _, ok := meta.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+						// Check if probes are specified in chaosengine
+						if meta.Spec.Experiments[0].Spec.Probe != nil {
+							type probeRef struct {
+								Name string `json:"name"`
+								Mode string `json:"mode"`
+							}
+							probeRefs := []probeRef{}
+							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
+								// Generate new probes for the experiment
+								result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+								if err != nil {
+									return err
+								}
+								// If probes are created then update the probeRef annotation in chaosengine
+								probeRefs = append(probeRefs, probeRef{
+									Name: result.Name,
+									Mode: p.Mode,
+								})
+							}
+							probeRefBytes, _ := json.Marshal(probeRefs)
+							meta.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+						} else {
+							return errors.New("no probes specified in chaosengine - " + meta.Name)
+						}
+					}
 					if val, ok := weights[exprname]; ok {
 						cronExperimentManifest.Spec.WorkflowSpec.Templates[i].Metadata.Labels = map[string]string{
 							"weight": strconv.Itoa(val),
@@ -564,7 +624,7 @@ func processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weigh
 	return nil
 }
 
-func processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+func (c *chaosExperimentService) processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest chaosTypes.ChaosEngine
@@ -596,6 +656,33 @@ func processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights 
 	if len(exprName) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
+	// Check if probeRef annotation is present in chaosengine, if not then create new probes
+	if _, ok := workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+		// Check if probes are specified in chaosengine
+		if workflowManifest.Spec.Experiments[0].Spec.Probe != nil {
+			type probeRef struct {
+				Name string `json:"name"`
+				Mode string `json:"mode"`
+			}
+			probeRefs := []probeRef{}
+			for _, p := range workflowManifest.Spec.Experiments[0].Spec.Probe {
+				// Generate new probes for the experiment
+				result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+				if err != nil {
+					return err
+				}
+				// If probes are created then update the probeRef annotation in chaosengine
+				probeRefs = append(probeRefs, probeRef{
+					Name: result.Name,
+					Mode: p.Mode,
+				})
+			}
+			probeRefBytes, _ := json.Marshal(probeRefs)
+			workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+		} else {
+			return errors.New("no probes specified in chaosengine - " + workflowManifest.Name)
+		}
+	}
 	if val, ok := weights[exprName]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
 	} else if val, ok := workflowManifest.Labels["weight"]; ok {
@@ -624,7 +711,7 @@ func processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights 
 	return nil
 }
 
-func processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID string) error {
+func (c *chaosExperimentService) processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest scheduleTypes.ChaosSchedule
@@ -655,7 +742,33 @@ func processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weight
 	if len(exprName) == 0 {
 		return errors.New("empty chaos experiment name")
 	}
-
+	// Check if probeRef annotation is present in chaosengine, if not then create new probes
+	if _, ok := workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"]; !ok {
+		// Check if probes are specified in chaosengine
+		if workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Spec.Probe != nil {
+			type probeRef struct {
+				Name string `json:"name"`
+				Mode string `json:"mode"`
+			}
+			probeRefs := []probeRef{}
+			for _, p := range workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Spec.Probe {
+				// Generate new probes for the experiment
+				result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+				if err != nil {
+					return err
+				}
+				// If probes are created then update the probeRef annotation in chaosengine
+				probeRefs = append(probeRefs, probeRef{
+					Name: result.Name,
+					Mode: p.Mode,
+				})
+			}
+			probeRefBytes, _ := json.Marshal(probeRefs)
+			workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+		} else {
+			return errors.New("no probes specified in chaosengine - " + workflowManifest.Name)
+		}
+	}
 	if val, ok := weights[exprName]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
 	} else if val, ok := workflowManifest.Labels["weight"]; ok {
@@ -753,4 +866,108 @@ func (c *chaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWork
 		}
 	}
 	return cronWorkflowManifest, faults, nil
+}
+
+func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.ProbeRequest {
+	var kubernetesHTTPProperties *model.KubernetesHTTPProbeRequest
+	var kubernetesCMDProperties *model.KubernetesCMDProbeRequest
+	var k8sProperties *model.K8SProbeRequest
+	var promProperties *model.PROMProbeRequest
+
+	switch model.ProbeType(probeInputs.Type) {
+	case model.ProbeTypeHTTPProbe:
+		method := &model.MethodRequest{}
+		if probeInputs.HTTPProbeInputs.Method.Get != nil {
+			method.Get = &model.GETRequest{
+				Criteria:     probeInputs.HTTPProbeInputs.Method.Get.Criteria,
+				ResponseCode: probeInputs.HTTPProbeInputs.Method.Get.ResponseCode,
+			}
+		} else if probeInputs.HTTPProbeInputs.Method.Post != nil {
+			method.Post = &model.POSTRequest{
+				Criteria:     probeInputs.HTTPProbeInputs.Method.Post.Criteria,
+				ResponseCode: probeInputs.HTTPProbeInputs.Method.Post.ResponseCode,
+			}
+			method.Post.ContentType = &probeInputs.HTTPProbeInputs.Method.Post.ContentType
+			method.Post.Body = &probeInputs.HTTPProbeInputs.Method.Post.Body
+			method.Post.BodyPath = &probeInputs.HTTPProbeInputs.Method.Post.BodyPath
+		}
+		kubernetesHTTPProperties = &model.KubernetesHTTPProbeRequest{
+			ProbeTimeout:         probeInputs.RunProperties.ProbeTimeout,
+			Interval:             probeInputs.RunProperties.Interval,
+			EvaluationTimeout:    &probeInputs.RunProperties.EvaluationTimeout,
+			URL:                  probeInputs.HTTPProbeInputs.URL,
+			Method:               method,
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			InsecureSkipVerify:   &probeInputs.HTTPProbeInputs.InsecureSkipVerify,
+		}
+	case model.ProbeTypeCmdProbe:
+		source, _ := json.Marshal(probeInputs.CmdProbeInputs.Source)
+		sourcePtr := string(source)
+		kubernetesCMDProperties = &model.KubernetesCMDProbeRequest{
+			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
+			Interval:     probeInputs.RunProperties.Interval,
+			Command:      probeInputs.CmdProbeInputs.Command,
+			Comparator: &model.ComparatorInput{
+				Type:     probeInputs.CmdProbeInputs.Comparator.Type,
+				Criteria: probeInputs.CmdProbeInputs.Comparator.Criteria,
+				Value:    probeInputs.CmdProbeInputs.Comparator.Value,
+			},
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Source:               &sourcePtr,
+		}
+	case model.ProbeTypePromProbe:
+		promProperties = &model.PROMProbeRequest{
+			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
+			Interval:     probeInputs.RunProperties.Interval,
+			Endpoint:     probeInputs.PromProbeInputs.Endpoint,
+			Comparator: &model.ComparatorInput{
+				Type:     probeInputs.PromProbeInputs.Comparator.Type,
+				Criteria: probeInputs.PromProbeInputs.Comparator.Criteria,
+				Value:    probeInputs.PromProbeInputs.Comparator.Value,
+			},
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			EvaluationTimeout:    &probeInputs.RunProperties.EvaluationTimeout,
+			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Query:                &probeInputs.PromProbeInputs.Query,
+			QueryPath:            &probeInputs.PromProbeInputs.QueryPath,
+		}
+	case model.ProbeTypeK8sProbe:
+		k8sProperties = &model.K8SProbeRequest{
+			ProbeTimeout:         probeInputs.RunProperties.ProbeTimeout,
+			Interval:             probeInputs.RunProperties.Interval,
+			Version:              probeInputs.K8sProbeInputs.Version,
+			Resource:             probeInputs.K8sProbeInputs.Resource,
+			Operation:            probeInputs.K8sProbeInputs.Operation,
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			EvaluationTimeout:    &probeInputs.RunProperties.EvaluationTimeout,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Group:                &probeInputs.K8sProbeInputs.Group,
+			ResourceNames:        &probeInputs.K8sProbeInputs.ResourceNames,
+			Namespace:            &probeInputs.K8sProbeInputs.Namespace,
+			FieldSelector:        &probeInputs.K8sProbeInputs.FieldSelector,
+			LabelSelector:        &probeInputs.K8sProbeInputs.LabelSelector,
+		}
+	}
+
+	return model.ProbeRequest{
+		Name:                     probeInputs.Name,
+		Type:                     model.ProbeType(probeInputs.Type),
+		K8sProperties:            k8sProperties,
+		KubernetesHTTPProperties: kubernetesHTTPProperties,
+		KubernetesCMDProperties:  kubernetesCMDProperties,
+		PromProperties:           promProperties,
+	}
 }

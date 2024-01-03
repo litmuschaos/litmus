@@ -108,6 +108,9 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	}
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
