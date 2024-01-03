@@ -236,7 +236,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	if probeNames != nil && len(probeNames) != 0 {
 		matchProbeName := bson.D{
 			{
-				"$match", bson.D{
+				Key: "$match", Value: bson.D{
 					{"name", bson.D{
 						{"$in", probeNames},
 					}},
@@ -251,7 +251,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	if infrastructureType != nil {
 		matchProbeInfra := bson.D{
 			{
-				"$match", bson.D{
+				Key: "$match", Value: bson.D{
 					{"infrastructure_type", *infrastructureType},
 				},
 			},
@@ -265,7 +265,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 		if filter.Type != nil && len(filter.Type) != 0 {
 			matchProbeType := bson.D{
 				{
-					"$match", bson.D{
+					Key: "$match", Value: bson.D{
 						{"type", bson.D{
 							{"$in", filter.Type},
 						}},
@@ -322,12 +322,10 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	// Match with identifiers
 	matchIdentifierStage := bson.D{
 		{
-			"project_id",
-			projectID,
-		},
-		{
-			"is_removed",
-			false,
+			Key: "$match", Value: bson.D{
+				{"project_id", projectID},
+				{"is_removed", false},
+			},
 		},
 	}
 	pipeline = append(pipeline, matchIdentifierStage)
