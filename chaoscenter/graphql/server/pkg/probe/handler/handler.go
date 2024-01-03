@@ -54,7 +54,11 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest, projectI
 	var (
 		currTime = time.Now().UnixMilli()
 	)
-	tkn := ctx.Value(authorization.AuthKey).(string)
+	tkn, ok := ctx.Value(authorization.AuthKey).(string)
+	if !ok {
+		return nil, errors.New("JWT token not found")
+	}
+
 	username, err := authorization.GetUsername(tkn)
 	if err != nil {
 		return nil, err

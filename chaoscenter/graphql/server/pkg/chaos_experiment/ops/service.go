@@ -37,7 +37,7 @@ import (
 )
 
 type Service interface {
-	ProcessExperiment(workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error)
+	ProcessExperiment(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error)
 	ProcessExperimentCreation(ctx context.Context, input *model.ChaosExperimentRequest, username string, projectID string, wfType *dbChaosExperiment.ChaosExperimentType, revisionID string, r *store.StateData) error
 	ProcessExperimentUpdate(workflow *model.ChaosExperimentRequest, username string, wfType *dbChaosExperiment.ChaosExperimentType, revisionID string, updateRevision bool, projectID string, r *store.StateData) error
 	ProcessExperimentDelete(query bson.D, workflow dbChaosExperiment.ChaosExperimentRequest, username string, r *store.StateData) error
@@ -63,7 +63,7 @@ func NewChaosExperimentService(chaosWorkflowOperator *dbChaosExperiment.Operator
 }
 
 // ProcessExperiment takes the workflow and processes it as required
-func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error) {
+func (c *chaosExperimentService) ProcessExperiment(ctx context.Context, workflow *model.ChaosExperimentRequest, projectID string, revID string) (*model.ChaosExperimentRequest, *dbChaosExperiment.ChaosExperimentType, error) {
 	// security check for chaos_infra access
 	infra, err := c.chaosInfrastructureOperator.GetInfra(workflow.InfraID)
 	if err != nil {
@@ -108,7 +108,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	switch strings.ToLower(objMeta.GetKind()) {
 	case "workflow":
 		{
-			err = c.processExperimentManifest(workflow, weights, revID, projectID)
+			err = c.processExperimentManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -116,7 +116,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "cronworkflow":
 		{
 			wfType = dbChaosExperiment.CronExperiment
-			err = c.processCronExperimentManifest(workflow, weights, revID, projectID)
+			err = c.processCronExperimentManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -124,7 +124,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "chaosengine":
 		{
 			wfType = dbChaosExperiment.ChaosEngine
-			err = c.processChaosEngineManifest(workflow, weights, revID, projectID)
+			err = c.processChaosEngineManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -133,7 +133,7 @@ func (c *chaosExperimentService) ProcessExperiment(workflow *model.ChaosExperime
 	case "chaosschedule":
 		{
 			wfType = dbChaosExperiment.ChaosEngine
-			err = c.processChaosScheduleManifest(workflow, weights, revID, projectID)
+			err = c.processChaosScheduleManifest(ctx, workflow, weights, revID, projectID)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -354,7 +354,7 @@ func (c *chaosExperimentService) ProcessExperimentDelete(query bson.D, workflow 
 	return nil
 }
 
-func (c *chaosExperimentService) processExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
+func (c *chaosExperimentService) processExperimentManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest v1alpha1.Workflow
@@ -420,7 +420,7 @@ func (c *chaosExperimentService) processExperimentManifest(workflow *model.Chaos
 							probeRefs := []probeRef{}
 							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
 								// Generate new probes for the experiment
-								result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+								result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
 								if err != nil {
 									return err
 								}
@@ -475,7 +475,7 @@ func (c *chaosExperimentService) processExperimentManifest(workflow *model.Chaos
 	return nil
 }
 
-func (c *chaosExperimentService) processCronExperimentManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
+func (c *chaosExperimentService) processCronExperimentManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights             []*model.WeightagesInput
 		cronExperimentManifest v1alpha1.CronWorkflow
@@ -570,7 +570,7 @@ func (c *chaosExperimentService) processCronExperimentManifest(workflow *model.C
 							probeRefs := []probeRef{}
 							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
 								// Generate new probes for the experiment
-								result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+								result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
 								if err != nil {
 									return err
 								}
@@ -624,7 +624,7 @@ func (c *chaosExperimentService) processCronExperimentManifest(workflow *model.C
 	return nil
 }
 
-func (c *chaosExperimentService) processChaosEngineManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
+func (c *chaosExperimentService) processChaosEngineManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest chaosTypes.ChaosEngine
@@ -667,7 +667,7 @@ func (c *chaosExperimentService) processChaosEngineManifest(workflow *model.Chao
 			probeRefs := []probeRef{}
 			for _, p := range workflowManifest.Spec.Experiments[0].Spec.Probe {
 				// Generate new probes for the experiment
-				result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+				result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
 				if err != nil {
 					return err
 				}
@@ -711,7 +711,7 @@ func (c *chaosExperimentService) processChaosEngineManifest(workflow *model.Chao
 	return nil
 }
 
-func (c *chaosExperimentService) processChaosScheduleManifest(workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
+func (c *chaosExperimentService) processChaosScheduleManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
 	var (
 		newWeights       []*model.WeightagesInput
 		workflowManifest scheduleTypes.ChaosSchedule
@@ -753,7 +753,7 @@ func (c *chaosExperimentService) processChaosScheduleManifest(workflow *model.Ch
 			probeRefs := []probeRef{}
 			for _, p := range workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Spec.Probe {
 				// Generate new probes for the experiment
-				result, err := c.probeService.AddProbe(context.TODO(), ProbeInputsToProbeRequest(p), projectID)
+				result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
 				if err != nil {
 					return err
 				}
