@@ -431,7 +431,11 @@ func (c *chaosExperimentService) processExperimentManifest(ctx context.Context, 
 								})
 							}
 							probeRefBytes, _ := json.Marshal(probeRefs)
-							meta.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+							rawYaml, err := insertProbeRefAnnotation(artifact[0].Raw.Data, string(probeRefBytes))
+							if err != nil {
+								return err
+							}
+							artifact[0].Raw.Data = rawYaml
 						} else {
 							return errors.New("no probes specified in chaosengine - " + meta.Name)
 						}
@@ -473,6 +477,38 @@ func (c *chaosExperimentService) processExperimentManifest(ctx context.Context, 
 
 	workflow.ExperimentManifest = string(out)
 	return nil
+}
+
+func insertProbeRefAnnotation(rawYaml, value string) (string, error) {
+	var data interface{}
+
+	err := yaml.Unmarshal([]byte(rawYaml), &data)
+	if err != nil {
+		return "", err
+	}
+
+	dataMap := data.(map[string]interface{})
+
+	metadata := dataMap["metadata"]
+	if metadata == nil {
+		return "", errors.New("metadata not found")
+	}
+
+	annotations := metadata.(map[string]interface{})["annotations"]
+	if annotations == nil {
+		// create new annotations
+		annotations = make(map[string]interface{})
+		metadata.(map[string]interface{})["annotations"] = annotations
+	}
+
+	annotations.(map[string]interface{})["probeRef"] = value
+
+	result, err := yaml.Marshal(dataMap)
+	if err != nil {
+		return "", err
+	}
+
+	return string(result), nil
 }
 
 func (c *chaosExperimentService) processCronExperimentManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
@@ -891,18 +927,25 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 			method.Post.Body = &probeInputs.HTTPProbeInputs.Method.Post.Body
 			method.Post.BodyPath = &probeInputs.HTTPProbeInputs.Method.Post.BodyPath
 		}
+		if probeInputs.RunProperties.EvaluationTimeout != "" {
+			kubernetesHTTPProperties.EvaluationTimeout = &probeInputs.RunProperties.EvaluationTimeout
+		}
+		if probeInputs.RunProperties.ProbePollingInterval != "" {
+			kubernetesHTTPProperties.ProbePollingInterval = &probeInputs.RunProperties.ProbePollingInterval
+		}
+		if probeInputs.RunProperties.InitialDelay != "" {
+			kubernetesHTTPProperties.InitialDelay = &probeInputs.RunProperties.InitialDelay
+		}
+
 		kubernetesHTTPProperties = &model.KubernetesHTTPProbeRequest{
-			ProbeTimeout:         probeInputs.RunProperties.ProbeTimeout,
-			Interval:             probeInputs.RunProperties.Interval,
-			EvaluationTimeout:    &probeInputs.RunProperties.EvaluationTimeout,
-			URL:                  probeInputs.HTTPProbeInputs.URL,
-			Method:               method,
-			Attempt:              &probeInputs.RunProperties.Attempt,
-			Retry:                &probeInputs.RunProperties.Retry,
-			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
-			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
-			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
-			InsecureSkipVerify:   &probeInputs.HTTPProbeInputs.InsecureSkipVerify,
+			ProbeTimeout:       probeInputs.RunProperties.ProbeTimeout,
+			Interval:           probeInputs.RunProperties.Interval,
+			URL:                probeInputs.HTTPProbeInputs.URL,
+			Method:             method,
+			Attempt:            &probeInputs.RunProperties.Attempt,
+			Retry:              &probeInputs.RunProperties.Retry,
+			StopOnFailure:      &probeInputs.RunProperties.StopOnFailure,
+			InsecureSkipVerify: &probeInputs.HTTPProbeInputs.InsecureSkipVerify,
 		}
 	case model.ProbeTypeCmdProbe:
 		source, _ := json.Marshal(probeInputs.CmdProbeInputs.Source)
@@ -969,5 +1012,7 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 		KubernetesHTTPProperties: kubernetesHTTPProperties,
 		KubernetesCMDProperties:  kubernetesCMDProperties,
 		PromProperties:           promProperties,
+		InfrastructureType:       model.InfrastructureType(model.InfrastructureTypeKubernetes),
+		Tags:                     []string{},
 	}
 }
