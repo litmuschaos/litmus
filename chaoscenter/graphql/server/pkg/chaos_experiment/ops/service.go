@@ -420,7 +420,11 @@ func (c *chaosExperimentService) processExperimentManifest(ctx context.Context, 
 							probeRefs := []probeRef{}
 							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
 								// Generate new probes for the experiment
-								result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
+								probe, err := ProbeInputsToProbeRequest(p)
+								if err != nil {
+									return err
+								}
+								result, err := c.probeService.AddProbe(ctx, probe, projectID)
 								if err != nil {
 									return err
 								}
@@ -477,38 +481,6 @@ func (c *chaosExperimentService) processExperimentManifest(ctx context.Context, 
 
 	workflow.ExperimentManifest = string(out)
 	return nil
-}
-
-func insertProbeRefAnnotation(rawYaml, value string) (string, error) {
-	var data interface{}
-
-	err := yaml.Unmarshal([]byte(rawYaml), &data)
-	if err != nil {
-		return "", err
-	}
-
-	dataMap := data.(map[string]interface{})
-
-	metadata := dataMap["metadata"]
-	if metadata == nil {
-		return "", errors.New("metadata not found")
-	}
-
-	annotations := metadata.(map[string]interface{})["annotations"]
-	if annotations == nil {
-		// create new annotations
-		annotations = make(map[string]interface{})
-		metadata.(map[string]interface{})["annotations"] = annotations
-	}
-
-	annotations.(map[string]interface{})["probeRef"] = value
-
-	result, err := yaml.Marshal(dataMap)
-	if err != nil {
-		return "", err
-	}
-
-	return string(result), nil
 }
 
 func (c *chaosExperimentService) processCronExperimentManifest(ctx context.Context, workflow *model.ChaosExperimentRequest, weights map[string]int, revID, projectID string) error {
@@ -606,7 +578,11 @@ func (c *chaosExperimentService) processCronExperimentManifest(ctx context.Conte
 							probeRefs := []probeRef{}
 							for _, p := range meta.Spec.Experiments[0].Spec.Probe {
 								// Generate new probes for the experiment
-								result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
+								probe, err := ProbeInputsToProbeRequest(p)
+								if err != nil {
+									return err
+								}
+								result, err := c.probeService.AddProbe(ctx, probe, projectID)
 								if err != nil {
 									return err
 								}
@@ -617,7 +593,11 @@ func (c *chaosExperimentService) processCronExperimentManifest(ctx context.Conte
 								})
 							}
 							probeRefBytes, _ := json.Marshal(probeRefs)
-							meta.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
+							rawYaml, err := insertProbeRefAnnotation(artifact[0].Raw.Data, string(probeRefBytes))
+							if err != nil {
+								return err
+							}
+							artifact[0].Raw.Data = rawYaml
 						} else {
 							return errors.New("no probes specified in chaosengine - " + meta.Name)
 						}
@@ -703,7 +683,11 @@ func (c *chaosExperimentService) processChaosEngineManifest(ctx context.Context,
 			probeRefs := []probeRef{}
 			for _, p := range workflowManifest.Spec.Experiments[0].Spec.Probe {
 				// Generate new probes for the experiment
-				result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
+				probe, err := ProbeInputsToProbeRequest(p)
+				if err != nil {
+					return err
+				}
+				result, err := c.probeService.AddProbe(ctx, probe, projectID)
 				if err != nil {
 					return err
 				}
@@ -714,11 +698,15 @@ func (c *chaosExperimentService) processChaosEngineManifest(ctx context.Context,
 				})
 			}
 			probeRefBytes, _ := json.Marshal(probeRefs)
+			if workflowManifest.GetObjectMeta().GetAnnotations() == nil {
+				workflowManifest.GetObjectMeta().SetAnnotations(map[string]string{})
+			}
 			workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
 		} else {
 			return errors.New("no probes specified in chaosengine - " + workflowManifest.Name)
 		}
 	}
+
 	if val, ok := weights[exprName]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
 	} else if val, ok := workflowManifest.Labels["weight"]; ok {
@@ -789,7 +777,11 @@ func (c *chaosExperimentService) processChaosScheduleManifest(ctx context.Contex
 			probeRefs := []probeRef{}
 			for _, p := range workflowManifest.Spec.EngineTemplateSpec.Experiments[0].Spec.Probe {
 				// Generate new probes for the experiment
-				result, err := c.probeService.AddProbe(ctx, ProbeInputsToProbeRequest(p), projectID)
+				probe, err := ProbeInputsToProbeRequest(p)
+				if err != nil {
+					return err
+				}
+				result, err := c.probeService.AddProbe(ctx, probe, projectID)
 				if err != nil {
 					return err
 				}
@@ -800,11 +792,15 @@ func (c *chaosExperimentService) processChaosScheduleManifest(ctx context.Contex
 				})
 			}
 			probeRefBytes, _ := json.Marshal(probeRefs)
+			if workflowManifest.GetObjectMeta().GetAnnotations() == nil {
+				workflowManifest.GetObjectMeta().SetAnnotations(map[string]string{})
+			}
 			workflowManifest.GetObjectMeta().GetAnnotations()["probeRef"] = string(probeRefBytes)
 		} else {
 			return errors.New("no probes specified in chaosengine - " + workflowManifest.Name)
 		}
 	}
+
 	if val, ok := weights[exprName]; ok {
 		workflowManifest.Labels["weight"] = strconv.Itoa(val)
 	} else if val, ok := workflowManifest.Labels["weight"]; ok {
@@ -871,8 +867,8 @@ func (c *chaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWork
 						}
 					}
 					probes = append(probes, dbChaosExperimentRun.Probes{
-						artifact[0].Name,
-						annotationArray,
+						FaultName:  artifact[0].Name,
+						ProbeNames: annotationArray,
 					})
 
 					meta.Annotations = annotation
@@ -904,11 +900,15 @@ func (c *chaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWork
 	return cronWorkflowManifest, faults, nil
 }
 
-func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.ProbeRequest {
+func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) (model.ProbeRequest, error) {
 	var kubernetesHTTPProperties *model.KubernetesHTTPProbeRequest
 	var kubernetesCMDProperties *model.KubernetesCMDProbeRequest
 	var k8sProperties *model.K8SProbeRequest
 	var promProperties *model.PROMProbeRequest
+
+	if probeInputs.RunProperties.ProbeTimeout == "" || probeInputs.RunProperties.Interval == "" {
+		return model.ProbeRequest{}, errors.New("values for ProbeTimeout and Interval are required")
+	}
 
 	switch model.ProbeType(probeInputs.Type) {
 	case model.ProbeTypeHTTPProbe:
@@ -926,6 +926,11 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 			method.Post.ContentType = &probeInputs.HTTPProbeInputs.Method.Post.ContentType
 			method.Post.Body = &probeInputs.HTTPProbeInputs.Method.Post.Body
 			method.Post.BodyPath = &probeInputs.HTTPProbeInputs.Method.Post.BodyPath
+		} else {
+			return model.ProbeRequest{}, errors.New("GET/POST method not specified")
+		}
+		if probeInputs.HTTPProbeInputs.URL == "" {
+			return model.ProbeRequest{}, errors.New("URL not specified")
 		}
 		if probeInputs.RunProperties.EvaluationTimeout != "" {
 			kubernetesHTTPProperties.EvaluationTimeout = &probeInputs.RunProperties.EvaluationTimeout
@@ -947,26 +952,10 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 			StopOnFailure:      &probeInputs.RunProperties.StopOnFailure,
 			InsecureSkipVerify: &probeInputs.HTTPProbeInputs.InsecureSkipVerify,
 		}
-	case model.ProbeTypeCmdProbe:
-		source, _ := json.Marshal(probeInputs.CmdProbeInputs.Source)
-		sourcePtr := string(source)
-		kubernetesCMDProperties = &model.KubernetesCMDProbeRequest{
-			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
-			Interval:     probeInputs.RunProperties.Interval,
-			Command:      probeInputs.CmdProbeInputs.Command,
-			Comparator: &model.ComparatorInput{
-				Type:     probeInputs.CmdProbeInputs.Comparator.Type,
-				Criteria: probeInputs.CmdProbeInputs.Comparator.Criteria,
-				Value:    probeInputs.CmdProbeInputs.Comparator.Value,
-			},
-			Attempt:              &probeInputs.RunProperties.Attempt,
-			Retry:                &probeInputs.RunProperties.Retry,
-			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
-			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
-			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
-			Source:               &sourcePtr,
-		}
 	case model.ProbeTypePromProbe:
+		if probeInputs.PromProbeInputs.Endpoint == "" {
+			return model.ProbeRequest{}, errors.New("endpoint not specified")
+		}
 		promProperties = &model.PROMProbeRequest{
 			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
 			Interval:     probeInputs.RunProperties.Interval,
@@ -986,6 +975,9 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 			QueryPath:            &probeInputs.PromProbeInputs.QueryPath,
 		}
 	case model.ProbeTypeK8sProbe:
+		if probeInputs.K8sProbeInputs.Resource == "" || probeInputs.K8sProbeInputs.Operation == "" || probeInputs.K8sProbeInputs.Version == "" {
+			return model.ProbeRequest{}, errors.New("resource, operation and version are required")
+		}
 		k8sProperties = &model.K8SProbeRequest{
 			ProbeTimeout:         probeInputs.RunProperties.ProbeTimeout,
 			Interval:             probeInputs.RunProperties.Interval,
@@ -1003,6 +995,25 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 			FieldSelector:        &probeInputs.K8sProbeInputs.FieldSelector,
 			LabelSelector:        &probeInputs.K8sProbeInputs.LabelSelector,
 		}
+	case model.ProbeTypeCmdProbe:
+		source, _ := json.Marshal(probeInputs.CmdProbeInputs.Source)
+		sourcePtr := string(source)
+		kubernetesCMDProperties = &model.KubernetesCMDProbeRequest{
+			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
+			Interval:     probeInputs.RunProperties.Interval,
+			Command:      probeInputs.CmdProbeInputs.Command,
+			Comparator: &model.ComparatorInput{
+				Type:     probeInputs.CmdProbeInputs.Comparator.Type,
+				Criteria: probeInputs.CmdProbeInputs.Comparator.Criteria,
+				Value:    probeInputs.CmdProbeInputs.Comparator.Value,
+			},
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Source:               &sourcePtr,
+		}
 	}
 
 	return model.ProbeRequest{
@@ -1014,5 +1025,37 @@ func ProbeInputsToProbeRequest(probeInputs chaosTypes.ProbeAttributes) model.Pro
 		PromProperties:           promProperties,
 		InfrastructureType:       model.InfrastructureType(model.InfrastructureTypeKubernetes),
 		Tags:                     []string{},
+	}, nil
+}
+
+func insertProbeRefAnnotation(rawYaml, value string) (string, error) {
+	var data interface{}
+
+	err := yaml.Unmarshal([]byte(rawYaml), &data)
+	if err != nil {
+		return "", err
 	}
+
+	dataMap := data.(map[string]interface{})
+
+	metadata := dataMap["metadata"]
+	if metadata == nil {
+		return "", errors.New("metadata not found")
+	}
+
+	annotations := metadata.(map[string]interface{})["annotations"]
+	if annotations == nil {
+		// create new annotations
+		annotations = make(map[string]interface{})
+		metadata.(map[string]interface{})["annotations"] = annotations
+	}
+
+	annotations.(map[string]interface{})["probeRef"] = value
+
+	result, err := yaml.Marshal(dataMap)
+	if err != nil {
+		return "", err
+	}
+
+	return string(result), nil
 }
