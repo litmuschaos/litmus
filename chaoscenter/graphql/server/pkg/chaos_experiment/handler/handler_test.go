@@ -31,19 +31,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var (
-	mongodbMockOperator        = new(dbMocks.MongoOperator)
-	infrastructureService      = new(chaosInfraMocks.InfraService)
-	chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
-	gitOpsService              = new(dbGitOpsMocks.GitOpsService)
-	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
-	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
-	chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
-)
-
-var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
-
 func TestNewChaosExperimentHandler(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
 	type args struct {
 		chaosExperimentService     types.Service
 		chaosExperimentRunService  chaosExperimentRun.Service
@@ -89,6 +87,18 @@ func TestNewChaosExperimentHandler(t *testing.T) {
 	}
 }
 func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	type args struct {
 		request   model.SaveChaosExperimentRequest
 		request2  *model.ChaosExperimentRequest
@@ -282,6 +292,18 @@ func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 	ctx := context.TODO()
 	projectId := uuid.New().String()
@@ -389,6 +411,18 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	type args struct {
 		request   *model.ChaosExperimentRequest
 		projectID string
@@ -479,6 +513,18 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	projectId := uuid.New().String()
 	experimentId := uuid.New().String()
 	infraId := uuid.New().String()
@@ -565,6 +611,18 @@ func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	type args struct {
 		projectID string
 		request   model.ListExperimentRequest
@@ -663,6 +721,18 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 	projectID := uuid.New().String()
 	experimentID := uuid.New().String()
@@ -708,6 +778,18 @@ func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+
 	ctx := context.Background()
 	projectID := uuid.New().String()
 	tests := []struct {
