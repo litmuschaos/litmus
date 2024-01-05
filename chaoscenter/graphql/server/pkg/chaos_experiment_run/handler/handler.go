@@ -11,7 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
+	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
@@ -905,7 +906,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	}
 
 	// Generate Probe in the manifest
-	workflowManifest, err = probe.GenerateExperimentManifestWithProbes(string(manifestString), projectID)
+	workflowManifest, err = probeUtils.GenerateExperimentManifestWithProbes(string(manifestString), projectID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate probes in workflow manifest, err: %v", err)
 	}
@@ -938,7 +939,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return workflow.Revision[i].UpdatedAt > workflow.Revision[j].UpdatedAt
 	})
 
-	cronExperimentManifest, err := probe.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
+	cronExperimentManifest, err := probeUtils.GenerateCronExperimentManifestWithProbes(workflow.Revision[0].ExperimentManifest, workflow.ProjectID)
 	if err != nil {
 		return errors.New("failed to unmarshal experiment manifest")
 	}
@@ -1090,7 +1091,7 @@ func (c *ChaosExperimentRunHandler) ChaosExperimentRunEvent(event model.Experime
 	logrus.WithFields(logFields).Info("new workflow event received")
 
 	expType := experiment.ExperimentType
-	probes, err := probe.ParseProbesFromManifestForRuns(&expType, experiment.Revision[len(experiment.Revision)-1].ExperimentManifest)
+	probes, err := probeUtils.ParseProbesFromManifestForRuns(&expType, experiment.Revision[len(experiment.Revision)-1].ExperimentManifest)
 	if err != nil {
 		return "", fmt.Errorf("unable to parse probes %v", err.Error())
 	}
