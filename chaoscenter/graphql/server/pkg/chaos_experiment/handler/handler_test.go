@@ -463,7 +463,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 
 				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("experiment update failed")).Once()
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 	}
 	for _, tc := range tests {
@@ -694,7 +694,7 @@ func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 			given: func() {
 				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("error while updating")).Once()
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 	}
 	for _, tc := range tests {

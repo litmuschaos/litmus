@@ -1,0 +1,36 @@
+---
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  name: container-kill
+  version: 0.1.0
+  annotations:
+    categories: "Kubernetes"
+    vendor: LitmusChaos
+spec:
+  displayName: Container Kill
+  categoryDescription: |
+    Container kill fault disrupts state of kubernetes resources. This fault injects random container delete failures against specified application.
+     - Executes SIGKILL on containers of random replicas of an application deployment.
+     - Tests deployment sanity (replica availability & uninterrupted service) and recovery workflows of the application pod.
+  keywords:
+    - Kubernetes
+  platforms:
+    - GKE
+    - Minikube
+    - Packet(Kubeadm)
+    - EKS
+    - AKS
+  maintainers:
+    - name: ksatchit
+      email: karthik.s@harness.io
+  minKubeVersion: 1.12.0
+  labels:
+    app.kubernetes.io/component: chartserviceversion
+    app.kubernetes.io/version: ci
+  links:
+    - name: Documentation
+      url: https://litmuschaos.github.io/litmus/experiments/categories/contents
+  icon:
+    - url:
+      mediatype: ""

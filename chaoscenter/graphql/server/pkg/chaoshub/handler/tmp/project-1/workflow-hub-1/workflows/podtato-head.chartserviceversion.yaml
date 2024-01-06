@@ -1,0 +1,28 @@
+apiVersion: litmuchaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  name: podtato-head
+  version: 0.1.0
+  annotations:
+    categories: podtato-head
+    chartDescription: Injects chaos on podtato-head application
+spec:
+  displayName: Podtato-head Chaos
+  categoryDescription: >
+    It installs podtato-head application, inject chaos on the application, uninstall the application, and reverts the chaos
+  faults:
+    - name: pod-delete
+      description: Pod delete fault disrupts the state of Kubernetes resources. This fault injects random pod delete failures against specified application.
+  keywords:
+    - Kubernetes
+    - Podtato-head
+    - Pod
+  platforms:
+    - GKE
+    - Minikube
+    - Packet(Kubeadm)
+    - EKS
+    - AKS
+  icon:
+    - url:
+      mediatype: ""

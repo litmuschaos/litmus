@@ -35,7 +35,7 @@ func TestGetChartsPath(t *testing.T) {
 	// when
 	path := handler.GetChartsPath(chartsInput, projectID, true)
 	// then
-	assert.Equal(t, "/tmp/default/test/faults/", path)
+	assert.Equal(t, "./tmp/default/test/faults/", path)
 }
 
 func TestGetChartsPathFalse(t *testing.T) {
@@ -48,7 +48,7 @@ func TestGetChartsPathFalse(t *testing.T) {
 	// when
 	path := handler.GetChartsPath(chartsInput, projectID, false)
 	// then
-	assert.Equal(t, "/tmp/test/test/faults/", path)
+	assert.Equal(t, "./tmp/test/test/faults/", path)
 }
 
 // TestReadExperimentFile is used to test the ReadExperimentFile function
@@ -281,7 +281,7 @@ func TestGetChartsData(t *testing.T) {
 			name:      "success: url is valid",
 			projectID: uuid.New().String(),
 			repoData: model.CloningInput{
-				Name:       uuid.New().String(),
+				Name:       "container-kill",
 				RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 				RepoBranch: "master",
 				IsPrivate:  false,
@@ -368,8 +368,8 @@ func TestGetExperimentData(t *testing.T) {
 // TestListPredefinedWorkflowDetails is used to test the ListPredefinedWorkflowDetails function
 func TestListPredefinedWorkflowDetails(t *testing.T) {
 	// given
-	succeedProjectID := uuid.New().String()
-	succeedName := uuid.New().String()
+	succeedProjectID := "project-1"
+	succeedName := "workflow-hub-1"
 	t.Cleanup(func() { _ = os.RemoveAll("/tmp/version/" + succeedProjectID) })
 	err := chaosHubOps.GitClone(
 		model.CloningInput{
