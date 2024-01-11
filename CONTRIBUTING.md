@@ -70,9 +70,9 @@ If you are new to Go, consider reading [Effective Go](https://golang.org/doc/eff
 
 To generate new mocks or update existing mocks:
 
--  Follow the instructions to install [mockery](https://vektra.github.io/mockery/latest/installation/).
--  If generating mocks for existing interface simply run `mockery`.
--  If generating mocks for new interface update [`.mockery.yaml`](././chaoscenter/graphql/server/.mockery.yaml) and run `mockery`.
+-   Follow the instructions to install [mockery](https://vektra.github.io/mockery/latest/installation/).
+-   If generating mocks for existing interface simply run `mockery`.
+-   If generating mocks for new interface update [`.mockery.yaml`](././chaoscenter/graphql/server/.mockery.yaml) and run `mockery`.
 
 ---
 
