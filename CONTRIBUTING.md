@@ -66,6 +66,14 @@ To submit any kinds of improvements, please consider the following:
 
 If you are new to Go, consider reading [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments) for guidance on writing idiomatic Go code.
 
+### Generating/Updating Mocks for `chaoscenter/graphql/server`
+
+To generate new mocks or update existing mocks:
+
+-   Follow the instructions to install [mockery](https://vektra.github.io/mockery/latest/installation/).
+-   If generating mocks for existing interface simply run `mockery`.
+-   If generating mocks for new interface update [`.mockery.yaml`](././chaoscenter/graphql/server/.mockery.yaml) and run `mockery`.
+
 ---
 
 ## Pull Request Checklist :
