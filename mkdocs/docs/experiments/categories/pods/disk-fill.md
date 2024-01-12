@@ -18,7 +18,7 @@
 ??? info "Verify the prerequisites"
     - Ensure that Kubernetes Version > 1.16
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>disk-fill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/disk-fill/experiment.yaml">here</a>
+    -  Ensure that the <code>disk-fill</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/kubernetes/disk-fill/fault.yaml">here</a>
     - Appropriate Ephemeral Storage Requests and Limits should be set for the application before running the experiment. An example specification is shown below:
     ```yaml
     apiVersion: v1
@@ -58,7 +58,6 @@
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/generic/disk-fill/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
