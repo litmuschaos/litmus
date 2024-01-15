@@ -2270,6 +2270,8 @@ spec:
                                     type: string
                                   initialDelay:
                                     type: string
+                                  verbosity:
+                                    type: string
                                   initialDelaySeconds:
                                     type: integer
                                   stopOnFailure:
