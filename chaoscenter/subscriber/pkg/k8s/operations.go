@@ -12,7 +12,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/labels"
 
-	atype "subscriber/pkg/types"
+	pkgTypes "subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
@@ -166,7 +166,7 @@ func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
 	// Define a patch object for the ConfigMap with only "IS_CLUSTER_CONFIRMED".
 	newConfigMapData := map[string]interface{}{
 		"data": map[string]interface{}{
-			"IS_CLUSTER_CONFIRMED": true,
+			"IS_INFRA_CONFIRMED": true,
 		},
 	}
 
@@ -188,7 +188,7 @@ func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
 		return false, err
 	}
 
-	logrus.Info("%s has been updtaed", InfraConfigName)
+	logrus.Info("%s has been updated", InfraConfigName)
 
 	newSecretData := map[string]string{
 		"ACCESS_KEY": accessKey,
@@ -319,7 +319,7 @@ func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]str
 }
 
 // AgentOperations This function handles agent operations
-func (k8s *k8sSubscriber) AgentOperations(infraAction atype.Action) (*unstructured.Unstructured, error) {
+func (k8s *k8sSubscriber) AgentOperations(infraAction pkgTypes.Action) (*unstructured.Unstructured, error) {
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(infraAction.K8SManifest))
 	if err != nil {
