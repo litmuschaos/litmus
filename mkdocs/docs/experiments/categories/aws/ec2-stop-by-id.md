@@ -1,11 +1,11 @@
 ## Introduction
 
-- It causes termination of an EC2 instance by tag before bringing it back to running state after the specified chaos duration.
+- It causes stopping of an EC2 instance by instance ID or list of instance IDs before bringing it back to running state after the specified chaos duration.
 - It helps to check the performance of the application/process running on the ec2 instance.
 When the MANAGED_NODEGROUP is enable then the experiment will not try to start the instance post chaos instead it will check of the addition of the new node instance to the cluster.
 
-!!! tip "Scenario: Terminate EC2 Instance"    
-    ![EC2 Terminate By Tag](../../images/ec2-terminate.png)
+!!! tip "Scenario: Stop EC2 Instance"
+    ![EC2 Stop By ID](../../images/ec2-stop.png)
 
 ## Uses
 
@@ -17,7 +17,7 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
     -  Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://v1-docs.litmuschaos.io/docs/getstarted/#install-litmus">here</a>
-    -  Ensure that the <code>ec2-terminate-by-tag</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=charts/kube-aws/ec2-terminate-by-tag/experiment.yaml">here</a>
+    -  Ensure that the <code>ec2-stop-by-id</code> experiment resource is available in the cluster by executing <code>kubectl get chaosexperiments</code> in the desired namespace. If not, install from <a href="https://hub.litmuschaos.io/api/chaos/master?file=faults/aws/ec2-stop-by-id/fault.yaml">here</a>
     - Ensure that you have sufficient AWS access to stop and start an ec2 instance. 
     - Ensure to create a Kubernetes secret having the AWS access configuration(key) in the `CHAOS_NAMESPACE`. A sample secret file looks like:
 
@@ -54,24 +54,23 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 
     ??? note "View the Minimal RBAC permissions"
 
-        [embedmd]:# (https://raw.githubusercontent.com/litmuschaos/chaos-charts/master/charts/kube-aws/ec2-terminate-by-tag/rbac.yaml yaml)
         ```yaml
         ---
         apiVersion: v1
         kind: ServiceAccount
         metadata:
-          name: ec2-terminate-by-tag-sa
+          name: ec2-stop-by-id-sa
           namespace: default
           labels:
-            name: ec2-terminate-by-tag-sa
+            name: ec2-stop-by-id-sa
             app.kubernetes.io/part-of: litmus
         ---
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
         metadata:
-          name: ec2-terminate-by-tag-sa
+          name: ec2-stop-by-id-sa
           labels:
-            name: ec2-terminate-by-tag-sa
+            name: ec2-stop-by-id-sa
             app.kubernetes.io/part-of: litmus
         rules:
           # Create and monitor the experiment & helper pods
@@ -110,17 +109,17 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         metadata:
-          name: ec2-terminate-by-tag-sa
+          name: ec2-stop-by-id-sa
           labels:
-            name: ec2-terminate-by-tag-sa
+            name: ec2-stop-by-id-sa
             app.kubernetes.io/part-of: litmus
         roleRef:
           apiGroup: rbac.authorization.k8s.io
           kind: ClusterRole
-          name: ec2-terminate-by-tag-sa
+          name: ec2-stop-by-id-sa
         subjects:
         - kind: ServiceAccount
-          name: ec2-terminate-by-tag-sa
+          name: ec2-stop-by-id-sa
           namespace: default
         ```
         
@@ -138,9 +137,9 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <th> Notes </th>
       </tr>
       <tr> 
-        <td> INSTANCE_TAG </td>
-        <td> Instance Tag to filter the target ec2 instance.</td>
-        <td> The <code>INSTANCE_TAG</code> should be provided as <code>key:value</code> ex: <code>team:devops</code></td>
+        <td> EC2_INSTANCE_ID </td>
+        <td> Instance ID of the target ec2 instance. Multiple IDs can also be provided as a comma(,) separated values</td>
+        <td> Multiple IDs can be provided as `id1,id2` </td>
       </tr>
       <tr>
         <td> REGION </td>
@@ -158,18 +157,13 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
         <th> Notes </th>
       </tr>
       <tr> 
-        <td> INSTANCE_AFFECTED_PERC </td>
-        <td> The Percentage of total ec2 instance to target </td>
-        <td> Defaults to 0 (corresponds to 1 instance), provide numeric value only </td>
-      </tr>
-      <tr> 
         <td> TOTAL_CHAOS_DURATION </td>
         <td> The total time duration for chaos insertion (sec) </td>
         <td> Defaults to 30s </td>
       </tr>
       <tr> 
         <td> CHAOS_INTERVAL </td>
-        <td> The interval (in sec) between successive instance termination.</td>
+        <td> The interval (in sec) between successive instance stop.</td>
         <td> Defaults to 30s </td>
       </tr>  
       <tr> 
@@ -195,15 +189,15 @@ When the MANAGED_NODEGROUP is enable then the experiment will not try to start t
 
 Refer the [common attributes](../common/common-tunables-for-all-experiments.md) and [AWS specific tunable](AWS-experiments-tunables.md) to tune the common tunables for all experiments and aws specific tunables.  
 
-### Target single instance
+### Stop Instances By ID
 
-It will stop a random single ec2 instance with the given `INSTANCE_TAG` tag and the `REGION` region.
+It contains comma separated list of instances IDs subjected to ec2 stop chaos. It can be tuned via `EC2_INSTANCE_ID` ENV.
 
 Use the following example to tune this:
 
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-tag/instance-tag.yaml yaml)
+[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-stop-by-id/instance-id.yaml yaml)
 ```yaml
-# target the ec2 instances with matching tag
+# contains the instance id to be stopped
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
@@ -211,53 +205,18 @@ metadata:
 spec:
   engineState: "active"
   annotationCheck: "false"
-  chaosServiceAccount: ec2-terminate-by-tag-sa
+  chaosServiceAccount: ec2-stop-by-id-sa
   experiments:
-  - name: ec2-terminate-by-tag
+  - name: ec2-stop-by-id
     spec:
       components:
         env:
-        # tag of the ec2 instance
-        - name: INSTANCE_TAG
-          value: 'key:value'
+        # id of the ec2 instance
+        - name: EC2_INSTANCE_ID
+          value: 'instance-1'
         # region for the ec2 instance
         - name: REGION
-          value: '<region for instance>'
-        - name: TOTAL_CHAOS_DURATION
-          value: '60'
-```
-
-### Target Percent of instances
-
-It will stop the `INSTANCE_AFFECTED_PERC` percentage of ec2 instances with the given `INSTANCE_TAG` tag and `REGION` region.
-
-Use the following example to tune this:
-
-[embedmd]:# (https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/experiments/categories/aws/ec2-terminate-by-tag/instance-affected-percentage.yaml yaml)
-```yaml
-# percentage of ec2 instances, needs to terminate with provided tags
-apiVersion: litmuschaos.io/v1alpha1
-kind: ChaosEngine
-metadata:
-  name: engine-nginx
-spec:
-  engineState: "active"
-  annotationCheck: "false"
-  chaosServiceAccount: ec2-terminate-by-tag-sa
-  experiments:
-  - name: ec2-terminate-by-tag
-    spec:
-      components:
-        env:
-        # percentage of ec2 instance filterd by tags 
-        - name: INSTANCE_AFFECTED_PERC
-          value: '100'
-        # tag of the ec2 instance
-        - name: INSTANCE_TAG
-          value: 'key:value'
-        # region for the ec2 instance
-        - name: REGION
-          value: '<region for instance>'
+          value: '<region for EC2_INSTANCE_ID>'
         - name: TOTAL_CHAOS_DURATION
           value: '60'
 ```
