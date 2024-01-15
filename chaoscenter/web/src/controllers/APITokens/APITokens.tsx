@@ -1,7 +1,7 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
 import ApiTokensView from '@views/ApiTokens';
-import { useGetApiTokensQuery } from '@api/auth';
+import { GetApiTokensResponse, useGetApiTokensQuery } from '@api/auth';
 import { getUserDetails } from '@utils';
 
 interface APITokensControllerProps {
@@ -12,18 +12,16 @@ export default function APITokensController(props: APITokensControllerProps): Re
   const { setApiTokensCount } = props;
   const { showError } = useToaster();
   const { accountID } = getUserDetails();
+  const [apiTokenData, setApiTokenData] = React.useState<GetApiTokensResponse | undefined>(undefined);
 
-  const {
-    data: apiTokensData,
-    isLoading: apiTokensLoading,
-    refetch: apiTokensRefetch
-  } = useGetApiTokensQuery(
+  const { isLoading: apiTokensLoading, refetch: apiTokensRefetch } = useGetApiTokensQuery(
     { user_id: accountID },
     {
       onError: error => {
         showError(error.error);
       },
       onSuccess: data => {
+        setApiTokenData(data);
         setApiTokensCount(data.apiTokens.length);
       }
     }
@@ -31,7 +29,7 @@ export default function APITokensController(props: APITokensControllerProps): Re
 
   return (
     <ApiTokensView
-      apiTokensData={apiTokensData}
+      apiTokensData={apiTokenData}
       apiTokensRefetch={apiTokensRefetch}
       getApiTokensQueryLoading={apiTokensLoading}
     />
