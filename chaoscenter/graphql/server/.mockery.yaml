@@ -1,0 +1,20 @@
+with-expecter: true
+packages:
+  github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops:
+    interfaces:
+      Service:
+        # Modify package-level config for this specific interface (if applicable)
+        config:
+          dir: "pkg/chaos_experiment/model/mocks"
+          filename: "service.go"
+          mockname: ChaosExperimentService
+          outpkg: mocks
+  github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run:
+    interfaces:
+      Service:
+        # Modify package-level config for this specific interface (if applicable)
+        config:
+          dir: "pkg/chaos_experiment_run/model/mocks"
+          filename: "service.go"
+          mockname: ChaosExperimentRunService
+          outpkg: mocks

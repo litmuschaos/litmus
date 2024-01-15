@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe"
+	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 
 	"github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	chaosTypes "github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
@@ -1391,7 +1391,7 @@ func (c *ChaosExperimentHandler) UpdateCronExperimentState(ctx context.Context, 
 		return false, errors.New("failed to marshal workflow manifest")
 	}
 
-	cronWorkflowManifest, err = probe.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
+	cronWorkflowManifest, err = probeUtils.GenerateCronExperimentManifestWithProbes(string(updatedManifest), experiment.ProjectID)
 	if err != nil {
 		return false, fmt.Errorf("failed to unmarshal experiment manifest, error: %v", err)
 	}
