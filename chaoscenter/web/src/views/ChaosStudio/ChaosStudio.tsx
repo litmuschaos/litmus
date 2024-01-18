@@ -81,6 +81,7 @@ export default function ChaosStudioView({
   const [hasFaults, setHasFaults] = React.useState<boolean>(false);
   const studioOverviewRef = React.useRef<FormikProps<ExperimentMetadata>>();
   const experimentHashKeyForClone = getHash();
+  const { showWarning } = useToaster();
   const {
     isOpen: isOpenDiscardExperimentDialog,
     open: openDiscardExperimentDialog,
@@ -159,25 +160,23 @@ export default function ChaosStudioView({
         experimentHandler as KubernetesYamlService
       )?.checkProbesInExperimentManifest(experiment?.manifest as KubernetesExperimentManifest);
 
-      if (probeWithoutAnnotation) {
-        /**
-         * Checks if probe metadata is already present in the manifest
-         *
-         * Returns true if probe metadata is present
-         */
-        const doesProbeExists = await (experimentHandler as KubernetesYamlService)?.doesProbeMetadataExists(
-          experiment?.manifest as KubernetesExperimentManifest
-        );
+      /**
+       * Checks if probe metadata is already present in the manifest
+       *
+       * Returns true if probe metadata is present
+       */
+      const doesProbeExists = await (experimentHandler as KubernetesYamlService)?.doesProbeMetadataExists(
+        experiment?.manifest as KubernetesExperimentManifest
+      );
 
-        /**
-         * If probe metadata is not present in the manifest then show error
-         *
-         * Generate new probes and append it to the annotation on the saveChaosExperimentMutation function
-         */
-        if (!doesProbeExists) {
-          showError(`${getString('probeInFault')} ${probeWithoutAnnotation} ${getString('probeNotAttachedToRef')}`);
-          return;
-        }
+      if (doesProbeExists) {
+        showWarning(getString('probeMetadataExists'));
+      }
+
+      // Generate new probes if annotation is missing but probes are present. Else case return error
+      if (probeWithoutAnnotation && !doesProbeExists) {
+        showError(`${getString('probeInFault')} ${probeWithoutAnnotation} ${getString('probeNotAttachedToRef')}`);
+        return;
       }
     }
 
