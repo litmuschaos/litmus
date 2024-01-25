@@ -298,6 +298,7 @@ export interface StringsMap {
   'error': unknown
   'errorApplyChanges': unknown
   'errorFetchName': unknown
+  'errorInYamlDescription': unknown
   'evaluationTimeout': unknown
   'executedBy': unknown
   'executedOn': unknown
@@ -847,6 +848,7 @@ export interface StringsMap {
   'showLess': unknown
   'showingAll': unknown
   'showingLastRuns': unknown
+  'signIn': unknown
   'signOut': unknown
   'singleRun': unknown
   'source': unknown

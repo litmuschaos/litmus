@@ -49,7 +49,7 @@ func TestGetClonePath(t *testing.T) {
 	// when
 	path := chaosHubOps.GetClonePath(chaosHubConfig)
 	// then
-	assert.Equal(t, "/tmp/version/"+projectID+"/test", path)
+	assert.Equal(t, "/tmp/"+projectID+"/test", path)
 }
 
 // TestGitConfigConstruct is used to test the GitConfigConstruct function

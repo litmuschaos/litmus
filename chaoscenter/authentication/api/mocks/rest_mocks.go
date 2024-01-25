@@ -70,8 +70,8 @@ func (m *MockedApplicationService) UpdateUser(user *entities.UserDetails) error 
 	return args.Error(0)
 }
 
-func (m *MockedApplicationService) UpdateUserState(username string, isDeactivate bool, deactivateTime int64) error {
-	args := m.Called(username, isDeactivate, deactivateTime)
+func (m *MockedApplicationService) UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error {
+	args := m.Called(ctx, username, isDeactivate, deactivateTime)
 	return args.Error(0)
 }
 
@@ -125,8 +125,8 @@ func (m *MockedApplicationService) GetAggregateProjects(pipeline mongo.Pipeline,
 	return args.Get(0).(*mongo.Cursor), args.Error(1)
 }
 
-func (m *MockedApplicationService) UpdateProjectState(userID string, deactivateTime int64, isDeactivate bool) error {
-	args := m.Called(userID, deactivateTime, isDeactivate)
+func (m *MockedApplicationService) UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error {
+	args := m.Called(ctx, userID, deactivateTime, isDeactivate)
 	return args.Error(0)
 }
 
