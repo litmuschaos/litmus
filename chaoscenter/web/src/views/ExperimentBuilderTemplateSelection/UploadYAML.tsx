@@ -27,17 +27,20 @@ export default function UploadYAML({ onClose }: UploadYAMLProps): React.ReactEle
   const { showError } = useToaster();
 
   const onUpload = (response: string): void => {
-    experimentHandler?.getExperiment(experimentKey).then(experiment => {
-      const processedManifest = experimentHandler.preProcessExperimentManifest({
-        manifest: parse(response) as ExperimentManifest,
-        experimentName: experiment?.name ?? 'chaos-experiment',
-        chaosInfrastructureID: experiment?.chaosInfrastructure?.id,
-        chaosInfrastructureNamespace: experiment?.chaosInfrastructure?.namespace,
-        imageRegistry: experiment?.imageRegistry
-      });
-      experimentHandler?.updateExperimentManifest(experimentKey, processedManifest);
-      onClose(processedManifest, true);
-    });
+    experimentHandler
+      ?.getExperiment(experimentKey)
+      .then(experiment => {
+        const processedManifest = experimentHandler.preProcessExperimentManifest({
+          manifest: parse(response) as ExperimentManifest,
+          experimentName: experiment?.name ?? 'chaos-experiment',
+          chaosInfrastructureID: experiment?.chaosInfrastructure?.id,
+          chaosInfrastructureNamespace: experiment?.chaosInfrastructure?.namespace,
+          imageRegistry: experiment?.imageRegistry
+        });
+        experimentHandler?.updateExperimentManifest(experimentKey, processedManifest);
+        onClose(processedManifest, true);
+      })
+      .catch(() => showError('errorInYamlDescription'));
   };
 
   const onUploadError = (err: string): void => {
