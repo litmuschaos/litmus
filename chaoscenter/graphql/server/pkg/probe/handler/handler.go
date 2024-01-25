@@ -1,4 +1,4 @@
-package probe
+package handler
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
+	globalUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment"
 
@@ -18,8 +19,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
-
-	"github.com/ghodss/yaml"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -75,9 +74,8 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 
 	newProbe := &dbSchemaProbe.Probe{
 		ResourceDetails: mongodb.ResourceDetails{
-			Name:        probe.Name,
-			Description: *probe.Description,
-			Tags:        probe.Tags,
+			Name: probe.Name,
+			Tags: probe.Tags,
 		},
 		ProjectID: p.ProjectID,
 		Audit: mongodb.Audit{
@@ -94,15 +92,20 @@ func (p *probe) AddProbe(ctx context.Context, probe model.ProbeRequest) (*model.
 		Type:               dbSchemaProbe.ProbeType(probe.Type),
 		InfrastructureType: probe.InfrastructureType,
 	}
+
+	if probe.Description != nil {
+		newProbe.Description = *probe.Description
+	}
+
 	// Check the respective probe type and modify the property response based on the type
 	if probe.Type == model.ProbeTypeHTTPProbe && probe.KubernetesHTTPProperties != nil {
-		addKubernetesHTTPProbeProperties(newProbe, probe)
+		utils.AddKubernetesHTTPProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeCmdProbe && probe.KubernetesCMDProperties != nil {
-		addKubernetesCMDProbeProperties(newProbe, probe)
+		utils.AddKubernetesCMDProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypePromProbe && probe.PromProperties != nil {
-		addPROMProbeProperties(newProbe, probe)
+		utils.AddPROMProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeK8sProbe && probe.K8sProperties != nil {
-		addK8SProbeProperties(newProbe, probe)
+		utils.AddK8SProbeProperties(newProbe, probe)
 	} else if probe.Type == model.ProbeTypeHTTPProbe && probe.KubernetesHTTPProperties == nil {
 		return nil, Error(logFields, "http probe type's properties are empty")
 	} else if probe.Type == model.ProbeTypeCmdProbe && probe.KubernetesCMDProperties == nil {
@@ -135,9 +138,8 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 	// Shared Properties
 	newProbe := &dbSchemaProbe.Probe{
 		ResourceDetails: mongodb.ResourceDetails{
-			Name:        request.Name,
-			Description: *request.Description,
-			Tags:        request.Tags,
+			Name: request.Name,
+			Tags: request.Tags,
 		},
 		ProjectID: p.ProjectID,
 		Audit: mongodb.Audit{
@@ -153,16 +155,20 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 		InfrastructureType: pr.InfrastructureType,
 	}
 
+	if request.Description != nil {
+		newProbe.Description = *request.Description
+	}
+
 	if pr.InfrastructureType == model.InfrastructureTypeKubernetes {
 		switch model.ProbeType(pr.Type) {
 		case model.ProbeTypeHTTPProbe:
-			addKubernetesHTTPProbeProperties(newProbe, request)
+			utils.AddKubernetesHTTPProbeProperties(newProbe, request)
 		case model.ProbeTypeCmdProbe:
-			addKubernetesCMDProbeProperties(newProbe, request)
+			utils.AddKubernetesCMDProbeProperties(newProbe, request)
 		case model.ProbeTypePromProbe:
-			addPROMProbeProperties(newProbe, request)
+			utils.AddPROMProbeProperties(newProbe, request)
 		case model.ProbeTypeK8sProbe:
-			addK8SProbeProperties(newProbe, request)
+			utils.AddK8SProbeProperties(newProbe, request)
 		}
 	}
 
@@ -172,7 +178,7 @@ func (p *probe) UpdateProbe(ctx context.Context, request model.ProbeRequest) (st
 		return "", errors.New("cmd probe type's properties are empty")
 	} else if request.Type == model.ProbeTypePromProbe && request.PromProperties == nil {
 		return "", errors.New("prom probe type's properties are empty")
-	} else if request.Type == model.ProbeTypePromProbe && request.K8sProperties == nil {
+	} else if request.Type == model.ProbeTypeK8sProbe && request.K8sProperties == nil {
 		return "", errors.New("k8s probe type's properties are empty")
 	}
 
@@ -214,282 +220,12 @@ func (p *probe) GetProbeYAMLData(ctx context.Context, probeRequest model.GetProb
 		return "", err
 	}
 
-	if model.ProbeType(probe.Type) == model.ProbeTypeHTTPProbe {
-
-		var _probe HTTPProbeAttributes
-
-		_probe.Name = probe.Name
-		_probe.Type = string(probe.Type)
-		_probe.Mode = string(probeRequest.Mode)
-		_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
-			URL: probe.KubernetesHTTPProperties.URL,
-		}
-
-		if probe.KubernetesHTTPProperties.InsecureSkipVerify != nil {
-			_probe.HTTPProbeInputs.InsecureSkipVerify = *probe.KubernetesHTTPProperties.InsecureSkipVerify
-		}
-
-		if probe.KubernetesHTTPProperties.Method.GET != nil {
-			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
-				Method: v1alpha1.HTTPMethod{
-					Get: &v1alpha1.GetMethod{
-						Criteria:     probe.KubernetesHTTPProperties.Method.GET.Criteria,
-						ResponseCode: probe.KubernetesHTTPProperties.Method.GET.ResponseCode,
-					},
-				},
-			}
-		} else if probe.KubernetesHTTPProperties.Method.POST != nil {
-			_probe.HTTPProbeInputs = v1alpha1.HTTPProbeInputs{
-				Method: v1alpha1.HTTPMethod{
-					Post: &v1alpha1.PostMethod{
-						Criteria:     probe.KubernetesHTTPProperties.Method.POST.Criteria,
-						ResponseCode: probe.KubernetesHTTPProperties.Method.POST.ResponseCode,
-					},
-				},
-			}
-
-			if probe.KubernetesHTTPProperties.Method.POST.ContentType != nil {
-				_probe.HTTPProbeInputs.Method.Post.ContentType = *probe.KubernetesHTTPProperties.Method.POST.ContentType
-			}
-
-			if probe.KubernetesHTTPProperties.Method.POST.Body != nil {
-				_probe.HTTPProbeInputs.Method.Post.Body = *probe.KubernetesHTTPProperties.Method.POST.Body
-			}
-
-			if probe.KubernetesHTTPProperties.Method.POST.BodyPath != nil {
-				_probe.HTTPProbeInputs.Method.Post.BodyPath = *probe.KubernetesHTTPProperties.Method.POST.BodyPath
-			}
-		}
-
-		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.KubernetesHTTPProperties.ProbeTimeout,
-			Interval:     probe.KubernetesHTTPProperties.Interval,
-		}
-
-		if probe.KubernetesHTTPProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.KubernetesHTTPProperties.Retry
-		}
-
-		if probe.KubernetesHTTPProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.KubernetesHTTPProperties.Attempt
-		}
-
-		if probe.KubernetesHTTPProperties.PollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.KubernetesHTTPProperties.PollingInterval
-		}
-
-		if probe.KubernetesHTTPProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.KubernetesHTTPProperties.EvaluationTimeout
-		}
-
-		if probe.KubernetesHTTPProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.KubernetesHTTPProperties.InitialDelay
-		}
-
-		if probe.KubernetesHTTPProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.KubernetesHTTPProperties.StopOnFailure
-		}
-
-		y, err := yaml.Marshal(_probe)
-		if err != nil {
-			return "", err
-		}
-
-		return string(y), err
-	} else if model.ProbeType(probe.Type) == model.ProbeTypeCmdProbe {
-
-		var _probe CMDProbeAttributes
-
-		_probe.Name = probe.Name
-		_probe.Type = string(probe.Type)
-		_probe.Mode = string(probeRequest.Mode)
-		_probe.CmdProbeInputs = v1alpha1.CmdProbeInputs{
-			Command: probe.KubernetesCMDProperties.Command,
-			Comparator: v1alpha1.ComparatorInfo{
-				Type:     probe.KubernetesCMDProperties.Comparator.Type,
-				Criteria: probe.KubernetesCMDProperties.Comparator.Criteria,
-				Value:    probe.KubernetesCMDProperties.Comparator.Value,
-			},
-		}
-
-		if probe.KubernetesCMDProperties.Source != nil {
-			// TODO: Add source volume and volume mount types
-			_probe.CmdProbeInputs.Source = &v1alpha1.SourceDetails{
-				Image:            probe.KubernetesCMDProperties.Source.Image,
-				HostNetwork:      probe.KubernetesCMDProperties.Source.HostNetwork,
-				InheritInputs:    probe.KubernetesCMDProperties.Source.InheritInputs,
-				Args:             probe.KubernetesCMDProperties.Source.Args,
-				ENVList:          probe.KubernetesCMDProperties.Source.ENVList,
-				Labels:           probe.KubernetesCMDProperties.Source.Labels,
-				Annotations:      probe.KubernetesCMDProperties.Source.Annotations,
-				Command:          probe.KubernetesCMDProperties.Source.Command,
-				ImagePullPolicy:  probe.KubernetesCMDProperties.Source.ImagePullPolicy,
-				Privileged:       probe.KubernetesCMDProperties.Source.Privileged,
-				NodeSelector:     probe.KubernetesCMDProperties.Source.NodeSelector,
-				ImagePullSecrets: probe.KubernetesCMDProperties.Source.ImagePullSecrets,
-			}
-		}
-
-		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.KubernetesCMDProperties.ProbeTimeout,
-			Interval:     probe.KubernetesCMDProperties.Interval,
-		}
-
-		if probe.KubernetesCMDProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.KubernetesCMDProperties.Retry
-		}
-
-		if probe.KubernetesCMDProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.KubernetesCMDProperties.Attempt
-		}
-
-		if probe.KubernetesCMDProperties.PollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.KubernetesCMDProperties.PollingInterval
-		}
-
-		if probe.KubernetesCMDProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.KubernetesCMDProperties.EvaluationTimeout
-		}
-
-		if probe.KubernetesCMDProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.KubernetesCMDProperties.InitialDelay
-		}
-
-		if probe.KubernetesCMDProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.KubernetesCMDProperties.StopOnFailure
-		}
-
-		y, err := yaml.Marshal(_probe)
-		if err != nil {
-			return "", err
-		}
-
-		return string(y), err
-	} else if model.ProbeType(probe.Type) == model.ProbeTypePromProbe {
-
-		var _probe PROMProbeAttributes
-
-		_probe.Name = probe.Name
-		_probe.Type = string(probe.Type)
-		_probe.Mode = string(probeRequest.Mode)
-		_probe.PromProbeInputs = v1alpha1.PromProbeInputs{
-			Endpoint: probe.PROMProperties.Endpoint,
-			Query:    probe.PROMProperties.Query,
-			Comparator: v1alpha1.ComparatorInfo{
-				Type:     probe.PROMProperties.Comparator.Type,
-				Criteria: probe.PROMProperties.Comparator.Criteria,
-				Value:    probe.PROMProperties.Comparator.Value,
-			},
-		}
-
-		if probe.PROMProperties.QueryPath != nil {
-			_probe.PromProbeInputs.QueryPath = *probe.PROMProperties.QueryPath
-		}
-
-		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.PROMProperties.ProbeTimeout,
-			Interval:     probe.PROMProperties.Interval,
-		}
-
-		if probe.PROMProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.PROMProperties.Retry
-		}
-
-		if probe.PROMProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.PROMProperties.Attempt
-		}
-
-		if probe.PROMProperties.PollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.PROMProperties.PollingInterval
-		}
-
-		if probe.PROMProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.PROMProperties.EvaluationTimeout
-		}
-
-		if probe.PROMProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.PROMProperties.InitialDelay
-		}
-
-		if probe.PROMProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.PROMProperties.StopOnFailure
-		}
-
-		y, err := yaml.Marshal(_probe)
-		if err != nil {
-			return "", err
-		}
-
-		return string(y), err
-	} else if model.ProbeType(probe.Type) == model.ProbeTypeK8sProbe {
-
-		var _probe K8SProbeAttributes
-
-		_probe.Name = probe.Name
-		_probe.Type = string(probe.Type)
-		_probe.Mode = string(probeRequest.Mode)
-		_probe.K8sProbeInputs.Version = probe.K8SProperties.Version
-		_probe.K8sProbeInputs.Resource = probe.K8SProperties.Resource
-		_probe.K8sProbeInputs.Operation = probe.K8SProperties.Operation
-
-		if probe.K8SProperties.Group != nil {
-			_probe.K8sProbeInputs.Group = *probe.K8SProperties.Group
-		}
-
-		if probe.K8SProperties.ResourceNames != nil {
-			_probe.K8sProbeInputs.ResourceNames = *probe.K8SProperties.ResourceNames
-		}
-
-		if probe.K8SProperties.Namespace != nil {
-			_probe.K8sProbeInputs.Namespace = *probe.K8SProperties.Namespace
-		}
-
-		if probe.K8SProperties.FieldSelector != nil {
-			_probe.K8sProbeInputs.FieldSelector = *probe.K8SProperties.FieldSelector
-		}
-
-		if probe.K8SProperties.LabelSelector != nil {
-			_probe.K8sProbeInputs.LabelSelector = *probe.K8SProperties.LabelSelector
-		}
-
-		_probe.RunProperties = v1alpha1.RunProperty{
-			ProbeTimeout: probe.K8SProperties.ProbeTimeout,
-			Interval:     probe.K8SProperties.Interval,
-		}
-
-		if probe.K8SProperties.Retry != nil {
-			_probe.RunProperties.Retry = *probe.K8SProperties.Retry
-		}
-
-		if probe.K8SProperties.Attempt != nil {
-			_probe.RunProperties.Attempt = *probe.K8SProperties.Attempt
-		}
-
-		if probe.K8SProperties.PollingInterval != nil {
-			_probe.RunProperties.ProbePollingInterval = *probe.K8SProperties.PollingInterval
-		}
-
-		if probe.K8SProperties.EvaluationTimeout != nil {
-			_probe.RunProperties.EvaluationTimeout = *probe.K8SProperties.EvaluationTimeout
-		}
-
-		if probe.K8SProperties.InitialDelay != nil {
-			_probe.RunProperties.InitialDelay = *probe.K8SProperties.InitialDelay
-		}
-
-		if probe.K8SProperties.StopOnFailure != nil {
-			_probe.RunProperties.StopOnFailure = *probe.K8SProperties.StopOnFailure
-		}
-
-		y, err := yaml.Marshal(_probe)
-		if err != nil {
-			return "", err
-		}
-
-		return string(y), err
+	manifest, err := utils.GenerateProbeManifest(probe.GetOutputProbe(), probeRequest.Mode)
+	if err != nil {
+		return "", err
 	}
 
-	return "", err
+	return manifest, err
 }
 
 // ListProbes - List a single/all Probes
@@ -663,7 +399,7 @@ func GetProbeExecutionHistoryInExperimentRuns(projectID string, probeName string
 		for _, fault := range execution.Probes {
 			probeVerdict := model.ProbeVerdictNa
 
-			if !utils.ContainsString(fault.ProbeNames, probeName) {
+			if !globalUtils.ContainsString(fault.ProbeNames, probeName) {
 				continue
 			}
 
@@ -830,7 +566,7 @@ func (p *probe) GetProbeReference(ctx context.Context, probeName string) (*model
 		totalRuns++
 		if len(runs.Probes) != 0 {
 			for _, fault := range runs.Probes {
-				if utils.ContainsString(fault.ProbeNames, probeName) {
+				if globalUtils.ContainsString(fault.ProbeNames, probeName) {
 					var executionData chaos_experiment.ExecutionData
 					status := model.ProbeVerdictNa
 					mode := model.ModeSot

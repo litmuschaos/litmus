@@ -11,10 +11,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	chaosExperimentMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/model/mocks"
-	types "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
-	chaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run"
 	chaosExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run/model/mocks"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
@@ -24,71 +21,56 @@ import (
 	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	dbGitOpsMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops/model/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var (
-	mongodbMockOperator        = new(dbMocks.MongoOperator)
-	infrastructureService      = new(chaosInfraMocks.InfraService)
-	chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
-	gitOpsService              = new(dbGitOpsMocks.GitOpsService)
-	chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
-	chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
-	chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
-)
+type MockServices struct {
+	ChaosExperimentService     *chaosExperimentMocks.ChaosExperimentService
+	ChaosExperimentRunService  *chaosExperimentRunMocks.ChaosExperimentRunService
+	InfrastructureService      *chaosInfraMocks.InfraService
+	GitOpsService              *dbGitOpsMocks.GitOpsService
+	ChaosExperimentOperator    *dbChaosExperiment.Operator
+	ChaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	MongodbOperator            *dbMocks.MongoOperator
+	ChaosExperimentHandler     *ChaosExperimentHandler
+}
 
-var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
-
-func TestNewChaosExperimentHandler(t *testing.T) {
-	type args struct {
-		chaosExperimentService     types.Service
-		chaosExperimentRunService  chaosExperimentRun.Service
-		infrastructureService      chaos_infrastructure.Service
-		gitOpsService              gitops.Service
-		chaosExperimentOperator    *dbChaosExperiment.Operator
-		chaosExperimentRunOperator *dbChaosExperimentRun.Operator
-		mongodbOperator            mongodb.MongoOperator
-	}
-	tests := []struct {
-		name string
-		args args
-		want *ChaosExperimentHandler
-	}{
-		{
-			name: "NewChaosExperimentHandler",
-			args: args{
-				chaosExperimentService:     chaosExperimentService,
-				chaosExperimentRunService:  chaosExperimentRunService,
-				infrastructureService:      infrastructureService,
-				gitOpsService:              gitOpsService,
-				chaosExperimentOperator:    chaosExperimentOperator,
-				chaosExperimentRunOperator: chaosExperimentRunOperator,
-				mongodbOperator:            mongodbMockOperator,
-			},
-			want: &ChaosExperimentHandler{
-				chaosExperimentService:     chaosExperimentService,
-				chaosExperimentRunService:  chaosExperimentRunService,
-				infrastructureService:      infrastructureService,
-				gitOpsService:              gitOpsService,
-				chaosExperimentOperator:    chaosExperimentOperator,
-				chaosExperimentRunOperator: chaosExperimentRunOperator,
-				mongodbOperator:            mongodbMockOperator,
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewChaosExperimentHandler(tt.args.chaosExperimentService, tt.args.chaosExperimentRunService, tt.args.infrastructureService, tt.args.gitOpsService, tt.args.chaosExperimentOperator, tt.args.chaosExperimentRunOperator, tt.args.mongodbOperator); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewChaosExperimentHandler() = %v, want %v", got, tt.want)
-			}
-		})
+func newMockServices() *MockServices {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+	var chaosExperimentHandler = NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+	return &MockServices{
+		ChaosExperimentService:     chaosExperimentService,
+		ChaosExperimentRunService:  chaosExperimentRunService,
+		InfrastructureService:      infrastructureService,
+		GitOpsService:              gitOpsService,
+		ChaosExperimentOperator:    chaosExperimentOperator,
+		ChaosExperimentRunOperator: chaosExperimentRunOperator,
+		MongodbOperator:            mongodbMockOperator,
+		ChaosExperimentHandler:     chaosExperimentHandler,
 	}
 }
+
+func assertExpectations(mockServices *MockServices, t *testing.T) {
+	mockServices.ChaosExperimentService.AssertExpectations(t)
+	mockServices.ChaosExperimentRunService.AssertExpectations(t)
+	mockServices.InfrastructureService.AssertExpectations(t)
+	mockServices.GitOpsService.AssertExpectations(t)
+	mockServices.MongodbOperator.AssertExpectations(t)
+}
+
 func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
+
 	type args struct {
 		request   model.SaveChaosExperimentRequest
 		request2  *model.ChaosExperimentRequest
@@ -107,7 +89,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 		name    string
 		args    args
 		wantErr bool
-		given   func(request *model.ChaosExperimentRequest)
+		given   func(request *model.ChaosExperimentRequest, mockServices *MockServices)
 	}{
 		{
 			name: "Save Chaos Experiment",
@@ -124,19 +106,17 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request2 *model.ChaosExperimentRequest) {
+			given: func(request2 *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				chaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
-				chaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
-
-				chaosExperimentService.On("ProcessExperimentCreation", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, nil).Return(nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
@@ -155,10 +135,10 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request2 *model.ChaosExperimentRequest) {
+			given: func(request2 *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				singleResult := mongo.NewSingleResultFromDocument(nil, nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, errors.New("single result error")).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, errors.New("single result error")).Once()
 			},
 			wantErr: true,
 		},
@@ -177,15 +157,15 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request2 *model.ChaosExperimentRequest) {
+			given: func(request2 *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				chaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, errors.New("Incorrect request format")).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, errors.New("Incorrect request format")).Once()
 			},
 			wantErr: true,
 		},
@@ -204,45 +184,36 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request2 *model.ChaosExperimentRequest) {
+			given: func(request2 *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				chaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
-				chaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
-
-				chaosExperimentService.On("ProcessExperimentCreation", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, nil).Return(errors.New("experiment creation failed")).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given(tc.args.request2)
-			_, err := chaosExperimentHandler.SaveChaosExperiment(ctx, tc.args.request, tc.args.projectID, store)
+			mockServices := newMockServices()
+			tc.given(tc.args.request2, mockServices)
+			_, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, tc.args.request, tc.args.projectID, store)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.SaveChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
 
 func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
-	type fields struct {
-		chaosExperimentService     types.Service
-		chaosExperimentRunService  chaosExperimentRun.Service
-		infrastructureService      chaos_infrastructure.Service
-		gitOpsService              gitops.Service
-		chaosExperimentOperator    *dbChaosExperiment.Operator
-		chaosExperimentRunOperator *dbChaosExperimentRun.Operator
-		mongodbOperator            mongodb.MongoOperator
-	}
 	type args struct {
 		ctx       context.Context
 		request   *model.ChaosExperimentRequest
@@ -251,7 +222,6 @@ func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		fields  fields
 		args    args
 		want    *model.ChaosExperimentResponse
 		wantErr bool
@@ -260,16 +230,8 @@ func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := &ChaosExperimentHandler{
-				chaosExperimentService:     tt.fields.chaosExperimentService,
-				chaosExperimentRunService:  tt.fields.chaosExperimentRunService,
-				infrastructureService:      tt.fields.infrastructureService,
-				gitOpsService:              tt.fields.gitOpsService,
-				chaosExperimentOperator:    tt.fields.chaosExperimentOperator,
-				chaosExperimentRunOperator: tt.fields.chaosExperimentRunOperator,
-				mongodbOperator:            tt.fields.mongodbOperator,
-			}
-			got, err := c.CreateChaosExperiment(tt.args.ctx, tt.args.request, tt.args.projectID, tt.args.r)
+			mockServices := newMockServices()
+			got, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(tt.args.ctx, tt.args.request, tt.args.projectID, tt.args.r)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ChaosExperimentHandler.CreateChaosExperiment() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -291,12 +253,12 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		given   func()
+		given   func(mockServices *MockServices)
 		wantErr bool
 	}{
 		{
 			name: "success: Delete Chaos Experiment",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
@@ -305,21 +267,17 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 					}},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				chaosExperimentService.On("ProcessExperimentDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
-
-				chaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
 		{
 			name: "failure: mongo error while retrieving the experiment details",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
@@ -328,13 +286,13 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 					}},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, errors.New("error retrieving the experiments")).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, errors.New("error retrieving the experiments")).Once()
 			},
 			wantErr: true,
 		},
 		{
 			name: "failure: mongo error while retrieving the experiment run details",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
@@ -343,17 +301,15 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 					}},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, errors.New("error retrieving the experiment runs")).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, errors.New("error retrieving the experiment runs")).Once()
 			},
 			wantErr: true,
 		},
 		{
 			name: "failure: unable to delete experiment-runs",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{bson.D{
 					{Key: "experiment_id", Value: experimentId},
@@ -362,28 +318,23 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 					}},
 				}}
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
-
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
-				chaosExperimentService.On("ProcessExperimentDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-
-				mongodbMockOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
-
-				chaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
+				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
 			},
 			wantErr: true,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given()
-			_, err := chaosExperimentHandler.DeleteChaosExperiment(ctx, projectId, experimentId, &experimentRunID, store)
+			mockServices := newMockServices()
+			tc.given(mockServices)
+			_, err := mockServices.ChaosExperimentHandler.DeleteChaosExperiment(ctx, projectId, experimentId, &experimentRunID, store)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.DeleteChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
@@ -404,7 +355,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		given   func(request *model.ChaosExperimentRequest)
+		given   func(request *model.ChaosExperimentRequest, mockServices *MockServices)
 		wantErr bool
 	}{
 		{
@@ -418,12 +369,11 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request *model.ChaosExperimentRequest) {
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
-				mongodbMockOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
-				chaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
-
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
@@ -437,10 +387,10 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request *model.ChaosExperimentRequest) {
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
-				mongodbMockOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
-				chaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
+				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
 			},
 			wantErr: true,
 		},
@@ -454,26 +404,28 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 					ExperimentType: &model.AllExperimentType[0],
 				},
 			},
-			given: func(request *model.ChaosExperimentRequest) {
+			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 
-				mongodbMockOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 
-				chaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("experiment update failed")).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("experiment update failed")).Once()
 			},
 			wantErr: true,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given(tc.args.request)
-			_, err := chaosExperimentHandler.UpdateChaosExperiment(ctx, tc.args.request, tc.args.projectID, store)
+			mockServices := newMockServices()
+			tc.given(tc.args.request, mockServices)
+			_, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, tc.args.request, tc.args.projectID, store)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.UpdateChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
@@ -485,12 +437,12 @@ func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
 	ctx := context.Background()
 	tests := []struct {
 		name    string
-		given   func()
+		given   func(mockServices *MockServices)
 		wantErr bool
 	}{
 		{
 			name: "success: Get Experiment",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				findResult := []interface{}{bson.D{
 					{Key: "project_id", Value: projectId},
 					{Key: "infra_id", Value: infraId},
@@ -509,25 +461,25 @@ func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
 					},
 				}}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
 			wantErr: false,
 		},
 		{
 			name: "failure: Kubernetes infra details absent",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				findResult := []interface{}{bson.D{
 					{Key: "project_id", Value: projectId},
 					{Key: "infra_id", Value: infraId},
 				}}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("kubernetes infra details absent")).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("kubernetes infra details absent")).Once()
 			},
 			wantErr: true,
 		},
 		{
 			name: "failure: Absent experiment run details",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				findResult := []interface{}{bson.D{
 					{Key: "project_id", Value: projectId},
 					{Key: "infra_id", Value: infraId},
@@ -539,27 +491,29 @@ func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
 					}},
 				}}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("experiment run details absent")).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("experiment run details absent")).Once()
 			},
 			wantErr: true,
 		},
 		{
 			name: "failure: empty mongo cursor returned",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("experiment run details absent")).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("experiment run details absent")).Once()
 			},
 			wantErr: true,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given()
-			_, err := chaosExperimentHandler.GetExperiment(ctx, projectId, experimentId)
+			mockServices := newMockServices()
+			tc.given(mockServices)
+			_, err := mockServices.ChaosExperimentHandler.GetExperiment(ctx, projectId, experimentId)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.GetExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
@@ -580,7 +534,7 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		given   func()
+		given   func(mockServices *MockServices)
 		wantErr bool
 	}{
 		{
@@ -592,9 +546,9 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 					Pagination:    &model.Pagination{Page: 1},
 				},
 			},
-			given: func() {
+			given: func(mockServices *MockServices) {
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
 			wantErr: false,
 		},
@@ -610,9 +564,9 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 					},
 				},
 			},
-			given: func() {
+			given: func(mockServices *MockServices) {
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
 			wantErr: false,
 		},
@@ -628,9 +582,9 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 					},
 				},
 			},
-			given: func() {
+			given: func(mockServices *MockServices) {
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
 			wantErr: false,
 		},
@@ -643,21 +597,23 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 					Pagination:    &model.Pagination{Page: 1},
 				},
 			},
-			given: func() {
+			given: func(mockServices *MockServices) {
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("failed aggregating experiments")).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("failed aggregating experiments")).Once()
 			},
 			wantErr: true,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given()
-			_, err := chaosExperimentHandler.ListExperiment(tc.args.projectID, tc.args.request)
+			mockServices := newMockServices()
+			tc.given(mockServices)
+			_, err := mockServices.ChaosExperimentHandler.ListExperiment(tc.args.projectID, tc.args.request)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.ListExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
@@ -679,30 +635,32 @@ func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 	store := store.NewStore()
 	tests := []struct {
 		name    string
-		given   func()
+		given   func(mockServices *MockServices)
 		wantErr bool
 	}{
 		{
 			name: "Success: Disable Cron Experiment",
-			given: func() {
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+			given: func(mockServices *MockServices) {
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
 		{
 			name: "Failure: mongo error while updating the experiment details",
-			given: func() {
-				chaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("error while updating")).Once()
+			given: func(mockServices *MockServices) {
+				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("error while updating")).Once()
 			},
 			wantErr: true,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given()
-			if err := chaosExperimentHandler.DisableCronExperiment(username, experimentRequest, projectID, store); (err != nil) != tc.wantErr {
+			mockServices := newMockServices()
+			tc.given(mockServices)
+			if err := mockServices.ChaosExperimentHandler.DisableCronExperiment(username, experimentRequest, projectID, store); (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.DisableCronExperiment() error = %v, wantErr %v", err, tc.wantErr)
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
@@ -713,11 +671,11 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 	tests := []struct {
 		name    string
 		wantErr bool
-		given   func()
+		given   func(mockServices *MockServices)
 	}{
 		{
 			name: "success: get experiment stats",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{
@@ -726,23 +684,23 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 					},
 				}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, nil).Once()
 			},
 			wantErr: false,
 		},
 		{
 			name: "failure: empty cursor returned",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("empty cursor returned")).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("empty cursor returned")).Once()
 			},
 			wantErr: true,
 		},
 		{
 			name: "failure: getting experiment stats",
-			given: func() {
+			given: func(mockServices *MockServices) {
 				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{
@@ -751,19 +709,21 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 					},
 				}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
-				mongodbMockOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("failed to get experiment stats")).Once()
+				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("failed to get experiment stats")).Once()
 			},
 			wantErr: true,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.given()
-			_, err := chaosExperimentHandler.GetExperimentStats(ctx, projectID)
+			mockServices := newMockServices()
+			tc.given(mockServices)
+			_, err := mockServices.ChaosExperimentHandler.GetExperimentStats(ctx, projectID)
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.GetExperimentStats() error = %v, wantErr %v", err, tc.wantErr)
 				return
 			}
+			assertExpectations(mockServices, t)
 		})
 	}
 }
