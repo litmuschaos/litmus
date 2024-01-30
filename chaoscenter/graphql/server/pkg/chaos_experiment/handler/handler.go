@@ -111,7 +111,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
-		if wfDetails.Name != request.Name {
+		if wfDetails.ExperimentName != request.Name {
 			err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
 			if err != nil {
 				return "", err
