@@ -1,6 +1,8 @@
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
+  annotations:
+    probeRef: '[{"name":"http-probe"}]'
   generateName: nginx-chaos
   name: nginx-chaos
   namespace: default
