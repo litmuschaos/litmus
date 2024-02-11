@@ -6617,11 +6617,11 @@ input EnvironmentFilterInput {
     """
     Type name of environment
     """
-    type: String
+    type: EnvironmentType
     """
     Tags of an environment
     """
-    tags: [EnvironmentType]
+    tags: [String!]
 }
 enum EnvironmentSortingField {
     NAME
@@ -27688,13 +27688,13 @@ func (ec *executionContext) unmarshalInputEnvironmentFilterInput(ctx context.Con
 			}
 		case "type":
 			var err error
-			it.Type, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Type, err = ec.unmarshalOEnvironmentType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "tags":
 			var err error
-			it.Tags, err = ec.unmarshalOEnvironmentType2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx, v)
+			it.Tags, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35782,66 +35782,6 @@ func (ec *executionContext) unmarshalOEnvironmentType2githubᚗcomᚋlitmuschaos
 
 func (ec *executionContext) marshalOEnvironmentType2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx context.Context, sel ast.SelectionSet, v model.EnvironmentType) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) unmarshalOEnvironmentType2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx context.Context, v interface{}) ([]*model.EnvironmentType, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.EnvironmentType, len(vSlice))
-	for i := range vSlice {
-		res[i], err = ec.unmarshalOEnvironmentType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOEnvironmentType2ᚕᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx context.Context, sel ast.SelectionSet, v []*model.EnvironmentType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOEnvironmentType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
 }
 
 func (ec *executionContext) unmarshalOEnvironmentType2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐEnvironmentType(ctx context.Context, v interface{}) (*model.EnvironmentType, error) {
