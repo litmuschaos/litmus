@@ -157,7 +157,7 @@ func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
 }
 
 // AgentRegister function creates litmus-portal config map in the litmus namespace
-func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
+func (k8s *k8sSubscriber) AgentRegister(infraData map[string]string) (bool, error) {
 	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
 		return false, err
@@ -167,6 +167,12 @@ func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
 	newConfigMapData := map[string]interface{}{
 		"data": map[string]interface{}{
 			"IS_INFRA_CONFIRMED": true,
+			"SERVER_ADDR":        infraData["SERVER_ADDR"],
+			"INFRA_SCOPE":        infraData["INFRA_SCOPE"],
+			"COMPONENTS":         infraData["COMPONENTS"],
+			"START_TIME":         infraData["START_TIME"],
+			"VERSION":            infraData["VERSION"],
+			"SKIP_SSL_VERIFY":    infraData["SKIP_SSL_VERIFY"],
 		},
 	}
 
@@ -191,7 +197,9 @@ func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
 	logrus.Info("%s has been updated", InfraConfigName)
 
 	newSecretData := map[string]string{
-		"ACCESS_KEY": accessKey,
+		"ACCESS_KEY":        infraData["ACCESS_KEY"],
+		"INFRA_ID":          infraData["INFRA_ID"],
+		"CUSTOM_TLS_SECRET": infraData["CUSTOM_TLS_SECRET"],
 	}
 
 	secretPatch := map[string]interface{}{
