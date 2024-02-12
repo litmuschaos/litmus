@@ -15,7 +15,7 @@ export interface Environment extends Audit, ResourceDetails {
 export interface EnvironmentFilterInput {
   name?: string;
   description?: string;
-  type?: string;
+  type?: EnvironmentType;
   tags?: Array<string>;
 }
 
