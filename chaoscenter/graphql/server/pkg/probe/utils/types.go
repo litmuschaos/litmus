@@ -1,4 +1,4 @@
-package probe
+package utils
 
 import (
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"

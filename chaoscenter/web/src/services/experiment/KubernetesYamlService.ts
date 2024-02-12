@@ -297,11 +297,58 @@ export class KubernetesYamlService extends ExperimentYamlService {
         delete spec?.nodeSelector;
       }
 
+      const [templates] = this.getTemplatesAndSteps(experiment?.manifest as KubernetesExperimentManifest);
+
+      templates?.map(template => {
+        if (template.inputs?.artifacts?.[0]?.raw?.data) {
+          const chaosEngineCR = parse(template.inputs.artifacts[0].raw.data ?? '') as ChaosEngine;
+          if (chaosEngineCR.kind === 'ChaosEngine') {
+            const updatedEngineCR = this.updateNodeSelectorInChaosEngine(chaosEngineCR, nodeSelector, remove);
+            template.inputs.artifacts[0].raw.data = yamlStringify(updatedEngineCR);
+          }
+        }
+      });
+
       await store.put({ ...experiment }, key);
       await tx.done;
     } catch (_) {
       this.handleIDBFailure();
     }
+  }
+
+  private updateNodeSelectorInChaosEngine(
+    manifest: ChaosEngine | undefined,
+    nodeSelector: {
+      key: string;
+      value: string;
+    },
+    remove: boolean
+  ): ChaosEngine | undefined {
+    if (!manifest?.spec) return;
+
+    if (remove) {
+      if (manifest.spec?.components?.runner?.nodeSelector) {
+        delete manifest.spec?.components?.runner?.nodeSelector;
+      }
+      if (manifest.spec?.experiments[0].spec.components?.nodeSelector) {
+        delete manifest.spec.experiments[0].spec.components?.nodeSelector;
+      }
+      return manifest;
+    }
+
+    manifest.spec.components = {
+      ...manifest.spec.components,
+      runner: {
+        ...manifest.spec.components?.runner,
+        nodeSelector: { [nodeSelector.key]: nodeSelector.value }
+      }
+    };
+    manifest.spec.experiments[0].spec.components = {
+      ...manifest.spec.experiments[0].spec.components,
+      nodeSelector: { [nodeSelector.key]: nodeSelector.value }
+    };
+
+    return manifest;
   }
 
   async updateToleration(
