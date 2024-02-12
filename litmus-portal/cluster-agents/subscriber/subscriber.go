@@ -114,7 +114,7 @@ func init() {
 			clusterData["ACCESS_KEY"] = clusterConfirmInterface.Data.ClusterConfirm.NewAccessKey
 			clusterData["IS_CLUSTER_CONFIRMED"] = "true"
 
-			_, err = k8s.ClusterRegister(clusterData)
+			_, err = k8s.ClusterRegister(clusterData["ACCESS_KEY"])
 			if err != nil {
 				logrus.Fatal(err)
 			}
