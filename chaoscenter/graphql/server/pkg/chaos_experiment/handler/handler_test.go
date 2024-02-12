@@ -114,7 +114,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
 			},
@@ -165,7 +165,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, errors.New("Incorrect request format")).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, errors.New("Incorrect request format")).Once()
 			},
 			wantErr: true,
 		},
@@ -192,7 +192,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 				singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperiment", request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
 			},
@@ -372,7 +372,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
-				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
@@ -390,7 +390,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
-				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
 			},
 			wantErr: true,
 		},
@@ -409,7 +409,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 
 				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 
-				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
+				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("experiment update failed")).Once()
 			},
