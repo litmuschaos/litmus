@@ -20,7 +20,7 @@ import { noop, omit } from 'lodash-es';
 import { Divider } from '@blueprintjs/core';
 import { parse } from 'yaml';
 import { Icon } from '@harnessio/icons';
-import { getIcon, getScope } from '@utils';
+import { cleanApolloResponse, getIcon, getScope } from '@utils';
 import { useStrings } from '@strings';
 import NameDescriptionTags from '@components/NameIdDescriptionTags';
 import type {
@@ -309,19 +309,15 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
       interval: Yup.string()
         .matches(unitsRegex, 'Probe interval should contain values in ns, us, ms, m, s or h only')
         .required(getString(`probeValidation.interval`)),
-      attempt: Yup.number(),
-      probePollingInterval: Yup.string().matches(
-        unitsRegex,
-        'Probe polling interval should contain values in ns, us, ms, m, s or h only'
-      ),
-      initialDelay: Yup.string().matches(
-        unitsRegex,
-        'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only'
-      ),
-      evaluationTimeout: Yup.string().matches(
-        unitsRegex,
-        'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only'
-      )
+      probePollingInterval: Yup.string()
+        .matches(unitsRegex, 'Probe polling interval should contain values in ns, us, ms, m, s or h only')
+        .nullable(),
+      initialDelay: Yup.string()
+        .matches(unitsRegex, 'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only')
+        .nullable(),
+      evaluationTimeout: Yup.string()
+        .matches(unitsRegex, 'Probe evaluation timeout should contain values in ns, us, ms, m, s or h only')
+        .nullable()
     };
 
     if (props.formData.infrastructureType === InfrastructureType.KUBERNETES) {
@@ -359,7 +355,7 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
         {formikProps => {
           return (
             <Form style={{ height: '100%' }}>
-              <Layout.Vertical height={'100%'}>
+              <Layout.Vertical height={516} style={{ overflow: 'auto' }}>
                 <Text font={{ variation: FontVariation.H3 }} color={Color.GREY_800} margin={{ bottom: 'large' }}>
                   {getString(`properties`)}
                 </Text>
@@ -442,8 +438,10 @@ const TuneDetailsStep: React.FC<
   // TODO: Add monaco editor for source probe in CMD
   const cmdComparatorType = React.useRef<string>('int');
   const promComparatorType = React.useRef<string>('int');
-  const source = React.useRef<string>('');
-  const [isSourceSelected, setIsSourceSelected] = React.useState<boolean>(false);
+  const source = React.useRef<string>(props.formData.kubernetesCMDProperties?.source ?? '');
+  const [isSourceSelected, setIsSourceSelected] = React.useState<boolean>(
+    props.formData.kubernetesCMDProperties?.source ? true : false
+  );
   const { error, loading, mutation, isEdit, hideDarkModal } = props;
 
   const preventDefault = (e: React.DragEvent<HTMLDivElement>) => {
@@ -925,7 +923,15 @@ const TuneDetailsStep: React.FC<
               />
             </Layout.Horizontal>
 
-            <Switch label="Source" checked={isSourceSelected} onChange={() => setIsSourceSelected(prev => !prev)} />
+            <Switch
+              label="Source"
+              checked={isSourceSelected}
+              onChange={event => {
+                setIsSourceSelected(prev => !prev);
+                (event.target as HTMLInputElement).checked &&
+                  window.setTimeout(() => document.getElementById('sourceContainer')?.scrollIntoView(false), 100);
+              }}
+            />
             <Text
               font={{ variation: FontVariation.FORM_INPUT_TEXT }}
               padding={{ top: 'medium', bottom: 'medium' }}
@@ -934,7 +940,7 @@ const TuneDetailsStep: React.FC<
               {getString('sourceModeDesction')}
             </Text>
             {isSourceSelected && (
-              <Container height={200}>
+              <Container id="sourceContainer" height={200}>
                 <div
                   className={css.yamlBuilder}
                   onDragEnter={preventDefault}
@@ -1168,21 +1174,7 @@ export default function AddProbeModalWizardView({
 
   React.useMemo(() => {
     if (mutation.updateProbeMutation && probeDataWithTypename) {
-      /**
-       * Will remove deeply nested __typename fields efficiently from the payload
-       * Apollo Github Issue: https://github.com/apollographql/apollo-feature-requests/issues/6
-       * */
-      const probeData: Probe = JSON.parse(
-        JSON.stringify(probeDataWithTypename, (name, val) => {
-          if (name === '__typename') {
-            delete val[name];
-          } else if (val === null) {
-            return undefined;
-          } else {
-            return val;
-          }
-        })
-      );
+      const probeData = cleanApolloResponse(probeDataWithTypename) as Probe;
 
       initialValues = {
         name: probeData.name,

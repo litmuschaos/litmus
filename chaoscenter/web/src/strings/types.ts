@@ -635,6 +635,7 @@ export interface StringsMap {
   'private': unknown
   'probeAddedSuccessfully': unknown
   'probeConfiguration': unknown
+  'probeDeletedSuccessfully': unknown
   'probeDetails': unknown
   'probeExecutionPreview': unknown
   'probeInFault': unknown
@@ -736,6 +737,8 @@ export interface StringsMap {
   'remove': unknown
   'removeMember': unknown
   'removeMemberConfirmation': PrimitiveObject<'username'>
+  'removeProbeDesc': unknown
+  'removeProbeHeading': unknown
   'repoBranchPlaceholder': unknown
   'repoURLPlaceholder': unknown
   'repository': unknown

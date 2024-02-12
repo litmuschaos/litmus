@@ -200,7 +200,13 @@ ExperimentCreationTuneFaultProps): React.ReactElement {
     {
       id: TuneFaultTab.Probes,
       title: getString('probes'),
-      panel: <NewProbes faultData={faultData} setIsAddProbeSelected={setIsAddProbeSelected} />
+      panel: (
+        <NewProbes
+          faultData={faultData}
+          onSave={data => setFaultData({ ...faultData, ...data })}
+          setIsAddProbeSelected={setIsAddProbeSelected}
+        />
+      )
     }
   ];
 

@@ -23,7 +23,7 @@ export const UpdateProbeModal = ({
     isCloseButtonShown: true,
     style: {
       width: 1000,
-      minHeight: 600,
+      height: 620,
       borderLeft: 0,
       paddingBottom: 0,
       position: 'relative',
