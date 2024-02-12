@@ -664,6 +664,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 
 		newInfra := model.Infra{
 			InfraID:          infra.InfraID,
+			ProjectID:        infra.ProjectID,
 			Name:             infra.Name,
 			EnvironmentID:    infra.EnvironmentID,
 			Description:      &description,
