@@ -7,7 +7,7 @@ import ResetPasswordView from '../ResetPassword';
 
 beforeEach(() => {
   jest.spyOn(stringUtils, 'useStrings').mockReturnValue({
-    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`),
+    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`)
   });
 });
 
@@ -61,10 +61,10 @@ describe('ResetPasswordView Component', () => {
       </TestWrapper>
     );
     fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
-      target: { value: 'password123' },
+      target: { value: 'password123' }
     });
     fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
-      target: { value: 'password123' },
+      target: { value: 'password123' }
     });
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });
@@ -82,10 +82,10 @@ describe('ResetPasswordView Component', () => {
       </TestWrapper>
     );
     fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
-      target: { value: 'password123' },
+      target: { value: 'password123' }
     });
     fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
-      target: { value: 'differentPassword123' },
+      target: { value: 'differentPassword123' }
     });
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });

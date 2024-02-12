@@ -24,7 +24,7 @@ type SubscriberK8s interface {
 	SendKubeObjects(infraData map[string]string, kubeobjectrequest types.KubeObjRequest) error
 	CheckComponentStatus(componentEnv string) error
 	IsAgentConfirmed() (bool, string, error)
-	AgentRegister(infraData map[string]string) (bool, error)
+	AgentRegister(accessKey string) (bool, error)
 	AgentOperations(infraAction types.Action) (*unstructured.Unstructured, error)
 	AgentConfirm(infraData map[string]string) ([]byte, error)
 	GetKubeConfig() (*rest.Config, error)
