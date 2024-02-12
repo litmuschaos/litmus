@@ -355,9 +355,9 @@ type EnvironmentFilterInput struct {
 	// ID of the environment
 	Description *string `json:"description"`
 	// Type name of environment
-	Type *string `json:"type"`
+	Type *EnvironmentType `json:"type"`
 	// Tags of an environment
-	Tags []*EnvironmentType `json:"tags"`
+	Tags []string `json:"tags"`
 }
 
 // Defines sorting options for experiment
