@@ -487,7 +487,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 		logrus.Info("WFID in changed File :", wfID)
 		if wfID == "" {
 			logrus.Info("New Experiment pushed to git : " + file)
-			flag, err := g.createExperiment(string(data), file, config)
+			flag, err := g.createExperiment(ctx, string(data), file, config)
 			if err != nil {
 				logrus.Error("Error while creating new experiment db entry : " + file + " | " + err.Error())
 				continue
@@ -496,7 +496,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 				newExperiments = true
 			}
 		} else {
-			err = g.updateExperiment(string(data), wfID, file, config)
+			err = g.updateExperiment(ctx, string(data), wfID, file, config)
 			if err != nil {
 				logrus.Error("Error while updating experiment db entry : " + file + " | " + err.Error())
 				continue
@@ -534,7 +534,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 }
 
 // createExperiment helps in creating a new experiment during the SyncDBToGit operation
-func (g *gitOpsService) createExperiment(data, file string, config GitConfig) (bool, error) {
+func (g *gitOpsService) createExperiment(ctx context.Context, data, file string, config GitConfig) (bool, error) {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 	wfName := gjson.Get(data, "metadata.name").String()
@@ -557,7 +557,7 @@ func (g *gitOpsService) createExperiment(data, file string, config GitConfig) (b
 		InfraID:               infraID,
 	}
 	revID := ""
-	input, wfType, err := g.chaosExperimentService.ProcessExperiment(&experiment, config.ProjectID, revID)
+	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experiment, config.ProjectID, revID)
 	if err != nil {
 		return false, err
 	}
@@ -582,7 +582,7 @@ func (g *gitOpsService) createExperiment(data, file string, config GitConfig) (b
 }
 
 // updateExperiment helps in updating an existing experiment during the SyncDBToGit operation
-func (g *gitOpsService) updateExperiment(data, wfID, file string, config GitConfig) error {
+func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 	wfName := gjson.Get(data, "metadata.name").String()
@@ -620,7 +620,7 @@ func (g *gitOpsService) updateExperiment(data, wfID, file string, config GitConf
 
 	revID := ""
 	updateRevision := false
-	input, wfType, err := g.chaosExperimentService.ProcessExperiment(&experimentData, config.ProjectID, revID)
+	input, wfType, err := g.chaosExperimentService.ProcessExperiment(ctx, &experimentData, config.ProjectID, revID)
 	if err != nil {
 		return err
 	}

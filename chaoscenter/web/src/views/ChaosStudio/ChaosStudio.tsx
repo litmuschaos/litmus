@@ -81,7 +81,6 @@ export default function ChaosStudioView({
   const [hasFaults, setHasFaults] = React.useState<boolean>(false);
   const studioOverviewRef = React.useRef<FormikProps<ExperimentMetadata>>();
   const experimentHashKeyForClone = getHash();
-  const probeWithoutRef = React.useRef<string | undefined>();
   const { showWarning } = useToaster();
   const {
     isOpen: isOpenDiscardExperimentDialog,
@@ -160,7 +159,6 @@ export default function ChaosStudioView({
       const probeWithoutAnnotation = await (
         experimentHandler as KubernetesYamlService
       )?.checkProbesInExperimentManifest(experiment?.manifest as KubernetesExperimentManifest);
-      probeWithoutRef.current = probeWithoutAnnotation;
 
       /**
        * Checks if probe metadata is already present in the manifest
@@ -174,12 +172,14 @@ export default function ChaosStudioView({
       if (doesProbeExists) {
         showWarning(getString('probeMetadataExists'));
       }
+
+      // Generate new probes if annotation is missing but probes are present. Else case return error
+      if (probeWithoutAnnotation && !doesProbeExists) {
+        showError(`${getString('probeInFault')} ${probeWithoutAnnotation} ${getString('probeNotAttachedToRef')}`);
+        return;
+      }
     }
 
-    if (probeWithoutRef.current) {
-      showError(`${getString('probeInFault')} ${probeWithoutRef.current} ${getString('probeNotAttachedToRef')}`);
-      return;
-    }
     saveChaosExperimentMutation({
       variables: {
         projectID: scope.projectID,
