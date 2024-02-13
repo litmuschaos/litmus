@@ -10,7 +10,6 @@ import (
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/handler"
 	"github.com/sirupsen/logrus"
 )
 
