@@ -38,11 +38,11 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
         currentUserInfo: {
           userRole: 'admin',
           ID: 'uid',
-          username: 'admin',
+          username: 'admin'
         },
         renderUrl: `/account/uid`,
         matchPath: '/account/:accountID',
-        updateAppStore: () => void NO_OPERATION,
+        updateAppStore: () => void NO_OPERATION
       }}
     >
       <StringsContext.Provider value={{ data: strings as never, getString }}>

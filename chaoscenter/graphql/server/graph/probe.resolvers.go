@@ -54,8 +54,8 @@ func (r *mutationResolver) AddProbe(ctx context.Context, request model.ProbeRequ
 		logrus.WithFields(logFields).Error(err)
 		return nil, errors.New(err)
 	}
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.AddProbe(ctx, request)
+
+	response, err := r.probeService.AddProbe(ctx, request, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -80,8 +80,7 @@ func (r *mutationResolver) UpdateProbe(ctx context.Context, request model.ProbeR
 		return "", err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.UpdateProbe(ctx, request)
+	response, err := r.probeService.UpdateProbe(ctx, request, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err
@@ -106,8 +105,7 @@ func (r *mutationResolver) DeleteProbe(ctx context.Context, probeName string, pr
 		return false, err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.DeleteProbe(ctx, probeName)
+	response, err := r.probeService.DeleteProbe(ctx, probeName, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err
@@ -131,8 +129,7 @@ func (r *queryResolver) ListProbes(ctx context.Context, projectID string, infras
 		return nil, err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.ListProbes(ctx, probeNames, infrastructureType, filter)
+	response, err := r.probeService.ListProbes(ctx, probeNames, infrastructureType, filter, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -157,8 +154,7 @@ func (r *queryResolver) GetProbe(ctx context.Context, projectID string, probeNam
 		return nil, err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.GetProbe(ctx, probeName)
+	response, err := r.probeService.GetProbe(ctx, probeName, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -183,8 +179,7 @@ func (r *queryResolver) GetProbeYaml(ctx context.Context, projectID string, requ
 		return "", err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.GetProbeYAMLData(ctx, request)
+	response, err := r.probeService.GetProbeYAMLData(ctx, request, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err
@@ -209,8 +204,7 @@ func (r *queryResolver) GetProbeReference(ctx context.Context, projectID string,
 		return nil, err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.GetProbeReference(ctx, probeName)
+	response, err := r.probeService.GetProbeReference(ctx, probeName, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -260,8 +254,7 @@ func (r *queryResolver) ValidateUniqueProbe(ctx context.Context, projectID strin
 		return false, err
 	}
 
-	p := handler.NewProbeRepository(projectID)
-	response, err := p.ValidateUniqueProbe(ctx, probeName)
+	response, err := r.probeService.ValidateUniqueProbe(ctx, probeName, projectID)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err

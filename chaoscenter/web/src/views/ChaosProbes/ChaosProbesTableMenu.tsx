@@ -18,18 +18,22 @@ import type { Probe } from '@api/entities';
 import type { RefetchProbes } from '@controllers/ChaosProbes';
 import RbacMenuItem from '@components/RbacMenuItem';
 import { PermissionGroup } from '@models';
-import { UpdateProbeModal } from './UpdateProbeModal';
+import type { EditProbeData } from './ChaosProbeTable';
 
 interface MenuCellProps extends RefetchProbes {
   row: Row<Probe>;
+  setEditProbe: React.Dispatch<React.SetStateAction<EditProbeData | undefined>>;
 }
 
-export const MenuCell = ({ row: { original: data }, refetchProbes }: MenuCellProps): React.ReactElement => {
+export const MenuCell = ({
+  row: { original: data },
+  refetchProbes,
+  setEditProbe
+}: MenuCellProps): React.ReactElement => {
   const scope = getScope();
   const { getString } = useStrings();
   const { showError } = useToaster();
 
-  const { isOpen: isOpenUpdateProbeModal, open: openUpdateProbeModal, close: closeUpdateProbeModal } = useToggleOpen();
   const {
     isOpen: isOpenDeleteProbeDialog,
     open: openDeleteProbeDialog,
@@ -66,22 +70,15 @@ export const MenuCell = ({ row: { original: data }, refetchProbes }: MenuCellPro
 
   return (
     <Layout.Horizontal style={{ justifyContent: 'flex-end' }} onClick={killEvent}>
-      <UpdateProbeModal
-        refetchProbes={refetchProbes}
-        isOpen={isOpenUpdateProbeModal}
-        hideDarkModal={closeUpdateProbeModal}
-        probeName={data.name}
-        infrastructureType={data.infrastructureType}
-      />
       <Popover className={Classes.DARK} position={Position.LEFT}>
         <Button variation={ButtonVariation.ICON} icon="Options" />
         <Menu style={{ backgroundColor: 'unset' }}>
           {/* <!-- edit probe button --> */}
           <ParentComponentErrorWrapper>
             <RbacMenuItem
-              icon={'Edit'}
+              icon="Edit"
               text={getString('editProbe')}
-              onClick={openUpdateProbeModal}
+              onClick={() => setEditProbe({ name: data.name, infrastructureType: data.infrastructureType })}
               permission={PermissionGroup.EDITOR || PermissionGroup.OWNER}
             />
           </ParentComponentErrorWrapper>
