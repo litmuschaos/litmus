@@ -1038,7 +1038,7 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 
 	var res []dbChaosExperiment.AggregatedExperimentRunStats
 
-	if err = experimentRunCursor.All(context.Background(), &res); err != nil || len(res) == 0 {
+	if err = experimentRunCursor.All(context.Background(), &res); err != nil {
 		return nil, err
 	}
 
