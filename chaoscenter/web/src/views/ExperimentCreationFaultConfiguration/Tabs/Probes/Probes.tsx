@@ -21,8 +21,7 @@ const getTableColumns = (
   onSave: (data: Omit<FaultData, 'experimentCR'>) => void,
   setEditProbe: React.Dispatch<React.SetStateAction<EditProbeData | undefined>>,
   faultData: FaultData | undefined
-): // getString: (key: keyof StringsMap, vars?: Record<string, any> | undefined) => string
-any => {
+): any => {
   return [
     {
       Header: 'Probes',

@@ -78,7 +78,6 @@ export const MenuCell = ({
     onClose: (isConfirmed: boolean) => {
       if (isConfirmed) {
         removeProbeFromManifest();
-        closeRemoveProbeDialog();
       }
       closeRemoveProbeDialog();
     }
