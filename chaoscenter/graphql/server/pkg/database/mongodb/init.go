@@ -256,7 +256,9 @@ func (m *MongoClient) initAllCollection() {
 			Keys: bson.M{
 				"environment_id": 1,
 			},
-			Options: options.Index().SetUnique(true),
+			Options: options.Index().SetUnique(true).SetPartialFilterExpression(bson.D{{
+				"is_removed", false,
+			}}),
 		},
 		{
 			Keys: bson.M{
