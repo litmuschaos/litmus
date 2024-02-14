@@ -3,10 +3,11 @@ package handler
 import (
 	"context"
 	"errors"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	"go.mongodb.org/mongo-driver/mongo"
 	"testing"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
