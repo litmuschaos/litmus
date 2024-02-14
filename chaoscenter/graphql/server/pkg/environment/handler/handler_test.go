@@ -187,7 +187,7 @@ func TestDeleteEnvironment(t *testing.T) {
 	}
 }
 
-func FuzzTestDeleteEnvironment(f *testing.F) {
+func FuzzTestGetEnvironment(f *testing.F) {
 	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		projectID     string
@@ -206,6 +206,7 @@ func FuzzTestDeleteEnvironment(f *testing.F) {
 
 		findResult := []interface{}{bson.D{
 			{Key: "environment_id", Value: environmentID},
+			{Key: "project_id", Value: projectID},
 		}}
 		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 		mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, nil).Once()
