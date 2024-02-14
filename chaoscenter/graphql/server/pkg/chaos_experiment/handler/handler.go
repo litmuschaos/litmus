@@ -102,12 +102,15 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		Tags:                  request.Tags,
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(&chaosWfReq, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &chaosWfReq, projectID, revID)
 	if err != nil {
 		return "", err
 	}
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
@@ -152,7 +155,7 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 		return nil, err
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +243,7 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 		return nil, err
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
 	if err != nil {
 		return nil, err
 	}

@@ -6,9 +6,9 @@ export const ReactQueryProvider: React.FC = ({ children }): React.ReactElement =
     defaultOptions: {
       mutations: {},
       queries: {
-        refetchOnWindowFocus: false,
-      },
-    },
+        refetchOnWindowFocus: false
+      }
+    }
   });
 
   return <QueryClientProvider client={reactQueryClient}>{children}</QueryClientProvider>;

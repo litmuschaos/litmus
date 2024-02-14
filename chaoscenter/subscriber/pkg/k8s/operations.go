@@ -3,6 +3,7 @@ package k8s
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -11,7 +12,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/labels"
 
-	"subscriber/pkg/types"
+	pkgTypes "subscriber/pkg/types"
 
 	yaml_converter "github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
@@ -22,6 +23,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
+	"k8s.io/apimachinery/pkg/types"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -155,51 +157,63 @@ func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
 }
 
 // AgentRegister function creates litmus-portal config map in the litmus namespace
-func (k8s *k8sSubscriber) AgentRegister(infraData map[string]string) (bool, error) {
+func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
 	clientset, err := k8s.GetGenericK8sClient()
 	if err != nil {
 		return false, err
 	}
 
-	newConfigMapData := map[string]string{
-		"IS_INFRA_CONFIRMED": infraData["IS_INFRA_CONFIRMED"],
-		"SERVER_ADDR":        infraData["SERVER_ADDR"],
-		"INFRA_SCOPE":        infraData["INFRA_SCOPE"],
-		"COMPONENTS":         infraData["COMPONENTS"],
-		"START_TIME":         infraData["START_TIME"],
-		"VERSION":            infraData["VERSION"],
-		"SKIP_SSL_VERIFY":    infraData["SKIP_SSL_VERIFY"],
-		"CUSTOM_TLS_CERT":    infraData["CUSTOM_TLS_CERT"],
+	// Define a patch object for the ConfigMap with only "IS_CLUSTER_CONFIRMED".
+	newConfigMapData := map[string]interface{}{
+		"data": map[string]interface{}{
+			"IS_INFRA_CONFIRMED": true,
+		},
 	}
 
-	_, err = clientset.CoreV1().ConfigMaps(InfraNamespace).Update(context.TODO(), &corev1.ConfigMap{
-		Data: newConfigMapData,
-		ObjectMeta: metav1.ObjectMeta{
-			Name: InfraConfigName,
-		},
-	}, metav1.UpdateOptions{})
+	configMapPatchBytes, err := json.Marshal(newConfigMapData)
+
 	if err != nil {
 		return false, err
 	}
 
-	logrus.Info(InfraConfigName + " has been updated")
+	// Patch the ConfigMap.
+	_, err = clientset.CoreV1().ConfigMaps(InfraNamespace).Patch(
+		context.TODO(),
+		InfraConfigName,
+		types.StrategicMergePatchType,
+		configMapPatchBytes,
+		metav1.PatchOptions{},
+	)
+	if err != nil {
+		return false, err
+	}
+
+	logrus.Info("%s has been updated", InfraConfigName)
 
 	newSecretData := map[string]string{
-		"ACCESS_KEY": infraData["ACCESS_KEY"],
-		"INFRA_ID":   infraData["INFRA_ID"],
+		"ACCESS_KEY": accessKey,
 	}
 
-	_, err = clientset.CoreV1().Secrets(InfraNamespace).Update(context.TODO(), &corev1.Secret{
-		StringData: newSecretData,
-		ObjectMeta: metav1.ObjectMeta{
-			Name: InfraSecretName,
-		},
-	}, metav1.UpdateOptions{})
+	secretPatch := map[string]interface{}{
+		"stringData": newSecretData,
+	}
+
+	secretPatchBytes, err := json.Marshal(secretPatch)
+	if err != nil {
+		return false, err
+	}
+	_, err = clientset.CoreV1().Secrets(InfraNamespace).Patch(
+		context.TODO(),
+		InfraSecretName,
+		types.StrategicMergePatchType,
+		secretPatchBytes,
+		metav1.PatchOptions{},
+	)
 	if err != nil {
 		return false, err
 	}
 
-	logrus.Info(InfraSecretName + " has been updated")
+	logrus.Info("%s has been updated", InfraSecretName)
 
 	return true, nil
 }
@@ -305,7 +319,7 @@ func addCustomLabels(obj *unstructured.Unstructured, customLabels map[string]str
 }
 
 // AgentOperations This function handles agent operations
-func (k8s *k8sSubscriber) AgentOperations(infraAction types.Action) (*unstructured.Unstructured, error) {
+func (k8s *k8sSubscriber) AgentOperations(infraAction pkgTypes.Action) (*unstructured.Unstructured, error) {
 	// Converting JSON to YAML and store it in yamlStr variable
 	yamlStr, err := yaml_converter.JSONToYAML([]byte(infraAction.K8SManifest))
 	if err != nil {

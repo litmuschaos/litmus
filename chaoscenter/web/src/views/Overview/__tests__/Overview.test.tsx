@@ -13,9 +13,9 @@ const NoExperimentProps = {
     chaosHubStats: false,
     experimentStats: false,
     infraStats: false,
-    recentExperimentsTable: false,
+    recentExperimentsTable: false
   },
-  refetchExperiments: Promise.resolve,
+  refetchExperiments: Promise.resolve
 };
 
 const props = {
@@ -27,10 +27,10 @@ const props = {
     chaosHubStats: true,
     experimentStats: true,
     infraStats: true,
-    recentExperimentsTable: true,
+    recentExperimentsTable: true
   },
 
-  refetchExperiments: Promise.resolve,
+  refetchExperiments: Promise.resolve
 };
 describe('OverviewView Component', () => {
   test('shows loading state', async () => {
