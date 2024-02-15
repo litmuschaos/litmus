@@ -1,10 +1,13 @@
-package handler_test
+package handler
 
 import (
 	"context"
 	"errors"
 	"testing"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -13,7 +16,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -97,7 +99,7 @@ func TestCreateEnvironment(t *testing.T) {
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 			mockOperator := environmentOperator
-			service := handler.NewEnvironmentService(mockOperator)
+			service := NewEnvironmentService(mockOperator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -174,7 +176,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
 			mockOperator := environmentOperator
-			service := handler.NewEnvironmentService(mockOperator)
+			service := NewEnvironmentService(mockOperator)
 
 			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -184,4 +186,40 @@ func TestDeleteEnvironment(t *testing.T) {
 			}
 		})
 	}
+}
+
+func FuzzTestGetEnvironment(f *testing.F) {
+	utils.Config.JwtSecret = JwtSecret
+	testCases := []struct {
+		projectID     string
+		environmentID string
+	}{
+		{
+			projectID:     "testProject",
+			environmentID: "testEnvID",
+		},
+	}
+	for _, tc := range testCases {
+		f.Add(tc.projectID, tc.environmentID)
+	}
+
+	f.Fuzz(func(t *testing.T, projectID string, environmentID string) {
+
+		findResult := []interface{}{bson.D{
+			{Key: "environment_id", Value: environmentID},
+			{Key: "project_id", Value: projectID},
+		}}
+		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
+		mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, nil).Once()
+		service := NewEnvironmentService(environmentOperator)
+
+		env, err := service.GetEnvironment(projectID, environmentID)
+		if err != nil {
+			t.Errorf("Unexpected error: %v", err)
+		}
+
+		if env == nil {
+			t.Errorf("Returned environment is nil")
+		}
+	})
 }
