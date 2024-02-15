@@ -3,7 +3,6 @@ package k8s
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -23,7 +22,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-	"k8s.io/apimachinery/pkg/types"
 	memory "k8s.io/client-go/discovery/cached"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -163,57 +161,45 @@ func (k8s *k8sSubscriber) AgentRegister(accessKey string) (bool, error) {
 		return false, err
 	}
 
-	// Define a patch object for the ConfigMap with only "IS_CLUSTER_CONFIRMED".
-	newConfigMapData := map[string]interface{}{
-		"data": map[string]interface{}{
-			"IS_INFRA_CONFIRMED": true,
-		},
+	getCM, err := clientset.CoreV1().ConfigMaps(InfraNamespace).Get(context.TODO(), InfraConfigName, metav1.GetOptions{})
+	if err != nil {
+		return false, err
 	}
-
-	configMapPatchBytes, err := json.Marshal(newConfigMapData)
-
+	getSecret, err := clientset.CoreV1().Secrets(InfraNamespace).Get(context.TODO(), InfraSecretName, metav1.GetOptions{})
 	if err != nil {
 		return false, err
 	}
 
-	// Patch the ConfigMap.
-	_, err = clientset.CoreV1().ConfigMaps(InfraNamespace).Patch(
+	getCM.Data["IS_INFRA_CONFIRMED"] = "true"
+
+	// Update the ConfigMap.
+	_, err = clientset.CoreV1().ConfigMaps(InfraNamespace).Update(
 		context.TODO(),
-		InfraConfigName,
-		types.StrategicMergePatchType,
-		configMapPatchBytes,
-		metav1.PatchOptions{},
+		getCM,
+		metav1.UpdateOptions{},
 	)
 	if err != nil {
 		return false, err
 	}
 
-	logrus.Info("%s has been updated", InfraConfigName)
+	logrus.Infof("%s has been updated", InfraConfigName)
 
-	newSecretData := map[string]string{
-		"ACCESS_KEY": accessKey,
-	}
+	getSecret.StringData = make(map[string]string)
+	getSecret.StringData["ACCESS_KEY"] = accessKey
 
-	secretPatch := map[string]interface{}{
-		"stringData": newSecretData,
-	}
-
-	secretPatchBytes, err := json.Marshal(secretPatch)
 	if err != nil {
 		return false, err
 	}
-	_, err = clientset.CoreV1().Secrets(InfraNamespace).Patch(
+	_, err = clientset.CoreV1().Secrets(InfraNamespace).Update(
 		context.TODO(),
-		InfraSecretName,
-		types.StrategicMergePatchType,
-		secretPatchBytes,
-		metav1.PatchOptions{},
+		getSecret,
+		metav1.UpdateOptions{},
 	)
 	if err != nil {
 		return false, err
 	}
 
-	logrus.Info("%s has been updated", InfraSecretName)
+	logrus.Infof("%s has been updated", InfraSecretName)
 
 	return true, nil
 }
