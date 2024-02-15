@@ -651,7 +651,7 @@ spec:
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.4.0"
+              value: "3.3.0"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
             - name: INGRESS
