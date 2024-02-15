@@ -40,7 +40,7 @@ export default function OverviewView({
   infraStats,
   experimentDashboardTableData,
   experimentStats,
-  refetchExperiments,
+  refetchExperiments
 }: OverviewViewProps & RefetchExperiments): React.ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
@@ -58,10 +58,10 @@ export default function OverviewView({
       paddingBottom: 0,
       position: 'relative',
       overflow: 'hidden',
-      display: 'grid',
+      display: 'grid'
     },
     enforceFocus: false,
-    onClose: () => setIsEnableChaosModalOpen(false),
+    onClose: () => setIsEnableChaosModalOpen(false)
   };
 
   React.useEffect(() => {
