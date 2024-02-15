@@ -1048,7 +1048,7 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 		return nil, err
 	}
 	if !(infra.AccessKey == identity.AccessKey && infra.IsRegistered) {
-		return nil, fmt.Errorf("ERROR:  infra_ID MISMATCH")
+		return nil, fmt.Errorf("ERROR:  accessID MISMATCH")
 	}
 	return &infra, nil
 }
