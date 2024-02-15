@@ -654,11 +654,11 @@ spec:
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
               value: "litmuschaos.docker.scarf.sh/litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
-              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.4.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.3.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
-              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.4.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-runner:3.3.0"
             - name: LITMUS_CHAOS_EXPORTER_IMAGE
-              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-exporter:3.4.0"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-exporter:3.3.0"
             - name: SERVER_SERVICE_NAME
               value: "litmusportal-server-service"
             - name: INFRA_DEPLOYMENTS
@@ -676,7 +676,7 @@ spec:
             - name: CONTAINER_RUNTIME_EXECUTOR
               value: "k8sapi"
             - name: DEFAULT_HUB_BRANCH_NAME
-              value: "v3.4.x"
+              value: "v3.3.x"
             - name: LITMUS_AUTH_GRPC_ENDPOINT
               value: "litmusportal-auth-server-service"
             - name: LITMUS_AUTH_GRPC_PORT
