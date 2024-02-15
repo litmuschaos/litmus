@@ -16,7 +16,7 @@ spec:
       containers:
         - name: chaos-scheduler
           # Replace this with the built image name
-          image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-scheduler:3.3.0
+          image: litmuschaos.docker.scarf.sh/litmuschaos/chaos-scheduler:3.4.0
           command:
           - chaos-scheduler
           imagePullPolicy: IfNotPresent
