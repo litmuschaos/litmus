@@ -121,6 +121,12 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			}
 		}
 
+		err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
+		if err != nil {
+			logrus.WithFields(logFields).Errorf("error pushing experiment manifest to git, err: %v", err)
+			return "", err
+		}
+
 		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
 		if err != nil {
 			return "", err
@@ -136,6 +142,12 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 
 	// Saving chaos experiment in the DB
 	logrus.WithFields(logFields).Info("request received to save k8s chaos experiment")
+
+	err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
+	if err != nil {
+		logrus.WithFields(logFields).Errorf("error pushing experiment manifest to git, err: %v", err)
+		return "", err
+	}
 
 	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
@@ -205,6 +217,16 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 				return false, err
 			}
 		}
+		wf := model.ChaosExperimentRequest{
+			ExperimentID:   &workflow.ExperimentID,
+			ExperimentName: workflow.Name,
+		}
+
+		err = c.gitOpsService.DeleteExperimentFromGit(ctx, projectID, &wf)
+		if err != nil {
+			logrus.Errorf("error deleting experiment manifest from git, err: %v", err)
+			return false, err
+		}
 		// Delete experiment
 		err = c.chaosExperimentService.ProcessExperimentDelete(query, workflow, uid, r)
 		if err != nil {
@@ -249,6 +271,13 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 	}
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	uid, err := authorization.GetUsername(tkn)
+
+	err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
+	if err != nil {
+		logrus.Errorf("error pushing experiment manifest to git, err: %v", err)
+		return nil, err
+	}
+
 	err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, uid, wfType, revID, false, projectID, r)
 	if err != nil {
 		return nil, err
@@ -319,22 +348,22 @@ func (c *ChaosExperimentHandler) GetExperiment(ctx context.Context, projectID st
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
+				bson.D{
+					{"$match", bson.D{
+						{"$expr", bson.D{
+							{"$eq", bson.A{"$infra_id", "$$infraID"}},
 						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
+					}},
 				},
+				bson.D{
+					{"$project", bson.D{
+						{"token", 0},
+						{"infra_ns_exists", 0},
+						{"infra_sa_exists", 0},
+						{"access_key", 0},
+					}},
+				},
+			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -579,22 +608,22 @@ func (c *ChaosExperimentHandler) ListExperiment(projectID string, request model.
 			{"let", bson.M{"infraID": "$infra_id"}},
 			{
 				"pipeline", bson.A{
-					bson.D{
-						{"$match", bson.D{
-							{"$expr", bson.D{
-								{"$eq", bson.A{"$infra_id", "$$infraID"}},
-							}},
+				bson.D{
+					{"$match", bson.D{
+						{"$expr", bson.D{
+							{"$eq", bson.A{"$infra_id", "$$infraID"}},
 						}},
-					},
-					bson.D{
-						{"$project", bson.D{
-							{"token", 0},
-							{"infra_ns_exists", 0},
-							{"infra_sa_exists", 0},
-							{"access_key", 0},
-						}},
-					},
+					}},
 				},
+				bson.D{
+					{"$project", bson.D{
+						{"token", 0},
+						{"infra_ns_exists", 0},
+						{"infra_sa_exists", 0},
+						{"access_key", 0},
+					}},
+				},
+			},
 			},
 			{"as", "kubernetesInfraDetails"},
 		}},
@@ -1081,11 +1110,11 @@ func (c *ChaosExperimentHandler) GetExperimentStats(ctx context.Context, project
 	groupByTotalCount := bson.D{
 		{
 			"$group", bson.D{
-				{"_id", nil},
-				{"count", bson.D{
-					{"$sum", 1},
-				}},
-			},
+			{"_id", nil},
+			{"count", bson.D{
+				{"$sum", 1},
+			}},
+		},
 		},
 	}
 
