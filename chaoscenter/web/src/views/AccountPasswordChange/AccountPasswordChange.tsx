@@ -1,5 +1,5 @@
 import { FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Container, FormInput, Layout, Text, useToaster } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, FormInput, Layout, OverlaySpinner, Text, useToaster } from '@harnessio/uicore';
 import React from 'react';
 import { Icon } from '@harnessio/icons';
 import { Form, Formik } from 'formik';
@@ -64,6 +64,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
   }
 
   return (
+    <OverlaySpinner show={updatePasswordMutationLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('updatePassword')}</Text>
@@ -130,5 +131,6 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
         </Formik>
       </Container>
     </Layout.Vertical>
+    </OverlaySpinner>
   );
 }

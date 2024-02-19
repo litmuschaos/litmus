@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { FontVariation } from '@harnessio/design-system';
-import { Layout, Container, FormInput, ButtonVariation, Text, Button } from '@harnessio/uicore';
+import { Layout, Container, FormInput, ButtonVariation, Text, Button, OverlaySpinner } from '@harnessio/uicore';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
@@ -26,6 +26,7 @@ interface ResetPasswordFormProps {
 export default function ResetPasswordView(props: ResetPasswordViewProps): React.ReactElement {
   const { handleClose, resetPasswordMutation, username } = props;
   const { getString } = useStrings();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function isSubmitButtonDisabled(values: ResetPasswordFormProps): boolean {
     if (values.password === '' || values.reEnterPassword === '') {
@@ -45,8 +46,8 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
   }
 
   function handleSubmit(values: ResetPasswordFormProps): void {
-    doesNewPasswordMatch(values) &&
-      username &&
+    if (doesNewPasswordMatch(values) && username) {
+      setIsLoading(true); 
       resetPasswordMutation(
         {
           body: {
@@ -56,12 +57,17 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
           }
         },
         {
-          onSuccess: () => handleClose()
+          onSuccess: () => {
+            setIsLoading(false); 
+            handleClose();
+          }
         }
       );
+    }
   }
 
   return (
+    <OverlaySpinner show={isLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('resetPassword')}</Text>
@@ -120,5 +126,6 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
         </Formik>
       </Container>
     </Layout.Vertical>
+    </OverlaySpinner>
   );
 }
