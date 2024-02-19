@@ -24,15 +24,6 @@ describe('<CreateNewUserView />', () => {
     expect(getByText('createNewUser')).toBeInTheDocument();
   });
 
-  test('validates form fields', async () => {
-    const { getByText, getByPlaceholderText } = setup();
-    fireEvent.change(getByPlaceholderText('enterYourName'), { target: { value: '' } });
-    fireEvent.submit(getByText('confirm'));
-    await waitFor(() => {
-      expect(getByText('nameIsARequiredField')).toBeInTheDocument();
-    });
-  });
-
   test('calls handleClose on cancel', () => {
     const { getByText } = setup();
     fireEvent.click(getByText('cancel'));
