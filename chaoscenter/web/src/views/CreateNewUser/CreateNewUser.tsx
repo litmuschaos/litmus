@@ -62,7 +62,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
           }}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
-            name: Yup.string().required(getString('nameIsARequiredField')),
+            name: Yup.string(),
             email: Yup.string().email(getString('invalidEmailText')).required(getString('emailIsRequired')),
             username: Yup.string().required(getString('usernameIsRequired')),
             password: Yup.string().required(getString('passwordIsRequired')),
