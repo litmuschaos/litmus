@@ -36,7 +36,10 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 		username := c.Param("username")
 
 		// Validating logged in user
-		if c.MustGet("username").(string) != username {
+		// Must be either requesting info from the logged in user
+		// or any user if it has the admin role
+		role := c.MustGet("role").(string)
+		if c.MustGet("username").(string) != username && role != string(entities.RoleAdmin) {
 			log.Error("auth error: unauthorized")
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
