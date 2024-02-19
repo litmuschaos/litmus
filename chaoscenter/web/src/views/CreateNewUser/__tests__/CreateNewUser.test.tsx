@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { TestWrapper } from 'utils/testUtils';
 import CreateNewUserView from '../CreateNewUser';
 import '@testing-library/jest-dom';
