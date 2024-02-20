@@ -27,6 +27,7 @@ func TestGetUserWithProject(t *testing.T) {
 			{"username", username},
 		}
 		c.Set("username", username)
+		c.Set("role", string(entities.RoleUser))
 
 		user := &entities.User{
 			ID:       "testUID",
@@ -52,6 +53,7 @@ func TestGetUserWithProject(t *testing.T) {
 			{"username", username},
 		}
 		c.Set("username", username)
+		c.Set("role", string(entities.RoleUser))
 
 		user := &entities.User{
 			ID:       "testUID",
@@ -68,6 +70,32 @@ func TestGetUserWithProject(t *testing.T) {
 		assert.Equal(t, http.StatusOK, f.Code)
 	})
 
+	t.Run("Successfully retrieve user with projects if logged user has admin role", func(t *testing.T) {
+		service := new(mocks.MockedApplicationService)
+		username := "testUser"
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Params = gin.Params{
+			{"username", username},
+		}
+		c.Set("username", "adminusername")
+		c.Set("role", string(entities.RoleAdmin))
+
+		user := &entities.User{
+			ID:       "testUID",
+			Username: "testUser",
+			Email:    "test@example.com",
+			Role:     entities.RoleAdmin,
+		}
+		project := &entities.Project{}
+
+		service.On("FindUserByUsername", "testUser").Return(user, nil)
+		service.On("GetProjectsByUserID", "testUID", false).Return([]*entities.Project{project}, nil)
+
+		rest.GetUserWithProject(service)(c)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
 }
 
 func TestGetProjectsByUserID(t *testing.T) {
