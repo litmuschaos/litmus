@@ -1,5 +1,5 @@
 import { FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Container, FormInput, Layout, OverlaySpinner, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, FormInput, Layout, Text } from '@harnessio/uicore';
 import React from 'react';
 import { Icon } from '@harnessio/icons';
 import { Form, Formik } from 'formik';
@@ -54,7 +54,6 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
   }
 
   return (
-    <OverlaySpinner show={updateDetailsMutationLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('editName')}</Text>
@@ -95,9 +94,9 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
+                      text={updateDetailsMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
                       loading={updateDetailsMutationLoading}
-                      disabled={isUserDetailsUpdated(formikProps.values)}
+                      disabled={updateDetailsMutationLoading || isUserDetailsUpdated(formikProps.values)}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}
@@ -112,6 +111,5 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
         </Formik>
       </Container>
     </Layout.Vertical>
-    </OverlaySpinner>
   );
 }

@@ -1,7 +1,7 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
 import React from 'react';
 import { FontVariation } from '@harnessio/design-system';
-import { Layout, Container, FormInput, ButtonVariation, Text, Button, OverlaySpinner} from '@harnessio/uicore';
+import { Layout, Container, FormInput, ButtonVariation, Text, Button} from '@harnessio/uicore';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
@@ -46,7 +46,6 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
   }
 
   return (
-    <OverlaySpinner show={createNewUserMutationLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('createNewUser')}</Text>
@@ -112,9 +111,10 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
+                      text={createNewUserMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
                       loading={createNewUserMutationLoading || formikProps.isSubmitting}
-                      disabled={Object.keys(formikProps.errors).length > 0}
+                      disabled={createNewUserMutationLoading || Object.keys(formikProps.errors).length > 0}
+                      style={{minWidth: '90px'}}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}
@@ -123,12 +123,11 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                     />
                   </Layout.Horizontal>
                 </Layout.Vertical>
-              </Form>
+              </Form>         
             );
           }}
         </Formik>
       </Container>
     </Layout.Vertical>
-    </OverlaySpinner>
   );
 }

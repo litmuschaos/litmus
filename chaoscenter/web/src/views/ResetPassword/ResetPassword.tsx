@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { FontVariation } from '@harnessio/design-system';
-import { Layout, Container, FormInput, ButtonVariation, Text, Button, OverlaySpinner } from '@harnessio/uicore';
+import { Layout, Container, FormInput, ButtonVariation, Text, Button } from '@harnessio/uicore';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
@@ -17,6 +17,7 @@ interface ResetPasswordViewProps {
     unknown
   >;
   username: string | undefined;
+  resetPasswordMutationLoading: boolean;
 }
 interface ResetPasswordFormProps {
   password: string;
@@ -24,9 +25,8 @@ interface ResetPasswordFormProps {
 }
 
 export default function ResetPasswordView(props: ResetPasswordViewProps): React.ReactElement {
-  const { handleClose, resetPasswordMutation, username } = props;
+  const { handleClose, resetPasswordMutation, username, resetPasswordMutationLoading } = props;
   const { getString } = useStrings();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function isSubmitButtonDisabled(values: ResetPasswordFormProps): boolean {
     if (values.password === '' || values.reEnterPassword === '') {
@@ -46,8 +46,8 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
   }
 
   function handleSubmit(values: ResetPasswordFormProps): void {
-    if (doesNewPasswordMatch(values) && username) {
-      setIsLoading(true); 
+    doesNewPasswordMatch(values) &&
+      username &&
       resetPasswordMutation(
         {
           body: {
@@ -57,17 +57,12 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
           }
         },
         {
-          onSuccess: () => {
-            setIsLoading(false); 
-            handleClose();
-          }
+          onSuccess: () => handleClose()
         }
       );
-    }
   }
 
   return (
-    <OverlaySpinner show={isLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('resetPassword')}</Text>
@@ -109,8 +104,8 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
-                      disabled={isSubmitButtonDisabled(formikProps.values)}
+                      text={resetPasswordMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+                      disabled={resetPasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
                       onClick={() => formikProps.handleSubmit()}
                     />
                     <Button
@@ -126,6 +121,5 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
         </Formik>
       </Container>
     </Layout.Vertical>
-    </OverlaySpinner>
   );
 }

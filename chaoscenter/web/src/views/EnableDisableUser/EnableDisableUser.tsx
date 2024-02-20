@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, ButtonVariation, Layout, OverlaySpinner, Text } from '@harnessio/uicore';
+import React from 'react';
+import { Button, ButtonVariation, Layout, Text } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { FontVariation } from '@harnessio/design-system';
 import type { UseMutateFunction } from '@tanstack/react-query';
@@ -11,15 +11,14 @@ interface EnableDisableUserViewProps {
   currentState: boolean | undefined;
   username: string | undefined;
   updateStateMutation: UseMutateFunction<UpdateStateOkResponse, unknown, UpdateStateMutationProps<never>, unknown>;
+  updateStateMutationLoading: boolean;
 }
 
 export default function EnableDisableUserView(props: EnableDisableUserViewProps): React.ReactElement {
-  const { handleClose, username, currentState, updateStateMutation } = props;
+  const { handleClose, username, currentState, updateStateMutation, updateStateMutationLoading } = props;
   const { getString } = useStrings();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleMutation = () => {
-    setIsLoading(true);
     updateStateMutation(
       {
         body: {
@@ -29,7 +28,6 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
       },
       {
         onSuccess: () => {
-          setIsLoading(false);
           handleClose();
         }
       }
@@ -37,7 +35,6 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
   }
 
   return (
-    <OverlaySpinner show={isLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>
@@ -53,12 +50,12 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
           type="submit"
           variation={ButtonVariation.PRIMARY}
           intent={!currentState ? 'danger' : 'primary'}
-          text={getString('confirm')}
+          text={updateStateMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+          disabled={updateStateMutationLoading}
           onClick={handleMutation}
         />
         <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />
       </Layout.Horizontal>
     </Layout.Vertical>
-    </OverlaySpinner>
   );
 }

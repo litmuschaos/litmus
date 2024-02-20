@@ -1,6 +1,6 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
 import React from 'react';
-import { Button, ButtonVariation, Layout, OverlaySpinner, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Layout, Text } from '@harnessio/uicore';
 import { FontVariation } from '@harnessio/design-system';
 import { Icon } from '@harnessio/icons';
 import type { RemoveApiTokenMutationProps, RemoveApiTokenOkResponse } from '@api/auth';
@@ -15,15 +15,14 @@ interface DeleteApiTokenViewProps {
     unknown
   >;
   token: string | undefined;
-  mutationLoading: boolean;
+  deleteApiTokenMutationLoading: boolean;
 }
 
 export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): React.ReactElement {
-  const { handleClose, deleteApiTokenMutation, token, mutationLoading} = props;
+  const { handleClose, deleteApiTokenMutation, token, deleteApiTokenMutationLoading} = props;
   const { getString } = useStrings();
 
   return (
-    <OverlaySpinner show={mutationLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('delete')}</Text>
@@ -35,7 +34,8 @@ export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): Reac
           type="submit"
           variation={ButtonVariation.PRIMARY}
           intent="danger"
-          text={getString('confirm')}
+          text={deleteApiTokenMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+          disabled={deleteApiTokenMutationLoading}
           onClick={() =>
             deleteApiTokenMutation({
               body: {
@@ -47,6 +47,5 @@ export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): Reac
         <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />
       </Layout.Horizontal>
     </Layout.Vertical>
-    </OverlaySpinner>
   );
 }
