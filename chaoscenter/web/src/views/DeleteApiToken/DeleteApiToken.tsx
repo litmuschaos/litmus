@@ -35,6 +35,7 @@ export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): Reac
           variation={ButtonVariation.PRIMARY}
           intent="danger"
           text={deleteApiTokenMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+          style={{minWidth: '90px'}}
           disabled={deleteApiTokenMutationLoading}
           onClick={() =>
             deleteApiTokenMutation({

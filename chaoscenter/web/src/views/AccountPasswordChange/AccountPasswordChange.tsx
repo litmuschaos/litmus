@@ -116,6 +116,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
                       text={updatePasswordMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
                       loading={updatePasswordMutationLoading}
                       disabled={updatePasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
+                      style={{minWidth: '90px'}}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}

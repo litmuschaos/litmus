@@ -52,6 +52,7 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
           intent={!currentState ? 'danger' : 'primary'}
           text={updateStateMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
           disabled={updateStateMutationLoading}
+          style={{minWidth: '90px'}}
           onClick={handleMutation}
         />
         <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />
