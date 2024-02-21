@@ -99,6 +99,7 @@ You can choose from a list of sub-dependent repos to contribute to, a few highli
 - [Litmus-website](https://github.com/litmuschaos/litmus-website-2)
 - [Litmusctl](https://github.com/litmuschaos/litmusctl)
 - [Litmus-docs](https://github.com/litmuschaos/litmus-docs)
+- [backstage-plugin](https://github.com/litmuschaos/backstage-plugin)
 
 ## Community
 
