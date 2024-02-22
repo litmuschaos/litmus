@@ -921,7 +921,7 @@ func (c *ChaosWorkflowHandler) ReRunChaosWorkFlow(projectID string, workflowID s
 	if err != nil {
 		return "", errors.New(err.Error())
 	}
-	if cluster.IsActive != true {
+	if !cluster.IsActive {
 		log.Error("agent not active to re-run the workflow")
 		return "", errors.New("agent not active to re-run the selected workflow")
 	}
@@ -992,7 +992,7 @@ func (c *ChaosWorkflowHandler) CreateWorkflowTemplate(ctx context.Context, reque
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
+	if IsExist {
 		return nil, errors.New("template already exists")
 	}
 
@@ -1088,11 +1088,11 @@ func (c *ChaosWorkflowHandler) SyncWorkflowRun(ctx context.Context, projectID st
 	}
 
 	for _, workflowRun := range workflow.WorkflowRuns {
-		if workflow.IsRemoved == true {
+		if workflow.IsRemoved {
 			return false, errors.New("workflow has been removed")
 		}
 
-		if workflowRun.WorkflowRunID == workflowRunID && !workflowRun.Completed && workflow.IsRemoved == false {
+		if workflowRun.WorkflowRunID == workflowRunID && !workflowRun.Completed && !workflow.IsRemoved {
 			err = c.chaosWorkflowService.ProcessWorkflowRunSync(workflowID, &workflowRunID, workflow, r)
 			if err != nil {
 				return false, err

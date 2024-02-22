@@ -65,11 +65,11 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 	)
 
 	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
-	if *cluster.AgentNsExists == false && cluster.AgentScope != "namespace" {
+	if !*cluster.AgentNsExists && cluster.AgentScope != "namespace" {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(namespaceConfig))
 	}
 
-	if *cluster.AgentSaExists == false {
+	if !*cluster.AgentSaExists {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
 	}
 
@@ -152,7 +152,7 @@ func manifestParser(cluster dbSchemaCluster.Cluster, rootPath string, config *su
 		newContent = strings.Replace(newContent, "#{CUSTOM_TLS_CERT}", config.TLSCert, -1)
 
 		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+cluster.StartTime+"\"", -1)
-		if cluster.IsClusterConfirmed == true {
+		if cluster.IsClusterConfirmed {
 			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"true"+"\"", -1)
 		} else {
 			newContent = strings.Replace(newContent, "#{IS_CLUSTER_CONFIRMED}", "\""+"false"+"\"", -1)

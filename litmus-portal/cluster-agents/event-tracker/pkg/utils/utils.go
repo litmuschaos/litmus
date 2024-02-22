@@ -6,9 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-
 	"github.com/sirupsen/logrus"
+	"io"
 
 	"github.com/jmespath/go-jmespath"
 	litmuschaosv1 "github.com/litmuschaos/litmus/litmus-portal/cluster-agents/event-tracker/api/v1"
@@ -67,7 +66,7 @@ func cases(key string, value string, operator string) bool {
 }
 
 func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{}, oldData interface{}) bool {
-	final_result := false
+	finalResult := false
 	if etp.Spec.ConditionType == "and" {
 		for _, condition := range etp.Spec.Conditions {
 			newDataResult, err := jmespath.Search(condition.Key, newData)
@@ -84,14 +83,14 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 
 			if newDataResult != oldDataResult {
 				if condition.Operator == "Change" {
-					final_result = true
+					finalResult = true
 				} else {
 					str := fmt.Sprintf("%v", newDataResult)
 					if val := cases(str, *condition.Value, condition.Operator); !val {
-						final_result = val
+						finalResult = val
 						break
 					} else if val {
-						final_result = true
+						finalResult = true
 					}
 				}
 			} else {
@@ -113,11 +112,11 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 
 			if newDataResult != oldDataResult {
 				if condition.Operator == "Change" {
-					final_result = true
+					finalResult = true
 				} else {
 					str := fmt.Sprintf("%v", newDataResult)
 					if val := cases(str, *condition.Value, condition.Operator); val {
-						final_result = val
+						finalResult = val
 					}
 				}
 			} else {
@@ -126,7 +125,7 @@ func conditionChecker(etp litmuschaosv1.EventTrackerPolicy, newData interface{},
 		}
 	}
 
-	return final_result
+	return finalResult
 }
 
 func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, workflowid string) error {
@@ -255,9 +254,7 @@ func PolicyAuditor(resourceType string, newObj interface{}, oldObj interface{}, 
 			return errors.New("resource not supported")
 		}
 
-		check := conditionChecker(etp, newDataInterface, oldDataInterface)
-
-		if check == true {
+		if conditionChecker(etp, newDataInterface, oldDataInterface) {
 			etp.Statuses = append(etp.Statuses, litmuschaosv1.EventTrackerPolicyStatus{
 				TimeStamp:    time.Now().Format(time.RFC850),
 				Resource:     resourceType,
@@ -319,7 +316,7 @@ func getAgentConfigMapData() (string, string, string, error) {
 	return "", "", "", nil
 }
 
-// Function to send request to litmus graphql server
+// SendRequest is function to send request to litmus graphql server
 func SendRequest(workflowID string) (string, error) {
 	accessKey, clusterID, serverAddr, err := getAgentConfigMapData()
 	if err != nil {
@@ -344,7 +341,7 @@ func SendRequest(workflowID string) (string, error) {
 		return "URL is not reachable or Bad request", nil
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}

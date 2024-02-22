@@ -32,10 +32,8 @@ func (r repository) IsTokenRevoked(encodedToken string) bool {
 	err := r.Collection.FindOne(context.Background(), bson.M{
 		"token": encodedToken,
 	}).Decode(&result)
-	if err != nil {
-		return false
-	}
-	return true
+
+	return err == nil
 }
 
 // NewRepo creates a new instance of this repository

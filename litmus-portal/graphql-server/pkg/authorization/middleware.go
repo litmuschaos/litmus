@@ -72,7 +72,6 @@ func RestMiddlewareWithRole(handler gin.HandlerFunc, mongoClient *mongo.Client, 
 			}
 		}
 		c.Writer.WriteHeader(http.StatusUnauthorized)
-		return
 	}
 }
 
@@ -87,8 +86,6 @@ func IsRevokedToken(tokenString string, mongoClient *mongo.Client) bool {
 	err := collection.FindOne(context.Background(), bson.M{
 		"token": tokenString,
 	}).Decode(&result)
-	if err != nil {
-		return false
-	}
-	return true
+
+	return err == nil
 }

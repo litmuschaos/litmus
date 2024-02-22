@@ -85,7 +85,7 @@ func StartDeployer(clusterService cluster.Service, projectID string) {
 		}
 	}
 
-	if isAllManifestInstall == true {
+	if isAllManifestInstall {
 		log.Info("all manifests has been installed")
 	} else {
 		log.Error("some manifests has not been installed: ", failedManifest)
