@@ -1,8 +1,9 @@
-package handler
+package test
 
 import (
 	"context"
 	"errors"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"testing"
 	"time"
 
@@ -99,7 +100,7 @@ func TestCreateEnvironment(t *testing.T) {
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 			mockOperator := environmentOperator
-			service := NewEnvironmentService(mockOperator)
+			service := handler.NewEnvironmentService(mockOperator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -176,7 +177,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
 			mockOperator := environmentOperator
-			service := NewEnvironmentService(mockOperator)
+			service := handler.NewEnvironmentService(mockOperator)
 
 			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -211,7 +212,7 @@ func FuzzTestGetEnvironment(f *testing.F) {
 		}}
 		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 		mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, nil).Once()
-		service := NewEnvironmentService(environmentOperator)
+		service := handler.NewEnvironmentService(environmentOperator)
 
 		env, err := service.GetEnvironment(projectID, environmentID)
 		if err != nil {
