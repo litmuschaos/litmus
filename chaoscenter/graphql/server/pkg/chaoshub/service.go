@@ -501,7 +501,7 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 	}
 
 	return &model.FaultDetails{
-		Csv:    string(csvYaml),
+		CSV:    string(csvYaml),
 		Engine: string(engineYaml),
 		Fault:  string(faultYaml),
 	}, nil
@@ -738,7 +738,7 @@ func (c *chaosHubService) ListPredefinedExperiments(ctx context.Context, hubID s
 	for _, file := range files {
 		if file.Name() != "icons" {
 			preDefinedWorkflow := c.getPredefinedExperimentDetails(hubPath, file.Name())
-			if preDefinedWorkflow.ExperimentCsv != "" {
+			if preDefinedWorkflow.ExperimentCSV != "" {
 				predefinedWorkflows = append(predefinedWorkflows, preDefinedWorkflow)
 			}
 		}
@@ -791,7 +791,7 @@ func (c *chaosHubService) GetPredefinedExperiment(ctx context.Context, hubID str
 
 	for _, experiment := range experiments {
 		preDefinedWorkflow := c.getPredefinedExperimentDetails(hubPath, experiment)
-		if preDefinedWorkflow.ExperimentCsv != "" {
+		if preDefinedWorkflow.ExperimentCSV != "" {
 			predefinedWorkflows = append(predefinedWorkflows, preDefinedWorkflow)
 		}
 	}
@@ -830,7 +830,7 @@ func (c *chaosHubService) getPredefinedExperimentDetails(experimentsPath string,
 		preDefinedWorkflow = &model.PredefinedExperimentList{
 			ExperimentName:     experiment,
 			ExperimentManifest: workflowManifest,
-			ExperimentCsv:      csvManifest,
+			ExperimentCSV:      csvManifest,
 		}
 	}
 
