@@ -3,9 +3,10 @@ package test
 import (
 	"context"
 	"errors"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"testing"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	"go.mongodb.org/mongo-driver/mongo"

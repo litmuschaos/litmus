@@ -1,10 +1,11 @@
 package tests
 
 import (
-	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"strings"
 	"testing"
+
+	fuzz "github.com/AdaLogics/go-fuzz-headers"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 func isValidString(s string) bool {
