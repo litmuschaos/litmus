@@ -80,6 +80,39 @@ const TableData: React.FC<TableDataProps> = ({
               onClose={handleClose}
             >
               <MenuItem
+                data-cy="ownerRole"
+                onClick={() => {
+                  setRole('Owner');
+                  setAnchorEl(null);
+                  sendInvite(row._id, 'Owner');
+                }}
+                className={classes.menuOpt}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <div>
+                    <Typography className={classes.menuHeader}>
+                      <strong>
+                        {t(
+                          'settings.teamingTab.invitation.sentInvitation.menuItem.ownerRole.label'
+                        )}
+                      </strong>
+                    </Typography>
+                  </div>
+                  <div>
+                    <Typography className={classes.menuDesc}>
+                      {t(
+                        'settings.teamingTab.invitation.sentInvitation.menuItem.ownerRole.body'
+                      )}
+                    </Typography>
+                  </div>
+                </div>
+              </MenuItem>
+              <MenuItem
                 data-cy="editorRole"
                 onClick={() => {
                   setRole('Editor');
