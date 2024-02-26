@@ -2,12 +2,13 @@ package tests
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"testing"
-	"time"
 )
 
 // generateExpiredFakeJWTToken generates a fake JWT token with expiration time set to the past
