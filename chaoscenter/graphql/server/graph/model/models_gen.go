@@ -10,15 +10,38 @@ import (
 
 type Audit interface {
 	IsAudit()
+	GetUpdatedAt() *string
+	GetCreatedAt() *string
+	GetUpdatedBy() *UserDetails
+	GetCreatedBy() *UserDetails
 }
 
 // Defines the common probe properties shared across different ProbeTypes
 type CommonProbeProperties interface {
 	IsCommonProbeProperties()
+	// Timeout of the Probe
+	GetProbeTimeout() string
+	// Interval of the Probe
+	GetInterval() string
+	// Retry interval of the Probe
+	GetRetry() *int
+	// Attempt contains the total attempt count for the probe
+	GetAttempt() *int
+	// Polling interval of the Probe
+	GetProbePollingInterval() *string
+	// Initial delay interval of the Probe in seconds
+	GetInitialDelay() *string
+	// EvaluationTimeout is the timeout window in which the SLO metrics
+	GetEvaluationTimeout() *string
+	// Is stop on failure enabled in the Probe
+	GetStopOnFailure() *bool
 }
 
 type ResourceDetails interface {
 	IsResourceDetails()
+	GetName() string
+	GetDescription() *string
+	GetTags() []string
 }
 
 type ActionPayload struct {
@@ -26,8 +49,8 @@ type ActionPayload struct {
 	RequestType  string  `json:"requestType"`
 	K8sManifest  string  `json:"k8sManifest"`
 	Namespace    string  `json:"namespace"`
-	ExternalData *string `json:"externalData"`
-	Username     *string `json:"username"`
+	ExternalData *string `json:"externalData,omitempty"`
+	Username     *string `json:"username,omitempty"`
 }
 
 type Annotation struct {
@@ -46,35 +69,35 @@ type CMDProbeRequest struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Command of the Probe
 	Command string `json:"command"`
 	// Comparator of the Probe
 	Comparator *ComparatorInput `json:"comparator"`
 	// Source of the Probe
-	Source *string `json:"source"`
+	Source *string `json:"source,omitempty"`
 }
 
 // Defines the details for a chaos experiment
 type ChaosExperimentRequest struct {
 	// ID of the experiment
-	ExperimentID *string `json:"experimentID"`
+	ExperimentID *string `json:"experimentID,omitempty"`
 	// Boolean check indicating if the created scenario will be executed or not
-	RunExperiment *bool `json:"runExperiment"`
+	RunExperiment *bool `json:"runExperiment,omitempty"`
 	// Manifest of the experiment
 	ExperimentManifest string `json:"experimentManifest"`
 	// Type of the experiment
-	ExperimentType *ExperimentType `json:"experimentType"`
+	ExperimentType *ExperimentType `json:"experimentType,omitempty"`
 	// Cron syntax of the experiment schedule
 	CronSyntax string `json:"cronSyntax"`
 	// Name of the experiment
@@ -88,7 +111,7 @@ type ChaosExperimentRequest struct {
 	// ID of the target infra in which the experiment will run
 	InfraID string `json:"infraID"`
 	// Tags of the infra
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 // Defines the response received for querying the details of chaos experiment
@@ -105,7 +128,7 @@ type ChaosExperimentResponse struct {
 	// Bool value indicating whether the experiment is a custom experiment or not
 	IsCustomExperiment bool `json:"isCustomExperiment"`
 	// Tags of the infra
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 type ChaosHub struct {
@@ -122,13 +145,13 @@ type ChaosHub struct {
 	// Name of the chaos hub
 	Name string `json:"name"`
 	// Tags of the ChaosHub
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// User who created the ChaosHub
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// User who has updated the ChaosHub
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// Description of ChaosHub
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Type of ChaosHub
 	HubType HubType `json:"hubType"`
 	// Bool value indicating whether the hub is private or not.
@@ -136,13 +159,13 @@ type ChaosHub struct {
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
 	AuthType AuthType `json:"authType"`
 	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password *string `json:"password"`
+	Password *string `json:"password,omitempty"`
 	// Private SSH key for authenticating into private chaos hub
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 	// Bool value indicating if the chaos hub is removed
 	IsRemoved bool `json:"isRemoved"`
 	// Timestamp when the chaos hub was created
@@ -153,17 +176,34 @@ type ChaosHub struct {
 	LastSyncedAt string `json:"lastSyncedAt"`
 }
 
-func (ChaosHub) IsResourceDetails() {}
-func (ChaosHub) IsAudit()           {}
+func (ChaosHub) IsResourceDetails()           {}
+func (this ChaosHub) GetName() string         { return this.Name }
+func (this ChaosHub) GetDescription() *string { return this.Description }
+func (this ChaosHub) GetTags() []string {
+	if this.Tags == nil {
+		return nil
+	}
+	interfaceSlice := make([]string, 0, len(this.Tags))
+	for _, concrete := range this.Tags {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+func (ChaosHub) IsAudit()                        {}
+func (this ChaosHub) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this ChaosHub) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this ChaosHub) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this ChaosHub) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 // Defines filter options for ChaosHub
 type ChaosHubFilterInput struct {
 	// Name of the ChaosHub
-	ChaosHubName *string `json:"chaosHubName"`
+	ChaosHubName *string `json:"chaosHubName,omitempty"`
 	// Tags of a chaos hub
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Description of a chaos hub
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 }
 
 type ChaosHubStatus struct {
@@ -188,37 +228,54 @@ type ChaosHubStatus struct {
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
 	AuthType AuthType `json:"authType"`
 	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password *string `json:"password"`
+	Password *string `json:"password,omitempty"`
 	// Bool value indicating whether the hub is private or not.
 	IsRemoved bool `json:"isRemoved"`
 	// Private SSH key for authenticating into private chaos hub
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 	// Public SSH key for authenticating into private chaos hub
-	SSHPublicKey *string `json:"sshPublicKey"`
+	SSHPublicKey *string `json:"sshPublicKey,omitempty"`
 	// Timestamp when the chaos hub was last synced
 	LastSyncedAt string `json:"lastSyncedAt"`
 	// Tags of the ChaosHub
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// User who created the ChaosHub
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// User who has updated the ChaosHub
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// Created at timestamp
 	CreatedAt string `json:"createdAt"`
 	// Updated at timestamp
 	UpdatedAt string `json:"updatedAt"`
 	// Description of ChaosHub
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Default Hub Identifier
 	IsDefault bool `json:"isDefault"`
 }
 
-func (ChaosHubStatus) IsResourceDetails() {}
-func (ChaosHubStatus) IsAudit()           {}
+func (ChaosHubStatus) IsResourceDetails()           {}
+func (this ChaosHubStatus) GetName() string         { return this.Name }
+func (this ChaosHubStatus) GetDescription() *string { return this.Description }
+func (this ChaosHubStatus) GetTags() []string {
+	if this.Tags == nil {
+		return nil
+	}
+	interfaceSlice := make([]string, 0, len(this.Tags))
+	for _, concrete := range this.Tags {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+func (ChaosHubStatus) IsAudit()                        {}
+func (this ChaosHubStatus) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this ChaosHubStatus) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this ChaosHubStatus) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this ChaosHubStatus) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 type Chart struct {
 	APIVersion  string              `json:"apiVersion"`
@@ -240,12 +297,12 @@ type CloningInput struct {
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
 	AuthType AuthType `json:"authType"`
 	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password      *string `json:"password"`
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	Password      *string `json:"password,omitempty"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 	IsDefault     bool    `json:"isDefault"`
 }
 
@@ -271,8 +328,8 @@ type ComparatorInput struct {
 
 type ConfirmInfraRegistrationResponse struct {
 	IsInfraConfirmed bool    `json:"isInfraConfirmed"`
-	NewAccessKey     *string `json:"newAccessKey"`
-	InfraID          *string `json:"infraID"`
+	NewAccessKey     *string `json:"newAccessKey,omitempty"`
+	InfraID          *string `json:"infraID,omitempty"`
 }
 
 // Defines the details required for creating a chaos hub
@@ -280,9 +337,9 @@ type CreateChaosHubRequest struct {
 	// Name of the chaos hub
 	Name string `json:"name"`
 	// Tags of the ChaosHub
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Description of ChaosHub
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// URL of the git repository
 	RepoURL string `json:"repoURL"`
 	// Branch of the git repository
@@ -292,32 +349,32 @@ type CreateChaosHubRequest struct {
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
 	AuthType AuthType `json:"authType"`
 	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password *string `json:"password"`
+	Password *string `json:"password,omitempty"`
 	// Private SSH key for authenticating into private chaos hub
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 	// Public SSH key for authenticating into private chaos hub
-	SSHPublicKey *string `json:"sshPublicKey"`
+	SSHPublicKey *string `json:"sshPublicKey,omitempty"`
 }
 
 type CreateEnvironmentRequest struct {
 	EnvironmentID string          `json:"environmentID"`
 	Name          string          `json:"name"`
 	Type          EnvironmentType `json:"type"`
-	Description   *string         `json:"description"`
-	Tags          []string        `json:"tags"`
+	Description   *string         `json:"description,omitempty"`
+	Tags          []string        `json:"tags,omitempty"`
 }
 
 type CreateRemoteChaosHub struct {
 	// Name of the chaos hub
 	Name string `json:"name"`
 	// Tags of the ChaosHub
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Description of ChaosHub
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// URL of the git repository
 	RepoURL string `json:"repoURL"`
 }
@@ -327,37 +384,54 @@ type DateRange struct {
 	// Start date
 	StartDate string `json:"startDate"`
 	// End date
-	EndDate *string `json:"endDate"`
+	EndDate *string `json:"endDate,omitempty"`
 }
 
 type Environment struct {
 	ProjectID     string          `json:"projectID"`
 	EnvironmentID string          `json:"environmentID"`
 	Name          string          `json:"name"`
-	Description   *string         `json:"description"`
-	Tags          []string        `json:"tags"`
+	Description   *string         `json:"description,omitempty"`
+	Tags          []string        `json:"tags,omitempty"`
 	Type          EnvironmentType `json:"type"`
 	CreatedAt     string          `json:"createdAt"`
-	CreatedBy     *UserDetails    `json:"createdBy"`
-	UpdatedBy     *UserDetails    `json:"updatedBy"`
+	CreatedBy     *UserDetails    `json:"createdBy,omitempty"`
+	UpdatedBy     *UserDetails    `json:"updatedBy,omitempty"`
 	UpdatedAt     string          `json:"updatedAt"`
-	IsRemoved     *bool           `json:"isRemoved"`
-	InfraIDs      []string        `json:"infraIDs"`
+	IsRemoved     *bool           `json:"isRemoved,omitempty"`
+	InfraIDs      []string        `json:"infraIDs,omitempty"`
 }
 
-func (Environment) IsResourceDetails() {}
-func (Environment) IsAudit()           {}
+func (Environment) IsResourceDetails()           {}
+func (this Environment) GetName() string         { return this.Name }
+func (this Environment) GetDescription() *string { return this.Description }
+func (this Environment) GetTags() []string {
+	if this.Tags == nil {
+		return nil
+	}
+	interfaceSlice := make([]string, 0, len(this.Tags))
+	for _, concrete := range this.Tags {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+func (Environment) IsAudit()                        {}
+func (this Environment) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this Environment) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this Environment) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this Environment) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 // Defines filter options for infras
 type EnvironmentFilterInput struct {
 	// Name of the environment
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// ID of the environment
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Type name of environment
-	Type *EnvironmentType `json:"type"`
+	Type *EnvironmentType `json:"type,omitempty"`
 	// Tags of an environment
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 // Defines sorting options for experiment
@@ -365,7 +439,7 @@ type EnvironmentSortInput struct {
 	// Field in which sorting will be done
 	Field EnvironmentSortingField `json:"field"`
 	// Bool value indicating whether the sorting will be done in ascending order
-	Ascending *bool `json:"ascending"`
+	Ascending *bool `json:"ascending,omitempty"`
 }
 
 // Defines the Executed by which experiment details for Probes
@@ -377,7 +451,7 @@ type ExecutedByExperiment struct {
 	// Timestamp at which the experiment was last updated
 	UpdatedAt int `json:"updatedAt"`
 	// User who has updated the experiment
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 }
 
 // Defines the Execution History of experiment referenced by the Probe
@@ -398,7 +472,7 @@ type Experiment struct {
 	// ID of the experiment
 	ExperimentID string `json:"experimentID"`
 	// Type of the experiment
-	ExperimentType *string `json:"experimentType"`
+	ExperimentType *string `json:"experimentType,omitempty"`
 	// Manifest of the experiment
 	ExperimentManifest string `json:"experimentManifest"`
 	// Cron syntax of the experiment schedule
@@ -416,21 +490,38 @@ type Experiment struct {
 	// Timestamp when the experiment was created
 	CreatedAt string `json:"createdAt"`
 	// Target infra in which the experiment will run
-	Infra *Infra `json:"infra"`
+	Infra *Infra `json:"infra,omitempty"`
 	// Bool value indicating if the experiment has removed
 	IsRemoved bool `json:"isRemoved"`
 	// Tags of the experiment
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// User who created the experiment
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// Array of object containing details of recent experiment runs
-	RecentExperimentRunDetails []*RecentExperimentRun `json:"recentExperimentRunDetails"`
+	RecentExperimentRunDetails []*RecentExperimentRun `json:"recentExperimentRunDetails,omitempty"`
 	// Details of the user who updated the experiment
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 }
 
-func (Experiment) IsResourceDetails() {}
-func (Experiment) IsAudit()           {}
+func (Experiment) IsResourceDetails()           {}
+func (this Experiment) GetName() string         { return this.Name }
+func (this Experiment) GetDescription() *string { return &this.Description }
+func (this Experiment) GetTags() []string {
+	if this.Tags == nil {
+		return nil
+	}
+	interfaceSlice := make([]string, 0, len(this.Tags))
+	for _, concrete := range this.Tags {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+func (Experiment) IsAudit()                        {}
+func (this Experiment) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this Experiment) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this Experiment) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this Experiment) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 type ExperimentDetails struct {
 	// Engine Manifest
@@ -442,21 +533,21 @@ type ExperimentDetails struct {
 // Defines filter options for experiments
 type ExperimentFilterInput struct {
 	// Name of the experiment
-	ExperimentName *string `json:"experimentName"`
+	ExperimentName *string `json:"experimentName,omitempty"`
 	// Name of the infra in which the experiment is running
-	InfraName *string `json:"infraName"`
+	InfraName *string `json:"infraName,omitempty"`
 	// ID of the infra in which the experiment is running
-	InfraID *string `json:"infraID"`
+	InfraID *string `json:"infraID,omitempty"`
 	// Bool value indicating if Chaos Infrastructure is active
-	InfraActive *bool `json:"infraActive"`
+	InfraActive *bool `json:"infraActive,omitempty"`
 	// Scenario type of the experiment i.e. CRON or NON_CRON
-	ScheduleType *ScheduleType `json:"scheduleType"`
+	ScheduleType *ScheduleType `json:"scheduleType,omitempty"`
 	// Status of the latest experiment run
-	Status *string `json:"status"`
+	Status *string `json:"status,omitempty"`
 	// Date range for filtering purpose
-	DateRange *DateRange `json:"dateRange"`
+	DateRange *DateRange `json:"dateRange,omitempty"`
 	// Type of infras
-	InfraTypes []*InfrastructureType `json:"infraTypes"`
+	InfraTypes []*InfrastructureType `json:"infraTypes,omitempty"`
 }
 
 type ExperimentRequest struct {
@@ -474,7 +565,7 @@ type ExperimentRun struct {
 	// ID of the experiment run which is to be queried
 	ExperimentRunID string `json:"experimentRunID"`
 	// Type of the experiment
-	ExperimentType *string `json:"experimentType"`
+	ExperimentType *string `json:"experimentType,omitempty"`
 	// ID of the experiment
 	ExperimentID string `json:"experimentID"`
 	// Array containing weightage and name of each chaos fault in the experiment
@@ -492,53 +583,57 @@ type ExperimentRun struct {
 	// Phase of the experiment run
 	Phase ExperimentRunStatus `json:"phase"`
 	// Resiliency score of the experiment
-	ResiliencyScore *float64 `json:"resiliencyScore"`
+	ResiliencyScore *float64 `json:"resiliencyScore,omitempty"`
 	// Number of faults passed
-	FaultsPassed *int `json:"faultsPassed"`
+	FaultsPassed *int `json:"faultsPassed,omitempty"`
 	// Number of faults failed
-	FaultsFailed *int `json:"faultsFailed"`
+	FaultsFailed *int `json:"faultsFailed,omitempty"`
 	// Number of faults awaited
-	FaultsAwaited *int `json:"faultsAwaited"`
+	FaultsAwaited *int `json:"faultsAwaited,omitempty"`
 	// Number of faults stopped
-	FaultsStopped *int `json:"faultsStopped"`
+	FaultsStopped *int `json:"faultsStopped,omitempty"`
 	// Number of faults which are not available
-	FaultsNa *int `json:"faultsNa"`
+	FaultsNa *int `json:"faultsNa,omitempty"`
 	// Total number of faults
-	TotalFaults *int `json:"totalFaults"`
+	TotalFaults *int `json:"totalFaults,omitempty"`
 	// Stores all the experiment run details related to the nodes of DAG graph and chaos results of the faults
 	ExecutionData string `json:"executionData"`
 	// Bool value indicating if the experiment run has removed
-	IsRemoved *bool `json:"isRemoved"`
+	IsRemoved *bool `json:"isRemoved,omitempty"`
 	// User who has updated the experiment
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// User who has created the experiment run
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// Notify ID of the experiment run
-	NotifyID *string `json:"notifyID"`
+	NotifyID *string `json:"notifyID,omitempty"`
 	// runSequence is the sequence number of experiment run
 	RunSequence int `json:"runSequence"`
 }
 
-func (ExperimentRun) IsAudit() {}
+func (ExperimentRun) IsAudit()                        {}
+func (this ExperimentRun) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this ExperimentRun) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this ExperimentRun) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this ExperimentRun) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 // Defines input type for experiment run filter
 type ExperimentRunFilterInput struct {
 	// Name of the experiment
-	ExperimentName *string `json:"experimentName"`
+	ExperimentName *string `json:"experimentName,omitempty"`
 	// Name of the infra infra
-	InfraID *string `json:"infraID"`
+	InfraID *string `json:"infraID,omitempty"`
 	// Type of the experiment
-	ExperimentType *ScheduleType `json:"experimentType"`
+	ExperimentType *ScheduleType `json:"experimentType,omitempty"`
 	// Status of the experiment run
-	ExperimentStatus *ExperimentRunStatus `json:"experimentStatus"`
+	ExperimentStatus *ExperimentRunStatus `json:"experimentStatus,omitempty"`
 	// Date range for filtering purpose
-	DateRange *DateRange `json:"dateRange"`
+	DateRange *DateRange `json:"dateRange,omitempty"`
 	// ID of experiment run
-	ExperimentRunID *string `json:"experimentRunID"`
+	ExperimentRunID *string `json:"experimentRunID,omitempty"`
 	// Array of experiment run status
-	ExperimentRunStatus []*string `json:"experimentRunStatus"`
+	ExperimentRunStatus []*string `json:"experimentRunStatus,omitempty"`
 	// Type of infras
-	InfraTypes []*InfrastructureType `json:"infraTypes"`
+	InfraTypes []*InfrastructureType `json:"infraTypes,omitempty"`
 }
 
 // Defines the details for a experiment run
@@ -546,7 +641,7 @@ type ExperimentRunRequest struct {
 	// ID of the experiment
 	ExperimentID string `json:"experimentID"`
 	// notifyID is required to give an ack for non cron experiment execution
-	NotifyID *string `json:"notifyID"`
+	NotifyID *string `json:"notifyID,omitempty"`
 	// ID of the experiment run which is to be queried
 	ExperimentRunID string `json:"experimentRunID"`
 	// Name of the experiment
@@ -560,7 +655,7 @@ type ExperimentRunRequest struct {
 	// Bool value indicating if the experiment run has completed
 	Completed bool `json:"completed"`
 	// Bool value indicating if the experiment run has removed
-	IsRemoved *bool `json:"isRemoved"`
+	IsRemoved *bool `json:"isRemoved,omitempty"`
 	// User who has updated the experiment
 	UpdatedBy string `json:"updatedBy"`
 }
@@ -570,7 +665,7 @@ type ExperimentRunSortInput struct {
 	// Field in which sorting will be done
 	Field ExperimentSortingField `json:"field"`
 	// Bool value indicating whether the sorting will be done in ascending order
-	Ascending *bool `json:"ascending"`
+	Ascending *bool `json:"ascending,omitempty"`
 }
 
 // Defines sorting options for experiment
@@ -578,12 +673,12 @@ type ExperimentSortInput struct {
 	// Field in which sorting will be done
 	Field ExperimentSortingField `json:"field"`
 	// Bool value indicating whether the sorting will be done in ascending order
-	Ascending *bool `json:"ascending"`
+	Ascending *bool `json:"ascending,omitempty"`
 }
 
 type Experiments struct {
 	Name string `json:"name"`
-	Csv  string `json:"CSV"`
+	CSV  string `json:"CSV"`
 	Desc string `json:"desc"`
 }
 
@@ -594,14 +689,14 @@ type FaultDetails struct {
 	// engine consists engine.yaml
 	Engine string `json:"engine"`
 	// csv consists chartserviceversion.yaml
-	Csv string `json:"csv"`
+	CSV string `json:"csv"`
 }
 
 type FaultList struct {
 	Name        string   `json:"name"`
 	DisplayName string   `json:"displayName"`
 	Description string   `json:"description"`
-	Plan        []string `json:"plan"`
+	Plan        []string `json:"plan,omitempty"`
 }
 
 // Details of GET request
@@ -630,7 +725,7 @@ type GetExperimentResponse struct {
 	// Details of experiment
 	ExperimentDetails *Experiment `json:"experimentDetails"`
 	// Average resiliency score of the experiment
-	AverageResiliencyScore *float64 `json:"averageResiliencyScore"`
+	AverageResiliencyScore *float64 `json:"averageResiliencyScore,omitempty"`
 }
 
 type GetExperimentRunStatsResponse struct {
@@ -707,13 +802,13 @@ type GitConfig struct {
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
 	AuthType AuthType `json:"authType"`
 	// Token used for private repository
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password *string `json:"password"`
+	Password *string `json:"password,omitempty"`
 	// Private SSH key authenticating into git repository
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 }
 
 // Response received after configuring GitOps
@@ -723,19 +818,19 @@ type GitConfigResponse struct {
 	// ID of the project where GitOps is configured
 	ProjectID string `json:"projectID"`
 	// Git branch where the chaos charts will be pushed and synced
-	Branch *string `json:"branch"`
+	Branch *string `json:"branch,omitempty"`
 	// URL of the Git repository
-	RepoURL *string `json:"repoURL"`
+	RepoURL *string `json:"repoURL,omitempty"`
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
-	AuthType *AuthType `json:"authType"`
+	AuthType *AuthType `json:"authType,omitempty"`
 	// Token used for private repository
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password *string `json:"password"`
+	Password *string `json:"password,omitempty"`
 	// Private SSH key authenticating into git repository
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 }
 
 // Defines the input for HTTP probe properties
@@ -745,29 +840,29 @@ type HTTPProbeRequest struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// URL of the Probe
 	URL string `json:"url"`
 	// HTTP method of the Probe
 	Method *MethodRequest `json:"method"`
 	// If Insecure HTTP verification should  be skipped
-	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
+	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty"`
 }
 
 // Defines details for image registry
 type ImageRegistry struct {
 	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
-	IsDefault *bool `json:"isDefault"`
+	IsDefault *bool `json:"isDefault,omitempty"`
 	// Name of Image Registry
 	ImageRegistryName string `json:"imageRegistryName"`
 	// Name of image repository
@@ -775,11 +870,11 @@ type ImageRegistry struct {
 	// Type of the image registry: public/private
 	ImageRegistryType string `json:"imageRegistryType"`
 	// Secret which is used for private registry
-	SecretName *string `json:"secretName"`
+	SecretName *string `json:"secretName,omitempty"`
 	// Namespace where the secret is available
-	SecretNamespace *string `json:"secretNamespace"`
+	SecretNamespace *string `json:"secretNamespace,omitempty"`
 	// Bool value indicating if image registry is enabled or not
-	EnableRegistry *bool `json:"enableRegistry"`
+	EnableRegistry *bool `json:"enableRegistry,omitempty"`
 }
 
 // Defines input data for querying the details of an image registry
@@ -793,11 +888,11 @@ type ImageRegistryInput struct {
 	// Type of the image registry: public/private
 	ImageRegistryType string `json:"imageRegistryType"`
 	// Secret which is used for private registry
-	SecretName *string `json:"secretName"`
+	SecretName *string `json:"secretName,omitempty"`
 	// Namespace where the secret is available
-	SecretNamespace *string `json:"secretNamespace"`
+	SecretNamespace *string `json:"secretNamespace,omitempty"`
 	// Bool value indicating if image registry is enabled or not
-	EnableRegistry *bool `json:"enableRegistry"`
+	EnableRegistry *bool `json:"enableRegistry,omitempty"`
 }
 
 // Defines response data for image registry
@@ -805,24 +900,28 @@ type ImageRegistryResponse struct {
 	// Bool value indicating if the image registry is default or not; by default workflow uses LitmusChaos registry
 	IsDefault bool `json:"isDefault"`
 	// Information Image Registry
-	ImageRegistryInfo *ImageRegistry `json:"imageRegistryInfo"`
+	ImageRegistryInfo *ImageRegistry `json:"imageRegistryInfo,omitempty"`
 	// ID of the image registry
 	ImageRegistryID string `json:"imageRegistryID"`
 	// ID of the project in which image registry is created
 	ProjectID string `json:"projectID"`
 	// Timestamp when the image registry was last updated
-	UpdatedAt *string `json:"updatedAt"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 	// Timestamp when the image registry was created
-	CreatedAt *string `json:"createdAt"`
+	CreatedAt *string `json:"createdAt,omitempty"`
 	// User who created the infra
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// User who has updated the infra
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// Bool value indicating if the image registry has been removed
-	IsRemoved *bool `json:"isRemoved"`
+	IsRemoved *bool `json:"isRemoved,omitempty"`
 }
 
-func (ImageRegistryResponse) IsAudit() {}
+func (ImageRegistryResponse) IsAudit()                        {}
+func (this ImageRegistryResponse) GetUpdatedAt() *string      { return this.UpdatedAt }
+func (this ImageRegistryResponse) GetCreatedAt() *string      { return this.CreatedAt }
+func (this ImageRegistryResponse) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this ImageRegistryResponse) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 // Defines the details for a infra
 type Infra struct {
@@ -832,9 +931,9 @@ type Infra struct {
 	// Name of the infra
 	Name string `json:"name"`
 	// Description of the infra
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Tags of the infra
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Environment ID for the infra
 	EnvironmentID string `json:"environmentID"`
 	// Infra Platform Name eg. GKE,AWS, Others
@@ -850,39 +949,56 @@ type Infra struct {
 	// Timestamp when the infra was created
 	CreatedAt string `json:"createdAt"`
 	// Number of schedules created in the infra
-	NoOfExperiments *int `json:"noOfExperiments"`
+	NoOfExperiments *int `json:"noOfExperiments,omitempty"`
 	// Number of experiments run in the infra
-	NoOfExperimentRuns *int `json:"noOfExperimentRuns"`
+	NoOfExperimentRuns *int `json:"noOfExperimentRuns,omitempty"`
 	// Token used to verify and retrieve the infra manifest
 	Token string `json:"token"`
 	// Namespace where the infra is being installed
-	InfraNamespace *string `json:"infraNamespace"`
+	InfraNamespace *string `json:"infraNamespace,omitempty"`
 	// Name of service account used by infra
-	ServiceAccount *string `json:"serviceAccount"`
+	ServiceAccount *string `json:"serviceAccount,omitempty"`
 	// Scope of the infra : ns or cluster
 	InfraScope string `json:"infraScope"`
 	// Bool value indicating whether infra ns used already exists on infra or not
-	InfraNsExists *bool `json:"infraNsExists"`
+	InfraNsExists *bool `json:"infraNsExists,omitempty"`
 	// Bool value indicating whether service account used already exists on infra or not
-	InfraSaExists *bool `json:"infraSaExists"`
+	InfraSaExists *bool `json:"infraSaExists,omitempty"`
 	// Timestamp of the last experiment run in the infra
-	LastExperimentTimestamp *string `json:"lastExperimentTimestamp"`
+	LastExperimentTimestamp *string `json:"lastExperimentTimestamp,omitempty"`
 	// Timestamp when the infra got connected
 	StartTime string `json:"startTime"`
 	// Version of the infra
 	Version string `json:"version"`
 	// User who created the infra
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// User who has updated the infra
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// Type of the infrastructure
-	InfraType *InfrastructureType `json:"infraType"`
+	InfraType *InfrastructureType `json:"infraType,omitempty"`
 	// update status of infra
 	UpdateStatus UpdateStatus `json:"updateStatus"`
 }
 
-func (Infra) IsResourceDetails() {}
-func (Infra) IsAudit()           {}
+func (Infra) IsResourceDetails()           {}
+func (this Infra) GetName() string         { return this.Name }
+func (this Infra) GetDescription() *string { return this.Description }
+func (this Infra) GetTags() []string {
+	if this.Tags == nil {
+		return nil
+	}
+	interfaceSlice := make([]string, 0, len(this.Tags))
+	for _, concrete := range this.Tags {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+func (Infra) IsAudit()                        {}
+func (this Infra) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this Infra) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this Infra) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this Infra) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 type InfraActionResponse struct {
 	ProjectID string         `json:"projectID"`
@@ -900,19 +1016,19 @@ type InfraEventResponse struct {
 // Defines filter options for infras
 type InfraFilterInput struct {
 	// Name of the infra
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// ID of the infra
-	InfraID *string `json:"infraID"`
+	InfraID *string `json:"infraID,omitempty"`
 	// ID of the infra
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Platform name of infra
-	PlatformName *string `json:"platformName"`
+	PlatformName *string `json:"platformName,omitempty"`
 	// Scope of infra
-	InfraScope *InfraScope `json:"infraScope"`
+	InfraScope *InfraScope `json:"infraScope,omitempty"`
 	// Status of infra
-	IsActive *bool `json:"isActive"`
+	IsActive *bool `json:"isActive,omitempty"`
 	// Tags of an infra
-	Tags []*string `json:"tags"`
+	Tags []*string `json:"tags,omitempty"`
 }
 
 type InfraIdentity struct {
@@ -936,36 +1052,60 @@ type K8SProbe struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Group of the Probe
-	Group *string `json:"group"`
+	Group *string `json:"group,omitempty"`
 	// Version of the Probe
 	Version string `json:"version"`
 	// Resource of the Probe
 	Resource string `json:"resource"`
 	// Namespace of the Probe
-	Namespace *string `json:"namespace"`
+	Namespace *string `json:"namespace,omitempty"`
 	// Resource Names of the Probe
-	ResourceNames *string `json:"resourceNames"`
+	ResourceNames *string `json:"resourceNames,omitempty"`
 	// Field Selector of the Probe
-	FieldSelector *string `json:"fieldSelector"`
+	FieldSelector *string `json:"fieldSelector,omitempty"`
 	// Label Selector of the Probe
-	LabelSelector *string `json:"labelSelector"`
+	LabelSelector *string `json:"labelSelector,omitempty"`
 	// Operation of the Probe
 	Operation string `json:"operation"`
 }
 
 func (K8SProbe) IsCommonProbeProperties() {}
+
+// Timeout of the Probe
+func (this K8SProbe) GetProbeTimeout() string { return this.ProbeTimeout }
+
+// Interval of the Probe
+func (this K8SProbe) GetInterval() string { return this.Interval }
+
+// Retry interval of the Probe
+func (this K8SProbe) GetRetry() *int { return this.Retry }
+
+// Attempt contains the total attempt count for the probe
+func (this K8SProbe) GetAttempt() *int { return this.Attempt }
+
+// Polling interval of the Probe
+func (this K8SProbe) GetProbePollingInterval() *string { return this.ProbePollingInterval }
+
+// Initial delay interval of the Probe in seconds
+func (this K8SProbe) GetInitialDelay() *string { return this.InitialDelay }
+
+// EvaluationTimeout is the timeout window in which the SLO metrics
+func (this K8SProbe) GetEvaluationTimeout() *string { return this.EvaluationTimeout }
+
+// Is stop on failure enabled in the Probe
+func (this K8SProbe) GetStopOnFailure() *bool { return this.StopOnFailure }
 
 // Defines the input for K8S probe properties
 type K8SProbeRequest struct {
@@ -974,31 +1114,31 @@ type K8SProbeRequest struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Group of the Probe
-	Group *string `json:"group"`
+	Group *string `json:"group,omitempty"`
 	// Version of the Probe
 	Version string `json:"version"`
 	// Resource of the Probe
 	Resource string `json:"resource"`
 	// Namespace of the Probe
-	Namespace *string `json:"namespace"`
+	Namespace *string `json:"namespace,omitempty"`
 	// Resource Names of the Probe
-	ResourceNames *string `json:"resourceNames"`
+	ResourceNames *string `json:"resourceNames,omitempty"`
 	// Field Selector of the Probe
-	FieldSelector *string `json:"fieldSelector"`
+	FieldSelector *string `json:"fieldSelector,omitempty"`
 	// Label Selector of the Probe
-	LabelSelector *string `json:"labelSelector"`
+	LabelSelector *string `json:"labelSelector,omitempty"`
 	// Operation of the Probe
 	Operation string `json:"operation"`
 }
@@ -1032,9 +1172,9 @@ type KubeObjectRequest struct {
 	// ID of the infra in which the Kubernetes object is present
 	InfraID string `json:"infraID"`
 	// GVR Request
-	KubeObjRequest *KubeGVRRequest `json:"kubeObjRequest"`
+	KubeObjRequest *KubeGVRRequest `json:"kubeObjRequest,omitempty"`
 	ObjectType     string          `json:"objectType"`
-	Workloads      []*Workload     `json:"workloads"`
+	Workloads      []*Workload     `json:"workloads,omitempty"`
 }
 
 // Response received for querying Kubernetes Object
@@ -1052,26 +1192,50 @@ type KubernetesCMDProbe struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Command of the Probe
 	Command string `json:"command"`
 	// Comparator of the Probe
 	Comparator *Comparator `json:"comparator"`
 	// Source of the Probe
-	Source *string `json:"source"`
+	Source *string `json:"source,omitempty"`
 }
 
 func (KubernetesCMDProbe) IsCommonProbeProperties() {}
+
+// Timeout of the Probe
+func (this KubernetesCMDProbe) GetProbeTimeout() string { return this.ProbeTimeout }
+
+// Interval of the Probe
+func (this KubernetesCMDProbe) GetInterval() string { return this.Interval }
+
+// Retry interval of the Probe
+func (this KubernetesCMDProbe) GetRetry() *int { return this.Retry }
+
+// Attempt contains the total attempt count for the probe
+func (this KubernetesCMDProbe) GetAttempt() *int { return this.Attempt }
+
+// Polling interval of the Probe
+func (this KubernetesCMDProbe) GetProbePollingInterval() *string { return this.ProbePollingInterval }
+
+// Initial delay interval of the Probe in seconds
+func (this KubernetesCMDProbe) GetInitialDelay() *string { return this.InitialDelay }
+
+// EvaluationTimeout is the timeout window in which the SLO metrics
+func (this KubernetesCMDProbe) GetEvaluationTimeout() *string { return this.EvaluationTimeout }
+
+// Is stop on failure enabled in the Probe
+func (this KubernetesCMDProbe) GetStopOnFailure() *bool { return this.StopOnFailure }
 
 // Defines the input for Kubernetes CMD probe properties
 type KubernetesCMDProbeRequest struct {
@@ -1080,23 +1244,23 @@ type KubernetesCMDProbeRequest struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Command of the Probe
 	Command string `json:"command"`
 	// Comparator of the Probe
 	Comparator *ComparatorInput `json:"comparator"`
 	// Source of the Probe
-	Source *string `json:"source"`
+	Source *string `json:"source,omitempty"`
 }
 
 // Defines the Kubernetes HTTP probe properties
@@ -1106,26 +1270,50 @@ type KubernetesHTTPProbe struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// URL of the Probe
 	URL string `json:"url"`
 	// HTTP method of the Probe
 	Method *Method `json:"method"`
 	// If Insecure HTTP verification should  be skipped
-	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
+	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty"`
 }
 
 func (KubernetesHTTPProbe) IsCommonProbeProperties() {}
+
+// Timeout of the Probe
+func (this KubernetesHTTPProbe) GetProbeTimeout() string { return this.ProbeTimeout }
+
+// Interval of the Probe
+func (this KubernetesHTTPProbe) GetInterval() string { return this.Interval }
+
+// Retry interval of the Probe
+func (this KubernetesHTTPProbe) GetRetry() *int { return this.Retry }
+
+// Attempt contains the total attempt count for the probe
+func (this KubernetesHTTPProbe) GetAttempt() *int { return this.Attempt }
+
+// Polling interval of the Probe
+func (this KubernetesHTTPProbe) GetProbePollingInterval() *string { return this.ProbePollingInterval }
+
+// Initial delay interval of the Probe in seconds
+func (this KubernetesHTTPProbe) GetInitialDelay() *string { return this.InitialDelay }
+
+// EvaluationTimeout is the timeout window in which the SLO metrics
+func (this KubernetesHTTPProbe) GetEvaluationTimeout() *string { return this.EvaluationTimeout }
+
+// Is stop on failure enabled in the Probe
+func (this KubernetesHTTPProbe) GetStopOnFailure() *bool { return this.StopOnFailure }
 
 // Defines the input for Kubernetes HTTP probe properties
 type KubernetesHTTPProbeRequest struct {
@@ -1134,23 +1322,23 @@ type KubernetesHTTPProbeRequest struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// URL of the Probe
 	URL string `json:"url"`
 	// HTTP method of the Probe
 	Method *MethodRequest `json:"method"`
 	// If Insecure HTTP verification should  be skipped
-	InsecureSkipVerify *bool `json:"insecureSkipVerify"`
+	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty"`
 }
 
 type Link struct {
@@ -1160,38 +1348,38 @@ type Link struct {
 
 type ListChaosHubRequest struct {
 	// Array of ChaosHub IDs for which details will be fetched
-	ChaosHubIDs []string `json:"chaosHubIDs"`
+	ChaosHubIDs []string `json:"chaosHubIDs,omitempty"`
 	// Details for fetching filtered data
-	Filter *ChaosHubFilterInput `json:"filter"`
+	Filter *ChaosHubFilterInput `json:"filter,omitempty"`
 }
 
 type ListEnvironmentRequest struct {
 	// Environment ID
-	EnvironmentIDs []string `json:"environmentIDs"`
+	EnvironmentIDs []string `json:"environmentIDs,omitempty"`
 	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 	// Details for fetching filtered data
-	Filter *EnvironmentFilterInput `json:"filter"`
+	Filter *EnvironmentFilterInput `json:"filter,omitempty"`
 	// Details for fetching sorted data
-	Sort *EnvironmentSortInput `json:"sort"`
+	Sort *EnvironmentSortInput `json:"sort,omitempty"`
 }
 
 type ListEnvironmentResponse struct {
 	// Total number of environment
 	TotalNoOfEnvironments int            `json:"totalNoOfEnvironments"`
-	Environments          []*Environment `json:"environments"`
+	Environments          []*Environment `json:"environments,omitempty"`
 }
 
 // Defines the details for a experiment
 type ListExperimentRequest struct {
 	// Array of experiment IDs for which details will be fetched
-	ExperimentIDs []*string `json:"experimentIDs"`
+	ExperimentIDs []*string `json:"experimentIDs,omitempty"`
 	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 	// Details for fetching sorted data
-	Sort *ExperimentSortInput `json:"sort"`
+	Sort *ExperimentSortInput `json:"sort,omitempty"`
 	// Details for fetching filtered data
-	Filter *ExperimentFilterInput `json:"filter"`
+	Filter *ExperimentFilterInput `json:"filter,omitempty"`
 }
 
 // Defines the details for a experiment with total experiment count
@@ -1205,15 +1393,15 @@ type ListExperimentResponse struct {
 // Defines the details for experiment runs
 type ListExperimentRunRequest struct {
 	// Array of experiment run IDs for which details will be fetched
-	ExperimentRunIDs []*string `json:"experimentRunIDs"`
+	ExperimentRunIDs []*string `json:"experimentRunIDs,omitempty"`
 	// Array of experiment IDs for which details will be fetched
-	ExperimentIDs []*string `json:"experimentIDs"`
+	ExperimentIDs []*string `json:"experimentIDs,omitempty"`
 	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 	// Details for fetching sorted data
-	Sort *ExperimentRunSortInput `json:"sort"`
+	Sort *ExperimentRunSortInput `json:"sort,omitempty"`
 	// Details for fetching filtered data
-	Filter *ExperimentRunFilterInput `json:"filter"`
+	Filter *ExperimentRunFilterInput `json:"filter,omitempty"`
 }
 
 // Defines the details of a experiment to sent as response
@@ -1227,13 +1415,13 @@ type ListExperimentRunResponse struct {
 // Defines the details for a infra
 type ListInfraRequest struct {
 	// Array of infra IDs for which details will be fetched
-	InfraIDs []string `json:"infraIDs"`
+	InfraIDs []string `json:"infraIDs,omitempty"`
 	// Environment ID
-	EnvironmentIDs []string `json:"environmentIDs"`
+	EnvironmentIDs []string `json:"environmentIDs,omitempty"`
 	// Details for fetching paginated data
-	Pagination *Pagination `json:"pagination"`
+	Pagination *Pagination `json:"pagination,omitempty"`
 	// Details for fetching filtered data
-	Filter *InfraFilterInput `json:"filter"`
+	Filter *InfraFilterInput `json:"filter,omitempty"`
 }
 
 // Defines the details for a infras with total infras count
@@ -1261,17 +1449,20 @@ type Metadata struct {
 // Defines the methods of the probe properties
 type Method struct {
 	// A GET request
-	Get *Get `json:"get"`
+	Get *Get `json:"get,omitempty"`
 	// A POST request
-	Post *Post `json:"post"`
+	Post *Post `json:"post,omitempty"`
 }
 
 // Defines the input for methods of the probe properties
 type MethodRequest struct {
 	// A GET request
-	Get *GETRequest `json:"get"`
+	Get *GETRequest `json:"get,omitempty"`
 	// A POST request
-	Post *POSTRequest `json:"post"`
+	Post *POSTRequest `json:"post,omitempty"`
+}
+
+type Mutation struct {
 }
 
 type NewInfraEventRequest struct {
@@ -1283,7 +1474,7 @@ type NewInfraEventRequest struct {
 
 type ObjectData struct {
 	// Labels present in the resource
-	Labels []string `json:"labels"`
+	Labels []string `json:"labels,omitempty"`
 	// Name of the resource
 	Name string `json:"name"`
 }
@@ -1291,11 +1482,11 @@ type ObjectData struct {
 // Details of POST request
 type Post struct {
 	// Content Type of the request
-	ContentType *string `json:"contentType"`
+	ContentType *string `json:"contentType,omitempty"`
 	// Body of the request
-	Body *string `json:"body"`
+	Body *string `json:"body,omitempty"`
 	// Body Path of the HTTP body required for the http post request
-	BodyPath *string `json:"bodyPath"`
+	BodyPath *string `json:"bodyPath,omitempty"`
 	// Criteria of the request
 	Criteria string `json:"criteria"`
 	// Response Code of the request
@@ -1305,11 +1496,11 @@ type Post struct {
 // Details for input of the POST request
 type POSTRequest struct {
 	// Content Type of the request
-	ContentType *string `json:"contentType"`
+	ContentType *string `json:"contentType,omitempty"`
 	// Body of the request
-	Body *string `json:"body"`
+	Body *string `json:"body,omitempty"`
 	// Body Path of the request for Body
-	BodyPath *string `json:"bodyPath"`
+	BodyPath *string `json:"bodyPath,omitempty"`
 	// Criteria of the request
 	Criteria string `json:"criteria"`
 	// Response Code of the request
@@ -1323,28 +1514,52 @@ type PROMProbe struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Endpoint of the Probe
 	Endpoint string `json:"endpoint"`
 	// Query of the Probe
-	Query *string `json:"query"`
+	Query *string `json:"query,omitempty"`
 	// Query path of the Probe
-	QueryPath *string `json:"queryPath"`
+	QueryPath *string `json:"queryPath,omitempty"`
 	// Comparator of the Probe
 	Comparator *Comparator `json:"comparator"`
 }
 
 func (PROMProbe) IsCommonProbeProperties() {}
+
+// Timeout of the Probe
+func (this PROMProbe) GetProbeTimeout() string { return this.ProbeTimeout }
+
+// Interval of the Probe
+func (this PROMProbe) GetInterval() string { return this.Interval }
+
+// Retry interval of the Probe
+func (this PROMProbe) GetRetry() *int { return this.Retry }
+
+// Attempt contains the total attempt count for the probe
+func (this PROMProbe) GetAttempt() *int { return this.Attempt }
+
+// Polling interval of the Probe
+func (this PROMProbe) GetProbePollingInterval() *string { return this.ProbePollingInterval }
+
+// Initial delay interval of the Probe in seconds
+func (this PROMProbe) GetInitialDelay() *string { return this.InitialDelay }
+
+// EvaluationTimeout is the timeout window in which the SLO metrics
+func (this PROMProbe) GetEvaluationTimeout() *string { return this.EvaluationTimeout }
+
+// Is stop on failure enabled in the Probe
+func (this PROMProbe) GetStopOnFailure() *bool { return this.StopOnFailure }
 
 // Defines the input for PROM probe properties
 type PROMProbeRequest struct {
@@ -1353,23 +1568,23 @@ type PROMProbeRequest struct {
 	// Interval of the Probe
 	Interval string `json:"interval"`
 	// Retry interval of the Probe
-	Retry *int `json:"retry"`
+	Retry *int `json:"retry,omitempty"`
 	// Attempt contains the total attempt count for the probe
-	Attempt *int `json:"attempt"`
+	Attempt *int `json:"attempt,omitempty"`
 	// Polling interval of the Probe
-	ProbePollingInterval *string `json:"probePollingInterval"`
+	ProbePollingInterval *string `json:"probePollingInterval,omitempty"`
 	// Initial delay interval of the Probe in seconds
-	InitialDelay *string `json:"initialDelay"`
+	InitialDelay *string `json:"initialDelay,omitempty"`
 	// EvaluationTimeout is the timeout window in which the SLO metrics
-	EvaluationTimeout *string `json:"evaluationTimeout"`
+	EvaluationTimeout *string `json:"evaluationTimeout,omitempty"`
 	// Is stop on failure enabled in the Probe
-	StopOnFailure *bool `json:"stopOnFailure"`
+	StopOnFailure *bool `json:"stopOnFailure,omitempty"`
 	// Endpoint of the Probe
 	Endpoint string `json:"endpoint"`
 	// Query of the Probe
-	Query *string `json:"query"`
+	Query *string `json:"query,omitempty"`
 	// Query path of the Probe
-	QueryPath *string `json:"queryPath"`
+	QueryPath *string `json:"queryPath,omitempty"`
 	// Comparator of the Probe
 	Comparator *ComparatorInput `json:"comparator"`
 }
@@ -1416,11 +1631,11 @@ type PodLogRequest struct {
 	// Type of the pod: chaosEngine or not pod
 	PodType string `json:"podType"`
 	// Name of the experiment pod fetched from execution data
-	ExpPod *string `json:"expPod"`
+	ExpPod *string `json:"expPod,omitempty"`
 	// Name of the runner pod fetched from execution data
-	RunnerPod *string `json:"runnerPod"`
+	RunnerPod *string `json:"runnerPod,omitempty"`
 	// Namespace where the experiment is executing
-	ChaosNamespace *string `json:"chaosNamespace"`
+	ChaosNamespace *string `json:"chaosNamespace,omitempty"`
 }
 
 // Defines the response received for querying querying the pod logs
@@ -1439,7 +1654,7 @@ type PredefinedExperimentList struct {
 	// Name of the experiment
 	ExperimentName string `json:"experimentName"`
 	// Experiment CSV
-	ExperimentCsv string `json:"experimentCSV"`
+	ExperimentCSV string `json:"experimentCSV"`
 	// Experiment Manifest
 	ExperimentManifest string `json:"experimentManifest"`
 }
@@ -1451,46 +1666,63 @@ type Probe struct {
 	// Name of the Probe
 	Name string `json:"name"`
 	// Description of the Probe
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Tags of the Probe
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Type of the Probe [From list of ProbeType enum]
 	Type ProbeType `json:"type"`
 	// Infrastructure type of the Probe
 	InfrastructureType InfrastructureType `json:"infrastructureType"`
 	// Kubernetes HTTP Properties of the specific type of the Probe
-	KubernetesHTTPProperties *KubernetesHTTPProbe `json:"kubernetesHTTPProperties"`
+	KubernetesHTTPProperties *KubernetesHTTPProbe `json:"kubernetesHTTPProperties,omitempty"`
 	// Kubernetes CMD Properties of the specific type of the Probe
-	KubernetesCMDProperties *KubernetesCMDProbe `json:"kubernetesCMDProperties"`
+	KubernetesCMDProperties *KubernetesCMDProbe `json:"kubernetesCMDProperties,omitempty"`
 	// K8S Properties of the specific type of the Probe
-	K8sProperties *K8SProbe `json:"k8sProperties"`
+	K8sProperties *K8SProbe `json:"k8sProperties,omitempty"`
 	// PROM Properties of the specific type of the Probe
-	PromProperties *PROMProbe `json:"promProperties"`
+	PromProperties *PROMProbe `json:"promProperties,omitempty"`
 	// All execution histories of the probe
-	RecentExecutions []*ProbeRecentExecutions `json:"recentExecutions"`
+	RecentExecutions []*ProbeRecentExecutions `json:"recentExecutions,omitempty"`
 	// Referenced by how many faults
-	ReferencedBy *int `json:"referencedBy"`
+	ReferencedBy *int `json:"referencedBy,omitempty"`
 	// Timestamp at which the Probe was last updated
 	UpdatedAt string `json:"updatedAt"`
 	// Timestamp at which the Probe was created
 	CreatedAt string `json:"createdAt"`
 	// User who has updated the Probe
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// User who has created the Probe
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 }
 
-func (Probe) IsResourceDetails() {}
-func (Probe) IsAudit()           {}
+func (Probe) IsResourceDetails()           {}
+func (this Probe) GetName() string         { return this.Name }
+func (this Probe) GetDescription() *string { return this.Description }
+func (this Probe) GetTags() []string {
+	if this.Tags == nil {
+		return nil
+	}
+	interfaceSlice := make([]string, 0, len(this.Tags))
+	for _, concrete := range this.Tags {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+func (Probe) IsAudit()                        {}
+func (this Probe) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this Probe) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this Probe) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this Probe) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 // Defines the input for Probe filter
 type ProbeFilterInput struct {
 	// Name of the Probe
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// Date range for filtering purpose
-	DateRange *DateRange `json:"dateRange"`
+	DateRange *DateRange `json:"dateRange,omitempty"`
 	// Type of the Probe [From list of ProbeType enum]
-	Type []*ProbeType `json:"type"`
+	Type []*ProbeType `json:"type,omitempty"`
 }
 
 // Defines the Recent Executions of global probe in ListProbe API with different fault and execution history each time
@@ -1508,25 +1740,28 @@ type ProbeRequest struct {
 	// Name of the Probe
 	Name string `json:"name"`
 	// Description of the Probe
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Tags of the Probe
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// Type of the Probe [From list of ProbeType enum]
 	Type ProbeType `json:"type"`
 	// Infrastructure type of the Probe
 	InfrastructureType InfrastructureType `json:"infrastructureType"`
 	// HTTP Properties of the specific type of the Probe
-	KubernetesHTTPProperties *KubernetesHTTPProbeRequest `json:"kubernetesHTTPProperties"`
+	KubernetesHTTPProperties *KubernetesHTTPProbeRequest `json:"kubernetesHTTPProperties,omitempty"`
 	// CMD Properties of the specific type of the Probe
-	KubernetesCMDProperties *KubernetesCMDProbeRequest `json:"kubernetesCMDProperties"`
+	KubernetesCMDProperties *KubernetesCMDProbeRequest `json:"kubernetesCMDProperties,omitempty"`
 	// K8S Properties of the specific type of the Probe
-	K8sProperties *K8SProbeRequest `json:"k8sProperties"`
+	K8sProperties *K8SProbeRequest `json:"k8sProperties,omitempty"`
 	// PROM Properties of the specific type of the Probe
-	PromProperties *PROMProbeRequest `json:"promProperties"`
+	PromProperties *PROMProbeRequest `json:"promProperties,omitempty"`
 }
 
 type Provider struct {
 	Name string `json:"name"`
+}
+
+type Query struct {
 }
 
 // Defines the Recent Executions of experiment referenced by the Probe
@@ -1545,20 +1780,24 @@ type RecentExperimentRun struct {
 	// Phase of the experiment run
 	Phase string `json:"phase"`
 	// Resiliency score of the experiment
-	ResiliencyScore *float64 `json:"resiliencyScore"`
+	ResiliencyScore *float64 `json:"resiliencyScore,omitempty"`
 	// Timestamp when the experiment was last updated
 	UpdatedAt string `json:"updatedAt"`
 	// Timestamp when the experiment was created
 	CreatedAt string `json:"createdAt"`
 	// User who created the experiment run
-	CreatedBy *UserDetails `json:"createdBy"`
+	CreatedBy *UserDetails `json:"createdBy,omitempty"`
 	// User who updated the experiment run
-	UpdatedBy *UserDetails `json:"updatedBy"`
+	UpdatedBy *UserDetails `json:"updatedBy,omitempty"`
 	// runSequence is the sequence number of experiment run
 	RunSequence int `json:"runSequence"`
 }
 
-func (RecentExperimentRun) IsAudit() {}
+func (RecentExperimentRun) IsAudit()                        {}
+func (this RecentExperimentRun) GetUpdatedAt() *string      { return &this.UpdatedAt }
+func (this RecentExperimentRun) GetCreatedAt() *string      { return &this.CreatedAt }
+func (this RecentExperimentRun) GetUpdatedBy() *UserDetails { return this.UpdatedBy }
+func (this RecentExperimentRun) GetCreatedBy() *UserDetails { return this.CreatedBy }
 
 // Defines the details for the new infra being connected
 type RegisterInfraRequest struct {
@@ -1569,27 +1808,27 @@ type RegisterInfraRequest struct {
 	// Type of Infra : internal/external
 	InfrastructureType InfrastructureType `json:"infrastructureType"`
 	// Description of the infra
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Infra Platform Name eg. GKE,AWS, Others
 	PlatformName string `json:"platformName"`
 	// Namespace where the infra is being installed
-	InfraNamespace *string `json:"infraNamespace"`
+	InfraNamespace *string `json:"infraNamespace,omitempty"`
 	// Name of service account used by infra
-	ServiceAccount *string `json:"serviceAccount"`
+	ServiceAccount *string `json:"serviceAccount,omitempty"`
 	// Scope of the infra : ns or infra
 	InfraScope string `json:"infraScope"`
 	// Bool value indicating whether infra ns used already exists on infra or not
-	InfraNsExists *bool `json:"infraNsExists"`
+	InfraNsExists *bool `json:"infraNsExists,omitempty"`
 	// Bool value indicating whether service account used already exists on infra or not
-	InfraSaExists *bool `json:"infraSaExists"`
+	InfraSaExists *bool `json:"infraSaExists,omitempty"`
 	// Bool value indicating whether infra will skip ssl checks or not
-	SkipSsl *bool `json:"skipSsl"`
+	SkipSsl *bool `json:"skipSsl,omitempty"`
 	// Node selectors used by infra
-	NodeSelector *string `json:"nodeSelector"`
+	NodeSelector *string `json:"nodeSelector,omitempty"`
 	// Node tolerations used by infra
-	Tolerations []*Toleration `json:"tolerations"`
+	Tolerations []*Toleration `json:"tolerations,omitempty"`
 	// Tags of the infra
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 // Response received for registering a new infra
@@ -1628,7 +1867,7 @@ type SaveChaosExperimentRequest struct {
 	// ID of the experiment
 	ID string `json:"id"`
 	// Type of the experiment
-	Type *ExperimentType `json:"type"`
+	Type *ExperimentType `json:"type,omitempty"`
 	// Name of the experiment
 	Name string `json:"name"`
 	// Description of the experiment
@@ -1638,7 +1877,7 @@ type SaveChaosExperimentRequest struct {
 	// ID of the target infrastructure in which the experiment will run
 	InfraID string `json:"infraID"`
 	// Tags of the infrastructure
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 }
 
 // Response received for fetching GQL server version
@@ -1659,10 +1898,10 @@ type Spec struct {
 	Provider            *Provider     `json:"provider"`
 	Links               []*Link       `json:"links"`
 	Faults              []*FaultList  `json:"faults"`
-	Experiments         []string      `json:"experiments"`
+	Experiments         []string      `json:"experiments,omitempty"`
 	ChaosExpCRDLink     string        `json:"chaosExpCRDLink"`
 	Platforms           []string      `json:"platforms"`
-	ChaosType           *string       `json:"chaosType"`
+	ChaosType           *string       `json:"chaosType,omitempty"`
 }
 
 // Status defines whether a probe is pass or fail
@@ -1670,7 +1909,7 @@ type Status struct {
 	// Verdict defines the verdict of the probe, range: Passed, Failed, N/A
 	Verdict ProbeVerdict `json:"verdict"`
 	// Description defines the description of probe status
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 }
 
 // Defines the request for stopping a experiment
@@ -1679,15 +1918,18 @@ type StopExperimentRunsRequest struct {
 	// ID of the experiment to be stopped
 	ExperimentID string `json:"experimentID"`
 	// ID of the experiment run to be stopped
-	ExperimentRunID *string `json:"experimentRunID"`
+	ExperimentRunID *string `json:"experimentRunID,omitempty"`
+}
+
+type Subscription struct {
 }
 
 type Toleration struct {
-	TolerationSeconds *int    `json:"tolerationSeconds"`
-	Key               *string `json:"key"`
-	Operator          *string `json:"operator"`
-	Effect            *string `json:"effect"`
-	Value             *string `json:"value"`
+	TolerationSeconds *int    `json:"tolerationSeconds,omitempty"`
+	Key               *string `json:"key,omitempty"`
+	Operator          *string `json:"operator,omitempty"`
+	Effect            *string `json:"effect,omitempty"`
+	Value             *string `json:"value,omitempty"`
 }
 
 type UpdateChaosHubRequest struct {
@@ -1696,9 +1938,9 @@ type UpdateChaosHubRequest struct {
 	// Name of the chaos hub
 	Name string `json:"name"`
 	// Description of the infra
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Tags of the infra
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// URL of the git repository
 	RepoURL string `json:"repoURL"`
 	// Branch of the git repository
@@ -1708,23 +1950,23 @@ type UpdateChaosHubRequest struct {
 	// Type of authentication used: 	BASIC, SSH,	TOKEN
 	AuthType AuthType `json:"authType"`
 	// Token for authentication of private chaos hub
-	Token *string `json:"token"`
+	Token *string `json:"token,omitempty"`
 	// Git username
-	UserName *string `json:"userName"`
+	UserName *string `json:"userName,omitempty"`
 	// Git password
-	Password *string `json:"password"`
+	Password *string `json:"password,omitempty"`
 	// Private SSH key for authenticating into private chaos hub
-	SSHPrivateKey *string `json:"sshPrivateKey"`
+	SSHPrivateKey *string `json:"sshPrivateKey,omitempty"`
 	// Public SSH key for authenticating into private chaos hub
-	SSHPublicKey *string `json:"sshPublicKey"`
+	SSHPublicKey *string `json:"sshPublicKey,omitempty"`
 }
 
 type UpdateEnvironmentRequest struct {
 	EnvironmentID string           `json:"environmentID"`
-	Name          *string          `json:"name"`
-	Description   *string          `json:"description"`
-	Tags          []*string        `json:"tags"`
-	Type          *EnvironmentType `json:"type"`
+	Name          *string          `json:"name,omitempty"`
+	Description   *string          `json:"description,omitempty"`
+	Tags          []*string        `json:"tags,omitempty"`
+	Type          *EnvironmentType `json:"type,omitempty"`
 }
 
 type UserDetails struct {
@@ -2031,19 +2273,19 @@ const (
 	FileTypeExperiment FileType = "EXPERIMENT"
 	FileTypeEngine     FileType = "ENGINE"
 	FileTypeWorkflow   FileType = "WORKFLOW"
-	FileTypeCsv        FileType = "CSV"
+	FileTypeCSV        FileType = "CSV"
 )
 
 var AllFileType = []FileType{
 	FileTypeExperiment,
 	FileTypeEngine,
 	FileTypeWorkflow,
-	FileTypeCsv,
+	FileTypeCSV,
 }
 
 func (e FileType) IsValid() bool {
 	switch e {
-	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCsv:
+	case FileTypeExperiment, FileTypeEngine, FileTypeWorkflow, FileTypeCSV:
 		return true
 	}
 	return false

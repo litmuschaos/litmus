@@ -134,7 +134,7 @@ func ListPredefinedWorkflowDetails(name string, projectID string) ([]*model.Pred
 			preDefinedWorkflow := &model.PredefinedExperimentList{
 				ExperimentName:     file.Name(),
 				ExperimentManifest: workflowManifest,
-				ExperimentCsv:      csvManifest,
+				ExperimentCSV:      csvManifest,
 			}
 			predefinedWorkflows = append(predefinedWorkflows, preDefinedWorkflow)
 		}
