@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -111,7 +112,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 
 	gitInfo := map[string]string{"projectID": c.ProjectID, "revision": "1"}
 	if exists {
-		data, err := os.ReadFile(projectPath + "/.info")
+		data, err := os.ReadFile(path.Clean(projectPath + "/.info"))
 		if err != nil {
 			return errors.New("can't read existing git info file " + err.Error())
 		}
@@ -135,7 +136,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(projectPath+"/.info", data, 0644)
+	err = os.WriteFile(path.Clean(projectPath+"/.info"), data, 0644)
 	if err != nil {
 		return err
 	}

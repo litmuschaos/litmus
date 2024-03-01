@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -34,9 +35,9 @@ func GetChartsPath(chartsInput model.CloningInput, projectID string, isDefault b
 }
 
 // GetChartsData is used to get details of charts like experiments.
-func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
+func GetChartsData(chartsPath string) ([]*model.Chart, error) {
 	var allChartsDetails []ChaosChart
-	Charts, err := os.ReadDir(ChartsPath)
+	Charts, err := os.ReadDir(path.Clean(chartsPath))
 	if err != nil {
 		log.Error("file reading error", err)
 		return nil, err
@@ -45,7 +46,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 		if chart.Name() == "icons" {
 			continue
 		}
-		chartDetails, _ := ReadExperimentFile(ChartsPath + chart.Name() + "/" + chart.Name() + ".chartserviceversion.yaml")
+		chartDetails, _ := ReadExperimentFile(chartsPath + chart.Name() + "/" + chart.Name() + ".chartserviceversion.yaml")
 		allChartsDetails = append(allChartsDetails, chartDetails)
 	}
 
@@ -82,9 +83,9 @@ func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 }
 
 // ReadExperimentFile is used for reading experiment file from given path
-func ReadExperimentFile(path string) (ChaosChart, error) {
+func ReadExperimentFile(givenPath string) (ChaosChart, error) {
 	var experiment ChaosChart
-	experimentFile, err := os.ReadFile(path)
+	experimentFile, err := os.ReadFile(path.Clean(givenPath))
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
@@ -161,7 +162,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	}
 	//create the destination directory where the hub will be downloaded
 	hubPath := dirPath + "/" + hubDetails.Name + ".zip"
-	destDir, err := os.Create(hubPath)
+	destDir, err := os.Create(path.Clean(hubPath))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -197,14 +198,14 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	contentLength := download.Header.Get("content-length")
 	length, err := strconv.Atoi(contentLength)
 	if length > maxSize {
-		_ = os.Remove(hubPath)
+		_ = os.Remove(path.Clean(hubPath))
 		return fmt.Errorf("err: File size exceeded the threshold %d", length)
 	}
 
 	//validate the content-type
 	contentType := download.Header.Get("content-type")
 	if contentType != "application/zip" {
-		_ = os.Remove(hubPath)
+		_ = os.Remove(path.Clean(hubPath))
 		return fmt.Errorf("err: Invalid file type %s", contentType)
 	}
 
@@ -222,7 +223,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	}
 
 	//remove the redundant zip file
-	err = os.Remove(hubPath)
+	err = os.Remove(path.Clean(hubPath))
 	if err != nil {
 		return err
 	}

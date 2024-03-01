@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"time"
 
@@ -477,21 +478,21 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 	}
 
 	//Get fault chartserviceversion.yaml data
-	csvPath := basePath + "/" + request.ExperimentName + ".chartserviceversion.yaml"
+	csvPath := path.Clean(basePath + "/" + request.ExperimentName + ".chartserviceversion.yaml")
 	csvYaml, err := os.ReadFile(csvPath)
 	if err != nil {
 		csvYaml = []byte("")
 	}
 
 	//Get engine.yaml data
-	enginePath := basePath + "/" + "engine.yaml"
+	enginePath := path.Clean(basePath + "/" + "engine.yaml")
 	engineYaml, err := os.ReadFile(enginePath)
 	if err != nil {
 		engineYaml = []byte("")
 	}
 
 	//Get fault.yaml data
-	faultPath := basePath + "/" + "fault.yaml"
+	faultPath := path.Clean(basePath + "/" + "fault.yaml")
 	faultYaml, err := os.ReadFile(faultPath)
 	if err != nil {
 		faultYaml = []byte("")
@@ -726,6 +727,7 @@ func (c *chaosHubService) ListPredefinedExperiments(ctx context.Context, hubID s
 	} else {
 		hubPath = DefaultPath + projectID + "/" + hub.Name + "/experiments/"
 	}
+	hubPath = path.Clean(hubPath)
 	var predefinedWorkflows []*model.PredefinedExperimentList
 	files, err := os.ReadDir(hubPath)
 	if err != nil {
@@ -800,24 +802,24 @@ func (c *chaosHubService) getPredefinedExperimentDetails(experimentsPath string,
 	var (
 		csvManifest        = ""
 		workflowManifest   = ""
-		path               = experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml"
+		predefinedPath     = experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml"
 		isExist            = true
 		preDefinedWorkflow = &model.PredefinedExperimentList{}
 	)
-	_, err := os.Stat(path)
+	_, err := os.Stat(predefinedPath)
 	if err != nil {
 		isExist = false
 	}
 
 	if isExist {
-		yamlData, err := os.ReadFile(experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml")
+		yamlData, err := os.ReadFile(path.Clean(experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml"))
 		if err != nil {
 			csvManifest = ""
 		}
 
 		csvManifest = string(yamlData)
 
-		yamlData, err = os.ReadFile(experimentsPath + experiment + "/" + "experiment.yaml")
+		yamlData, err = os.ReadFile(path.Clean(experimentsPath + experiment + "/" + "experiment.yaml"))
 		if err != nil {
 			workflowManifest = ""
 		}
