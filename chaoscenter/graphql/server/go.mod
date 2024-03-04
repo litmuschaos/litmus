@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/99designs/gqlgen v0.17.42
+	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24
 	github.com/argoproj/argo-workflows/v3 v3.3.1
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/gin-contrib/cors v1.3.1
