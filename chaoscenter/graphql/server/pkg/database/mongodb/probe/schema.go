@@ -181,7 +181,7 @@ func (probe *Probe) GetOutputProbe() *model.Probe {
 				Method:               &model.Method{},
 			}
 
-			if probeResponse.KubernetesHTTPProperties.InsecureSkipVerify != nil {
+			if probe.KubernetesHTTPProperties.InsecureSkipVerify != nil {
 				probeResponse.KubernetesHTTPProperties.InsecureSkipVerify = probe.KubernetesHTTPProperties.InsecureSkipVerify
 			}
 

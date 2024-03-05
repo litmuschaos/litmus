@@ -761,6 +761,7 @@ previous: Previous
 private: Private
 probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
+probeDeletedSuccessfully: Probe Deleted Successfully
 probeDetails: Probe Details
 probeExecutionPreview: PROBE EXECUTION PREVIEW
 probeInFault: Probe in fault
@@ -886,6 +887,10 @@ registryType: Registry Type
 remove: Remove
 removeMember: Remove Member
 removeMemberConfirmation: Are you sure you want to remove {{username}}?
+removeProbeDesc: >-
+  This action will remove the probe from the manifest. Are you sure you want to
+  continue?
+removeProbeHeading: Remove this probe?
 repoBranchPlaceholder: Enter repository branch
 repoURLPlaceholder: Enter repository URL
 repository: Repository
