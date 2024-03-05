@@ -15,7 +15,7 @@ const EnvironmentController: React.FC = () => {
 
   // State for pagination
   const page = parseInt(searchParams.get('page') ?? '0');
-  const limit = parseInt(searchParams.get('limit') ?? '15');
+  const limit = parseInt(searchParams.get('limit') ?? '5');
 
   const setPage = (newPage: number): void => updateSearchParams({ page: newPage.toString() });
   const setLimit = (newLimit: number): void => updateSearchParams({ limit: newLimit.toString() });
@@ -27,7 +27,7 @@ const EnvironmentController: React.FC = () => {
   } = listEnvironment({
     projectID: scope.projectID,
     environmentIDs: [],
-    pagination: { page, limit: 5 },
+    pagination: { page, limit },
     options: {
       onError: err => showError(err.message),
       fetchPolicy: 'cache-first'
@@ -57,7 +57,6 @@ const EnvironmentController: React.FC = () => {
 
   const environments = envData?.listEnvironments.environments;
   const totalEnvironments = envData?.listEnvironments.totalNoOfEnvironments;
-
   const environmentTableData: EnvironmentDetailsTableProps | undefined = environments && {
     content: generateEnvironmentTableContent(environments),
     pagination: {

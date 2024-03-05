@@ -2,6 +2,8 @@ package chaos_infrastructure
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -9,12 +11,8 @@ import (
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-
-	"io/ioutil"
-	"os"
-	"strings"
 )
 
 type SubscriberConfigurations struct {
@@ -65,7 +63,7 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 	} else if infra.InfraScope == NamespaceScope {
 		respData, err = ManifestParser(infra, "manifests/namespace", &config)
 	} else {
-		logrus.Error("INFRA_SCOPE env is empty!")
+		log.Error("INFRA_SCOPE env is empty!")
 	}
 	if err != nil {
 		return nil, err
@@ -129,7 +127,11 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		return nil, fmt.Errorf("failed to open the file %v", err)
 	}
 
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Warnf("failed to close file: %v", err)
+		}
+	}()
 
 	list, err := file.Readdirnames(0) // 0 to read all files and folders
 	if err != nil {
@@ -174,7 +176,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 	}
 
 	for _, fileName := range list {
-		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
+		fileContent, err := os.ReadFile(rootPath + "/" + fileName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read the file %v", err)
 		}

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +26,7 @@ import (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	os.Exit(m.Run())
 }
 
@@ -516,7 +516,7 @@ func TestResetPassword(t *testing.T) {
 			c := GetTestGinContext(w)
 			c.Request.Method = http.MethodPost
 			bodyBytes, _ := json.Marshal(tt.inputBody)
-			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(bodyBytes)))
+			c.Request.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 			c.Set("role", tt.mockRole)
 			c.Set("uid", tt.mockUID)
 			c.Set("username", tt.mockUsername)
@@ -592,7 +592,7 @@ func TestUpdateUserState(t *testing.T) {
 			c := GetTestGinContext(w)
 			c.Request.Method = http.MethodPost
 			bodyBytes, _ := json.Marshal(tc.inputBody)
-			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(bodyBytes)))
+			c.Request.Body = io.NopCloser(bytes.NewReader([]byte(bodyBytes)))
 			c.Set("role", tc.mockRole)
 			c.Set("uid", tc.mockUID)
 			c.Set("username", tc.mockUsername)
