@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -12,19 +11,18 @@ import (
 	"sync"
 	"time"
 
-	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
-
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	chaos_infra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
-	data_store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
+	chaosExperimentOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
+	chaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
+	dataStore "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
-
 	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"go.mongodb.org/mongo-driver/bson"
@@ -68,7 +66,7 @@ func NewGitOpsService(gitOpsOperator *gitops.Operator, chaosExperimentService ch
 	}
 }
 
-// GitOpsNotificationHandler sends experiment run request(single run experiment only) to agent on gitops notification
+// GitOpsNotificationHandler sends experiment run request(single run experiment only) to agent on GitOps notification
 func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra chaos_infrastructure.ChaosInfra, experimentID string) (string, error) {
 	gitLock.Lock(infra.ProjectID, nil)
 	defer gitLock.Unlock(infra.ProjectID, nil)
@@ -77,7 +75,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 		return "", errors.New("Cannot get Git Config from DB : " + err.Error())
 	}
 	if config == nil {
-		return "Gitops Disabled", nil
+		return "GitOps Disabled", nil
 	}
 	query := bson.D{{"infra_id", infra.InfraID}, {"experiment_id", experimentID}, {"is_removed", false}}
 	experiments, err := g.chaosExperimentOps.GetExperiments(query)
@@ -99,7 +97,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 	}
 
 	username := "git-ops"
-	chaos_infra.SendExperimentToSubscriber(experiments[0].ProjectID, &model.ChaosExperimentRequest{
+	chaosInfra.SendExperimentToSubscriber(experiments[0].ProjectID, &model.ChaosExperimentRequest{
 		ExperimentManifest: experiments[0].Revision[len(experiments[0].Revision)-1].ExperimentManifest,
 		InfraID:            experiments[0].InfraID,
 	}, &username, nil, "create", store.Store)
@@ -107,7 +105,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 	return "Request Acknowledged for experimentID: " + experimentID, nil
 }
 
-// EnableGitOpsHandler enables gitops for a particular project
+// EnableGitOpsHandler enables GitOps for a particular project
 func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID string, config model.GitConfig) (bool, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
@@ -117,14 +115,18 @@ func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID strin
 
 	var conn *grpc2.ClientConn
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			log.Warnf("failed to close connection: %v", err)
+		}
+	}()
 
 	_, err := grpc.GetProjectById(client, projectID)
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}
 
-	logrus.Info("Enabling Gitops")
+	logrus.Info("Enabling GitOps")
 	gitDB := gitops.GetGitConfigDB(projectID, config)
 
 	commit, err := SetupGitOps(GitUserFromContext(ctx), GetGitOpsConfig(gitDB))
@@ -141,12 +143,12 @@ func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID strin
 	return true, nil
 }
 
-// DisableGitOpsHandler disables gitops for a specific project
+// DisableGitOpsHandler disables GitOps for a specific project
 func (g *gitOpsService) DisableGitOpsHandler(ctx context.Context, projectID string) (bool, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 
-	logrus.Info("Disabling Gitops")
+	logrus.Info("Disabling GitOps")
 	err := g.gitOpsOperator.DeleteGitConfig(ctx, projectID)
 	if err != nil {
 		return false, errors.New("Failed to delete git config from DB : " + err.Error())
@@ -160,7 +162,7 @@ func (g *gitOpsService) DisableGitOpsHandler(ctx context.Context, projectID stri
 	return true, nil
 }
 
-// UpdateGitOpsDetailsHandler updates an exiting gitops config for a project
+// UpdateGitOpsDetailsHandler updates an exiting GitOps config for a project
 func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectID string, config model.GitConfig) (bool, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
@@ -176,7 +178,7 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectI
 		return false, errors.New("GitOps Disabled ")
 	}
 
-	logrus.Info("Enabling Gitops")
+	logrus.Info("Enabling GitOps")
 	gitDB := gitops.GetGitConfigDB(projectID, config)
 
 	gitConfig := GetGitOpsConfig(gitDB)
@@ -205,7 +207,7 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectI
 	return true, nil
 }
 
-// GetGitOpsDetails returns the current gitops config for the requested project
+// GetGitOpsDetails returns the current GitOps config for the requested project
 func (g *gitOpsService) GetGitOpsDetails(ctx context.Context, projectID string) (*model.GitConfigResponse, error) {
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
@@ -269,7 +271,7 @@ func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID str
 		return errors.New("Cannot convert manifest to yaml : " + err.Error())
 	}
 
-	err = ioutil.WriteFile(experimentPath, data, 0644)
+	err = os.WriteFile(experimentPath, data, 0644)
 	if err != nil {
 		return errors.New("Cannot write experiment to git : " + err.Error())
 	}
@@ -468,7 +470,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			continue
 		}
 		// read changes [new additions/updates]
-		data, err := ioutil.ReadFile(config.LocalPath + "/" + file)
+		data, err := os.ReadFile(config.LocalPath + "/" + file)
 		if err != nil {
 			logrus.Error("Error reading data from git file : " + file + " | " + err.Error())
 			continue
@@ -573,7 +575,7 @@ func (g *gitOpsService) createExperiment(ctx context.Context, data, file string,
 		return false, errors.New("Cannot convert manifest to yaml : " + err.Error())
 	}
 
-	err = ioutil.WriteFile(experimentPath, yamlData, 0644)
+	err = os.WriteFile(experimentPath, yamlData, 0644)
 	if err != nil {
 		return false, errors.New("Cannot write experiment to git : " + err.Error())
 	}
@@ -624,10 +626,10 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	if err != nil {
 		return err
 	}
-	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, updateRevision, config.ProjectID, data_store.Store)
+	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, updateRevision, config.ProjectID, dataStore.Store)
 }
 
-// deleteExperiment helps in deleting a experiment from DB during the SyncDBToGit operation
+// deleteExperiment helps in deleting an experiment from DB during the SyncDBToGit operation
 func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
@@ -638,5 +640,5 @@ func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 		return err
 	}
 
-	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, "git-ops", data_store.Store)
+	return g.chaosExperimentService.ProcessExperimentDelete(query, experiment, "git-ops", dataStore.Store)
 }

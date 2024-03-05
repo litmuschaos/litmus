@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (gql *subscriberGql) SendRequest(server string, payload []byte) (string, error) {
@@ -21,7 +23,12 @@ func (gql *subscriberGql) SendRequest(server string, payload []byte) (string, er
 	}
 
 	body, err := io.ReadAll(resp.Body)
-	resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Warnf("failed to close body: %v", err)
+		}
+	}()
+
 	if err != nil {
 		return "", err
 	}
