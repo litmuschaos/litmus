@@ -191,8 +191,14 @@ export default function AccountSettingsUserManagementView(
   const { isOpen: isCreateUserModalOpen, open: openCreateUserModal, close: closeCreateUserModal } = useToggleOpen();
   const { getString } = useStrings();
 
+  const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = parseInt(event.target.value);
+    setItemsPerPage(selectedValue);
+    setCurrentPage(1);
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -242,9 +248,19 @@ export default function AccountSettingsUserManagementView(
             message: getString('noUserAddUsers')
           }}
         >
-          <Text font={{ variation: FontVariation.H4 }}>
-            {getString('totalUsers')}: {usersData?.length ?? 0}
-          </Text>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Text font={{ variation: FontVariation.H4 }}>
+              {getString('totalUsers')}: {usersData?.length ?? 0}
+            </Text>
+            <div>
+              Items per page:
+              <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+          </div>
           <Container style={{ flexGrow: 1 }}>
             {currentItems && <MemoizedUsersTable users={currentItems} getUsersRefetch={getUsersRefetch} />}
           </Container>
