@@ -11,7 +11,7 @@ import {
   Text,
   useToggleOpen
 } from '@harnessio/uicore';
-import React, { useState } from 'react';
+import React from 'react';
 import type { Column, Row } from 'react-table';
 import { Classes, Dialog, Menu, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import { Icon } from '@harnessio/icons';
@@ -107,7 +107,7 @@ function MemoizedUsersTable({ users, getUsersRefetch }: MemoizedUsersTableProps)
           return (
             data.createdAt && (
               <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
-                {getFormattedTime(data.createdAt * 1000)}
+                {getFormattedTime(data.createdAt)}
               </Text>
             )
           );
@@ -191,8 +191,13 @@ export default function AccountSettingsUserManagementView(
   const { isOpen: isCreateUserModalOpen, open: openCreateUserModal, close: closeCreateUserModal } = useToggleOpen();
   const { getString } = useStrings();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  function handleItemsPerPageChange(pageSize: number) {
+    setItemsPerPage(pageSize);
+    setCurrentPage(1);
+  }
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [itemsPerPage, setItemsPerPage] = React.useState(5);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -238,13 +243,15 @@ export default function AccountSettingsUserManagementView(
           small
           loading={useUsersQueryLoading}
           noData={{
-            when: () => !currentItems?.length,
+            when: () => !usersData?.length,
             message: getString('noUserAddUsers')
           }}
         >
-          <Text font={{ variation: FontVariation.H4 }}>
-            {getString('totalUsers')}: {usersData?.length ?? 0}
-          </Text>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Text font={{ variation: FontVariation.H4 }}>
+              {getString('totalUsers')}: {usersData?.length ?? 0}
+            </Text>
+          </div>
           <Container style={{ flexGrow: 1 }}>
             {currentItems && <MemoizedUsersTable users={currentItems} getUsersRefetch={getUsersRefetch} />}
           </Container>
@@ -255,6 +262,8 @@ export default function AccountSettingsUserManagementView(
             pageIndex={currentPage - 1}
             gotoPage={pageIndex => setCurrentPage(pageIndex + 1)}
             showPagination={true}
+            pageSizeOptions={[5, 10, 20]}
+            onPageSizeChange={pageSize => handleItemsPerPageChange(pageSize)}
           />
         </Loader>
       </Layout.Vertical>
