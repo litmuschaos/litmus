@@ -29,7 +29,7 @@ func (r *mutationResolver) RunChaosExperiment(ctx context.Context, experimentID 
 
 	logrus.WithFields(logFields).Info("request received to run chaos experiment")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.CreateChaosWorkFlow],
+		authorization.MutationRbacRules[authorization.CreateChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
