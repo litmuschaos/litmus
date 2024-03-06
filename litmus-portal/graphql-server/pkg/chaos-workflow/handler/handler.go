@@ -198,7 +198,7 @@ func (c *ChaosWorkflowHandler) TerminateChaosWorkflow(ctx context.Context, proje
 		for _, workflowRun := range workflow.WorkflowRuns {
 			if workflowRun.WorkflowRunID == *workflowRunID {
 				workflowRun.Completed = true
-				workflowRun.Phase = "Terminated"
+				workflowRun.Phase = string(model.WorkflowRunStatusTerminated)
 			}
 		}
 
