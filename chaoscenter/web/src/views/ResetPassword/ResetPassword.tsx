@@ -17,6 +17,7 @@ interface ResetPasswordViewProps {
     unknown
   >;
   username: string | undefined;
+  resetPasswordMutationLoading: boolean;
 }
 interface ResetPasswordFormProps {
   password: string;
@@ -24,7 +25,7 @@ interface ResetPasswordFormProps {
 }
 
 export default function ResetPasswordView(props: ResetPasswordViewProps): React.ReactElement {
-  const { handleClose, resetPasswordMutation, username } = props;
+  const { handleClose, resetPasswordMutation, username, resetPasswordMutationLoading } = props;
   const { getString } = useStrings();
 
   function isSubmitButtonDisabled(values: ResetPasswordFormProps): boolean {
@@ -103,9 +104,10 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
-                      disabled={isSubmitButtonDisabled(formikProps.values)}
+                      text={resetPasswordMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+                      disabled={resetPasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
                       onClick={() => formikProps.handleSubmit()}
+                      style={{minWidth: '90px'}}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}
