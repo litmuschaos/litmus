@@ -11,11 +11,28 @@ interface EnableDisableUserViewProps {
   currentState: boolean | undefined;
   username: string | undefined;
   updateStateMutation: UseMutateFunction<UpdateStateOkResponse, unknown, UpdateStateMutationProps<never>, unknown>;
+  updateStateMutationLoading: boolean;
 }
 
 export default function EnableDisableUserView(props: EnableDisableUserViewProps): React.ReactElement {
-  const { handleClose, username, currentState, updateStateMutation } = props;
+  const { handleClose, username, currentState, updateStateMutation, updateStateMutationLoading } = props;
   const { getString } = useStrings();
+
+  const handleMutation = () => {
+    updateStateMutation(
+      {
+        body: {
+          username: username ?? '',
+          isDeactivate: !currentState
+        }
+      },
+      {
+        onSuccess: () => {
+          handleClose();
+        }
+      }
+    )
+  }
 
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
@@ -33,20 +50,10 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
           type="submit"
           variation={ButtonVariation.PRIMARY}
           intent={!currentState ? 'danger' : 'primary'}
-          text={getString('confirm')}
-          onClick={() =>
-            updateStateMutation(
-              {
-                body: {
-                  username: username ?? '',
-                  isDeactivate: !currentState
-                }
-              },
-              {
-                onSuccess: () => handleClose()
-              }
-            )
-          }
+          text={updateStateMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+          disabled={updateStateMutationLoading}
+          style={{minWidth: '90px'}}
+          onClick={handleMutation}
         />
         <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />
       </Layout.Horizontal>

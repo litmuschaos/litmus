@@ -1,7 +1,7 @@
 import type { UseMutateFunction } from '@tanstack/react-query';
 import React from 'react';
 import { FontVariation } from '@harnessio/design-system';
-import { Layout, Container, FormInput, ButtonVariation, Text, Button } from '@harnessio/uicore';
+import { Layout, Container, FormInput, ButtonVariation, Text, Button, OverlaySpinner } from '@harnessio/uicore';
 import { Formik, Form } from 'formik';
 import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
@@ -48,6 +48,7 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
   }
 
   return (
+    <OverlaySpinner show={createNewTokenMutationLoading}>
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('createNewToken')}</Text>
@@ -109,5 +110,6 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
         </Formik>
       </Container>
     </Layout.Vertical>
+    </OverlaySpinner>
   );
 }

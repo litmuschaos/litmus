@@ -75,7 +75,7 @@ func (r *mutationResolver) SaveChaosExperiment(ctx context.Context, request mode
 	}
 	logrus.WithFields(logFields).Info("request received to save chaos experiment")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.CreateChaosWorkFlow],
+		authorization.MutationRbacRules[authorization.CreateChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err
@@ -101,7 +101,7 @@ func (r *mutationResolver) UpdateChaosExperiment(ctx context.Context, request *m
 
 	logrus.WithFields(logFields).Info("request received to update chaos experiment")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ReRunChaosWorkFlow],
+		authorization.MutationRbacRules[authorization.ReRunChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (r *mutationResolver) DeleteChaosExperiment(ctx context.Context, experiment
 	logrus.WithFields(logFields).Info("request received to delete chaos experiment")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.DeleteChaosWorkflow],
+		authorization.MutationRbacRules[authorization.DeleteChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
@@ -150,7 +150,7 @@ func (r *mutationResolver) UpdateCronExperimentState(ctx context.Context, experi
 	logrus.WithFields(logFields).Info("request received to update cron chaos experiment")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
+		authorization.MutationRbacRules[authorization.UpdateChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return false, err
@@ -172,7 +172,7 @@ func (r *queryResolver) GetExperiment(ctx context.Context, projectID string, exp
 	}
 	logrus.WithFields(logFields).Info("request received to get chaos experiment")
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListWorkflow],
+		authorization.MutationRbacRules[authorization.ListExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -195,7 +195,7 @@ func (r *queryResolver) ListExperiment(ctx context.Context, projectID string, re
 	logrus.WithFields(logFields).Info("request received to list chaos experiments")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListWorkflow],
+		authorization.MutationRbacRules[authorization.ListExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
@@ -216,7 +216,7 @@ func (r *queryResolver) GetExperimentStats(ctx context.Context, projectID string
 	logrus.WithFields(logFields).Info("request received to get chaos experiment stats")
 
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.ListWorkflow],
+		authorization.MutationRbacRules[authorization.ListExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return nil, err
