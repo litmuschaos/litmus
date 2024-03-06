@@ -93,7 +93,7 @@ func (r *mutationResolver) SaveChaosExperiment(ctx context.Context, request mode
 }
 
 // UpdateChaosExperiment is the resolver for the updateChaosExperiment field.
-func (r *mutationResolver) UpdateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error) {
+func (r *mutationResolver) UpdateChaosExperiment(ctx context.Context, request model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error) {
 	logFields := logrus.Fields{
 		"projectId":         projectID,
 		"chaosExperimentId": request.ExperimentID,
