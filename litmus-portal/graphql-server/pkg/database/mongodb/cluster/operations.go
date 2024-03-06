@@ -29,7 +29,9 @@ func NewClusterOperator(mongodbOperator mongodb.MongoOperator) *Operator {
 
 // InsertCluster takes details of a cluster and inserts into the database collection
 func (c *Operator) InsertCluster(cluster Cluster) error {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
+
 	err := c.operator.Create(ctx, mongodb.ClusterCollection, cluster)
 	if err != nil {
 		return err
@@ -40,7 +42,9 @@ func (c *Operator) InsertCluster(cluster Cluster) error {
 
 // GetCluster takes a clusterID to retrieve the cluster details from the database
 func (c *Operator) GetCluster(clusterID string) (Cluster, error) {
-	ctx, _ := context.WithTimeout(backgroundContext, 10*time.Second)
+	ctx, cancel := context.WithTimeout(backgroundContext, 10*time.Second)
+	defer cancel()
+
 	query := bson.D{{"cluster_id", clusterID}}
 
 	var cluster Cluster

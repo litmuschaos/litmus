@@ -58,7 +58,7 @@ func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
 func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest) (*model.ChaosHub, error) {
 	if IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.HubName, chaosHub.ProjectID); err != nil {
 		return nil, err
-	} else if IsExist == true {
+	} else if IsExist {
 		return nil, errors.New("HubName Already exists")
 	}
 
@@ -102,7 +102,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
+	if IsExist {
 		return nil, errors.New("HubName Already exists")
 	}
 
@@ -529,7 +529,7 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 func (c *chaosHubService) RecurringHubSync() {
 	for {
 		// Started Syncing of hubs
-		chaosHubs, _ := c.GetAllHubs(nil)
+		chaosHubs, _ := c.GetAllHubs(context.TODO())
 
 		for _, chaosHub := range chaosHubs {
 			if !chaosHub.IsRemoved {

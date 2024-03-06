@@ -606,7 +606,7 @@ func (a *analyticsService) DeleteDataSource(projectID string, input model.Delete
 		return false, fmt.Errorf("failed to list dashboard, error: %v", err)
 	}
 
-	if input.ForceDelete == true {
+	if input.ForceDelete {
 		for _, dashboard := range dashboards {
 
 			for _, panelGroup := range dashboard.PanelGroups {
@@ -1388,7 +1388,7 @@ func (a *analyticsService) GetPrometheusData(promInput *model.PrometheusDataRequ
 
 	wg.Wait()
 
-	if patchEventWithVerdict == true {
+	if patchEventWithVerdict {
 		annotations = ops.PatchChaosEventWithVerdict(annotations, verdictResponse, promInput, AnalyticsCache)
 	}
 

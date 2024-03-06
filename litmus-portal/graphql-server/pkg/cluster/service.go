@@ -271,7 +271,7 @@ func (c *clusterService) ListClusters(projectID string, clusterType *string) ([]
 		copier.Copy(&newCluster, &cluster)
 		newCluster.NoOfWorkflows = func(i int) *int { return &i }(len(workflows))
 		for _, workflow := range workflows {
-			if workflow.IsRemoved == false {
+			if !workflow.IsRemoved {
 				totalNoOfSchedules = totalNoOfSchedules + len(workflow.WorkflowRuns)
 			}
 			if strings.Compare(workflow.UpdatedAt, lastWorkflowTimestamp) == 1 {

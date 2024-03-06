@@ -373,7 +373,7 @@ func (g *gitOpsService) gitSyncHelper(config dbSchemaGitOps.GitConfigDB, wg *syn
 
 	gitConfig := GetGitOpsConfig(*conf)
 
-	err = g.syncDBToGit(nil, gitConfig)
+	err = g.syncDBToGit(context.TODO(), gitConfig)
 	if err != nil {
 		logrus.Error("Repo Sync ERROR: ", conf.ProjectID, err.Error())
 	}

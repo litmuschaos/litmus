@@ -95,7 +95,8 @@ func MongoConnection() (*mongo.Client, error) {
 		return nil, err
 	}
 
-	ctx, _ := context.WithTimeout(backgroundContext, ConnectionTimeout)
+	ctx, cancel := context.WithTimeout(backgroundContext, ConnectionTimeout)
+	defer cancel()
 
 	// Check the connection
 	err = client.Ping(ctx, nil)
