@@ -13,7 +13,7 @@ interface DeleteApiTokenControllerProps {
 
 export default function DeleteApiTokenController(props: DeleteApiTokenControllerProps): React.ReactElement {
   const { token, apiTokensRefetch, handleClose } = props;
-  const { mutate: deleteApiTokenMutation } = useRemoveApiTokenMutation(
+  const { mutate: deleteApiTokenMutation, isLoading: deleteApiTokenMutationLoading } = useRemoveApiTokenMutation(
     {},
     {
       onSuccess: () => {
@@ -23,5 +23,5 @@ export default function DeleteApiTokenController(props: DeleteApiTokenController
     }
   );
 
-  return <DeleteApiTokenView handleClose={handleClose} deleteApiTokenMutation={deleteApiTokenMutation} token={token} />;
+  return <DeleteApiTokenView handleClose={handleClose} deleteApiTokenMutation={deleteApiTokenMutation} deleteApiTokenMutationLoading={deleteApiTokenMutationLoading} token={token} />;
 }
