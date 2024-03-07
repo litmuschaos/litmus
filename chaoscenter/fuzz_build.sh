@@ -14,8 +14,26 @@
 # limitations under the License.
 #
 ################################################################################
-cd chaoscenter/graphql/server && go mod download
-go install github.com/AdamKorcz/go-118-fuzz-build@latest
-go get github.com/AdamKorcz/go-118-fuzz-build/testing
+# cd chaoscenter/graphql/server && go mod download
+# go install github.com/AdamKorcz/go-118-fuzz-build@latest
+# go get github.com/AdamKorcz/go-118-fuzz-build/testing
 
-compile_native_go_fuzzer $(pwd)/pkg/environment/handler FuzzTestGetEnvironment test-fuzz
+# compile_native_go_fuzzer $(pwd)/pkg/environment/handler FuzzTestGetEnvironment test-fuzz
+
+
+# grep --line-buffered --include '*_test_fuzz.go' -Pr 'func Fuzz.*\(.* \*testing\.F' | sed -E 's/(func Fuzz(.*)\(.*)/\2/' | xargs -I{} sh -c '
+#   file="$(echo "{}" | cut -d: -f1)"
+#   folder="$(dirname $file)"
+#   func="Fuzz$(echo "{}" | cut -d: -f2)"
+#   compile_native_go_fuzzer github.com/crossplane/crossplane/$folder $func $func
+# '
+
+
+export GO_MOD_PATHS_MAPPING=( "graphql/server")
+
+for dir in "${GO_MOD_PATHS_MAPPING[@]}"; do
+   (cd ${dir} && go mod download &&
+   go install github.com/AdamKorcz/go-118-fuzz-build@latest &&
+   go get github.com/AdamKorcz/go-118-fuzz-build/testing &&
+   ./test-fuzz.sh $(pwd)/pkg/environment/test FuzzTestGetEnvironment test-fuzz)
+done
