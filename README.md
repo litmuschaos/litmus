@@ -87,7 +87,19 @@ Feel free to reach out if you have any queries,concerns, or feature requests
 
 - To join our [Slack Community](https://slack.litmuschaos.io/) and meet our community members, put forward your questions & opinions, join the #litmus channel on the [Kubernetes Slack](https://slack.k8s.io/). 
 ### Community Meetings
-The Litmus community meets on the third wednesday of every month at 10:00PM IST/6:30 PM CEST/9:30 AM PST.
+
+1. Community Meetings
+These will be hosted every 3rd Wednesday of every month at  5:30 PM GMT /6:30 PM CEST /10 PM IST
+The community meetings will involve discussing community updates, sharing updates on new features/releases and discussing user/adopter stories. Everyone in the community is invited for the same to participate in the LitmusChaos community meetings.
+
+
+2. Contributor Meetings
+These will be hosted every second & last Thursday of every month at  2:30 PM GMT /3:30 PM CEST /7 PM IST
+The contributor meetings are only meant to discuss technical and non-technical contributions to LitmusChaos. Maintainers, present Contributors and aspiring contributors are invited to participate in the LitmusChaos contributor meetings to discuss issues, fixes, enhancements and future contributions
+
+
+Fill out the [LitmusChaos Meetings invite form](https://forms.gle/xYZyZ2gTWMqz7xSs7) to get your Calendar invite!  
+
 
 - [Sync Up Meeting Link](https://harness-io.zoom.us/j/95100368978?pwd=b2VrdCtaakE5U3dhOElFMUJOaXVOUT09)
 - [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
