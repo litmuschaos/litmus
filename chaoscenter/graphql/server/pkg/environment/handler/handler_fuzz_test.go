@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"testing"
+
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
@@ -11,7 +13,6 @@ import (
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"testing"
 )
 
 func FuzzCreateEnvironment(f *testing.F) {
