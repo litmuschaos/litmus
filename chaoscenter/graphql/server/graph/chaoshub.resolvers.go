@@ -50,7 +50,7 @@ func (r *mutationResolver) SaveChaosHub(ctx context.Context, projectID string, r
 // SyncChaosHub is the resolver for the syncChaosHub field.
 func (r *mutationResolver) SyncChaosHub(ctx context.Context, id string, projectID string) (string, error) {
 	err := authorization.ValidateRole(ctx, projectID,
-		authorization.MutationRbacRules[authorization.UpdateChaosWorkflow],
+		authorization.MutationRbacRules[authorization.UpdateChaosExperiment],
 		model.InvitationAccepted.String())
 	if err != nil {
 		return "", err
