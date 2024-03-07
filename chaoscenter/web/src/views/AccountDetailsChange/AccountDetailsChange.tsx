@@ -94,9 +94,10 @@ export default function AccountDetailsChangeView(props: AccountDetailsChangeView
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
+                      text={updateDetailsMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
                       loading={updateDetailsMutationLoading}
-                      disabled={isUserDetailsUpdated(formikProps.values)}
+                      disabled={updateDetailsMutationLoading || isUserDetailsUpdated(formikProps.values)}
+                      style={{minWidth: '90px'}}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}
