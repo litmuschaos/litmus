@@ -1,5 +1,4 @@
 import { parse } from 'yaml';
-import type { EnvVar } from 'argo-ui/src/models/kubernetes';
 import { ChaosObjectStoreNameMap, ChaosObjectStoresPrimaryKeys, Experiment } from '@db';
 import {
   ChaosEngine,
@@ -19,6 +18,7 @@ import {
 import { yamlStringify } from '@utils';
 import { Weightages, InfrastructureType, ProbeObj } from '@api/entities';
 import type { PipelineGraphState } from '@components/PipelineDiagram/types';
+import { EnvVar } from 'models/k8s';
 import ExperimentFactory from './ExperimentFactory';
 import { ExperimentYamlService, GetFaultTunablesOperation, PreProcessChaosExperiment } from './ExperimentYamlService';
 
