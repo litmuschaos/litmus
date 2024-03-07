@@ -38,7 +38,6 @@
     "experimentalDecorators": true,
     "typeRoots": ["node_modules/@types", "./typings"],
     "resolveJsonModule": true,
-    "importsNotUsedAsValues": "error",
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },

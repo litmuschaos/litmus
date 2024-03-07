@@ -1003,3 +1003,164 @@ func GenerateCronExperimentManifestWithProbes(manifest string, projectID string)
 
 	return cronManifest, nil
 }
+
+func InsertProbeRefAnnotation(rawYaml, value string) (string, error) {
+	var data interface{}
+
+	err := yaml.Unmarshal([]byte(rawYaml), &data)
+	if err != nil {
+		return "", err
+	}
+
+	dataMap := data.(map[string]interface{})
+
+	metadata := dataMap["metadata"]
+	if metadata == nil {
+		return "", errors.New("metadata not found")
+	}
+
+	annotations := metadata.(map[string]interface{})["annotations"]
+	if annotations == nil {
+		// create new annotations
+		annotations = make(map[string]interface{})
+		metadata.(map[string]interface{})["annotations"] = annotations
+	}
+
+	annotations.(map[string]interface{})["probeRef"] = value
+
+	result, err := yaml.Marshal(dataMap)
+	if err != nil {
+		return "", err
+	}
+
+	return string(result), nil
+}
+
+// Convert the probe inputs to probe request
+func ProbeInputsToProbeRequestConverter(probeInputs v1alpha1.ProbeAttributes) (model.ProbeRequest, error) {
+	var kubernetesHTTPProperties *model.KubernetesHTTPProbeRequest
+	var kubernetesCMDProperties *model.KubernetesCMDProbeRequest
+	var k8sProperties *model.K8SProbeRequest
+	var promProperties *model.PROMProbeRequest
+
+	if probeInputs.RunProperties.ProbeTimeout == "" || probeInputs.RunProperties.Interval == "" {
+		return model.ProbeRequest{}, errors.New("values for ProbeTimeout and Interval are required")
+	}
+
+	switch model.ProbeType(probeInputs.Type) {
+	case model.ProbeTypeHTTPProbe:
+		method := &model.MethodRequest{}
+		if probeInputs.HTTPProbeInputs.Method.Get != nil {
+			method.Get = &model.GETRequest{
+				Criteria:     probeInputs.HTTPProbeInputs.Method.Get.Criteria,
+				ResponseCode: probeInputs.HTTPProbeInputs.Method.Get.ResponseCode,
+			}
+		} else if probeInputs.HTTPProbeInputs.Method.Post != nil {
+			method.Post = &model.POSTRequest{
+				Criteria:     probeInputs.HTTPProbeInputs.Method.Post.Criteria,
+				ResponseCode: probeInputs.HTTPProbeInputs.Method.Post.ResponseCode,
+			}
+			method.Post.ContentType = &probeInputs.HTTPProbeInputs.Method.Post.ContentType
+			method.Post.Body = &probeInputs.HTTPProbeInputs.Method.Post.Body
+			method.Post.BodyPath = &probeInputs.HTTPProbeInputs.Method.Post.BodyPath
+		} else {
+			return model.ProbeRequest{}, errors.New("GET/POST method not specified")
+		}
+		if probeInputs.HTTPProbeInputs.URL == "" {
+			return model.ProbeRequest{}, errors.New("URL not specified")
+		}
+		if probeInputs.RunProperties.EvaluationTimeout != "" {
+			kubernetesHTTPProperties.EvaluationTimeout = &probeInputs.RunProperties.EvaluationTimeout
+		}
+		if probeInputs.RunProperties.ProbePollingInterval != "" {
+			kubernetesHTTPProperties.ProbePollingInterval = &probeInputs.RunProperties.ProbePollingInterval
+		}
+		if probeInputs.RunProperties.InitialDelay != "" {
+			kubernetesHTTPProperties.InitialDelay = &probeInputs.RunProperties.InitialDelay
+		}
+
+		kubernetesHTTPProperties = &model.KubernetesHTTPProbeRequest{
+			ProbeTimeout:       probeInputs.RunProperties.ProbeTimeout,
+			Interval:           probeInputs.RunProperties.Interval,
+			URL:                probeInputs.HTTPProbeInputs.URL,
+			Method:             method,
+			Attempt:            &probeInputs.RunProperties.Attempt,
+			Retry:              &probeInputs.RunProperties.Retry,
+			StopOnFailure:      &probeInputs.RunProperties.StopOnFailure,
+			InsecureSkipVerify: &probeInputs.HTTPProbeInputs.InsecureSkipVerify,
+		}
+	case model.ProbeTypePromProbe:
+		if probeInputs.PromProbeInputs.Endpoint == "" {
+			return model.ProbeRequest{}, errors.New("endpoint not specified")
+		}
+		promProperties = &model.PROMProbeRequest{
+			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
+			Interval:     probeInputs.RunProperties.Interval,
+			Endpoint:     probeInputs.PromProbeInputs.Endpoint,
+			Comparator: &model.ComparatorInput{
+				Type:     probeInputs.PromProbeInputs.Comparator.Type,
+				Criteria: probeInputs.PromProbeInputs.Comparator.Criteria,
+				Value:    probeInputs.PromProbeInputs.Comparator.Value,
+			},
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			EvaluationTimeout:    &probeInputs.RunProperties.EvaluationTimeout,
+			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Query:                &probeInputs.PromProbeInputs.Query,
+			QueryPath:            &probeInputs.PromProbeInputs.QueryPath,
+		}
+	case model.ProbeTypeK8sProbe:
+		if probeInputs.K8sProbeInputs.Resource == "" || probeInputs.K8sProbeInputs.Operation == "" || probeInputs.K8sProbeInputs.Version == "" {
+			return model.ProbeRequest{}, errors.New("resource, operation and version are required")
+		}
+		k8sProperties = &model.K8SProbeRequest{
+			ProbeTimeout:         probeInputs.RunProperties.ProbeTimeout,
+			Interval:             probeInputs.RunProperties.Interval,
+			Version:              probeInputs.K8sProbeInputs.Version,
+			Resource:             probeInputs.K8sProbeInputs.Resource,
+			Operation:            probeInputs.K8sProbeInputs.Operation,
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			EvaluationTimeout:    &probeInputs.RunProperties.EvaluationTimeout,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Group:                &probeInputs.K8sProbeInputs.Group,
+			ResourceNames:        &probeInputs.K8sProbeInputs.ResourceNames,
+			Namespace:            &probeInputs.K8sProbeInputs.Namespace,
+			FieldSelector:        &probeInputs.K8sProbeInputs.FieldSelector,
+			LabelSelector:        &probeInputs.K8sProbeInputs.LabelSelector,
+		}
+	case model.ProbeTypeCmdProbe:
+		source, _ := json.Marshal(probeInputs.CmdProbeInputs.Source)
+		sourcePtr := string(source)
+		kubernetesCMDProperties = &model.KubernetesCMDProbeRequest{
+			ProbeTimeout: probeInputs.RunProperties.ProbeTimeout,
+			Interval:     probeInputs.RunProperties.Interval,
+			Command:      probeInputs.CmdProbeInputs.Command,
+			Comparator: &model.ComparatorInput{
+				Type:     probeInputs.CmdProbeInputs.Comparator.Type,
+				Criteria: probeInputs.CmdProbeInputs.Comparator.Criteria,
+				Value:    probeInputs.CmdProbeInputs.Comparator.Value,
+			},
+			Attempt:              &probeInputs.RunProperties.Attempt,
+			Retry:                &probeInputs.RunProperties.Retry,
+			ProbePollingInterval: &probeInputs.RunProperties.ProbePollingInterval,
+			InitialDelay:         &probeInputs.RunProperties.InitialDelay,
+			StopOnFailure:        &probeInputs.RunProperties.StopOnFailure,
+			Source:               &sourcePtr,
+		}
+	}
+
+	return model.ProbeRequest{
+		Name:                     probeInputs.Name,
+		Type:                     model.ProbeType(probeInputs.Type),
+		K8sProperties:            k8sProperties,
+		KubernetesHTTPProperties: kubernetesHTTPProperties,
+		KubernetesCMDProperties:  kubernetesCMDProperties,
+		PromProperties:           promProperties,
+		InfrastructureType:       model.InfrastructureType(model.InfrastructureTypeKubernetes),
+		Tags:                     []string{},
+	}, nil
+}

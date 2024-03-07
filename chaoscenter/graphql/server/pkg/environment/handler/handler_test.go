@@ -1,4 +1,4 @@
-package handler_test
+package handler
 
 import (
 	"context"
@@ -13,7 +13,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,9 +23,9 @@ var (
 	environmentOperator = dbOperationsEnvironment.NewEnvironmentOperator(mongodbMockOperator)
 )
 
-const JwtSecret = "testsecret"
+var JwtSecret = "testsecret"
 
-func getSignedJWT(name string) (string, error) {
+func GetSignedJWT(name string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = uuid.NewString()
@@ -65,7 +64,7 @@ func TestCreateEnvironment(t *testing.T) {
 			expectedEnv: nil,
 			expectedErr: errors.New("invalid Token"),
 			given: func() string {
-				token, err := getSignedJWT("testUser")
+				token, err := GetSignedJWT("testUser")
 				if err != nil {
 					return token
 				}
@@ -97,7 +96,7 @@ func TestCreateEnvironment(t *testing.T) {
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 			mockOperator := environmentOperator
-			service := handler.NewEnvironmentService(mockOperator)
+			service := NewEnvironmentService(mockOperator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -140,7 +139,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			},
 			expectedErr: errors.New("invalid Token"),
 			given: func() string {
-				token, err := getSignedJWT("testUser")
+				token, err := GetSignedJWT("testUser")
 				if err != nil {
 					return token
 				}
@@ -174,7 +173,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
 			mockOperator := environmentOperator
-			service := handler.NewEnvironmentService(mockOperator)
+			service := NewEnvironmentService(mockOperator)
 
 			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
 			if (err != nil && tc.expectedErr == nil) ||

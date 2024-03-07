@@ -7,7 +7,7 @@ import ResetPasswordView from '../ResetPassword';
 
 beforeEach(() => {
   jest.spyOn(stringUtils, 'useStrings').mockReturnValue({
-    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`),
+    getString: jest.fn().mockImplementation(key => `Mocked String for ${key}`)
   });
 });
 
@@ -24,6 +24,7 @@ describe('ResetPasswordView Component', () => {
         <ResetPasswordView
           handleClose={mockClose}
           resetPasswordMutation={mockRestPasswordMutation}
+          resetPasswordMutationLoading={false}
           username="testUser"
         />
       </TestWrapper>
@@ -42,6 +43,7 @@ describe('ResetPasswordView Component', () => {
         resetPasswordMutation={() => {
           /* noop */
         }}
+        resetPasswordMutationLoading={false}
         username="testUser"
       />
     );
@@ -56,15 +58,16 @@ describe('ResetPasswordView Component', () => {
         <ResetPasswordView
           handleClose={mockClose}
           resetPasswordMutation={mockRestPasswordMutation}
+          resetPasswordMutationLoading={false}
           username="testUser"
         />
       </TestWrapper>
     );
     fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
-      target: { value: 'password123' },
+      target: { value: 'password123' }
     });
     fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
-      target: { value: 'password123' },
+      target: { value: 'password123' }
     });
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });
@@ -77,15 +80,16 @@ describe('ResetPasswordView Component', () => {
         <ResetPasswordView
           handleClose={mockClose}
           resetPasswordMutation={mockRestPasswordMutation}
+          resetPasswordMutationLoading={false}
           username="testUser"
         />
       </TestWrapper>
     );
     fireEvent.change(screen.getByPlaceholderText('Mocked String for newPassword'), {
-      target: { value: 'password123' },
+      target: { value: 'password123' }
     });
     fireEvent.change(screen.getByPlaceholderText('Mocked String for reEnterNewPassword'), {
-      target: { value: 'differentPassword123' },
+      target: { value: 'differentPassword123' }
     });
 
     const submitButton = screen.getByRole('button', { name: /confirm/i });
