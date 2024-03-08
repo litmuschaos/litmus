@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>middleware: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware/jwt_middlware.go (30.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package middleware
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/golang-jwt/jwt"
+        "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+        "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+        "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+        log "github.com/sirupsen/logrus"
+)
+
+// JwtMiddleware is a Gin Middleware that authorises requests
+func JwtMiddleware(service services.ApplicationService) gin.HandlerFunc <span class="cov8" title="1">{
+        return func(c *gin.Context) </span><span class="cov8" title="1">{
+                const BearerSchema = "Bearer "
+                authHeader := c.GetHeader("Authorization")
+                if authHeader == "" </span><span class="cov8" title="1">{
+                        c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+                        return
+                }</span>
+                <span class="cov0" title="0">tokenString := authHeader[len(BearerSchema):]
+                token, err := service.ValidateToken(tokenString)
+                if err != nil </span><span class="cov0" title="0">{
+                        log.Error(err)
+                        c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+                        return
+                }</span>
+                <span class="cov0" title="0">if token.Valid </span><span class="cov0" title="0">{
+                        claims := token.Claims.(jwt.MapClaims)
+                        c.Set("username", claims["username"])
+                        c.Set("uid", claims["uid"])
+                        c.Set("role", claims["role"])
+                        c.Next()
+                }</span> else<span class="cov0" title="0"> {
+                        c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
+                        return
+                }</span>
+        }
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
