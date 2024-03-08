@@ -4531,6 +4531,8 @@ enum ExperimentRunStatus {
   Skipped
   Error
   Timeout
+  Terminated
+  Queued
   NA
 }
 

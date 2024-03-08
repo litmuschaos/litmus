@@ -2135,6 +2135,8 @@ const (
 	ExperimentRunStatusSkipped            ExperimentRunStatus = "Skipped"
 	ExperimentRunStatusError              ExperimentRunStatus = "Error"
 	ExperimentRunStatusTimeout            ExperimentRunStatus = "Timeout"
+	ExperimentRunStatusTerminated         ExperimentRunStatus = "Terminated"
+	ExperimentRunStatusQueued             ExperimentRunStatus = "Queued"
 	ExperimentRunStatusNa                 ExperimentRunStatus = "NA"
 )
 
@@ -2147,12 +2149,14 @@ var AllExperimentRunStatus = []ExperimentRunStatus{
 	ExperimentRunStatusSkipped,
 	ExperimentRunStatusError,
 	ExperimentRunStatusTimeout,
+	ExperimentRunStatusTerminated,
+	ExperimentRunStatusQueued,
 	ExperimentRunStatusNa,
 }
 
 func (e ExperimentRunStatus) IsValid() bool {
 	switch e {
-	case ExperimentRunStatusAll, ExperimentRunStatusRunning, ExperimentRunStatusCompleted, ExperimentRunStatusCompletedWithError, ExperimentRunStatusStopped, ExperimentRunStatusSkipped, ExperimentRunStatusError, ExperimentRunStatusTimeout, ExperimentRunStatusNa:
+	case ExperimentRunStatusAll, ExperimentRunStatusRunning, ExperimentRunStatusCompleted, ExperimentRunStatusCompletedWithError, ExperimentRunStatusStopped, ExperimentRunStatusSkipped, ExperimentRunStatusError, ExperimentRunStatusTimeout, ExperimentRunStatusTerminated, ExperimentRunStatusQueued, ExperimentRunStatusNa:
 		return true
 	}
 	return false
