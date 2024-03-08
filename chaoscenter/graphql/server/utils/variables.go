@@ -39,6 +39,7 @@ type Configuration struct {
 	HttpPort                    string `split_words:"true" default:"8080"`
 	RpcPort                     string `split_words:"true" default:"8000"`
 	InfraCompatibleVersions     string `required:"true" split_words:"true"`
+	DefaultHubGitURL            string `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	DefaultHubBranchName        string `required:"true" split_words:"true"`
 	CustomChaosHubPath          string `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string `split_words:"true" default:"/tmp/default/"`
