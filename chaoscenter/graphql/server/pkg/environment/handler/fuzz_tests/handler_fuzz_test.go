@@ -1,8 +1,14 @@
-package handler
+package fuzz_tests
 
 import (
 	"context"
+	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
+	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
+	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"testing"
+	"time"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -14,6 +20,28 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var (
+	mongodbMockOperator = new(dbMocks.MongoOperator)
+	environmentOperator = dbOperationsEnvironment.NewEnvironmentOperator(mongodbMockOperator)
+)
+
+var JwtSecret = "testsecret"
+
+func GetSignedJWT(name string) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS512)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["uid"] = uuid.NewString()
+	claims["role"] = uuid.NewString()
+	claims["username"] = name
+	claims["exp"] = time.Now().Add(time.Minute).Unix()
+
+	tokenString, err := token.SignedString([]byte(JwtSecret))
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
 
 func FuzzCreateEnvironment(f *testing.F) {
 	utils.Config.JwtSecret = JwtSecret
@@ -34,7 +62,7 @@ func FuzzCreateEnvironment(f *testing.F) {
 		}
 
 		ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
-		service := NewEnvironmentService(environmentOperator)
+		service := handler.NewEnvironmentService(environmentOperator)
 
 		env, err := service.CreateEnvironment(ctx, targetStruct.projectID, &targetStruct.input)
 		if err != nil {
@@ -76,7 +104,7 @@ func FuzzTestDeleteEnvironment(f *testing.F) {
 		}
 
 		ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
-		service := NewEnvironmentService(environmentOperator)
+		service := handler.NewEnvironmentService(environmentOperator)
 
 		env, err := service.DeleteEnvironment(ctx, projectID, environmentID)
 		if err != nil {
@@ -112,7 +140,7 @@ func FuzzTestGetEnvironment(f *testing.F) {
 		}}
 		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
 		mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, nil).Once()
-		service := NewEnvironmentService(environmentOperator)
+		service := handler.NewEnvironmentService(environmentOperator)
 
 		env, err := service.GetEnvironment(projectID, environmentID)
 		if err != nil {
