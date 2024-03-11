@@ -2,13 +2,14 @@ package fuzz_tests
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
-	"testing"
-	"time"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
