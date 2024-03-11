@@ -30,7 +30,7 @@ func (r *mutationResolver) CreateChaosExperiment(ctx context.Context, request mo
 		return nil, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.CreateChaosExperiment(ctx, &request, projectID, data_store.Store)
+	uiResponse, err := r.chaosExperimentHandler.CreateChaosExperiment(ctx, &request, projectID)
 	if err != nil {
 		return nil, errors.New("could not create experiment, error: " + err.Error())
 	}
