@@ -1,8 +1,15 @@
-package handler
+package fuzz_tests
 
 import (
 	"context"
 	"testing"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/handler"
+	chaosExperimentMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/model/mocks"
+	chaosExperimentRunMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment_run/model/mocks"
+	chaosInfraMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
+	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
+	dbGitOpsMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops/model/mocks"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/golang-jwt/jwt"
@@ -20,6 +27,40 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+type MockServices struct {
+	ChaosExperimentService     *chaosExperimentMocks.ChaosExperimentService
+	ChaosExperimentRunService  *chaosExperimentRunMocks.ChaosExperimentRunService
+	InfrastructureService      *chaosInfraMocks.InfraService
+	GitOpsService              *dbGitOpsMocks.GitOpsService
+	ChaosExperimentOperator    *dbChaosExperiment.Operator
+	ChaosExperimentRunOperator *dbChaosExperimentRun.Operator
+	MongodbOperator            *dbMocks.MongoOperator
+	ChaosExperimentHandler     *handler.ChaosExperimentHandler
+}
+
+func NewMockServices() *MockServices {
+	var (
+		mongodbMockOperator        = new(dbMocks.MongoOperator)
+		infrastructureService      = new(chaosInfraMocks.InfraService)
+		chaosExperimentRunService  = new(chaosExperimentRunMocks.ChaosExperimentRunService)
+		gitOpsService              = new(dbGitOpsMocks.GitOpsService)
+		chaosExperimentOperator    = dbChaosExperiment.NewChaosExperimentOperator(mongodbMockOperator)
+		chaosExperimentRunOperator = dbChaosExperimentRun.NewChaosExperimentRunOperator(mongodbMockOperator)
+		chaosExperimentService     = new(chaosExperimentMocks.ChaosExperimentService)
+	)
+	var chaosExperimentHandler = handler.NewChaosExperimentHandler(chaosExperimentService, chaosExperimentRunService, infrastructureService, gitOpsService, chaosExperimentOperator, chaosExperimentRunOperator, mongodbMockOperator)
+	return &MockServices{
+		ChaosExperimentService:     chaosExperimentService,
+		ChaosExperimentRunService:  chaosExperimentRunService,
+		InfrastructureService:      infrastructureService,
+		GitOpsService:              gitOpsService,
+		ChaosExperimentOperator:    chaosExperimentOperator,
+		ChaosExperimentRunOperator: chaosExperimentRunOperator,
+		MongodbOperator:            mongodbMockOperator,
+		ChaosExperimentHandler:     chaosExperimentHandler,
+	}
+}
 
 func FuzzSaveChaosExperiment(f *testing.F) {
 
@@ -51,7 +92,7 @@ func FuzzSaveChaosExperiment(f *testing.F) {
 		}, &experimentType, nil).Once()
 
 		mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
-
+		mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 		store := store.NewStore()
 		res, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, targetStruct.request, targetStruct.projectID, store)
 		if err != nil {
