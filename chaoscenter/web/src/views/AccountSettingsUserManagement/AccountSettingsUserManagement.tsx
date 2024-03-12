@@ -106,7 +106,7 @@ function MemoizedUsersTable({ users, getUsersRefetch }: MemoizedUsersTableProps)
           return (
             data.createdAt && (
               <Text font={{ variation: FontVariation.BODY }} color={Color.GREY_600}>
-                {getFormattedTime(data.createdAt * 1000)}
+                {getFormattedTime(data.createdAt)}
               </Text>
             )
           );

@@ -1,4 +1,4 @@
-import type * as kubernetes from 'argo-ui/src/models/kubernetes';
+import type * as kubernetes from './k8s';
 
 // ChaosResult is the Schema for the chaosresults API
 export interface ChaosResult {
