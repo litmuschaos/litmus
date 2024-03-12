@@ -758,7 +758,7 @@ extend type Mutation {
   Updates the experiment
   """
   updateChaosExperiment(
-    request: ChaosExperimentRequest
+    request: ChaosExperimentRequest!
     projectID: ID!
   ): ChaosExperimentResponse!
 

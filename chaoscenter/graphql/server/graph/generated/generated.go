@@ -505,7 +505,7 @@ type ComplexityRoot struct {
 		SaveChaosHub              func(childComplexity int, projectID string, request model.CreateChaosHubRequest) int
 		StopExperimentRuns        func(childComplexity int, projectID string, experimentID string, experimentRunID *string, notifyID *string) int
 		SyncChaosHub              func(childComplexity int, id string, projectID string) int
-		UpdateChaosExperiment     func(childComplexity int, request *model.ChaosExperimentRequest, projectID string) int
+		UpdateChaosExperiment     func(childComplexity int, request model.ChaosExperimentRequest, projectID string) int
 		UpdateChaosHub            func(childComplexity int, projectID string, request model.UpdateChaosHubRequest) int
 		UpdateCronExperimentState func(childComplexity int, experimentID string, disable bool, projectID string) int
 		UpdateEnvironment         func(childComplexity int, projectID string, request *model.UpdateEnvironmentRequest) int
@@ -715,7 +715,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateChaosExperiment(ctx context.Context, request model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error)
 	SaveChaosExperiment(ctx context.Context, request model.SaveChaosExperimentRequest, projectID string) (string, error)
-	UpdateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error)
+	UpdateChaosExperiment(ctx context.Context, request model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error)
 	DeleteChaosExperiment(ctx context.Context, experimentID string, experimentRunID *string, projectID string) (bool, error)
 	UpdateCronExperimentState(ctx context.Context, experimentID string, disable bool, projectID string) (bool, error)
 	ChaosExperimentRun(ctx context.Context, request model.ExperimentRunRequest) (string, error)
@@ -3187,7 +3187,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateChaosExperiment(childComplexity, args["request"].(*model.ChaosExperimentRequest), args["projectID"].(string)), true
+		return e.complexity.Mutation.UpdateChaosExperiment(childComplexity, args["request"].(model.ChaosExperimentRequest), args["projectID"].(string)), true
 
 	case "Mutation.updateChaosHub":
 		if e.complexity.Mutation.UpdateChaosHub == nil {
@@ -5260,7 +5260,7 @@ extend type Mutation {
   Updates the experiment
   """
   updateChaosExperiment(
-    request: ChaosExperimentRequest
+    request: ChaosExperimentRequest!
     projectID: ID!
   ): ChaosExperimentResponse!
 
@@ -8802,10 +8802,10 @@ func (ec *executionContext) field_Mutation_syncChaosHub_args(ctx context.Context
 func (ec *executionContext) field_Mutation_updateChaosExperiment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.ChaosExperimentRequest
+	var arg0 model.ChaosExperimentRequest
 	if tmp, ok := rawArgs["request"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("request"))
-		arg0, err = ec.unmarshalOChaosExperimentRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐChaosExperimentRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNChaosExperimentRequest2githubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐChaosExperimentRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -23236,7 +23236,7 @@ func (ec *executionContext) _Mutation_updateChaosExperiment(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateChaosExperiment(rctx, fc.Args["request"].(*model.ChaosExperimentRequest), fc.Args["projectID"].(string))
+		return ec.resolvers.Mutation().UpdateChaosExperiment(rctx, fc.Args["request"].(model.ChaosExperimentRequest), fc.Args["projectID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45296,14 +45296,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
-}
-
-func (ec *executionContext) unmarshalOChaosExperimentRequest2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐChaosExperimentRequest(ctx context.Context, v interface{}) (*model.ChaosExperimentRequest, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputChaosExperimentRequest(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOChaosHubFilterInput2ᚖgithubᚗcomᚋlitmuschaosᚋlitmusᚋchaoscenterᚋgraphqlᚋserverᚋgraphᚋmodelᚐChaosHubFilterInput(ctx context.Context, v interface{}) (*model.ChaosHubFilterInput, error) {
