@@ -25,13 +25,13 @@ echo ${rootDir}
 ls
 
 for dir in "${GO_MOD_PATHS_MAPPING[@]}"; do
-    cd ${dir}
+    cd ${dir} && go mod download
     ls
-    go mod download
     go install github.com/AdamKorcz/go-118-fuzz-build@latest
     go get github.com/AdamKorcz/go-118-fuzz-build/testing
     cd ${rootDir}
     fuzz_files=($(find "$(pwd)/${dir}" -type f -name '*_fuzz_test.go'))
+    echo "Fuzz Files: ${fuzz_files}"
     for file in "${fuzz_files[@]}"; do
         pkg=$(grep -m 1 '^package' "$file" | awk '{print $2}')
         package_path=$(dirname "${file%$pkg}")
