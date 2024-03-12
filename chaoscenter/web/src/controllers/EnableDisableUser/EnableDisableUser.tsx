@@ -17,7 +17,7 @@ export default function EnableDisableUserController(props: EnableDisableUserCont
   const { getUsersRefetch } = props;
   const { showSuccess } = useToaster();
 
-  const { mutate: updateStateMutation, isLoading: updateStateMutationLoading} = useUpdateStateMutation(
+  const { mutate: updateStateMutation, isLoading: updateStateMutationLoading } = useUpdateStateMutation(
     {},
     {
       onSuccess: data => {
@@ -27,5 +27,11 @@ export default function EnableDisableUserController(props: EnableDisableUserCont
     }
   );
 
-  return <EnableDisableUserView {...props} updateStateMutation={updateStateMutation} updateStateMutationLoading={updateStateMutationLoading} />;
+  return (
+    <EnableDisableUserView
+      {...props}
+      updateStateMutation={updateStateMutation}
+      updateStateMutationLoading={updateStateMutationLoading}
+    />
+  );
 }
