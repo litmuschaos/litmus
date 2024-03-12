@@ -13,12 +13,12 @@ export default function ResetPasswordController(props: ResetPasswordControllerPr
   const { username, handleClose } = props;
   const { getString } = useStrings();
   const { showSuccess } = useToaster();
-  const { mutate: resetPasswordMutation } = useResetPasswordMutation(
+  const { mutate: resetPasswordMutation, isLoading: resetPasswordMutationLoading } = useResetPasswordMutation(
     {},
     { onSuccess: () => showSuccess(getString('passwordResetSuccess')) }
   );
 
   return (
-    <ResetPasswordView username={username} handleClose={handleClose} resetPasswordMutation={resetPasswordMutation} />
+    <ResetPasswordView username={username} handleClose={handleClose} resetPasswordMutation={resetPasswordMutation} resetPasswordMutationLoading={resetPasswordMutationLoading} />
   );
 }
