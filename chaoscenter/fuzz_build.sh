@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 ################################################################################
-export GO_MOD_PATHS_MAPPING=( "graphql/server" "authentication" "subscriber" )
+export GO_MOD_PATHS_MAPPING=( "chaoscenter/graphql/server" "chaoscenter/authentication" "chaoscenter/subscriber" )
 
 export rootDir=$(pwd)
 
