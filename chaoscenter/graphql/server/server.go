@@ -6,9 +6,12 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
 	handler2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 
+	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"runtime"
@@ -27,7 +30,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	log "github.com/sirupsen/logrus"
@@ -45,6 +48,28 @@ func init() {
 		log.Fatal(err)
 	}
 
+}
+
+func validateVersion() error {
+	currentVersion := utils.Config.Version
+	dbVersion, err := config.GetConfig(context.Background(), "version")
+	if err != nil {
+		return fmt.Errorf("failed to get version from db, error = %w", err)
+	}
+	if dbVersion == nil {
+		err := config.CreateConfig(
+			context.Background(),
+			&config.ServerConfig{Key: "version", Value: currentVersion},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to insert current version in db, error = %w", err)
+		}
+		return nil
+	}
+	if dbVersion.Value.(string) != currentVersion {
+		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
+	}
+	return nil
 }
 
 func setupGin() *gin.Engine {
@@ -74,6 +99,9 @@ func main() {
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
 	mongodb.Operator = mongodbOperator
 
+	if err := validateVersion(); err != nil {
+		log.Fatal(err)
+	}
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))

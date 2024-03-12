@@ -5,6 +5,7 @@ import type { RefetchProbes } from '@controllers/ChaosProbes';
 import AddProbeModalWizardView from '@views/AddProbeModalWizard';
 import type { InfrastructureType } from '@api/entities';
 import { getScope } from '@utils';
+import Loader from '@components/Loader';
 
 interface UpdateHubModalWizardControllerProps extends RefetchProbes {
   hideDarkModal: () => void;
@@ -29,7 +30,7 @@ export default function UpdateProbeModalWizardController({
   const [updateProbeMutation, { loading: updateProbeLoading, error }] = updateProbe({
     onCompleted: data => {
       showSuccess(data.updateProbe);
-      refetchProbes();
+      refetchProbes?.();
     },
     onError: err => showError(err.message)
   });
@@ -45,15 +46,17 @@ export default function UpdateProbeModalWizardController({
   const loading = updateProbeLoading || getProbeLoading;
 
   return (
-    <AddProbeModalWizardView
-      mutation={{ updateProbeMutation }}
-      probeData={probeData?.getProbe}
-      loading={loading}
-      validateName={validateUniqueProbeQuery}
-      error={error}
-      isEdit={true}
-      infrastructureType={infrastructureType}
-      hideDarkModal={hideDarkModal}
-    />
+    <Loader loading={loading}>
+      <AddProbeModalWizardView
+        mutation={{ updateProbeMutation }}
+        probeData={probeData?.getProbe}
+        loading={loading}
+        validateName={validateUniqueProbeQuery}
+        error={error}
+        isEdit={true}
+        infrastructureType={infrastructureType}
+        hideDarkModal={hideDarkModal}
+      />
+    </Loader>
   );
 }

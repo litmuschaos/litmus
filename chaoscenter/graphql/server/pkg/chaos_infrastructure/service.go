@@ -664,6 +664,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 
 		newInfra := model.Infra{
 			InfraID:          infra.InfraID,
+			ProjectID:        infra.ProjectID,
 			Name:             infra.Name,
 			EnvironmentID:    infra.EnvironmentID,
 			Description:      &description,
@@ -1047,7 +1048,7 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 		return nil, err
 	}
 	if !(infra.AccessKey == identity.AccessKey && infra.IsRegistered) {
-		return nil, fmt.Errorf("ERROR:  infra_ID MISMATCH")
+		return nil, fmt.Errorf("ERROR:  accessID MISMATCH")
 	}
 	return &infra, nil
 }

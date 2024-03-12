@@ -102,12 +102,15 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 		Tags:                  request.Tags,
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(&chaosWfReq, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &chaosWfReq, projectID, revID)
 	if err != nil {
 		return "", err
 	}
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
@@ -152,7 +155,7 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 		return nil, err
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +177,6 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 }
 
 func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, projectID string, workflowID string, workflowRunID *string, r *store.StateData) (bool, error) {
-
 	query := bson.D{
 		{"experiment_id", workflowID},
 		{"project_id", projectID},
@@ -229,7 +231,7 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 	return true, nil
 }
 
-func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string, r *store.StateData) (*model.ChaosExperimentResponse, error) {
+func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, request model.ChaosExperimentRequest, projectID string, r *store.StateData) (*model.ChaosExperimentResponse, error) {
 	var (
 		revID = uuid.New().String()
 	)
@@ -240,7 +242,7 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 		return nil, err
 	}
 
-	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(request, projectID, revID)
+	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, &request, projectID, revID)
 	if err != nil {
 		return nil, err
 	}
@@ -968,6 +970,9 @@ func (c *ChaosExperimentHandler) getWfRunDetails(workflowIDs []string) (map[stri
 }
 
 func (c *ChaosExperimentHandler) DisableCronExperiment(username string, experiment dbChaosExperiment.ChaosExperimentRequest, projectID string, r *store.StateData) error {
+	if len(experiment.Revision) < 1 {
+		return fmt.Errorf("revision array is empty")
+	}
 	workflowManifest, err := sjson.Set(experiment.Revision[len(experiment.Revision)-1].ExperimentManifest, "spec.suspend", true)
 	if err != nil {
 		return err

@@ -62,7 +62,7 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
           }}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
-            name: Yup.string().required(getString('nameIsARequiredField')),
+            name: Yup.string(),
             email: Yup.string().email(getString('invalidEmailText')).required(getString('emailIsRequired')),
             username: Yup.string().required(getString('usernameIsRequired')),
             password: Yup.string().required(getString('passwordIsRequired')),
@@ -111,9 +111,10 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
+                      text={createNewUserMutationLoading ? <Icon name="loading" size={16} /> : getString('confirm')}
                       loading={createNewUserMutationLoading || formikProps.isSubmitting}
-                      disabled={Object.keys(formikProps.errors).length > 0}
+                      disabled={createNewUserMutationLoading || Object.keys(formikProps.errors).length > 0}
+                      style={{ minWidth: '90px' }}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}
