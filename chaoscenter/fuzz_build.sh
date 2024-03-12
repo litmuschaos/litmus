@@ -17,21 +17,16 @@
 export GO_MOD_PATHS_MAPPING=( "graphql/server" "authentication" "subscriber" )
 
 cd chaoscenter
-
 export rootDir=$(pwd)
-
-echo ${rootDir}
 
 for dir in "${GO_MOD_PATHS_MAPPING[@]}"; do
     cd ${dir} && go mod download
-    ls
     go install github.com/AdamKorcz/go-118-fuzz-build@latest
     go get github.com/AdamKorcz/go-118-fuzz-build/testing
     fuzz_files=($(find "$(pwd)" -type f -name '*_fuzz_test.go'))
     for file in "${fuzz_files[@]}"; do
         pkg=$(grep -m 1 '^package' "$file" | awk '{print $2}')
         package_path=$(dirname "${file%$pkg}")
-        echo ${package_path}
         functionList=($(grep -o 'func Fuzz[A-Za-z0-9_]*' ${file} | awk '{print $2}'))
         for i in "${functionList[@]}"
         do
