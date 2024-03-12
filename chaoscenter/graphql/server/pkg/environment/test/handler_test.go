@@ -6,11 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -18,6 +13,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,9 +24,9 @@ var (
 	environmentOperator = dbOperationsEnvironment.NewEnvironmentOperator(mongodbMockOperator)
 )
 
-const JwtSecret = "testsecret"
+var JwtSecret = "testsecret"
 
-func getSignedJWT(name string) (string, error) {
+func GetSignedJWT(name string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = uuid.NewString()
@@ -69,7 +65,7 @@ func TestCreateEnvironment(t *testing.T) {
 			expectedEnv: nil,
 			expectedErr: errors.New("invalid Token"),
 			given: func() string {
-				token, err := getSignedJWT("testUser")
+				token, err := GetSignedJWT("testUser")
 				if err != nil {
 					return token
 				}
@@ -144,7 +140,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			},
 			expectedErr: errors.New("invalid Token"),
 			given: func() string {
-				token, err := getSignedJWT("testUser")
+				token, err := GetSignedJWT("testUser")
 				if err != nil {
 					return token
 				}
@@ -188,40 +184,4 @@ func TestDeleteEnvironment(t *testing.T) {
 			}
 		})
 	}
-}
-
-func FuzzTestGetEnvironment(f *testing.F) {
-	utils.Config.JwtSecret = JwtSecret
-	testCases := []struct {
-		projectID     string
-		environmentID string
-	}{
-		{
-			projectID:     "testProject",
-			environmentID: "testEnvID",
-		},
-	}
-	for _, tc := range testCases {
-		f.Add(tc.projectID, tc.environmentID)
-	}
-
-	f.Fuzz(func(t *testing.T, projectID string, environmentID string) {
-
-		findResult := []interface{}{bson.D{
-			{Key: "environment_id", Value: environmentID},
-			{Key: "project_id", Value: projectID},
-		}}
-		singleResult := mongo.NewSingleResultFromDocument(findResult[0], nil, nil)
-		mongodbMockOperator.On("Get", mock.Anything, mongodb.EnvironmentCollection, mock.Anything).Return(singleResult, nil).Once()
-		service := handler.NewEnvironmentService(environmentOperator)
-
-		env, err := service.GetEnvironment(projectID, environmentID)
-		if err != nil {
-			t.Errorf("Unexpected error: %v", err)
-		}
-
-		if env == nil {
-			t.Errorf("Returned environment is nil")
-		}
-	})
 }

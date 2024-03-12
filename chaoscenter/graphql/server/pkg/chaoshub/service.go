@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"path"
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
@@ -16,13 +18,9 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"go.mongodb.org/mongo-driver/mongo"
-
-	"github.com/google/uuid"
-	"github.com/jinzhu/copier"
-
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -480,22 +478,22 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 	}
 
 	//Get fault chartserviceversion.yaml data
-	csvPath := basePath + "/" + request.ExperimentName + ".chartserviceversion.yaml"
-	csvYaml, err := ioutil.ReadFile(csvPath)
+	csvPath := path.Clean(basePath + "/" + request.ExperimentName + ".chartserviceversion.yaml")
+	csvYaml, err := os.ReadFile(csvPath)
 	if err != nil {
 		csvYaml = []byte("")
 	}
 
 	//Get engine.yaml data
-	enginePath := basePath + "/" + "engine.yaml"
-	engineYaml, err := ioutil.ReadFile(enginePath)
+	enginePath := path.Clean(basePath + "/" + "engine.yaml")
+	engineYaml, err := os.ReadFile(enginePath)
 	if err != nil {
 		engineYaml = []byte("")
 	}
 
 	//Get fault.yaml data
-	faultPath := basePath + "/" + "fault.yaml"
-	faultYaml, err := ioutil.ReadFile(faultPath)
+	faultPath := path.Clean(basePath + "/" + "fault.yaml")
+	faultYaml, err := os.ReadFile(faultPath)
 	if err != nil {
 		faultYaml = []byte("")
 	}
@@ -729,8 +727,9 @@ func (c *chaosHubService) ListPredefinedExperiments(ctx context.Context, hubID s
 	} else {
 		hubPath = DefaultPath + projectID + "/" + hub.Name + "/experiments/"
 	}
+	hubPath = path.Clean(hubPath)
 	var predefinedWorkflows []*model.PredefinedExperimentList
-	files, err := ioutil.ReadDir(hubPath)
+	files, err := os.ReadDir(hubPath)
 	if err != nil {
 		return nil, err
 	}
@@ -803,24 +802,24 @@ func (c *chaosHubService) getPredefinedExperimentDetails(experimentsPath string,
 	var (
 		csvManifest        = ""
 		workflowManifest   = ""
-		path               = experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml"
+		predefinedPath     = experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml"
 		isExist            = true
 		preDefinedWorkflow = &model.PredefinedExperimentList{}
 	)
-	_, err := os.Stat(path)
+	_, err := os.Stat(predefinedPath)
 	if err != nil {
 		isExist = false
 	}
 
 	if isExist {
-		yamlData, err := ioutil.ReadFile(experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml")
+		yamlData, err := os.ReadFile(path.Clean(experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml"))
 		if err != nil {
 			csvManifest = ""
 		}
 
 		csvManifest = string(yamlData)
 
-		yamlData, err = ioutil.ReadFile(experimentsPath + experiment + "/" + "experiment.yaml")
+		yamlData, err = os.ReadFile(path.Clean(experimentsPath + experiment + "/" + "experiment.yaml"))
 		if err != nil {
 			workflowManifest = ""
 		}

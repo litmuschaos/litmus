@@ -1,6 +1,6 @@
 /* eslint-disable */
 // These models come from argo, hence disabling eslint
-import type * as kubernetes from 'argo-ui/src/models/kubernetes';
+import type * as kubernetes from './k8s';
 
 export const labels = {
   clusterWorkflowTemplate: 'workflows.argoproj.io/cluster-workflow-template',
