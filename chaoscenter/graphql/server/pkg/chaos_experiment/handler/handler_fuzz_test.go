@@ -131,7 +131,7 @@ func FuzzUpdateChaosExperiment(f *testing.F) {
 			ExperimentType: &model.AllExperimentType[0],
 		}, &experimentType, nil).Once()
 		mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-
+		mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 		store := store.NewStore()
 		res, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, targetStruct.experiment, targetStruct.projectID, store)
 		if err != nil {

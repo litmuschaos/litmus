@@ -111,6 +111,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	if err != nil {
 		return "", err
 	}
+
 	// Updating the existing experiment
 	if wfDetails.ExperimentID == request.ID {
 		logrus.WithFields(logFields).Info("request received to update k8s chaos experiment")
@@ -121,6 +122,13 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 			}
 		}
 
+		// Gitops Update
+		err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
+		if err != nil {
+			logrus.WithFields(logFields).Errorf("failed to push the experiment manifest to Git., err: %v", err)
+			return "", err
+		}
+
 		err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, username, wfType, revID, false, projectID, nil)
 		if err != nil {
 			return "", err
@@ -128,7 +136,6 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 
 		return "experiment updated successfully", nil
 	}
-
 	err = c.validateDuplicateExperimentName(ctx, projectID, request.Name)
 	if err != nil {
 		return "", err
@@ -136,6 +143,13 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 
 	// Saving chaos experiment in the DB
 	logrus.WithFields(logFields).Info("request received to save k8s chaos experiment")
+
+	// Gitops Update
+	err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
+	if err != nil {
+		logrus.WithFields(logFields).Errorf("failed to push the experiment manifest to Git, err: %v", err)
+		return "", err
+	}
 
 	err = c.chaosExperimentService.ProcessExperimentCreation(ctx, newRequest, username, projectID, wfType, revID, nil)
 	if err != nil {
@@ -156,6 +170,12 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 	}
 
 	newRequest, wfType, err := c.chaosExperimentService.ProcessExperiment(ctx, request, projectID, revID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Gitops Update
+	err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -222,6 +242,17 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 
 		workflowRun.IsRemoved = true
 
+		wf := model.ChaosExperimentRequest{
+			ExperimentID:   &workflow.ExperimentID,
+			ExperimentName: workflow.Name,
+		}
+
+		err = c.gitOpsService.DeleteExperimentFromGit(ctx, projectID, &wf)
+		if err != nil {
+			logrus.Errorf("Failed to delete experiment manifest from git, err: %v", err)
+			return false, err
+		}
+
 		err = c.chaosExperimentRunService.ProcessExperimentRunDelete(ctx, query, workflowRunID, workflowRun, workflow, uid, r)
 		if err != nil {
 			return false, err
@@ -248,6 +279,13 @@ func (c *ChaosExperimentHandler) UpdateChaosExperiment(ctx context.Context, requ
 	}
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	uid, err := authorization.GetUsername(tkn)
+
+	err = c.gitOpsService.UpsertExperimentToGit(ctx, projectID, newRequest)
+	if err != nil {
+		logrus.Errorf("failed to push experiment manifest to git, err: %v", err)
+		return nil, err
+	}
+
 	err = c.chaosExperimentService.ProcessExperimentUpdate(newRequest, uid, wfType, revID, false, projectID, r)
 	if err != nil {
 		return nil, err
