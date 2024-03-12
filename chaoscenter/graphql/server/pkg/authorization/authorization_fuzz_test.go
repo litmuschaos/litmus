@@ -1,4 +1,4 @@
-package tests
+package authorization
 
 import (
 	"fmt"
@@ -7,7 +7,6 @@ import (
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/golang-jwt/jwt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
@@ -47,7 +46,7 @@ func FuzzGetUsername(f *testing.F) {
 		// Create a fake JWT token with predefined claims
 
 		//  Invalid token format check
-		_, err := authorization.GetUsername(input)
+		_, err := GetUsername(input)
 		if err == nil {
 			t.Error("Expected error for invalid token format")
 		}
@@ -56,7 +55,7 @@ func FuzzGetUsername(f *testing.F) {
 		token := generateFakeJWTToken(input)
 
 		// Run the test with the fake JWT token
-		username, err := authorization.GetUsername(token)
+		username, err := GetUsername(token)
 		if err != nil {
 			t.Errorf("Error encountered: %v", err)
 		}
@@ -69,14 +68,14 @@ func FuzzGetUsername(f *testing.F) {
 		// Additional checks
 		//  Expiration check
 		expiredToken := generateExpiredFakeJWTToken(input)
-		_, err = authorization.GetUsername(expiredToken)
+		_, err = GetUsername(expiredToken)
 		if err == nil {
 			t.Error("Expected error for expired token")
 		}
 
 		//  Token signature check (invalid secret key)
 		invalidSignatureToken := generateFakeJWTTokenWithInvalidSignature(input)
-		_, err = authorization.GetUsername(invalidSignatureToken)
+		_, err = GetUsername(invalidSignatureToken)
 		if err == nil {
 			t.Error("Expected error for token with invalid signature")
 		}
@@ -116,7 +115,7 @@ func FuzzUserValidateJWT(f *testing.F) {
 		}
 
 		// Run the test with the generated JWT token
-		claims, err := authorization.UserValidateJWT(tokenString)
+		claims, err := UserValidateJWT(tokenString)
 		if err != nil {
 			t.Errorf("Error encountered: %v", err)
 		}
