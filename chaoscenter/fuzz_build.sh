@@ -14,12 +14,10 @@
 # limitations under the License.
 #
 ################################################################################
-export GO_MOD_PATHS_MAPPING=( "chaoscenter/graphql/server" "chaoscenter/authentication" "chaoscenter/subscriber" )
-
-export rootDir=$(pwd)
+export GO_MOD_PATHS_MAPPING=( "graphql/server" "authentication" "subscriber" )
 
 for dir in "${GO_MOD_PATHS_MAPPING[@]}"; do
-    cd ${dir} && go mod download && go install github.com/AdamKorcz/go-118-fuzz-build@latest && go get github.com/AdamKorcz/go-118-fuzz-build/testing && cd ${rootDir}
+    cd ${SRC}/litmus/chaoscenter/${dir} && go mod download && go install github.com/AdamKorcz/go-118-fuzz-build@latest && go get github.com/AdamKorcz/go-118-fuzz-build/testing && cd ${SRC}/litmus/chaoscenter/
     fuzz_files=($(find "$(pwd)/${dir}" -type f -name '*_fuzz_test.go'))
     for file in "${fuzz_files[@]}"; do
         pkg=$(grep -m 1 '^package' "$file" | awk '{print $2}')
