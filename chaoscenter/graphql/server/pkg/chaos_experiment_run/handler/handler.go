@@ -777,7 +777,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 
 	executionData := types.ExecutionData{
 		Name:         workflowManifest.Name,
-		Phase:        "Queued",
+		Phase:        string(model.ExperimentRunStatusQueued),
 		ExperimentID: workflow.ExperimentID,
 	}
 
@@ -856,7 +856,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		err = c.chaosExperimentRunOperator.CreateExperimentRun(sessionContext, dbChaosExperimentRun.ChaosExperimentRun{
 			InfraID:      workflow.InfraID,
 			ExperimentID: workflow.ExperimentID,
-			Phase:        "Queued",
+			Phase:        string(model.ExperimentRunStatusQueued),
 			RevisionID:   workflow.Revision[0].RevisionID,
 			ProjectID:    projectID,
 			Audit: mongodb.Audit{
@@ -1042,27 +1042,27 @@ func (c *ChaosExperimentRunHandler) GetExperimentRunStats(ctx context.Context, p
 		return nil, err
 	}
 
-	resMap := map[string]int{
-		"Completed":  0,
-		"Stopped":    0,
-		"Running":    0,
-		"Terminated": 0,
-		"Error":      0,
+	resMap := map[model.ExperimentRunStatus]int{
+		model.ExperimentRunStatusCompleted:  0,
+		model.ExperimentRunStatusStopped:    0,
+		model.ExperimentRunStatusRunning:    0,
+		model.ExperimentRunStatusTerminated: 0,
+		model.ExperimentRunStatusError:      0,
 	}
 
 	totalExperimentRuns := 0
 	for _, phase := range res {
-		resMap[phase.Id] = phase.Count
+		resMap[model.ExperimentRunStatus(phase.Id)] = phase.Count
 		totalExperimentRuns = totalExperimentRuns + phase.Count
 	}
 
 	return &model.GetExperimentRunStatsResponse{
 		TotalExperimentRuns:           totalExperimentRuns,
-		TotalCompletedExperimentRuns:  resMap["Completed"],
-		TotalTerminatedExperimentRuns: resMap["Terminated"],
-		TotalRunningExperimentRuns:    resMap["Running"],
-		TotalStoppedExperimentRuns:    resMap["Stopped"],
-		TotalErroredExperimentRuns:    resMap["Error"],
+		TotalCompletedExperimentRuns:  resMap[model.ExperimentRunStatusCompleted],
+		TotalTerminatedExperimentRuns: resMap[model.ExperimentRunStatusTerminated],
+		TotalRunningExperimentRuns:    resMap[model.ExperimentRunStatusRunning],
+		TotalStoppedExperimentRuns:    resMap[model.ExperimentRunStatusStopped],
+		TotalErroredExperimentRuns:    resMap[model.ExperimentRunStatusError],
 	}, nil
 }
 
