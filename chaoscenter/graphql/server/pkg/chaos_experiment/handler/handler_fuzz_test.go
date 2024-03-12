@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"testing"
+
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -17,7 +19,6 @@ import (
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"testing"
 )
 
 func FuzzSaveChaosExperiment(f *testing.F) {
