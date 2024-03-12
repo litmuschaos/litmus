@@ -25,7 +25,7 @@ echo ${rootDir}
 ls
 
 for dir in "${GO_MOD_PATHS_MAPPING[@]}"; do
-    cd chaoscenter/${dir}
+    cd ${dir}
     ls
     go mod download
     go install github.com/AdamKorcz/go-118-fuzz-build@latest
