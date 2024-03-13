@@ -121,7 +121,7 @@ func init() {
 			infraData["ACCESS_KEY"] = infraConfirmInterface.Data.InfraConfirm.NewAccessKey
 			infraData["IS_INFRA_CONFIRMED"] = "true"
 
-			_, err = subscriberK8s.AgentRegister(infraData)
+			_, err = subscriberK8s.AgentRegister(infraData["ACCESS_KEY"])
 			if err != nil {
 				logrus.Fatal(err)
 			}

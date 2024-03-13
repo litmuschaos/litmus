@@ -8,9 +8,9 @@ Thanks for your interest in contributing to Litmus and help improve the project!
 
 ## Where to Begin!
 
-If you have any queries or requests about Litmus please [create an issue](https://github.com/litmuschaos/litmus/issues/new) on GitHub. If you want to comment or ask questions to the contributors start by [joining our community](http://slack.litmuschaos.io) and drop your questions in the #litmus channel.
+If you have any queries or requests about Litmus please [create an issue](https://github.com/litmuschaos/litmus/issues/new) on GitHub. If you want to comment or ask questions to the contributors start by [joining our community](http://slack.litmuschaos.io) and drop your questions in the **#litmus** channel.
 
-If you want to do code contributions but you are fairly new to the tech stack we are using! Check out the [Development Guide](https://github.com/litmuschaos/litmus/wiki/Litmus-Portal-Development-Guide) to get a reference and help get started.
+If you want to do code contributions but you are fairly new to the tech stack we are using! Check out the [Local Development Guide](https://github.com/litmuschaos/litmus/wiki/ChaosCenter-Development-Guide) and [Development Best Practices](https://github.com/litmuschaos/litmus/wiki/Development-Best-Practices) to get a reference and help get started.
 
 We welcome contributions of all kinds
 
@@ -59,12 +59,21 @@ To submit any kinds of improvements, please consider the following:
   - If you are making a change to the user interface (UI), include a screenshot of the UI changes.
 - Follow the relevant coding style guidelines
   - For backend contributions, popular ones are the [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/CodeReviewComments) and the _Formatting_ and _style_ section of Peter Bourgon's [Go: Best Practices for Production Environments](https://peter.bourgon.org/go-in-production/#formatting-and-style).
+  - If you are making any changes in backend, make sure you have run and tested the code locally, the reviewers might ask for relevant screenshots in the comments.
   - For frontend contributions, we follow the [Airbnb style guide](https://airbnb.io/javascript/react/)
 - Your branch may be merged once all configured checks pass, including:
   - The branch has passed tests in CI.
   - A review from appropriate maintainers (see [MAINTAINERS.md](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS) and [GOVERNANCE.md](https://github.com/litmuschaos/litmus/blob/master/GOVERNANCE.md))
 
 If you are new to Go, consider reading [Effective Go](https://golang.org/doc/effective_go.html) and [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments) for guidance on writing idiomatic Go code.
+
+### Generating/Updating Mocks for `chaoscenter/graphql/server`
+
+To generate new mocks or update existing mocks:
+
+-   Follow the instructions to install [mockery](https://vektra.github.io/mockery/latest/installation/).
+-   If generating mocks for existing interface simply run `mockery`.
+-   If generating mocks for new interface update [`.mockery.yaml`](././chaoscenter/graphql/server/.mockery.yaml) and run `mockery`.
 
 ---
 
@@ -87,7 +96,10 @@ You can choose from a list of sub-dependent repos to contribute to, a few highli
 - [Chaos-workflows](https://github.com/litmuschaos/chaos-workflows)
 - [Test-tools](https://github.com/litmuschaos/test-tools)
 - [Litmus-go](https://github.com/litmuschaos/litmus-go)
-- [website-litmuschaos](https://github.com/litmuschaos/website-litmuschaos)
+- [Litmus-website](https://github.com/litmuschaos/litmus-website-2)
+- [Litmusctl](https://github.com/litmuschaos/litmusctl)
+- [Litmus-docs](https://github.com/litmuschaos/litmus-docs)
+- [backstage-plugin](https://github.com/litmuschaos/backstage-plugin)
 
 ## Community
 

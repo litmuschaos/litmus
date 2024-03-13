@@ -2,7 +2,7 @@ package chaoshubops_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 	"time"
@@ -25,7 +25,7 @@ var (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	os.Exit(m.Run())
 }
 
@@ -49,7 +49,7 @@ func TestGetClonePath(t *testing.T) {
 	// when
 	path := chaosHubOps.GetClonePath(chaosHubConfig)
 	// then
-	assert.Equal(t, "/tmp/version/"+projectID+"/test", path)
+	assert.Equal(t, "/tmp/"+projectID+"/test", path)
 }
 
 // TestGitConfigConstruct is used to test the GitConfigConstruct function

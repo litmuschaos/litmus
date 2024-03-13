@@ -123,8 +123,8 @@ nav:
       - Cloud Infrastructure:
         - AWS: 
             - EC2:
-              - EC2 Terminate By ID: experiments/categories/aws/ec2-terminate-by-id.md
-              - EC2 Terminate By Tag: experiments/categories/aws/ec2-terminate-by-tag.md
+              - EC2 Stop By ID: experiments/categories/aws/ec2-stop-by-id.md
+              - EC2 Stop By Tag: experiments/categories/aws/ec2-stop-by-tag.md
             - EBS:
               - EBS Loss By ID: experiments/categories/aws/ebs-loss-by-id.md
               - EBS Loss By Tag: experiments/categories/aws/ebs-loss-by-tag.md

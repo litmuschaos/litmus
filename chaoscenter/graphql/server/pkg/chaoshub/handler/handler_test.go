@@ -1,18 +1,16 @@
 package handler_test
 
 import (
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
-	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +18,7 @@ import (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	os.Exit(m.Run())
 }
 
@@ -285,6 +283,7 @@ func TestGetChartsData(t *testing.T) {
 				RepoURL:    "https://github.com/litmuschaos/chaos-charts",
 				RepoBranch: "master",
 				IsPrivate:  false,
+				IsDefault:  false,
 			},
 			isError: false,
 		},
@@ -296,6 +295,7 @@ func TestGetChartsData(t *testing.T) {
 				RepoURL:    "invalid url",
 				RepoBranch: "master",
 				IsPrivate:  false,
+				IsDefault:  true,
 			},
 			isError: true,
 		},
@@ -304,7 +304,7 @@ func TestGetChartsData(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.isError {
 				// when
-				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID, false)
+				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID, tc.repoData.IsDefault)
 				_, err := handler.GetChartsData(chartsPath)
 				// then
 				assert.Error(t, err)
@@ -314,7 +314,7 @@ func TestGetChartsData(t *testing.T) {
 
 				err := chaosHubOps.GitClone(tc.repoData, tc.projectID)
 				assert.NoError(t, err)
-				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID, true)
+				chartsPath := handler.GetChartsPath(tc.repoData, tc.projectID, tc.repoData.IsDefault)
 				// when
 				_, err = handler.GetChartsData(chartsPath)
 				// then
@@ -386,11 +386,13 @@ func TestListPredefinedWorkflowDetails(t *testing.T) {
 		hubName   string
 		isError   bool
 	}{
-		{
-			name:      "success: list predefined workflows",
-			projectID: succeedProjectID,
-			hubName:   succeedName,
-		},
+		// Workflows were removed in v3.0.0
+		// TODO: Cleanup ListPredefinedWorkflowDetails if not needed
+		// {
+		// 	name:      "success: list predefined workflows",
+		// 	projectID: succeedProjectID,
+		// 	hubName:   succeedName,
+		// },
 		{
 			name:      "failure: Not defined workflows",
 			projectID: uuid.New().String(),
