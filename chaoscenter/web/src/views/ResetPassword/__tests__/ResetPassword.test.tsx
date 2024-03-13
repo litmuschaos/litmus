@@ -24,6 +24,7 @@ describe('ResetPasswordView Component', () => {
         <ResetPasswordView
           handleClose={mockClose}
           resetPasswordMutation={mockRestPasswordMutation}
+          resetPasswordMutationLoading={false}
           username="testUser"
         />
       </TestWrapper>
@@ -42,6 +43,7 @@ describe('ResetPasswordView Component', () => {
         resetPasswordMutation={() => {
           /* noop */
         }}
+        resetPasswordMutationLoading={false}
         username="testUser"
       />
     );
@@ -56,6 +58,7 @@ describe('ResetPasswordView Component', () => {
         <ResetPasswordView
           handleClose={mockClose}
           resetPasswordMutation={mockRestPasswordMutation}
+          resetPasswordMutationLoading={false}
           username="testUser"
         />
       </TestWrapper>
@@ -77,6 +80,7 @@ describe('ResetPasswordView Component', () => {
         <ResetPasswordView
           handleClose={mockClose}
           resetPasswordMutation={mockRestPasswordMutation}
+          resetPasswordMutationLoading={false}
           username="testUser"
         />
       </TestWrapper>
