@@ -117,6 +117,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
 			wantErr: false,
 		},
@@ -195,6 +196,8 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, request2, mock.Anything, mock.Anything).Return(request2, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", request2, mock.Anything, mock.Anything, mock.Anything, false, mock.Anything, mock.Anything).Return(nil).Once()
+
+				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request2).Return(nil).Once()
 			},
 		},
 	}
@@ -272,6 +275,7 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 
 				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.GitOpsService.On("DeleteExperimentFromGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: false,
 		},
@@ -321,6 +325,7 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything).Return(singleResult, nil).Once()
 				mockServices.MongodbOperator.On("Get", mock.Anything, mongodb.ChaosExperimentRunsCollection, mock.Anything).Return(singleResult, nil).Once()
 				mockServices.ChaosExperimentRunService.On("ProcessExperimentRunDelete", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("")).Once()
+				mockServices.GitOpsService.On("DeleteExperimentFromGit", ctx, mock.Anything, mock.Anything).Return(nil).Once()
 			},
 			wantErr: true,
 		},
@@ -374,6 +379,8 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request).Return(nil).Once()
+
 			},
 			wantErr: false,
 		},
@@ -412,6 +419,8 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(errors.New("experiment update failed")).Once()
+
+				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request).Return(nil).Once()
 			},
 			wantErr: true,
 		},
