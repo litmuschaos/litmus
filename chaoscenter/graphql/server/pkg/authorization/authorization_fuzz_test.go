@@ -1,6 +1,7 @@
 package authorization
 
 import (
+	"encoding/base64"
 	"fmt"
 	"testing"
 	"time"
@@ -52,7 +53,7 @@ func FuzzGetUsername(f *testing.F) {
 		}
 
 		// Generating fake jwt token for testing
-		token := generateFakeJWTToken(input)
+		token := generateFakeJWTToken(base64.StdEncoding.EncodeToString([]byte(input)))
 
 		// Run the test with the fake JWT token
 		username, err := GetUsername(token)
@@ -60,8 +61,14 @@ func FuzzGetUsername(f *testing.F) {
 			t.Errorf("Error encountered: %v", err)
 		}
 
+		// Decode the username back from base64
+		decodedUsername, err := base64.StdEncoding.DecodeString(username)
+		if err != nil {
+			t.Errorf("Error decoding username: %v", err)
+		}
+
 		// Check if the decoded username matches the input string
-		if username != input {
+		if string(decodedUsername) != input {
 			t.Errorf("Expected username: %s, got: %s", input, username)
 		}
 

@@ -1,11 +1,10 @@
-package tests
+package utils
 
 import (
 	"strings"
 	"testing"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 func isValidString(s string) bool {
@@ -25,7 +24,7 @@ func isValidString(s string) bool {
 func FuzzRandomString(f *testing.F) {
 	f.Add(10)
 	f.Fuzz(func(t *testing.T, n int) {
-		randomString := utils.RandomString(n)
+		randomString := RandomString(n)
 		// Perform checks on the generated string
 		// Check if the length matches the expected length
 		if n >= 0 && len(randomString) != n {
@@ -53,7 +52,7 @@ func FuzzContainsString(f *testing.F) {
 		}
 		// Perform checks on the ContainsString function
 		// Check if ContainsString returns true when the target string is in the array
-		if utils.ContainsString(targetStruct.s, targetStruct.str) {
+		if ContainsString(targetStruct.s, targetStruct.str) {
 			found := false
 			for _, v := range targetStruct.s {
 				if v == targetStruct.str {
