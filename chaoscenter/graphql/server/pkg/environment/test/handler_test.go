@@ -1,4 +1,4 @@
-package handler
+package test
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -96,7 +97,7 @@ func TestCreateEnvironment(t *testing.T) {
 			token := tc.given()
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 			mockOperator := environmentOperator
-			service := NewEnvironmentService(mockOperator)
+			service := handler.NewEnvironmentService(mockOperator)
 
 			env, err := service.CreateEnvironment(ctx, tc.projectID, tc.input)
 			if (err != nil && tc.expectedErr == nil) ||
@@ -173,7 +174,7 @@ func TestDeleteEnvironment(t *testing.T) {
 			ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 
 			mockOperator := environmentOperator
-			service := NewEnvironmentService(mockOperator)
+			service := handler.NewEnvironmentService(mockOperator)
 
 			_, err := service.DeleteEnvironment(ctx, tc.projectID, tc.environmentID)
 			if (err != nil && tc.expectedErr == nil) ||
