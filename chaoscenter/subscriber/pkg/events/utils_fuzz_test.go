@@ -1,7 +1,6 @@
 package events
 
 import (
-	"fmt"
 	"subscriber/pkg/graphql"
 	"subscriber/pkg/k8s"
 	"subscriber/pkg/types"
@@ -34,7 +33,6 @@ func FuzzGenerateWorkflowPayload(f *testing.F) {
 
 		event, err := subscriberEvents.GenerateWorkflowPayload(targetStruct.cid, targetStruct.accessKey, targetStruct.version, targetStruct.completed, targetStruct.wfEvent)
 		if err != nil {
-			fmt.Println(event)
 			t.Errorf("Unexpected error: %v", err)
 		}
 		if event == nil {
@@ -79,7 +77,6 @@ func FuzzGetExperimentStatus(f *testing.F) {
 			return
 		}
 
-		fmt.Println(targetStruct.wfEvent)
 		// Call the getExperimentStatus function
 		_, err = getExperimentStatus(targetStruct.wfEvent)
 		if err != nil {
