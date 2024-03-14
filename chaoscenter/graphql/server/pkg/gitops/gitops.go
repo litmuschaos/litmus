@@ -232,7 +232,7 @@ func (c GitConfig) GitGetStatus() (bool, error) {
 	return status.IsClean(), nil
 }
 
-// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instanes for the repo
+// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instances for the repo
 func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Worktree, error) {
 	repo, err := git.PlainOpen(c.LocalPath)
 	if err != nil {

@@ -224,6 +224,16 @@ func (c *ChaosExperimentHandler) DeleteChaosExperiment(ctx context.Context, proj
 				return false, err
 			}
 		}
+		wf := model.ChaosExperimentRequest{
+			ExperimentID:   &workflow.ExperimentID,
+			ExperimentName: workflow.Name,
+		}
+
+		err = c.gitOpsService.DeleteExperimentFromGit(ctx, projectID, &wf)
+		if err != nil {
+			logrus.Errorf("error deleting experiment manifest from git, err: %v", err)
+			return false, err
+		}
 		// Delete experiment
 		err = c.chaosExperimentService.ProcessExperimentDelete(query, workflow, uid, r)
 		if err != nil {
