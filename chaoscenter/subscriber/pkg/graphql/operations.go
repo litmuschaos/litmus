@@ -3,12 +3,10 @@ package graphql
 import (
 	"bytes"
 	"encoding/json"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 )
 
 func (gql *subscriberGql) SendRequest(server string, payload []byte) (string, error) {
@@ -22,13 +20,8 @@ func (gql *subscriberGql) SendRequest(server string, payload []byte) (string, er
 		return "", err
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	defer func() {
-		if err := resp.Body.Close(); err != nil {
-			log.Warnf("failed to close body: %v", err)
-		}
-	}()
-
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
 	if err != nil {
 		return "", err
 	}
