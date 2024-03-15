@@ -659,9 +659,9 @@ spec:
             - name: EVENT_TRACKER_IMAGE
               value: "litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-event-tracker:3.5.0"
             - name: ARGO_WORKFLOW_CONTROLLER_IMAGE
-              value: "litmuschaos.docker.scarf.sh/litmuschaos/workflow-controller:v3.5.1"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/workflow-controller:v3.3.1"
             - name: ARGO_WORKFLOW_EXECUTOR_IMAGE
-              value: "litmuschaos.docker.scarf.sh/litmuschaos/argoexec:v3.5.1"
+              value: "litmuschaos.docker.scarf.sh/litmuschaos/argoexec:v3.3.1"
             - name: LITMUS_CHAOS_OPERATOR_IMAGE
               value: "litmuschaos.docker.scarf.sh/litmuschaos/chaos-operator:3.5.0"
             - name: LITMUS_CHAOS_RUNNER_IMAGE
