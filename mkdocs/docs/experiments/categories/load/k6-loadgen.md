@@ -8,11 +8,6 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
 !!! tip "Scenario: Load generating with k6"    
     ![k6-loadgen](../../images/k6-loadgen.png)
 
-## Uses
-
-??? info "View the uses of the experiment" 
-    coming soon
-
 ## Prerequisites
 
 ??? info "Verify the prerequisites" 
@@ -136,7 +131,32 @@ You can add k6 options(ex hosts, thresholds) in the script `options` object. Mor
 
 ### Custom Secret Name and Secret Key
 
-You can provide the secret name and secret key of the JS script to be used for k6-loadgen. The secret should be created in the same namespace where the `chaos infrastructure` is created. For example, if the chaos infrastructure is created in the `litmus` namespace, then the secret should also be created in the `litmus` namespace. And If we want to use `custom-k6-script` secret and `custom-script.js` as the secret key, then the experiment tunable will look like this:
+You can provide the secret name and secret key of the JS script to be used for k6-loadgen. The secret should be created in the same namespace where the `chaos infrastructure` is created. For example, if the chaos infrastructure is created in the `litmus` namespace, then the secret should also be created in the `litmus` namespace. 
+
+You can write a JS script like below. If you want to know more about the script, checkout [this documentation](https://grafana.com/docs/k6/latest/using-k6/).
+
+[embedmd]:# (./k6-loadgen/custom-script.js js)
+```js
+import http from 'k6/http';
+import { sleep } from 'k6';
+export const options = {
+    vus: 100,
+    duration: '30s',
+};
+export default function () {
+    http.get('http://<<target_domain_name>>/');
+    sleep(1);
+}
+```
+
+Then create a secret with the above script.
+
+```bash
+kubectl create secret generic custom-k6-script \
+  --from-file=script.js=custom-script.js -n <<chaos_infrastructure_namespace>>
+```
+
+And If we want to use `custom-k6-script` secret and `custom-script.js` as the secret key, then the experiment tunable will look like this:
 
 [embedmd]:# (./k6-loadgen/k6-loadgen.yaml yaml)
 ```yaml
