@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TestWrapper } from 'utils/testUtils';
-import LoginPageView from '../LoginPage';
+import { LoginPageView } from '../LoginPage';
 
 const mockHandleLogin = jest.fn();
 
@@ -40,8 +40,8 @@ describe('LoginPageView', () => {
   test('With Dex Login Disabled', async () => {
     const capabilitiesWithDexDisabled = {
       dex: {
-        enabled: false
-      }
+        enabled: false,
+      },
     };
 
     render(
@@ -55,8 +55,8 @@ describe('LoginPageView', () => {
   test('With Dex Login Enabled', async () => {
     const capabilitiesWithDexEnabled = {
       dex: {
-        enabled: true
-      }
+        enabled: true,
+      },
     };
     render(
       <TestWrapper>

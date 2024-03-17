@@ -6,10 +6,9 @@ import { Form } from 'formik';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import AuthLayout from '@components/AuthLayout/AuthLayout';
 import { useStrings } from '@strings';
-import type { ErrorModel, LoginMutationProps, LoginResponse } from '@api/auth';
+import type { ErrorModel, LoginMutationProps, LoginResponse, GetCapabilitiesOkResponse } from '@api/auth';
 import PassowrdInput from '@components/PasswordInput';
 import UserNameInput from '@components/UserNameInput';
-import { GetCapabilitiesOkResponse } from '@api/auth';
 
 interface LoginForm {
   username: string;
@@ -22,7 +21,7 @@ interface LoginPageViewProps {
   capabilities?: GetCapabilitiesOkResponse;
 }
 
-export default function LoginPageView({ handleLogin, loading, capabilities }: LoginPageViewProps): React.ReactElement {
+export const LoginPageView = ({ handleLogin, loading, capabilities }: LoginPageViewProps): React.ReactElement => {
   const { getString } = useStrings();
 
   return (
@@ -84,4 +83,4 @@ export default function LoginPageView({ handleLogin, loading, capabilities }: Lo
       )}
     </AuthLayout>
   );
-}
+};
