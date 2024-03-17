@@ -12,7 +12,11 @@ type Project struct {
 type Owner struct {
 	UserID   string `bson:"user_id" json:"userID"`
 	Username string `bson:"username" json:"username"`
+	Invitation    Invitation `bson:"invitation" json:"invitation"`
+	JoinedAt      int64      `bson:"joined_at" json:"joinedAt"`
+	DeactivatedAt *int64     `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
 }
+
 type MemberStat struct {
 	Owner *[]Owner `bson:"owner" json:"owner"`
 	Total int      `bson:"total" json:"total"`
