@@ -30,6 +30,7 @@ type Repository interface {
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
+	GetProjectOwners(projectID string) ([]*entities.Member, error)
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
@@ -379,6 +380,28 @@ func (r repository) GetOwnerProjects(ctx context.Context, userID string) ([]*ent
 	}
 
 	return projects, nil
+}
+
+// GetProjectOwners takes projectID and returns the owners
+func (r repository) GetProjectOwners(projectID string) ([]*entities.Member, error) {
+	filter := bson.D{{"_id", projectID}}
+
+	var project struct {
+		Members []*entities.Member `bson:"members"`
+	}
+	err := r.Collection.FindOne(context.TODO(), filter).Decode(&project)
+	if err != nil {
+		return err, nil
+	}
+
+	// Filter the members to include only the owners
+	var owners []*entities.Member
+	for _, member := range project.Members {
+		if member.Role == entities.RoleOwner {
+			owners = append(owners, member)
+		}
+	}
+	return owners, nil
 }
 
 // GetProjectRole returns the role of a user in the project

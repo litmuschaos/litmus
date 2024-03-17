@@ -195,6 +195,30 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 	}
 }
 
+// GetActiveProjectOwners 		godoc
+//
+//	@Summary		Get active project Owners.
+//	@Description	Return list of active project owners.
+//	@Tags			ProjectRouter
+//	@Param			state	path	string	true	"State"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_project_owners/:project_id/:state [get]
+func GetActiveProjectOwners(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		// state := c.Param("state")
+		owners, err := service.GetProjectOwners(projectID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": owners})
+	}
+}
+
 // getInvitation returns the Invitation status
 func getInvitation(service services.ApplicationService, member entities.MemberInput) (entities.Invitation, error) {
 	project, err := service.GetProjectByProjectID(member.ProjectID)
