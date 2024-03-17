@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
@@ -35,7 +36,7 @@ func TestCapabilities(t *testing.T) {
 			utils.DexEnabled = test.DexEnabled
 
 			rest.GetCapabilities()(ctx)
-			capa := rest.Capabilities{}
+			capa := response.CapabilitiesResponse{}
 			err := json.Unmarshal(w.Body.Bytes(), &capa)
 
 			assert.Nil(t, err)

@@ -2,14 +2,9 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 )
-
-type Capabilities struct {
-	Dex struct {
-		Enabled bool `json:"enabled"`
-	} `json:"dex"`
-}
 
 // GetCapabilities 		godoc
 //
@@ -19,12 +14,12 @@ type Capabilities struct {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		500	{object}	response.ErrServerError
-//	@Success		200	{object}	response.Response{}
+//	@Success		200	{object}	response.CapabilitiesResponse{}
 //	@Router			/capabilities [get]
 func GetCapabilities() gin.HandlerFunc {
-	capabilities := new(Capabilities)
-	capabilities.Dex.Enabled = utils.DexEnabled
 	return func(c *gin.Context) {
+		capabilities := new(response.CapabilitiesResponse)
+		capabilities.Dex.Enabled = utils.DexEnabled
 		c.JSON(200, capabilities)
 	}
 }
