@@ -36,4 +36,34 @@ describe('LoginPageView', () => {
     expect(usernameInput.value).toBe(undefined);
     expect(passwordInput.value).toBe(undefined);
   });
+
+  test('With Dex Login Disabled', async () => {
+    const capabilitiesWithDexDisabled = {
+      dex: {
+        enabled: false
+      }
+    };
+
+    render(
+      <TestWrapper>
+        <LoginPageView handleLogin={mockHandleLogin} loading={false} capabilities={capabilitiesWithDexDisabled} />
+      </TestWrapper>
+    );
+    const dexLoginButton = screen.queryByRole('button', { name: 'signInWithDex' });
+    expect(dexLoginButton).not.toBeInTheDocument();
+  });
+  test('With Dex Login Enabled', async () => {
+    const capabilitiesWithDexEnabled = {
+      dex: {
+        enabled: true
+      }
+    };
+    render(
+      <TestWrapper>
+        <LoginPageView handleLogin={mockHandleLogin} loading={false} capabilities={capabilitiesWithDexEnabled} />
+      </TestWrapper>
+    );
+    const dexLoginButton = screen.queryByRole('button', { name: 'signInWithDex' });
+    expect(dexLoginButton).toBeInTheDocument();
+  });
 });
