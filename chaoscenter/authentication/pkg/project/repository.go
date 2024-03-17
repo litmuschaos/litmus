@@ -391,7 +391,7 @@ func (r repository) GetProjectOwners(projectID string) ([]*entities.Member, erro
 	}
 	err := r.Collection.FindOne(context.TODO(), filter).Decode(&project)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 
 	// Filter the members to include only the owners
