@@ -120,6 +120,8 @@ nav:
             - Spring Boot Exceptions: experiments/categories/spring-boot/spring-boot-exceptions.md
             - Spring Boot Latency: experiments/categories/spring-boot/spring-boot-latency.md
             - Spring Boot Faults: experiments/categories/spring-boot/spring-boot-faults.md
+        - Load:
+            - k6 Load Generator: experiments/categories/load/k6-loadgen.md
       - Cloud Infrastructure:
         - AWS: 
             - EC2:
