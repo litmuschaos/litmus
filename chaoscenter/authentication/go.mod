@@ -12,7 +12,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
-	github.com/swaggo/swag v1.16.2
+	github.com/swaggo/swag v1.16.3
 	go.mongodb.org/mongo-driver v1.13.1
 	golang.org/x/crypto v0.21.0
 	golang.org/x/oauth2 v0.16.0
