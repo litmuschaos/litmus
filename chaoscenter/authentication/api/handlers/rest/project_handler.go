@@ -593,6 +593,20 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		if member.Role == entities.RoleOwner {
+			owners, err := service.GetProjectsOwners(member.ProjectID)
+			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+				return
+			}
+
+			if len(owners) == 1 {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], gin.H{"message": "Cannot leave project. There must be at least one owner."})
+				return
+			}
+		}
+
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
