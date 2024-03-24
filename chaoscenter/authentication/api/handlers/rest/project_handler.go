@@ -195,6 +195,30 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 	}
 }
 
+// GetActiveProjectOwners 		godoc
+//
+//	@Summary		Get active project Owners.
+//	@Description	Return list of active project owners.
+//	@Tags			ProjectRouter
+//	@Param			state	path	string	true	"State"
+//	@Accept			json
+//	@Produce		json
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/get_project_owners/:project_id/:state [get]
+func GetActiveProjectOwners(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		projectID := c.Param("project_id")
+		// state := c.Param("state")
+		owners, err := service.GetProjectOwners(projectID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": owners})
+	}
+}
+
 // getInvitation returns the Invitation status
 func getInvitation(service services.ApplicationService, member entities.MemberInput) (entities.Invitation, error) {
 	project, err := service.GetProjectByProjectID(member.ProjectID)
@@ -380,7 +404,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		// Validating member role
-		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer) {
+		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}
@@ -569,6 +593,20 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		if member.Role == entities.RoleOwner {
+			owners, err := service.GetProjectsOwners(member.ProjectID)
+			if err != nil {
+				log.Error(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+				return
+			}
+
+			if len(owners) == 1 {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], gin.H{"message": "Cannot leave project. There must be at least one owner."})
+				return
+			}
+		}
+
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
@@ -722,6 +760,55 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Successful",
+		})
+	}
+}
+
+// UpdateMemberRole 		godoc
+//
+//	@Summary		Update member role.
+//	@Description	Return updated member role.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/update_member_role [post]
+//
+// UpdateMemberRole is used to update a member role in the project
+func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var member entities.MemberInput
+		err := c.BindJSON(&member)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		err = validations.RbacValidator(c.MustGet("uid").(string),
+			member.ProjectID,
+			validations.MutationRbacRules["updateMemberRole"],
+			string(entities.AcceptedInvitation),
+			service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Successfully updated Role",
 		})
 	}
 }
