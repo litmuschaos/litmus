@@ -86,6 +86,11 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, errors.New("infra already exists in this project with the same name")
 	}
 
+	// Check if EnvironmentID is valid
+	if _, err := in.envOperator.GetEnvironmentDetails(c, input.EnvironmentID, projectID); err != nil {
+		return nil, errors.New("Invalid EnvironmentID")
+	}
+
 	if (*input.InfraNsExists && input.InfraNamespace == nil) || (*input.InfraNsExists && *input.InfraNamespace == "") {
 		return nil, errors.New("InfraNamespace parameter is required if InfraNsExists is true")
 	}
