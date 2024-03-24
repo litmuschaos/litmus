@@ -10,5 +10,6 @@ var MutationRbacRules = map[string][]string{
 	"removeInvitation":  {string(entities.RoleOwner)},
 	"leaveProject":      {string(entities.RoleOwner), string(entities.RoleViewer), string(entities.RoleEditor)},
 	"updateProjectName": {string(entities.RoleOwner)},
+	"updateMemberRole":  {string(entities.RoleOwner)},
 	"getProject":        {string(entities.RoleOwner), string(entities.RoleViewer), string(entities.RoleEditor)},
 }

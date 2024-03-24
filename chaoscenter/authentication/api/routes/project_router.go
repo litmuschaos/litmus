@@ -27,4 +27,5 @@ func ProjectRouter(router *gin.Engine, service services.ApplicationService) {
 	router.POST("/remove_invitation", rest.RemoveInvitation(service))
 	router.POST("/leave_project", rest.LeaveProject(service))
 	router.POST("/update_project_name", rest.UpdateProjectName(service))
+	router.POST("/update_member_role", rest.UpdateMemberRole(service))
 }

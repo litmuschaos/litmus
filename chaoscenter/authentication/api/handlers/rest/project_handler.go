@@ -764,6 +764,55 @@ func UpdateProjectName(service services.ApplicationService) gin.HandlerFunc {
 	}
 }
 
+// UpdateMemberRole 		godoc
+//
+//	@Summary		Update member role.
+//	@Description	Return updated member role.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrUnauthorized
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/update_member_role [post]
+//
+// UpdateMemberRole is used to update a member role in the project
+func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var member entities.MemberInput
+		err := c.BindJSON(&member)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		err = validations.RbacValidator(c.MustGet("uid").(string),
+			member.ProjectID,
+			validations.MutationRbacRules["updateMemberRole"],
+			string(entities.AcceptedInvitation),
+			service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Successfully updated Role",
+		})
+	}
+}
+
 // GetOwnerProjects 		godoc
 //
 //	@Summary		Get projects owner.

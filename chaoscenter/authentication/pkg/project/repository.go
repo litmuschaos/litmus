@@ -25,6 +25,7 @@ type Repository interface {
 	RemoveInvitation(projectID string, userID string, invitation entities.Invitation) error
 	UpdateInvite(projectID string, userID string, invitation entities.Invitation, role *entities.MemberRole) error
 	UpdateProjectName(projectID string, projectName string) error
+	UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error
 	GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error)
 	UpdateProjectState(ctx context.Context, userID string, deactivateTime int64, isDeactivate bool) error
 	GetOwnerProjects(ctx context.Context, userID string) ([]*entities.Project, error)
@@ -271,6 +272,24 @@ func (r repository) UpdateProjectName(projectID string, projectName string) erro
 	update := bson.D{{"$set", bson.M{"name": projectName}}}
 
 	_, err := r.Collection.UpdateOne(context.TODO(), query, update)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateMemberRole : Updates Role of the member in the project.
+func (r repository) UpdateMemberRole(projectID string, userID string, role *entities.MemberRole) error {
+	opts := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{
+			bson.D{{"elem.user_id", userID}},
+		},
+	})
+	query := bson.D{{"_id", projectID}}
+	update := bson.D{{"$set", bson.M{"members.$[elem]role": role}}}
+
+	_, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
 	if err != nil {
 		return err
 	}
