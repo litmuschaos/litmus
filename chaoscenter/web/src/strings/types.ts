@@ -852,6 +852,7 @@ export interface StringsMap {
   'showingAll': unknown
   'showingLastRuns': unknown
   'signIn': unknown
+  'signInWithDex': unknown
   'signOut': unknown
   'singleRun': unknown
   'source': unknown

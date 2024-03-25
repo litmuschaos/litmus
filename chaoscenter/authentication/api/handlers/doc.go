@@ -25,6 +25,12 @@ type UserResponse struct {
 	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
 }
 
+type CapabilitiesResponse struct {
+	Dex struct {
+		Enabled bool `json:"enabled"`
+	} `json:"dex"`
+}
+
 type MessageResponse struct {
 	Message string
 }

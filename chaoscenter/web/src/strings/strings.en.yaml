@@ -1011,6 +1011,7 @@ showLess: ' Show less'
 showingAll: Showing all
 showingLastRuns: Showing last 50 runs only
 signIn: Sign In
+signInWithDex: Login With Single Sign-On
 signOut: Sign Out
 singleRun: Single Run
 source: Source
