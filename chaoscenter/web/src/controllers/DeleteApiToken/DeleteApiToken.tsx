@@ -23,5 +23,12 @@ export default function DeleteApiTokenController(props: DeleteApiTokenController
     }
   );
 
-  return <DeleteApiTokenView handleClose={handleClose} deleteApiTokenMutation={deleteApiTokenMutation} deleteApiTokenMutationLoading={deleteApiTokenMutationLoading} token={token} />;
+  return (
+    <DeleteApiTokenView
+      handleClose={handleClose}
+      deleteApiTokenMutation={deleteApiTokenMutation}
+      deleteApiTokenMutationLoading={deleteApiTokenMutationLoading}
+      token={token}
+    />
+  );
 }
