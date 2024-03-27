@@ -500,7 +500,7 @@ func AcceptInvitation(service services.ApplicationService) gin.HandlerFunc {
 // DeclineInvitation 		godoc
 //
 //	@Summary		Decline invitation.
-//	@Description	Deecline invitation to a project.
+//	@Description	Decline invitation to a project.
 //	@Tags			ProjectRouter
 //	@Accept			json
 //	@Produce		json

@@ -247,7 +247,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Deecline invitation to a project.
+      description: Decline invitation to a project.
       produces:
       - application/json
       responses:

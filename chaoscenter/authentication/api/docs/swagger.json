@@ -151,7 +151,7 @@
         },
         "/decline_invitation": {
             "post": {
-                "description": "Deecline invitation to a project.",
+                "description": "Decline invitation to a project.",
                 "consumes": [
                     "application/json"
                 ],
