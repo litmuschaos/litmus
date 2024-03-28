@@ -6,11 +6,12 @@ import {
   Checkbox,
   Container,
   Layout,
+  Pagination,
   TableV2,
   Text,
   useToggleOpen
 } from '@harnessio/uicore';
-import React from 'react';
+import React, { useState } from 'react';
 import type { Column, Row } from 'react-table';
 import { Classes, Dialog, Menu, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import { Icon } from '@harnessio/icons';
@@ -190,6 +191,19 @@ export default function AccountSettingsUserManagementView(
   const { isOpen: isCreateUserModalOpen, open: openCreateUserModal, close: closeCreateUserModal } = useToggleOpen();
   const { getString } = useStrings();
 
+  const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = parseInt(event.target.value);
+    setItemsPerPage(selectedValue);
+    setCurrentPage(1);
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = usersData?.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <Layout.Vertical height={'100%'}>
       <Layout.Horizontal
@@ -230,16 +244,35 @@ export default function AccountSettingsUserManagementView(
           small
           loading={useUsersQueryLoading}
           noData={{
-            when: () => !usersData?.length,
+            when: () => !currentItems?.length,
             message: getString('noUserAddUsers')
           }}
         >
-          <Text font={{ variation: FontVariation.H4 }}>
-            {getString('totalUsers')}: {usersData?.length ?? 0}
-          </Text>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Text font={{ variation: FontVariation.H4 }}>
+              {getString('totalUsers')}: {usersData?.length ?? 0}
+            </Text>
+            <div>
+              Items per page:
+              <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+          </div>
           <Container style={{ flexGrow: 1 }}>
-            {usersData && <MemoizedUsersTable users={usersData} getUsersRefetch={getUsersRefetch} />}
+            {currentItems && <MemoizedUsersTable users={currentItems} getUsersRefetch={getUsersRefetch} />}
           </Container>
+          <Pagination
+            pageSize={itemsPerPage}
+            pageCount={Math.ceil(usersData?.length / itemsPerPage)}
+            itemCount={usersData?.length ?? 0}
+            pageIndex={currentPage - 1}
+            gotoPage={pageIndex => setCurrentPage(pageIndex + 1)}
+            showPagination={true}
+            pageSizeOptions={[...new Set([10, 20, itemsPerPage])].sort()}
+          />
         </Loader>
       </Layout.Vertical>
     </Layout.Vertical>
