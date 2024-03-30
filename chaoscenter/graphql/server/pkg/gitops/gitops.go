@@ -6,11 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
-	"path"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -19,9 +23,6 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/golang-jwt/jwt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	log "github.com/sirupsen/logrus"
 	ssh2 "golang.org/x/crypto/ssh"
 )
@@ -112,7 +113,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 
 	gitInfo := map[string]string{"projectID": c.ProjectID, "revision": "1"}
 	if exists {
-		data, err := os.ReadFile(path.Clean(projectPath + "/.info"))
+		data, err := ioutil.ReadFile(projectPath + "/.info")
 		if err != nil {
 			return errors.New("can't read existing git info file " + err.Error())
 		}
@@ -136,7 +137,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(path.Clean(projectPath+"/.info"), data, 0644)
+	err = ioutil.WriteFile(projectPath+"/.info", data, 0644)
 	if err != nil {
 		return err
 	}
