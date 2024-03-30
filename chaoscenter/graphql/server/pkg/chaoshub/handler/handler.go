@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,9 +16,7 @@ import (
 	chaoshubops "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-
 	log "github.com/sirupsen/logrus"
-
 	"gopkg.in/yaml.v2"
 )
 
@@ -37,9 +34,9 @@ func GetChartsPath(chartsInput model.CloningInput, projectID string, isDefault b
 }
 
 // GetChartsData is used to get details of charts like experiments.
-func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
+func GetChartsData(chartsPath string) ([]*model.Chart, error) {
 	var allChartsDetails []ChaosChart
-	Charts, err := ioutil.ReadDir(ChartsPath)
+	Charts, err := os.ReadDir(chartsPath)
 	if err != nil {
 		log.Error("file reading error", err)
 		return nil, err
@@ -48,7 +45,7 @@ func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 		if chart.Name() == "icons" {
 			continue
 		}
-		chartDetails, _ := ReadExperimentFile(ChartsPath + chart.Name() + "/" + chart.Name() + ".chartserviceversion.yaml")
+		chartDetails, _ := ReadExperimentFile(chartsPath + chart.Name() + "/" + chart.Name() + ".chartserviceversion.yaml")
 		allChartsDetails = append(allChartsDetails, chartDetails)
 	}
 
@@ -77,14 +74,16 @@ func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 		return nil, err
 	}
 	var chartData *model.Chart
-	json.Unmarshal(e, &chartData)
+	if err = json.Unmarshal(e, &chartData); err != nil {
+		return nil, err
+	}
 	return chartData, nil
 }
 
 // ReadExperimentFile is used for reading experiment file from given path
 func ReadExperimentFile(path string) (ChaosChart, error) {
 	var experiment ChaosChart
-	experimentFile, err := ioutil.ReadFile(path)
+	experimentFile, err := os.ReadFile(path)
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
@@ -97,7 +96,7 @@ func ReadExperimentFile(path string) (ChaosChart, error) {
 // ReadExperimentYAMLFile is used for reading experiment/engine file from given path
 func ReadExperimentYAMLFile(path string) (string, error) {
 	var s string
-	YAMLData, err := ioutil.ReadFile(path)
+	YAMLData, err := os.ReadFile(path)
 	if err != nil {
 		return s, fmt.Errorf("file path of the, err: %+v", err)
 	}
@@ -110,7 +109,7 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 func ListPredefinedWorkflowDetails(name string, projectID string) ([]*model.PredefinedExperimentList, error) {
 	experimentsPath := DefaultPath + projectID + "/" + name + "/workflows"
 	var predefinedWorkflows []*model.PredefinedExperimentList
-	files, err := ioutil.ReadDir(experimentsPath)
+	files, err := os.ReadDir(experimentsPath)
 	if err != nil {
 		return nil, err
 	}
@@ -160,8 +159,8 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 		return err
 	}
 	//create the destination directory where the hub will be downloaded
-	hubpath := dirPath + "/" + hubDetails.Name + ".zip"
-	destDir, err := os.Create(hubpath)
+	hubPath := dirPath + "/" + hubDetails.Name + ".zip"
+	destDir, err := os.Create(hubPath)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -189,14 +188,14 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	contentLength := download.Header.Get("content-length")
 	length, err := strconv.Atoi(contentLength)
 	if length > maxSize {
-		_ = os.Remove(hubpath)
+		_ = os.Remove(hubPath)
 		return fmt.Errorf("err: File size exceeded the threshold %d", length)
 	}
 
 	//validate the content-type
 	contentType := download.Header.Get("content-type")
 	if contentType != "application/zip" {
-		_ = os.Remove(hubpath)
+		_ = os.Remove(hubPath)
 		return fmt.Errorf("err: Invalid file type %s", contentType)
 	}
 
@@ -208,13 +207,13 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	}
 
 	//unzip the ChaosHub to the default hub directory
-	err = UnzipRemoteHub(hubpath, hubDetails, projectID)
+	err = UnzipRemoteHub(hubPath, projectID)
 	if err != nil {
 		return err
 	}
 
 	//remove the redundant zip file
-	err = os.Remove(hubpath)
+	err = os.Remove(hubPath)
 	if err != nil {
 		return err
 	}
@@ -222,16 +221,24 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 }
 
 // UnzipRemoteHub is used to unzip the zip file
-func UnzipRemoteHub(zipPath string, hubDetails model.CreateRemoteChaosHub, projectID string) error {
+func UnzipRemoteHub(zipPath string, projectID string) error {
 	extractPath := DefaultPath + projectID
 	zipReader, err := zip.OpenReader(zipPath)
 	if err != nil {
 		log.Error(err)
 		return err
 	}
-	defer zipReader.Close()
+	defer func(zipReader *zip.ReadCloser) {
+		err := zipReader.Close()
+		if err != nil {
+			log.Error(err)
+		}
+	}(zipReader)
 	for _, file := range zipReader.File {
-		CopyZipItems(file, extractPath, file.Name)
+		err := CopyZipItems(file, extractPath, file.Name)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -363,7 +370,12 @@ func DefaultChaosHubIconHandler() gin.HandlerFunc {
 			}
 		}
 
-		defer img.Close()
+		defer func(img *os.File) {
+			err := img.Close()
+			if err != nil {
+				log.WithError(err).Error("error while closing the file")
+			}
+		}(img)
 
 		c.Writer.Header().Set("Content-Type", "image/png")
 		c.Writer.WriteHeader(responseStatusCode)
