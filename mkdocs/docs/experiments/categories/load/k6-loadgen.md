@@ -17,12 +17,7 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
             ```bash
             kubectl create secret generic k6-script \
                 --from-file=script.js=<<script-path>> -n <<chaos_infrastructure_namespace>>
-            ``` 
-
-## Default Validations
-
-??? info "View the default validations" 
-    The application pods should be in running state before and after chaos injection.
+            ```
 
 ## Minimal RBAC configuration example (optional)
 
