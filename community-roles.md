@@ -17,8 +17,8 @@ Roles are progressive, so each include responsibilities, requirements and defini
 Most of the roles defined herein are defined by membership in a certain GitHub organization or team:
 
 - [litmuschaos org](https://github.com/litmuschaos): The organization under which all of litmuschaos's activity on GitHub is captured.
-- [@litmuschaos/core-maintainers](https://github.com/litmuschaos/community/blob/main/CORE-MAINTAINERS): The team comprised of all maintainers of the litmus repo.
-- [@litmuschaos/maintainers](https://github.com/litmuschaos/community/blob/main/project/litmuschaos-project-maintainers.yaml): The team comprised of all maintainers of the various projects in the litmuschaos organization: litmusctl, litmus-go,litmus-docs, website and community repos, etc.
+- [@litmuschaos/core-maintainers](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md): The team comprised of all maintainers of the litmus repo.
+- [@litmuschaos/maintainers](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md): The team comprised of all maintainers of the various projects in the litmuschaos organization: litmusctl, litmus-go,litmus-docs, website and community repos, etc.
 
 ### Community Member
 
@@ -62,7 +62,7 @@ Process: refer to [PROCESS.md](PROCESS.md#applying-for-litmuschaos-membership).
 
 Maintainers are elected [Project Members][Project Member] who have shown significant and sustained contributions in a Git repository.
 
-**Defined by:** entry in MAINTAINERS file in a repo owned by the litmuschaos project, and membership in the `@litmuschaos/maintainers` GitHub team. See an automatically generated list of litmuschaos maintainers [here](https://github.com/litmuschaos/community/blob/main/project/litmuschaos-project-maintainers.yaml).
+**Defined by:** entry in MAINTAINERS file in a repo owned by the litmuschaos project, and membership in the `@litmuschaos/maintainers` GitHub team. See an automatically generated list of litmuschaos maintainers [here](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md).
 
 **Responsibilities and Privileges:**
 
@@ -89,7 +89,7 @@ Process: refer to [PROCESS.md](PROCESS.md#applying-for-litmuschaos-maintainershi
 
 ### Core maintainers
 
-Maintainership in the [CORE-MAINTAINERS file](https://github.com/litmuschaos/litmus/MAINTAINERS.md) trickles down to all other litmuschaos-related repositories which means that maintainers mentioned there are also maintainers in all other repositories.
+Maintainership in the [CORE-MAINTAINERS file](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md) trickles down to all other litmuschaos-related repositories which means that maintainers mentioned there are also maintainers in all other repositories.
 
 In addition to maintaining `litmuschaos` and litmuschaos-related repositories, this team serves as escalation point for the overall project, and anything not easily managed by the Maintainers of each Git repository.
 
@@ -98,7 +98,7 @@ This team drives the direction, values and governance of the overall project.
 It is important to us that its members come from a diverse background of companies and organizations.
 Ensuring that oversight of the project is not controlled by one company or organization.
 
-**Defined by:** entry in [CORE-MAINTAINERS file](https://github.com/litmuschaos/community/blob/main/CORE-MAINTAINERS), and in the `@litmuschaos/core-maintainers` GitHub team.
+**Defined by:** entry in [CORE-MAINTAINERS file](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md), and in the `@litmuschaos/core-maintainers` GitHub team.
 
 **Responsibilities and Privileges:**
 
@@ -124,7 +124,7 @@ Reviewers are part of the organization but do not have write access. Becoming a 
 
 ### Security Team member
 
-Security Team members are listed in the [SECURITY.md file](https://github.com/litmuschaos/.github/blob/main/SECURITY.md#security-team).
+Security Team members are listed in the [SECURITY.md file]().
 
 Members of this team handle security issues for the litmuschaos projects. It is essential for us to deal with security-related concerns responsibly and follow the high standards of the security community as a whole.
 
@@ -152,7 +152,7 @@ In order to restrict access to [`admin` level functionality in GitHub](https://d
 
 This team has no decision making power on its own, but is instead there to serve the needs of the litmuschaos maintainers and contributors.
 
-**Defined by:** entry in [ORG-ADMINS file](https://github.com/litmuschaos/community/blob/main/ORG-ADMINS), and in the `@litmuschaos/org-admins` GitHub team.
+**Defined by:** entry in [ORG-ADMINS file](https://github.com/litmuschaos/litmus/blob/master/MAINTAINERS.md), and in the `@litmuschaos/org-admins` GitHub team.
 
 **Responsibilities and Privileges:**
 
