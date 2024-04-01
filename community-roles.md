@@ -18,7 +18,7 @@ Most of the roles defined herein are defined by membership in a certain GitHub o
 
 - [litmuschaos org](https://github.com/litmuschaos): The organization under which all of litmuschaos's activity on GitHub is captured.
 - [@litmuschaos/core-maintainers](https://github.com/litmuschaos/community/blob/main/CORE-MAINTAINERS): The team comprised of all maintainers of the litmus repo.
-- [@litmuschaos/maintainers](https://github.com/litmuschaos/community/blob/main/project/litmuschaos-project-maintainers.yaml): The team comprised of all maintainers of the various projects in the litmuschaos organization: litmusctl, litmus-ui, litmus-go,litmus-docs, website and community repos, etc.
+- [@litmuschaos/maintainers](https://github.com/litmuschaos/community/blob/main/project/litmuschaos-project-maintainers.yaml): The team comprised of all maintainers of the various projects in the litmuschaos organization: litmusctl, litmus-go,litmus-docs, website and community repos, etc.
 
 ### Community Member
 
@@ -80,8 +80,8 @@ To become a Maintainer you need to demonstrate the following:
   This can be evidenced differently and we want to maintain some general flexibility assessing this. Significant and sustained contributions can be both by showing a long-term level of care with a bigger number of smaller contributions or by a smaller set of sizable contributions. To make it somewhat more comparable, here is an example of commitment we would be happy to accept for a maintainer:
 
   - Participate in discussions, contributions, code and documentation reviews for 3 months or more,
-  - perform reviews for 10 non-trivial pull requests (total),
-  - contribute 15 non-trivial pull requests (total) and have them merged.
+  - Perform reviews for 10 non-trivial pull requests (total),
+  - Contribute 15 non-trivial pull requests (total) and have them merged.
 
   Ask one of the current maintainers, if you are unsure. They will be happy to give you feedback.
 
