@@ -271,7 +271,8 @@ export default function AccountSettingsUserManagementView(
             pageIndex={currentPage - 1}
             gotoPage={pageIndex => setCurrentPage(pageIndex + 1)}
             showPagination={true}
-            pageSizeOptions={[...new Set([10, 20, itemsPerPage])].sort()}
+            pageSizeOptions={[5,10,20]}
+            onPageSizeChange={handleItemsPerPageChange}
           />
         </Loader>
       </Layout.Vertical>
