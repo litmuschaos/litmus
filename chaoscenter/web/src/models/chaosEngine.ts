@@ -1,5 +1,4 @@
-import type * as kubernetes from 'argo-ui/src/models/kubernetes';
-import type { ConfigMap, Secret, Toleration } from './k8s';
+import type * as kubernetes from './k8s';
 
 // ChaosEngine is the Schema for the chaosengines API
 export interface ChaosEngine {
@@ -100,11 +99,11 @@ export interface RunnerInfo {
   // NodeSelector for runner pod
   nodeSelector?: { [key: string]: string };
   // ConfigMaps for runner pod
-  configMaps?: ConfigMap[];
+  configMaps?: kubernetes.ConfigMap[];
   // Secrets for runner pod
-  secrets?: Secret[];
+  secrets?: kubernetes.Secret[];
   // Tolerations for runner pod
-  tolerations?: Toleration;
+  tolerations?: kubernetes.Toleration;
   // Resource requirements for the runner pod
   resources?: kubernetes.ResourceRequirements;
 }
@@ -334,15 +333,15 @@ export interface RunProperty {
 // FaultComponents contains ENV, Configmaps and Secrets
 export interface FaultComponents {
   env?: kubernetes.EnvVar[];
-  configMaps?: ConfigMap;
-  secrets?: Secret;
+  configMaps?: kubernetes.ConfigMap;
+  secrets?: kubernetes.Secret;
   experimentAnnotations?: { [key: string]: string };
   experimentImage?: string;
   experimentImagePullSecrets?: kubernetes.LocalObjectReference[];
   nodeSelector?: { [key: string]: string };
   statusCheckTimeouts?: StatusCheckTimeout;
   resources?: kubernetes.ResourceRequirements;
-  tolerations?: Toleration;
+  tolerations?: kubernetes.Toleration;
 }
 
 // StatusCheckTimeout contains Delay and timeouts for the status checks

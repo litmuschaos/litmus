@@ -31,8 +31,8 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
           handleClose();
         }
       }
-    )
-  }
+    );
+  };
 
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
@@ -50,9 +50,9 @@ export default function EnableDisableUserView(props: EnableDisableUserViewProps)
           type="submit"
           variation={ButtonVariation.PRIMARY}
           intent={!currentState ? 'danger' : 'primary'}
-          text={updateStateMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+          text={updateStateMutationLoading ? <Icon name="loading" size={16} /> : getString('confirm')}
           disabled={updateStateMutationLoading}
-          style={{minWidth: '90px'}}
+          style={{ minWidth: '90px' }}
           onClick={handleMutation}
         />
         <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={() => handleClose()} />

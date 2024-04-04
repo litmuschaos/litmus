@@ -1,16 +1,18 @@
 package handler_test
 
 import (
-	"io"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
+	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
+	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
-	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +20,7 @@ import (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(io.Discard)
+	log.SetOutput(ioutil.Discard)
 	os.Exit(m.Run())
 }
 

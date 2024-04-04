@@ -19,7 +19,7 @@ interface DeleteApiTokenViewProps {
 }
 
 export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): React.ReactElement {
-  const { handleClose, deleteApiTokenMutation, token, deleteApiTokenMutationLoading} = props;
+  const { handleClose, deleteApiTokenMutation, token, deleteApiTokenMutationLoading } = props;
   const { getString } = useStrings();
 
   return (
@@ -34,8 +34,8 @@ export default function DeleteApiTokenView(props: DeleteApiTokenViewProps): Reac
           type="submit"
           variation={ButtonVariation.PRIMARY}
           intent="danger"
-          text={deleteApiTokenMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
-          style={{minWidth: '90px'}}
+          text={deleteApiTokenMutationLoading ? <Icon name="loading" size={16} /> : getString('confirm')}
+          style={{ minWidth: '90px' }}
           disabled={deleteApiTokenMutationLoading}
           onClick={() =>
             deleteApiTokenMutation({

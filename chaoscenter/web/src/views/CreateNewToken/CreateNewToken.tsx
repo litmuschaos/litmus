@@ -49,67 +49,67 @@ export default function CreateNewTokenView(props: CreateNewTokenViewProps): Reac
 
   return (
     <OverlaySpinner show={createNewTokenMutationLoading}>
-    <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
-      <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>{getString('createNewToken')}</Text>
-        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
-      </Layout.Horizontal>
-      <Container>
-        <Formik<CreateNewTokenFormProps>
-          initialValues={{
-            name: '',
-            daysUntilExpiration: 30
-          }}
-          onSubmit={values => handleSubmit(values)}
-          validationSchema={Yup.object().shape({
-            name: Yup.string().required(getString('nameIsARequiredField'))
-          })}
-        >
-          {formikProps => {
-            return (
-              <Form style={{ height: '100%' }}>
-                <Layout.Vertical style={{ gap: '2rem' }}>
-                  <Container>
-                    <FormInput.Text
-                      name="name"
-                      placeholder={getString('enterYourName')}
-                      label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('name')}</Text>}
-                    />
-                    <FormInput.Select
-                      name="daysUntilExpiration"
-                      label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('expiresIn')}</Text>}
-                      items={[
-                        { value: 30, label: getString('days', { count: 30 }) },
-                        { value: 90, label: getString('days', { count: 90 }) },
-                        { value: 180, label: getString('days', { count: 180 }) },
-                        { value: 365, label: getString('days', { count: 365 }) },
-                        { value: 36500, label: getString('noExpiration') }
-                      ]}
-                    />
-                  </Container>
-                  <Layout.Vertical style={{ gap: '0.5rem' }}>
-                    <Layout.Horizontal style={{ gap: '1rem' }}>
-                      <Button
-                        type="submit"
-                        variation={ButtonVariation.PRIMARY}
-                        text={getString('confirm')}
-                        loading={createNewTokenMutationLoading || formikProps.isSubmitting}
-                        disabled={Object.keys(formikProps.errors).length > 0}
+      <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
+        <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text font={{ variation: FontVariation.H4 }}>{getString('createNewToken')}</Text>
+          <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
+        </Layout.Horizontal>
+        <Container>
+          <Formik<CreateNewTokenFormProps>
+            initialValues={{
+              name: '',
+              daysUntilExpiration: 30
+            }}
+            onSubmit={values => handleSubmit(values)}
+            validationSchema={Yup.object().shape({
+              name: Yup.string().required(getString('nameIsARequiredField'))
+            })}
+          >
+            {formikProps => {
+              return (
+                <Form style={{ height: '100%' }}>
+                  <Layout.Vertical style={{ gap: '2rem' }}>
+                    <Container>
+                      <FormInput.Text
+                        name="name"
+                        placeholder={getString('enterYourName')}
+                        label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('name')}</Text>}
                       />
-                      <Button
-                        variation={ButtonVariation.TERTIARY}
-                        text={getString('cancel')}
-                        onClick={() => handleClose()}
+                      <FormInput.Select
+                        name="daysUntilExpiration"
+                        label={<Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('expiresIn')}</Text>}
+                        items={[
+                          { value: 30, label: getString('days', { count: 30 }) },
+                          { value: 90, label: getString('days', { count: 90 }) },
+                          { value: 180, label: getString('days', { count: 180 }) },
+                          { value: 365, label: getString('days', { count: 365 }) },
+                          { value: 36500, label: getString('noExpiration') }
+                        ]}
                       />
-                    </Layout.Horizontal>
+                    </Container>
+                    <Layout.Vertical style={{ gap: '0.5rem' }}>
+                      <Layout.Horizontal style={{ gap: '1rem' }}>
+                        <Button
+                          type="submit"
+                          variation={ButtonVariation.PRIMARY}
+                          text={getString('confirm')}
+                          loading={createNewTokenMutationLoading || formikProps.isSubmitting}
+                          disabled={Object.keys(formikProps.errors).length > 0}
+                        />
+                        <Button
+                          variation={ButtonVariation.TERTIARY}
+                          text={getString('cancel')}
+                          onClick={() => handleClose()}
+                        />
+                      </Layout.Horizontal>
+                    </Layout.Vertical>
                   </Layout.Vertical>
-                </Layout.Vertical>
-              </Form>
-            );
-          }}
-        </Formik>
-      </Container>
-    </Layout.Vertical>
+                </Form>
+              );
+            }}
+          </Formik>
+        </Container>
+      </Layout.Vertical>
     </OverlaySpinner>
   );
 }
