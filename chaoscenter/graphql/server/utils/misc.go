@@ -29,14 +29,17 @@ func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
 
 // RandomString generates random strings, can be used to create ids or random secrets
 func RandomString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
-	rand.Seed(time.Now().UnixNano())
-	s := make([]rune, n)
-	for i := range s {
-		s[i] = letters[rand.Intn(len(letters))]
-	}
+	if n > 0 {
+		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
+		rand.Seed(time.Now().UnixNano())
+		s := make([]rune, n)
+		for i := range s {
+			s[i] = letters[rand.Intn(len(letters))]
+		}
 
-	return string(s)
+		return string(s)
+	}
+	return ""
 }
 
 func AddRootIndent(b []byte, n int) []byte {

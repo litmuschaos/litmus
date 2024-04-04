@@ -62,7 +62,7 @@
     "@harnessio/icons": "^2.0.0-beta.2",
     "@harnessio/oats-cli": "^2.1.0",
     "@harnessio/oats-plugin-react-query": "^2.1.0",
-    "@harnessio/uicore": "^4.0.0-beta.1",
+    "@harnessio/uicore": "^4.0.0-beta.1a",
     "@popperjs/core": "^2.11.5",
     "@tanstack/react-query": "4.20.4",
     "@types/d3-array": "^3.0.3",
