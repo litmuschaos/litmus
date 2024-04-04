@@ -8,10 +8,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/mrz1836/go-sanitize"
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -170,7 +171,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	defer destDir.Close()
 
 	//download the zip file from the provided url
-	download, err := http.Get(path.Clean(hubDetails.RepoURL))
+	download, err := http.Get(sanitize.URL(hubDetails.RepoURL))
 	if err != nil {
 		log.Error(err)
 		return err
