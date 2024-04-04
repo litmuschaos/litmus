@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -169,7 +170,7 @@ func DownloadRemoteHub(hubDetails model.CreateRemoteChaosHub, projectID string) 
 	defer destDir.Close()
 
 	//download the zip file from the provided url
-	download, err := http.Get(hubDetails.RepoURL)
+	download, err := http.Get(path.Clean(hubDetails.RepoURL))
 	if err != nil {
 		log.Error(err)
 		return err
