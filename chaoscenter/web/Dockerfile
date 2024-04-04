@@ -8,9 +8,11 @@ COPY ./entrypoint.sh /opt
 
 WORKDIR /opt/chaos
 
-RUN chown 65534:65534 -R /opt/chaos
-RUN chown 65534:65534 -R /var/log/nginx
-RUN chown 65534:65534 -R /etc/nginx
+# Update the permission of group to 0(root) to make it Openshift friendly
+# as Openshift runs container with an arbitrary uid that in the root group
+RUN chown 65534:0 -R /opt/chaos && \
+    chown 65534:0 -R /var/log/nginx && \
+    chown 65534:0 -R /etc/nginx
 
 USER 65534
 
