@@ -37,5 +37,5 @@ spec:
               value: "ghcr.io/grafana/k6-operator:latest-runner"
 
             # Provide the image pull policy of the helper pod
-            - name: LIBImagePullPolicy
+            - name: LIB_IMAGE_PULL_POLICY
               value: "Always"

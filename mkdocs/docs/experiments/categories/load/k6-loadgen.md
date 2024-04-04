@@ -12,8 +12,8 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
 
 ??? info "Verify the prerequisites" 
     - Ensure that Kubernetes Version > 1.16 
-    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>).If not, install from <a href="https://docs.litmuschaos.io/docs/getting-started/installation">here</a>
-    - Ensure to create a Kubernetes secret having the JS script file in the `Chaos Infrastructure`'s namespace(typically litmus). The simplest way to create a secret object looks like this:
+    - Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>). If not, install from <a href="https://docs.litmuschaos.io/docs/getting-started/installation">here</a>
+    - Ensure to create a Kubernetes secret having the JS script file in the `Chaos Infrastructure`'s namespace (`litmus` by default). The simplest way to create a secret object looks like this:
             ```bash
             kubectl create secret generic k6-script \
                 --from-file=script.js=<<script-path>> -n <<chaos_infrastructure_namespace>>
@@ -99,7 +99,7 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
         <td> Defaults to <code>ghcr.io/grafana/k6-operator:latest-runner</code></td>
       </tr>
       <tr>
-        <td> LIBImagePullPolicy  </td>
+        <td> LIB_IMAGE_PULL_POLICY  </td>
         <td> LIB Image pull policy </td>
         <td> Defaults to <code>Always</code> </td> 
       </tr>
@@ -194,6 +194,6 @@ spec:
               value: "ghcr.io/grafana/k6-operator:latest-runner"
 
             # Provide the image pull policy of the helper pod
-            - name: LIBImagePullPolicy
+            - name: LIB_IMAGE_PULL_POLICY
               value: "Always"
 ```
