@@ -19,6 +19,11 @@ export default function ResetPasswordController(props: ResetPasswordControllerPr
   );
 
   return (
-    <ResetPasswordView username={username} handleClose={handleClose} resetPasswordMutation={resetPasswordMutation} resetPasswordMutationLoading={resetPasswordMutationLoading} />
+    <ResetPasswordView
+      username={username}
+      handleClose={handleClose}
+      resetPasswordMutation={resetPasswordMutation}
+      resetPasswordMutationLoading={resetPasswordMutationLoading}
+    />
   );
 }

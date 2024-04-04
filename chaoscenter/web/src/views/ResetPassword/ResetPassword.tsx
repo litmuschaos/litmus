@@ -104,10 +104,10 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={resetPasswordMutationLoading ? <Icon name='loading' size={16}/> : getString('confirm')}
+                      text={resetPasswordMutationLoading ? <Icon name="loading" size={16} /> : getString('confirm')}
                       disabled={resetPasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
                       onClick={() => formikProps.handleSubmit()}
-                      style={{minWidth: '90px'}}
+                      style={{ minWidth: '90px' }}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}

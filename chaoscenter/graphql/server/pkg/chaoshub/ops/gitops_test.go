@@ -2,7 +2,7 @@ package chaoshubops_test
 
 import (
 	"fmt"
-	"io"
+	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -25,7 +25,7 @@ var (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(io.Discard)
+	log.SetOutput(ioutil.Discard)
 	os.Exit(m.Run())
 }
 
