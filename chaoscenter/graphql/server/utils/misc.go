@@ -11,10 +11,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 )
 
 const GRPCErrorPrefix string = "rpc error: code = Unknown desc ="
@@ -86,8 +84,8 @@ func Split(str, before, after string) string {
 	return b[0][0 : len(b[0])-len(after)]
 }
 
-// GenerateUuid : Generate a unique string id based on google/uuid
-func GenerateUuid() string {
+// GenerateUUID : Generate a unique string id based on google/uuid
+func GenerateUUID() string {
 	id := uuid.New()
 	return base64.RawURLEncoding.EncodeToString(id[:])
 }
