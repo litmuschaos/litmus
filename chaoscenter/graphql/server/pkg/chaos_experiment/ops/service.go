@@ -833,7 +833,6 @@ func (c *chaosExperimentService) processChaosScheduleManifest(ctx context.Contex
 func (c *chaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWorkflowManifest v1alpha1.CronWorkflow, experiment dbChaosExperiment.ChaosExperimentRequest) (v1alpha1.CronWorkflow, []string, error) {
 	var (
 		faults []string
-		probes []dbChaosExperimentRun.Probes
 	)
 	for i, template := range cronWorkflowManifest.Spec.WorkflowSpec.Templates {
 		artifact := template.Inputs.Artifacts
@@ -867,10 +866,6 @@ func (c *chaosExperimentService) UpdateRuntimeCronWorkflowConfiguration(cronWork
 							annotationArray = append(annotationArray, annotationKey.Name)
 						}
 					}
-					probes = append(probes, dbChaosExperimentRun.Probes{
-						FaultName:  artifact[0].Name,
-						ProbeNames: annotationArray,
-					})
 
 					meta.Annotations = annotation
 
