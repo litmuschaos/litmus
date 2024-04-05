@@ -287,7 +287,7 @@ func (r repository) UpdateMemberRole(projectID string, userID string, role *enti
 		},
 	})
 	query := bson.D{{"_id", projectID}}
-	update := bson.D{{"$set", bson.M{"members.$[elem]role": role}}}
+	update := bson.D{{"$set", bson.M{"members.$[elem].role": role}}}
 
 	_, err := r.Collection.UpdateOne(context.TODO(), query, update, opts)
 	if err != nil {

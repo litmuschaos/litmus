@@ -593,8 +593,8 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		if member.Role == entities.RoleOwner {
-			owners, err := service.GetProjectsOwners(member.ProjectID)
+		if member.Role == nil || *member.Role == entities.RoleOwner {
+			owners, err := service.GetProjectOwners(member.ProjectID)
 			if err != nil {
 				log.Error(err)
 				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
