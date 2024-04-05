@@ -222,7 +222,11 @@ func (ev *subscriberEvents) SendWorkflowUpdates(infraData map[string]string, eve
 	// Setting up the experiment status
 	// based on different probes results
 	// present in the experiment
-	event.Phase = getExperimentStatus(event)
+	status, err := getExperimentStatus(event)
+	if err != nil {
+		logrus.WithError(err)
+	}
+	event.Phase = status
 
 	eventMap[event.UID] = event
 
@@ -276,7 +280,7 @@ func updateWorkflowStatus(status v1alpha1.WorkflowPhase) string {
 
 // getExperimentStatus is used to fetch the final experiment status
 // based on the fault/probe status
-func getExperimentStatus(experiment types.WorkflowEvent) string {
+func getExperimentStatus(experiment types.WorkflowEvent) (string, error) {
 	var (
 		errorCount                     = 0
 		completedWithProbeFailureCount = 0
@@ -287,8 +291,12 @@ func getExperimentStatus(experiment types.WorkflowEvent) string {
 	// we will fetch the data based on the different
 	// node statuses(which are coming from the probe status
 	// of these faults)
+	if status == "" {
+		return "", errors.New("status is invalid")
+	}
+
 	if status == "Stopped" || experiment.FinishedAt == "" {
-		return status
+		return status, nil
 	}
 
 	for _, node := range experiment.Nodes {
@@ -313,6 +321,5 @@ func getExperimentStatus(experiment types.WorkflowEvent) string {
 	} else if completedWithProbeFailureCount > 0 {
 		status = string(types.FaultCompletedWithProbeFailure)
 	}
-
-	return status
+	return status, nil
 }
