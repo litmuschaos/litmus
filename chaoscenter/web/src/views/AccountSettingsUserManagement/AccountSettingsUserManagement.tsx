@@ -247,11 +247,9 @@ export default function AccountSettingsUserManagementView(
             message: getString('noUserAddUsers')
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Text font={{ variation: FontVariation.H4 }}>
-              {getString('totalUsers')}: {usersData?.length ?? 0}
-            </Text>
-          </div>
+          <Text font={{ variation: FontVariation.H4 }}>
+            {getString('totalUsers')}: {usersData?.length ?? 0}
+          </Text>
           <Container style={{ flexGrow: 1 }}>
             {currentItems && <MemoizedUsersTable users={currentItems} getUsersRefetch={getUsersRefetch} />}
           </Container>
