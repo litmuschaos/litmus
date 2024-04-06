@@ -11,7 +11,7 @@ import {
   Text,
   useToggleOpen
 } from '@harnessio/uicore';
-import React, { useState } from 'react';
+import React from 'react';
 import type { Column, Row } from 'react-table';
 import { Classes, Dialog, Menu, Popover, PopoverInteractionKind, Position } from '@blueprintjs/core';
 import { Icon } from '@harnessio/icons';
@@ -191,11 +191,10 @@ export default function AccountSettingsUserManagementView(
   const { isOpen: isCreateUserModalOpen, open: openCreateUserModal, close: closeCreateUserModal } = useToggleOpen();
   const { getString } = useStrings();
 
-  const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = parseInt(event.target.value);
-    setItemsPerPage(selectedValue);
+  function handleItemsPerPageChange(pageSize: number) {
+    setItemsPerPage(pageSize);
     setCurrentPage(1);
-  };
+  }
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const [itemsPerPage, setItemsPerPage] = React.useState(5);
@@ -244,23 +243,13 @@ export default function AccountSettingsUserManagementView(
           small
           loading={useUsersQueryLoading}
           noData={{
-            when: () => !currentItems?.length,
+            when: () => !usersData?.length,
             message: getString('noUserAddUsers')
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Text font={{ variation: FontVariation.H4 }}>
-              {getString('totalUsers')}: {usersData?.length ?? 0}
-            </Text>
-            <div>
-              Items per page:
-              <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-              </select>
-            </div>
-          </div>
+          <Text font={{ variation: FontVariation.H4 }}>
+            {getString('totalUsers')}: {usersData?.length ?? 0}
+          </Text>
           <Container style={{ flexGrow: 1 }}>
             {currentItems && <MemoizedUsersTable users={currentItems} getUsersRefetch={getUsersRefetch} />}
           </Container>
@@ -271,8 +260,8 @@ export default function AccountSettingsUserManagementView(
             pageIndex={currentPage - 1}
             gotoPage={pageIndex => setCurrentPage(pageIndex + 1)}
             showPagination={true}
-            pageSizeOptions={[5,10,20]}
-            onPageSizeChange={handleItemsPerPageChange}
+            pageSizeOptions={[5, 10, 20]}
+            onPageSizeChange={pageSize => handleItemsPerPageChange(pageSize)}
           />
         </Loader>
       </Layout.Vertical>
