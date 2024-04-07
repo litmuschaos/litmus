@@ -159,7 +159,7 @@ func (c *ChaosExperimentHandler) SaveChaosExperiment(ctx context.Context, reques
 	return "experiment saved successfully", nil
 }
 
-func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string, r *store.StateData) (*model.ChaosExperimentResponse, error) {
+func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, request *model.ChaosExperimentRequest, projectID string) (*model.ChaosExperimentResponse, error) {
 
 	var revID = uuid.New().String()
 
@@ -182,7 +182,7 @@ func (c *ChaosExperimentHandler) CreateChaosExperiment(ctx context.Context, requ
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	uid, err := authorization.GetUsername(tkn)
-	err = c.chaosExperimentService.ProcessExperimentCreation(context.TODO(), newRequest, uid, projectID, wfType, revID, r)
+	err = c.chaosExperimentService.ProcessExperimentCreation(context.TODO(), newRequest, uid, projectID, wfType, revID, nil)
 	if err != nil {
 		return nil, err
 	}
