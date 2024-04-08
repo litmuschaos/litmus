@@ -18,6 +18,19 @@ func FuzzSanitizeString(f *testing.F) {
 	})
 }
 
+func FuzzValidateOauth(f *testing.F) {
+	f.Fuzz(func(t *testing.T, input string) {
+		validated, err := ValidateOAuthJWT(input)
+		if err != nil {
+			fmt.Printf("Unexpected error for input '%s': %v\n", input, err)
+		}
+		if !validated {
+			fmt.Printf("Expected validation failure for input '%s'\n", input)
+		}
+	})
+}
+
+
 func isExpectedError(err error) bool {
 	expectedErrors := []string{
 		"password is less than 8 characters",
