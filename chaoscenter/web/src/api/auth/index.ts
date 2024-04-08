@@ -46,6 +46,12 @@ export type {
 } from './hooks/useGetApiTokensQuery';
 export { getApiTokens, useGetApiTokensQuery } from './hooks/useGetApiTokensQuery';
 export type {
+  GetCapabilitiesErrorResponse,
+  GetCapabilitiesOkResponse,
+  GetCapabilitiesProps
+} from './hooks/useGetCapabilitiesQuery';
+export { getCapabilities, useGetCapabilitiesQuery } from './hooks/useGetCapabilitiesQuery';
+export type {
   GetOwnerProjectsErrorResponse,
   GetOwnerProjectsOkResponse,
   GetOwnerProjectsProps
@@ -200,12 +206,14 @@ export type {
   UpdateStateProps,
   UpdateStateRequestBody
 } from './hooks/useUpdateStateMutation';
+
 export { updateState, useUpdateStateMutation } from './hooks/useUpdateStateMutation';
 export type { UsersErrorResponse, UsersOkResponse, UsersProps } from './hooks/useUsersQuery';
 export { useUsersQuery, users } from './hooks/useUsersQuery';
 export type { DeclineInvitationBodyRequestBody } from './requestBodies/DeclineInvitationBodyRequestBody';
 export type { ActionBy } from './schemas/ActionBy';
 export type { ApiToken } from './schemas/ApiToken';
+export type { CapabilitiesResponse } from './schemas/CapabilitiesResponse';
 export type { CreateApiTokenResponse } from './schemas/CreateApiTokenResponse';
 export type { ErrorModel } from './schemas/ErrorModel';
 export type { GetApiTokensResponse } from './schemas/GetApiTokensResponse';

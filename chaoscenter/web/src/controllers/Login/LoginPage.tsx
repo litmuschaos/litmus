@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useToaster } from '@harnessio/uicore';
 import jwtDecode from 'jwt-decode';
 import LoginPageView from '@views/Login';
-import { useLoginMutation } from '@api/auth';
+import { useLoginMutation, useGetCapabilitiesQuery } from '@api/auth';
 import { setUserDetails } from '@utils';
 import { normalizePath } from '@routes/RouteDefinitions';
 import type { DecodedTokenType, PermissionGroup } from '@models';
@@ -16,6 +16,8 @@ const LoginController: React.FC = () => {
   const dexToken = searchParams.get('jwtToken');
   const dexProjectID = searchParams.get('projectID');
   const dexProjectRole = searchParams.get('projectRole') as PermissionGroup;
+
+  const capabilities = useGetCapabilitiesQuery({});
 
   React.useEffect(() => {
     if (dexToken && dexProjectID && dexProjectRole) {
@@ -44,7 +46,7 @@ const LoginController: React.FC = () => {
     }
   );
 
-  return <LoginPageView handleLogin={handleLogin} loading={isLoading} />;
+  return <LoginPageView handleLogin={handleLogin} loading={isLoading} capabilities={capabilities.data} />;
 };
 
 export default LoginController;
