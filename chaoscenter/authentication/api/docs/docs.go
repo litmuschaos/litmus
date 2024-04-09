@@ -56,6 +56,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/capabilities": {
+            "get": {
+                "description": "Returns capabilities that can be leveraged by frontend services to toggle certain features.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CapabilitiesRouter"
+                ],
+                "summary": "Get capabilities of Auth Server.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.CapabilitiesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrServerError"
+                        }
+                    }
+                }
+            }
+        },
         "/create_project": {
             "post": {
                 "description": "Create a new project.",
@@ -1085,6 +1114,19 @@ const docTemplate = `{
                 }
             }
         },
+        "response.CapabilitiesResponse": {
+            "type": "object",
+            "properties": {
+                "dex": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        }
+                    }
+                }
+            }
+        },
         "response.ErrInvalidCredentials": {
             "type": "object",
             "properties": {
@@ -1159,7 +1201,7 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string",
-                    "example": "The authorization server encountered an unexpected condition that prevented it from fulfi"
+                    "example": "The authorization server encountered an unexpected condition that prevented it from fulfilling the request"
                 }
             }
         },
