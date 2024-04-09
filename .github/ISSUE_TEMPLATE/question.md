@@ -1,7 +1,10 @@
 ---
 name: "\U0001F914 Question"
 about: Question not answered in our community meetings, Docs or Readme.
-labels: question
+title: ''
+labels: ''
+assignees: ''
+
 ---
 
 ## Question
