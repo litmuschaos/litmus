@@ -54,6 +54,10 @@ type CreateProjectInput struct {
 	UserID      string `bson:"user_id" json:"userID"`
 }
 
+type DeleteProjectInput struct {
+	ProjectID   string `json:"projectID"`
+}
+
 type MemberInput struct {
 	ProjectID string      `json:"projectID"`
 	UserID    string      `json:"userID"`

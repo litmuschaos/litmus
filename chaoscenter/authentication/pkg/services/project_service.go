@@ -27,6 +27,7 @@ type projectService interface {
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
 	GetProjectOwners(projectID string) ([]*entities.Member, error)
+	DeleteProject(projectID string) error
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
@@ -94,4 +95,8 @@ func (a applicationService) GetProjectOwners(projectID string) ([]*entities.Memb
 
 func (a applicationService) ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error) {
 	return a.projectRepository.ListInvitations(userID, invitationState)
+}
+
+func (a applicationService) DeleteProject(projectID string) error {
+	return a.projectRepository.DeleteProject(projectID)
 }

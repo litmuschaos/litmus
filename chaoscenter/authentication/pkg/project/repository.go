@@ -32,6 +32,7 @@ type Repository interface {
 	GetProjectRole(projectID string, userID string) (*entities.MemberRole, error)
 	GetProjectMembers(projectID string, state string) ([]*entities.Member, error)
 	GetProjectOwners(projectID string) ([]*entities.Member, error)
+	DeleteProject(projectID string) error
 	ListInvitations(userID string, invitationState entities.Invitation) ([]*entities.Project, error)
 }
 
@@ -597,4 +598,20 @@ func NewRepo(collection *mongo.Collection) Repository {
 	return &repository{
 		Collection: collection,
 	}
+}
+
+// DeleteProject deletes the project with given projectID
+func (r repository) DeleteProject(projectID string) error {
+	query := bson.D{{"_id", projectID}}
+
+	result, err := r.Collection.DeleteOne(context.TODO(), query)
+	if err != nil {
+		return err
+	}
+
+	if result.DeletedCount == 0 {
+		return errors.New("no project found with the given projectID")
+	}
+
+	return nil
 }

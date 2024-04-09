@@ -209,7 +209,6 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 func GetActiveProjectOwners(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
-		// state := c.Param("state")
 		owners, err := service.GetProjectOwners(projectID)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
@@ -881,5 +880,52 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 			"role": role,
 		})
 
+	}
+}
+	
+// DeleteProject  		godoc
+//
+//	@Description	Delete a project.
+//	@Tags			ProjectRouter
+//	@Accept			json
+//	@Produce		json
+//	@Failure		400	{object}	response.ErrProjectNotFound
+//	@Failure		500	{object}	response.ErrServerError
+//	@Success		200	{object}	response.Response{}
+//	@Router			/delete_project [post]
+//
+// DeleteProject is used to delete a project.
+func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var deleteProjectRequest entities.DeleteProjectInput
+		err := c.BindJSON(&deleteProjectRequest)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+
+		err = validations.RbacValidator(c.MustGet("uid").(string),
+			deleteProjectRequest.ProjectID,
+			validations.MutationRbacRules["deleteProject"],
+			string(entities.AcceptedInvitation),
+			service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		err = service.DeleteProject(deleteProjectRequest.ProjectID)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Successfully deleted project.",
+		})
 	}
 }
