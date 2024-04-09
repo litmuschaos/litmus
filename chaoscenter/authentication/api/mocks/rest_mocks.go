@@ -120,6 +120,11 @@ func (m *MockedApplicationService) UpdateProjectName(projectID, projectName stri
 	return args.Error(0)
 }
 
+func (m *MockedApplicationService) UpdateMemberRole(projectID, userID string, role *entities.MemberRole) error {
+	args := m.Called(projectID, userID, role)
+	return args.Error(0)
+}
+
 func (m *MockedApplicationService) GetAggregateProjects(pipeline mongo.Pipeline, opts *options.AggregateOptions) (*mongo.Cursor, error) {
 	args := m.Called(pipeline, opts)
 	return args.Get(0).(*mongo.Cursor), args.Error(1)
@@ -142,6 +147,11 @@ func (m *MockedApplicationService) GetProjectRole(projectID, userID string) (*en
 
 func (m *MockedApplicationService) GetProjectMembers(projectID, state string) ([]*entities.Member, error) {
 	args := m.Called(projectID, state)
+	return args.Get(0).([]*entities.Member), args.Error(1)
+}
+
+func (m *MockedApplicationService) GetProjectOwners(projectID string) ([]*entities.Member, error) {
+	args := m.Called(projectID)
 	return args.Get(0).([]*entities.Member), args.Error(1)
 }
 
@@ -197,5 +207,10 @@ func (m *MockedApplicationService) UpdateStateTransaction(userRequest entities.U
 
 func (m *MockedApplicationService) RbacValidator(userID, resourceID string, rules []string, invitationStatus string) error {
 	args := m.Called(userID, resourceID, rules, invitationStatus)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) DeleteProject(projectID string) error {
+	args := m.Called(projectID)
 	return args.Error(0)
 }
