@@ -8,10 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestJwtMiddleware(t *testing.T) {
