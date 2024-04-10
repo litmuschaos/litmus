@@ -120,7 +120,7 @@ func getNameFromLog(log string) string {
 	return name[1]
 }
 
-// converts unix timestamp to string
+// StrConvTime converts unix timestamp to string
 func StrConvTime(time int64) string {
 	if time < 0 {
 		return ""
