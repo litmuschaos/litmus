@@ -798,7 +798,13 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
-
+	
+		uid := c.MustGet("uid").(string)
+		if uid == member.UserID {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change his own role."})
+			return
+		}
+		
 		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
 		if err != nil {
 			log.Error(err)
