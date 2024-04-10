@@ -8,11 +8,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestJwtMiddleware(t *testing.T) {
@@ -45,82 +44,82 @@ func TestJwtMiddleware(t *testing.T) {
 }
 
 func TestJwtMiddleware_SetClaimsAndCallNextHandler(t *testing.T) {
-    router := gin.Default()
+	router := gin.Default()
 
-    mockService := new(mocks.MockedApplicationService)
-    router.Use(middleware.JwtMiddleware(mockService))
+	mockService := new(mocks.MockedApplicationService)
+	router.Use(middleware.JwtMiddleware(mockService))
 
-    router.GET("/status", func(c *gin.Context) {
-        username, _ := c.Get("username")
-        uid, _ := c.Get("uid")
-        role, _ := c.Get("role")
-        assert.Equal(t, "testuser", username)
-        assert.Equal(t, "12345", uid)
-        assert.Equal(t, "admin", role)
-        c.JSON(http.StatusOK, gin.H{"message": "Access Granted"})
-    })
+	router.GET("/status", func(c *gin.Context) {
+		username, _ := c.Get("username")
+		uid, _ := c.Get("uid")
+		role, _ := c.Get("role")
+		assert.Equal(t, "testuser", username)
+		assert.Equal(t, "12345", uid)
+		assert.Equal(t, "admin", role)
+		c.JSON(http.StatusOK, gin.H{"message": "Access Granted"})
+	})
 
-    mockService.On("ValidateToken", "jwtstring").Return(&jwt.Token{
-        Valid: true,
-        Claims: jwt.MapClaims{
-            "username": "testuser",
-            "uid": "12345",
-            "role": "admin",
-        },
-    }, nil)
+	mockService.On("ValidateToken", "jwtstring").Return(&jwt.Token{
+		Valid: true,
+		Claims: jwt.MapClaims{
+			"username": "testuser",
+			"uid":      "12345",
+			"role":     "admin",
+		},
+	}, nil)
 
-    w := httptest.NewRecorder()
-    req, _ := http.NewRequest("GET", "/status", nil)
-    req.Header.Set("Authorization", "Bearer jwtstring")
-    router.ServeHTTP(w, req)
-    assert.Equal(t, http.StatusOK, w.Code)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/status", nil)
+	req.Header.Set("Authorization", "Bearer jwtstring")
+	router.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestJwtMiddleware_TokenValidationFailure(t *testing.T) {
-    router := gin.Default()
+	router := gin.Default()
 
-    mockService := new(mocks.MockedApplicationService)
-    router.Use(middleware.JwtMiddleware(mockService))
+	mockService := new(mocks.MockedApplicationService)
+	router.Use(middleware.JwtMiddleware(mockService))
 
-    router.GET("/status", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{"message": "Access Granted"})
-    })
+	router.GET("/status", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Access Granted"})
+	})
 
-    mockService.On("ValidateToken", "invalidtoken").Return(&jwt.Token{
-        Valid: false,
-    }, nil)
+	mockService.On("ValidateToken", "invalidtoken").Return(&jwt.Token{
+		Valid: false,
+	}, nil)
 
-    w := httptest.NewRecorder()
-    req, _ := http.NewRequest("GET", "/status", nil)
-    req.Header.Set("Authorization", "Bearer invalidtoken")
-    router.ServeHTTP(w, req)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/status", nil)
+	req.Header.Set("Authorization", "Bearer invalidtoken")
+	router.ServeHTTP(w, req)
 
-    assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
 
 func TestJwtMiddleware_Error(t *testing.T) {
-    router := gin.Default()
+	router := gin.Default()
 
-    mockService := new(mocks.MockedApplicationService)
-    router.Use(middleware.JwtMiddleware(mockService))
+	mockService := new(mocks.MockedApplicationService)
+	router.Use(middleware.JwtMiddleware(mockService))
 
-    dummyToken := &jwt.Token{
-        Raw:       "DummyToken",
-        Method:    jwt.SigningMethodHS256,
-        Header:    map[string]interface{}{"alg": "HS256"},
-        Claims:    jwt.MapClaims{"foo": "bar"},
-        Signature: "",
-        Valid:     false,
-    }
+	dummyToken := &jwt.Token{
+		Raw:       "DummyToken",
+		Method:    jwt.SigningMethodHS256,
+		Header:    map[string]interface{}{"alg": "HS256"},
+		Claims:    jwt.MapClaims{"foo": "bar"},
+		Signature: "",
+		Valid:     false,
+	}
 
-    mockService.On("ValidateToken", "dummy").Return(dummyToken, errors.New("mock error"))
+	mockService.On("ValidateToken", "dummy").Return(dummyToken, errors.New("mock error"))
 
-    req, _ := http.NewRequest("GET", "/", nil)
-    req.Header.Set("Authorization", "Bearer dummy")
-    resp := httptest.NewRecorder()
-    router.ServeHTTP(resp, req)
+	req, _ := http.NewRequest("GET", "/", nil)
+	req.Header.Set("Authorization", "Bearer dummy")
+	resp := httptest.NewRecorder()
+	router.ServeHTTP(resp, req)
 
-    if status := resp.Code; status != utils.ErrorStatusCodes[utils.ErrUnauthorized] {
-        t.Errorf("Handler returned wrong status code: got %v want %v", status, utils.ErrorStatusCodes[utils.ErrUnauthorized])
-    }
+	if status := resp.Code; status != utils.ErrorStatusCodes[utils.ErrUnauthorized] {
+		t.Errorf("Handler returned wrong status code: got %v want %v", status, utils.ErrorStatusCodes[utils.ErrUnauthorized])
+	}
 }
