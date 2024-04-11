@@ -898,21 +898,15 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 //	@Failure		400	{object}	response.ErrProjectNotFound
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.Response{}
-//	@Router			/delete_project [post]
+//	@Router			/delete_project/{project_id} [post]
 //
 // DeleteProject is used to delete a project.
 func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var deleteProjectRequest entities.DeleteProjectInput
-		err := c.BindJSON(&deleteProjectRequest)
-		if err != nil {
-			log.Warn(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
-			return
-		}
+		projectID := c.Param("project_id")
 
-		err = validations.RbacValidator(c.MustGet("uid").(string),
-			deleteProjectRequest.ProjectID,
+		err := validations.RbacValidator(c.MustGet("uid").(string),
+			projectID,
 			validations.MutationRbacRules["deleteProject"],
 			string(entities.AcceptedInvitation),
 			service)
@@ -923,7 +917,7 @@ func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		err = service.DeleteProject(deleteProjectRequest.ProjectID)
+		err = service.DeleteProject(projectID)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
