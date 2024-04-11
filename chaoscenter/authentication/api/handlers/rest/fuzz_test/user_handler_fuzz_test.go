@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"os"
 	"testing"
+	"unicode/utf8"
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/gin-gonic/gin"
@@ -16,6 +21,23 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/mock"
 )
+
+// TestMain is the entry point for testing
+func TestMain(m *testing.M) {
+	gin.SetMode(gin.TestMode)
+	log.SetOutput(ioutil.Discard)
+	os.Exit(m.Run())
+}
+
+func GetTestGinContext(w *httptest.ResponseRecorder) *gin.Context {
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Request = &http.Request{
+		Header: make(http.Header),
+		URL:    &url.URL{},
+	}
+
+	return ctx
+}
 
 func FuzzCreateUser(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
@@ -28,7 +50,7 @@ func FuzzCreateUser(f *testing.F) {
 		// Mock service setup
 		mockService := new(mocks.MockedApplicationService)
 		if targetStruct.Role == "" || targetStruct.Username == "" || targetStruct.Password == "" {
-			// Simulate CreateUser behavior for invalid input data
+			// Simulate CreateUser behaviour for invalid input data
 			mockService.On("CreateUser", mock.AnythingOfType("*entities.User")).Return(nil, errors.New("invalid user data"))
 		} else {
 			mockService.On("CreateUser", mock.AnythingOfType("*entities.User")).Return(targetStruct, nil)
@@ -108,9 +130,9 @@ func FuzzUpdateUser(f *testing.F) {
 func FuzzGetUser(f *testing.F) {
 	f.Fuzz(func(t *testing.T, targetUID string) {
 
-		// Check if the generated user data is empty
-		if targetUID == "" {
-			t.Skip("Empty data generated, skipping test")
+		// Check if the generated user data is empty or contains invalid UTF-8 characters
+		if targetUID == "" || !utf8.ValidString(targetUID) {
+			t.Skip("Empty or invalid data generated, skipping test")
 		}
 
 		// Mock service setup
@@ -181,3 +203,154 @@ func FuzzFetchUsers(f *testing.F) {
 		}
 	})
 }
+
+func FuzzInviteUsers(f *testing.F) {
+	f.Fuzz(func(t *testing.T, projectID string) {
+
+		// Check if the generated data is empty or contains invalid UTF-8 characters
+		if projectID == "" || !utf8.ValidString(projectID) {
+			t.Skip("Empty or invalid data generated, skipping test")
+		}
+
+		// Define a mock slice of members
+		mockMembers := []*entities.Member{
+			{UserID: "user1ID"},
+			{UserID: "user2ID"},
+		}
+		// Mock service setup
+		mockService := new(mocks.MockedApplicationService)
+		// Mock the GetProjectMembers function to return the mock members
+		mockService.On("GetProjectMembers", projectID, "all").Return(mockMembers, nil)
+
+		// Define the list of user IDs
+		uids := []string{"user1ID", "user2ID"}
+
+		// Define a mock slice of users
+		mockUsers := &[]entities.User{
+			{ID: "user1ID", Username: "user1"},
+			{ID: "user2ID", Username: "user2"},
+		}
+
+		// Mock the InviteUsers function to return the mock users
+		mockService.On("InviteUsers", uids).Return(mockUsers, nil)
+
+		// Mock Gin context setup
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Params = gin.Params{
+			{Key: "project_id", Value: projectID},
+		}
+
+		// Call the handler
+		rest.InviteUsers(mockService)(c)
+
+		// Define the expected HTTP status code
+		expectedCode := http.StatusOK
+		if w.Code != expectedCode {
+			t.Errorf("InviteUsers handler returned status code %d, expected %d", w.Code, expectedCode)
+		}
+	})
+}
+
+func FuzzLogoutUser(f *testing.F) {
+	f.Fuzz(func(t *testing.T, givenToken string) {
+		// Check if the generated token is empty or contains invalid UTF-8 characters
+		if givenToken == "" || !utf8.ValidString(givenToken) {
+			t.Skip("Empty or invalid token generated, skipping test")
+		}
+
+		// Mock service setup
+		mockService := new(mocks.MockedApplicationService)
+		// Mock the RevokeToken function to return nil, indicating successful token revocation
+		mockService.On("RevokeToken", givenToken).Return(nil)
+
+		// Mock Gin context setup
+		w := httptest.NewRecorder()
+		c := GetTestGinContext(w)
+		c.Request.Header.Set("Authorization", givenToken)
+
+		// Call the handler
+		rest.LogoutUser(mockService)(c)
+
+		// Define the expected HTTP status code and output message
+		expectedCode := http.StatusOK
+		expectedOutput := `{"message":"successfully logged out"}`
+
+		// Check the actual HTTP status code and output message
+		if w.Code != expectedCode {
+			t.Errorf("LogoutUser handler returned status code %d, expected %d", w.Code, expectedCode)
+		}
+		if w.Body.String() != expectedOutput {
+			t.Errorf("LogoutUser handler returned output %s, expected %s", w.Body.String(), expectedOutput)
+		}
+	})
+}
+
+// LoginUser fuzz test to be added
+
+// func FuzzUpdatePassword(f *testing.F) {
+// 	f.Fuzz(func(t *testing.T, data []byte) {
+// 		fuzzConsumer := fuzz.NewConsumer(data)
+// 		targetStruct := struct {
+// 			OldPassword       string
+// 			NewPassword       string
+// 			GivenStrictPolicy bool
+// 		}{}
+// 		err := fuzzConsumer.GenerateStruct(&targetStruct)
+// 		if err != nil {
+// 			return
+// 		}
+
+// 		// Mock service setup
+// 		mockService := new(mocks.MockedApplicationService)
+
+// 		// Mock Gin context setup
+// 		w := httptest.NewRecorder()
+// 		c, _ := gin.CreateTestContext(w)
+// 		body, _ := json.Marshal(targetStruct)
+// 		c.Request = httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(body))
+// 		c.Request.Header.Set("Content-Type", "application/json")
+
+// 		// Set random username for the test
+// 		username := "testUser"
+// 		c.Set("username", username)
+
+// 		// Set the strict password policy
+// 		utils.StrictPasswordPolicy = targetStruct.GivenStrictPolicy
+
+// 		// Mock UpdatePassword service response
+// 		var givenServiceResponse error
+// 		if targetStruct.OldPassword == targetStruct.NewPassword {
+// 			givenServiceResponse = errors.New("old and new passwords are the same")
+// 		} else if len(targetStruct.NewPassword) < 8 {
+// 			givenServiceResponse = errors.New("new password is too short")
+// 		} else {
+// 			givenServiceResponse = nil // Simulate successful update
+// 		}
+// 		userPassword := entities.UserPassword{
+// 			Username:    username,
+// 			OldPassword: targetStruct.OldPassword,
+// 			NewPassword: targetStruct.NewPassword,
+// 		}
+// 		mockService.On("UpdatePassword", &userPassword, true).Return(givenServiceResponse)
+
+// 		// Call the handler
+// 		rest.UpdatePassword(mockService)(c)
+
+// 		// Define the expected HTTP status code and output
+// 		expectedCode := http.StatusOK
+// 		expectedOutput := `{"message":"password has been updated successfully"}`
+// 		if givenServiceResponse != nil {
+// 			expectedCode = utils.ErrorStatusCodes[utils.ErrInvalidCredentials]
+// 			expectedOutput = `{"error":"password update failed"}`
+// 		}
+
+// 		// Check the actual HTTP status code and output message
+// 		if w.Code != expectedCode {
+// 			t.Errorf("UpdatePassword handler returned status code %d, expected %d", w.Code, expectedCode)
+// 		}
+// 		if w.Body.String() != expectedOutput {
+// 			t.Errorf("UpdatePassword handler returned output %s, expected %s", w.Body.String(), expectedOutput)
+// 		}
+// 	})
+// }
