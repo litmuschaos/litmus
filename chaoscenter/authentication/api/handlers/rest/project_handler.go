@@ -591,7 +591,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-
+		
 		if member.Role != nil && *member.Role == entities.RoleOwner {
 			owners, err := service.GetProjectOwners(member.ProjectID)
 			if err != nil {
@@ -605,7 +605,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 				return
 			}
 		}
-
+    
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
@@ -787,6 +787,13 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+
+		// Validating member role
+		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
+			return
+		}
+
 		err = validations.RbacValidator(c.MustGet("uid").(string),
 			member.ProjectID,
 			validations.MutationRbacRules["updateMemberRole"],
@@ -801,7 +808,7 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 	
 		uid := c.MustGet("uid").(string)
 		if uid == member.UserID {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change his own role."})
+			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change their own role."})
 			return
 		}
 		

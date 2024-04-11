@@ -417,7 +417,7 @@ func (r repository) GetProjectOwners(projectID string) ([]*entities.Member, erro
 	// Filter the members to include only the owners
 	var owners []*entities.Member
 	for _, member := range project.Members {
-		if member.Role == entities.RoleOwner {
+		if member.Role == entities.RoleOwner && member.Invitation == entities.AcceptedInvitation {
 			owners = append(owners, member)
 		}
 	}
