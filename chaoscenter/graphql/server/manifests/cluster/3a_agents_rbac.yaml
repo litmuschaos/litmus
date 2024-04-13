@@ -141,7 +141,7 @@ rules:
 
   - apiGroups: ['']
     resources: ['namespaces']
-    verbs: ['get', 'watch', 'patch', 'list']
+    verbs: ['get', 'watch', 'patch', 'list', 'create']
 
   # for tracking & getting logs of the pods created by workflow controller to implement individual steps in the workflow
   - apiGroups: ['']

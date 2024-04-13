@@ -8,17 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
-	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
-
 	argoTypes "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
-	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
-
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/chaos-operator/api/litmuschaos/v1alpha1"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	dbChaosExperiment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment"
+	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
+	dbSchemaProbe "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/probe"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 func AddKubernetesHTTPProbeProperties(newProbe *dbSchemaProbe.Probe, request model.ProbeRequest) *dbSchemaProbe.Probe {
@@ -112,25 +110,26 @@ func AddKubernetesCMDProbeProperties(newProbe *dbSchemaProbe.Probe, request mode
 
 		err := json.Unmarshal([]byte(*request.KubernetesCMDProperties.Source), &source)
 		if err != nil {
-			logrus.Errorf("error unmarshalling soruce: %s", err.Error())
+			log.Errorf("error unmarshalling soruce: %s", err.Error())
 			return nil
 		}
-
-		newProbe.KubernetesCMDProperties.Source = &v1alpha1.SourceDetails{
-			Image:            source.Image,
-			HostNetwork:      source.HostNetwork,
-			InheritInputs:    source.InheritInputs,
-			Args:             source.Args,
-			ENVList:          source.ENVList,
-			Labels:           source.Labels,
-			Annotations:      source.Annotations,
-			Command:          source.Command,
-			ImagePullPolicy:  source.ImagePullPolicy,
-			Privileged:       source.Privileged,
-			NodeSelector:     source.NodeSelector,
-			Volumes:          source.Volumes,
-			VolumesMount:     source.VolumesMount,
-			ImagePullSecrets: source.ImagePullSecrets,
+		if source != nil {
+			newProbe.KubernetesCMDProperties.Source = &v1alpha1.SourceDetails{
+				Image:            source.Image,
+				HostNetwork:      source.HostNetwork,
+				InheritInputs:    source.InheritInputs,
+				Args:             source.Args,
+				ENVList:          source.ENVList,
+				Labels:           source.Labels,
+				Annotations:      source.Annotations,
+				Command:          source.Command,
+				ImagePullPolicy:  source.ImagePullPolicy,
+				Privileged:       source.Privileged,
+				NodeSelector:     source.NodeSelector,
+				Volumes:          source.Volumes,
+				VolumesMount:     source.VolumesMount,
+				ImagePullSecrets: source.ImagePullSecrets,
+			}
 		}
 	}
 
@@ -528,8 +527,8 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 							}
 						}
 						probes = append(probes, dbChaosExperiment.Probes{
-							artifact[0].Name,
-							annotationArray,
+							FaultName:  artifact[0].Name,
+							ProbeNames: annotationArray,
 						})
 					}
 				}
@@ -576,8 +575,8 @@ func ParseProbesFromManifest(wfType *dbChaosExperiment.ChaosExperimentType, mani
 							}
 						}
 						probes = append(probes, dbChaosExperiment.Probes{
-							artifact[0].Name,
-							annotationArray,
+							FaultName:  artifact[0].Name,
+							ProbeNames: annotationArray,
 						})
 					}
 				}
@@ -637,8 +636,8 @@ func ParseProbesFromManifestForRuns(wfType *dbChaosExperiment.ChaosExperimentTyp
 							}
 						}
 						probes = append(probes, dbChaosExperimentRun.Probes{
-							artifact[0].Name,
-							annotationArray,
+							FaultName:  artifact[0].Name,
+							ProbeNames: annotationArray,
 						})
 					}
 				}
@@ -772,7 +771,7 @@ func GenerateExperimentManifestWithProbes(manifest string, projectID string) (ar
 										HTTPProbeInputs: &v1alpha1.HTTPProbeInputs{
 											URL:                httpProbe.HTTPProbeInputs.URL,
 											InsecureSkipVerify: httpProbe.HTTPProbeInputs.InsecureSkipVerify,
-											Method:             v1alpha1.HTTPMethod(httpProbe.HTTPProbeInputs.Method),
+											Method:             httpProbe.HTTPProbeInputs.Method,
 										},
 										RunProperties: httpProbe.RunProperties,
 										Mode:          httpProbe.Mode,
@@ -925,7 +924,7 @@ func GenerateCronExperimentManifestWithProbes(manifest string, projectID string)
 									HTTPProbeInputs: &v1alpha1.HTTPProbeInputs{
 										URL:                httpProbe.HTTPProbeInputs.URL,
 										InsecureSkipVerify: httpProbe.HTTPProbeInputs.InsecureSkipVerify,
-										Method:             v1alpha1.HTTPMethod(httpProbe.HTTPProbeInputs.Method),
+										Method:             httpProbe.HTTPProbeInputs.Method,
 									},
 									RunProperties: httpProbe.RunProperties,
 									Mode:          httpProbe.Mode,
@@ -1036,7 +1035,7 @@ func InsertProbeRefAnnotation(rawYaml, value string) (string, error) {
 	return string(result), nil
 }
 
-// Convert the probe inputs to probe request
+// ProbeInputsToProbeRequestConverter Convert the probe inputs to probe request
 func ProbeInputsToProbeRequestConverter(probeInputs v1alpha1.ProbeAttributes) (model.ProbeRequest, error) {
 	var kubernetesHTTPProperties *model.KubernetesHTTPProbeRequest
 	var kubernetesCMDProperties *model.KubernetesCMDProbeRequest
@@ -1069,16 +1068,6 @@ func ProbeInputsToProbeRequestConverter(probeInputs v1alpha1.ProbeAttributes) (m
 		if probeInputs.HTTPProbeInputs.URL == "" {
 			return model.ProbeRequest{}, errors.New("URL not specified")
 		}
-		if probeInputs.RunProperties.EvaluationTimeout != "" {
-			kubernetesHTTPProperties.EvaluationTimeout = &probeInputs.RunProperties.EvaluationTimeout
-		}
-		if probeInputs.RunProperties.ProbePollingInterval != "" {
-			kubernetesHTTPProperties.ProbePollingInterval = &probeInputs.RunProperties.ProbePollingInterval
-		}
-		if probeInputs.RunProperties.InitialDelay != "" {
-			kubernetesHTTPProperties.InitialDelay = &probeInputs.RunProperties.InitialDelay
-		}
-
 		kubernetesHTTPProperties = &model.KubernetesHTTPProbeRequest{
 			ProbeTimeout:       probeInputs.RunProperties.ProbeTimeout,
 			Interval:           probeInputs.RunProperties.Interval,
@@ -1088,6 +1077,15 @@ func ProbeInputsToProbeRequestConverter(probeInputs v1alpha1.ProbeAttributes) (m
 			Retry:              &probeInputs.RunProperties.Retry,
 			StopOnFailure:      &probeInputs.RunProperties.StopOnFailure,
 			InsecureSkipVerify: &probeInputs.HTTPProbeInputs.InsecureSkipVerify,
+		}
+		if probeInputs.RunProperties.EvaluationTimeout != "" {
+			kubernetesHTTPProperties.EvaluationTimeout = &probeInputs.RunProperties.EvaluationTimeout
+		}
+		if probeInputs.RunProperties.ProbePollingInterval != "" {
+			kubernetesHTTPProperties.ProbePollingInterval = &probeInputs.RunProperties.ProbePollingInterval
+		}
+		if probeInputs.RunProperties.InitialDelay != "" {
+			kubernetesHTTPProperties.InitialDelay = &probeInputs.RunProperties.InitialDelay
 		}
 	case model.ProbeTypePromProbe:
 		if probeInputs.PromProbeInputs.Endpoint == "" {
@@ -1154,13 +1152,13 @@ func ProbeInputsToProbeRequestConverter(probeInputs v1alpha1.ProbeAttributes) (m
 	}
 
 	return model.ProbeRequest{
-		Name:                     probeInputs.Name,
+		Name:                     probeInputs.Name + "-" + utils.GenerateUUID(),
 		Type:                     model.ProbeType(probeInputs.Type),
 		K8sProperties:            k8sProperties,
 		KubernetesHTTPProperties: kubernetesHTTPProperties,
 		KubernetesCMDProperties:  kubernetesCMDProperties,
 		PromProperties:           promProperties,
-		InfrastructureType:       model.InfrastructureType(model.InfrastructureTypeKubernetes),
+		InfrastructureType:       model.InfrastructureTypeKubernetes,
 		Tags:                     []string{},
 	}, nil
 }
