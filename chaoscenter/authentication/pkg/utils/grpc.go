@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"google.golang.org/grpc/credentials/insecure"
 	"os"
 
 	grpc2 "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
@@ -22,7 +23,7 @@ func GetProjectGRPCSvcClient(conn *grpc.ClientConn) (grpc2.ProjectClient, *grpc.
 		litmusGqlGrpcPort = DefaultLitmusGqlGrpcPort
 	}
 
-	conn, err := grpc.Dial(litmusGqlGrpcEndpoint+litmusGqlGrpcPort, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(litmusGqlGrpcEndpoint+litmusGqlGrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		logrus.Fatalf("did not connect: %s", err)
 	}

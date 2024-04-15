@@ -3,7 +3,7 @@ package graphql
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -20,7 +20,7 @@ func (gql *subscriberGql) SendRequest(server string, payload []byte) (string, er
 		return "", err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
 		return "", err

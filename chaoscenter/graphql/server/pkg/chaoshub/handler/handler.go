@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -41,7 +40,7 @@ func GetChartsPath(chartsInput model.CloningInput, projectID string, isDefault b
 // GetChartsData is used to get details of charts like experiments.
 func GetChartsData(ChartsPath string) ([]*model.Chart, error) {
 	var allChartsDetails []ChaosChart
-	Charts, err := ioutil.ReadDir(ChartsPath)
+	Charts, err := os.ReadDir(ChartsPath)
 	if err != nil {
 		log.Error("file reading error", err)
 		return nil, err
@@ -86,7 +85,7 @@ func GetExperimentData(experimentFilePath string) (*model.Chart, error) {
 // ReadExperimentFile is used for reading experiment file from given path
 func ReadExperimentFile(path string) (ChaosChart, error) {
 	var experiment ChaosChart
-	experimentFile, err := ioutil.ReadFile(path)
+	experimentFile, err := os.ReadFile(path)
 	if err != nil {
 		return experiment, fmt.Errorf("file path of the, err: %+v", err)
 	}
@@ -99,7 +98,7 @@ func ReadExperimentFile(path string) (ChaosChart, error) {
 // ReadExperimentYAMLFile is used for reading experiment/engine file from given path
 func ReadExperimentYAMLFile(path string) (string, error) {
 	var s string
-	YAMLData, err := ioutil.ReadFile(path)
+	YAMLData, err := os.ReadFile(path)
 	if err != nil {
 		return s, fmt.Errorf("file path of the, err: %+v", err)
 	}
@@ -112,7 +111,7 @@ func ReadExperimentYAMLFile(path string) (string, error) {
 func ListPredefinedWorkflowDetails(name string, projectID string) ([]*model.PredefinedExperimentList, error) {
 	experimentsPath := DefaultPath + projectID + "/" + name + "/workflows"
 	var predefinedWorkflows []*model.PredefinedExperimentList
-	files, err := ioutil.ReadDir(experimentsPath)
+	files, err := os.ReadDir(experimentsPath)
 	if err != nil {
 		return nil, err
 	}

@@ -29,7 +29,7 @@ func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
 func RandomString(n int) string {
 	if n > 0 {
 		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
-		rand.Seed(time.Now().UnixNano())
+		rand.New(rand.NewSource(time.Now().UnixNano()))
 		s := make([]rune, n)
 		for i := range s {
 			s[i] = letters[rand.Intn(len(letters))]
