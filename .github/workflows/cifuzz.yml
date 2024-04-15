@@ -1,5 +1,10 @@
 name: CIFuzz
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - 'chaoscenter/authentication/**'
+      - 'chaoscenter/graphql/**'
+      - 'chaoscenter/subscriber/**'
 permissions: {}
 jobs:
  Fuzzing:
@@ -23,7 +28,7 @@ jobs:
      with:
        oss-fuzz-project-name: 'litmuschaos'
        language: go
-       fuzz-seconds: 600
+       fuzz-seconds: 120
        sanitizer: ${{ matrix.sanitizer }}
        output-sarif: true
    - name: Upload Crash

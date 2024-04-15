@@ -156,16 +156,16 @@ export default function ChaosStudioView({
        * If probeRef is not present in the manifest then return the fault name
        * where the ref is missing otherwise return undefined
        */
-      const probeWithoutAnnotation = await (
-        experimentHandler as KubernetesYamlService
-      )?.checkProbesInExperimentManifest(experiment?.manifest as KubernetesExperimentManifest);
+      const probeWithoutAnnotation = (experimentHandler as KubernetesYamlService)?.checkProbesInExperimentManifest(
+        experiment?.manifest as KubernetesExperimentManifest
+      );
 
       /**
        * Checks if probe metadata is already present in the manifest
        *
        * Returns true if probe metadata is present
        */
-      const doesProbeExists = await (experimentHandler as KubernetesYamlService)?.doesProbeMetadataExists(
+      const doesProbeExists = (experimentHandler as KubernetesYamlService)?.doesProbeMetadataExists(
         experiment?.manifest as KubernetesExperimentManifest
       );
 

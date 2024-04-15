@@ -87,6 +87,24 @@ person will contact the maintainer to ask if they want to continue being
 a maintainer. If the maintainer decides to step down as a maintainer, they
 open a pull request to be removed from the MAINTAINERS file.
 
+## Emeritus maintainers
+
+For committers who are stepping down or being removed due to inactivity,
+the project would like to memorialize their contributions to the project by
+recognizing them as Emeritus maintainers in the EMERITUS.md file. The EMERITUS.md
+file will include a brief paragraph summarizing their contribution to the
+containerd project and recognize them as permanent Emeritus members of the
+community. While Emeritus maintainers are not active in the project, their
+expertise is always valued and their LGTM may count towards the required LGTM
+count to merge a code change into the project.
+
+If in the future an Emeritus maintainer has the desire or ability to return to
+contributing to the project, Emeritus maintainers can submit a pull request
+reversing their removal from the MAINTAINERS file and approval only requires
+2 LGTMs from current committers to return to full committer status in the
+project.
+
+
 ## How are decisions made?
 
 LitmusChaos is an open-source project with an open design philosophy. This means
