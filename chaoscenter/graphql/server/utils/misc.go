@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	crypto "crypto/rand"
 	"encoding/base64"
 	"fmt"
 	"math/rand"
@@ -25,7 +26,18 @@ func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
 	(*w).WriteHeader(statusCode)
 }
 
-// RandomString generates random strings, can be used to create ids or random secrets
+// GenerateAccessKey generates an access key by leveraging crypto/rand package
+func GenerateAccessKey(length int) (string, error) {
+	b := make([]byte, length)
+	_, err := crypto.Read(b)
+	if err != nil {
+		return "", err
+	}
+
+	return base64.URLEncoding.EncodeToString(b), nil
+}
+
+// RandomString generates random strings, can be used to create ids
 func RandomString(n int) string {
 	if n > 0 {
 		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
