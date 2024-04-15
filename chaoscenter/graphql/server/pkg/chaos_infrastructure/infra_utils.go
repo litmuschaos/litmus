@@ -115,11 +115,11 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 	)
 
 	// Checking if the agent namespace does not exist and its scope of installation is not namespaced
-	if *infra.InfraNsExists == false && infra.InfraScope != "namespace" {
+	if !*infra.InfraNsExists && infra.InfraScope != "namespace" {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(namespaceConfig))
 	}
 
-	if *infra.InfraSaExists == false {
+	if !*infra.InfraSaExists {
 		generatedYAML = append(generatedYAML, fmt.Sprintf(serviceAccountStr))
 	}
 
@@ -202,7 +202,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		newContent = strings.Replace(newContent, "#{CUSTOM_TLS_CERT}", config.TLSCert, -1)
 
 		newContent = strings.Replace(newContent, "#{START_TIME}", "\""+infra.StartTime+"\"", -1)
-		if infra.IsInfraConfirmed == true {
+		if infra.IsInfraConfirmed {
 			newContent = strings.Replace(newContent, "#{IS_INFRA_CONFIRMED}", "\""+"true"+"\"", -1)
 		} else {
 			newContent = strings.Replace(newContent, "#{IS_INFRA_CONFIRMED}", "\""+"false"+"\"", -1)
