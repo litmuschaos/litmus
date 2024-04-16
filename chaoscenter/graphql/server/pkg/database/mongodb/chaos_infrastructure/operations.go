@@ -82,9 +82,7 @@ func (c *Operator) UpdateInfra(ctx context.Context, query bson.D, update bson.D)
 
 // GetInfraWithProjectID takes projectID parameters to retrieve the chaos_infra details
 func (c *Operator) GetInfraWithProjectID(projectID string) ([]*ChaosInfra, error) {
-	var query bson.D
-	query = bson.D{
-
+	var query = bson.D{
 		{"project_id", projectID},
 		{"is_removed", false},
 	}

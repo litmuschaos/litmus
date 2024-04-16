@@ -237,7 +237,7 @@ func (p *probe) ListProbes(ctx context.Context, probeNames []string, infrastruct
 	var pipeline mongo.Pipeline
 
 	// Match the Probe Names from the input array
-	if probeNames != nil && len(probeNames) != 0 {
+	if len(probeNames) != 0 {
 		matchProbeName := bson.D{
 			{
 				Key: "$match", Value: bson.D{
