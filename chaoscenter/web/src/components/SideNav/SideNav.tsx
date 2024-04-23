@@ -100,9 +100,10 @@ export default function SideNav(): ReactElement {
       }}
     >
       <div>
-        {isPathPresent('settings') ? (
+        {isPathPresent('settings') || isPathPresent('projects') ? (
           <Layout.Vertical spacing="small" padding={{ top: 'large' }}>
             <SidebarLink label={'Settings'} to={accountScopedPaths.toAccountSettingsOverview()} />
+            <SidebarLink label={'Projects'} to={accountScopedPaths.toProjects()} />
           </Layout.Vertical>
         ) : (
           <Layout.Vertical spacing="small">

@@ -25,6 +25,7 @@ import AccountSettingsController from '@controllers/AccountSettings';
 import ProjectMembersView from '@views/ProjectMembers';
 import ChaosProbesController from '@controllers/ChaosProbes';
 import ChaosProbeController from '@controllers/ChaosProbe';
+import ProjectDashboardController from '@controllers/ProjectDashboard';
 
 const experimentID = ':experimentID';
 const runID = ':runID';
@@ -58,6 +59,7 @@ export function RoutesWithAuthentication(): React.ReactElement {
       <Redirect exact from={accountMatchPaths.toRoot()} to={accountRenderPaths.toAccountSettingsOverview()} />
       <Redirect exact from={projectMatchPaths.toRoot()} to={projectRenderPaths.toDashboard()} />
       <Route exact path={accountMatchPaths.toAccountSettingsOverview()} component={AccountSettingsController} />
+      <Route exact path={accountMatchPaths.toProjects()} component={ProjectDashboardController} />
       <Route exact path={projectMatchPaths.toDashboard()} component={OverviewController} />
       {/* Chaos Experiments */}
       <Route exact path={projectMatchPaths.toExperiments()} component={ExperimentDashboardV2Controller} />
