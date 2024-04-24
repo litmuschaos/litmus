@@ -1,0 +1,40 @@
+.wrapper {
+  padding: '20px 40px';
+}
+
+.pageMainContainer {
+  padding: 0rem 1rem !important;
+  height: 100%;
+}
+
+.cardsMainContainer {
+  align-items: flex-start;
+  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 245px);
+  gap: 2rem 1.5rem;
+}
+
+.card {
+  min-height: 200px;
+  gap: 1rem;
+}
+
+.projectDashboardCard {
+  position: relative;
+
+  .tagsList {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    .tag {
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px;
+    }
+  }
+}
+
+.deleteProjectDialog {
+  padding-bottom: 0 !important;
+}
