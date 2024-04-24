@@ -170,9 +170,11 @@ export interface StringsMap {
   'createNamespace': unknown
   'createNewToken': unknown
   'createNewUser': unknown
+  'createProject': unknown
   'createRecurringSchedule': unknown
   'created': unknown
   'createdAt': unknown
+  'createdBy': unknown
   'createdOn': unknown
   'creationTime': unknown
   'criteria': unknown
@@ -212,6 +214,8 @@ export interface StringsMap {
   'deleteProbe': unknown
   'deleteProbeDesc': unknown
   'deleteProbeHeading': unknown
+  'deleteProject': unknown
+  'deleteProjectWarning': unknown
   'deleteSuccess': unknown
   'deployChaosInfrastructure': unknown
   'deployProbe': unknown
@@ -565,6 +569,8 @@ export interface StringsMap {
   'noProbesFound.errorMessage': unknown
   'noProbesFound.message': unknown
   'noProbesFound.title': unknown
+  'noProject.subtitle': unknown
+  'noProject.title': unknown
   'noProjectFoundMatchingSearch': PrimitiveObject<'searchTerm'>
   'noProjectsFound': unknown
   'noProjectsJoined': unknown
@@ -608,6 +614,7 @@ export interface StringsMap {
   'overallResiliencyScore': unknown
   'overview': unknown
   'overwriteYaml': unknown
+  'owner': unknown
   'parallel': unknown
   'passed': unknown
   'passedRuns': unknown
@@ -699,6 +706,7 @@ export interface StringsMap {
   'prod': unknown
   'project': unknown
   'projectCreatedByYou': unknown
+  'projectDescription': unknown
   'projectNameIsRequired': unknown
   'projectNameValidText': unknown
   'projectsByInvite': unknown

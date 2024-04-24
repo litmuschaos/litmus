@@ -202,9 +202,11 @@ createChaosExperiment: Create Chaos Experiment
 createNamespace: 1. Create the namespace on your Kubernetes cluster
 createNewToken: Create New Token
 createNewUser: Create New User
+createProject: Create Project
 createRecurringSchedule: Create recurring schedule
 created: Created
 createdAt: Created At
+createdBy: Created By
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
@@ -253,6 +255,8 @@ deleteProbeDesc: >-
   control plane. This will also misplace any analytics that had incurred for the
   previous runs for this probe.
 deleteProbeHeading: Delete this probe?
+deleteProject: Delete Project
+deleteProjectWarning: Do you want to delete selected project.
 deleteSuccess: Chaos Infrastructure Successfully Disabled
 deployChaosInfrastructure: Deploying your Infrastructure
 deployProbe: Deploy new Probe
@@ -681,6 +685,11 @@ noProbesFound:
   errorMessage: Error in fetching probes
   message: Experiment has no probes yet, chaos step may still be executing.
   title: No Probes found
+noProject:
+  subtitle: >-
+    Create a project to enable Chaos Infrastructures and create Chaos
+    Experiments to  test your applications
+  title: Get Started with Chaos Engineering
 noProjectFoundMatchingSearch: No project found matching your search {{searchTerm}}
 noProjectsFound: No projects found
 noProjectsJoined: No projects joined
@@ -732,6 +741,7 @@ overallNodeResult: Overall Node Result
 overallResiliencyScore: Overall Resilience Score
 overview: Overview
 overwriteYaml: Uploading a yaml will overwrite the existing one.
+owner: Owner
 parallel: Parallel
 passed: Passed
 passedRuns: Passed Runs
@@ -840,6 +850,7 @@ probesArePassed: probes are passed
 prod: Prod
 project: Project
 projectCreatedByYou: Your Projects
+projectDescription: Project Description
 projectNameIsRequired: Project name is a required in order to update.
 projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
 projectsByInvite: Projects By Invite
