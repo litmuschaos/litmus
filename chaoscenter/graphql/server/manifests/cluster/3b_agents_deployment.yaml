@@ -40,7 +40,7 @@ spec:
       labels:
         app: subscriber
     spec:
-      serviceAccountName: #{SUBSCRIBER_SERVICE_ACCOUNT}
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}
       #{TOLERATIONS}
       #{NODE_SELECTOR}
       containers:

@@ -42,7 +42,7 @@ spec:
     spec:
       #{TOLERATIONS}
       #{NODE_SELECTOR}
-      serviceAccountName: #{SUBSCRIBER_SERVICE_ACCOUNT}
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}
       containers:
         - name: subscriber
           image: #{SUBSCRIBER_IMAGE}

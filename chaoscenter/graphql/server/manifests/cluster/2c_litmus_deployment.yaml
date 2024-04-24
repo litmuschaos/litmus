@@ -30,7 +30,7 @@ spec:
         app.kubernetes.io/managed-by: kubectl
         name: chaos-operator
     spec:
-      serviceAccountName: litmus-cluster-scope
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}
       #{TOLERATIONS}
       #{NODE_SELECTOR}
       containers:
@@ -114,7 +114,7 @@ spec:
               memory: "500Mi"
               cpu: "225m"
               ephemeral-storage: "1Gi"
-      serviceAccountName: litmus-cluster-scope
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}
 ---
 apiVersion: v1
 kind: Service
