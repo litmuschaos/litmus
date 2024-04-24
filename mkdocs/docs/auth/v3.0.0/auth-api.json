@@ -1485,6 +1485,48 @@
         ]
       }
     },
+    "/delete_project/{project_id}": {
+      "post": {
+        "description": "This API is used to delete project, which helps owners to delete their projects.",
+        "operationId": "deleteProject",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "data": [
+                  {
+                    "message": "Successfully deleted project."
+                  }
+                ]
+              }
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "required": true,
+            "description": "ID of the project to delete",
+            "in": "path",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": ["ProjectRouter"],
+        "consumes": ["application/json"]
+      }
+    },
     "/invite_users/{project_id}": {
       "get": {
         "description": "This API is used to fetch users who can be invited",

@@ -39,6 +39,14 @@ export type {
 } from './hooks/useDeclineInvitationMutation';
 export { declineInvitation, useDeclineInvitationMutation } from './hooks/useDeclineInvitationMutation';
 export type {
+  DeleteProjectErrorResponse,
+  DeleteProjectMutationPathParams,
+  DeleteProjectMutationProps,
+  DeleteProjectOkResponse,
+  DeleteProjectProps
+} from './hooks/useDeleteProjectMutation';
+export { deleteProject, useDeleteProjectMutation } from './hooks/useDeleteProjectMutation';
+export type {
   GetApiTokensErrorResponse,
   GetApiTokensOkResponse,
   GetApiTokensProps,
@@ -206,7 +214,6 @@ export type {
   UpdateStateProps,
   UpdateStateRequestBody
 } from './hooks/useUpdateStateMutation';
-
 export { updateState, useUpdateStateMutation } from './hooks/useUpdateStateMutation';
 export type { UsersErrorResponse, UsersOkResponse, UsersProps } from './hooks/useUsersQuery';
 export { useUsersQuery, users } from './hooks/useUsersQuery';
