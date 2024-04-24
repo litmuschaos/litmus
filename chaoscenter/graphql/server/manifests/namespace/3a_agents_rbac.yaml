@@ -131,6 +131,18 @@ rules:
   - apiGroups: [ "policy" ]
     resources: [ "poddisruptionbudgets" ]
     verbs: [ "create", "get", "delete" ]
+
+  # ************************************************************************
+  # Permissions needed to for the event-tracker
+  # ************************************************************************
+
+  - apiGroups: [ "eventtracker.litmuschaos.io" ]
+    resources: [ "eventtrackerpolicies" ]
+    verbs: [ "create", "get", "list", "delete", "update", "patch", "watch" ]
+
+  - apiGroups: [ "eventtracker.litmuschaos.io" ]
+    resources: [ "eventtrackerpolicies/status" ]
+    verbs: [ "get","patch", "update" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

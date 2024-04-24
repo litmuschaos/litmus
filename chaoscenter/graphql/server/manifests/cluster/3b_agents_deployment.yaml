@@ -89,7 +89,7 @@ spec:
     spec:
       #{TOLERATIONS}
       #{NODE_SELECTOR}
-      serviceAccountName: event-tracker-sa
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}
       containers:
         - image: #{EVENT_TRACKER_IMAGE}
           imagePullPolicy: Always
