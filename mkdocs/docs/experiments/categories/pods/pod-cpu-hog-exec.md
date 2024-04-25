@@ -166,7 +166,7 @@
       <tr>
         <td> CHAOS_KILL_COMMAND </td>
         <td> The command to kill the chaos process</td>
-        <td> Default to <code>kill $(find /proc -name exe -lname '*/md5sum' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}')</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep \"[md5sum] /dev/zero\" | awk '{print$1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
+        <td> Default to <code>kill $(find /proc -name exe -lname '*/md5sum' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}')</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep "[md5sum] /dev/zero" | awk '{print $1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
       </tr>
       <tr>
         <td> RAMP_TIME </td>
