@@ -245,7 +245,7 @@ spec:
       components:
         env:
         # command to kill the dd process
-        # alternative command: "kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')"
+        # alternative command: "kill -9 $(ps afx | grep "[dd] if=/dev/zero" | awk '{print $1}' | tr '\n' ' ')"
         - name: CHAOS_KILL_COMMAND
           value: "kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)"
         - name: TOTAL_CHAOS_DURATION
