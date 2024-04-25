@@ -11,11 +11,6 @@ rules:
   # Permissions needed for orchestration and monitoring chaos by chaos-operator and chaos-exporter
   # ***********************************************************************************************
 
-  # for mounting the secrets to the chaos-runner pod
-  - apiGroups: [ "" ]
-    resources: ["secrets" ]
-    verbs: [ "get", "list" ]
-
   # for deriving the owner references of the operator pod
   - apiGroups: [ "apps" ]
     resources: [ "deployments", "replicasets"]
@@ -31,9 +26,9 @@ rules:
     resources: [ "pods"]
     verbs: ["get", "create", "update", "patch", "delete", "list", "watch", "deletecollection" ]
 
-  # for creating of events, monitoring and leader election
+  # for creating of events and monitoring
   - apiGroups: [ "" ]
-    resources: [ "configmaps", "events", "services" ]
+    resources: [ "events", "services" ]
     verbs: ["get", "create", "update", "patch", "list", "watch" ]
 
   # for creation, status polling and deletion of litmus chaos resources used within a chaos workflow
@@ -56,10 +51,6 @@ rules:
   # *******************************************************************************************************
 
   - apiGroups: [ "" ]
-    resources: [ "configmaps", "secrets" ]
-    verbs: [ "get", "create", "delete", "update", "patch" ]
-
-  - apiGroups: [ "" ]
     resources: [ "pods/log" ]
     verbs: [ "get", "list", "watch" ]
 
@@ -68,7 +59,7 @@ rules:
     verbs: [ "get", "list", "watch" ]
 
   - apiGroups: [ "litmuschaos.io" ]
-    resources: [ "chaosengines", "chaosschedules", "chaosresults" ]
+    resources: [ "chaosengines", "chaosschedules", "chaosresults", "chaosschedules" ]
     verbs: [ "get", "list", "create", "delete", "update", "watch", "patch" ]
 
   - apiGroups: [ "apps.openshift.io" ]
@@ -102,9 +93,6 @@ rules:
     resources: [ "pods", "pods/exec" ]
     verbs: [ "create", "get", "list", "watch", "update", "patch", "delete" ]
   - apiGroups: [ "" ]
-    resources: [ "configmaps" ]
-    verbs: [ "get", "watch", "list" ]
-  - apiGroups: [ "" ]
     resources: [ "persistentvolumeclaims" ]
     verbs: [ "create", "delete" ]
   - apiGroups: [ "argoproj.io" ]
@@ -119,9 +107,6 @@ rules:
   - apiGroups: [ "" ]
     resources: [ "serviceaccounts" ]
     verbs: [ "get", "list" ]
-  - apiGroups: [ "" ]
-    resources: [ "secrets" ]
-    verbs: [ "get" ]
   - apiGroups: [ "argoproj.io" ]
     resources: [ "cronworkflows", "cronworkflows/finalizers" ]
     verbs: [ "get", "list", "watch", "update", "patch", "delete" ]
@@ -157,3 +142,31 @@ roleRef:
   kind: Role
   name: infra-role
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: infra-ops-role
+  namespace: #{INFRA_NAMESPACE}
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "secrets" ]
+    verbs: [ "get", "create", "delete", "update", "patch" ]
+
+  - apiGroups: [ "" ]
+    resources: [ "configmaps"]
+    verbs: ["get", "create", "update", "patch", "list", "watch" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: infra-ops-role-binding
+  namespace: #{INFRA_NAMESPACE}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: infra-ops-role
+subjects:
+  - kind: ServiceAccount
+    name: #{INFRA_SERVICE_ACCOUNT}
+    namespace: #{INFRA_NAMESPACE}
