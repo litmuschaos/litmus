@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/component: operator
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/managed-by: kubectl
+    module: execution-plane
   name: chaos-operator-ce
   namespace: #{INFRA_NAMESPACE}
 spec:
@@ -76,6 +77,7 @@ metadata:
   labels:
     app: chaos-exporter
     release: prometheus-stack
+    module: execution-plane
   name: chaos-exporter
   namespace: #{INFRA_NAMESPACE}
 spec:

@@ -31,6 +31,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    module: execution-plane
   name: workflow-controller
   namespace: #{INFRA_NAMESPACE}
 spec:

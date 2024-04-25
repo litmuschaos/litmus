@@ -550,6 +550,8 @@ metadata:
   name: litmusportal-frontend
   namespace: litmus
   labels:
+    app: litmus
+    module: control-plane
     component: litmusportal-frontend
 spec:
   replicas: 1
@@ -601,6 +603,8 @@ metadata:
   name: litmusportal-server
   namespace: litmus
   labels:
+    app: litmus
+    module: control-plane
     component: litmusportal-server
 spec:
   replicas: 1
@@ -716,6 +720,8 @@ metadata:
   name: litmusportal-auth-server
   namespace: litmus
   labels:
+    app: litmus
+    module: control-plane
     component: litmusportal-auth-server
 spec:
   replicas: 1
