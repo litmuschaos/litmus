@@ -160,7 +160,7 @@ metadata:
 rules:
   - apiGroups: [ "" ]
     resources: [ "secrets" ]
-    verbs: [ "get", "create", "delete", "update", "patch" ]
+    verbs: [ "get", "create", "update", "patch" ]
 
   - apiGroups: [ "" ]
     resources: [ "configmaps"]
