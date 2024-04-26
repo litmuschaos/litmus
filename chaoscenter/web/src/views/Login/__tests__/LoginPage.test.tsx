@@ -40,8 +40,8 @@ describe('LoginPageView', () => {
   test('With Dex Login Disabled', async () => {
     const capabilitiesWithDexDisabled = {
       dex: {
-        enabled: false,
-      },
+        enabled: false
+      }
     };
 
     render(
@@ -55,8 +55,8 @@ describe('LoginPageView', () => {
   test('With Dex Login Enabled', async () => {
     const capabilitiesWithDexEnabled = {
       dex: {
-        enabled: true,
-      },
+        enabled: true
+      }
     };
     render(
       <TestWrapper>
