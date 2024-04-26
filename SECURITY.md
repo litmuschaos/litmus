@@ -15,8 +15,11 @@ To report a litmuschaos vulnerability, either:
     ![Github Advisories tab](./images/security-reporting2.png)
 
     Click on 'Report a vulnerability'
-    
+   ![Github Report a Vulnerability](./images/security-reporting3.png)
 
+
+
+    
 2. Send an email to `litmuschaos@gmail.com` detailing the issue and steps
 to reproduce.
 
