@@ -215,6 +215,23 @@ While Chaos Experiments under the Generic category offer the ability to induce c
   </tr>
 </table>
 
+### Load Chaos
+
+Load chaos contains different chaos experiments to test the app/platform service availability. It will install all the experiments which can be used to inject load into the services like VMs, Pods and so on.
+
+<table style="width: 100%;">
+  <tr>
+    <th>Experiment Name</th>
+    <th>Description</th>
+    <th>User Guide</th>
+  </tr>
+  <tr>
+    <td>k6 Load Generator</td>
+    <td>Generate load using single js script</td>
+    <td><a href="/litmus/experiments/categories/load/k6-loadgen">k6-loadgen</a></td>
+  </tr>
+</table>
+
 <hr/>
 
 ##  Cloud Infrastructure
