@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	crypto "crypto/rand"
 	"encoding/base64"
 	"fmt"
 	"math/rand"
@@ -11,10 +12,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 )
 
 const GRPCErrorPrefix string = "rpc error: code = Unknown desc ="
@@ -27,7 +26,18 @@ func WriteHeaders(w *gin.ResponseWriter, statusCode int) {
 	(*w).WriteHeader(statusCode)
 }
 
-// RandomString generates random strings, can be used to create ids or random secrets
+// GenerateAccessKey generates an access key by leveraging crypto/rand package
+func GenerateAccessKey(length int) (string, error) {
+	b := make([]byte, length)
+	_, err := crypto.Read(b)
+	if err != nil {
+		return "", err
+	}
+
+	return base64.URLEncoding.EncodeToString(b), nil
+}
+
+// RandomString generates random strings, can be used to create ids
 func RandomString(n int) string {
 	if n > 0 {
 		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
@@ -86,8 +96,8 @@ func Split(str, before, after string) string {
 	return b[0][0 : len(b[0])-len(after)]
 }
 
-// GenerateUuid : Generate a unique string id based on google/uuid
-func GenerateUuid() string {
+// GenerateUUID : Generate a unique string id based on google/uuid
+func GenerateUUID() string {
 	id := uuid.New()
 	return base64.RawURLEncoding.EncodeToString(id[:])
 }

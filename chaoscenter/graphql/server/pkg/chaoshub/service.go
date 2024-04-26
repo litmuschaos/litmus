@@ -949,7 +949,7 @@ func (c *chaosHubService) listDefaultHubs() *model.ChaosHub {
 	defaultHubs := &model.ChaosHub{
 		ID:         DefaultHubID,
 		Name:       "Litmus ChaosHub",
-		RepoURL:    "https://github.com/litmuschaos/chaos-charts",
+		RepoURL:    utils.Config.DefaultHubGitURL,
 		RepoBranch: utils.Config.DefaultHubBranchName,
 		IsDefault:  true,
 	}

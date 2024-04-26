@@ -234,7 +234,7 @@ func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockServices := NewMockServices()
-			got, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(tt.args.ctx, tt.args.request, tt.args.projectID, tt.args.r)
+			got, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(tt.args.ctx, tt.args.request, tt.args.projectID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ChaosExperimentHandler.CreateChaosExperiment() error = %v, wantErr %v", err, tt.wantErr)
 				return
