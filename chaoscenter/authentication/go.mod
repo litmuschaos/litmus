@@ -15,7 +15,7 @@ require (
 	github.com/swaggo/swag v1.16.3
 	go.mongodb.org/mongo-driver v1.14.0
 	golang.org/x/crypto v0.21.0
-	golang.org/x/oauth2 v0.16.0
+	golang.org/x/oauth2 v0.19.0
 	google.golang.org/grpc v1.61.0
 	google.golang.org/protobuf v1.33.0
 )
@@ -62,7 +62,6 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.19.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
