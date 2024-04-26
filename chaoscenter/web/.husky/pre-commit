@@ -1,9 +1,8 @@
 #!/bin/sh
 "$(dirname "$0")/_/husky.sh"
 
-echo "\033[0;31;1mYou can't commit directly to main branch\033[0m"
-
 MATCH_PATH='chaoscenter/web/'
+
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 if [ "$BRANCH" = "main" ]; then
@@ -17,20 +16,22 @@ if expr "$BRANCH" : 'release\/.*' >/dev/null; then
 fi
 
 LITMUS_UI_FILE_CHANGES=$(git diff --name-only --cached | grep "$MATCH_PATH" -c)
+
 echo "\033[0;93mLITMUS_UI_FILE_CHANGES\033[0m ⟶ $LITMUS_UI_FILE_CHANGES"
 
-if [ "$LITMUS_UI_FILE_CHANGES" -gt 0 ]; then 
-  cd ./chaoscenter/web && yarn lint-staged
-else
-  echo "\033[0;93mSkipping husky pre-commit hook in $MATCH_PATH folder\033[0m"
+if [ "$LITMUS_UI_FILE_CHANGES" -gt 0 ];
+  then 
+    cd ./chaoscenter/web && yarn lint-staged
+  else
+    echo "\033[0;93mSkipping husky pre-commit hook in $MATCH_PATH folder\033[0m"
 fi
 
 # check for unused strings in strings.en.yaml
-UNUSED_STRINGS=$(grep -Fvxf <(grep -oP '"\K[^"]+' ./chaoscenter/web/strings/strings.en.yaml) <(grep -rl 'chaoscenter/web/src' ./*))
+UNUSED_STRINGS=$(grep -Fvxf <(grep -oP '"\K[^"]+' chaoscenter/web/strings/strings.en.yaml) <(grep -rl 'chaoscenter/web/src' ./*))
 if [ "$UNUSED_STRINGS" != "" ]; then
   echo "\033[0;31;1mERROR: Unused strings found in strings.en.yaml\033[0m"
   echo "$UNUSED_STRINGS"
   exit 1
 fi
 
-exit 0
+
