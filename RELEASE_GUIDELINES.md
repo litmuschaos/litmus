@@ -96,9 +96,8 @@ year with bug fixes and security patches.
 ### Next Release
 
 The activity for the next release will be tracked in the
-[milestones](https://github.com/LitmusChaos/LitmusChaos/milestones). If your
-issue or PR is not present in a milestone, please reach out to the maintainers
-to create the milestone or add an issue or PR to an existing milestone.
+[project board](https://github.com/litmuschaos/litmus/projects). If your
+issue or PR is not present in the project board, please reach out to the maintainers or discuss the same on the #litmus-dev slack channel  to create the milestone or add an issue or PR to an existing milestone.
 
 ### Support Horizon
 
@@ -137,18 +136,14 @@ The current state is available in the following tables:
 
 | Release                                                              | Status        | Start              | End of Life                                             |
 | ---------                                                            | ------------- | ------------------ | -------------------                                     |
-| [0.0](https://github.com/LitmusChaos/LitmusChaos/releases/tag/0.0.5)   | End of Life   | Dec 4, 2015        | -                                                       |
-| [0.1](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v0.1.0)  | End of Life   | Mar 21, 2016       | -                                                       |
-| [0.2](https://github.com/LitmusChaos/LitmusChaos/tree/v0.2.x)          | End of Life   | Apr 21, 2016       | December 5, 2017                                        |
-| [1.0](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.0.3)  | End of Life   | December 5, 2017   | December 5, 2018                                        |
-| [1.1](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.1.8)  | End of Life   | April 23, 2018     | October 23, 2019                                        |
-| [1.2](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.2.13) | End of Life   | October 24, 2018   | October 15, 2020                                        |
-| [1.3](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.3.10) | End of Life   | September 26, 2019 | March 4, 2021                                           |
-| [1.4](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.4.13) | End of Life   | August 17, 2020    | March 3, 2022                                           |
-| [1.5](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.5.18) | End of Life   | May 3, 2021        | February 28, 2023                                       |
+| [0.x  {0.6 - 0.9}](https://github.com/litmuschaos/litmus/releases/tag/0.9.0) | End of Life | Sept 13, 2019      | Jun 15, 2020                                                    |
+| [1.x  {1.0 - 1.13}](https://github.com/litmuschaos/litmus/releases/tag/1.13.8)  | End of Life   | Jan 8, 2020       | -                                                       |
+| [2.0 beta  {2.0 beta 0 to 2.0 beta 9}](https://github.com/litmuschaos/litmus/releases/tag/2.0.0-Beta9)     | End of Life   | Mar 05, 2021       | July 15, 2021                                        |
+| [2.x](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.0.3)  | End of Life   | December 5, 2017   | December 5, 2018                                        |
+| [3.x beta](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.1.8)  | End of Life   | April 23, 2018     | October 23, 2019                                        |
 | [1.6](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.6.23) | LTS           | February 15, 2022  | max(February 15, 2025 or next LTS + 6 months)           |
-| [1.7](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.7.3)  | Active        | March 10, 2023     | active(release of 2.0 + 6 months), extended(EOL of 1.6) |
-| [2.0](https://github.com/LitmusChaos/LitmusChaos/milestone/35)         | Next          | TBD                | TBD                                                     |
+| [3.x](https://github.com/LitmusChaos/LitmusChaos/releases/tag/v1.7.3)  | Active        | Oct 04, 2023     | active(release of 3.0 + 6 months), extended(EOL of 1.6) |
+| [4.0](https://github.com/litmuschaos/litmus/blob/master/ROADMAP.md)         | Next          | TBD                | TBD                                                     |
 
 > **_NOTE_** LitmusChaos v1.7 will end of life at the same time as v1.6 LTS. Due to
 > [Minimal Version Selection](https://go.dev/ref/mod#minimal-version-selection) used
