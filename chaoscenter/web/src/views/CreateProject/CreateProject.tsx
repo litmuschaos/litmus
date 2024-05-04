@@ -32,9 +32,9 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
     createProjectMutation(
       {
         body: {
-          projectName: values.projectName
-          // projectDescription: values.projectDescription,
-          // tags: values.tags,
+          projectName: values.projectName,
+          description: values.projectDescription,
+          tags: values.tags
         }
       },
       {
@@ -45,6 +45,12 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
     );
   }
 
+  const initialValues: CreateProjectFormProps = {
+    projectName: '',
+    projectDescription: '',
+    tags: []
+  };
+
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
@@ -52,15 +58,11 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
       </Layout.Horizontal>
       <Container>
         <Formik<CreateProjectFormProps>
-          initialValues={{
-            projectName: '',
-            projectDescription: '',
-            tags: []
-          }}
+          initialValues={initialValues}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
-            projectName: Yup.string(),
-            projectDescription: Yup.string().required(getString('usernameIsRequired'))
+            projectName: Yup.string().required(getString('usernameIsRequired')),
+            projectDescription: Yup.string()
           })}
         >
           {formikProps => {
@@ -79,6 +81,14 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
                       label={
                         <Text font={{ variation: FontVariation.FORM_LABEL }}>{getString('projectDescription')}</Text>
                       }
+                    />
+                    <FormInput.KVTagInput
+                      name="tags"
+                      label="Tags"
+                      isArray={true}
+                      tooltipProps={{
+                        dataTooltipId: 'tagInputId'
+                      }}
                     />
                   </Container>
                   <Layout.Horizontal style={{ gap: '1rem' }}>
