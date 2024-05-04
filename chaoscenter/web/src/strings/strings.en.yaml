@@ -207,6 +207,7 @@ createRecurringSchedule: Create recurring schedule
 created: Created
 createdAt: Created At
 createdBy: Created By
+createdByUser: Created By User
 createdOn: Created On
 creationTime: Creation Time
 criteria: Criteria
@@ -499,6 +500,7 @@ invitationSuccess: Invitation sent successfully
 invitations: Invitations
 inviteAs: Invite as
 invitedBy: Invited By
+invitedByOthers: Invited By Others
 isRequired: '{{field}} is required field'
 issueSupport: If the issue still persists, consider reaching out to support!
 k8sDescription: >-
@@ -685,6 +687,9 @@ noProbesFound:
   errorMessage: Error in fetching probes
   message: Experiment has no probes yet, chaos step may still be executing.
   title: No Probes found
+projectDashboard:
+  noProjectText: No Projects
+  noProjectDescription: There are no projects.
 noProject:
   subtitle: >-
     Create a project to enable Chaos Infrastructures and create Chaos
@@ -853,6 +858,7 @@ projectCreatedByYou: Your Projects
 projectDescription: Project Description
 projectNameIsRequired: Project name is a required in order to update.
 projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
+projectFilters: Project Filters
 projectsByInvite: Projects By Invite
 projectsInTotal: project(s) in total
 projectsJoined: Projects Joined
@@ -1025,6 +1031,8 @@ signIn: Sign In
 signInWithDex: Login With Single Sign-On
 signOut: Sign Out
 singleRun: Single Run
+sortDirection: Sort Direction
+sortField: Sort Field
 source: Source
 sourceModeDesction: >-
   Source mode is where the command execution is carried out from within a new
@@ -1042,6 +1050,7 @@ startWith: Start with blank canvas
 startedAt: Started at
 startedOn: Started On
 startingWith: Starting with
+state: State
 status: Status
 statusCheck: >-
   Note: You may check the status of your Chaos Infrastructure in the status
