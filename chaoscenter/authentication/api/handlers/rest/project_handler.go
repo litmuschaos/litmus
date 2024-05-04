@@ -55,14 +55,17 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 
 		outputUser := user.GetUserWithProject()
 
-		projects, err := service.GetProjectsByUserID(outputUser.ID, false)
+		request := utils.GetProjectFilters(c)
+		request.UserID = outputUser.ID
+
+		response, err := service.GetProjectsByUserID(request)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
-		outputUser.Projects = projects
+		outputUser.Projects = response.Projects
 
 		c.JSON(http.StatusOK, gin.H{"data": outputUser})
 	}
@@ -119,9 +122,10 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uID := c.MustGet("uid").(string)
-		projects, err := service.GetProjectsByUserID(uID, false)
-		if projects == nil {
+		request := utils.GetProjectFilters(c)
+
+		response, err := service.GetProjectsByUserID(request)
+		if response == nil || (response.TotalNumberOfProjects != nil && *response.TotalNumberOfProjects == 0) {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "No projects found",
 			})
@@ -132,7 +136,7 @@ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": projects})
+		c.JSON(http.StatusOK, gin.H{"data": response})
 	}
 }
 
@@ -300,6 +304,18 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		if userRequest.Description == nil {
+			// If description is not provided, set it to an empty string
+			emptyDescription := ""
+			userRequest.Description = &emptyDescription
+		}
+
+		if userRequest.Tags == nil {
+			// If tags are not provided, set it to an empty slice
+			emptyTags := make([]*string, 0)
+			userRequest.Tags = emptyTags
+		}
+
 		userRequest.UserID = c.MustGet("uid").(string)
 
 		user, err := service.GetUser(userRequest.UserID)
@@ -333,10 +349,12 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		members = append(members, newMember)
 		state := "active"
 		newProject := &entities.Project{
-			ID:      pID,
-			Name:    userRequest.ProjectName,
-			Members: members,
-			State:   &state,
+			ID:          pID,
+			Name:        userRequest.ProjectName,
+			Members:     members,
+			State:       &state,
+			Description: userRequest.Description,
+			Tags:        userRequest.Tags,
 			Audit: entities.Audit{
 				IsRemoved: false,
 				CreatedAt: time.Now().UnixMilli(),
@@ -591,7 +609,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		
+
 		if member.Role != nil && *member.Role == entities.RoleOwner {
 			owners, err := service.GetProjectOwners(member.ProjectID)
 			if err != nil {
@@ -605,7 +623,7 @@ func LeaveProject(service services.ApplicationService) gin.HandlerFunc {
 				return
 			}
 		}
-    
+
 		err = validations.RbacValidator(c.MustGet("uid").(string), member.ProjectID,
 			validations.MutationRbacRules["leaveProject"],
 			string(entities.AcceptedInvitation),
@@ -787,7 +805,7 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-
+		
 		// Validating member role
 		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
@@ -805,13 +823,13 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
 		}
-	
+
 		uid := c.MustGet("uid").(string)
 		if uid == member.UserID {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot change their own role."})
 			return
 		}
-		
+
 		err = service.UpdateMemberRole(member.ProjectID, member.UserID, member.Role)
 		if err != nil {
 			log.Error(err)
@@ -895,7 +913,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 
 	}
 }
-	
+
 // DeleteProject  		godoc
 //
 //	@Description	Delete a project.
@@ -930,7 +948,7 @@ func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Successfully deleted project.",
 		})

@@ -18,7 +18,7 @@ import (
 type Repository interface {
 	GetProjectByProjectID(projectID string) (*entities.Project, error)
 	GetProjects(query bson.D) ([]*entities.Project, error)
-	GetProjectsByUserID(uid string, isOwner bool) ([]*entities.Project, error)
+	GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error)
 	GetProjectStats() ([]*entities.ProjectStats, error)
 	CreateProject(project *entities.Project) error
 	AddMember(projectID string, member *entities.Member) error
@@ -69,51 +69,148 @@ func (r repository) GetProjects(query bson.D) ([]*entities.Project, error) {
 }
 
 // GetProjectsByUserID returns a project based on the userID
-func (r repository) GetProjectsByUserID(userID string, isOwner bool) ([]*entities.Project, error) {
+func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
 	var projects []*entities.Project
-	query := bson.D{}
 
-	if isOwner == true {
-		query = bson.D{
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"role", bson.D{
-						{"$eq", entities.RoleOwner},
+	// Construct the pipeline
+	var pipeline mongo.Pipeline
+	pipeline = mongo.Pipeline{
+		bson.D{
+			{"$match", bson.D{
+				{"is_removed", false},
+				{"members", bson.D{
+					{"$elemMatch", bson.D{
+						{"user_id", request.UserID},
+						{"invitation", bson.D{
+							{"$nin", bson.A{
+								string(entities.PendingInvitation),
+								string(entities.DeclinedInvitation),
+								string(entities.ExitedProject),
+							}},
+						}},
 					}},
 				}},
-			}}}
+			}},
+		},
+	}
+
+	// Add additional stages to the pipeline based on the filter
+	if request.Filter != nil {
+		if request.Filter.CreatedByMe != nil && *request.Filter.CreatedByMe {
+			pipeline = append(pipeline, bson.D{
+				{"$match", bson.D{
+					{"created_by.user_id", bson.M{"$eq": request.UserID}},
+				}},
+			})
+		} else if request.Filter.CreatedByMe != nil {
+			pipeline = append(pipeline, bson.D{
+				{"$match", bson.D{
+					{"created_by.user_id", bson.M{"$ne": request.UserID}},
+				}},
+			})
+		}
+
+		if request.Filter.ProjectName != nil {
+			pipeline = append(pipeline, bson.D{
+				{"$match", bson.D{
+					{"name", bson.D{
+						{"$regex", *request.Filter.ProjectName},
+					}},
+				}},
+			})
+		}
+	}
+
+	var sortField string
+	var sortDirection int
+
+	if request.Sort != nil && request.Sort.Field != nil {
+
+		switch *request.Sort.Field {
+		case entities.ProjectSortingFieldTime:
+			sortField = "updated_at"
+		case entities.ProjectSortingFieldName:
+			sortField = "name"
+		default:
+			sortField = "updated_at"
+		}
+
+		if request.Sort.Ascending != nil && *request.Sort.Ascending {
+			sortDirection = 1
+		} else {
+			sortDirection = -1
+		}
+
+		pipeline = append(pipeline, bson.D{
+			{"$sort", bson.D{
+				{sortField, sortDirection},
+			}},
+		})
+	}
+
+	// count stage
+	var pipelineCount mongo.Pipeline
+	pipelineCount = append(pipeline, bson.D{
+		{"$count", "totalNumberOfProjects"},
+	})
+
+	countCursor, err := r.Collection.Aggregate(context.TODO(), pipelineCount)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract count result
+	var countResult []bson.M
+	if err := countCursor.All(context.TODO(), &countResult); err != nil {
+		return nil, err
+	}
+
+	var totalNumberOfProjects int64
+	if len(countResult) > 0 {
+		totalNumberOfProjects = int64(countResult[0]["totalNumberOfProjects"].(int32))
+	}
+
+	if request.Pagination != nil {
+		page := request.Pagination.Page
+		limit := request.Pagination.Limit
+
+		// Add $skip and $limit stages to the pipeline
+		pipeline = append(pipeline, bson.D{
+			{"$skip", page * limit},
+		})
+		pipeline = append(pipeline, bson.D{
+			{"$limit", limit},
+		})
 	} else {
-		query = bson.D{
-			{"is_removed", false},
-			{"members", bson.D{
-				{"$elemMatch", bson.D{
-					{"user_id", userID},
-					{"$and", bson.A{
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.PendingInvitation},
-						}}},
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.DeclinedInvitation},
-						}}},
-						bson.D{{"invitation", bson.D{
-							{"$ne", entities.ExitedProject},
-						}}},
-					}},
-				}},
-			}}}
+		pipeline = append(pipeline, bson.D{
+			{"$limit", 10},
+		})
 	}
 
-	result, err := r.Collection.Find(context.TODO(), query)
+	cursor, err := r.Collection.Aggregate(context.TODO(), pipeline)
 	if err != nil {
 		return nil, err
 	}
-	err = result.All(context.TODO(), &projects)
-	if err != nil {
+	defer cursor.Close(context.TODO())
+
+	// Iterate over the cursor and decode the results into projects
+	for cursor.Next(context.TODO()) {
+		var project entities.Project
+		if err := cursor.Decode(&project); err != nil {
+			return nil, err
+		}
+		projects = append(projects, &project)
+	}
+	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
 
-	return projects, err
+	response := entities.ListProjectResponse{
+		Projects:              projects,
+		TotalNumberOfProjects: &totalNumberOfProjects,
+	}
+
+	return &response, nil
 }
 
 // GetProjectStats returns stats related to projects in the DB
