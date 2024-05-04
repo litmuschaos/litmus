@@ -22,7 +22,7 @@ export default function APITokensController(props: APITokensControllerProps): Re
       },
       onSuccess: data => {
         setApiTokenData(data);
-        setApiTokensCount(data.apiTokens.length);
+        setApiTokensCount(data.apiTokens?.length);
       }
     }
   );
