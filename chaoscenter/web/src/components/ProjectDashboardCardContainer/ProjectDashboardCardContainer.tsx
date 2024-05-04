@@ -7,7 +7,8 @@ import { ListProjectsOkResponse, Project } from '@api/auth';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import { useStrings } from '@strings';
 import ProjectDashboardCardMenuController from '@controllers/ProjectDashboardCardMenu';
-import css from './ProjectDashboardCard.module.scss';
+import { toSentenceCase } from '@utils';
+import css from './ProjectDashboardCardContainer.module.scss';
 
 interface ProjectDashboardCardProps {
   projects: Project[] | undefined;
@@ -16,13 +17,13 @@ interface ProjectDashboardCardProps {
   ) => Promise<QueryObserverResult<ListProjectsOkResponse, unknown>>;
 }
 
-export default function ProjectDashboardCard(props: ProjectDashboardCardProps): React.ReactElement {
+export default function ProjectDashboardCardContainer(props: ProjectDashboardCardProps): React.ReactElement {
   const { projects, listProjectRefetch } = props;
   const [projectId, setProjectId] = useState<string>();
   const { getString } = useStrings();
 
   return (
-    <Container data-testid="hubContainer" className={css.pageMainContainer}>
+    <Container width="100%">
       <Container padding={{ top: 'large', bottom: 'xxlarge' }} className={css.cardsMainContainer}>
         {projects?.map(project => {
           return (
@@ -53,7 +54,7 @@ export default function ProjectDashboardCard(props: ProjectDashboardCardProps): 
                     width="100%"
                     margin={{ top: 'xsmall', bottom: 'xsmall' }}
                   >
-                    {project.name.length > 19 ? project.name.slice(0, 19) + '...' : project.name}
+                    {project?.name?.length > 19 ? project.name.slice(0, 19) + '...' : project.name}
                   </Text>
                   <Text
                     font={{ size: 'small', weight: 'light' }}
@@ -61,12 +62,11 @@ export default function ProjectDashboardCard(props: ProjectDashboardCardProps): 
                     width="100%"
                     margin={{ top: 'xsmall', bottom: 'xsmall' }}
                   >
-                    {/* todo */}
-                    {'Project description here.'}
+                    {project.description ? project.description : 'Project Description Here'}
                   </Text>
                   <CustomTagsPopover
                     // custom tags here
-                    tags={['Enterprise', 'ChaosHub']}
+                    tags={project.tags}
                     title={getString('nameIdDescriptionTags.tagsLabel')}
                   />
                 </Container>
@@ -78,10 +78,10 @@ export default function ProjectDashboardCard(props: ProjectDashboardCardProps): 
                 >
                   <Layout.Horizontal data-testid="details" margin={{ top: 'small' }} spacing="medium">
                     <Text font={{ variation: FontVariation.SMALL, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
-                      {getString('members')}: {project.members.length}
+                      {getString('members')}: {project.members ? project.members.length : 0}
                     </Text>
                     <Text font={{ variation: FontVariation.SMALL, weight: 'semi-bold' }} color={Color.PRIMARY_7}>
-                      {'state'}: {project.state}
+                      {getString('state')}: {toSentenceCase(project.state ?? '')}
                     </Text>
                   </Layout.Horizontal>
                 </Container>
