@@ -131,7 +131,8 @@ export { listInvitations, useListInvitationsQuery } from './hooks/useListInvitat
 export type {
   ListProjectsErrorResponse,
   ListProjectsOkResponse,
-  ListProjectsProps
+  ListProjectsProps,
+  ListProjectsQueryQueryParams
 } from './hooks/useListProjectsQuery';
 export { listProjects, useListProjectsQuery } from './hooks/useListProjectsQuery';
 export type {
