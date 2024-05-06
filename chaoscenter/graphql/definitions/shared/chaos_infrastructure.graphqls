@@ -404,8 +404,22 @@ input KubeObjectRequest {
   GVR Request
   """
   kubeObjRequest: KubeGVRRequest
+  """
+  Namespace in which the Kubernetes object is present
+  """
+  Namespace: String!
   objectType: String!
   workloads: [Workload]
+}
+
+"""
+Defines details for fetching Kubernetes namespace data
+"""
+input KubeNamespaceRequest {
+  """
+  ID of the infra
+  """
+  infraID: ID!
 }
 
 input KubeGVRRequest {
@@ -413,6 +427,35 @@ input KubeGVRRequest {
   version: String!
   resource: String!
 }
+
+"""
+Response received for querying Kubernetes Namespaces
+"""
+type KubeNamespaceResponse {
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: ID!
+  """
+  List of the Kubernetes namespace
+  """
+  KubeNamespace: [string]!
+}
+
+"""
+Defines the details of Kubernetes namespace
+"""
+input KubeNamespaceData {
+  """
+  Unique request ID for fetching Kubernetes namespace details
+  """
+  requestID: ID!
+  """
+  ID of the infra in which the Kubernetes namespace is present
+  """
+  infraID: InfraIdentity!
+}
+
 
 """
 Defines the details of Kubernetes object
@@ -638,6 +681,12 @@ extend type Mutation {
   """
   # authorized directive not required
   kubeObj(request: KubeObjectData!): String!
+
+  """
+  Receives kubernetes namespace data from subscriber
+  """
+  # authorized directive not required
+  kubeNamespace(request: KubeNamespaceData!): String!
 }
 
 extend type Subscription {
@@ -663,4 +712,9 @@ extend type Subscription {
   Returns a kubernetes object given an input
   """
   getKubeObject(request: KubeObjectRequest!): KubeObjectResponse!
+
+  """
+  Returns a kubernetes namespaces given an input
+  """
+  getKubeNamespace(request: KubeNamespaceRequest!): KubeNamespaceResponse!
 }

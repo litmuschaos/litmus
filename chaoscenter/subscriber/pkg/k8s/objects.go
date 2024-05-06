@@ -24,7 +24,7 @@ var (
 )
 
 //GetKubernetesNamespaces is used to get the list of Kubernetes Namespaces
-func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.NamespaceRequest) ([]string, error) {
+func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]string, error) {
 
 	var namespaceData []string
 

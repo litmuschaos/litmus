@@ -25,7 +25,7 @@ type KubeGVRRequest struct {
 	Resource string `json:"resource"`
 }
 
-type NamespaceRequest struct {
+type KubeNamespaceRequest struct {
 	RequestID      string
 	InfraID        string         `json:"infraID"`
 }
