@@ -637,7 +637,7 @@ func TestCreateApiToken(t *testing.T) {
 			bodyBytes, _ := json.Marshal(tt.inputBody)
 			c.Request = httptest.NewRequest(http.MethodPost, "/api/token", bytes.NewReader(bodyBytes))
 			c.Request.Header.Set("Content-Type", "application/json")
-
+			c.Set("uid", tt.inputBody.UserID)
 			tt.given()
 
 			rest.CreateApiToken(service)(c)
@@ -682,7 +682,7 @@ func TestGetApiTokens(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Params = []gin.Param{{Key: "uid", Value: tt.uid}}
-
+			c.Set("uid", tt.uid)
 			tt.given()
 
 			rest.GetApiTokens(service)(c)
