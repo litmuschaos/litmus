@@ -17,10 +17,10 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/litmuschaos/chaos-operator v0.0.0-20230718113617-6819a4be12e4
 	github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71
-	github.com/mrz1836/go-sanitize v1.3.1
+	github.com/mrz1836/go-sanitize v1.3.2
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/tidwall/gjson v1.14.0
 	github.com/tidwall/sjson v1.2.4
 	github.com/vektah/gqlparser/v2 v2.5.10
@@ -92,7 +92,7 @@ require (
 	github.com/skeema/knownhosts v1.2.1 // indirect
 	github.com/sosodev/duration v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
