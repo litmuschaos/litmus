@@ -315,6 +315,25 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 	return kubeObjData, nil
 }
 
+// GetKubeNamespace is the resolver for the getKubeNamespace field
+func (r *subscriptionResolver) GetNamespaceObject(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error) {
+	logrus.Print("NEW NAMESPACE REQUEST", request.InfraID)
+	kubeNamespaceData := make(chan *model.KubeNamespaceResponse)
+	reqID := uuid.New()
+	data_store.Store.Mutex.Lock()
+	data_store.Store.KubeNamespaceData[reqID.String()] = kubeNamespaceData
+	data_store.Store.Mutex.Unlock()
+	go func() {
+		<-ctx.Done()
+		logrus.Println("Closed KubeNamespace Listener")
+		delete(data_store.Store.KubeNamespaceData, reqID.String())
+	}()
+	go r.chaosExperimentHandler.GetKubeNamespaceData(reqID.String(), request, *data_store.Store)
+
+	return kubeNamespaceData, nil
+}
+
+
 // Subscription returns generated.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
 
