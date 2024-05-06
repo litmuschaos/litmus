@@ -141,7 +141,7 @@ The current state is available in the following tables:
 | [2.0 beta  {2.0 beta 0 to 2.0 beta 9}](https://github.com/litmuschaos/litmus/releases/tag/2.0.0-Beta9)     | End of Life   | Mar 05, 2021       | July 15, 2021                                        |
 | [2.x](https://github.com/litmuschaos/litmus/releases/tag/2.14.0)  | End of Life   | Aug 9, 2021  | September 5, 2023                                       |
 | [3.x beta](https://github.com/litmuschaos/litmus/releases/tag/3.0.0-beta12)  | End of Life   | Nov 16, 2022     | Nov 15, 2023                                        |
-| [3.x](https://github.com/litmuschaos/litmus/releases/tag/3.6.1)  | Active        | Oct 04, 2023     | active(release of 3.0 + 6 months), extended(EOL of 1.6) |
+| [3.x](https://github.com/litmuschaos/litmus/releases/tag/3.6.1)  | Active        | Oct 04, 2023     | active(release of 4.0 + 6 months), |
 | [4.0](https://github.com/litmuschaos/litmus/blob/master/ROADMAP.md)         | Next          | TBD                | TBD                                                     |
 
 > **_NOTE_** LitmusChaos v3.x will end of life at the same time as v4.x reaches full stability. Due to
@@ -161,26 +161,14 @@ for the list of actively tested versions. Kubernetes only supports n-3 minor
 release versions and LitmusChaos will ensure there is always a supported version
 of LitmusChaos for every supported version of Kubernetes.
 
-| Kubernetes Version | LitmusChaos Version            | CRI Version     |
-|--------------------|-------------------------------|-----------------|
-| 1.26               | 1.7.0+, 1.6.15+               | v1, v1alpha2 ** |
-| 1.27               | 1.7.0+, 1.6.15+               | v1              |
-| 1.28               | 1.7.0+, 1.6.15+               | v1              |
-| 1.29               | 1.7.11+, 1.6.27+              | v1              |
-| 1.30(wip)          | 2.0(wip), 1.7.13+, 1.6.28+    | v1              |
+| Kubernetes Version | LitmusChaos Version           | 
+|--------------------|-------------------------------|
+| 1.26               | 1.x, 2.x          | 
+| 1.27               | 1.x, 2.x            | 
+| 1.28               | 2.x, 3.x         | 
+| 1.29               | 3.x          | 
+| 1.30(wip)          | 4.0 (wip), 3.x  |
 
-** Note: LitmusChaos v1.6.*, and v1.7.* support CRI v1 and v1alpha2 through EOL as those releases continue to support older versions of k8s, cloud providers, and other clients using CRI v1alpha2. CRI v1alpha2 is deprecated in v1.7 and will be removed in LitmusChaos v2.0.
-
-Deprecated LitmusChaos and kubernetes versions
-
-| LitmusChaos Version       | Kubernetes Version | CRI Version          |
-|--------------------------|--------------------|----------------------|
-| v1.0 (w/ cri-LitmusChaos) | 1.7, 1.8, 1.9      | v1alpha1             |
-| v1.1                     | 1.10+              | v1alpha2             |
-| v1.2                     | 1.10+              | v1alpha2             |
-| v1.3                     | 1.12+              | v1alpha2             |
-| v1.4                     | 1.19+              | v1alpha2             |
-| v1.5                     | 1.20+              | v1 (1.23+), v1alpha2 |
 
 ## Public API Stability
 
@@ -190,13 +178,9 @@ LitmusChaos versions:
 
 | Component        | Status   | Stabilized Version | Links         |
 |------------------|----------|--------------------|---------------|
-| GRPC API         | Stable   | 1.0                | [gRPC API](#grpc-api) |
-| Metrics API      | Stable   | 1.0                | - |
-| Runtime Shim API | Stable   | 1.2                | - |
-| Daemon Config    | Stable   | 1.0                | - |
-| CRI GRPC API     | Stable   | 1.6 (_CRI v1_)     | [cri-api](https://github.com/kubernetes/cri-api/tree/master/pkg/apis/runtime/v1) |
-| Go client API    | Stable   | 2.0                | [godoc](https://pkg.go.dev/github.com/LitmusChaos/LitmusChaos/v2/client) |
-| `ctr` tool       | Unstable | Out of scope       | - |
+| GraphQL API         | Stable   | 1.0                | [graphql API]() |
+| Go client API    | Stable   | 2.0                | [godoc]() |
+
 
 From the version stated in the above table, that component must adhere to the
 stability constraints expected in release versions.
