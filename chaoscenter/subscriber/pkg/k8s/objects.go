@@ -23,6 +23,42 @@ var (
 	InfraScope     = os.Getenv("INFRA_SCOPE")
 )
 
+//GetKubernetesNamespaces is used to get the list of Kubernetes Namespaces
+func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.NamespaceRequest) ([]string, error) {
+
+	var namespaceData []string
+
+	if strings.ToLower(InfraScope) == "namespace" {
+		// In case of namespace scope, only one namespace is available
+		namespaceData = append(namespaceData, InfraNamespace)
+	} else {
+		// In case of cluster scope, get all the namespaces
+		conf, err := k8s.GetKubeConfig()
+		if err != nil {
+			return nil, err
+		}
+		clientset, err := kubernetes.NewForConfig(conf)
+		if err != nil {
+			return nil, err
+		}
+		
+		namespace, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+		if err != nil {
+			return nil, err
+		}
+		if len(namespace.Items) > 0 {
+			for _, namespace := range namespace.Items {
+				namespaceData = append(namespaceData, namespace.GetName())
+			}
+		} else {
+			return nil, errors.New("No namespace available")
+		}
+	}
+
+	return namespaceData, nil
+}
+
+
 // GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
 func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
 	conf, err := k8s.GetKubeConfig()
@@ -45,39 +81,18 @@ func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) ([]
 	}
 	var ObjData []*types.KubeObject
 
-	if strings.ToLower(InfraScope) == "namespace" {
-		dataList, err := k8s.GetObjectDataByNamespace(InfraNamespace, dynamicClient, resourceType)
-		if err != nil {
-			return nil, err
-		}
-		KubeObj := &types.KubeObject{
-			Namespace: InfraNamespace,
-			Data:      dataList,
-		}
-		ObjData = append(ObjData, KubeObj)
-	} else {
-		namespace, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
-		if err != nil {
-			return nil, err
-		}
+	dataList, err := k8s.GetObjectDataByNamespace(request.Namespace, dynamicClient, resourceType)
 
-		if len(namespace.Items) > 0 {
-			for _, namespace := range namespace.Items {
-				podList, err := k8s.GetObjectDataByNamespace(namespace.GetName(), dynamicClient, resourceType)
-				if err != nil {
-					return nil, err
-				}
-				KubeObj := &types.KubeObject{
-					Namespace: namespace.GetName(),
-					Data:      podList,
-				}
-				ObjData = append(ObjData, KubeObj)
-			}
-		} else {
-			return nil, errors.New("No namespace available")
-		}
-
+	if err != nil {
+		return nil, err
 	}
+	KubeObj := &types.KubeObject{
+		Namespace: InfraNamespace,
+		Data:      dataList,
+	}
+
+	ObjData = append(ObjData, KubeObj)
+
 	kubeData, _ := json.Marshal(ObjData)
 	var kubeObjects []*types.KubeObject
 	err = json.Unmarshal(kubeData, &kubeObjects)
