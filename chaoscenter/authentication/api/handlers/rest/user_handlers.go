@@ -559,6 +559,15 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		// Validating logged in user
+		// Requesting info must be from the logged in user
+		if c.MustGet("uid").(string) != apiTokenRequest.UserID {
+			log.Error("auth error: unauthorized")
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		// Checking if user exists
 		user, err := service.GetUser(apiTokenRequest.UserID)
 		if err != nil {
@@ -594,6 +603,16 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 func GetApiTokens(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uid := c.Param("uid")
+
+		// Validating logged in user
+		// Requesting info must be from the logged in user
+		if c.MustGet("uid").(string) != uid {
+			log.Error("auth error: unauthorized")
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		apiTokens, err := service.GetApiTokensByUserID(uid)
 		if err != nil {
 			log.Error(err)
