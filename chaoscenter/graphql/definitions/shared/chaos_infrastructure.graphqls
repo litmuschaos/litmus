@@ -362,7 +362,7 @@ type KubeObjectResponse {
 }
 
 """
-KubeObject consists of the namespace and the available resources in the same
+KubeObject consists of the available resources in a namespace
 """
 type KubeObject {
   """
@@ -422,6 +422,18 @@ input KubeNamespaceRequest {
   infraID: ID!
 }
 
+"""
+Define name in the infra (not really useful at the moment but maybe we will need other field later)
+"""
+type KubeNamespace{
+  """
+  Name of the namespace
+  """
+  Name: String!
+}
+
+
+
 input KubeGVRRequest {
   group: String!
   version: String!
@@ -439,7 +451,7 @@ type KubeNamespaceResponse {
   """
   List of the Kubernetes namespace
   """
-  KubeNamespace: [string]!
+  KubeNamespace: [KubeNamespace]!
 }
 
 """
