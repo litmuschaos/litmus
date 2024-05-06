@@ -142,12 +142,14 @@ func TestGetUser(t *testing.T) {
 	tests := []struct {
 		name         string
 		uid          string
+		role         string
 		given        func()
 		expectedCode int
 	}{
 		{
 			name: "Successfully retrieve user",
 			uid:  "testUID",
+			role: "user",
 			given: func() {
 				user := &entities.User{
 					ID:       "testUID",
@@ -167,7 +169,8 @@ func TestGetUser(t *testing.T) {
 			c.Params = gin.Params{
 				{"uid", tt.uid},
 			}
-
+			c.Set("uid", tt.uid)
+			c.Set("role", tt.role)
 			tt.given()
 
 			rest.GetUser(service)(c)
