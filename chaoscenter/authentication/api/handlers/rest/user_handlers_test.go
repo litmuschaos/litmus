@@ -142,12 +142,14 @@ func TestGetUser(t *testing.T) {
 	tests := []struct {
 		name         string
 		uid          string
+		role         string
 		given        func()
 		expectedCode int
 	}{
 		{
 			name: "Successfully retrieve user",
 			uid:  "testUID",
+			role: "user",
 			given: func() {
 				user := &entities.User{
 					ID:       "testUID",
@@ -167,7 +169,8 @@ func TestGetUser(t *testing.T) {
 			c.Params = gin.Params{
 				{"uid", tt.uid},
 			}
-
+			c.Set("uid", tt.uid)
+			c.Set("role", tt.role)
 			tt.given()
 
 			rest.GetUser(service)(c)
@@ -637,7 +640,7 @@ func TestCreateApiToken(t *testing.T) {
 			bodyBytes, _ := json.Marshal(tt.inputBody)
 			c.Request = httptest.NewRequest(http.MethodPost, "/api/token", bytes.NewReader(bodyBytes))
 			c.Request.Header.Set("Content-Type", "application/json")
-
+			c.Set("uid", tt.inputBody.UserID)
 			tt.given()
 
 			rest.CreateApiToken(service)(c)
@@ -682,7 +685,7 @@ func TestGetApiTokens(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Params = []gin.Param{{Key: "uid", Value: tt.uid}}
-
+			c.Set("uid", tt.uid)
 			tt.given()
 
 			rest.GetApiTokens(service)(c)
