@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Classes, PopoverInteractionKind, Position, Menu, Dialog } from '@blueprintjs/core';
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters } from '@tanstack/react-query';
+import { useHistory } from 'react-router-dom';
 import { ListProjectsOkResponse, Project } from '@api/auth';
 import CustomTagsPopover from '@components/CustomTagsPopover';
 import { useStrings } from '@strings';
 import ProjectDashboardCardMenuController from '@controllers/ProjectDashboardCardMenu';
-import { toSentenceCase } from '@utils';
+import { setUserDetails, toSentenceCase } from '@utils';
+import { useAppStore } from '@context';
 import css from './ProjectDashboardCardContainer.module.scss';
 
 interface ProjectDashboardCardProps {
@@ -21,19 +23,44 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
   const { projects, listProjectRefetch } = props;
   const [projectId, setProjectId] = useState<string>();
   const { getString } = useStrings();
+  const history = useHistory();
+  const { updateAppStore } = useAppStore();
+
+  const handleClick = (project: Project) => {
+    handleProjectSelect(project);
+  };
+
+  const handleProjectSelect = (project: Project): void => {
+    updateAppStore({ projectID: project.projectID, projectName: project.name });
+    setUserDetails({
+      projectID: project.projectID
+    });
+    history.push(`/`);
+  };
 
   return (
     <Container width="100%">
       <Container padding={{ top: 'large', bottom: 'xxlarge' }} className={css.cardsMainContainer}>
         {projects?.map(project => {
           return (
-            <Card className={css.projectDashboardCard} key={project.projectID} interactive>
+            <Card
+              onClick={() => handleClick(project)}
+              className={css.projectDashboardCard}
+              key={project.projectID}
+              interactive
+            >
               {/* ProjectMenu */}
-              <Layout.Vertical flex={{ justifyContent: 'center', alignItems: 'flex-end' }}>
+              <Layout.Vertical
+                onClick={e => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                flex={{ justifyContent: 'center', alignItems: 'flex-end' }}
+              >
                 <Popover
                   className={Classes.DARK}
-                  position={Position.LEFT}
-                  interactionKind={PopoverInteractionKind.CLICK}
+                  position={Position.RIGHT}
+                  interactionKind={PopoverInteractionKind.HOVER}
                   usePortal
                 >
                   <Button variation={ButtonVariation.ICON} icon="Options" />
@@ -51,18 +78,20 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
                   <Text
                     font={{ size: 'medium', weight: 'bold' }}
                     color={Color.BLACK}
-                    width="100%"
+                    width="70%"
+                    lineClamp={1}
                     margin={{ top: 'xsmall', bottom: 'xsmall' }}
                   >
-                    {project?.name?.length > 19 ? project.name.slice(0, 19) + '...' : project.name}
+                    {project.name}
                   </Text>
                   <Text
                     font={{ size: 'small', weight: 'light' }}
                     color={Color.BLACK}
-                    width="100%"
+                    width="70%"
+                    lineClamp={2}
                     margin={{ top: 'xsmall', bottom: 'xsmall' }}
                   >
-                    {project.description ? project.description : 'Project Description Here'}
+                    {project.description}
                   </Text>
                   <CustomTagsPopover
                     // custom tags here
@@ -88,7 +117,8 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
                 <Text
                   font={{ size: 'small', weight: 'light' }}
                   color={Color.BLACK}
-                  width="100%"
+                  width="70%"
+                  lineClamp={1}
                   margin={{ top: 'xsmall', bottom: 'xsmall' }}
                 >
                   {getString('createdBy')}: {project.createdBy?.username}
