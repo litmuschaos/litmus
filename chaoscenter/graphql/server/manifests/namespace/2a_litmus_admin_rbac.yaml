@@ -10,10 +10,10 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: litmus-admin
+  name: litmus-admin-role
   namespace: #{INFRA_NAMESPACE}
   labels:
-    name: litmus-admin
+    name: litmus-admin-role
 rules:
   # ***************************************************************************************
   # Permissions needed for preparing and monitor the chaos resources by chaos-runner
@@ -29,11 +29,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "get", "list", "patch", "update"]
-
-    # for fetching configmaps and secrets to inject into chaos-runner pod (if specified)
-  - apiGroups: [""]
-    resources: ["secrets", "configmaps"]
-    verbs: ["get", "list"]
 
     # for tracking & getting logs of the pods created by chaos-runner to implement individual steps in the runner
   - apiGroups: [""]
@@ -105,14 +100,30 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: litmus-admin
+  name: litmus-admin-role-binding
   namespace: #{INFRA_NAMESPACE}
   labels:
-    name: litmus-admin
+    name: litmus-admin-role-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: litmus-admin
+  name: litmus-admin-role
+subjects:
+  - kind: ServiceAccount
+    name: litmus-admin
+    namespace: #{INFRA_NAMESPACE}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: litmus-admin-ops-role-binding
+  namespace: #{INFRA_NAMESPACE}
+  labels:
+    name: litmus-admin-ops-role-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: infra-ops-role
 subjects:
   - kind: ServiceAccount
     name: litmus-admin
