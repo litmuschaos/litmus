@@ -98,7 +98,7 @@ func (req *subscriberRequests) AgentConnect(infraData map[string]string) {
 }
 
 func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r types.RawData) error {
-	if strings.Index("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+	if strings.Contains("kubeobject kubeobjects", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) {
 		KubeObjRequest := types.KubeObjRequest{
 			RequestID: r.Payload.Data.InfraConnect.Action.RequestID,
 		}
@@ -124,12 +124,12 @@ func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r t
 
 		logrus.Print("Log Request: ", r.Payload.Data.InfraConnect.Action.ExternalData)
 		req.subscriberK8s.SendPodLogs(infraData, podRequest)
-	} else if strings.Index("create update delete get", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+	} else if strings.Contains("create update delete get", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) {
 		_, err := req.subscriberK8s.AgentOperations(r.Payload.Data.InfraConnect.Action)
 		if err != nil {
 			return errors.New("error performing infra operation: " + err.Error())
 		}
-	} else if strings.Index("workflow_delete workflow_run_delete workflow_run_stop ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+	} else if strings.Contains("workflow_delete workflow_run_delete workflow_run_stop ", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) {
 
 		err := req.subscriberUtils.WorkflowRequest(infraData, r.Payload.Data.InfraConnect.Action.RequestType, r.Payload.Data.InfraConnect.Action.ExternalData, r.Payload.Data.InfraConnect.Action.Username)
 		if err != nil {

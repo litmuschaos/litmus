@@ -80,7 +80,6 @@ func (ev *subscriberEvents) getChaosData(nodeStatus v1alpha13.NodeStatus, engine
 // CheckChaosData util function, checks if event is a chaos-exp event, if so -  extract the chaos data
 func (ev *subscriberEvents) CheckChaosData(nodeStatus v1alpha13.NodeStatus, workflowNS string, chaosClient *v1alpha12.LitmuschaosV1alpha1Client) (string, *types.ChaosData, error) {
 	nodeType := string(nodeStatus.Type)
-	var cd *types.ChaosData = nil
 	// considering chaos events has only 1 artifact with manifest as raw data
 	data := nodeStatus.Inputs.Artifacts[0].Raw.Data
 	obj := &unstructured.Unstructured{}
@@ -100,6 +99,7 @@ func (ev *subscriberEvents) CheckChaosData(nodeStatus v1alpha13.NodeStatus, work
 					return nodeType, nil, errors.New("Chaos-Engine Generated Name couldn't be retrieved")
 				}
 			}
+			var cd *types.ChaosData
 			cd, err = ev.getChaosData(nodeStatus, name, obj.GetNamespace(), chaosClient)
 			return nodeType, cd, err
 		}

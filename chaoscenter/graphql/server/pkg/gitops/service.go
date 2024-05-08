@@ -116,7 +116,7 @@ func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID strin
 	defer gitLock.Unlock(config.RepoURL, &config.Branch)
 
 	var conn *grpc2.ClientConn
-	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	client, conn := grpc.GetAuthGRPCSvcClient()
 	defer conn.Close()
 
 	_, err := grpc.GetProjectById(client, projectID)
@@ -378,7 +378,7 @@ func (g *gitOpsService) gitSyncHelper(config gitops.GitConfigDB, wg *sync.WaitGr
 
 	gitConfig := GetGitOpsConfig(*conf)
 
-	err = g.SyncDBToGit(nil, gitConfig)
+	err = g.SyncDBToGit(context.TODO(), gitConfig)
 	if err != nil {
 		logrus.Error("Repo Sync ERROR: ", conf.ProjectID, err.Error())
 	}

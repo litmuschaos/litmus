@@ -100,7 +100,7 @@ func (ev *subscriberEvents) chaosEventHandler(obj interface{}, eventType string,
 
 	nodes := make(map[string]types.Node)
 	logrus.Print("STANDALONE CHAOSENGINE EVENT ", workflowObj.UID, " ", eventType)
-	var cd *types.ChaosData = nil
+	var cd *types.ChaosData
 
 	//extracts chaos data
 	cd, err = ev.getChaosData(v1alpha1.NodeStatus{StartedAt: workflowObj.ObjectMeta.CreationTimestamp}, workflowObj.Name, workflowObj.Namespace, chaosClient)
@@ -202,6 +202,9 @@ func (ev *subscriberEvents) StopChaosEngineState(namespace string, workflowRunID
 func (ev *subscriberEvents) StopWorkflow(wfName string, namespace string) error {
 
 	conf, err := ev.subscriberK8s.GetKubeConfig()
+	if err != nil {
+		return fmt.Errorf("error in getting kube config: %w", err)
+	}
 	wfClient := wfclientset.NewForConfigOrDie(conf).ArgoprojV1alpha1().Workflows(namespace)
 	patch := []byte(`{"spec":{"shutdown":"Stop"}}`)
 	wf, err := wfClient.Patch(context.TODO(), wfName, mergeType.MergePatchType, patch, v1.PatchOptions{})

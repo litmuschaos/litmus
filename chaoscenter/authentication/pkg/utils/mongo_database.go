@@ -13,7 +13,9 @@ import (
 
 // MongoConnection creates a connection to the mongo
 func MongoConnection() (*mongo.Client, error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	mongoCredentials := options.Credential{
 		Username: DBUser,
 		Password: DBPassword,

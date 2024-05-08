@@ -60,7 +60,7 @@ func ProjectEvents(projectEventChannel chan string, mongoClient *mongo.Client, m
 		log.Error(err.Error())
 	}
 	var conn *grpc2.ClientConn
-	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	client, conn := grpc.GetAuthGRPCSvcClient()
 	defer conn.Close()
 
 	for projectDetails.Next(context.Background()) {

@@ -14,7 +14,7 @@ func ValidateRole(ctx context.Context, projectID string,
 	requiredRoles []string, invitation string) error {
 	jwt := ctx.Value(AuthKey).(string)
 	var conn *grpc2.ClientConn
-	client, conn := grpc.GetAuthGRPCSvcClient(conn)
+	client, conn := grpc.GetAuthGRPCSvcClient()
 	defer conn.Close()
 	err := grpc.ValidatorGRPCRequest(client, jwt, projectID,
 		requiredRoles,
