@@ -9,13 +9,13 @@ import (
 )
 
 func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
-	uID := c.MustGet("uid").(string)
-
 	var request entities.ListProjectRequest
 
-	if uID != "" {
-		request.UserID = uID
+	uID, exists := c.Get("uid")
+	if exists {
+		request.UserID = uID.(string)
 	}
+
 
 	// Initialize request.Filter and request.Sort if they are nil
 	if request.Filter == nil {
