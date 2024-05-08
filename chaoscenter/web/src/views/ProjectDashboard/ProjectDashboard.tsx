@@ -22,6 +22,8 @@ interface ProjectDashboardViewProps {
   projectSearchBar: React.ReactElement;
   resetFilterButton: React.ReactElement;
   sortDropDown: React.ReactElement;
+  totalNumberOfProjects: number;
+  areFiltersSet: boolean;
 }
 
 export default function ProjectDashboardView(props: ProjectDashboardViewProps): React.ReactElement {
@@ -32,7 +34,9 @@ export default function ProjectDashboardView(props: ProjectDashboardViewProps): 
     filterDropDown,
     projectSearchBar,
     resetFilterButton,
-    sortDropDown
+    totalNumberOfProjects,
+    sortDropDown,
+    areFiltersSet
   } = props;
   const {
     isOpen: isCreateProjectModalOpen,
@@ -52,7 +56,7 @@ export default function ProjectDashboardView(props: ProjectDashboardViewProps): 
         />
         {filterDropDown}
         {sortDropDown}
-        {resetFilterButton}
+        {areFiltersSet && resetFilterButton}
       </Layout.Horizontal>
       <Layout.Horizontal spacing={'medium'}>{projectSearchBar}</Layout.Horizontal>
       {isCreateProjectModalOpen && (
@@ -94,7 +98,7 @@ export default function ProjectDashboardView(props: ProjectDashboardViewProps): 
       <Loader
         loading={props.loading}
         noData={{
-          when: () => projects?.length == 0,
+          when: () => !totalNumberOfProjects && !areFiltersSet,
           messageTitle: getString('projectDashboard.noProjectText'),
           message: getString('projectDashboard.noProjectDescription'),
           image: projectImage,

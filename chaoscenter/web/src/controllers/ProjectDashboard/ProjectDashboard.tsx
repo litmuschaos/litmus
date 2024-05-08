@@ -1,8 +1,9 @@
 import React from 'react';
 import { Pagination, PaginationProps } from '@harnessio/uicore';
+import { isEqual } from 'lodash-es';
 import { useListProjectsQuery } from '@api/auth';
 import ProjectDashboardView from '@views/ProjectDashboard';
-import { useProjectFilter, useSearchParams, useUpdateSearchParams } from '@hooks';
+import { initialProjectFilterState, useProjectFilter, useSearchParams, useUpdateSearchParams } from '@hooks';
 import { FilterDropDown, FilterProps, ProjectSearchBar, ResetFilterButton, SortDropDown } from './ProjectFilters';
 
 export interface ProjectPaginationProps extends PaginationProps {
@@ -70,6 +71,8 @@ export default function ProjectDashboardController(): React.ReactElement {
     resetPage
   };
 
+  const areFiltersSet = !(isEqual(state, initialProjectFilterState) && page === 0);
+
   return (
     <ProjectDashboardView
       projects={projects}
@@ -80,6 +83,8 @@ export default function ProjectDashboardController(): React.ReactElement {
       sortDropDown={<SortDropDown {...filterProps} />}
       listProjectRefetch={refetch}
       pagination={<PaginationComponent />}
+      totalNumberOfProjects={totalNumberOfProjects}
+      areFiltersSet={areFiltersSet}
     />
   );
 }
