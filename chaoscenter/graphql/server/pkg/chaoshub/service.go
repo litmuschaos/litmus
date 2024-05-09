@@ -67,7 +67,7 @@ func NewService(chaosHubOperator *dbSchemaChaosHub.Operator) Service {
 func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.CreateChaosHubRequest, projectID string) (*model.ChaosHub, error) {
 	if IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID); err != nil {
 		return nil, err
-	} else if IsExist == true {
+	} else if IsExist {
 		return nil, errors.New("Name Already exists")
 	}
 	currentTime := time.Now()
@@ -136,7 +136,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
+	if IsExist {
 		return nil, errors.New("Name Already exists")
 	}
 	description := ""
@@ -205,7 +205,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 	if err != nil {
 		return nil, err
 	}
-	if IsExist == true {
+	if IsExist {
 		return nil, errors.New("Name Already exists")
 	}
 
