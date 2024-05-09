@@ -12,7 +12,7 @@ require (
 	github.com/go-git/go-git/v5 v5.11.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.6.0
-	github.com/gorilla/websocket v1.5.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/jinzhu/copier v0.3.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/litmuschaos/chaos-operator v0.0.0-20230718113617-6819a4be12e4
