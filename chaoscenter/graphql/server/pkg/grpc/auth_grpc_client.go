@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"errors"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
@@ -13,7 +14,7 @@ import (
 
 // GetAuthGRPCSvcClient returns an RPC client for Authentication service
 func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *grpc.ClientConn) {
-	conn, err := grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithBlock(), grpc.WithInsecure())
+	conn, err := grpc.Dial(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logrus.Fatalf("did not connect: %s", err)
 	}

@@ -5,8 +5,8 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
 	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
+	"io"
 
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -20,7 +20,7 @@ import (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	os.Exit(m.Run())
 }
 
