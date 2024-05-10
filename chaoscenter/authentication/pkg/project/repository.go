@@ -10,6 +10,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -114,7 +115,7 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 			pipeline = append(pipeline, bson.D{
 				{"$match", bson.D{
 					{"name", bson.D{
-						{"$regex", *request.Filter.ProjectName},
+						{"$regex", primitive.Regex{Pattern: *request.Filter.ProjectName, Options: "i"}},
 					}},
 				}},
 			})

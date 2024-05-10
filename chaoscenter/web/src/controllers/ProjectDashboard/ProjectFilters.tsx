@@ -34,7 +34,7 @@ export const ProjectSearchBar = ({ state, dispatch, resetPage }: FilterProps): R
       throttle={500}
       autoFocus={false}
       onChange={workflowName => {
-        if (!(state.projectName === workflowName)) {
+        if (!(state.projectName === workflowName.toLocaleLowerCase())) {
           resetPage();
           dispatch({
             type: ProjectFilterActionKind.CHANGE_PROJECT_NAME,
