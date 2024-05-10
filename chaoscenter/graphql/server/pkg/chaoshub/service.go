@@ -133,8 +133,13 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 	if err != nil {
 		return nil, err
 	}
+<<<<<<< HEAD
 	if IsExist == true {
 		return nil, errors.New("name already exists")
+=======
+	if IsExist {
+		return nil, errors.New("Name Already exists")
+>>>>>>> 53c11651443d0f41515b30237647a18ecf1c2bdf
 	}
 	description := ""
 	if chaosHub.Description != nil {
@@ -202,8 +207,13 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 	if err != nil {
 		return nil, err
 	}
+<<<<<<< HEAD
 	if IsExist == true {
 		return nil, errors.New("name already exists")
+=======
+	if IsExist {
+		return nil, errors.New("Name Already exists")
+>>>>>>> 53c11651443d0f41515b30237647a18ecf1c2bdf
 	}
 
 	// Initialize a UID for new Hub.
