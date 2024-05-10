@@ -46,6 +46,7 @@ spec:
             - workflow-controller-configmap
             - --executor-image
             -  #{ARGO_WORKFLOW_EXECUTOR}
+            - --namespaced
             - --container-runtime-executor
             -  #{ARGO_CONTAINER_RUNTIME_EXECUTOR}
           command:
