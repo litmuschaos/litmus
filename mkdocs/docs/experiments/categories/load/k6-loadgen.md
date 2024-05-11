@@ -8,6 +8,11 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
 !!! tip "Scenario: Load generating with k6"    
     ![k6-loadgen](../../images/k6-loadgen.png)
 
+## Uses
+
+??? info "View the uses of the experiment"
+    [tutorial]()
+
 ## Prerequisites
 
 ??? info "Verify the prerequisites" 
@@ -16,7 +21,7 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
     - Ensure to create a Kubernetes secret having the JS script file in the `Chaos Infrastructure`'s namespace (`litmus` by default). The simplest way to create a secret object looks like this:
             ```bash
             kubectl create secret generic k6-script \
-                --from-file=script.js=<<script-path>> -n <<chaos_infrastructure_namespace>>
+                --from-file=<<script-path>> -n <<chaos_infrastructure_namespace>>
             ```
 
 ## Minimal RBAC configuration example (optional)
@@ -148,7 +153,7 @@ Then create a secret with the above script.
 
 ```bash
 kubectl create secret generic custom-k6-script \
-  --from-file=script.js=custom-script.js -n <<chaos_infrastructure_namespace>>
+  --from-file=custom-script.js -n <<chaos_infrastructure_namespace>>
 ```
 
 And If we want to use `custom-k6-script` secret and `custom-script.js` as the secret key, then the experiment tunable will look like this:
