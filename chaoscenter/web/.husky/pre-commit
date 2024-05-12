@@ -1,12 +1,9 @@
 #!/bin/sh
-
-# Source Husky
 "$(dirname "$0")/_/husky.sh"
 
 MATCH_PATH='chaoscenter/web/'
 STRINGS_FILE="chaoscenter/web/strings/strings.en.yaml"
 
-# Function to find and delete unused strings in strings.en.yaml
 check_and_delete_unused_strings() {
 TEMP_FILE=$(mktemp)
 grep -rEo '\b[a-zA-Z0-9_]+\b' chaoscenter/web/**/*.js > "$TEMP_FILE"
