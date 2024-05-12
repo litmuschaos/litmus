@@ -1,12 +1,43 @@
 #!/bin/sh
+
+# Source Husky
 "$(dirname "$0")/_/husky.sh"
 
 MATCH_PATH='chaoscenter/web/'
+STRINGS_FILE="chaoscenter/web/strings/strings.en.yaml"
+
+# Function to find and delete unused strings in strings.en.yaml
+check_and_delete_unused_strings() {
+   # Create a temporary file to store the output of the inner grep command
+TEMP_FILE=$(mktemp)
+
+# Execute the inner grep command and save the output to the temporary file
+grep -rEo '\b[a-zA-Z0-9_]+\b' chaoscenter/web/**/*.js > "$TEMP_FILE"
+
+# Use the temporary file as input for the outer grep commands
+UNUSED_STRINGS=$(grep -v '^#' "$STRINGS_FILE" | grep -vFf "$TEMP_FILE" | grep -oE '^[a-zA-Z0-9_]+')
+
+# Remove the temporary file
+rm "$TEMP_FILE"
+
+
+    if [ -n "$UNUSED_STRINGS" ]; then
+        echo "Unused strings found: $UNUSED_STRINGS"
+        for UNUSED_STRING in $UNUSED_STRINGS; do
+            sed -i "/$UNUSED_STRING:/d" "$STRINGS_FILE"
+        done
+        echo "Unused strings deleted from $STRINGS_FILE"
+    else
+        echo "No unused strings found in $STRINGS_FILE"
+    fi
+}
+
+check_and_delete_unused_strings
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-if [ "$BRANCH" = "main" ]; then
-  echo "\033[0;31;1mYou can't commit directly to main branch\033[0m"
+if [ "$BRANCH" = "master" ]; then
+  echo "\033[0;31;1mYou can't commit directly to master branch\033[0m"
   exit 1
 fi
 
