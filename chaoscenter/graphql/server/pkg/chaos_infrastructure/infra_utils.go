@@ -2,6 +2,8 @@ package chaos_infrastructure
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -9,12 +11,8 @@ import (
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-
-	"io/ioutil"
-	"os"
-	"strings"
 )
 
 type SubscriberConfigurations struct {
@@ -65,7 +63,7 @@ func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 	} else if infra.InfraScope == NamespaceScope {
 		respData, err = ManifestParser(infra, "manifests/namespace", &config)
 	} else {
-		logrus.Error("INFRA_SCOPE env is empty!")
+		log.Error("INFRA_SCOPE env is empty!")
 	}
 	if err != nil {
 		return nil, err
@@ -129,14 +127,19 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		return nil, fmt.Errorf("failed to open the file %v", err)
 	}
 
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Errorf("failed to close the file %v", err)
+		}
+	}(file)
 
 	list, err := file.Readdirnames(0) // 0 to read all files and folders
 	if err != nil {
 		return nil, fmt.Errorf("failed to read the file %v", err)
 	}
 
-	var nodeselector string
+	var nodeSelector string
 	if infra.NodeSelector != nil {
 		selector := strings.Split(*infra.NodeSelector, ",")
 		selectorList := make(map[string]string)
@@ -145,18 +148,17 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 			selectorList[kv[0]] = kv[1]
 		}
 
-		nodeSelector := struct {
-			NodeSelector map[string]string `yaml:"nodeSelector" json:"nodeSelector"`
-		}{
-			NodeSelector: selectorList,
-		}
-
-		byt, err := yaml.Marshal(nodeSelector)
+		byt, err := yaml.Marshal(
+			struct {
+				NodeSelector map[string]string `yaml:"nodeSelector" json:"nodeSelector"`
+			}{
+				NodeSelector: selectorList,
+			})
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal the node selector %v", err)
 		}
 
-		nodeselector = string(utils.AddRootIndent(byt, 6))
+		nodeSelector = string(utils.AddRootIndent(byt, 6))
 	}
 
 	var tolerations string
@@ -174,7 +176,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 	}
 
 	for _, fileName := range list {
-		fileContent, err := ioutil.ReadFile(rootPath + "/" + fileName)
+		fileContent, err := os.ReadFile(rootPath + "/" + fileName)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read the file %v", err)
 		}
@@ -209,7 +211,7 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 		}
 
 		if infra.NodeSelector != nil {
-			newContent = strings.Replace(newContent, "#{NODE_SELECTOR}", nodeselector, -1)
+			newContent = strings.Replace(newContent, "#{NODE_SELECTOR}", nodeSelector, -1)
 		}
 		generatedYAML = append(generatedYAML, newContent)
 	}
@@ -250,7 +252,8 @@ func SendExperimentToSubscriber(projectID string, workflow *model.ChaosExperimen
 	var workflowObj unstructured.Unstructured
 	err := yaml.Unmarshal([]byte(workflow.ExperimentManifest), &workflowObj)
 	if err != nil {
-		fmt.Errorf("error while parsing experiment manifest %v", err)
+		log.Errorf("error while parsing experiment manifest %v", err)
+		return
 	}
 
 	SendRequestToSubscriber(SubscriberRequests{
