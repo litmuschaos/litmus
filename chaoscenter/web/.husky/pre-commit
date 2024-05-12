@@ -8,18 +8,10 @@ STRINGS_FILE="chaoscenter/web/strings/strings.en.yaml"
 
 # Function to find and delete unused strings in strings.en.yaml
 check_and_delete_unused_strings() {
-   # Create a temporary file to store the output of the inner grep command
 TEMP_FILE=$(mktemp)
-
-# Execute the inner grep command and save the output to the temporary file
 grep -rEo '\b[a-zA-Z0-9_]+\b' chaoscenter/web/**/*.js > "$TEMP_FILE"
-
-# Use the temporary file as input for the outer grep commands
 UNUSED_STRINGS=$(grep -v '^#' "$STRINGS_FILE" | grep -vFf "$TEMP_FILE" | grep -oE '^[a-zA-Z0-9_]+')
-
-# Remove the temporary file
 rm "$TEMP_FILE"
-
 
     if [ -n "$UNUSED_STRINGS" ]; then
         echo "Unused strings found: $UNUSED_STRINGS"
