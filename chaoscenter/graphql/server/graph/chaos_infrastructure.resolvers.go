@@ -7,7 +7,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -102,7 +101,7 @@ func (r *mutationResolver) KubeObj(ctx context.Context, request model.KubeObject
 
 // KubeNamespace is the resolver for the kubeNamespace field.
 func (r *mutationResolver) KubeNamespace(ctx context.Context, request model.KubeNamespaceData) (string, error) {
-	panic(fmt.Errorf("not implemented: KubeNamespace - kubeNamespace"))
+	return r.chaosInfrastructureService.KubeNamespace(request, *data_store.Store)
 }
 
 // GetInfra is the resolver for the getInfra field.
@@ -323,21 +322,6 @@ func (r *subscriptionResolver) GetKubeObject(ctx context.Context, request model.
 
 // GetKubeNamespace is the resolver for the getKubeNamespace field.
 func (r *subscriptionResolver) GetKubeNamespace(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error) {
-	panic(fmt.Errorf("not implemented: GetKubeNamespace - getKubeNamespace"))
-}
-
-// Subscription returns generated.SubscriptionResolver implementation.
-func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
-
-type subscriptionResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *subscriptionResolver) GetNamespaceObject(ctx context.Context, request model.KubeNamespaceRequest) (<-chan *model.KubeNamespaceResponse, error) {
 	logrus.Print("NEW NAMESPACE REQUEST", request.InfraID)
 	kubeNamespaceData := make(chan *model.KubeNamespaceResponse)
 	reqID := uuid.New()
@@ -353,3 +337,8 @@ func (r *subscriptionResolver) GetNamespaceObject(ctx context.Context, request m
 
 	return kubeNamespaceData, nil
 }
+
+// Subscription returns generated.SubscriptionResolver implementation.
+func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
+
+type subscriptionResolver struct{ *Resolver }

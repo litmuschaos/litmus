@@ -1161,6 +1161,8 @@ type KubeNamespaceData struct {
 	RequestID string `json:"requestID"`
 	// ID of the infra in which the Kubernetes namespace is present
 	InfraID *InfraIdentity `json:"infraID"`
+	// List of KubeNamespace return by subscriber
+	KubeNamespace string `json:"kubeNamespace"`
 }
 
 // Defines details for fetching Kubernetes namespace data

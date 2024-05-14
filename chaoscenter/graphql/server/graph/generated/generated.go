@@ -5850,6 +5850,10 @@ input KubeNamespaceData {
   ID of the infra in which the Kubernetes namespace is present
   """
   infraID: InfraIdentity!
+  """
+  List of KubeNamespace return by subscriber
+  """
+  kubeNamespace: String!
 }
 
 
@@ -36949,7 +36953,7 @@ func (ec *executionContext) unmarshalInputKubeNamespaceData(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"requestID", "infraID"}
+	fieldsInOrder := [...]string{"requestID", "infraID", "kubeNamespace"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36970,6 +36974,13 @@ func (ec *executionContext) unmarshalInputKubeNamespaceData(ctx context.Context,
 				return it, err
 			}
 			it.InfraID = data
+		case "kubeNamespace":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kubeNamespace"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KubeNamespace = data
 		}
 	}
 

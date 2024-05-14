@@ -466,6 +466,10 @@ input KubeNamespaceData {
   ID of the infra in which the Kubernetes namespace is present
   """
   infraID: InfraIdentity!
+  """
+  List of KubeNamespace return by subscriber
+  """
+  kubeNamespace: String!
 }
 
 

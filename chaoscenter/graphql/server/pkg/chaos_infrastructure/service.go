@@ -52,6 +52,7 @@ type Service interface {
 	GetVersionDetails() (*model.InfraVersionDetails, error)
 	QueryServerVersion(ctx context.Context) (*model.ServerVersionResponse, error)
 	PodLog(request model.PodLog, r store.StateData) (string, error)
+	KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error)
 	KubeObj(request model.KubeObjectData, r store.StateData) (string, error)
 	UpdateInfra(query bson.D, update bson.D) error
 	GetDBInfra(infraID string) (dbChaosInfra.ChaosInfra, error)
@@ -970,6 +971,31 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		resp := model.KubeObjectResponse{
 			InfraID: request.InfraID.InfraID,
 			KubeObj: kubeObjData,
+		}
+		reqChan <- &resp
+		close(reqChan)
+		return "KubeData sent successfully", nil
+	}
+	return "KubeData sent successfully", nil
+}
+
+// KubeObj receives Kubernetes Namespace data from subscriber
+func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error) {
+	_, err := in.VerifyInfra(*request.InfraID)
+	if err != nil {
+		log.Print("Error", err)
+		return "", err
+	}
+	if reqChan, ok := r.KubeNamespaceData[request.RequestID]; ok {
+		var kubeNamespaceData []*model.KubeNamespace
+		err = json.Unmarshal([]byte(request.KubeNamespace), &kubeNamespaceData)
+		if err != nil {
+			return "", fmt.Errorf("failed to unmarshal kubeNamespace data %w", err)
+		}
+
+		resp := model.KubeNamespaceResponse{
+			InfraID: request.InfraID.InfraID,
+			KubeNamespace: kubeNamespaceData,
 		}
 		reqChan <- &resp
 		close(reqChan)
