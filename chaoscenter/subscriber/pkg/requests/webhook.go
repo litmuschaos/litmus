@@ -113,6 +113,21 @@ func (req *subscriberRequests) RequestProcessor(infraData map[string]string, r t
 			return errors.New("error getting kubernetes object data: " + err.Error())
 		}
 	}
+	if strings.Index("kubenamespace kubenamespaces", strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType)) >= 0 {
+		KubeNamespaceRequest := types.KubeNamespaceRequest{
+			RequestID: r.Payload.Data.InfraConnect.Action.RequestID,
+		}
+
+		err := json.Unmarshal([]byte(r.Payload.Data.InfraConnect.Action.ExternalData), &KubeNamespaceRequest)
+		if err != nil {
+			return errors.New("failed to json unmarshal: " + err.Error())
+		}
+
+		err = req.subscriberK8s.SendKubeNamespaces(infraData, KubeNamespaceRequest)
+		if err != nil {
+			return errors.New("error getting kubernetes namespace data: " + err.Error())
+		}
+	}
 	if strings.ToLower(r.Payload.Data.InfraConnect.Action.RequestType) == "logs" {
 		podRequest := types.PodLogRequest{
 			RequestID: r.Payload.Data.InfraConnect.Action.RequestID,

@@ -25,6 +25,11 @@ type KubeGVRRequest struct {
 	Resource string `json:"resource"`
 }
 
+// Not really useful at the moment but we might need other fields in the future
+type KubeNamespace struct {
+	Name string `json:"name"`
+}
+
 type KubeNamespaceRequest struct {
 	RequestID      string
 	InfraID        string         `json:"infraID"`
