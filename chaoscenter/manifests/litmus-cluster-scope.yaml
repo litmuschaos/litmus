@@ -10,6 +10,9 @@ rules:
   - apiGroups: [""]
     resources: [services, nodes, pods/log] # Will have to remove this for namespaced scope
     verbs: [get, watch]
+  - apiGroups: [""] # To get TLS Cert from secrets incase of cluster scope
+    resources: [secrets]
+    verbs: [get]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
