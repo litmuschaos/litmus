@@ -47,10 +47,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Run GitLeaks
+        run: |
+          wget https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz && \
+          tar -zxvf gitleaks_8.18.2_linux_x64.tar.gz && \
+          sudo mv gitleaks /usr/local/bin && gitleaks detect --source . -v
 
   backend-checks:
     runs-on: ubuntu-latest
