@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/coreos/go-oidc/v3 v3.1.0
-	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.4
