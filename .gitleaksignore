@@ -11,3 +11,7 @@ cd1841bb0d83decc0ab0f09ddda69cc572c50da9:auth/swagger.yml:jwt:56
 92da50bb8ff07fce3427e70449844b77b7ee3270:apps/datastax/deployers/common/opscenter/conf-dir/conf/ssl/opscenter.key:private-key:1
 edb1d8dc6e2d1044a9fcb3677727363bbe1e267c:mysql-master/Dockerfile:generic-api-key:37
 edb1d8dc6e2d1044a9fcb3677727363bbe1e267c:mysql-slave/Dockerfile:generic-api-key:37
+fd88a74c81ae34796a42fafed1a61bf1edc06607:auth/v3.0.0/auth-api.json:jwt:140
+fd88a74c81ae34796a42fafed1a61bf1edc06607:auth/v3.0.0/auth-api.json:jwt:185
+fd88a74c81ae34796a42fafed1a61bf1edc06607:auth/v3.0.0/auth-api.json:jwt:278
+6eb10ad366fb3bd040cda61e8c64e47f15d576be:auth/v3.0.0/auth-api.json:jwt:46
