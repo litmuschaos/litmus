@@ -54,7 +54,7 @@ paths:
           description: OK
           examples:
             application/json:
-              access_token: eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjcxMjY4MjMsInJvbGUiOiJhZG1pbiIsInVpZCI6ImY4MDM2YzUxLTBkNzktNGNkNy1hN2QwLTQ1ZGNhZGI4MGVlYiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.zNIMwocHgmguwtGFupV54UfcfwEdaRO1_xB2ilalqn0fp-JE0ujkHT3gDyepnEGSRm2j1eTopPgtvyRVPb7gGA
+              access_token: ACCESS_TOKEN
               expires_in: 86400
               type: Bearer
           schema:
