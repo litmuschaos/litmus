@@ -155,7 +155,7 @@
       <tr>
         <td> CHAOS_KILL_COMMAND </td>
         <td> The command to kill the chaos process </td>
-        <td> Defaults to <code>kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
+        <td> Defaults to <code>kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)</code>. Another useful one that generally works (in case the default doesn't) is <code>kill -9 $(ps afx | grep "[dd] if=/dev/zero" | awk '{print $1}' | tr '\n' ' ')</code>. In case neither works, please check whether the target pod's base image offers a shell. If yes, identify appropriate shell command to kill the chaos process </td>
       </tr>
       <tr>
         <td> PODS_AFFECTED_PERC </td>
@@ -245,7 +245,7 @@ spec:
       components:
         env:
         # command to kill the dd process
-        # alternative command: "kill -9 $(ps afx | grep \"[dd] if=/dev/zero\" | awk '{print $1}' | tr '\n' ' ')"
+        # alternative command: "kill -9 $(ps afx | grep "[dd] if=/dev/zero" | awk '{print $1}' | tr '\n' ' ')"
         - name: CHAOS_KILL_COMMAND
           value: "kill $(find /proc -name exe -lname '*/dd' 2>&1 | grep -v 'Permission denied' | awk -F/ '{print $(NF-1)}' | head -n 1)"
         - name: TOTAL_CHAOS_DURATION
