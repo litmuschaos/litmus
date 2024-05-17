@@ -21,7 +21,6 @@ function HTTPRunProperties({ kubernetesHTTPProperties, columns }: HTTPRunPropert
       ? [
           {
             probeTimeout: kubernetesHTTPProperties?.probeTimeout,
-            retry: kubernetesHTTPProperties?.retry,
             attempt: kubernetesHTTPProperties?.attempt as number,
             interval: kubernetesHTTPProperties?.interval,
             probePollingInterval: kubernetesHTTPProperties?.probePollingInterval,
