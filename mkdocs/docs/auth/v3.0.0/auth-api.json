@@ -177,7 +177,7 @@
                   {
                     "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
                     "name": "test-api-token",
-                    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                    "token": "ACCESS_TOKEN",
                     "expires_at": 1627040198,
                     "created_at": 1627040098
                   }
@@ -327,7 +327,7 @@
                 }
               },
               "example": {
-                "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA"
+                "token": "ACCESS_TOKEN"
               }
             }
           }
