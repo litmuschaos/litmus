@@ -7,7 +7,7 @@ require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24
 	github.com/argoproj/argo-workflows/v3 v3.3.5
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
-	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
