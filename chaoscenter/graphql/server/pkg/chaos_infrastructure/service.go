@@ -911,11 +911,13 @@ func updateVersionFormat(str string) (int, error) {
 	var versionInt int
 	versionSlice := strings.Split(str, ".")
 	for i, val := range versionSlice {
-		x, err := strconv.Atoi(val)
-		if err != nil {
-			return -1, err
+		if val != CIVersion {
+			x, err := strconv.Atoi(val)
+			if err != nil {
+				return -1, err
+			}
+			versionInt += x * int(math.Pow(10, float64(2-i)))
 		}
-		versionInt += x * int(math.Pow(10, float64(2-i)))
 	}
 	return versionInt, nil
 }
