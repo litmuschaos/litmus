@@ -10,7 +10,11 @@ export default function ChaosProbeController(): React.ReactElement {
   const { probeName } = useParams<{ probeName: string }>();
   const { showError } = useToaster();
 
-  const { data, loading } = getProbe({
+  const {
+    data,
+    loading,
+    refetch: refetchProbe
+  } = getProbe({
     ...scope,
     probeName: probeName,
     options: {
@@ -20,5 +24,5 @@ export default function ChaosProbeController(): React.ReactElement {
 
   const probeData = data?.getProbe;
 
-  return <ChaosProbeView loading={loading} probeData={probeData} />;
+  return <ChaosProbeView loading={loading} probeData={probeData} refetchProbes={refetchProbe} />;
 }
