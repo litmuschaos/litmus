@@ -47,8 +47,8 @@ func ValidateStrictUsername(username string) error {
 		return fmt.Errorf("username must be at least three characters long")
 	}
 
-	if len(username) > 12 {
-		return fmt.Errorf("username must be at most twelve characters long")
+	if len(username) > 16 {
+		return fmt.Errorf("username must be at most sixteen characters long")
 	}
 
 	// Ensure username doesn't contain special characters (only letters, numbers, and underscores are allowed)
