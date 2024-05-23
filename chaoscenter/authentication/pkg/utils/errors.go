@@ -10,6 +10,7 @@ var (
 	ErrServerError                   AppError = errors.New("server_error")
 	ErrInvalidRequest                AppError = errors.New("invalid_request")
 	ErrStrictPasswordPolicyViolation AppError = errors.New("password_policy_violation")
+	ErrStrictUsernamePolicyViolation AppError = errors.New("username_policy_violation")
 	ErrUnauthorized                  AppError = errors.New("unauthorized")
 	ErrUserExists                    AppError = errors.New("user_exists")
 	ErrUserNotFound                  AppError = errors.New("user does not exist")
@@ -31,6 +32,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrUnauthorized:                  401,
 	ErrUserExists:                    401,
 	ErrStrictPasswordPolicyViolation: 401,
+	ErrStrictUsernamePolicyViolation: 401,
 	ErrUserNotFound:                  400,
 	ErrProjectNotFound:               400,
 	ErrUpdatingAdmin:                 400,
@@ -49,6 +51,7 @@ var ErrorDescriptions = map[AppError]string{
 	ErrUnauthorized:                  "The user does not have requested authorization to access this resource",
 	ErrUserExists:                    "This username is already assigned to another user",
 	ErrStrictPasswordPolicyViolation: "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character",
+	ErrStrictUsernamePolicyViolation: "The username be atleast 3 characters long and atmost 12 characters long.",
 	ErrEmptyProjectName:              "Project name can't be empty",
 	ErrInvalidRole:                   "Role is invalid",
 	ErrProjectNotFound:               "This project does not exist",

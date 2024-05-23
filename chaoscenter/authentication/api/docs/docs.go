@@ -940,6 +940,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/response.ErrInvalidRequest"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrStrictUsernamePolicyViolation"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1215,6 +1221,19 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
+                }
+            }
+        },
+        "response.ErrStrictUsernamePolicyViolation": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 401
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The username be atleast 3 characters long and atmost 12 characters long."
                 }
             }
         },

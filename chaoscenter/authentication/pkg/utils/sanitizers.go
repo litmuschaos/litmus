@@ -41,3 +41,20 @@ func ValidateStrictPassword(input string) error {
 	}
 	return nil
 }
+
+func ValidateStrictUsername(username string) error {
+	if len(username) < 3 {
+		return fmt.Errorf("username must be at least three characters long")
+	}
+
+	if len(username) > 12 {
+		return fmt.Errorf("username must be at most twelve characters long")
+	}
+
+	// Ensure username doesn't contain special characters (only letters, numbers, and underscores are allowed)
+	if matched, _ := regexp.MatchString(`^[a-zA-Z0-9_]+$`, username); !matched {
+		return fmt.Errorf("username can only contain letters, numbers, and underscores")
+	}
+
+	return nil
+}

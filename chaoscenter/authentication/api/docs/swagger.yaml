@@ -86,6 +86,16 @@ definitions:
           1 lowercase alphabet, 1 uppercase alphabet and 1 special character
         type: string
     type: object
+  response.ErrStrictUsernamePolicyViolation:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: The username be atleast 3 characters long and atmost 12 characters
+          long.
+        type: string
+    type: object
   response.ErrUnauthorized:
     properties:
       code:
@@ -762,6 +772,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrStrictUsernamePolicyViolation'
         "500":
           description: Internal Server Error
           schema:

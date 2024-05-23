@@ -100,6 +100,11 @@ type ErrStrictPasswordPolicyViolation struct {
 	Message string `json:"message" example:"Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"`
 }
 
+type ErrStrictUsernamePolicyViolation struct {
+	Code    int    `json:"code" example:"401"`
+	Message string `json:"message" example:"The username be atleast 3 characters long and atmost 12 characters long."`
+}
+
 type ErrEmptyProjectName struct {
 	Code    int    `json:"code" example:"400"`
 	Message string `json:"message" example:"Project name can't be empty"`
