@@ -1210,7 +1210,7 @@
                 },
                 "message": {
                     "type": "string",
-                    "example": "Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
+                    "example": "Please ensure the password is atleast 8 characters long and atmost 16 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
                 }
             }
         },
@@ -1223,7 +1223,7 @@
                 },
                 "message": {
                     "type": "string",
-                    "example": "The username be atleast 3 characters long and atmost 12 characters long."
+                    "example": "The username should be atleast 3 characters long and atmost 16 characters long."
                 }
             }
         },

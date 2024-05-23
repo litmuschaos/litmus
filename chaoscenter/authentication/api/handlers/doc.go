@@ -97,12 +97,12 @@ type ErrUserDeactivated struct {
 
 type ErrStrictPasswordPolicyViolation struct {
 	Code    int    `json:"code" example:"401"`
-	Message string `json:"message" example:"Please ensure the password is 8 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"`
+	Message string `json:"message" example:"Please ensure the password is atleast 8 characters long and atmost 16 characters long and has 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"`
 }
 
 type ErrStrictUsernamePolicyViolation struct {
 	Code    int    `json:"code" example:"401"`
-	Message string `json:"message" example:"The username be atleast 3 characters long and atmost 12 characters long."`
+	Message string `json:"message" example:"The username should be atleast 3 characters long and atmost 16 characters long."`
 }
 
 type ErrEmptyProjectName struct {
