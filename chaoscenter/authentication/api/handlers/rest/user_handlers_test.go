@@ -53,7 +53,7 @@ func TestCreateUser(t *testing.T) {
 			name: "successfully",
 			inputBody: &entities.User{
 				Username: "newUser",
-				Password: "validPassword123",
+				Password: "ValidPassword@1",
 				Email:    "newuser@example.com",
 				Name:     "John Doe",
 				Role:     entities.RoleUser,
@@ -66,7 +66,7 @@ func TestCreateUser(t *testing.T) {
 					Email:    "newuser@example.com",
 					Name:     "John Doe",
 					Role:     entities.RoleUser,
-				}, nil)
+				}, nil).Once()
 			},
 			expectedCode: 200,
 		},
@@ -78,8 +78,12 @@ func TestCreateUser(t *testing.T) {
 			c, _ := gin.CreateTestContext(w)
 			c.Set("role", tc.mockRole)
 			if tc.inputBody != nil {
-				b, _ := json.Marshal(tc.inputBody)
+				b, err := json.Marshal(tc.inputBody)
+				if err != nil {
+					t.Fatalf("could not marshal input body: %v", err)
+				}
 				c.Request = httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(b))
+				c.Request.Header.Set("Content-Type", "application/json")
 			}
 
 			tc.given()
@@ -89,6 +93,7 @@ func TestCreateUser(t *testing.T) {
 		})
 	}
 }
+
 
 func TestUpdateUser(t *testing.T) {
 	service := new(mocks.MockedApplicationService)
@@ -104,7 +109,7 @@ func TestUpdateUser(t *testing.T) {
 		{
 			name:      "Successful update with password",
 			uid:       "testUID",
-			inputBody: &entities.UserDetails{Email: "test@email.com", Name: "Test", Password: "TestPassword"},
+			inputBody: &entities.UserDetails{Email: "test@email.com", Name: "Test", Password: "TestPassword@123"},
 			given: func() {
 				service.On("UpdateUser", mock.AnythingOfType("*entities.UserDetails")).Return(nil)
 			},
@@ -418,7 +423,7 @@ func TestUpdatePassword(t *testing.T) {
 	}{
 		{
 			name:                 "Successfully update password",
-			givenBody:            `{"oldPassword":"oldPass", "newPassword":"newPass"}`,
+			givenBody:            `{"oldPassword":"oldPass@123", "newPassword":"newPass@123"}`,
 			givenUsername:        "testUser",
 			givenStrictPassword:  false,
 			givenServiceResponse: nil,
@@ -439,8 +444,8 @@ func TestUpdatePassword(t *testing.T) {
 
 			userPassword := entities.UserPassword{
 				Username:    tt.givenUsername,
-				OldPassword: "oldPass",
-				NewPassword: "newPass",
+				OldPassword: "oldPass@123",
+				NewPassword: "newPass@123",
 			}
 			service.On("UpdatePassword", &userPassword, true).Return(tt.givenServiceResponse)
 
@@ -470,7 +475,7 @@ func TestResetPassword(t *testing.T) {
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
-				NewPassword: "validPassword123",
+				NewPassword: "ValidPass@123",
 			},
 			mockRole:     "admin",
 			mockUID:      "testUID",
@@ -486,7 +491,7 @@ func TestResetPassword(t *testing.T) {
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
-				NewPassword: "validPassword123",
+				NewPassword: "validPass@123",
 			},
 			mockRole:     "user",
 			mockUID:      "testUID",
