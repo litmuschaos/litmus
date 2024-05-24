@@ -94,7 +94,6 @@ func TestCreateUser(t *testing.T) {
 	}
 }
 
-
 func TestUpdateUser(t *testing.T) {
 	service := new(mocks.MockedApplicationService)
 

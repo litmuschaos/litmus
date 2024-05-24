@@ -59,7 +59,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-		//username validation 
+		//username validation
 		err = utils.ValidateStrictUsername(userRequest.Username)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrStrictUsernamePolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictUsernamePolicyViolation))
@@ -72,7 +72,6 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
 			return
 		}
-		
 
 		// Assigning UID to user
 		uID := uuid.Must(uuid.NewRandom()).String()
@@ -436,13 +435,13 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 		}
 		username := c.MustGet("username").(string)
 		userPasswordRequest.Username = username
-		if userPasswordRequest.NewPassword != ""  {
+		if userPasswordRequest.NewPassword != "" {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
 				return
 			}
-		}else {
+		} else {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
