@@ -9,6 +9,8 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
+	"github.com/openshift/origin/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	"strconv"
 
 	"context"
 	"fmt"
@@ -116,8 +118,13 @@ func main() {
 		},
 	})
 
-	// to be removed in production
-	srv.Use(extension.Introspection{})
+	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
+	if err != nil {
+		logrus.Errorf("unable to parse boolean value %v", err)
+	}
+	if err == nil && enableIntrospection == true {
+		srv.Use(extension.Introspection{})
+	}
 
 	// go routine for syncing chaos hubs
 	go chaoshub.NewService(dbSchemaChaosHub.NewChaosHubOperator(mongodbOperator)).RecurringHubSync()
