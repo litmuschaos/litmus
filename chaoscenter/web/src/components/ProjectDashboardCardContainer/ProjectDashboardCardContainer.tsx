@@ -10,6 +10,7 @@ import { useStrings } from '@strings';
 import ProjectDashboardCardMenuController from '@controllers/ProjectDashboardCardMenu';
 import { setUserDetails, toSentenceCase } from '@utils';
 import { useAppStore } from '@context';
+import { useRouteWithBaseUrl } from '@hooks';
 import css from './ProjectDashboardCardContainer.module.scss';
 
 interface ProjectDashboardCardProps {
@@ -21,21 +22,19 @@ interface ProjectDashboardCardProps {
 
 export default function ProjectDashboardCardContainer(props: ProjectDashboardCardProps): React.ReactElement {
   const { projects, listProjectRefetch } = props;
-  const [projectId, setProjectId] = useState<string>();
+  const [projectIdToDelete, setProjectIdToDelete] = useState<string>();
   const { getString } = useStrings();
   const history = useHistory();
   const { updateAppStore } = useAppStore();
 
-  const handleClick = (project: Project) => {
-    handleProjectSelect(project);
-  };
+  const paths = useRouteWithBaseUrl();
 
   const handleProjectSelect = (project: Project): void => {
     updateAppStore({ projectID: project.projectID, projectName: project.name });
     setUserDetails({
       projectID: project.projectID
     });
-    history.push(`/`);
+    history.push(paths.toRoot());
   };
 
   return (
@@ -44,7 +43,7 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
         {projects?.map(project => {
           return (
             <Card
-              onClick={() => handleClick(project)}
+              onClick={() => handleProjectSelect}
               className={css.projectDashboardCard}
               key={project.projectID}
               interactive
@@ -68,7 +67,7 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
                     <Menu.Item
                       text={getString('deleteProject')}
                       icon={'delete'}
-                      onClick={() => setProjectId(project.projectID)}
+                      onClick={() => setProjectIdToDelete(project.projectID)}
                     />
                   </Menu>
                 </Popover>
@@ -128,19 +127,19 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
           );
         })}
       </Container>
-      {projectId && (
+      {projectIdToDelete && (
         <Dialog
-          isOpen={!!projectId}
+          isOpen={!!projectIdToDelete}
           canOutsideClickClose={false}
           canEscapeKeyClose={false}
           usePortal
-          onClose={() => setProjectId(undefined)}
+          onClose={() => setProjectIdToDelete(undefined)}
           className={css.deleteProjectDialog}
         >
           <ProjectDashboardCardMenuController
             listProjectRefetch={listProjectRefetch}
-            projectID={projectId}
-            handleClose={() => setProjectId(undefined)}
+            projectID={projectIdToDelete}
+            handleClose={() => setProjectIdToDelete(undefined)}
           />
         </Dialog>
       )}

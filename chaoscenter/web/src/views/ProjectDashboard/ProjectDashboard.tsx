@@ -52,7 +52,7 @@ export default function ProjectDashboardView(props: ProjectDashboardViewProps): 
           text={getString('createProject')}
           variation={ButtonVariation.PRIMARY}
           icon="plus"
-          onClick={() => openCreateProjectModal()}
+          onClick={openCreateProjectModal}
         />
         {filterDropDown}
         {sortDropDown}
@@ -64,7 +64,7 @@ export default function ProjectDashboardView(props: ProjectDashboardViewProps): 
           isOpen={isCreateProjectModalOpen}
           canOutsideClickClose={false}
           canEscapeKeyClose={false}
-          onClose={() => closeCreateProjectModal()}
+          onClose={closeCreateProjectModal}
         >
           <CreateProjectController listProjectRefetch={listProjectRefetch} handleClose={closeCreateProjectModal} />
         </Dialog>
@@ -85,7 +85,7 @@ export default function ProjectDashboardView(props: ProjectDashboardViewProps): 
           isOpen={isCreateProjectModalOpen}
           canOutsideClickClose={false}
           canEscapeKeyClose={false}
-          onClose={() => closeCreateProjectModal()}
+          onClose={closeCreateProjectModal}
         >
           <CreateProjectController listProjectRefetch={listProjectRefetch} handleClose={closeCreateProjectModal} />
         </Dialog>

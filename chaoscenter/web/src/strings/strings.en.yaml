@@ -257,7 +257,7 @@ deleteProbeDesc: >-
   previous runs for this probe.
 deleteProbeHeading: Delete this probe?
 deleteProject: Delete Project
-deleteProjectWarning: Do you want to delete selected project.
+deleteProjectWarning: Do you want to delete selected project?
 deleteSuccess: Chaos Infrastructure Successfully Disabled
 deployChaosInfrastructure: Deploying your Infrastructure
 deployProbe: Deploy new Probe
@@ -687,13 +687,10 @@ noProbesFound:
   errorMessage: Error in fetching probes
   message: Experiment has no probes yet, chaos step may still be executing.
   title: No Probes found
-projectDashboard:
-  noProjectText: No Projects
-  noProjectDescription: There are no projects.
 noProject:
   subtitle: >-
-    Create a project to enable Chaos Infrastructures and create Chaos
-    Experiments to  test your applications
+    Create a project to to run chaos experiments on your applications and verify
+    resilience.
   title: Get Started with Chaos Engineering
 noProjectFoundMatchingSearch: No project found matching your search {{searchTerm}}
 noProjectsFound: No projects found
@@ -855,10 +852,16 @@ probesArePassed: probes are passed
 prod: Prod
 project: Project
 projectCreatedByYou: Your Projects
+projectDashboard:
+  noProjectDescription: There are no projects.
+  noProjectText: No Projects
+projectDeletedSuccess: Project Deleted Successfully
 projectDescription: Project Description
+projectFilters: Project Filters
 projectNameIsRequired: Project name is a required in order to update.
 projectNameValidText: Project name should be alphanumeric and can contain hyphen and spaces.
-projectFilters: Project Filters
+projectSetup: Project Setup
+projects: Projects
 projectsByInvite: Projects By Invite
 projectsInTotal: project(s) in total
 projectsJoined: Projects Joined

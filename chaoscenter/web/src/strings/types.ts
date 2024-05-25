@@ -710,10 +710,13 @@ export interface StringsMap {
   'projectCreatedByYou': unknown
   'projectDashboard.noProjectDescription': unknown
   'projectDashboard.noProjectText': unknown
+  'projectDeletedSuccess': unknown
   'projectDescription': unknown
   'projectFilters': unknown
   'projectNameIsRequired': unknown
   'projectNameValidText': unknown
+  'projectSetup': unknown
+  'projects': unknown
   'projectsByInvite': unknown
   'projectsInTotal': unknown
   'projectsJoined': unknown

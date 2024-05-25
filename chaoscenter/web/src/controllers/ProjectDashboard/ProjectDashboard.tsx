@@ -57,10 +57,10 @@ export default function ProjectDashboardController(): React.ReactElement {
         pageSize={limit}
         pageCount={Math.ceil(totalNumberOfProjects / limit)}
         pageIndex={page}
-        gotoPage={pageNumber => setPage(pageNumber)}
+        gotoPage={setPage}
         showPagination={true}
         pageSizeOptions={[5, 10, 20]}
-        onPageSizeChange={newLimit => setLimit(newLimit)}
+        onPageSizeChange={setLimit}
       />
     );
   };

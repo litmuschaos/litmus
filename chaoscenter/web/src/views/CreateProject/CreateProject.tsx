@@ -38,9 +38,7 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
         }
       },
       {
-        onSuccess: () => {
-          handleClose();
-        }
+        onSuccess: handleClose
       }
     );
   }
@@ -54,12 +52,12 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text font={{ variation: FontVariation.H4 }}>{'Create Project'}</Text>
+        <Text font={{ variation: FontVariation.H4 }}>{getString('createProject')}</Text>
       </Layout.Horizontal>
       <Container>
         <Formik<CreateProjectFormProps>
           initialValues={initialValues}
-          onSubmit={values => handleSubmit(values)}
+          onSubmit={handleSubmit}
           validationSchema={Yup.object().shape({
             projectName: Yup.string().required(getString('usernameIsRequired')),
             projectDescription: Yup.string()
@@ -83,8 +81,8 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
                       }
                     />
                     <FormInput.KVTagInput
-                      name="tags"
-                      label="Tags"
+                      name={getString('tags')}
+                      label={getString('tags')}
                       isArray={true}
                       tooltipProps={{
                         dataTooltipId: 'tagInputId'
@@ -100,11 +98,7 @@ export default function CreateProjectView(props: CreateProjectViewProps): React.
                       disabled={createProjectMutationLoading || Object.keys(formikProps.errors).length > 0}
                       style={{ minWidth: '90px' }}
                     />
-                    <Button
-                      variation={ButtonVariation.TERTIARY}
-                      text={getString('cancel')}
-                      onClick={() => handleClose()}
-                    />
+                    <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>

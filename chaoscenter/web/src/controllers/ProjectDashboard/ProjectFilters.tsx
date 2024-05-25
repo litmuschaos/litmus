@@ -70,8 +70,8 @@ export const FilterDropDown = ({ state, dispatch, resetPage }: FilterProps): Rea
   const { getString } = useStrings();
 
   const statusFilterItems: SelectOption[] = [
-    { value: ProjectFiltersList.CREATEDBYUSER, label: getString('createdByUser') },
-    { value: ProjectFiltersList.INVITEDBYOTHERS, label: getString('invitedByOthers') }
+    { value: ProjectFiltersList.CREATED_BY_USER, label: getString('createdByUser') },
+    { value: ProjectFiltersList.INVITED_BY_OTHERS, label: getString('invitedByOthers') }
   ];
   return (
     <DropDown
@@ -84,7 +84,7 @@ export const FilterDropDown = ({ state, dispatch, resetPage }: FilterProps): Rea
         dispatch({
           type: ProjectFilterActionKind.CHANGE_CREATED_BY_ME,
           payload: {
-            createdByMe: selectedItem.value === ProjectFiltersList.CREATEDBYUSER ? true : false
+            createdByMe: selectedItem.value === ProjectFiltersList.CREATED_BY_USER ? true : false
           }
         });
       }}

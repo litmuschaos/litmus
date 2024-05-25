@@ -3,6 +3,7 @@ import { useToaster } from '@harnessio/uicore';
 import { RefetchOptions, RefetchQueryFilters, QueryObserverResult } from '@tanstack/react-query';
 import { ListProjectsOkResponse, useDeleteProjectMutation } from '@api/auth';
 import ProjectDashboardCardMenuView from '@views/ProjectDashboardCardMenu';
+import { useStrings } from '@strings';
 
 interface ProjectDashboardCardMenuControllerProps {
   handleClose: () => void;
@@ -17,12 +18,13 @@ export default function ProjectDashboardCardMenuController(
 ): React.ReactElement {
   const { showSuccess } = useToaster();
   const { handleClose, projectID, listProjectRefetch } = props;
+  const { getString } = useStrings();
 
   const { mutate: deleteProjectMutation, isLoading } = useDeleteProjectMutation(
     {},
     {
       onSuccess: () => {
-        showSuccess('Project Deleted Successfully.');
+        showSuccess(getString('projectDeletedSuccess'));
         handleClose();
         listProjectRefetch();
       }
