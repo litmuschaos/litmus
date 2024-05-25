@@ -22,12 +22,6 @@ export default function ProjectDashboardCardMenuView(props: ProjectDashboardCard
   const { projectId, deleteProjectMutation, loading, handleClose } = props;
   const { getString } = useStrings();
 
-  const handleMutation = (): void => {
-    deleteProjectMutation({
-      project_id: projectId
-    });
-  };
-
   return (
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
@@ -42,7 +36,11 @@ export default function ProjectDashboardCardMenuView(props: ProjectDashboardCard
           text={loading ? <Icon name="loading" size={16} /> : getString('confirm')}
           disabled={loading}
           style={{ minWidth: '90px' }}
-          onClick={handleMutation}
+          onClick={() =>
+            deleteProjectMutation({
+              project_id: projectId
+            })
+          }
         />
         <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
       </Layout.Horizontal>
