@@ -87,15 +87,15 @@ type Pagination struct {
 
 type ListProjectRequest struct {
 	UserID     string                  `json:"userID"`
-	Pagination *Pagination             `json:"pagination,omitempty"`
 	Sort       *SortInput              `json:"sort,omitempty"`
 	Filter     *ListProjectInputFilter `json:"filter,omitempty"`
+	Pagination *Pagination             `json:"pagination,omitempty"`
 }
 
 type ListProjectInputFilter struct {
+	ProjectName     *string `json:"projectName"`
 	CreatedByMe     *bool   `json:"createdByMe"`
 	InvitedByOthers *bool   `json:"invitedByOthers"`
-	ProjectName     *string `json:"projectName"`
 }
 
 type ProjectSortingField string

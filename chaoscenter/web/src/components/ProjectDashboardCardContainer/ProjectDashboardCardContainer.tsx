@@ -43,7 +43,7 @@ export default function ProjectDashboardCardContainer(props: ProjectDashboardCar
         {projects?.map(project => {
           return (
             <Card
-              onClick={() => handleProjectSelect}
+              onClick={() => handleProjectSelect(project)}
               className={css.projectDashboardCard}
               key={project.projectID}
               interactive

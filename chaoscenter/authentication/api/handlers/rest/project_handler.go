@@ -53,10 +53,8 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		outputUser := user.GetUserWithProject()
-
 		request := utils.GetProjectFilters(c)
-		request.UserID = outputUser.ID
+		request.UserID = user.ID
 
 		response, err := service.GetProjectsByUserID(request)
 		if err != nil {
@@ -65,7 +63,13 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		outputUser.Projects = response.Projects
+		outputUser := &entities.UserWithProject{
+			Username: user.Username,
+			ID:       user.ID,
+			Email:    user.Email,
+			Name:     user.Name,
+			Projects: response.Projects,
+		}
 
 		c.JSON(http.StatusOK, gin.H{"data": outputUser})
 	}
@@ -687,6 +691,12 @@ func RemoveInvitation(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
+		uid := c.MustGet("uid").(string)
+		if uid == member.UserID {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "User cannot remove invitation of themselves use Leave Project."})
+			return
+		}
+
 		invitation, err := getInvitation(service, member)
 		if err != nil {
 			log.Error(err)
@@ -805,7 +815,6 @@ func UpdateMemberRole(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		
 		// Validating member role
 		if member.Role == nil || (*member.Role != entities.RoleEditor && *member.Role != entities.RoleViewer && *member.Role != entities.RoleOwner) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
@@ -926,7 +935,7 @@ func GetProjectRole(service services.ApplicationService) gin.HandlerFunc {
 //	@Router			/delete_project/{project_id} [post]
 //
 // DeleteProject is used to delete a project.
-func DeleteProject (service services.ApplicationService) gin.HandlerFunc {
+func DeleteProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
 

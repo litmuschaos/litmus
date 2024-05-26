@@ -10,7 +10,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -75,78 +74,17 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 
 	// Construct the pipeline
 	var pipeline mongo.Pipeline
-	pipeline = mongo.Pipeline{
-		bson.D{
-			{"$match", bson.D{
-				{"is_removed", false},
-				{"members", bson.D{
-					{"$elemMatch", bson.D{
-						{"user_id", request.UserID},
-						{"invitation", bson.D{
-							{"$nin", bson.A{
-								string(entities.PendingInvitation),
-								string(entities.DeclinedInvitation),
-								string(entities.ExitedProject),
-							}},
-						}},
-					}},
-				}},
-			}},
-		},
-	}
 
-	// Add additional stages to the pipeline based on the filter
+	pipeline = append(pipeline, utils.CreateMatchStage(request.UserID))
+
 	if request.Filter != nil {
-		if request.Filter.CreatedByMe != nil && *request.Filter.CreatedByMe {
-			pipeline = append(pipeline, bson.D{
-				{"$match", bson.D{
-					{"created_by.user_id", bson.M{"$eq": request.UserID}},
-				}},
-			})
-		} else if request.Filter.CreatedByMe != nil {
-			pipeline = append(pipeline, bson.D{
-				{"$match", bson.D{
-					{"created_by.user_id", bson.M{"$ne": request.UserID}},
-				}},
-			})
-		}
-
-		if request.Filter.ProjectName != nil {
-			pipeline = append(pipeline, bson.D{
-				{"$match", bson.D{
-					{"name", bson.D{
-						{"$regex", primitive.Regex{Pattern: *request.Filter.ProjectName, Options: "i"}},
-					}},
-				}},
-			})
-		}
+		filterStages := utils.CreateFilterStages(request.Filter, request.UserID)
+		pipeline = append(pipeline, filterStages...)
 	}
 
-	var sortField string
-	var sortDirection int
-
-	if request.Sort != nil && request.Sort.Field != nil {
-
-		switch *request.Sort.Field {
-		case entities.ProjectSortingFieldTime:
-			sortField = "updated_at"
-		case entities.ProjectSortingFieldName:
-			sortField = "name"
-		default:
-			sortField = "updated_at"
-		}
-
-		if request.Sort.Ascending != nil && *request.Sort.Ascending {
-			sortDirection = 1
-		} else {
-			sortDirection = -1
-		}
-
-		pipeline = append(pipeline, bson.D{
-			{"$sort", bson.D{
-				{sortField, sortDirection},
-			}},
-		})
+	sortStage := utils.CreateSortStage(request.Sort)
+	if len(sortStage) > 0 {
+		pipeline = append(pipeline, sortStage)
 	}
 
 	// count stage
@@ -171,21 +109,9 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 		totalNumberOfProjects = int64(countResult[0]["totalNumberOfProjects"].(int32))
 	}
 
-	if request.Pagination != nil {
-		page := request.Pagination.Page
-		limit := request.Pagination.Limit
-
-		// Add $skip and $limit stages to the pipeline
-		pipeline = append(pipeline, bson.D{
-			{"$skip", page * limit},
-		})
-		pipeline = append(pipeline, bson.D{
-			{"$limit", limit},
-		})
-	} else {
-		pipeline = append(pipeline, bson.D{
-			{"$limit", 10},
-		})
+	paginationStages := utils.CreatePaginationStage(request.Pagination)
+	for _, stage := range paginationStages {
+		pipeline = append(pipeline, stage)
 	}
 
 	cursor, err := r.Collection.Aggregate(context.TODO(), pipeline)

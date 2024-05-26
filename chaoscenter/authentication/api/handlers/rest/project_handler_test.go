@@ -40,7 +40,6 @@ func TestGetUserWithProject(t *testing.T) {
 			UserID: "testUID",
 		}
 
-
 		service.On("FindUserByUsername", "testUser").Return(user, errors.New("failed"))
 		service.On("GetProjectsByUserID", request).Return(response, errors.New("failed"))
 
@@ -65,7 +64,7 @@ func TestGetUserWithProject(t *testing.T) {
 			Username: "testUser1",
 			Email:    "test@example.com",
 		}
-		
+
 		response := &entities.ListProjectResponse{}
 
 		fieldName := entities.ProjectSortingFieldTime
@@ -81,12 +80,11 @@ func TestGetUserWithProject(t *testing.T) {
 				Ascending: nil,
 			},
 			Filter: &entities.ListProjectInputFilter{
-				CreatedByMe:    nil,
+				CreatedByMe:     nil,
 				InvitedByOthers: nil,
-				ProjectName:    nil,
+				ProjectName:     nil,
 			},
-}
-
+		}
 
 		service.On("FindUserByUsername", "testUser1").Return(user, nil)
 		service.On("GetProjectsByUserID", request).Return(response, nil)
@@ -128,9 +126,9 @@ func TestGetUserWithProject(t *testing.T) {
 				Ascending: nil,
 			},
 			Filter: &entities.ListProjectInputFilter{
-				CreatedByMe:    nil,
+				CreatedByMe:     nil,
 				InvitedByOthers: nil,
-				ProjectName:    nil,
+				ProjectName:     nil,
 			},
 		}
 
@@ -151,7 +149,7 @@ func TestGetProjectsByUserID(t *testing.T) {
 		w := httptest.NewRecorder()
 		ctx := GetTestGinContext(w)
 		ctx.Set("uid", "testUserID")
-		
+
 		response := &entities.ListProjectResponse{}
 
 		fieldName := entities.ProjectSortingFieldTime
@@ -167,9 +165,9 @@ func TestGetProjectsByUserID(t *testing.T) {
 				Ascending: nil,
 			},
 			Filter: &entities.ListProjectInputFilter{
-				CreatedByMe:    nil,
+				CreatedByMe:     nil,
 				InvitedByOthers: nil,
-				ProjectName:    nil,
+				ProjectName:     nil,
 			},
 		}
 
@@ -208,9 +206,9 @@ func TestGetProjectsByUserID(t *testing.T) {
 				Ascending: nil,
 			},
 			Filter: &entities.ListProjectInputFilter{
-				CreatedByMe:    nil,
+				CreatedByMe:     nil,
 				InvitedByOthers: nil,
-				ProjectName:    nil,
+				ProjectName:     nil,
 			},
 		}
 
