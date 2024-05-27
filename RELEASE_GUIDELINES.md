@@ -161,13 +161,13 @@ for the list of actively tested versions. Kubernetes only supports n-3 minor
 release versions and LitmusChaos will ensure there is always a supported version
 of LitmusChaos for every supported version of Kubernetes.
 
-| Kubernetes Version | LitmusChaos Version           | 
-|--------------------|-------------------------------|
-| 1.26               | 1.x, 2.x          | 
-| 1.27               | 1.x, 2.x            | 
-| 1.28               | 2.x, 3.x         | 
-| 1.29               | 3.x          | 
-| 1.30(wip)          | 4.0 (wip), 3.x  |
+| Kubernetes Version  | LitmusChaos Version | 
+|---------------------|---------------------|
+| 1.26                | 1.x, 2.x, 3.x       | 
+| 1.27                | 3.x                 | 
+| 1.28                | 3.x                 | 
+| 1.29                | 3.x                 | 
+| 1.30                | 3.x, 4.0(wip)       |
 
 
 ## Public API Stability
