@@ -11,7 +11,7 @@ Support [various types](https://grafana.com/docs/k6/latest/testing-guides/test-t
 ## Uses
 
 ??? info "View the uses of the experiment"
-    [tutorial]()
+    [Introduction to k6 Load Chaos in LitmusChaos](https://dev.to/litmus-chaos/introduction-to-k6-load-chaos-in-litmuschaos-4l2k)
 
 ## Prerequisites
 
