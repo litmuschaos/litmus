@@ -358,7 +358,7 @@ type KubeObjectResponse {
   """
   Type of the Kubernetes object
   """
-  kubeObj: [KubeObject]!
+  kubeObj: KubeObject!
 }
 
 """
@@ -407,7 +407,7 @@ input KubeObjectRequest {
   """
   Namespace in which the Kubernetes object is present
   """
-  Namespace: String!
+  namespace: String!
   objectType: String!
   workloads: [Workload]
 }
@@ -429,7 +429,7 @@ type KubeNamespace{
   """
   Name of the namespace
   """
-  Name: String!
+  name: String!
 }
 
 
@@ -451,7 +451,7 @@ type KubeNamespaceResponse {
   """
   List of the Kubernetes namespace
   """
-  KubeNamespace: [KubeNamespace]!
+  kubeNamespace: [KubeNamespace]!
 }
 
 """

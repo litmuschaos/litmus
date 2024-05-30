@@ -68,7 +68,7 @@ func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequ
 
 
 // GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
-func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error) {
+func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) (*types.KubeObject, error) {
 	resourceType := schema.GroupVersionResource{
 		Group:    request.KubeGVRRequest.Group,
 		Version:  request.KubeGVRRequest.Version,
@@ -78,10 +78,8 @@ func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) ([]
 	if err != nil {
 		return nil, err
 	}
-	var ObjData []*types.KubeObject
 
 	dataList, err := k8s.GetObjectDataByNamespace(request.Namespace, dynamicClient, resourceType)
-
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +88,8 @@ func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) ([]
 		Data:      dataList,
 	}
 
-	ObjData = append(ObjData, KubeObj)
-
-	kubeData, _ := json.Marshal(ObjData)
-	var kubeObjects []*types.KubeObject
+	kubeData, _ := json.Marshal(KubeObj)
+	var kubeObjects *types.KubeObject
 	err = json.Unmarshal(kubeData, &kubeObjects)
 	if err != nil {
 		return nil, err
@@ -158,7 +154,7 @@ func (k8s *k8sSubscriber) GenerateKubeObject(cid string, accessKey, version stri
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ infraID: ` + infraID + `, requestID:\"` + kubeobjectrequest.RequestID + `\", kubeObj:\"` + processed[1:len(processed)-1] + `\"}`
+	mutation := `{ infraID: ` + infraID + `, requestID:\"` + kubeobjectrequest.RequestID + `\", kubeObj:\"` + processed[1:len(processed)-1]  + `\"}`
 
 	var payload = []byte(`{"query":"mutation { kubeObj(request:` + mutation + ` )}"}`)
 	return payload, nil

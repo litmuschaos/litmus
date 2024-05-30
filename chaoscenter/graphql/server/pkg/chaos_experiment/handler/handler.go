@@ -1246,7 +1246,7 @@ func (c *ChaosExperimentHandler) GetKubeObjData(reqID string, kubeObject model.K
 	} else if reqChan, ok := r.KubeObjectData[reqID]; ok {
 		resp := model.KubeObjectResponse{
 			InfraID: kubeObject.InfraID,
-			KubeObj: []*model.KubeObject{},
+			KubeObj: &model.KubeObject{},
 		}
 		reqChan <- &resp
 		close(reqChan)

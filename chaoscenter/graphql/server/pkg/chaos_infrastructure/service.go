@@ -962,7 +962,7 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 		return "", err
 	}
 	if reqChan, ok := r.KubeObjectData[request.RequestID]; ok {
-		var kubeObjData []*model.KubeObject
+		var kubeObjData *model.KubeObject
 		err = json.Unmarshal([]byte(request.KubeObj), &kubeObjData)
 		if err != nil {
 			return "", fmt.Errorf("failed to unmarshal kubeObj data %w", err)

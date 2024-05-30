@@ -19,7 +19,7 @@ type SubscriberK8s interface {
 	SendPodLogs(infraData map[string]string, podLog types.PodLogRequest)
 	GenerateLogPayload(cid, accessKey, version string, podLog types.PodLogRequest) ([]byte, error)
 	GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error)
-	GetKubernetesObjects(request types.KubeObjRequest) ([]*types.KubeObject, error)
+	GetKubernetesObjects(request types.KubeObjRequest) (*types.KubeObject, error)
 	GetObjectDataByNamespace(namespace string, dynamicClient dynamic.Interface, resourceType schema.GroupVersionResource) ([]types.ObjectData, error)
 	GenerateKubeObject(cid string, accessKey, version string, kubeobjectrequest types.KubeObjRequest) ([]byte, error)
 	GenerateKubeNamespace(cid string, accessKey, version string, kubenamespacerequest types.KubeNamespaceRequest) ([]byte, error)
