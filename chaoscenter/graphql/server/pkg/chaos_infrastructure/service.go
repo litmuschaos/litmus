@@ -979,7 +979,7 @@ func (in *infraService) KubeObj(request model.KubeObjectData, r store.StateData)
 	return "KubeData sent successfully", nil
 }
 
-// KubeObj receives Kubernetes Namespace data from subscriber
+// KubeNamespace receives Kubernetes Namespace data from subscriber
 func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.StateData) (string, error) {
 	_, err := in.VerifyInfra(*request.InfraID)
 	if err != nil {
