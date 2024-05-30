@@ -77,8 +77,8 @@ export function kubeObjectSubscription({
         request: {
           infraID: request.infraID,
           kubeObjRequest: request.kubeObjRequest,
-          objectType: request.objectType,
-          namespace: request.namespace
+          namespace: request.namespace,
+          objectType: request.objectType
         }
       },
       ...options

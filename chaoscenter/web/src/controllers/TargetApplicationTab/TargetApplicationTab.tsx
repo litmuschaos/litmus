@@ -35,8 +35,8 @@ export default function TargetApplicationTabController({
     request: {
       infraID: infrastructureID ?? '',
       kubeObjRequest: selectedGVR,
-      objectType: 'kubeobject',
-      namespace: targetApp.appns ?? ''
+      namespace: targetApp.appns ?? '',
+      objectType: 'kubeobject'
     }
   });
 
@@ -72,34 +72,6 @@ export default function TargetApplicationTabController({
       setAppInfoData(appInfo);
     }
   }, [resultObject?.getKubeObject, targetApp?.appns]);
-
-  /**
-   * UseEffect to filter the labels according to the namespace provided
-   * Required to populate the appLabels dropdown
-   */
-  // not needed probably
-  /*
-  React.useEffect(() => {
-    if (result?.getKubeObject) {
-      const appInfo: AppInfoData[] = [];
-      const kubeData = result.getKubeObject.kubeObj;
-      kubeData.forEach(obj => {
-        const applabels: string[] = [];
-        obj.data.forEach(objData => {
-          if (objData.labels) {
-            applabels.push(...objData.labels.filter(() => obj.namespace === targetApp?.appns));
-          }
-        });
-
-        appInfo.push({
-          namespace: obj.namespace,
-          appLabel: applabels
-        });
-      });
-
-      setAppInfoData(appInfo);
-    }
-  }, [result?.getKubeObject, targetApp?.appns]);*/
 
   return (
     <TargetApplicationTab
