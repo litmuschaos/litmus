@@ -12,13 +12,14 @@ export interface KubeObjRequest {
     infraID: string;
     objectType: string;
     kubeObjRequest?: KubeGVRRequest;
+    namespace: string;
   };
 }
 
 export interface KubeObjResponse {
   getKubeObject: {
     infraID: string;
-    kubeObj: Array<KubeObj>;
+    kubeObj: KubeObj;
   };
 }
 
@@ -30,6 +31,23 @@ interface KubeObj {
 interface KubeObjData {
   labels?: Array<string>;
   name: string;
+}
+
+interface KubeNamespace {
+  name: string;
+}
+
+export interface KubeNamespaceRequest {
+  request: {
+    infraID: string;
+  };
+}
+
+export interface KubeNamespaceResponse {
+  getKubeNamespace: {
+    infraID: string;
+    kubeNamespace: Array<KubeNamespace>;
+  };
 }
 
 export function kubeObjectSubscription({
@@ -59,7 +77,39 @@ export function kubeObjectSubscription({
         request: {
           infraID: request.infraID,
           kubeObjRequest: request.kubeObjRequest,
-          objectType: request.objectType
+          objectType: request.objectType,
+          namespace: request.namespace
+        }
+      },
+      ...options
+    }
+  );
+
+  return { data, loading, error };
+}
+
+export function kubeNamespaceSubscription({
+  request,
+  ...options
+}: GqlAPISubscriptionRequest<KubeNamespaceResponse, KubeNamespaceRequest>): GqlAPISubscriptionResponse<
+  KubeNamespaceResponse,
+  KubeNamespaceRequest
+> {
+  const { data, loading, error } = useSubscription<KubeNamespaceResponse, KubeNamespaceRequest>(
+    gql`
+      subscription getKubeNamespace($request: KubeNamespaceRequest!) {
+        getKubeNamespace(request: $request) {
+          infraID
+          kubeNamespace {
+            name
+          }
+        }
+      }
+    `,
+    {
+      variables: {
+        request: {
+          infraID: request.infraID
         }
       },
       ...options

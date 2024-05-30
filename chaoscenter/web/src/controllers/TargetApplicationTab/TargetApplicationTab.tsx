@@ -1,5 +1,5 @@
 import React from 'react';
-import { KubeGVRRequest, kubeObjectSubscription } from '@api/core';
+import { KubeGVRRequest, kubeObjectSubscription, kubeNamespaceSubscription } from '@api/core';
 import type { ChaosEngine, FaultData } from '@models';
 import { TargetApplicationTab } from '@views/ExperimentCreationFaultConfiguration/Tabs';
 import type { AppInfoData, TargetApplicationData } from './types';
@@ -16,18 +16,27 @@ export default function TargetApplicationTabController({
   infrastructureID,
   setFaultData
 }: TargetApplicationControllerProps): React.ReactElement {
-  const [appInfoData, setAppInfoData] = React.useState<AppInfoData[]>([]);
+  const [namespaceData, setNamespaceData] = React.useState<string[]>([]);
+  const [appInfoData, setAppInfoData] = React.useState<AppInfoData>({ appLabel: [] });
   const [targetApp, setTargetApp] = React.useState<TargetApplicationData>({
     ...engineCR?.spec?.appinfo
   });
   const [selectedGVR, setSelectedGVR] = React.useState<KubeGVRRequest>();
-  const { data: result, loading } = kubeObjectSubscription({
+  const { data: resultNamespace, loading: loadingNamespace } = kubeNamespaceSubscription({
     shouldResubscribe: true,
     skip: targetApp?.appkind === undefined || selectedGVR === undefined,
     request: {
+      infraID: infrastructureID ?? ''
+    }
+  });
+  const { data: resultObject, loading: loadingObject } = kubeObjectSubscription({
+    shouldResubscribe: true,
+    skip: targetApp?.appns === undefined || targetApp?.appns === '',
+    request: {
       infraID: infrastructureID ?? '',
       kubeObjRequest: selectedGVR,
-      objectType: 'kubeobject'
+      objectType: 'kubeobject',
+      namespace: targetApp.appns ?? ''
     }
   });
 
@@ -45,10 +54,31 @@ export default function TargetApplicationTabController({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetApp?.appkind]);
 
+  React.useEffect(() => {
+    if (resultNamespace?.getKubeNamespace) {
+      setNamespaceData(resultNamespace.getKubeNamespace.kubeNamespace.map(data => data.name));
+    }
+  }, [resultNamespace?.getKubeNamespace, targetApp?.appkind]);
+
+  React.useEffect(() => {
+    if (resultObject?.getKubeObject) {
+      const applabels: string[] = [];
+      resultObject.getKubeObject.kubeObj.data.forEach(objData => {
+        if (objData.labels) {
+          applabels.push(...objData.labels);
+        }
+      });
+      const appInfo: AppInfoData = { appLabel: applabels };
+      setAppInfoData(appInfo);
+    }
+  }, [resultObject?.getKubeObject, targetApp?.appns]);
+
   /**
    * UseEffect to filter the labels according to the namespace provided
    * Required to populate the appLabels dropdown
    */
+  // not needed probably
+  /*
   React.useEffect(() => {
     if (result?.getKubeObject) {
       const appInfo: AppInfoData[] = [];
@@ -60,9 +90,7 @@ export default function TargetApplicationTabController({
             applabels.push(...objData.labels.filter(() => obj.namespace === targetApp?.appns));
           }
         });
-        /**
-         * Push these labels corresponding to their namespaces
-         */
+
         appInfo.push({
           namespace: obj.namespace,
           appLabel: applabels
@@ -71,17 +99,19 @@ export default function TargetApplicationTabController({
 
       setAppInfoData(appInfo);
     }
-  }, [result?.getKubeObject, targetApp?.appns]);
+  }, [result?.getKubeObject, targetApp?.appns]);*/
 
   return (
     <TargetApplicationTab
       appInfoData={appInfoData}
+      namespaceData={namespaceData}
       targetApp={targetApp}
       setTargetApp={setTargetApp}
       engineCR={engineCR}
       setFaultData={setFaultData}
       infrastructureID={infrastructureID}
-      loading={loading}
+      loadingNamespace={loadingNamespace}
+      loadingObject={loadingObject}
     />
   );
 }
