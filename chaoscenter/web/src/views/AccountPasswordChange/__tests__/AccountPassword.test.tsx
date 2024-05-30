@@ -38,8 +38,8 @@ describe('AccountPasswordChangeView Tests', () => {
     const submitButton = screen.getByText('confirm');
 
     fireEvent.change(screen.getByPlaceholderText('oldPassword'), { target: { value: 'oldPass' } });
-    fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'newPass' } });
-    fireEvent.change(screen.getByPlaceholderText('reEnterNewPassword'), { target: { value: 'newPass' } });
+    fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'Password@123' } });
+    fireEvent.change(screen.getByPlaceholderText('reEnterNewPassword'), { target: { value: 'Password@123' } });
 
     await waitFor(() => expect(submitButton).not.toBeDisabled());
   });
@@ -47,8 +47,8 @@ describe('AccountPasswordChangeView Tests', () => {
   test('handles submit with correct data', async () => {
     renderComponent();
     fireEvent.change(screen.getByPlaceholderText('oldPassword'), { target: { value: 'oldPass' } });
-    fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'newPass' } });
-    fireEvent.change(screen.getByPlaceholderText('reEnterNewPassword'), { target: { value: 'newPass' } });
+    fireEvent.change(screen.getByPlaceholderText('newPassword'), { target: { value: 'Password@123' } });
+    fireEvent.change(screen.getByPlaceholderText('reEnterNewPassword'), { target: { value: 'Password@123' } });
     fireEvent.click(screen.getByText('confirm'));
 
     await waitFor(() => {
@@ -57,7 +57,7 @@ describe('AccountPasswordChangeView Tests', () => {
           body: {
             username: 'testuser',
             oldPassword: 'oldPass',
-            newPassword: 'newPass'
+            newPassword: 'Password@123'
           }
         },
         expect.anything()
