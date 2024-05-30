@@ -23,7 +23,7 @@ var (
 	InfraScope     = os.Getenv("INFRA_SCOPE")
 )
 
-//GetKubernetesNamespaces is used to get the list of Kubernetes Namespaces
+// GetKubernetesNamespaces is used to get the list of Kubernetes Namespaces
 func (k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error) {
 
 	var namespaceData []*types.KubeNamespace
