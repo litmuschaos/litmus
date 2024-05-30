@@ -994,7 +994,7 @@ func (in *infraService) KubeNamespace(request model.KubeNamespaceData, r store.S
 		}
 
 		resp := model.KubeNamespaceResponse{
-			InfraID: request.InfraID.InfraID,
+			InfraID:       request.InfraID.InfraID,
 			KubeNamespace: kubeNamespaceData,
 		}
 		reqChan <- &resp

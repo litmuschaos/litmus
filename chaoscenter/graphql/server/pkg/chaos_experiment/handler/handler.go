@@ -1271,7 +1271,7 @@ func (c *ChaosExperimentHandler) GetKubeNamespaceData(reqID string, kubeNamespac
 		clusterChan <- &payload
 	} else if reqChan, ok := r.KubeNamespaceData[reqID]; ok {
 		resp := model.KubeNamespaceResponse{
-			InfraID: kubeNamespace.InfraID,
+			InfraID:       kubeNamespace.InfraID,
 			KubeNamespace: []*model.KubeNamespace{},
 		}
 		reqChan <- &resp

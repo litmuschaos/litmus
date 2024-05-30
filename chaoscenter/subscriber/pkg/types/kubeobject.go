@@ -14,7 +14,7 @@ type KubeObject struct {
 type KubeObjRequest struct {
 	RequestID      string
 	InfraID        string         `json:"infraID"`
-	Namespace	   string         `json:"namespace"`	
+	Namespace      string         `json:"namespace"`
 	ObjectType     string         `json:"objectType"`
 	KubeGVRRequest KubeGVRRequest `json:"kubeObjRequest"`
 }
@@ -31,8 +31,8 @@ type KubeNamespace struct {
 }
 
 type KubeNamespaceRequest struct {
-	RequestID      string
-	InfraID        string         `json:"infraID"`
+	RequestID string
+	InfraID   string `json:"infraID"`
 }
 
 type ObjectData struct {

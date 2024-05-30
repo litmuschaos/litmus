@@ -24,7 +24,7 @@ var (
 )
 
 //GetKubernetesNamespaces is used to get the list of Kubernetes Namespaces
-func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error) {
+func (k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequest) ([]*types.KubeNamespace, error) {
 
 	var namespaceData []*types.KubeNamespace
 
@@ -44,7 +44,7 @@ func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequ
 		if err != nil {
 			return nil, err
 		}
-		
+
 		namespace, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 		if err != nil {
 			return nil, err
@@ -65,7 +65,6 @@ func(k8s *k8sSubscriber) GetKubernetesNamespaces(request types.KubeNamespaceRequ
 	//TODO Maybe add marshal/unmarshal here
 	return namespaceData, nil
 }
-
 
 // GetKubernetesObjects is used to get the Kubernetes Object details according to the request type
 func (k8s *k8sSubscriber) GetKubernetesObjects(request types.KubeObjRequest) (*types.KubeObject, error) {
@@ -154,7 +153,7 @@ func (k8s *k8sSubscriber) GenerateKubeObject(cid string, accessKey, version stri
 	if err != nil {
 		return nil, err
 	}
-	mutation := `{ infraID: ` + infraID + `, requestID:\"` + kubeobjectrequest.RequestID + `\", kubeObj:\"` + processed[1:len(processed)-1]  + `\"}`
+	mutation := `{ infraID: ` + infraID + `, requestID:\"` + kubeobjectrequest.RequestID + `\", kubeObj:\"` + processed[1:len(processed)-1] + `\"}`
 
 	var payload = []byte(`{"query":"mutation { kubeObj(request:` + mutation + ` )}"}`)
 	return payload, nil

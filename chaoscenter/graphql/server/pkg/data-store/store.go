@@ -13,7 +13,7 @@ type StateData struct {
 	ExperimentEventPublish map[string][]chan *model.ExperimentRun
 	ExperimentLog          map[string]chan *model.PodLogResponse
 	KubeObjectData         map[string]chan *model.KubeObjectResponse
-	KubeNamespaceData	   map[string]chan *model.KubeNamespaceResponse
+	KubeNamespaceData      map[string]chan *model.KubeNamespaceResponse
 	Mutex                  *sync.Mutex
 }
 
@@ -24,7 +24,7 @@ func NewStore() *StateData {
 		ExperimentEventPublish: make(map[string][]chan *model.ExperimentRun),
 		ExperimentLog:          make(map[string]chan *model.PodLogResponse),
 		KubeObjectData:         make(map[string]chan *model.KubeObjectResponse),
-		KubeNamespaceData:	    make(map[string]chan *model.KubeNamespaceResponse),
+		KubeNamespaceData:      make(map[string]chan *model.KubeNamespaceResponse),
 		Mutex:                  &sync.Mutex{},
 	}
 }
