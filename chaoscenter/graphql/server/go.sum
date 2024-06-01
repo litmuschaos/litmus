@@ -778,8 +778,8 @@ github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de/go.mod h1:zAbeS9
 github.com/lithammer/dedent v1.1.0/go.mod h1:jrXYCQtgg0nJiN+StA2KgR7w6CiQNv9Fd/Z9BP0jIOc=
 github.com/litmuschaos/chaos-operator v0.0.0-20210610071657-a58dbd939e73/go.mod h1:QMjfAVIfwcpj/P1jikyz5+C5vWICiUXsFZMR7Ihnzro=
 github.com/litmuschaos/chaos-operator v0.0.0-20220714075136-66fee1fb7ef7/go.mod h1:m8jQuijmZ9PxCbrvWy0QXL0ji558hUCuD9Q5JAKB12Q=
-github.com/litmuschaos/chaos-operator v0.0.0-20230718113617-6819a4be12e4 h1:GVU1jK8Gb9OaYuU3iDyU/FE3uZYmBwAEB95VY41SYJ8=
-github.com/litmuschaos/chaos-operator v0.0.0-20230718113617-6819a4be12e4/go.mod h1:i6wMEZRQoHjUy4bhq6ePuA2FChX1b7WBR2lH09iM0tU=
+github.com/litmuschaos/chaos-operator v0.0.0-20240601063404-e96a7ee7f1f7 h1:W4+NpHoBJnbPL4x9WTDJWIg219ElfQjjjs4V7VfDBKM=
+github.com/litmuschaos/chaos-operator v0.0.0-20240601063404-e96a7ee7f1f7/go.mod h1:7aAslOjCI8sens0OA3gtQDDa7PO0af3n9U15PXGhpXI=
 github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71 h1:V9/txTSub+FzFE+h48mlQgJ427vaYqKqvzGmzt6XSfw=
 github.com/litmuschaos/chaos-scheduler v0.0.0-20220714173615-d7513d616a71/go.mod h1:Edc10opZte1DHcKt0mxyqt64XKPVFAtQ8cghBltZTjs=
 github.com/litmuschaos/elves v0.0.0-20201107015738-552d74669e3c/go.mod h1:DsbHGNUq/78NZozWVVI9Q6eBei4I+JjlkkD5aibJ3MQ=
