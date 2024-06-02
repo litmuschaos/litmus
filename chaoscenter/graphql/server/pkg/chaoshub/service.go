@@ -869,7 +869,7 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 func (c *chaosHubService) RecurringHubSync() {
 	for {
 		// Started Syncing of hubs
-		chaosHubs, _ := c.GetAllHubs(nil)
+		chaosHubs, _ := c.GetAllHubs(context.Background())
 
 		for _, chaosHub := range chaosHubs {
 			if !chaosHub.IsRemoved {
