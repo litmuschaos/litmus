@@ -97,7 +97,6 @@ func main() {
 	mongoClient := mongodb.Client.Initialize(mongodb.MgoClient)
 
 	var mongodbOperator mongodb.MongoOperator = mongodb.NewMongoOperations(mongoClient)
-	mongodb.Operator = mongodbOperator
 
 	if err := validateVersion(); err != nil {
 		log.Fatal(err)
