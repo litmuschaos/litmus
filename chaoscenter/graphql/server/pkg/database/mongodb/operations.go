@@ -32,7 +32,7 @@ type MongoOperations struct {
 }
 
 var (
-	// Operator contains all the CRUD operations of the mongo database
+// Operator contains all the CRUD operations of the mongo database
 
 )
 
