@@ -1,5 +1,5 @@
 # BUILD STAGE
-FROM golang:1.20 AS builder
+FROM golang:1.22 AS builder
 
 ARG TARGETOS=linux
 ARG TARGETARCH
