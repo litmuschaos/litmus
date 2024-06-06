@@ -121,8 +121,7 @@ func main() {
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
 		logrus.Errorf("unable to parse boolean value %v", err)
-	}
-	if err == nil && enableIntrospection == true {
+	} else if err == nil && enableIntrospection == true {
 		srv.Use(extension.Introspection{})
 	}
 
