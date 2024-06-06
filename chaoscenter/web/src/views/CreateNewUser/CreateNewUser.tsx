@@ -7,6 +7,7 @@ import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
 import type { CreateUserMutationProps, User } from '@api/auth';
 import { useStrings } from '@strings';
+import { PASSWORD_REGEX, USERNAME_REGEX } from '@constants/validation';
 
 interface CreateNewUserViewProps {
   createNewUserMutation: UseMutateFunction<User, unknown, CreateUserMutationProps<never>, unknown>;
@@ -62,10 +63,18 @@ export default function CreateNewUserView(props: CreateNewUserViewProps): React.
           }}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
-            name: Yup.string(),
+            name: Yup.string().max(32),
             email: Yup.string().email(getString('invalidEmailText')).required(getString('emailIsRequired')),
-            username: Yup.string().required(getString('usernameIsRequired')),
-            password: Yup.string().required(getString('passwordIsRequired')),
+            username: Yup.string()
+              .required(getString('usernameIsRequired'))
+              .min(3, getString('fieldMinLength', { length: 3 }))
+              .max(16, getString('fieldMaxLength', { length: 16 }))
+              .matches(USERNAME_REGEX, getString('usernameValidText')),
+            password: Yup.string()
+              .required(getString('passwordIsRequired'))
+              .min(8, getString('fieldMinLength', { length: 8 }))
+              .max(16, getString('fieldMaxLength', { length: 16 }))
+              .matches(PASSWORD_REGEX, getString('passwordValidation')),
             reEnterPassword: Yup.string()
               .required(getString('reEnterPassword'))
               .oneOf([Yup.ref('password'), null], getString('passwordsDoNotMatch'))

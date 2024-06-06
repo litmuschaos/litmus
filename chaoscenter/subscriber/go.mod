@@ -1,15 +1,15 @@
 module subscriber
 
-go 1.20
+go 1.22
 
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24
 	github.com/argoproj/argo-workflows/v3 v3.3.5
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/golang/mock v1.6.0
-	github.com/gorilla/websocket v1.5.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/litmuschaos/chaos-operator v0.0.0-20230718113617-6819a4be12e4
+	github.com/litmuschaos/chaos-operator v0.0.0-20240601063404-e96a7ee7f1f7
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	gopkg.in/yaml.v2 v2.4.0
