@@ -371,11 +371,6 @@ const TunePropertiesStep: React.FC<StepProps<StepData>> = props => {
                   label={getString(`interval`)}
                 />
                 <FormInput.Text
-                  name={`${getType()}.retry`}
-                  inputGroup={{ type: 'number' }}
-                  label={getString(`retry`)}
-                />
-                <FormInput.Text
                   name={`${getType()}.attempt`}
                   inputGroup={{ type: 'number' }}
                   label={getString(`attempt`)}

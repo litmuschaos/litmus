@@ -39,11 +39,6 @@ function ProbeProperties({
         Cell: (props: Cell<KubernetesProbeTableType>) => checkAndReturn(props.value)
       },
       {
-        Header: `${getString('retry')}`.toLocaleUpperCase(),
-        accessor: 'retry',
-        Cell: (props: Cell<KubernetesProbeTableType>) => checkAndReturn(props.value)
-      },
-      {
         Header: `${getString('attempt')}`.toLocaleUpperCase(),
         accessor: 'attempt',
         Cell: (props: Cell<KubernetesProbeTableType>) => checkAndReturn(props.value)

@@ -31,7 +31,7 @@ function ExperimentYamlBuilderView({ setError, setHasFaults }: ExperimentYamlBui
   const experimentHandler = experimentYamlService.getInfrastructureTypeHandler(infrastructureType);
   const schema = getExperimentSchema(infrastructureType);
   const [currentExperiment, setCurrentExperiment] = React.useState<Experiment | undefined>();
-  const ajv = new Ajv({ allErrors: true, strict: false });
+  const ajv = new Ajv({ allErrors: process.env.NODE_ENV !== 'production', strict: false });
 
   const validateYaml = React.useCallback(
     (updatedYaml: string, save?: boolean) => {

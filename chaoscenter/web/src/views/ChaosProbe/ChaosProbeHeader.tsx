@@ -1,14 +1,16 @@
 import React from 'react';
-import { Container, Heading, Layout, Text } from '@harnessio/uicore';
+import { Button, ButtonVariation, Container, Heading, Layout, Text } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Icon } from '@harnessio/icons';
 import type { DefaultLayoutTemplateProps } from '@components/DefaultLayout/DefaultLayout';
 import { useStrings } from '@strings';
 import { getDetailedTime, getIcon } from '@utils';
-import type { ProbeType } from '@api/entities';
+import type { InfrastructureType, ProbeType } from '@api/entities';
 import LitmusBreadCrumbs from '@components/LitmusBreadCrumbs';
 import MainNav from '@components/MainNav';
 import SideNav from '@components/SideNav';
+import { UpdateProbeModal } from '@views/ChaosProbes/UpdateProbeModal';
+import { RefetchGetProbes } from '@controllers/ChaosProbe/types';
 import css from './ChaosProbe.module.scss';
 
 interface ChaosProbeHeaderProps extends DefaultLayoutTemplateProps {
@@ -17,9 +19,11 @@ interface ChaosProbeHeaderProps extends DefaultLayoutTemplateProps {
     name: string;
     description: string;
     type: ProbeType;
+    infrastructureType: InfrastructureType;
   };
   updatedAt: string;
   createdAt: string | undefined;
+  refetchProbes: RefetchGetProbes['refetchProbes'];
 }
 
 function HeaderToolbar({
@@ -45,9 +49,11 @@ export default function ChaosProbeHeader({
   updatedAt,
   createdAt,
   breadcrumbs,
-  children
+  children,
+  refetchProbes
 }: React.PropsWithChildren<ChaosProbeHeaderProps>): React.ReactElement {
   const { getString } = useStrings();
+  const [isEditProbeOpen, setEditProbeOpen] = React.useState<boolean>(false);
 
   return (
     <Layout.Horizontal>
@@ -87,9 +93,24 @@ export default function ChaosProbeHeader({
               </Layout.Vertical>
             </Layout.Horizontal>
             {/* Details of creation, updation and editing */}
-            <HeaderToolbar createdAt={createdAt} updatedAt={updatedAt} />
+            <Layout.Horizontal spacing={'medium'}>
+              <HeaderToolbar createdAt={createdAt} updatedAt={updatedAt} />
+              <Button
+                text={getString('editProbe')}
+                variation={ButtonVariation.SECONDARY}
+                icon="Edit"
+                onClick={() => setEditProbeOpen(true)}
+              />
+            </Layout.Horizontal>
           </Layout.Horizontal>
         </Container>
+        <UpdateProbeModal
+          refetchProbes={refetchProbes}
+          isOpen={isEditProbeOpen}
+          hideDarkModal={() => setEditProbeOpen(false)}
+          probeName={probeData.name}
+          infrastructureType={probeData.infrastructureType}
+        />
         {children}
       </Container>
     </Layout.Horizontal>

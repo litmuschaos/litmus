@@ -25,7 +25,7 @@ websites         |project website, chaoshub, documentation  |litmus-website, cha
 "Maria Kotlyarevskaya",@Jasstkn,jasssstkn@yahoo.com
 "Namkyu Park",namkyu1999,lak9348@gmail.com
 "Neelanjan Manna",@neelanjan00,neelanjan.manna@harness.io
-"Oum Nivrati Kale",@oumkale,imkaleoum@gmail.com
+"Oum Nivrati Kale",@oumkale,oumk@jfrog.com
 "Raj Das",@imrajdas,rajbabu.das@harness.io
 "Rémi Ziolkowski",@Vr00mm,remi.ziolkowski-ext@pole-emploi.fr
 "Soumya Ghosh Dastidar",@gdsoumya,gdsoumya@gmail.com

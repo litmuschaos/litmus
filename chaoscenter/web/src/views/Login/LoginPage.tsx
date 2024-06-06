@@ -3,11 +3,12 @@ import { Formik, Button, Text, Container, Layout } from '@harnessio/uicore';
 import { Icon } from '@harnessio/icons';
 import { Color } from '@harnessio/design-system';
 import { Form } from 'formik';
+import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import AuthLayout from '@components/AuthLayout/AuthLayout';
 import { useStrings } from '@strings';
 import type { ErrorModel, LoginMutationProps, LoginResponse, GetCapabilitiesOkResponse } from '@api/auth';
-import PassowrdInput from '@components/PasswordInput';
+import PasswordInput from '@components/PasswordInput';
 import UserNameInput from '@components/UserNameInput';
 
 interface LoginForm {
@@ -38,6 +39,10 @@ export const LoginPageView = ({ handleLogin, loading, capabilities }: LoginPageV
         <Formik<LoginForm>
           initialValues={{ username: '', password: '' }}
           formName="loginPageForm"
+          validationSchema={Yup.object().shape({
+            username: Yup.string().required(getString('isRequired', { field: getString('username') })),
+            password: Yup.string().required(getString('isRequired', { field: getString('password') }))
+          })}
           onSubmit={data =>
             handleLogin({
               body: data
@@ -53,7 +58,7 @@ export const LoginPageView = ({ handleLogin, loading, capabilities }: LoginPageV
                   placeholder={getString('enterYourUsername')}
                   disabled={loading}
                 />
-                <PassowrdInput
+                <PasswordInput
                   name="password"
                   label={getString('password')}
                   placeholder={getString('enterYourPassword')}
