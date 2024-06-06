@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
@@ -10,7 +12,6 @@ import (
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
 	"github.com/openshift/origin/Godeps/_workspace/src/github.com/Sirupsen/logrus"
-	"strconv"
 
 	"context"
 	"fmt"
