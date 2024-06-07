@@ -30,6 +30,7 @@ import type {
 import { useDocumentTitle, useRouteWithBaseUrl } from '@hooks';
 import { useStrings } from '@strings';
 import Loader from '@components/Loader';
+import PasswordInput from '@components/PasswordInput';
 import css from './Gitops.module.scss';
 
 interface GitopsData {
@@ -254,13 +255,9 @@ export default function GitopsView({
                                   ]}
                                 />
                                 {formikProps.values.authType === AuthType.TOKEN && (
-                                  <FormInput.Text
+                                  <PasswordInput
                                     name="token"
-                                    label={
-                                      <Text font={{ variation: FontVariation.FORM_LABEL }} margin={{ top: 'medium' }}>
-                                        {getString('accessToken')}
-                                      </Text>
-                                    }
+                                    label={getString('accessToken')}
                                     placeholder={getString('accessTokenPlaceholder')}
                                   />
                                 )}

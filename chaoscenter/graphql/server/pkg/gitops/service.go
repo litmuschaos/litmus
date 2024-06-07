@@ -21,7 +21,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -80,7 +79,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 	query := bson.D{{"infra_id", infra.InfraID}, {"experiment_id", experimentID}, {"is_removed", false}}
 	experiments, err := g.chaosExperimentOps.GetExperiments(query)
 	if err != nil {
-		logrus.Error("Could not get experiment :", err)
+		log.Error("Could not get experiment :", err)
 		return "could not get experiment", err
 	}
 	if len(experiments) == 0 {
@@ -92,7 +91,7 @@ func (g *gitOpsService) GitOpsNotificationHandler(ctx context.Context, infra cha
 	}
 	experiments[0].Revision[len(experiments[0].Revision)-1].ExperimentManifest, err = sjson.Set(experiments[0].Revision[len(experiments[0].Revision)-1].ExperimentManifest, "metadata.name", experiments[0].Name+"-"+strconv.FormatInt(time.Now().UnixMilli(), 10))
 	if err != nil {
-		logrus.Error("Failed to updated experiment name :", err)
+		log.Error("Failed to updated experiment name :", err)
 		return "", errors.New("Failed to updated experiment name " + err.Error())
 	}
 
@@ -115,18 +114,19 @@ func (g *gitOpsService) EnableGitOpsHandler(ctx context.Context, projectID strin
 
 	var conn *grpc2.ClientConn
 	client, conn := grpc.GetAuthGRPCSvcClient(conn)
-	defer func() {
-		if err := conn.Close(); err != nil {
-			log.Warnf("failed to close connection: %v", err)
+	defer func(conn *grpc2.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error("Failed to close connection : ", err)
 		}
-	}()
+	}(conn)
 
 	_, err := grpc.GetProjectById(client, projectID)
 	if err != nil {
 		return false, errors.New("Failed to setup GitOps : " + err.Error())
 	}
 
-	logrus.Info("Enabling GitOps")
+	log.Info("Enabling GitOps")
 	gitDB := gitops.GetGitConfigDB(projectID, config)
 
 	commit, err := SetupGitOps(GitUserFromContext(ctx), GetGitOpsConfig(gitDB))
@@ -148,7 +148,7 @@ func (g *gitOpsService) DisableGitOpsHandler(ctx context.Context, projectID stri
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 
-	logrus.Info("Disabling GitOps")
+	log.Info("Disabling GitOps")
 	err := g.gitOpsOperator.DeleteGitConfig(ctx, projectID)
 	if err != nil {
 		return false, errors.New("Failed to delete git config from DB : " + err.Error())
@@ -178,7 +178,7 @@ func (g *gitOpsService) UpdateGitOpsDetailsHandler(ctx context.Context, projectI
 		return false, errors.New("GitOps Disabled ")
 	}
 
-	logrus.Info("Enabling GitOps")
+	log.Info("Enabling GitOps")
 	gitDB := gitops.GetGitConfigDB(projectID, config)
 
 	gitConfig := GetGitOpsConfig(gitDB)
@@ -298,7 +298,7 @@ func (g *gitOpsService) UpsertExperimentToGit(ctx context.Context, projectID str
 
 // DeleteExperimentFromGit deletes experiment from git
 func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID string, experiment *model.ChaosExperimentRequest) error {
-	logrus.Info("Deleting Experiment...")
+	log.Info("Deleting Experiment...")
 	gitLock.Lock(projectID, nil)
 	defer gitLock.Unlock(projectID, nil)
 
@@ -325,7 +325,7 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 		return errors.New("Cannot delete experiment from git : " + err.Error())
 	}
 	if !exists {
-		logrus.Error("File not found in git : ", gitConfig.LocalPath+"/"+experimentPath)
+		log.Error("File not found in git : ", gitConfig.LocalPath+"/"+experimentPath)
 		return nil
 	}
 	err = os.RemoveAll(gitConfig.LocalPath + "/" + experimentPath)
@@ -335,13 +335,13 @@ func (g *gitOpsService) DeleteExperimentFromGit(ctx context.Context, projectID s
 
 	commit, err := gitConfig.GitCommit(GitUserFromContext(ctx), "Deleted Experiment : "+experiment.ExperimentName, &experimentPath)
 	if err != nil {
-		logrus.Error("Error", err)
+		log.Error("Error", err)
 		return errors.New("Cannot commit experiment[delete] to git : " + err.Error())
 	}
 
 	err = gitConfig.GitPush()
 	if err != nil {
-		logrus.Error("Error", err)
+		log.Error("Error", err)
 		return errors.New("Cannot push experiment[delete] to git : " + err.Error())
 	}
 
@@ -372,7 +372,7 @@ func (g *gitOpsService) gitSyncHelper(config gitops.GitConfigDB, wg *sync.WaitGr
 	// get most recent data from db after acquiring lock
 	conf, err := g.gitOpsOperator.GetGitConfig(ctx, config.ProjectID)
 	if err != nil {
-		logrus.Error("Repo Sync ERROR: ", config.ProjectID, err.Error())
+		log.Error("Repo Sync ERROR: ", config.ProjectID, err.Error())
 	}
 	if conf == nil {
 		return
@@ -382,7 +382,7 @@ func (g *gitOpsService) gitSyncHelper(config gitops.GitConfigDB, wg *sync.WaitGr
 
 	err = g.SyncDBToGit(nil, gitConfig)
 	if err != nil {
-		logrus.Error("Repo Sync ERROR: ", conf.ProjectID, err.Error())
+		log.Error("Repo Sync ERROR: ", conf.ProjectID, err.Error())
 	}
 }
 
@@ -393,17 +393,17 @@ func (g *gitOpsService) GitOpsSyncHandler(singleRun bool) {
 	for {
 
 		ctx, cancel := context.WithTimeout(backgroundContext, timeout)
-		logrus.Info("Running GitOps DB Sync...")
+		log.Info("Running GitOps DB Sync...")
 		configs, err := g.gitOpsOperator.GetAllGitConfig(ctx)
 
 		cancel()
 		if err != nil {
-			logrus.Error("Failed to get git configs from db : ", err) //condition
+			log.Error("Failed to get git configs from db : ", err) //condition
 		}
 
 		count := len(configs)
 		if count > 0 {
-			logrus.Info("Updating : ", configs) // condition
+			log.Info("Updating : ", configs) // condition
 
 			count = count - 1
 			for count >= 0 {
@@ -420,7 +420,7 @@ func (g *gitOpsService) GitOpsSyncHandler(singleRun bool) {
 				wg.Wait()
 			}
 
-			logrus.Info("GitOps DB Sync Complete") //condition
+			log.Info("GitOps DB Sync Complete") //condition
 		}
 		if singleRun {
 			break
@@ -450,7 +450,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 	if latestCommit == config.LatestCommit {
 		return nil
 	}
-	logrus.Info(latestCommit, " ", config.LatestCommit, "File Changes: ", files)
+	log.Info(latestCommit, " ", config.LatestCommit, "File Changes: ", files)
 	newExperiments := false
 	for file := range files {
 		if !strings.HasSuffix(file, ".yaml") {
@@ -464,7 +464,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 		if !exists {
 			err = g.deleteExperiment(file, config)
 			if err != nil {
-				logrus.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
+				log.Error("Error while deleting experiment db entry : " + file + " | " + err.Error())
 				continue
 			}
 			continue
@@ -472,12 +472,12 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 		// read changes [new additions/updates]
 		data, err := os.ReadFile(config.LocalPath + "/" + file)
 		if err != nil {
-			logrus.Error("Error reading data from git file : " + file + " | " + err.Error())
+			log.Error("Error reading data from git file : " + file + " | " + err.Error())
 			continue
 		}
 		data, err = yaml.YAMLToJSON(data)
 		if err != nil {
-			logrus.Error("Error unmarshalling data from git file : " + file + " | " + err.Error())
+			log.Error("Error unmarshalling data from git file : " + file + " | " + err.Error())
 			continue
 		}
 		wfID := gjson.Get(string(data), "metadata.labels.experiment_id").String()
@@ -486,12 +486,12 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 			continue
 		}
 
-		logrus.Info("WFID in changed File :", wfID)
+		log.Info("WFID in changed File :", wfID)
 		if wfID == "" {
-			logrus.Info("New Experiment pushed to git : " + file)
+			log.Info("New Experiment pushed to git : " + file)
 			flag, err := g.createExperiment(ctx, string(data), file, config)
 			if err != nil {
-				logrus.Error("Error while creating new experiment db entry : " + file + " | " + err.Error())
+				log.Error("Error while creating new experiment db entry : " + file + " | " + err.Error())
 				continue
 			}
 			if flag {
@@ -500,7 +500,7 @@ func (g *gitOpsService) SyncDBToGit(ctx context.Context, config GitConfig) error
 		} else {
 			err = g.updateExperiment(ctx, string(data), wfID, file, config)
 			if err != nil {
-				logrus.Error("Error while updating experiment db entry : " + file + " | " + err.Error())
+				log.Error("Error while updating experiment db entry : " + file + " | " + err.Error())
 				continue
 			}
 		}
@@ -541,7 +541,7 @@ func (g *gitOpsService) createExperiment(ctx context.Context, data, file string,
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 	wfName := gjson.Get(data, "metadata.name").String()
 	infraID := gjson.Get(data, "metadata.labels.infra_id").String()
-	logrus.Info("Experiment Details | wf_name: ", wfName, " infra_id: ", infraID)
+	log.Info("Experiment Details | wf_name: ", wfName, " infra_id: ", infraID)
 	if wfName == "" || infraID == "" {
 		return false, nil
 	}
@@ -589,9 +589,9 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	fileName = strings.Replace(fileName, ".yaml", "", -1)
 	wfName := gjson.Get(data, "metadata.name").String()
 	infraID := gjson.Get(data, "metadata.labels.infra_id").String()
-	logrus.Info("Experiment Details | wf_name: ", wfName, " infra_id: ", infraID)
+	log.Info("Experiment Details | wf_name: ", wfName, " infra_id: ", infraID)
 	if wfName == "" || infraID == "" {
-		logrus.Error("Cannot Update experiment missing experiment name or infra id")
+		log.Error("Cannot Update experiment missing experiment name or infra id")
 		return nil
 	}
 
@@ -605,7 +605,7 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	}
 
 	if infraID != experiment[0].InfraID {
-		logrus.Error("Cannot change infra id for existing experiment")
+		log.Error("Cannot change infra id for existing experiment")
 		return nil
 	}
 
@@ -629,7 +629,7 @@ func (g *gitOpsService) updateExperiment(ctx context.Context, data, wfID, file s
 	return g.chaosExperimentService.ProcessExperimentUpdate(input, "git-ops", wfType, revID, updateRevision, config.ProjectID, dataStore.Store)
 }
 
-// deleteExperiment helps in deleting an experiment from DB during the SyncDBToGit operation
+// deleteExperiment helps in deleting experiment from DB during the SyncDBToGit operation
 func (g *gitOpsService) deleteExperiment(file string, config GitConfig) error {
 	_, fileName := filepath.Split(file)
 	fileName = strings.Replace(fileName, ".yaml", "", -1)

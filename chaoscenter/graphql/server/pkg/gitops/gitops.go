@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -86,7 +85,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 		LatestCommit:  repoData.LatestCommit,
 		UserName:      repoData.UserName,
 		Password:      repoData.Password,
-		AuthType:      model.AuthType(repoData.AuthType),
+		AuthType:      repoData.AuthType,
 		Token:         repoData.Token,
 		SSHPrivateKey: repoData.SSHPrivateKey,
 	}
@@ -94,7 +93,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 	return gitConfig
 }
 
-// setupGitRepo helps clones and sets up the repo for gitops
+// setupGitRepo helps clones and sets up the repo for GitOps
 func (c GitConfig) setupGitRepo(user GitUser) error {
 	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + c.ProjectID
 
@@ -112,7 +111,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 
 	gitInfo := map[string]string{"projectID": c.ProjectID, "revision": "1"}
 	if exists {
-		data, err := os.ReadFile(path.Clean(projectPath + "/.info"))
+		data, err := os.ReadFile(projectPath + "/.info")
 		if err != nil {
 			return errors.New("can't read existing git info file " + err.Error())
 		}
@@ -136,7 +135,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(path.Clean(projectPath+"/.info"), data, 0644)
+	err = os.WriteFile(projectPath+"/.info", data, 0644)
 	if err != nil {
 		return err
 	}
@@ -203,7 +202,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 	}
 }
 
-// UnsafeGitPull executes git pull after a hard reset when uncommited changes are present in repo. Not safe.
+// UnsafeGitPull executes git pull after a hard reset when uncommitted changes are present in repo. Not safe.
 func (c GitConfig) UnsafeGitPull() error {
 	cleanStatus, err := c.GitGetStatus()
 	if err != nil {
@@ -281,7 +280,7 @@ func (c GitConfig) GitPull() error {
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 		SingleBranch:  true,
 	})
-	if err != nil && err != git.NoErrAlreadyUpToDate {
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return err
 	}
 	return nil
@@ -324,7 +323,7 @@ func (c GitConfig) GitPush() error {
 		Auth:       auth,
 		Progress:   nil,
 	})
-	if err == git.NoErrAlreadyUpToDate {
+	if errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return nil
 	}
 	return err
@@ -444,7 +443,7 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 	return commit.Hash.String(), nil
 }
 
-// SetupGitOps clones and sets up the repo for gitops and returns the LatestCommit
+// SetupGitOps clones and sets up the repo for git ops and returns the LatestCommit
 func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 	err := gitConfig.setupGitRepo(user)
 	if err != nil {

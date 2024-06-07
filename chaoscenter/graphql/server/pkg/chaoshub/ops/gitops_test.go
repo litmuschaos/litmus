@@ -7,13 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/google/uuid"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

@@ -170,6 +170,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
+	routes.CapabilitiesRouter(app)
 
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
 	err := app.Run(utils.Port)

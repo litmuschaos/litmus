@@ -7,6 +7,7 @@ import { Icon } from '@harnessio/icons';
 import * as Yup from 'yup';
 import type { ResetPasswordOkResponse, ResetPasswordMutationProps } from '@api/auth';
 import { useStrings } from '@strings';
+import { PASSWORD_REGEX } from '@constants/validation';
 
 interface ResetPasswordViewProps {
   handleClose: () => void;
@@ -76,8 +77,14 @@ export default function ResetPasswordView(props: ResetPasswordViewProps): React.
           }}
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
-            password: Yup.string().required(getString('enterNewPassword')),
-            reEnterPassword: Yup.string().required(getString('reEnterNewPassword'))
+            password: Yup.string()
+              .required(getString('enterNewPassword'))
+              .min(8, getString('fieldMinLength', { length: 8 }))
+              .max(16, getString('fieldMaxLength', { length: 16 }))
+              .matches(PASSWORD_REGEX, getString('passwordValidation')),
+            reEnterPassword: Yup.string()
+              .required(getString('reEnterNewPassword'))
+              .oneOf([Yup.ref('password'), null], getString('passwordsDoNotMatch'))
           })}
         >
           {formikProps => {

@@ -1,7 +1,9 @@
 ---
-name: "\U0001f41b Bug report"
+name: "\U0001F41B Bug report"
 about: Create a report to help improve the project
+title: ''
 labels: bug
+assignees: ''
 
 ---
 
