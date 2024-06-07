@@ -1684,6 +1684,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uses
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       Prerequisites
@@ -4271,6 +4280,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#uses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Uses
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       Prerequisites
@@ -4368,6 +4386,11 @@ Support <a href="https://grafana.com/docs/k6/latest/testing-guides/test-types/">
 <p class="admonition-title">Scenario: Load generating with k6</p>
 <p><img alt="k6-loadgen" src="../../../images/k6-loadgen.png" /></p>
 </div>
+<h2 id="uses">Uses<a class="headerlink" href="#uses" title="Permanent link">&para;</a></h2>
+<details class="info">
+<summary>View the uses of the experiment</summary>
+<p><a href="https://dev.to/litmus-chaos/introduction-to-k6-load-chaos-in-litmuschaos-4l2k">Introduction to k6 Load Chaos in LitmusChaos</a></p>
+</details>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <details class="info">
 <summary>Verify the prerequisites</summary>
@@ -4376,7 +4399,7 @@ Support <a href="https://grafana.com/docs/k6/latest/testing-guides/test-types/">
 <li>Ensure that the Litmus Chaos Operator is running by executing <code>kubectl get pods</code> in operator namespace (typically, <code>litmus</code>). If not, install from <a href="https://docs.litmuschaos.io/docs/getting-started/installation">here</a></li>
 <li>Ensure to create a Kubernetes secret having the JS script file in the <code>Chaos Infrastructure</code>'s namespace (<code>litmus</code> by default). The simplest way to create a secret object looks like this:
         <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>k6-script<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--from-file<span class="o">=</span>script.js<span class="o">=</span><span class="s">&lt;&lt;script-path&gt;&gt; -n &lt;&lt;chaos</span>_infrastructure_namespace&gt;&gt;
+<span class="w">    </span>--from-file<span class="o">=</span><span class="s">&lt;&lt;script-path&gt;&gt; -n &lt;&lt;chaos</span>_infrastructure_namespace&gt;&gt;
 </code></pre></div></li>
 </ul>
 </details>
@@ -4494,7 +4517,7 @@ Use this sample RBAC manifest to create a chaosServiceAccount in the desired (ap
 </code></pre></div>
 <p>Then create a secret with the above script.</p>
 <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>custom-k6-script<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--from-file<span class="o">=</span>script.js<span class="o">=</span>custom-script.js<span class="w"> </span>-n<span class="w"> </span><span class="s">&lt;&lt;chaos_infrastruc</span>ture_namespace&gt;&gt;
+<span class="w">  </span>--from-file<span class="o">=</span>custom-script.js<span class="w"> </span>-n<span class="w"> </span><span class="s">&lt;&lt;chaos_infrastruc</span>ture_namespace&gt;&gt;
 </code></pre></div>
 <p>And If we want to use <code>custom-k6-script</code> secret and <code>custom-script.js</code> as the secret key, then the experiment tunable will look like this:</p>
 <div class="highlight"><pre><span></span><code><span class="nn">---</span>
