@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +26,7 @@ import (
 // TestMain is the entry point for testing
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	os.Exit(m.Run())
 }
 
@@ -142,12 +142,14 @@ func TestGetUser(t *testing.T) {
 	tests := []struct {
 		name         string
 		uid          string
+		role         string
 		given        func()
 		expectedCode int
 	}{
 		{
 			name: "Successfully retrieve user",
 			uid:  "testUID",
+			role: "user",
 			given: func() {
 				user := &entities.User{
 					ID:       "testUID",
@@ -167,7 +169,8 @@ func TestGetUser(t *testing.T) {
 			c.Params = gin.Params{
 				{"uid", tt.uid},
 			}
-
+			c.Set("uid", tt.uid)
+			c.Set("role", tt.role)
 			tt.given()
 
 			rest.GetUser(service)(c)
@@ -516,7 +519,7 @@ func TestResetPassword(t *testing.T) {
 			c := GetTestGinContext(w)
 			c.Request.Method = http.MethodPost
 			bodyBytes, _ := json.Marshal(tt.inputBody)
-			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(bodyBytes)))
+			c.Request.Body = io.NopCloser(bytes.NewReader([]byte(bodyBytes)))
 			c.Set("role", tt.mockRole)
 			c.Set("uid", tt.mockUID)
 			c.Set("username", tt.mockUsername)
@@ -592,7 +595,7 @@ func TestUpdateUserState(t *testing.T) {
 			c := GetTestGinContext(w)
 			c.Request.Method = http.MethodPost
 			bodyBytes, _ := json.Marshal(tc.inputBody)
-			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(bodyBytes)))
+			c.Request.Body = io.NopCloser(bytes.NewReader([]byte(bodyBytes)))
 			c.Set("role", tc.mockRole)
 			c.Set("uid", tc.mockUID)
 			c.Set("username", tc.mockUsername)
@@ -637,7 +640,7 @@ func TestCreateApiToken(t *testing.T) {
 			bodyBytes, _ := json.Marshal(tt.inputBody)
 			c.Request = httptest.NewRequest(http.MethodPost, "/api/token", bytes.NewReader(bodyBytes))
 			c.Request.Header.Set("Content-Type", "application/json")
-
+			c.Set("uid", tt.inputBody.UserID)
 			tt.given()
 
 			rest.CreateApiToken(service)(c)
@@ -682,7 +685,7 @@ func TestGetApiTokens(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Params = []gin.Param{{Key: "uid", Value: tt.uid}}
-
+			c.Set("uid", tt.uid)
 			tt.given()
 
 			rest.GetApiTokens(service)(c)

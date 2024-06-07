@@ -6,15 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -23,6 +18,9 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/golang-jwt/jwt"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/gitops"
 	log "github.com/sirupsen/logrus"
 	ssh2 "golang.org/x/crypto/ssh"
 )
@@ -87,7 +85,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 		LatestCommit:  repoData.LatestCommit,
 		UserName:      repoData.UserName,
 		Password:      repoData.Password,
-		AuthType:      model.AuthType(repoData.AuthType),
+		AuthType:      repoData.AuthType,
 		Token:         repoData.Token,
 		SSHPrivateKey: repoData.SSHPrivateKey,
 	}
@@ -95,7 +93,7 @@ func GetGitOpsConfig(repoData gitops.GitConfigDB) GitConfig {
 	return gitConfig
 }
 
-// setupGitRepo helps clones and sets up the repo for gitops
+// setupGitRepo helps clones and sets up the repo for GitOps
 func (c GitConfig) setupGitRepo(user GitUser) error {
 	projectPath := c.LocalPath + "/" + ProjectDataPath + "/" + c.ProjectID
 
@@ -113,7 +111,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 
 	gitInfo := map[string]string{"projectID": c.ProjectID, "revision": "1"}
 	if exists {
-		data, err := ioutil.ReadFile(projectPath + "/.info")
+		data, err := os.ReadFile(projectPath + "/.info")
 		if err != nil {
 			return errors.New("can't read existing git info file " + err.Error())
 		}
@@ -137,7 +135,7 @@ func (c GitConfig) setupGitRepo(user GitUser) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(projectPath+"/.info", data, 0644)
+	err = os.WriteFile(projectPath+"/.info", data, 0644)
 	if err != nil {
 		return err
 	}
@@ -204,7 +202,7 @@ func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 	}
 }
 
-// UnsafeGitPull executes git pull after a hard reset when uncommited changes are present in repo. Not safe.
+// UnsafeGitPull executes git pull after a hard reset when uncommitted changes are present in repo. Not safe.
 func (c GitConfig) UnsafeGitPull() error {
 	cleanStatus, err := c.GitGetStatus()
 	if err != nil {
@@ -233,7 +231,7 @@ func (c GitConfig) GitGetStatus() (bool, error) {
 	return status.IsClean(), nil
 }
 
-// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instanes for the repo
+// getRepositoryWorktreeReference returns the git.Repository and git.Worktree instances for the repo
 func (c GitConfig) getRepositoryWorktreeReference() (*git.Repository, *git.Worktree, error) {
 	repo, err := git.PlainOpen(c.LocalPath)
 	if err != nil {
@@ -282,7 +280,7 @@ func (c GitConfig) GitPull() error {
 		ReferenceName: plumbing.NewBranchReferenceName(c.Branch),
 		SingleBranch:  true,
 	})
-	if err != nil && err != git.NoErrAlreadyUpToDate {
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return err
 	}
 	return nil
@@ -325,7 +323,7 @@ func (c GitConfig) GitPush() error {
 		Auth:       auth,
 		Progress:   nil,
 	})
-	if err == git.NoErrAlreadyUpToDate {
+	if errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return nil
 	}
 	return err
@@ -445,7 +443,7 @@ func (c GitConfig) GetLatestCommitHash() (string, error) {
 	return commit.Hash.String(), nil
 }
 
-// SetupGitOps clones and sets up the repo for gitops and returns the LatestCommit
+// SetupGitOps clones and sets up the repo for git ops and returns the LatestCommit
 func SetupGitOps(user GitUser, gitConfig GitConfig) (string, error) {
 	err := gitConfig.setupGitRepo(user)
 	if err != nil {

@@ -86,6 +86,11 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		return nil, errors.New("infra already exists in this project with the same name")
 	}
 
+	// Check if EnvironmentID is valid
+	if _, err := in.envOperator.GetEnvironmentDetails(c, input.EnvironmentID, projectID); err != nil {
+		return nil, errors.New("Invalid EnvironmentID")
+	}
+
 	if (*input.InfraNsExists && input.InfraNamespace == nil) || (*input.InfraNsExists && *input.InfraNamespace == "") {
 		return nil, errors.New("InfraNamespace parameter is required if InfraNsExists is true")
 	}
@@ -664,6 +669,7 @@ func (in *infraService) ListInfras(projectID string, request *model.ListInfraReq
 
 		newInfra := model.Infra{
 			InfraID:          infra.InfraID,
+			ProjectID:        infra.ProjectID,
 			Name:             infra.Name,
 			EnvironmentID:    infra.EnvironmentID,
 			Description:      &description,
@@ -1003,7 +1009,10 @@ func (in *infraService) ConfirmInfraRegistration(request model.InfraIdentity, r 
 	}
 
 	if infra.AccessKey == request.AccessKey {
-		newKey := utils.RandomString(32)
+		newKey, err := utils.GenerateAccessKey(32)
+		if err != nil {
+			return &model.ConfirmInfraRegistrationResponse{IsInfraConfirmed: false}, err
+		}
 		time := time.Now().UnixMilli()
 		query := bson.D{{"infra_id", request.InfraID}}
 		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_infra_confirmed", true}, {"updated_at", time}}}}
@@ -1047,7 +1056,7 @@ func (in *infraService) VerifyInfra(identity model.InfraIdentity) (*dbChaosInfra
 		return nil, err
 	}
 	if !(infra.AccessKey == identity.AccessKey && infra.IsRegistered) {
-		return nil, fmt.Errorf("ERROR:  infra_ID MISMATCH")
+		return nil, fmt.Errorf("ERROR:  accessID MISMATCH")
 	}
 	return &infra, nil
 }

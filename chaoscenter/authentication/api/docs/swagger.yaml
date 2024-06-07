@@ -12,6 +12,14 @@ definitions:
       userID:
         type: string
     type: object
+  response.CapabilitiesResponse:
+    properties:
+      dex:
+        properties:
+          enabled:
+            type: boolean
+        type: object
+    type: object
   response.ErrInvalidCredentials:
     properties:
       code:
@@ -65,7 +73,7 @@ definitions:
         type: integer
       message:
         example: The authorization server encountered an unexpected condition that
-          prevented it from fulfi
+          prevented it from fulfilling the request
         type: string
     type: object
   response.ErrStrictPasswordPolicyViolation:
@@ -176,6 +184,26 @@ paths:
       summary: Accept invitaion.
       tags:
       - ProjectRouter
+  /capabilities:
+    get:
+      consumes:
+      - application/json
+      description: Returns capabilities that can be leveraged by frontend services
+        to toggle certain features.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CapabilitiesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrServerError'
+      summary: Get capabilities of Auth Server.
+      tags:
+      - CapabilitiesRouter
   /create_project:
     post:
       consumes:

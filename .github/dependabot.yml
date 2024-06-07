@@ -16,6 +16,6 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "gomod"
-    directory: "chaoscenter/graphql"
+    directory: "chaoscenter/graphql/server"
     schedule:
       interval: "daily"

@@ -21,11 +21,11 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 
 	if err != nil {
 		log.Print("USER JWT ERROR: ", err)
-		return nil, errors.New("Invalid Token")
+		return nil, errors.New("invalid Token")
 	}
 
 	if !tkn.Valid {
-		return nil, errors.New("Invalid Token")
+		return nil, errors.New("invalid Token")
 	}
 
 	claims, ok := tkn.Claims.(jwt.MapClaims)
@@ -33,7 +33,7 @@ func UserValidateJWT(token string) (jwt.MapClaims, error) {
 		return claims, nil
 	}
 
-	return nil, errors.New("Invalid Token")
+	return nil, errors.New("invalid Token")
 }
 
 // GetUsername returns the username from the jwt token
@@ -50,25 +50,6 @@ func GetUsername(token string) (string, error) {
 	claims, ok := tkn.Claims.(jwt.MapClaims)
 	if ok {
 		return claims["username"].(string), nil
-	}
-
-	return "", errors.New("invalid Token")
-}
-
-// GetUserID returns the GetUserID from the jwt token
-func GetUserID(token string) (string, error) {
-	tkn, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(utils.Config.JwtSecret), nil
-	})
-
-	if err != nil {
-		log.Print("USER JWT ERROR: ", err)
-		return "", errors.New("invalid Token")
-	}
-
-	claims, ok := tkn.Claims.(jwt.MapClaims)
-	if ok {
-		return claims["uid"].(string), nil
 	}
 
 	return "", errors.New("invalid Token")

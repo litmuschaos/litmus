@@ -81,10 +81,13 @@ func init() {
 		if err != nil {
 			logrus.Fatalf("Failed to parse custom tls cert %v", err)
 		}
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(cert)
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{RootCAs: caCertPool}
-		websocket.DefaultDialer.TLSClientConfig = &tls.Config{RootCAs: caCertPool}
+		rootCerts, err := x509.SystemCertPool()
+		if err != nil {
+			logrus.Fatalf("Failed to read system cert pool %v", err)
+		}
+		rootCerts.AppendCertsFromPEM(cert)
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{RootCAs: rootCerts}
+		websocket.DefaultDialer.TLSClientConfig = &tls.Config{RootCAs: rootCerts}
 	}
 
 	k8s.KubeConfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
@@ -121,7 +124,7 @@ func init() {
 			infraData["ACCESS_KEY"] = infraConfirmInterface.Data.InfraConfirm.NewAccessKey
 			infraData["IS_INFRA_CONFIRMED"] = "true"
 
-			_, err = subscriberK8s.AgentRegister(infraData)
+			_, err = subscriberK8s.AgentRegister(infraData["ACCESS_KEY"])
 			if err != nil {
 				logrus.Fatal(err)
 			}

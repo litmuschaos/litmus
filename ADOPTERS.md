@@ -25,6 +25,11 @@ The companies listed here conform to [CNCF's definition of end-users](https://gi
 |[Adidas](https://adidas.com/)|Implementing Chaos Engineering as a practice at Adidas|[Our Story](adopters/organizations/adidas.md)|
 |[Cyren](https://www.cyren.com/)|Implementing Chaos Engineering as a practice at Cyren|[Our Story](https://www.infoq.com/articles/chaos-engineering-cloud-native/)|
 |[AB-Inbev](https://www.ab-inbev.com/)|Implementing Chaos Engineering as a practice at AB-Inbev|[Our Story](adopters/organizations/abinbev.md)|
+|[Group Baobab](https://baobab.com/en/home/)| Orchestrating Chaos using LitmusChaos at Baobab|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1647648343)|
+|[Flipkart](https://www.flipkart.com/)|Chaos Engineering at Flipkart|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1966904935)|
+|[Talend](https://www.talend.com/)|Chaos Engineering for our pipelines and weekly checks|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-2005254600)|
+|[Delivery Hero](https://www.deliveryhero.com/)|Enhancing Resiliency of Our Services|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1997465958)|
+
 
 ### Cloud-Native Vendors
 
@@ -43,6 +48,8 @@ devops/reliability pipelines (such as for customer portals/websites etc.,) withi
 |[Zebrium](https://www.zebrium.com?utm_source=github&utm_campaign=litmuschaos_repo)|[Zebrium K8s Chaos Project](https://github.com/zebrium/zebrium-kubernetes-demo)|[Our Story](adopters/organizations/zebrium.md)|
 |[Container Solutions](https://www.container-solutions.com/)|Building Chaos Engineering for E-Commerce Customers|[Our Story](adopters/organizations/containersolutions.md)|
 |[Infracloud Technologies](https://www.infracloud.io/)|Developing Resiliency Framework at Infracloud|[Our Story](adopters/organizations/infracloud.md)|
+|[IFS](https://www.ifs.com/)|Checking Resiliency with LitmusChaos at IFS|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1966428068)|
+|[Ericsson](https://www.ericsson.com/en)|Chaos Engineering with Open Source LitmusChaos|[Our Story](https://github.com/litmuschaos/litmus/issues/2191#issuecomment-1985348431)|
 
 
 ### Cloud-Native Solutions & Service Providers

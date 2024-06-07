@@ -416,6 +416,8 @@ featureRestriction:
   resourceOveruseEnterprise: >-
     You have exceeded your resource subscription limit. Consider increasing your
     limits to keep shipping.
+fieldMaxLength: Length should be {{length}} characters maximum.
+fieldMinLength: Length should be {{length}} characters minimum.
 fieldSelector: Field Selector
 fixAllErrors: Fix all the errors indicated in the YAML Editor to resolve the issue.
 generateSSH: Generate New SSH Key
@@ -601,7 +603,7 @@ nameIdDescriptionTags:
   tagsLabel: Tags
 nameIsARequiredField: Name is a required field
 nameIsRequired: Name is a required in order to update.
-nameVaidText: Name can only contain alphabets.
+nameValidText: Name can only contain alphabets.
 namespace: Namespace
 namespaceScopeDescription: Allows LitmusChaos to perform and monitor chaos in a namespace.
 namespaceWide: Namespace-wide
@@ -738,6 +740,9 @@ passedRuns: Passed Runs
 password: Password
 passwordIsRequired: Password is a required field
 passwordResetSuccess: Password reset successfully
+passwordValidation: >-
+  Password must contain at least one uppercase letter, one lowercase letter, one
+  number and one special character
 passwordsDoNotMatch: Passwords do not match
 pauseRun: Pause Run
 pending: Pending
@@ -761,6 +766,7 @@ previous: Previous
 private: Private
 probeAddedSuccessfully: Probe added successfully, please apply changes before closing
 probeConfiguration: Probe Configuration
+probeDeletedSuccessfully: Probe Deleted Successfully
 probeDetails: Probe Details
 probeExecutionPreview: PROBE EXECUTION PREVIEW
 probeInFault: Probe in fault
@@ -886,6 +892,10 @@ registryType: Registry Type
 remove: Remove
 removeMember: Remove Member
 removeMemberConfirmation: Are you sure you want to remove {{username}}?
+removeProbeDesc: >-
+  This action will remove the probe from the manifest. Are you sure you want to
+  continue?
+removeProbeHeading: Remove this probe?
 repoBranchPlaceholder: Enter repository branch
 repoURLPlaceholder: Enter repository URL
 repository: Repository
@@ -1006,6 +1016,7 @@ showLess: ' Show less'
 showingAll: Showing all
 showingLastRuns: Showing last 50 runs only
 signIn: Sign In
+signInWithDex: Login With Single Sign-On
 signOut: Sign Out
 singleRun: Single Run
 source: Source
@@ -1126,6 +1137,7 @@ userCreatedOn: User Created On
 userManagement: User Management
 username: Username
 usernameIsRequired: Username is a required field
+usernameValidText: Username can only contain letters, digits, underscores, and hyphens
 usersNotAvailableMessage: No users available to send invitation
 usersNotAvailableTitle: No users available
 validationError: Validation Error

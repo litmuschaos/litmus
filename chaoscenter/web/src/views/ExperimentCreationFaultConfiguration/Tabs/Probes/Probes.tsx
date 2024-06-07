@@ -3,14 +3,25 @@ import { Button, ButtonVariation, Container, Layout, TableV2, Text } from '@harn
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Divider } from '@blueprintjs/core';
 import { Icon } from '@harnessio/icons';
+import type { Row } from 'react-table';
 import type { FaultData } from '@models';
 import { useStrings } from '@strings';
 import EmptyProbe from '@images/emptyProbe.png';
-import type { ProbeObj } from '@api/entities';
+import type { InfrastructureType, ProbeObj } from '@api/entities';
+import { UpdateProbeModal } from '@views/ChaosProbes/UpdateProbeModal';
+import { MenuCell } from './MenuCell';
 import css from './Probes.module.scss';
 
-const getTableColumns = (): // getString: (key: keyof StringsMap, vars?: Record<string, any> | undefined) => string
-any => {
+export interface EditProbeData {
+  name: string;
+  infrastructureType: InfrastructureType;
+}
+
+const getTableColumns = (
+  onSave: (data: Omit<FaultData, 'experimentCR'>) => void,
+  setEditProbe: React.Dispatch<React.SetStateAction<EditProbeData | undefined>>,
+  faultData: FaultData | undefined
+): any => {
   return [
     {
       Header: 'Probes',
@@ -45,8 +56,11 @@ any => {
     },
     {
       Header: '',
-      accessor: () => <div>:</div>,
-      id: 'Menu',
+      id: 'threeDotMenu',
+      Cell: ({ row }: { row: Row<ProbeObj> }) => (
+        <MenuCell row={row} faultData={faultData} setEditProbe={setEditProbe} onSave={onSave} />
+      ),
+      disableSortBy: true,
       width: '10px'
     }
   ];
@@ -54,12 +68,15 @@ any => {
 
 export default function ProbesTab({
   faultData,
+  onSave,
   setIsAddProbeSelected
 }: {
   faultData: FaultData | undefined;
   setIsAddProbeSelected: React.Dispatch<React.SetStateAction<boolean>>;
+  onSave: (data: Omit<FaultData, 'experimentCR'>) => void;
 }): React.ReactElement {
   const { getString } = useStrings();
+  const [editProbe, setEditProbe] = React.useState<EditProbeData | undefined>();
 
   return (
     <Container
@@ -110,7 +127,11 @@ export default function ProbesTab({
           >
             {getString('selectedProbe')}
           </Text>
-          <TableV2 columns={getTableColumns()} data={faultData.probes as ProbeObj[]} className={css.probeTable} />
+          <TableV2
+            columns={getTableColumns(onSave, setEditProbe, faultData)}
+            data={faultData.probes as ProbeObj[]}
+            className={css.probeTable}
+          />
           <Divider className={css.divider} />
           <div className={css.newProbeCard} onClick={() => setIsAddProbeSelected(true)}>
             <Layout.Horizontal spacing={'xsmall'}>
@@ -127,6 +148,14 @@ export default function ProbesTab({
               </Layout.Vertical>
             </Layout.Horizontal>
           </div>
+          {editProbe && (
+            <UpdateProbeModal
+              isOpen={!!editProbe.name}
+              hideDarkModal={() => setEditProbe(undefined)}
+              probeName={editProbe.name}
+              infrastructureType={editProbe.infrastructureType}
+            />
+          )}
         </Layout.Vertical>
       )}
     </Container>

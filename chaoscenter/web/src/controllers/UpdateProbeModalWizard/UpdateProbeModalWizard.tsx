@@ -1,15 +1,18 @@
 import React from 'react';
 import { useToaster } from '@harnessio/uicore';
-import { getProbeAllProperties, updateProbe, validateUniqueProbe } from '@api/core';
+import { getProbeAllProperties, GetProbeRequest, GetProbeResponse, updateProbe, validateUniqueProbe } from '@api/core';
 import type { RefetchProbes } from '@controllers/ChaosProbes';
 import AddProbeModalWizardView from '@views/AddProbeModalWizard';
 import type { InfrastructureType } from '@api/entities';
 import { getScope } from '@utils';
+import Loader from '@components/Loader';
+import { GqlAPIQueryResponse } from '@api/types';
 
-interface UpdateHubModalWizardControllerProps extends RefetchProbes {
+interface UpdateHubModalWizardControllerProps {
   hideDarkModal: () => void;
   probeName: string;
   infrastructureType: InfrastructureType | undefined;
+  refetchProbes?: GqlAPIQueryResponse<GetProbeResponse, GetProbeRequest>['refetch'] | RefetchProbes['refetchProbes'];
 }
 
 export default function UpdateProbeModalWizardController({
@@ -29,7 +32,7 @@ export default function UpdateProbeModalWizardController({
   const [updateProbeMutation, { loading: updateProbeLoading, error }] = updateProbe({
     onCompleted: data => {
       showSuccess(data.updateProbe);
-      refetchProbes();
+      refetchProbes?.();
     },
     onError: err => showError(err.message)
   });
@@ -45,15 +48,17 @@ export default function UpdateProbeModalWizardController({
   const loading = updateProbeLoading || getProbeLoading;
 
   return (
-    <AddProbeModalWizardView
-      mutation={{ updateProbeMutation }}
-      probeData={probeData?.getProbe}
-      loading={loading}
-      validateName={validateUniqueProbeQuery}
-      error={error}
-      isEdit={true}
-      infrastructureType={infrastructureType}
-      hideDarkModal={hideDarkModal}
-    />
+    <Loader loading={loading}>
+      <AddProbeModalWizardView
+        mutation={{ updateProbeMutation }}
+        probeData={probeData?.getProbe}
+        loading={loading}
+        validateName={validateUniqueProbeQuery}
+        error={error}
+        isEdit={true}
+        infrastructureType={infrastructureType}
+        hideDarkModal={hideDarkModal}
+      />
+    </Loader>
   );
 }

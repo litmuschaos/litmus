@@ -108,19 +108,15 @@ func (ev *subscriberEvents) CheckChaosData(nodeStatus v1alpha13.NodeStatus, work
 }
 
 func getNameFromLog(log string) string {
-	s := regexp.MustCompile(`\n\nChaosEngine Name : .*\n\n`).FindString(log)
-	if s == "" {
+	re := regexp.MustCompile(`ChaosEngine Name : ([\w-]+)`)
+	match := re.FindStringSubmatch(log)
+	if len(match) < 2 {
 		return ""
 	}
-	s = strings.TrimSpace(s)
-	name := strings.Split(s, ": ")
-	if len(name) != 2 {
-		return ""
-	}
-	return name[1]
+	return match[1]
 }
 
-// converts unix timestamp to string
+// StrConvTime converts unix timestamp to string
 func StrConvTime(time int64) string {
 	if time < 0 {
 		return ""

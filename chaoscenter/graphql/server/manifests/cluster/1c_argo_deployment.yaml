@@ -46,6 +46,7 @@ spec:
             - workflow-controller-configmap
             - --executor-image
             -  #{ARGO_WORKFLOW_EXECUTOR}
+            - --namespaced
             - --container-runtime-executor
             -  #{ARGO_CONTAINER_RUNTIME_EXECUTOR}
           command:
@@ -67,4 +68,4 @@ spec:
               memory: "500Mi"
               cpu: "225m"
               ephemeral-storage: "1Gi"
-      serviceAccountName: argo
+      serviceAccountName: #{INFRA_SERVICE_ACCOUNT}

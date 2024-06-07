@@ -57,15 +57,10 @@ export default function ActiveMembersTableView({
         Cell: ({ row: { original: data } }: { row: Row<ProjectMember> }) => {
           const { open: openDeleteModal, isOpen: isDeleteModalOpen, close: hideDeleteModal } = useToggleOpen();
           // const { open: openEditModal, isOpen: isEditOpen, close: hideEditModal } = useToggleOpen();
-
+          if (data.role === 'Owner') return <></>;
           return (
             <Layout.Vertical flex={{ justifyContent: 'center', alignItems: 'flex-end' }} onClick={killEvent}>
-              <Popover
-                className={Classes.DARK}
-                position={Position.LEFT}
-                interactionKind={PopoverInteractionKind.HOVER}
-                disabled={data.role === 'Owner'}
-              >
+              <Popover className={Classes.DARK} position={Position.LEFT} interactionKind={PopoverInteractionKind.HOVER}>
                 <Button variation={ButtonVariation.ICON} icon="Options" />
                 <Menu style={{ backgroundColor: 'unset' }}>
                   {/* <RbacMenuItem icon="edit" text="Edit Role" onClick={openEditModal} permission={PermissionGroup.OWNER} /> */}

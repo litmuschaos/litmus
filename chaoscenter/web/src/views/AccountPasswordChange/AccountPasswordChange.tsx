@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import type { UpdatePasswordMutationProps, UpdatePasswordOkResponse } from '@api/auth';
+import { PASSWORD_REGEX } from '@constants/validation';
 
 interface AccountPasswordChangeViewProps {
   handleClose: () => void;
@@ -79,8 +80,14 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
           onSubmit={values => handleSubmit(values)}
           validationSchema={Yup.object().shape({
             oldPassword: Yup.string().required(getString('enterOldPassword')),
-            newPassword: Yup.string().required(getString('enterNewPassword')),
-            reEnterNewPassword: Yup.string().required(getString('reEnterNewPassword'))
+            newPassword: Yup.string()
+              .required(getString('enterNewPassword'))
+              .min(8, getString('fieldMinLength', { length: 8 }))
+              .max(16, getString('fieldMaxLength', { length: 16 }))
+              .matches(PASSWORD_REGEX, getString('passwordValidation')),
+            reEnterNewPassword: Yup.string()
+              .required(getString('reEnterNewPassword'))
+              .oneOf([Yup.ref('newPassword'), null], getString('passwordsDoNotMatch'))
           })}
         >
           {formikProps => {
@@ -113,9 +120,10 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
                     <Button
                       type="submit"
                       variation={ButtonVariation.PRIMARY}
-                      text={getString('confirm')}
+                      text={updatePasswordMutationLoading ? <Icon name="loading" size={16} /> : getString('confirm')}
                       loading={updatePasswordMutationLoading}
-                      disabled={isSubmitButtonDisabled(formikProps.values)}
+                      disabled={updatePasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
+                      style={{ minWidth: '90px' }}
                     />
                     <Button
                       variation={ButtonVariation.TERTIARY}

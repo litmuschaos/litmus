@@ -29,6 +29,8 @@ enum ExperimentRunStatus {
   Skipped
   Error
   Timeout
+  Terminated
+  Queued
   NA
 }
 
@@ -756,7 +758,7 @@ extend type Mutation {
   Updates the experiment
   """
   updateChaosExperiment(
-    request: ChaosExperimentRequest
+    request: ChaosExperimentRequest!
     projectID: ID!
   ): ChaosExperimentResponse!
 

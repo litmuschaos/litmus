@@ -1,13 +1,40 @@
 {
   "swagger": "2.0",
   "host": "localhost:3000",
-  "schemes": ["https", "http"],
+  "schemes": [
+    "https",
+    "http"
+  ],
   "info": {
     "title": "Litmus Portal Authentication API",
     "version": "2.7.0",
     "description": "Litmus Portal Authentication APIs are used to authenticate the identity of a user and to perform several user-specific tasks like:\n <li>Update Profile</li>\n <li>Change Password</li>\n <li>Reset Password</li>\n <li>Create new users etc.</li>\n"
   },
   "paths": {
+    "/capabilities": {
+      "get": {
+        "description": "Returns capabilities that can be leveraged by frontend services to toggle certain features.",
+        "operationId": "getCapabilities",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "CapabilitiesRouter"
+        ],
+        "summary": "Get capabilities of Auth Server.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CapabilitiesResponse"
+            }
+          }
+        }
+      }
+    },
     "/status": {
       "get": {
         "description": "This API is used to check the status of the server.",
@@ -31,7 +58,9 @@
           }
         },
         "parameters": [],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/login": {
@@ -71,7 +100,10 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["username", "password"],
+              "required": [
+                "username",
+                "password"
+              ],
               "properties": {
                 "username": {
                   "type": "string"
@@ -87,8 +119,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/logout": {
@@ -100,7 +136,7 @@
             "description": "OK",
             "examples": {
               "application/json": {
-                "message":"successfully logged out"
+                "message": "successfully logged out"
               }
             },
             "schema": {
@@ -120,8 +156,12 @@
             }
           }
         },
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/token/{user_id}": {
@@ -137,7 +177,7 @@
                   {
                     "user_id": "23d693b9-bae4-4076-9cd5-ebd3949c98d6",
                     "name": "test-api-token",
-                    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
+                    "token": "ACCESS_TOKEN",
                     "expires_at": 1627040198,
                     "created_at": 1627040098
                   }
@@ -170,7 +210,9 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/create_token": {
@@ -183,7 +225,7 @@
             "examples": {
               "application/json": {
                 "accessToken": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA",
-                "type":        "Bearer"
+                "type": "Bearer"
               }
             },
             "schema": {
@@ -209,7 +251,11 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["user_id", "name", "days_until_expiration"],
+              "required": [
+                "user_id",
+                "name",
+                "days_until_expiration"
+              ],
               "properties": {
                 "user_id": {
                   "type": "string"
@@ -229,8 +275,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/remove_token": {
@@ -268,20 +318,26 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["token"],
+              "required": [
+                "token"
+              ],
               "properties": {
                 "token": {
                   "type": "string"
                 }
               },
               "example": {
-                "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTI1MTEzMTIsInJvbGUiOiJhZG1pbiIsInVpZCI6IjIzZDY5M2I5LWJhZTQtNDA3Ni05Y2Q1LWViZDM5NDljOThkNiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.4-bvGu8iVlrn6N7aHZQl6xKk4Nl-EPoeCO4euO8cGg0PigxYJGeyHy70cC9hgFvjc2_BVskuvjhK3-auOT6llA"
+                "token": "ACCESS_TOKEN"
               }
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/users": {
@@ -309,7 +365,9 @@
           }
         },
         "parameters": [],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_user/{user_id}": {
@@ -343,7 +401,9 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/update/password": {
@@ -374,7 +434,11 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["username", "oldPassword", "newPassword"],
+              "required": [
+                "username",
+                "oldPassword",
+                "newPassword"
+              ],
               "properties": {
                 "username": {
                   "type": "string"
@@ -394,8 +458,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/create_user": {
@@ -427,7 +495,11 @@
             "schema": {
               "type": "object",
               "properties": {
-                "required": ["username", "password", "role"],
+                "required": [
+                  "username",
+                  "password",
+                  "role"
+                ],
                 "username": {
                   "type": "string"
                 },
@@ -454,8 +526,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/reset/password": {
@@ -486,7 +562,11 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["username", "oldPassword", "newPassword"],
+              "required": [
+                "username",
+                "oldPassword",
+                "newPassword"
+              ],
               "properties": {
                 "username": {
                   "type": "string"
@@ -505,8 +585,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/update/details": {
@@ -552,8 +636,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/update/state": {
@@ -584,7 +672,10 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["username", "isDeactivate"],
+              "required": [
+                "username",
+                "isDeactivate"
+              ],
               "properties": {
                 "username": {
                   "type": "string"
@@ -600,8 +691,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/create_project": {
@@ -647,7 +742,9 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["projectName"],
+              "required": [
+                "projectName"
+              ],
               "properties": {
                 "projectName": {
                   "type": "string"
@@ -659,8 +756,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_project/{project_id}": {
@@ -713,7 +814,9 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_user_with_project/{username}": {
@@ -771,7 +874,9 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/list_projects": {
@@ -817,7 +922,9 @@
           }
         },
         "parameters": [],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_projects_stats": {
@@ -852,7 +959,9 @@
           }
         },
         "parameters": [],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/update_project_name": {
@@ -883,7 +992,10 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["projectID", "projectName"],
+              "required": [
+                "projectID",
+                "projectName"
+              ],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -899,8 +1011,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/send_invitation": {
@@ -940,7 +1056,11 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["projectID", "userID", "role"],
+              "required": [
+                "projectID",
+                "userID",
+                "role"
+              ],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -950,7 +1070,11 @@
                 },
                 "role": {
                   "type": "string",
-                  "enum": ["Owner", "Editor", "Viewer"]
+                  "enum": [
+                    "Owner",
+                    "Editor",
+                    "Viewer"
+                  ]
                 }
               },
               "example": {
@@ -961,8 +1085,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/accept_invitation": {
@@ -993,7 +1121,10 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["projectID", "userID"],
+              "required": [
+                "projectID",
+                "userID"
+              ],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1009,8 +1140,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/decline_invitation": {
@@ -1041,7 +1176,10 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["projectID", "userID"],
+              "required": [
+                "projectID",
+                "userID"
+              ],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1057,8 +1195,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/remove_invitation": {
@@ -1089,7 +1231,10 @@
             "in": "body",
             "schema": {
               "type": "object",
-              "required": ["projectID", "userID"],
+              "required": [
+                "projectID",
+                "userID"
+              ],
               "properties": {
                 "projectID": {
                   "type": "string"
@@ -1105,8 +1250,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/leave_project": {
@@ -1138,7 +1287,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "required": ["projectID", "userID"],
+                "required": [
+                  "projectID",
+                  "userID"
+                ],
                 "projectID": {
                   "type": "string"
                 },
@@ -1153,8 +1305,12 @@
             }
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"]
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_owner_projects": {
@@ -1178,7 +1334,9 @@
           }
         },
         "parameters": [],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/list_invitations_with_filters/{invitation_state}": {
@@ -1208,10 +1366,17 @@
             "description": "state of the invitation",
             "in": "path",
             "type": "string",
-            "enum": ["Accepted", "Pending", "Declined", "Exited"]
+            "enum": [
+              "Accepted",
+              "Pending",
+              "Declined",
+              "Exited"
+            ]
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_project_role/{project_id}": {
@@ -1245,7 +1410,9 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/get_project_members/{project_id}/{state}": {
@@ -1306,10 +1473,16 @@
             "description": "state of the invitation",
             "in": "path",
             "type": "string",
-            "enum": ["accepted", "not_accepted", "all"]
+            "enum": [
+              "accepted",
+              "not_accepted",
+              "all"
+            ]
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/invite_users/{project_id}": {
@@ -1341,11 +1514,26 @@
             "type": "string"
           }
         ],
-        "produces": ["application/json"]
+        "produces": [
+          "application/json"
+        ]
       }
     }
   },
   "definitions": {
+    "CapabilitiesResponse": {
+      "type": "object",
+      "properties": {
+        "dex": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
     "ErrorModel": {
       "type": "object",
       "properties": {
@@ -1445,12 +1633,12 @@
       }
     },
     "RemoveApiTokenResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          }
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
+      }
     },
     "ActionBy": {
       "type": "object",
@@ -1468,7 +1656,12 @@
     },
     "User": {
       "type": "object",
-      "required": ["userID", "username", "role", "isRemoved"],
+      "required": [
+        "userID",
+        "username",
+        "role",
+        "isRemoved"
+      ],
       "properties": {
         "userID": {
           "type": "string"
@@ -1510,7 +1703,12 @@
     },
     "ProjectMember": {
       "type": "object",
-      "required": ["userID", "username", "invitation", "role"],
+      "required": [
+        "userID",
+        "username",
+        "invitation",
+        "role"
+      ],
       "properties": {
         "userID": {
           "type": "string"
@@ -1526,11 +1724,20 @@
         },
         "role": {
           "type": "string",
-          "enum": ["Owner", "Editor", "Viewer"]
+          "enum": [
+            "Owner",
+            "Editor",
+            "Viewer"
+          ]
         },
         "invitation": {
           "type": "string",
-          "enum": ["Accepted", "Pending", "Declined", "Exited"]
+          "enum": [
+            "Accepted",
+            "Pending",
+            "Declined",
+            "Exited"
+          ]
         },
         "joinedAt": {
           "type": "string"
@@ -1554,7 +1761,11 @@
         },
         "invitationRole": {
           "type": "string",
-          "enum": ["Owner", "Editor", "Viewer"]
+          "enum": [
+            "Owner",
+            "Editor",
+            "Viewer"
+          ]
         },
         "projectOwner": {
           "$ref": "#/definitions/ProjectMember"
@@ -1563,7 +1774,11 @@
     },
     "Project": {
       "type": "object",
-      "required": ["projectID", "name", "members"],
+      "required": [
+        "projectID",
+        "name",
+        "members"
+      ],
       "properties": {
         "updatedBy": {
           "$ref": "#/definitions/ActionBy"
