@@ -43,6 +43,7 @@ type Configuration struct {
 	DefaultHubBranchName        string `required:"true" split_words:"true"`
 	CustomChaosHubPath          string `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string `split_words:"true" default:"/tmp/default/"`
+	EnableGQLIntrospection      string `split_words:"true" default:"false"`
 }
 
 var Config Configuration
