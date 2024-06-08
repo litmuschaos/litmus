@@ -3,7 +3,6 @@ declare namespace ProjectSelectorListModuleScssNamespace {
     cardListContainer: string;
     gap2: string;
     gap4: string;
-    grow: string;
   }
 }
 
