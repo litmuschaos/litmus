@@ -37,10 +37,10 @@ func contains(s []string, str string) bool {
 }
 
 // ReadinessHandler returns a handler function for readiness checks
-func (o *Operator) ReadinessHandler() gin.HandlerFunc {
+func (r *Operator) ReadinessHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dbFlag = "up"
-		dbs, err := o.mongoOperator.ListDataBase(context.Background(), mongodb.MgoClient)
+		dbs, err := r.mongoOperator.ListDataBase(context.Background(), mongodb.MgoClient)
 		if err != nil {
 			dbFlag = "down"
 		}
