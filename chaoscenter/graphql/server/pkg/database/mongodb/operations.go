@@ -31,7 +31,6 @@ type MongoOperations struct {
 	MongoClient *MongoClient
 }
 
-
 func NewMongoOperations(mongoClient *MongoClient) *MongoOperations {
 	return &MongoOperations{
 		MongoClient: mongoClient,
