@@ -1,9 +1,10 @@
 package rest
 
 import (
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 	"net/http"
 	"time"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
