@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io"
 	"log"
 	"net/http"
@@ -271,12 +272,62 @@ func TestInviteUsers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
+			c.Set("uid", tt.projectID)
 			c.Params = gin.Params{
 				{"project_id", tt.projectID},
 			}
-
+			user := &entities.User{
+				ID:   "testUserID",
+				Name: "Test User",
+			}
+			project := &entities.Project{
+				ID:   "testProjectID",
+				Name: "Test Project",
+			}
+			projects := []*entities.Project{
+				{
+					ID:   "testProjectID",
+					Name: "Test Project",
+				},
+			}
+			expectedFilter := primitive.D{
+				primitive.E{
+					Key:   "_id",
+					Value: tt.projectID,
+				},
+				primitive.E{
+					Key: "members",
+					Value: primitive.D{
+						primitive.E{
+							Key: "$elemMatch",
+							Value: primitive.D{
+								primitive.E{
+									Key:   "user_id",
+									Value: tt.projectID,
+								},
+								primitive.E{
+									Key: "role",
+									Value: primitive.D{
+										primitive.E{
+											Key:   "$in",
+											Value: []string{"Owner"},
+										},
+									},
+								},
+								primitive.E{
+									Key:   "invitation",
+									Value: "Accepted",
+								},
+							},
+						},
+					},
+				},
+			}
 			tt.given()
 
+			service.On("GetProjectByProjectID", "").Return(project, nil)
+			service.On("GetUser", tt.projectID).Return(user, nil)
+			service.On("GetProjects", expectedFilter).Return(projects, nil)
 			rest.InviteUsers(service)(c)
 
 			assert.Equal(t, tt.expectedCode, w.Code)
