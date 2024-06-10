@@ -186,6 +186,15 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
 		state := c.Param("state")
+		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+			validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		members, err := service.GetProjectMembers(projectID, state)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
