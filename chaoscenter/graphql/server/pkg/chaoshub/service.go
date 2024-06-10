@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/handler"
@@ -16,13 +17,9 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
-	"go.mongodb.org/mongo-driver/mongo"
-
-	"github.com/google/uuid"
-	"github.com/jinzhu/copier"
-
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -68,7 +65,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 	if IsExist, err := c.IsChaosHubAvailable(ctx, chaosHub.Name, projectID); err != nil {
 		return nil, err
 	} else if IsExist == true {
-		return nil, errors.New("Name Already exists")
+		return nil, errors.New("name already exists")
 	}
 	currentTime := time.Now()
 	cloneHub := NewCloningInputFrom(chaosHub)
@@ -123,7 +120,7 @@ func (c *chaosHubService) AddChaosHub(ctx context.Context, chaosHub model.Create
 		return nil, err
 	}
 
-	// Cloning the repository at a path from chaoshub link structure.
+	// Cloning the repository at a path from ChaosHub link structure.
 	if err := chaosHubOps.GitClone(cloneHub, projectID); err != nil {
 		log.Error(err)
 	}
@@ -137,7 +134,7 @@ func (c *chaosHubService) AddRemoteChaosHub(ctx context.Context, chaosHub model.
 		return nil, err
 	}
 	if IsExist == true {
-		return nil, errors.New("Name Already exists")
+		return nil, errors.New("name already exists")
 	}
 	description := ""
 	if chaosHub.Description != nil {
@@ -206,7 +203,7 @@ func (c *chaosHubService) SaveChaosHub(ctx context.Context, chaosHub model.Creat
 		return nil, err
 	}
 	if IsExist == true {
-		return nil, errors.New("Name Already exists")
+		return nil, errors.New("name already exists")
 	}
 
 	// Initialize a UID for new Hub.
@@ -345,7 +342,7 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 			}
 		}
 	} else {
-		// Syncing/Cloning the repository at a path from chaoshub link structure.
+		// Syncing/Cloning the repository at a path from ChaosHub link structure.
 		if prevChaosHub.Name != chaosHub.Name || prevChaosHub.RepoURL != chaosHub.RepoURL || prevChaosHub.RepoBranch != chaosHub.RepoBranch || prevChaosHub.IsPrivate != chaosHub.IsPrivate || prevChaosHub.AuthType != chaosHub.AuthType.String() {
 			err = os.RemoveAll(clonePath)
 			if err != nil {
@@ -481,21 +478,21 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 
 	//Get fault chartserviceversion.yaml data
 	csvPath := basePath + "/" + request.ExperimentName + ".chartserviceversion.yaml"
-	csvYaml, err := ioutil.ReadFile(csvPath)
+	csvYaml, err := os.ReadFile(csvPath)
 	if err != nil {
 		csvYaml = []byte("")
 	}
 
 	//Get engine.yaml data
 	enginePath := basePath + "/" + "engine.yaml"
-	engineYaml, err := ioutil.ReadFile(enginePath)
+	engineYaml, err := os.ReadFile(enginePath)
 	if err != nil {
 		engineYaml = []byte("")
 	}
 
 	//Get fault.yaml data
 	faultPath := basePath + "/" + "fault.yaml"
-	faultYaml, err := ioutil.ReadFile(faultPath)
+	faultYaml, err := os.ReadFile(faultPath)
 	if err != nil {
 		faultYaml = []byte("")
 	}
@@ -507,7 +504,7 @@ func (c *chaosHubService) GetChaosFault(ctx context.Context, request model.Exper
 	}, nil
 }
 
-// ListChaosHubs returns the array of hubdetails with their current status.
+// ListChaosHubs returns the array of hub details with their current status.
 func (c *chaosHubService) ListChaosHubs(ctx context.Context, projectID string, request *model.ListChaosHubRequest) ([]*model.ChaosHubStatus, error) {
 	defaultHub := c.listDefaultHubs()
 	updatedDefaultHub := dbSchemaChaosHub.ChaosHub{
@@ -730,7 +727,7 @@ func (c *chaosHubService) ListPredefinedExperiments(ctx context.Context, hubID s
 		hubPath = DefaultPath + projectID + "/" + hub.Name + "/experiments/"
 	}
 	var predefinedWorkflows []*model.PredefinedExperimentList
-	files, err := ioutil.ReadDir(hubPath)
+	files, err := os.ReadDir(hubPath)
 	if err != nil {
 		return nil, err
 	}
@@ -813,14 +810,14 @@ func (c *chaosHubService) getPredefinedExperimentDetails(experimentsPath string,
 	}
 
 	if isExist {
-		yamlData, err := ioutil.ReadFile(experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml")
+		yamlData, err := os.ReadFile(experimentsPath + experiment + "/" + experiment + ".chartserviceversion.yaml")
 		if err != nil {
 			csvManifest = ""
 		}
 
 		csvManifest = string(yamlData)
 
-		yamlData, err = ioutil.ReadFile(experimentsPath + experiment + "/" + "experiment.yaml")
+		yamlData, err = os.ReadFile(experimentsPath + experiment + "/" + "experiment.yaml")
 		if err != nil {
 			workflowManifest = ""
 		}
@@ -836,64 +833,6 @@ func (c *chaosHubService) getPredefinedExperimentDetails(experimentsPath string,
 
 	return preDefinedWorkflow
 }
-
-// GetExperimentManifestDetails is used to send the ChaosEngine and ChaosExperiment YAMLs
-//func (c *chaosHubService) GetExperimentManifestDetails(ctx context.Context, request model.ExperimentRequest, projectID string) (*model.ExperimentDetails, error) {
-//
-//	engineType := model.FileTypeEngine
-//	experimentType := model.FileTypeExperiment
-//
-//	engineData, err := c.GetYAMLData(model.ExperimentRequest{
-//		ChartName:      request.ChartName,
-//		ExperimentName: request.ExperimentName,
-//		Name:           request.Name,
-//		FileType:       (*string)(&engineType),
-//	}, projectID)
-//	if err != nil {
-//		engineData = ""
-//	}
-//	experimentData, err := c.GetYAMLData(model.ExperimentRequest{
-//		ChartName:      request.ChartName,
-//		ExperimentName: request.ExperimentName,
-//		Name:           request.Name,
-//		FileType:       (*string)(&experimentType),
-//	}, projectID)
-//	if err != nil {
-//		experimentData = ""
-//	}
-//	experimentDetails := &model.ExperimentDetails{
-//		EngineDetails:     engineData,
-//		ExperimentDetails: experimentData,
-//	}
-//	return experimentDetails, nil
-//}
-
-//func (c *chaosHubService) ListPredefinedWorkflows(name string, projectID string) ([]*model.PredefinedWorkflowList, error) {
-//	workflowsList, err := handler.ListPredefinedWorkflowDetails(name, projectID)
-//	if err != nil {
-//		return nil, err
-//	}
-//	return workflowsList, nil
-//}
-
-// GetPredefinedExperimentYAMLData is responsible for sending the workflow.yaml for a given pre-defined workflow.
-//func (c *chaosHubService) GetPredefinedExperimentYAMLData(request model.ExperimentRequest, projectID string) (string, error) {
-//	var YAMLPath string
-//	if request.FileType == nil {
-//		return "", errors.New("provide a valid filetype")
-//	}
-//	if strings.ToLower(*request.FileType) != "workflow" {
-//		return "", errors.New("invalid file type")
-//	}
-//	if strings.ToLower(request.ChartName) == "predefined" && strings.ToLower(*request.FileType) == "workflow" {
-//		YAMLPath = handler.GetPredefinedExperimentManifest(request, projectID)
-//	}
-//	YAMLData, err := handler.ReadExperimentYAMLFile(YAMLPath)
-//	if err != nil {
-//		return "", err
-//	}
-//	return YAMLData, nil
-//}
 
 // IsChaosHubAvailable is used for checking if hub already exist or not
 func (c *chaosHubService) IsChaosHubAvailable(ctx context.Context, name string, projectID string) (bool, error) {
@@ -930,7 +869,7 @@ func (c *chaosHubService) GetAllHubs(ctx context.Context) ([]*model.ChaosHub, er
 func (c *chaosHubService) RecurringHubSync() {
 	for {
 		// Started Syncing of hubs
-		chaosHubs, _ := c.GetAllHubs(nil)
+		chaosHubs, _ := c.GetAllHubs(context.Background())
 
 		for _, chaosHub := range chaosHubs {
 			if !chaosHub.IsRemoved {

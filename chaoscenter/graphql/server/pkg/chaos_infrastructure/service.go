@@ -1009,7 +1009,10 @@ func (in *infraService) ConfirmInfraRegistration(request model.InfraIdentity, r 
 	}
 
 	if infra.AccessKey == request.AccessKey {
-		newKey := utils.RandomString(32)
+		newKey, err := utils.GenerateAccessKey(32)
+		if err != nil {
+			return &model.ConfirmInfraRegistrationResponse{IsInfraConfirmed: false}, err
+		}
 		time := time.Now().UnixMilli()
 		query := bson.D{{"infra_id", request.InfraID}}
 		update := bson.D{{"$unset", bson.D{{"token", ""}}}, {"$set", bson.D{{"access_key", newKey}, {"is_registered", true}, {"is_infra_confirmed", true}, {"updated_at", time}}}}
