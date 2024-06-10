@@ -88,7 +88,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 
 		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
 			validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
-		if err != nil || entities.Role(userRole) != entities.RoleAdmin {
+		if err != nil && entities.Role(userRole) != entities.RoleAdmin {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
