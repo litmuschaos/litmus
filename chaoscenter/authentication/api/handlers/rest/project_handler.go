@@ -84,10 +84,11 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
+		userRole := c.MustGet("role").(string)
 
 		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
 			validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
-		if err != nil {
+		if err != nil || entities.Role(userRole) != entities.RoleAdmin {
 			log.Warn(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
