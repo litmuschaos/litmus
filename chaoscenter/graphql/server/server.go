@@ -69,9 +69,10 @@ func validateVersion() error {
 		}
 		return nil
 	}
-	if dbVersion.Value.(string) != currentVersion {
-		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
-	}
+	// This check will be added back once DB upgrader job becomes functional
+	// if dbVersion.Value.(string) != currentVersion {
+	// 	return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
+	// }
 	return nil
 }
 
