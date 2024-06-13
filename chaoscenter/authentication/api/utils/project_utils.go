@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,7 +28,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	}
 
 	// filters
-	createdByMeStr := c.Query(entities.CreatedByMe)
+	createdByMeStr := c.Query(types.CreatedByMe)
 	if createdByMeStr != "" {
 		createdByMe, err := strconv.ParseBool(createdByMeStr)
 		if err != nil {
@@ -37,7 +38,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 		request.Filter.CreatedByMe = &createdByMe
 	}
 
-	projectNameStr := c.Query(entities.ProjectName)
+	projectNameStr := c.Query(types.ProjectName)
 
 	if projectNameStr != "" {
 		request.Filter.ProjectName = &projectNameStr
@@ -45,7 +46,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 
 	// sorts
 	var sortField entities.ProjectSortingField
-	sortFieldStr := c.Query(entities.SortField)
+	sortFieldStr := c.Query(types.SortField)
 
 	// Convert the string value to the appropriate type
 	switch sortFieldStr {
@@ -60,7 +61,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	// Now assign the converted value to the sort field
 	request.Sort.Field = &sortField
 
-	ascendingStr := c.Query(entities.Ascending)
+	ascendingStr := c.Query(types.Ascending)
 	if ascendingStr != "" {
 		ascending, err := strconv.ParseBool(ascendingStr)
 		if err != nil {
@@ -72,8 +73,8 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 
 	// pagination
 	// Extract page and limit from query parameters
-	pageStr := c.Query(entities.Page)
-	limitStr := c.Query(entities.Limit)
+	pageStr := c.Query(types.Page)
+	limitStr := c.Query(types.Limit)
 
 	// Convert strings to integers
 	page, err := strconv.Atoi(pageStr)

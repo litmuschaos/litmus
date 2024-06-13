@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
+	project_utils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
@@ -53,7 +55,7 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		request := utils.GetProjectFilters(c)
+		request := project_utils.GetProjectFilters(c)
 		request.UserID = user.ID
 
 		response, err := service.GetProjectsByUserID(request)
@@ -126,7 +128,7 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
 // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
 func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		request := utils.GetProjectFilters(c)
+		request := project_utils.GetProjectFilters(c)
 
 		response, err := service.GetProjectsByUserID(request)
 		if response == nil || (response.TotalNumberOfProjects != nil && *response.TotalNumberOfProjects == 0) {
@@ -351,7 +353,7 @@ func CreateProject(service services.ApplicationService) gin.HandlerFunc {
 		}
 		var members []*entities.Member
 		members = append(members, newMember)
-		state := "active"
+		state := string(types.MemberStateActive)
 		newProject := &entities.Project{
 			ID:          pID,
 			Name:        userRequest.ProjectName,

@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	project_utils "github.com/litmuschaos/litmus/chaoscenter/authentication/api/utils"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 
@@ -75,14 +76,14 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 	// Construct the pipeline
 	var pipeline mongo.Pipeline
 
-	pipeline = append(pipeline, utils.CreateMatchStage(request.UserID))
+	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID))
 
 	if request.Filter != nil {
-		filterStages := utils.CreateFilterStages(request.Filter, request.UserID)
+		filterStages := project_utils.CreateFilterStages(request.Filter, request.UserID)
 		pipeline = append(pipeline, filterStages...)
 	}
 
-	sortStage := utils.CreateSortStage(request.Sort)
+	sortStage := project_utils.CreateSortStage(request.Sort)
 	if len(sortStage) > 0 {
 		pipeline = append(pipeline, sortStage)
 	}
@@ -109,7 +110,7 @@ func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*
 		totalNumberOfProjects = int64(countResult[0]["totalNumberOfProjects"].(int32))
 	}
 
-	paginationStages := utils.CreatePaginationStage(request.Pagination)
+	paginationStages := project_utils.CreatePaginationStage(request.Pagination)
 	for _, stage := range paginationStages {
 		pipeline = append(pipeline, stage)
 	}
