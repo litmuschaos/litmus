@@ -28,7 +28,7 @@ require (
 	go.mongodb.org/mongo-driver v1.15.0
 	golang.org/x/crypto v0.24.0
 	google.golang.org/grpc v1.64.0
-	google.golang.org/protobuf v1.34.1
+	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.26.0
 	k8s.io/apimachinery v0.26.0
