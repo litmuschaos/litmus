@@ -21,6 +21,9 @@ var (
 	DexClientID                  = os.Getenv("DEX_OAUTH_CLIENT_ID")
 	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
 	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
+	EnableHTTPSConnection        = os.Getenv("ENABLE_HTTPS_CONNECTION")
+	CustomTlsCert                = os.Getenv("CUSTOM_TLS_CERT")
+	TlSKey                       = os.Getenv("TLS_KEY")
 	DBName                       = "auth"
 	Port                         = ":3000"
 	GrpcPort                     = ":3030"

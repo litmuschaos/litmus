@@ -1,6 +1,7 @@
 package main
 
 import (
+	"google.golang.org/grpc/credentials"
 	"strconv"
 
 	"github.com/gin-contrib/cors"
@@ -105,7 +106,21 @@ func main() {
 	if err := validateVersion(); err != nil {
 		log.Fatal(err)
 	}
-	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableHTTPSConnection)
+	if err != nil {
+		logrus.Errorf("unable to parse boolean value %v", err)
+	}
+
+	if enableHTTPSConnection {
+		if utils.Config.CustomTlsCert != "" && utils.Config.TlSKey != "" {
+			go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+		} else {
+			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+		}
+	} else {
+		go startGRPCServerWithTLS(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
+	}
 
 	srv := handler.New(generated.NewExecutableSchema(graph.NewConfig(mongodbOperator)))
 	srv.AddTransport(transport.POST{})
@@ -147,8 +162,15 @@ func main() {
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
-	log.Infof("chaos manager running at http://localhost:%s", utils.Config.HttpPort)
-	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	log.Infof("graphql server running at http://localhost:%s", utils.Config.HttpPort)
+	if enableHTTPSConnection {
+		if utils.Config.CustomTlsCert != "" && utils.Config.TlSKey != "" {
+			log.Fatal(http.ListenAndServeTLS(":"+utils.Config.HttpPort, utils.Config.CustomTlsCert, utils.Config.TlSKey, router))
+		}
+	} else {
+		log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+	}
+
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
@@ -159,6 +181,29 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 	}
 
 	grpcServer := grpc.NewServer()
+
+	// Register services
+
+	pb.RegisterProjectServer(grpcServer, &projects.ProjectServer{Operator: mongodbOperator})
+
+	log.Infof("GRPC server listening on %v", lis.Addr())
+	log.Fatal(grpcServer.Serve(lis))
+}
+
+// startGRPCServerWithTLS initializes, registers services to and starts the gRPC server for RPC calls
+func startGRPCServerWithTLS(port string, mongodbOperator mongodb.MongoOperator) {
+	lis, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Fatal("failed to listen: %w", err)
+	}
+
+	// Load TLS credentials
+	creds, err := credentials.NewServerTLSFromFile(utils.Config.CustomTlsCert, utils.Config.TlSKey)
+	if err != nil {
+		log.Fatalf("failed to create credentials: %v", err)
+	}
+
+	grpcServer := grpc.NewServer(grpc.Creds(creds))
 
 	// Register services
 
