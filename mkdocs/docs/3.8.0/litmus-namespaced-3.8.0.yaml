@@ -261,6 +261,8 @@ spec:
               value: ""
             - name: CHAOS_CENTER_SCOPE
               value: "namespace"
+            - name: ENABLE_GQL_INTROSPECTION
+              value: "false"
             - name: INFRA_DEPLOYMENTS
               value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
             - name: SERVER_SERVICE_NAME

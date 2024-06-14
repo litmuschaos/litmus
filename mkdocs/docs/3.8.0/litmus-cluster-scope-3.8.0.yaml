@@ -269,6 +269,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: CHAOS_CENTER_SCOPE
               value: "cluster"
+            - name: ENABLE_GQL_INTROSPECTION
+              value: "false"
             - name: SUBSCRIBER_IMAGE
               value: "litmuschaos.docker.scarf.sh/litmuschaos/litmusportal-subscriber:3.8.0"
             - name: EVENT_TRACKER_IMAGE
