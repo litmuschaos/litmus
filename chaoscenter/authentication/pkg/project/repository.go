@@ -72,66 +72,73 @@ func (r repository) GetProjects(query bson.D) ([]*entities.Project, error) {
 // GetProjectsByUserID returns a project based on the userID
 func (r repository) GetProjectsByUserID(request *entities.ListProjectRequest) (*entities.ListProjectResponse, error) {
 	var projects []*entities.Project
+	ctx := context.TODO()
 
 	// Construct the pipeline
 	var pipeline mongo.Pipeline
 
+	// Match stage
 	pipeline = append(pipeline, project_utils.CreateMatchStage(request.UserID))
 
+	// Filter stage
 	if request.Filter != nil {
 		filterStages := project_utils.CreateFilterStages(request.Filter, request.UserID)
 		pipeline = append(pipeline, filterStages...)
 	}
 
+	// Sort stage
 	sortStage := project_utils.CreateSortStage(request.Sort)
 	if len(sortStage) > 0 {
 		pipeline = append(pipeline, sortStage)
 	}
 
-	// count stage
-	var pipelineCount mongo.Pipeline
-	pipelineCount = append(pipeline, bson.D{
-		{"$count", "totalNumberOfProjects"},
-	})
+	// Pagination stages
+	paginationStages := project_utils.CreatePaginationStage(request.Pagination)
 
-	countCursor, err := r.Collection.Aggregate(context.TODO(), pipelineCount)
+	// Facet stage to count total projects and paginate results
+	facetStage := bson.D{
+		{"$facet", bson.D{
+			{"totalCount", bson.A{
+				bson.D{{"$count", "totalNumberOfProjects"}},
+			}},
+			{"projects", append(mongo.Pipeline{}, paginationStages...)},
+		}},
+	}
+	pipeline = append(pipeline, facetStage)
+
+	// Execute the aggregate pipeline
+	cursor, err := r.Collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
+	defer cursor.Close(ctx)
 
-	// Extract count result
-	var countResult []bson.M
-	if err := countCursor.All(context.TODO(), &countResult); err != nil {
-		return nil, err
+	// Extract results
+	var result struct {
+		TotalCount []struct {
+			TotalNumberOfProjects int64 `bson:"totalNumberOfProjects"`
+		} `bson:"totalCount"`
+		Projects []*entities.Project `bson:"projects"`
+	}
+
+	if cursor.Next(ctx) {
+		if err := cursor.Decode(&result); err != nil {
+			return nil, err
+		}
 	}
 
 	var totalNumberOfProjects int64
-	if len(countResult) > 0 {
-		totalNumberOfProjects = int64(countResult[0]["totalNumberOfProjects"].(int32))
+	if len(result.TotalCount) > 0 {
+		totalNumberOfProjects = result.TotalCount[0].TotalNumberOfProjects
+	} else {
+		zero := int64(0)
+		return &entities.ListProjectResponse{
+			Projects:              projects,
+			TotalNumberOfProjects: &zero,
+		}, nil
 	}
 
-	paginationStages := project_utils.CreatePaginationStage(request.Pagination)
-	for _, stage := range paginationStages {
-		pipeline = append(pipeline, stage)
-	}
-
-	cursor, err := r.Collection.Aggregate(context.TODO(), pipeline)
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(context.TODO())
-
-	// Iterate over the cursor and decode the results into projects
-	for cursor.Next(context.TODO()) {
-		var project entities.Project
-		if err := cursor.Decode(&project); err != nil {
-			return nil, err
-		}
-		projects = append(projects, &project)
-	}
-	if err := cursor.Err(); err != nil {
-		return nil, err
-	}
+	projects = result.Projects
 
 	response := entities.ListProjectResponse{
 		Projects:              projects,

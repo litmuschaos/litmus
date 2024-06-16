@@ -3,10 +3,9 @@ package types
 type MemberState string
 
 const (
-    MemberStateActive   MemberState = "active"
-    MemberStateInactive MemberState = "inactive"
+	MemberStateActive   MemberState = "active"
+	MemberStateInactive MemberState = "inactive"
 )
-
 
 const (
 	ProjectName = "projectName"

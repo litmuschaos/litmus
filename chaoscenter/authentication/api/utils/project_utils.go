@@ -189,6 +189,10 @@ func CreatePaginationStage(pagination *entities.Pagination) []bson.D {
 	if pagination != nil {
 		page := pagination.Page
 		limit := pagination.Limit
+		// upper limit of 50 to prevent exceeding max limit 16mb
+		if pagination.Limit > 50 {
+			limit = 50
+		}
 		stages = append(stages, bson.D{
 			{"$skip", page * limit},
 		})
