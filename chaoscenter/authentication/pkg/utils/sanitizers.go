@@ -25,7 +25,7 @@ func ValidateStrictPassword(input string) error {
 	}
 
 	if len(input) > 16 {
-		return fmt.Errorf("password is more than 16 characters")
+		return fmt.Errorf("password length is more than 16 characters")
 	}
 
 	digits := `[0-9]{1}`
