@@ -1,6 +1,6 @@
-# [LitmusChaos 3.6.0](https://docs.litmuschaos.io/)
+# [LitmusChaos 3.7.0](https://docs.litmuschaos.io/)
 
-## Installation steps for Litmus 3.6.0
+## Installation steps for Litmus 3.7.0
 
 ### Mongo installation via Helm - Bitnami Mongo
 
@@ -45,5 +45,5 @@ helm install my-release bitnami/mongodb --values mongo-values.yml -n <NAMESPACE>
 Applying the manifest file will install all the required service account configuration and ChaosCenter in cluster scope.
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.6.0/litmus-cluster-scope-3.6.0.yaml
+kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/mkdocs/docs/3.7.0/litmus-cluster-scope-3.7.0.yaml
 ```
