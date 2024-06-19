@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"time"
 
@@ -284,8 +285,30 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
+		// generate salt and add/update to user collection
+		// pass the salt in the below func which will act as jwt secret
+		salt := utils.RandomString(6)
+		newHashedSalt, err := bcrypt.GenerateFromPassword([]byte(salt), utils.PasswordEncryptionCost)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
 
-		token, err := service.GetSignedJWT(user)
+		err = service.UpdateUserByQuery(bson.D{
+			{"user_id", user.ID},
+		}, bson.D{
+			{"$set", bson.D{
+				{"salt", string(newHashedSalt)},
+			}},
+		})
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		token, err := service.GetSignedJWT(user, salt)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

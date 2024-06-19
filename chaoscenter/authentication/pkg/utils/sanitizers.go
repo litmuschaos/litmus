@@ -2,8 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"math/rand"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // SanitizeString trims the string input
@@ -40,4 +42,19 @@ func ValidateStrictPassword(input string) error {
 		return fmt.Errorf("password does not contain special characters")
 	}
 	return nil
+}
+
+// RandomString generates random strings, can be used to create ids
+func RandomString(n int) string {
+	if n > 0 {
+		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
+		rand.Seed(time.Now().UnixNano())
+		s := make([]rune, n)
+		for i := range s {
+			s[i] = letters[rand.Intn(len(letters))]
+		}
+
+		return string(s)
+	}
+	return ""
 }

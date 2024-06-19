@@ -14,7 +14,7 @@ import (
 type sessionService interface {
 	RevokeToken(tokenString string) error
 	ValidateToken(encodedToken string) (*jwt.Token, error)
-	GetSignedJWT(user *entities.User) (string, error)
+	GetSignedJWT(user *entities.User, jwtSecret string) (string, error)
 	CreateApiToken(user *entities.User, request entities.ApiTokenInput) (string, error)
 	GetApiTokensByUserID(userID string) ([]entities.ApiToken, error)
 	DeleteApiToken(token string) error
@@ -63,7 +63,7 @@ func (a applicationService) parseToken(encodedToken string) (*jwt.Token, error) 
 }
 
 // GetSignedJWT generates the JWT Token for the user object
-func (a applicationService) GetSignedJWT(user *entities.User) (string, error) {
+func (a applicationService) GetSignedJWT(user *entities.User, jwtSecret string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS512)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID
@@ -71,7 +71,7 @@ func (a applicationService) GetSignedJWT(user *entities.User) (string, error) {
 	claims["username"] = user.Username
 	claims["exp"] = time.Now().Add(time.Minute * time.Duration(utils.JWTExpiryDuration)).Unix()
 
-	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
+	tokenString, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		log.Error(err)
 		return "", err
