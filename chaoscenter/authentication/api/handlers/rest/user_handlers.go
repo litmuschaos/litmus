@@ -1,9 +1,10 @@
 package rest
 
 import (
-	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
