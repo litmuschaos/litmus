@@ -70,6 +70,11 @@ func (m *MockedApplicationService) UpdateUser(user *entities.UserDetails) error 
 	return args.Error(0)
 }
 
+func (m *MockedApplicationService) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
+	args := m.Called(filter, updateQuery)
+	return args.Error(0)
+}
+
 func (m *MockedApplicationService) UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error {
 	args := m.Called(ctx, username, isDeactivate, deactivateTime)
 	return args.Error(0)

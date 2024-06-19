@@ -2,6 +2,8 @@ package rest
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 
@@ -138,7 +140,30 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
-		jwtToken, err := userService.GetSignedJWT(signedInUser)
+
+		// generate salt and add/update to user collection
+		// pass the salt in the below func which will act as jwt secret
+		salt := utils.RandomString(6)
+		newHashedSalt, err := bcrypt.GenerateFromPassword([]byte(salt), utils.PasswordEncryptionCost)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		err = userService.UpdateUserByQuery(bson.D{
+			{"user_id", signedInUser.ID},
+		}, bson.D{
+			{"$set", bson.D{
+				{"salt", string(newHashedSalt)},
+			}},
+		})
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+		jwtToken, err := userService.GetSignedJWT(signedInUser, salt)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
