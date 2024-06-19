@@ -61,6 +61,7 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		// Assigning UID to user
 		uID := uuid.Must(uuid.NewRandom()).String()
 		userRequest.ID = uID
+		userRequest.IsInitialLogin = true
 
 		// Generating password hash
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
@@ -120,14 +121,11 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 
 		uid := c.MustGet("uid").(string)
 		userRequest.ID = uid
-
-		// Checking if password is updated
-		if userRequest.Password != "" {
-			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), utils.PasswordEncryptionCost)
-			if err != nil {
-				return
-			}
-			userRequest.Password = string(hashedPassword)
+		initialLogin, err := CheckInitialLogin(service, uid)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
 		err = service.UpdateUser(&userRequest)
@@ -460,6 +458,15 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 		var adminUser entities.User
 		adminUser.Username = c.MustGet("username").(string)
 		adminUser.ID = uid
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, uid)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
+
 		if utils.StrictPasswordPolicy {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
@@ -504,6 +511,17 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		userRole := c.MustGet("role").(string)
+		var adminUser entities.User
+		adminUser.Username = c.MustGet("username").(string)
+		adminUser.ID = c.MustGet("uid").(string)
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, adminUser.ID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
 
 		if entities.Role(userRole) != entities.RoleAdmin {
 			c.AbortWithStatusJSON(utils.ErrorStatusCodes[utils.ErrUnauthorized], presenter.CreateErrorResponse(utils.ErrUnauthorized))
@@ -511,7 +529,7 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		var userRequest entities.UpdateUserState
-		err := c.BindJSON(&userRequest)
+		err = c.BindJSON(&userRequest)
 		if err != nil {
 			log.Info(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
@@ -521,10 +539,6 @@ func UpdateUserState(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
-
-		var adminUser entities.User
-		adminUser.Username = c.MustGet("username").(string)
-		adminUser.ID = c.MustGet("uid").(string)
 
 		// Checking if loggedIn user is admin
 		err = service.IsAdministrator(&adminUser)
@@ -578,6 +592,14 @@ func CreateApiToken(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
 				presenter.CreateErrorResponse(utils.ErrUnauthorized))
 			return
+		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, apiTokenRequest.UserID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
 		// Checking if user exists
@@ -658,6 +680,24 @@ func DeleteApiToken(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
+		// Validating logged in user
+		// Requesting info must be from the logged in user
+		if c.MustGet("uid").(string) != deleteApiTokenRequest.UserID {
+			log.Error("auth error: unauthorized")
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
+		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
+		initialLogin, err := CheckInitialLogin(service, deleteApiTokenRequest.UserID)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+		} else if initialLogin {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
+		}
+
 		token := deleteApiTokenRequest.Token
 		err = service.DeleteApiToken(token)
 		if err != nil {
