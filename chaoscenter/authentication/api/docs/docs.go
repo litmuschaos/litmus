@@ -1220,7 +1220,7 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string",
-                    "example": "Please ensure the password is atleast 8 characters long and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
+                    "example": "Please ensure the password is atleast 8 characters and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"
                 }
             }
         },

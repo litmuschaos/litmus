@@ -21,7 +21,7 @@ ValidateStrictPassword represents and checks for the following patterns:
 */
 func ValidateStrictPassword(input string) error {
 	if len(input) < 8 {
-		return fmt.Errorf("password is less than 8 characters")
+		return fmt.Errorf("password length is less than 8 characters")
 	}
 
 	if len(input) > 16 {
