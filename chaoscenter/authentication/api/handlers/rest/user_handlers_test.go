@@ -102,10 +102,17 @@ func TestUpdateUser(t *testing.T) {
 		expectedMsg  string
 	}{
 		{
-			name:      "Successful update with password",
+			name:      "Successful update details",
 			uid:       "testUID",
-			inputBody: &entities.UserDetails{Email: "test@email.com", Name: "Test", Password: "TestPassword"},
+			inputBody: &entities.UserDetails{Email: "test@email.com", Name: "Test"},
 			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
 				service.On("UpdateUser", mock.AnythingOfType("*entities.UserDetails")).Return(nil)
 			},
 			expectedCode: http.StatusOK,
@@ -442,6 +449,13 @@ func TestUpdatePassword(t *testing.T) {
 				OldPassword: "oldPass",
 				NewPassword: "newPass",
 			}
+			user := &entities.User{
+				ID:             "testUID",
+				Username:       "testUser",
+				Email:          "test@example.com",
+				IsInitialLogin: false,
+			}
+			service.On("GetUser", "testUID").Return(user, nil)
 			service.On("UpdatePassword", &userPassword, true).Return(tt.givenServiceResponse)
 
 			rest.UpdatePassword(service)(c)
@@ -476,6 +490,13 @@ func TestResetPassword(t *testing.T) {
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
 			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
 				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
 				service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
 			},
@@ -557,6 +578,13 @@ func TestUpdateUserState(t *testing.T) {
 			mockUsername: "adminUser",
 			mockUID:      "tetstUUIS",
 			given: func() {
+				user := &entities.User{
+					ID:             "tetstUUIS",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "tetstUUIS").Return(user, nil)
 				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
 				service.On("UpdateStateTransaction", mock.AnythingOfType("entities.UpdateUserState")).Return(nil)
 
