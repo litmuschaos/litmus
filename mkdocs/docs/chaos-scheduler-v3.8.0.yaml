@@ -2665,6 +2665,81 @@ spec:
                                           type: string
                                       type: object
                                     type: array
+                concurrencyPolicy:
+                  type: string
+                scheduleState:
+                  type: string
+                schedule:
+                  oneOf:
+                    - required:
+                        - now
+                    - required:
+                        - once
+                    - required:
+                        - repeat
+                  properties:
+                    now:
+                      type: boolean
+                    once:
+                      properties:
+                        executionTime:
+                          format: date-time
+                          type: string
+                      type: object
+                    repeat:
+                      properties:
+                        timeRange:
+                          properties:
+                            endTime:
+                              format: date-time
+                              type: string
+                            startTime:
+                              format: date-time
+                              type: string
+                          type: object
+                        workHours:
+                          properties:
+                            includedHours:
+                              type: string
+                          type: object
+                          required:
+                            - includedHours
+                        workDays:
+                          properties:
+                            includedDays:
+                              pattern: ((Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,))*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)
+                              type: string
+                          type: object
+                          required:
+                            - includedDays
+                        properties:
+                          properties:
+                            minChaosInterval:
+                              properties:
+                                hour:
+                                  properties:
+                                    everyNthHour:
+                                      type: integer
+                                    minuteOfTheHour:
+                                      type: integer
+                                  type: object
+                                minute:
+                                  properties:
+                                    everyNthMinute:
+                                      type: integer
+                                  type: object
+                              type: object
+                              minProperties: 1
+                              maxProperties: 1
+                            random:
+                              type: boolean
+                          type: object
+                          required:
+                            - minChaosInterval
+                      type: object
+                      required:
+                        - properties
+                  type: object
             status:
               x-kubernetes-preserve-unknown-fields: true
               type: object
