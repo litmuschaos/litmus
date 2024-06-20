@@ -347,7 +347,8 @@ func TestLoginUser(t *testing.T) {
 				}
 				service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
 				service.On("CheckPasswordHash", "hashedPassword", "testPassword").Return(nil)
-				service.On("GetSignedJWT", userFromDB).Return("someJWTToken", nil)
+				service.On("UpdateUserByQuery", mock.Anything, mock.Anything).Return(nil)
+				service.On("GetSignedJWT", userFromDB, mock.Anything).Return("someJWTToken", nil)
 				project := &entities.Project{
 					ID: "someProjectID",
 				}

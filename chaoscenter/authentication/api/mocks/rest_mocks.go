@@ -165,8 +165,8 @@ func (m *MockedApplicationService) ValidateToken(encodedToken string) (*jwt.Toke
 	return args.Get(0).(*jwt.Token), args.Error(1)
 }
 
-func (m *MockedApplicationService) GetSignedJWT(user *entities.User) (string, error) {
-	args := m.Called(user)
+func (m *MockedApplicationService) GetSignedJWT(user *entities.User, jwtSecret string) (string, error) {
+	args := m.Called(user, jwtSecret)
 	return args.String(0), args.Error(1)
 }
 

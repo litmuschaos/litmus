@@ -2,10 +2,11 @@ package rest
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/google/uuid"
 
