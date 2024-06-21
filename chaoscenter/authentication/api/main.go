@@ -125,7 +125,7 @@ func main() {
 		if utils.CustomTlsCert != "" && utils.TlSKey != "" {
 			go runGrpcServerWithTLS(applicationService)
 		} else {
-			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
+			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
 		}
 	} else {
 		go runGrpcServer(applicationService)
