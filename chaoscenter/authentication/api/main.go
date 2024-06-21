@@ -4,9 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"net"
+	"net/http"
+	"regexp"
 	"runtime"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/routes"
@@ -20,7 +23,6 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
@@ -29,22 +31,22 @@ import (
 )
 
 type Config struct {
-	JwtSecret     string `required:"true" split_words:"true"`
-	AdminUsername string `required:"true" split_words:"true"`
-	AdminPassword string `required:"true" split_words:"true"`
-	DbServer      string `required:"true" split_words:"true"`
-	DbUser        string `required:"true" split_words:"true"`
-	DbPassword    string `required:"true" split_words:"true"`
+	JwtSecret      string   `required:"true" split_words:"true"`
+	AdminUsername  string   `required:"true" split_words:"true"`
+	AdminPassword  string   `required:"true" split_words:"true"`
+	DbServer       string   `required:"true" split_words:"true"`
+	DbUser         string   `required:"true" split_words:"true"`
+	DbPassword     string   `required:"true" split_words:"true"`
+	AllowedOrigins []string `split_words:"true" default:"(.)+.litmus.io?,(.)+.localhost:([0-9]+)?"`
 }
+
+var config Config
 
 func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetReportCaller(true)
 	printVersion()
-
-	var c Config
-
-	err := envconfig.Process("", &c)
+	err := envconfig.Process("", &config)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -159,9 +161,30 @@ func runRestServer(applicationService services.ApplicationService) {
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	app := gin.Default()
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodDelete,
+			http.MethodOptions,
+		},
+		AllowHeaders:     []string{"Origin"},
 		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			for _, allowedOrigin := range config.AllowedOrigins {
+				match, err := regexp.MatchString(allowedOrigin, origin)
+				if err == nil && match {
+					return true
+				}
+			}
+			return false
+		},
+		ExposeHeaders: []string{
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers",
+			"Access-Control-Allow-Methods",
+			"Access-Control-Allow-Origin",
+		},
 	}))
 	// Enable dex routes only if passed via environment variables
 	if utils.DexEnabled {

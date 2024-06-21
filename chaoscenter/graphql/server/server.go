@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	"strconv"
 
 	"github.com/gin-contrib/cors"
@@ -82,9 +83,32 @@ func setupGin() *gin.Engine {
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodDelete,
+			http.MethodOptions,
+		},
+		AllowHeaders:     []string{"Origin"},
 		AllowCredentials: true,
+		ExposeHeaders: []string{
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers",
+			"Access-Control-Allow-Methods",
+			"Access-Control-Allow-Origin",
+		},
+		AllowOriginFunc: func(origin string) bool {
+			for _, allowedOrigin := range utils.Config.AllowedOrigins {
+				match, err := regexp.MatchString(allowedOrigin, origin)
+				if err == nil && match {
+					return true
+				}
+			}
+			return false
+		},
+		AllowWebSockets: true,
+		AllowWildcard:   true,
 	}))
 
 	return router
@@ -115,7 +139,14 @@ func main() {
 		KeepAlivePingInterval: 10 * time.Second,
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
-				return true
+				origin := r.Header.Get("Origin")
+				for _, allowedOrigin := range utils.Config.AllowedOrigins {
+					match, err := regexp.MatchString(allowedOrigin, origin)
+					if err == nil && match {
+						return true
+					}
+				}
+				return false
 			},
 		},
 	})
@@ -123,7 +154,7 @@ func main() {
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
 		logrus.Errorf("unable to parse boolean value %v", err)
-	} else if err == nil && enableIntrospection == true {
+	} else if enableIntrospection == true {
 		srv.Use(extension.Introspection{})
 	}
 
