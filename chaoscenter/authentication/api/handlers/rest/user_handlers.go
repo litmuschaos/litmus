@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
@@ -219,6 +221,15 @@ func InviteUsers(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+			validations.MutationRbacRules["sendInvitation"], string(entities.AcceptedInvitation), service)
+		if err != nil {
+			log.Warn(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+				presenter.CreateErrorResponse(utils.ErrUnauthorized))
+			return
+		}
+
 		projectMembers, err := service.GetProjectMembers(projectID, "all")
 
 		var uids []string
