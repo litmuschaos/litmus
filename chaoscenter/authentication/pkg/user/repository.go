@@ -166,27 +166,29 @@ func (r repository) CheckPasswordHash(hash, password string) error {
 	return nil
 }
 
-// UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to true
+// UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to false
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
-	result.Username = userPassword.Username
-	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
-		"username": result.Username,
-	}).Decode(&result)
-	if findOneErr != nil {
-		return findOneErr
-	}
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
+
+	updateQuery := bson.M{"$set": bson.M{
+		"password":         string(newHashedPassword),
+		"is_initial_login": true, // if admin resets the pwd, user needs to reset it again
+	}}
+
 	if isAdminBeingReset {
 		err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(userPassword.OldPassword))
 		if err != nil {
 			return err
 		}
+
+		updateQuery = bson.M{"$set": bson.M{
+			"password":         string(newHashedPassword),
+			"is_initial_login": false,
+		}}
 	}
 
-	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
-	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"_id": result.ID}, bson.M{"$set": bson.M{
-		"password": string(newHashedPassword),
-	}})
+	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": result.ID}, updateQuery)
 	if err != nil {
 		return err
 	}
