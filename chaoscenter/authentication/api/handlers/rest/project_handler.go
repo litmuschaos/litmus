@@ -84,14 +84,17 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
 func GetProject(service services.ApplicationService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
+		userRole := c.MustGet("role").(string)
 
-		err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
-			validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
-		if err != nil {
-			log.Warn(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
-				presenter.CreateErrorResponse(utils.ErrUnauthorized))
-			return
+		if userRole != string(entities.RoleAdmin) {
+			err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+				validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+			if err != nil {
+				log.Warn(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+					presenter.CreateErrorResponse(utils.ErrUnauthorized))
+				return
+			}
 		}
 
 		project, err := service.GetProjectByProjectID(projectID)
@@ -186,6 +189,18 @@ func GetActiveProjectMembers(service services.ApplicationService) gin.HandlerFun
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
 		state := c.Param("state")
+		role := c.MustGet("role").(string)
+		if role != string(entities.RoleAdmin) {
+			err := validations.RbacValidator(c.MustGet("uid").(string), projectID,
+				validations.MutationRbacRules["getProject"], string(entities.AcceptedInvitation), service)
+			if err != nil {
+				log.Warn(err)
+				c.JSON(utils.ErrorStatusCodes[utils.ErrUnauthorized],
+					presenter.CreateErrorResponse(utils.ErrUnauthorized))
+				return
+			}
+		}
+
 		members, err := service.GetProjectMembers(projectID, state)
 		if err != nil {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
