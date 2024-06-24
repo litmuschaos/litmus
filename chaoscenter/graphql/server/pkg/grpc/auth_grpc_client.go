@@ -17,7 +17,7 @@ import (
 // GetAuthGRPCSvcClient returns an RPC client for Authentication service
 func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *grpc.ClientConn) {
 
-	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableHTTPSConnection)
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
 	if err != nil {
 		logrus.Errorf("unable to parse boolean value %v", err)
 	}

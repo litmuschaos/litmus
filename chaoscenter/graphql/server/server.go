@@ -109,7 +109,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableHTTPSConnection)
+	enableHTTPSConnection, err := strconv.ParseBool(utils.Config.EnableInternalTls)
 	if err != nil {
 		logrus.Errorf("unable to parse boolean value %v", err)
 	}

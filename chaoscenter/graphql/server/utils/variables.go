@@ -47,7 +47,7 @@ type Configuration struct {
 	CustomChaosHubPath          string `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string `split_words:"true" default:"false"`
-	EnableHTTPSConnection       string `required:"true" split_words:"true" default:"false"`
+	EnableInternalTls           string `required:"true" split_words:"true" default:"false"`
 	ServerTlsCertPath           string `split_words:"true"`
 	ServerTlsKeyPath            string `split_words:"true"`
 	ClientTlsCertPath           string `split_words:"true"`

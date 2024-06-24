@@ -118,7 +118,7 @@ func main() {
 
 	validatedAdminSetup(applicationService)
 
-	enableHTTPSConnection, err := strconv.ParseBool(utils.EnableHTTPSConnection)
+	enableHTTPSConnection, err := strconv.ParseBool(utils.EnableInternalTls)
 	if err != nil {
 		log.Errorf("unable to parse boolean value %v", err)
 	}
@@ -189,7 +189,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	routes.ProjectRouter(app, applicationService)
 	routes.CapabilitiesRouter(app)
 
-	enableHTTPSConnection, err := strconv.ParseBool(utils.EnableHTTPSConnection)
+	enableHTTPSConnection, err := strconv.ParseBool(utils.EnableInternalTls)
 	if err != nil {
 		log.Errorf("unable to parse boolean value %v", err)
 	}
