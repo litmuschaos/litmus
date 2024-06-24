@@ -3,9 +3,10 @@ package utils
 import (
 	"crypto/tls"
 	"crypto/x509"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (

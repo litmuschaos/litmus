@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"google.golang.org/grpc/credentials"
 	"net"
 	"net/http"
 	"runtime"
 	"strconv"
 	"time"
+
+	"google.golang.org/grpc/credentials"
 
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"

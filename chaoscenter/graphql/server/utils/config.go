@@ -3,8 +3,9 @@ package utils
 import (
 	"crypto/tls"
 	"crypto/x509"
-	log "github.com/sirupsen/logrus"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func GetTlsConfig(certPath string, keyPath string, isServerConfig bool) *tls.Config {

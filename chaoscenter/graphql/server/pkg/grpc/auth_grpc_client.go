@@ -3,8 +3,9 @@ package grpc
 import (
 	"context"
 	"errors"
-	"google.golang.org/grpc/credentials"
 	"strconv"
+
+	"google.golang.org/grpc/credentials"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
