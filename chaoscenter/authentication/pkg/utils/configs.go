@@ -82,7 +82,7 @@ func GetTlsConfig() *tls.Config {
 		log.Fatal(err)
 	}
 
-	// configuration of the certificate what we want to
+	// configuring TLS config based on provided certificates & keys to
 	conf := &tls.Config{
 		Certificates: []tls.Certificate{serverCert},
 		ClientAuth:   tls.RequireAndVerifyClientCert,
