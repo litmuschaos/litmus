@@ -11,7 +11,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-	"github.com/openshift/origin/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 
 	"context"
 	"fmt"
@@ -69,9 +68,10 @@ func validateVersion() error {
 		}
 		return nil
 	}
-	if dbVersion.Value.(string) != currentVersion {
-		return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
-	}
+	// This check will be added back once DB upgrader job becomes functional
+	// if dbVersion.Value.(string) != currentVersion {
+	// 	return fmt.Errorf("control plane needs to be upgraded from version %v to %v", dbVersion.Value.(string), currentVersion)
+	// }
 	return nil
 }
 
@@ -121,7 +121,7 @@ func main() {
 
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
-		logrus.Errorf("unable to parse boolean value %v", err)
+		log.Errorf("unable to parse boolean value %v", err)
 	} else if err == nil && enableIntrospection == true {
 		srv.Use(extension.Introspection{})
 	}
