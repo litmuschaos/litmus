@@ -3,6 +3,7 @@ package authorization
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
 
@@ -20,6 +21,7 @@ func ValidateRole(ctx context.Context, projectID string,
 		requiredRoles,
 		invitation)
 	if err != nil {
+		fmt.Println("errrrrrrrrrrrr ", err)
 		return errors.New("permission_denied")
 	}
 	return nil

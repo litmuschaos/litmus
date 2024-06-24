@@ -22,14 +22,14 @@ func GetAuthGRPCSvcClient(conn *grpc.ClientConn) (protos.AuthRpcServiceClient, *
 	}
 
 	if enableHTTPSConnection {
-		if utils.Config.CustomTlsCert != "" {
-			// Create tls based credential.
-			creds, err := credentials.NewClientTLSFromFile(utils.Config.CustomTlsCert, "")
-			if err != nil {
-				logrus.Fatalf("failed to load credentials: %v", err)
-			}
+		if utils.Config.ServerTlsCertPath != "" {
+			// configuration of the certificate what we want
+			conf := utils.GetTlsConfig(utils.Config.ClientTlsCertPath, utils.Config.ClientTlsKeyPath, false)
+
+			tlsCredential := credentials.NewTLS(conf)
+
 			// Set up a connection to the server.
-			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPort, grpc.WithTransportCredentials(creds))
+			conn, err = grpc.NewClient(utils.Config.LitmusAuthGrpcEndpoint+utils.Config.LitmusAuthGrpcPortHttps, grpc.WithTransportCredentials(tlsCredential))
 			if err != nil {
 				logrus.Fatalf("did not connect: %v", err)
 			}

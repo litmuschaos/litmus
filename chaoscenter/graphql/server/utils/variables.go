@@ -31,13 +31,16 @@ type Configuration struct {
 	TlsSecretName               string `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string `split_words:"true" default:"localhost"`
 	LitmusAuthGrpcPort          string `split_words:"true" default:":3030"`
+	LitmusAuthGrpcPortHttps     string `split_words:"true" default:":3031"`
 	KubeConfigFilePath          string `split_words:"true"`
 	RemoteHubMaxSize            string `split_words:"true"`
 	SkipSslVerify               string `split_words:"true"`
 	SelfInfraNodeSelector       string `split_words:"true"`
 	SelfInfraTolerations        string `split_words:"true"`
 	HttpPort                    string `split_words:"true" default:"8080"`
+	HttpsPort                   string `split_words:"true" default:"8081"`
 	RpcPort                     string `split_words:"true" default:"8000"`
+	RpcPortHttps                string `split_words:"true" default:"8001"`
 	InfraCompatibleVersions     string `required:"true" split_words:"true"`
 	DefaultHubGitURL            string `required:"true" default:"https://github.com/litmuschaos/chaos-charts"`
 	DefaultHubBranchName        string `required:"true" split_words:"true"`
@@ -45,8 +48,11 @@ type Configuration struct {
 	DefaultChaosHubPath         string `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string `split_words:"true" default:"false"`
 	EnableHTTPSConnection       string `required:"true" split_words:"true" default:"false"`
-	CustomTlsCert               string `split_words:"true"`
-	TlSKey                      string `split_words:"true"`
+	ServerTlsCertPath           string `split_words:"true"`
+	ServerTlsKeyPath            string `split_words:"true"`
+	ClientTlsCertPath           string `split_words:"true"`
+	ClientTlsKeyPath            string `split_words:"true"`
+	CaCertPath                  string `split_words:"true"`
 }
 
 var Config Configuration
