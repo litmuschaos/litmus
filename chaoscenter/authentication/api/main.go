@@ -4,13 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"net"
-	"net/http"
-	"regexp"
 	"runtime"
 	"time"
 
-	"github.com/gin-contrib/cors"
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/routes"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -37,7 +35,7 @@ type Config struct {
 	DbServer       string   `required:"true" split_words:"true"`
 	DbUser         string   `required:"true" split_words:"true"`
 	DbPassword     string   `required:"true" split_words:"true"`
-	AllowedOrigins []string `split_words:"true" default:"(.)+.litmus.io?,(.)+.localhost:([0-9]+)?"`
+	AllowedOrigins []string `split_words:"true" default:"litmus.io?,localhost:([0-9]+)?"`
 }
 
 var config Config
@@ -160,32 +158,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	gin.SetMode(gin.ReleaseMode)
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	app := gin.Default()
-	app.Use(cors.New(cors.Config{
-		AllowMethods: []string{
-			http.MethodGet,
-			http.MethodPost,
-			http.MethodPut,
-			http.MethodDelete,
-			http.MethodOptions,
-		},
-		AllowHeaders:     []string{"Origin"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			for _, allowedOrigin := range config.AllowedOrigins {
-				match, err := regexp.MatchString(allowedOrigin, origin)
-				if err == nil && match {
-					return true
-				}
-			}
-			return false
-		},
-		ExposeHeaders: []string{
-			"Access-Control-Allow-Credentials",
-			"Access-Control-Allow-Headers",
-			"Access-Control-Allow-Methods",
-			"Access-Control-Allow-Origin",
-		},
-	}))
+	app.Use(middleware.ValidateCors(config.AllowedOrigins))
 	// Enable dex routes only if passed via environment variables
 	if utils.DexEnabled {
 		routes.DexRouter(app, applicationService)
