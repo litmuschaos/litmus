@@ -11,7 +11,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-	"github.com/openshift/origin/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 
 	"context"
 	"fmt"
@@ -127,8 +126,8 @@ func main() {
 
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
-		logrus.Errorf("unable to parse boolean value %v", err)
-	} else if enableIntrospection == true {
+		log.Errorf("unable to parse boolean value %v", err)
+	} else if err == nil && enableIntrospection == true {
 		srv.Use(extension.Introspection{})
 	}
 
