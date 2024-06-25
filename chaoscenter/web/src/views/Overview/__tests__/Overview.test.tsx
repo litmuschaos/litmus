@@ -13,8 +13,11 @@ const NoExperimentProps = {
     chaosHubStats: false,
     experimentStats: false,
     infraStats: false,
-    recentExperimentsTable: false
+    recentExperimentsTable: false,
+    getUser: true
   },
+  currentUserData: undefined,
+
   refetchExperiments: Promise.resolve
 };
 
@@ -27,8 +30,10 @@ const props = {
     chaosHubStats: true,
     experimentStats: true,
     infraStats: true,
-    recentExperimentsTable: true
+    recentExperimentsTable: true,
+    getUser: true
   },
+  currentUserData: undefined,
 
   refetchExperiments: Promise.resolve
 };
