@@ -1,11 +1,11 @@
 package utils
 
 import (
+	crypto "crypto/rand"
+	"encoding/base64"
 	"fmt"
-	"math/rand"
 	"regexp"
 	"strings"
-	"time"
 )
 
 // SanitizeString trims the string input
@@ -45,16 +45,15 @@ func ValidateStrictPassword(input string) error {
 }
 
 // RandomString generates random strings, can be used to create ids
-func RandomString(n int) string {
+func RandomString(n int) (string, error) {
 	if n > 0 {
-		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
-		rand.Seed(time.Now().UnixNano())
-		s := make([]rune, n)
-		for i := range s {
-			s[i] = letters[rand.Intn(len(letters))]
+		b := make([]byte, n)
+		_, err := crypto.Read(b)
+		if err != nil {
+			return "", err
 		}
 
-		return string(s)
+		return base64.URLEncoding.EncodeToString(b), nil
 	}
-	return ""
+	return "", fmt.Errorf("length should be greater than 0")
 }

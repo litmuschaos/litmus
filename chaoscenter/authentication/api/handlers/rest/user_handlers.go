@@ -4,13 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -294,23 +292,8 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			return
 		}
-		// generate salt and add/update to user collection
-		// pass the salt in the below func which will act as jwt secret
-		salt := utils.RandomString(6)
-		newHashedSalt, err := bcrypt.GenerateFromPassword([]byte(salt), utils.PasswordEncryptionCost)
-		if err != nil {
-			log.Error(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
-			return
-		}
 
-		err = service.UpdateUserByQuery(bson.D{
-			{"user_id", user.ID},
-		}, bson.D{
-			{"$set", bson.D{
-				{"salt", string(newHashedSalt)},
-			}},
-		})
+		salt, err := utils.UpdateUserSalt(service, user.ID)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

@@ -5,9 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/google/uuid"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
@@ -142,23 +139,13 @@ func DexCallback(userService services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// generate salt and add/update to user collection
-		// pass the salt in the below func which will act as jwt secret
-		salt := utils.RandomString(6)
-		newHashedSalt, err := bcrypt.GenerateFromPassword([]byte(salt), utils.PasswordEncryptionCost)
+		salt, err := utils.UpdateUserSalt(userService, signedInUser.ID)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
-		err = userService.UpdateUserByQuery(bson.D{
-			{"user_id", signedInUser.ID},
-		}, bson.D{
-			{"$set", bson.D{
-				{"salt", string(newHashedSalt)},
-			}},
-		})
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
