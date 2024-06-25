@@ -55,6 +55,7 @@ const LoginController: React.FC = () => {
       user_id: userDetails.accountID
     },
     {
+      enabled: activateGetAPI,
       onSuccess: response => {
         setUserDetails({
           isInitialLogin: response.isInitialLogin
@@ -62,8 +63,7 @@ const LoginController: React.FC = () => {
         history.push(
           normalizePath(`/account/${userDetails.accountID}/project/${userDetails.projectID ?? ''}/dashboard`)
         );
-      },
-      enabled: activateGetAPI
+      }
     }
   );
 

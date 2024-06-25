@@ -1,7 +1,6 @@
-import type { IDialogProps } from '@blueprintjs/core';
+import { IDialogProps, Dialog as BluePrintDialog } from '@blueprintjs/core';
 import { Color, FontVariation } from '@harnessio/design-system';
 import { Button, ButtonVariation, Layout, Text, useToggleOpen, Dialog } from '@harnessio/uicore';
-import { Dialog as BluePrintDialog } from '@blueprintjs/core';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { isEmpty } from 'lodash-es';
