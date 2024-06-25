@@ -68,13 +68,6 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		// password validation
-		err = utils.ValidateStrictPassword(userRequest.Password)
-		if err != nil {
-			c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
-			return
-		}
-
 		// Assigning UID to user
 		uID := uuid.Must(uuid.NewRandom()).String()
 		userRequest.ID = uID
@@ -145,14 +138,6 @@ func UpdateUser(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 		} else if initialLogin {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
-		}
-
-		if userRequest.Name != "" {
-			err = utils.ValidateStrictUsername(userRequest.Name)
-			if err != nil {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictUsernamePolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictUsernamePolicyViolation))
-				return
-			}
 		}
 
 		err = service.UpdateUser(&userRequest)
@@ -494,7 +479,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 		var adminUser entities.User
 		adminUser.Username = c.MustGet("username").(string)
 		adminUser.ID = uid
-    
+
 		// admin/user shouldn't be able to perform any task if it's default pwd is not changes(initial login is true)
 		initialLogin, err := CheckInitialLogin(service, uid)
 		if err != nil {
@@ -503,7 +488,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
-		if utils.StrictPasswordPolicy {
+		if userPasswordRequest.NewPassword != "" {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))

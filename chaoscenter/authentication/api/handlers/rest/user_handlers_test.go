@@ -488,6 +488,15 @@ func TestUpdatePassword(t *testing.T) {
 			expectedCode:         http.StatusOK,
 			expectedOutput:       `{"message":"password has been updated successfully"}`,
 		},
+		{
+			name:                 "Invalid new password",
+			givenBody:            `{"oldPassword":"oldPass@123", "newPassword":"short"}`,
+			givenUsername:        "testUser",
+			givenStrictPassword:  false,
+			givenServiceResponse: errors.New("invalid password"),
+			expectedCode:         utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
+			expectedOutput:       `{"error":"password_policy_violation","errorDescription":"Please ensure the password is atleast 8 characters long and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"}`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -536,7 +545,7 @@ func TestResetPassword(t *testing.T) {
 		expectedCode int
 	}{
 		{
-			name: "Non-admin role",
+			name: "Admin role",
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
@@ -584,6 +593,29 @@ func TestResetPassword(t *testing.T) {
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
 			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name: "Admin role wrong password",
+			inputBody: &entities.UserPassword{
+				Username:    "testUser",
+				OldPassword: "",
+				NewPassword: "short",
+			},
+			mockRole:     "admin",
+			mockUID:      "testUID",
+			mockUsername: "adminUser",
+			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
+				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+				service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
+			},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
 		},
 	}
 
