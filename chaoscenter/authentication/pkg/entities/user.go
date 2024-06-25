@@ -17,23 +17,23 @@ const (
 
 // User contains the user information
 type User struct {
-	Audit         `bson:",inline"`
-	ID            string `bson:"_id,omitempty" json:"userID"`
-	Username      string `bson:"username,omitempty" json:"username"`
-	Password      string `bson:"password,omitempty" json:"password,omitempty"`
-	Salt          string `bson:"salt" json:"salt"`
-	Email         string `bson:"email,omitempty" json:"email,omitempty"`
-	Name          string `bson:"name,omitempty" json:"name,omitempty"`
-	Role          Role   `bson:"role,omitempty" json:"role"`
-	DeactivatedAt *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
+	Audit          `bson:",inline"`
+	ID             string `bson:"_id,omitempty" json:"userID"`
+	Username       string `bson:"username,omitempty" json:"username"`
+	Password       string `bson:"password,omitempty" json:"password,omitempty"`
+	Salt           string `bson:"salt" json:"salt"`
+	Email          string `bson:"email,omitempty" json:"email,omitempty"`
+	Name           string `bson:"name,omitempty" json:"name,omitempty"`
+	Role           Role   `bson:"role,omitempty" json:"role"`
+	DeactivatedAt  *int64 `bson:"deactivated_at,omitempty" json:"deactivatedAt,omitempty"`
+	IsInitialLogin bool   `bson:"is_initial_login" json:"isInitialLogin"`
 }
 
 // UserDetails is used to update user's personal details
 type UserDetails struct {
-	ID       string `bson:"id,omitempty"`
-	Email    string `bson:"email,omitempty" json:"email,omitempty"`
-	Name     string `bson:"name,omitempty" json:"name,omitempty"`
-	Password string `bson:"password,omitempty" json:"password,omitempty"`
+	ID    string `bson:"id,omitempty"`
+	Email string `bson:"email,omitempty" json:"email,omitempty"`
+	Name  string `bson:"name,omitempty" json:"name,omitempty"`
 }
 
 // UserPassword defines structure for password related requests
