@@ -6,26 +6,31 @@ import OverviewView from '../Overview';
 
 const NoExperimentProps = {
   chaosHubStats: undefined,
+  currentUserData: undefined,
   experimentDashboardTableData: { content: [] },
   experimentStats: undefined,
   infraStats: undefined,
   loading: {
     chaosHubStats: false,
     experimentStats: false,
+    getUser: true,
     infraStats: false,
     recentExperimentsTable: false
   },
+
   refetchExperiments: Promise.resolve
 };
 
 const props = {
   chaosHubStats: undefined,
+  currentUserData: undefined,
   experimentStats: undefined,
   experimentDashboardTableData: undefined,
   infraStats: undefined,
   loading: {
     chaosHubStats: true,
     experimentStats: true,
+    getUser: true,
     infraStats: true,
     recentExperimentsTable: true
   },
