@@ -44,7 +44,7 @@ type Configuration struct {
 	CustomChaosHubPath          string   `split_words:"true" default:"/tmp/"`
 	DefaultChaosHubPath         string   `split_words:"true" default:"/tmp/default/"`
 	EnableGQLIntrospection      string   `split_words:"true" default:"false"`
-	AllowedOrigins              []string `split_words:"true" default:"litmuschaos.io?,localhost:([0-9]+)?"`
+	AllowedOrigins              []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|),^(http://|https://|)localhost(:[0-9]+|)"`
 }
 
 var Config Configuration
