@@ -3,6 +3,8 @@ package graph
 import (
 	"context"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
+
 	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -84,7 +86,11 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 
 	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		token := ctx.Value(authorization.AuthKey).(string)
-		user, err := authorization.UserValidateJWT(token)
+		salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+		if err != nil {
+			return "", err
+		}
+		user, err := authorization.UserValidateJWT(token, salt.Value)
 		if err != nil {
 			return nil, err
 		}

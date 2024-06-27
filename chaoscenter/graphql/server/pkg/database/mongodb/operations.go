@@ -25,6 +25,7 @@ type MongoOperator interface {
 	ListCollection(ctx context.Context, mclient *mongo.Client) ([]string, error)
 	ListDataBase(ctx context.Context, mclient *mongo.Client) ([]string, error)
 	WatchEvents(ctx context.Context, client *mongo.Client, collectionType int, pipeline mongo.Pipeline, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
+	GetAuthConfig(ctx context.Context, key string) (*AuthConfig, error)
 }
 
 type MongoOperations struct {
@@ -213,4 +214,19 @@ func (m *MongoOperations) WatchEvents(ctx context.Context, client *mongo.Client,
 		return nil, err
 	}
 	return events, nil
+}
+
+func (m *MongoOperations) GetAuthConfig(ctx context.Context, key string) (*AuthConfig, error) {
+
+	authDb := MgoClient.Database("auth")
+	find := authDb.Collection("auth-config").FindOne(ctx, bson.D{
+		{"key", key},
+	})
+	var conf AuthConfig
+	err := find.Decode(&conf)
+	if err != nil {
+		return nil, err
+	}
+	return &conf, nil
+
 }

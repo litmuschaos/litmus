@@ -8,7 +8,6 @@ import (
 
 	fuzz "github.com/AdaLogics/go-fuzz-headers"
 	"github.com/golang-jwt/jwt"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
 
 // generateExpiredFakeJWTToken generates a fake JWT token with expiration time set to the past
@@ -37,8 +36,8 @@ func generateFakeJWTToken(username string) string {
 		"username": username,
 		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Set expiration time to 24 hours from now
 	})
-
-	signedToken, _ := token.SignedString([]byte(utils.Config.JwtSecret)) // No signature is needed for testing
+	fakeSecret := ""
+	signedToken, _ := token.SignedString([]byte(fakeSecret)) // No signature is needed for testing
 	return signedToken
 }
 
@@ -99,7 +98,7 @@ func generateJWTTokenFromClaims(claims jwt.MapClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Sign the token with a secret key
-	tokenString, err := token.SignedString([]byte(utils.Config.JwtSecret))
+	tokenString, err := token.SignedString([]byte(""))
 	if err != nil {
 		return "", fmt.Errorf("failed to sign JWT token: %v", err)
 	}
@@ -122,7 +121,7 @@ func FuzzUserValidateJWT(f *testing.F) {
 		}
 
 		// Run the test with the generated JWT token
-		claims, err := UserValidateJWT(tokenString)
+		claims, err := UserValidateJWT(tokenString, "")
 		if err != nil {
 			t.Errorf("Error encountered: %v", err)
 		}

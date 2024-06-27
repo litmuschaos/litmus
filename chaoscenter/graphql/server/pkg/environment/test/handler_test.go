@@ -14,7 +14,6 @@ import (
 	dbOperationsEnvironment "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/environments"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/environment/handler"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -42,7 +41,6 @@ func GetSignedJWT(name string) (string, error) {
 }
 
 func TestCreateEnvironment(t *testing.T) {
-	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		name           string
 		projectID      string
@@ -115,7 +113,6 @@ func TestCreateEnvironment(t *testing.T) {
 }
 
 func TestDeleteEnvironment(t *testing.T) {
-	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		name                   string
 		projectID              string

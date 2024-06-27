@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -22,7 +24,6 @@ import (
 	dbChaosExperimentRun "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_experiment_run"
 	dbMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/mocks"
 	dbGitOpsMocks "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops/model/mocks"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -77,7 +78,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 		projectID string
 	}
 
-	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(""))
 	ctx := context.Background()
 	projectId := uuid.New().String()
 	experimentId := uuid.New().String()
@@ -247,7 +248,7 @@ func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
-	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(""))
 	ctx := context.TODO()
 	projectId := uuid.New().String()
 	experimentId := uuid.New().String()
@@ -349,7 +350,11 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 		request   *model.ChaosExperimentRequest
 		projectID string
 	}
-	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+	if err != nil {
+		return
+	}
+	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
 	ctx := context.Background()
 	projectId := uuid.New().String()
 	infraId := uuid.New().String()
@@ -628,7 +633,11 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
-	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+	if err != nil {
+		return
+	}
+	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
 	projectID := uuid.New().String()
 	experimentID := uuid.New().String()
 	infraID := uuid.New().String()
@@ -675,6 +684,11 @@ func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
+
+	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
+	if err != nil {
+		return
+	}
 	ctx := context.Background()
 	projectID := uuid.New().String()
 	tests := []struct {
@@ -685,7 +699,7 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		{
 			name: "success: get experiment stats",
 			given: func(mockServices *MockServices) {
-				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{
 					bson.D{
@@ -700,7 +714,7 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		{
 			name: "failure: empty cursor returned",
 			given: func(mockServices *MockServices) {
-				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
 				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("empty cursor returned")).Once()
@@ -710,7 +724,7 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		{
 			name: "failure: getting experiment stats",
 			given: func(mockServices *MockServices) {
-				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(utils.Config.JwtSecret))
+				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
 				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{
 					bson.D{

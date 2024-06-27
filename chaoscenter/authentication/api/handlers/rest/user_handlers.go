@@ -293,14 +293,13 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		salt, err := utils.UpdateUserSalt(service, user.ID)
+		salt, err := service.GetConfig("salt")
 		if err != nil {
-			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			return
 		}
 
-		token, err := service.GetSignedJWT(user, salt)
+		token, err := service.GetSignedJWT(user, salt.Value)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))

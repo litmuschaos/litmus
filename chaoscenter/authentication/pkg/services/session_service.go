@@ -58,7 +58,12 @@ func (a applicationService) parseToken(encodedToken string) (*jwt.Token, error) 
 		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
 			return nil, fmt.Errorf("invalid token %s", token.Header["alg"])
 		}
-		return []byte(utils.JwtSecret), nil
+		salt, err := a.GetConfig("salt")
+		if err != nil {
+			log.Error(err)
+			return nil, fmt.Errorf("couldn't fetch jwt secret %v", err)
+		}
+		return []byte(salt.Value), nil
 	})
 }
 
@@ -90,7 +95,12 @@ func (a applicationService) CreateApiToken(user *entities.User, request entities
 	claims["username"] = user.Username
 	claims["exp"] = expiresAt
 
-	tokenString, err := token.SignedString([]byte(utils.JwtSecret))
+	salt, err := a.GetConfig("salt")
+	if err != nil {
+		log.Error(err)
+		return "", fmt.Errorf("couldn't fetch jwt secret %v", err)
+	}
+	tokenString, err := token.SignedString([]byte(salt.Value))
 	if err != nil {
 		log.Error(err)
 		return "", err
