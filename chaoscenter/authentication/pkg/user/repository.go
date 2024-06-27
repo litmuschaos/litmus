@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
@@ -169,6 +170,13 @@ func (r repository) CheckPasswordHash(hash, password string) error {
 // UpdatePassword helps to update the password of the user, it acts as a resetPassword when isAdminBeingReset is set to false
 func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error {
 	var result = entities.User{}
+	result.Username = userPassword.Username
+	findOneErr := r.Collection.FindOne(context.TODO(), bson.M{
+		"username": result.Username,
+	}).Decode(&result)
+	if findOneErr != nil {
+		return findOneErr
+	}
 	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
 
 	updateQuery := bson.M{"$set": bson.M{
@@ -188,11 +196,13 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 		}}
 	}
 
-	_, err = r.Collection.UpdateOne(context.Background(), bson.M{"username": result.ID}, updateQuery)
+	res, err := r.Collection.UpdateOne(context.Background(), bson.M{"username": result.Username}, updateQuery)
 	if err != nil {
 		return err
 	}
-
+	if res.MatchedCount == 0 {
+		return errors.New("could not find matching username in database")
+	}
 	return nil
 }
 

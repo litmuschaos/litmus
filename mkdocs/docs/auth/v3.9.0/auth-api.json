@@ -1692,6 +1692,9 @@
         },
         "updatedAt": {
           "type": "integer"
+        },
+        "isInitialLogin": {
+          "type": "boolean"
         }
       }
     },

@@ -1,0 +1,4 @@
+go test fuzz v1
+string("TEST_ENV")
+string(" \x003")
+int(456)
