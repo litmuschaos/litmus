@@ -1324,6 +1324,9 @@
                 },
                 "username": {
                     "type": "string"
+                },
+                "isInitialLogin": {
+                    "type": "boolean"
                 }
             }
         }
