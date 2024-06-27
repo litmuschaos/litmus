@@ -42,16 +42,20 @@ export function RoutesWithAuthentication(): React.ReactElement {
   const projectRenderPaths = useRouteWithBaseUrl();
   const accountMatchPaths = useRouteDefinitionsMatch('account');
   const accountRenderPaths = useRouteDefinitionsMatch('account');
+  const history = useHistory();
 
   const { forceLogout } = useLogout();
-  const { accessToken: token } = getUserDetails();
+  const { accessToken: token, isInitialLogin } = getUserDetails();
 
   useEffect(() => {
     if (!token || !isUserAuthenticated()) {
       forceLogout();
     }
+    if (isInitialLogin) {
+      history.push(projectRenderPaths.toDashboard());
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, isInitialLogin]);
 
   return (
     <Switch>

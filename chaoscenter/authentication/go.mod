@@ -1,10 +1,9 @@
 module github.com/litmuschaos/litmus/chaoscenter/authentication
 
-go 1.22
+go 1.22.0
 
 require (
 	github.com/coreos/go-oidc/v3 v3.1.0
-	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.4
@@ -13,7 +12,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/swag v1.16.3
-	go.mongodb.org/mongo-driver v1.15.0
+	go.mongodb.org/mongo-driver v1.15.1
 	golang.org/x/crypto v0.24.0
 	golang.org/x/oauth2 v0.20.0
 	google.golang.org/grpc v1.64.0
