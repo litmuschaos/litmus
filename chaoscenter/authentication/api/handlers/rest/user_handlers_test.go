@@ -55,7 +55,7 @@ func TestCreateUser(t *testing.T) {
 			name: "successfully",
 			inputBody: &entities.User{
 				Username: "newUser",
-				Password: "validPassword123",
+				Password: "ValidPassword@1",
 				Email:    "newuser@example.com",
 				Name:     "John Doe",
 				Role:     entities.RoleUser,
@@ -68,7 +68,7 @@ func TestCreateUser(t *testing.T) {
 					Email:    "newuser@example.com",
 					Name:     "John Doe",
 					Role:     entities.RoleUser,
-				}, nil)
+				}, nil).Once()
 			},
 			expectedCode: 200,
 		},
@@ -80,8 +80,12 @@ func TestCreateUser(t *testing.T) {
 			c, _ := gin.CreateTestContext(w)
 			c.Set("role", tc.mockRole)
 			if tc.inputBody != nil {
-				b, _ := json.Marshal(tc.inputBody)
+				b, err := json.Marshal(tc.inputBody)
+				if err != nil {
+					t.Fatalf("could not marshal input body: %v", err)
+				}
 				c.Request = httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(b))
+				c.Request.Header.Set("Content-Type", "application/json")
 			}
 
 			tc.given()
@@ -477,12 +481,21 @@ func TestUpdatePassword(t *testing.T) {
 	}{
 		{
 			name:                 "Successfully update password",
-			givenBody:            `{"oldPassword":"oldPass", "newPassword":"newPass"}`,
+			givenBody:            `{"oldPassword":"oldPass@123", "newPassword":"newPass@123"}`,
 			givenUsername:        "testUser",
 			givenStrictPassword:  false,
 			givenServiceResponse: nil,
 			expectedCode:         http.StatusOK,
 			expectedOutput:       `{"message":"password has been updated successfully"}`,
+		},
+		{
+			name:                 "Invalid new password",
+			givenBody:            `{"oldPassword":"oldPass@123", "newPassword":"short"}`,
+			givenUsername:        "testUser",
+			givenStrictPassword:  false,
+			givenServiceResponse: errors.New("invalid password"),
+			expectedCode:         utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
+			expectedOutput:       `{"error":"password_policy_violation","errorDescription":"Please ensure the password is atleast 8 characters long and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"}`,
 		},
 	}
 
@@ -498,8 +511,8 @@ func TestUpdatePassword(t *testing.T) {
 
 			userPassword := entities.UserPassword{
 				Username:    tt.givenUsername,
-				OldPassword: "oldPass",
-				NewPassword: "newPass",
+				OldPassword: "oldPass@123",
+				NewPassword: "newPass@123",
 			}
 			user := &entities.User{
 				ID:             "testUID",
@@ -532,11 +545,11 @@ func TestResetPassword(t *testing.T) {
 		expectedCode int
 	}{
 		{
-			name: "Non-admin role",
+			name: "Admin role",
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
-				NewPassword: "validPassword123",
+				NewPassword: "ValidPass@123",
 			},
 			mockRole:     "admin",
 			mockUID:      "testUID",
@@ -559,7 +572,7 @@ func TestResetPassword(t *testing.T) {
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
-				NewPassword: "validPassword123",
+				NewPassword: "validPass@123",
 			},
 			mockRole:     "user",
 			mockUID:      "testUID",
@@ -580,6 +593,29 @@ func TestResetPassword(t *testing.T) {
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
 			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name: "Admin role wrong password",
+			inputBody: &entities.UserPassword{
+				Username:    "testUser",
+				OldPassword: "",
+				NewPassword: "short",
+			},
+			mockRole:     "admin",
+			mockUID:      "testUID",
+			mockUsername: "adminUser",
+			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
+				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+				service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
+			},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
 		},
 	}
 
