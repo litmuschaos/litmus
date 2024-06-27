@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -202,5 +203,20 @@ func (m *MockedApplicationService) UpdateStateTransaction(userRequest entities.U
 
 func (m *MockedApplicationService) RbacValidator(userID, resourceID string, rules []string, invitationStatus string) error {
 	args := m.Called(userID, resourceID, rules, invitationStatus)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) CreateConfig(config authConfig.AuthConfig) error {
+	args := m.Called(config)
+	return args.Error(0)
+}
+
+func (m *MockedApplicationService) GetConfig(key string) (*authConfig.AuthConfig, error) {
+	args := m.Called(key)
+	return args.Get(0).(*authConfig.AuthConfig), args.Error(1)
+}
+
+func (m *MockedApplicationService) UpdateConfig(ctx context.Context, key string, value interface{}) error {
+	args := m.Called(ctx, key, value)
 	return args.Error(0)
 }

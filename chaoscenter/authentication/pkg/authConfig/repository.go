@@ -2,7 +2,7 @@ package authConfig
 
 import (
 	"context"
-
+	"encoding/base64"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -36,6 +36,11 @@ func (r repository) GetConfig(key string) (*AuthConfig, error) {
 	if err != nil {
 		return nil, err
 	}
+	decodedValue, err := base64.URLEncoding.DecodeString(config.Value)
+	if err != nil {
+		return nil, err
+	}
+	config.Value = string(decodedValue)
 	return &config, nil
 }
 

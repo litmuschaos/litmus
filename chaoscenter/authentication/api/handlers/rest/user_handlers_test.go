@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 	"io"
 	"log"
 	"net/http"
@@ -404,6 +405,7 @@ func TestLoginUser(t *testing.T) {
 					Password: "hashedPassword",
 					Email:    "test@example.com",
 				}
+				service.On("GetConfig", "salt").Return(&authConfig.AuthConfig{}, nil)
 				service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
 				service.On("CheckPasswordHash", "hashedPassword", "testPassword").Return(nil)
 				service.On("UpdateUserByQuery", mock.Anything, mock.Anything).Return(nil)

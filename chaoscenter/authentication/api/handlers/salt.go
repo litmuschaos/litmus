@@ -1,12 +1,12 @@
 package response
 
 import (
-	authConfig2 "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+	"encoding/base64"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func AddSalt(service services.ApplicationService) error {
@@ -26,18 +26,14 @@ func AddSalt(service services.ApplicationService) error {
 		log.Error(err)
 		return err
 	}
+	encodedSalt := base64.StdEncoding.EncodeToString([]byte(salt))
 
-	newHashedSalt, err := bcrypt.GenerateFromPassword([]byte(salt), utils.PasswordEncryptionCost)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	authConfig := authConfig2.AuthConfig{
+	config := authConfig.AuthConfig{
 		Key:   "salt",
-		Value: string(newHashedSalt),
+		Value: encodedSalt,
 	}
 
-	err = service.CreateConfig(authConfig)
+	err = service.CreateConfig(config)
 	if err != nil {
 		log.Error(err)
 		return err

@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"encoding/base64"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -227,6 +228,11 @@ func (m *MongoOperations) GetAuthConfig(ctx context.Context, key string) (*AuthC
 	if err != nil {
 		return nil, err
 	}
-	return &conf, nil
 
+	decodedValue, err := base64.URLEncoding.DecodeString(conf.Value)
+	if err != nil {
+		return nil, err
+	}
+	conf.Value = string(decodedValue)
+	return &conf, nil
 }
