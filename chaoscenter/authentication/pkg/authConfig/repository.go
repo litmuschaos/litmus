@@ -3,6 +3,7 @@ package authConfig
 import (
 	"context"
 	"encoding/base64"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

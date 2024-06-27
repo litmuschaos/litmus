@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 	"io"
 	"log"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 

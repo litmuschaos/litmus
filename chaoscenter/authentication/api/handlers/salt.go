@@ -2,6 +2,7 @@ package response
 
 import (
 	"encoding/base64"
+
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
