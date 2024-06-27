@@ -63,7 +63,7 @@ func FuzzCreateEnvironment(f *testing.F) {
 		ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 		service := handler.NewEnvironmentService(environmentOperator)
 
-		env, err := service.CreateEnvironment(ctx, targetStruct.projectID, &targetStruct.input)
+		env, err := service.CreateEnvironment(ctx, targetStruct.projectID, &targetStruct.input, "")
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
 		}
@@ -104,7 +104,7 @@ func FuzzTestDeleteEnvironment(f *testing.F) {
 		ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 		service := handler.NewEnvironmentService(environmentOperator)
 
-		env, err := service.DeleteEnvironment(ctx, projectID, environmentID)
+		env, err := service.DeleteEnvironment(ctx, projectID, environmentID, "")
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
 		}

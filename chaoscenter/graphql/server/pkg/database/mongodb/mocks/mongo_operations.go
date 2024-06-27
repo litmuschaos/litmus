@@ -17,13 +17,13 @@ type MongoOperator struct {
 }
 
 // WatchEvents implements mongodb.MongoOperator.
-func (m *MongoOperator) WatchEvents(ctx context.Context, client *mongo.Client, collectionType int, pipeline mongo.Pipeline, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+func (m MongoOperator) WatchEvents(ctx context.Context, client *mongo.Client, collectionType int, pipeline mongo.Pipeline, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
 	args := m.Called(ctx, client, collectionType, pipeline, opts)
 	return args.Get(0).(*mongo.ChangeStream), args.Error(1)
 }
 
 // GetAuthConfig implements mongodb.MongoOperator.
-func (m *MongoOperator) GetAuthConfig(ctx context.Context, key string) (*mongodb.AuthConfig, error) {
+func (m MongoOperator) GetAuthConfig(ctx context.Context, key string) (*mongodb.AuthConfig, error) {
 	args := m.Called(ctx, key)
 	return args.Get(0).(*mongodb.AuthConfig), args.Error(1)
 }

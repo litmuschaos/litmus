@@ -6,8 +6,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
-
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -85,7 +83,6 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 	experimentType := dbChaosExperiment.NonCronExperiment
 	infraId := uuid.New().String()
 
-	store := store.NewStore()
 	tests := []struct {
 		name    string
 		args    args
@@ -207,7 +204,7 @@ func TestChaosExperimentHandler_SaveChaosExperiment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockServices := NewMockServices()
 			tc.given(tc.args.request2, mockServices)
-			_, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, tc.args.request, tc.args.projectID, store)
+			_, err := mockServices.ChaosExperimentHandler.SaveChaosExperiment(ctx, tc.args.request, tc.args.projectID, "")
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.SaveChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
@@ -235,7 +232,7 @@ func TestChaosExperimentHandler_CreateChaosExperiment(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockServices := NewMockServices()
-			got, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(tt.args.ctx, tt.args.request, tt.args.projectID)
+			got, err := mockServices.ChaosExperimentHandler.CreateChaosExperiment(tt.args.ctx, tt.args.request, tt.args.projectID, "")
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ChaosExperimentHandler.CreateChaosExperiment() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -335,7 +332,7 @@ func TestChaosExperimentHandler_DeleteChaosExperiment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockServices := NewMockServices()
 			tc.given(mockServices)
-			_, err := mockServices.ChaosExperimentHandler.DeleteChaosExperiment(ctx, projectId, experimentId, &experimentRunID, store)
+			_, err := mockServices.ChaosExperimentHandler.DeleteChaosExperiment(ctx, projectId, experimentId, &experimentRunID, store, "")
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.DeleteChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
@@ -350,11 +347,6 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 		request   *model.ChaosExperimentRequest
 		projectID string
 	}
-	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
-	if err != nil {
-		return
-	}
-	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
 	ctx := context.Background()
 	projectId := uuid.New().String()
 	infraId := uuid.New().String()
@@ -380,11 +372,10 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-				ctx = context.WithValue(ctx, authorization.AuthKey, username)
-				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
+				mockServices.MongodbOperator.On("CountDocuments", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperimentUpdate", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
-				mockServices.GitOpsService.On("UpsertExperimentToGit", ctx, mock.Anything, request).Return(nil).Once()
+				mockServices.GitOpsService.On("UpsertExperimentToGit", mock.Anything, mock.Anything, request).Return(nil).Once()
 
 			},
 			wantErr: false,
@@ -400,7 +391,6 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, errors.New("Incorrect request format")).Once()
 			},
@@ -417,8 +407,6 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 				},
 			},
 			given: func(request *model.ChaosExperimentRequest, mockServices *MockServices) {
-				ctx = context.WithValue(ctx, authorization.AuthKey, username)
-
 				mockServices.MongodbOperator.On("CountDocuments", ctx, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(int64(0), nil).Once()
 
 				mockServices.ChaosExperimentService.On("ProcessExperiment", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(request, &experimentType, nil).Once()
@@ -434,7 +422,7 @@ func TestChaosExperimentHandler_UpdateChaosExperiment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockServices := NewMockServices()
 			tc.given(tc.args.request, mockServices)
-			_, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, *tc.args.request, tc.args.projectID, store)
+			_, err := mockServices.ChaosExperimentHandler.UpdateChaosExperiment(ctx, *tc.args.request, tc.args.projectID, store, "")
 			if (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.UpdateChaosExperiment() error = %v, wantErr %v", err, tc.wantErr)
 				return
@@ -468,10 +456,10 @@ func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
 					}},
 					{
 						Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
-							{
-								RevisionID: uuid.NewString(),
-							},
+						{
+							RevisionID: uuid.NewString(),
 						},
+					},
 					},
 				}}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)
@@ -633,11 +621,7 @@ func TestChaosExperimentHandler_ListExperiment(t *testing.T) {
 }
 
 func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
-	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
-	if err != nil {
-		return
-	}
-	username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
+
 	projectID := uuid.New().String()
 	experimentID := uuid.New().String()
 	infraID := uuid.New().String()
@@ -675,7 +659,7 @@ func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			mockServices := NewMockServices()
 			tc.given(mockServices)
-			if err := mockServices.ChaosExperimentHandler.DisableCronExperiment(username, experimentRequest, projectID, store); (err != nil) != tc.wantErr {
+			if err := mockServices.ChaosExperimentHandler.DisableCronExperiment("", experimentRequest, projectID, store); (err != nil) != tc.wantErr {
 				t.Errorf("ChaosExperimentHandler.DisableCronExperiment() error = %v, wantErr %v", err, tc.wantErr)
 			}
 			assertExpectations(mockServices, t)
@@ -685,10 +669,6 @@ func TestChaosExperimentHandler_DisableCronExperiment(t *testing.T) {
 
 func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 
-	salt, err := authConfig.NewAuthConfigOperator(mongodb.Operator).GetAuthConfig(context.Background())
-	if err != nil {
-		return
-	}
 	ctx := context.Background()
 	projectID := uuid.New().String()
 	tests := []struct {
@@ -699,8 +679,6 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		{
 			name: "success: get experiment stats",
 			given: func(mockServices *MockServices) {
-				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
-				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{
 					bson.D{
 						{Key: "project_id", Value: projectID},
@@ -714,8 +692,6 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		{
 			name: "failure: empty cursor returned",
 			given: func(mockServices *MockServices) {
-				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
-				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				cursor, _ := mongo.NewCursorFromDocuments(nil, nil, nil)
 				mockServices.MongodbOperator.On("Aggregate", mock.Anything, mongodb.ChaosExperimentCollection, mock.Anything, mock.Anything).Return(cursor, errors.New("empty cursor returned")).Once()
 			},
@@ -724,8 +700,6 @@ func TestChaosExperimentHandler_GetExperimentStats(t *testing.T) {
 		{
 			name: "failure: getting experiment stats",
 			given: func(mockServices *MockServices) {
-				username, _ := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{"username": "test"}).SignedString([]byte(salt.Value.(string)))
-				ctx = context.WithValue(ctx, authorization.AuthKey, username)
 				findResult := []interface{}{
 					bson.D{
 						{Key: "project_id", Value: projectID},

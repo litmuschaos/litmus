@@ -30,7 +30,12 @@ func (r *mutationResolver) CreateChaosExperiment(ctx context.Context, request mo
 		return nil, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.CreateChaosExperiment(ctx, &request, projectID)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
+	uiResponse, err := r.chaosExperimentHandler.CreateChaosExperiment(ctx, &request, projectID, username)
 	if err != nil {
 		return nil, errors.New("could not create experiment, error: " + err.Error())
 	}
@@ -82,8 +87,12 @@ func (r *mutationResolver) SaveChaosExperiment(ctx context.Context, request mode
 	}
 
 	var uiResponse string
-
-	uiResponse, err = r.chaosExperimentHandler.SaveChaosExperiment(ctx, request, projectID, data_store.Store)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
+	uiResponse, err = r.chaosExperimentHandler.SaveChaosExperiment(ctx, request, projectID, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return "", err
@@ -107,7 +116,12 @@ func (r *mutationResolver) UpdateChaosExperiment(ctx context.Context, request mo
 		return nil, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.UpdateChaosExperiment(ctx, request, projectID, data_store.Store)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
+	uiResponse, err := r.chaosExperimentHandler.UpdateChaosExperiment(ctx, request, projectID, data_store.Store, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return nil, err
@@ -132,7 +146,12 @@ func (r *mutationResolver) DeleteChaosExperiment(ctx context.Context, experiment
 		return false, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.DeleteChaosExperiment(ctx, projectID, experimentID, experimentRunID, data_store.Store)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return false, err
+	}
+	uiResponse, err := r.chaosExperimentHandler.DeleteChaosExperiment(ctx, projectID, experimentID, experimentRunID, data_store.Store, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err
@@ -156,7 +175,12 @@ func (r *mutationResolver) UpdateCronExperimentState(ctx context.Context, experi
 		return false, err
 	}
 
-	uiResponse, err := r.chaosExperimentHandler.UpdateCronExperimentState(ctx, experimentID, disable, projectID, data_store.Store)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return false, err
+	}
+	uiResponse, err := r.chaosExperimentHandler.UpdateCronExperimentState(ctx, experimentID, disable, projectID, data_store.Store, username)
 	if err != nil {
 		logrus.WithFields(logFields).Error(err)
 		return false, err
