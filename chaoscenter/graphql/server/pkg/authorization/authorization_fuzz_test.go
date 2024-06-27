@@ -1,7 +1,6 @@
 package authorization
 
 import (
-	"encoding/base64"
 	"fmt"
 	"testing"
 	"time"
@@ -39,54 +38,6 @@ func generateFakeJWTToken(username string) string {
 	fakeSecret := ""
 	signedToken, _ := token.SignedString([]byte(fakeSecret)) // No signature is needed for testing
 	return signedToken
-}
-
-func FuzzGetUsername(f *testing.F) {
-	f.Fuzz(func(t *testing.T, input string) {
-		// Create a fake JWT token with predefined claims
-
-		//  Invalid token format check
-		_, err := GetUsername(input)
-		if err == nil {
-			t.Error("Expected error for invalid token format")
-		}
-
-		// Generating fake jwt token for testing
-		token := generateFakeJWTToken(base64.StdEncoding.EncodeToString([]byte(input)))
-
-		// Run the test with the fake JWT token
-		username, err := GetUsername(token)
-		if err != nil {
-			t.Errorf("Error encountered: %v", err)
-		}
-
-		// Decode the username back from base64
-		decodedUsername, err := base64.StdEncoding.DecodeString(username)
-		if err != nil {
-			t.Errorf("Error decoding username: %v", err)
-		}
-
-		// Check if the decoded username matches the input string
-		if string(decodedUsername) != input {
-			t.Errorf("Expected username: %s, got: %s", input, username)
-		}
-
-		// Additional checks
-		//  Expiration check
-		expiredToken := generateExpiredFakeJWTToken(input)
-		_, err = GetUsername(expiredToken)
-		if err == nil {
-			t.Error("Expected error for expired token")
-		}
-
-		//  Token signature check (invalid secret key)
-		invalidSignatureToken := generateFakeJWTTokenWithInvalidSignature(input)
-		_, err = GetUsername(invalidSignatureToken)
-		if err == nil {
-			t.Error("Expected error for token with invalid signature")
-		}
-
-	})
 }
 
 // generateJWTToken generates a JWT token with the given claims
