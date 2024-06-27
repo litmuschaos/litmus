@@ -456,10 +456,10 @@ func TestChaosExperimentHandler_GetExperiment(t *testing.T) {
 					}},
 					{
 						Key: "revision", Value: []dbChaosExperiment.ExperimentRevision{
-						{
-							RevisionID: uuid.NewString(),
+							{
+								RevisionID: uuid.NewString(),
+							},
 						},
-					},
 					},
 				}}
 				cursor, _ := mongo.NewCursorFromDocuments(findResult, nil, nil)

@@ -2,9 +2,10 @@ package test
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
 	"testing"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
