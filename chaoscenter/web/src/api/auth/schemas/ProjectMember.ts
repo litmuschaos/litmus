@@ -7,7 +7,7 @@ export interface ProjectMember {
   invitation: 'Accepted' | 'Declined' | 'Exited' | 'Pending';
   joinedAt?: string;
   name?: string;
-  role: 'Editor' | 'Owner' | 'Viewer';
+  role: 'Executer' | 'Owner' | 'Viewer';
   userID: string;
   username: string;
 }
