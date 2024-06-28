@@ -87,6 +87,9 @@ func ClusterConnect(clusterData map[string]string) {
 		}
 		if r.Payload.Errors != nil {
 			logrus.Error("Error response from the server : ", string(message))
+      if strings.Contains(string(message), "CLUSTER ALREADY CONNECTED"){
+        logrus.Fatal("Fatal error, needs restart: CLUSTER_ALREADY_CONNECTED")
+      }
 			continue
 		}
 		err = RequestProcessor(clusterData, r)
