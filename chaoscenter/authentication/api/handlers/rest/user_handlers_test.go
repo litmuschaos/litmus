@@ -13,6 +13,8 @@ import (
 	"strings"
 	"testing"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
@@ -53,7 +55,7 @@ func TestCreateUser(t *testing.T) {
 			name: "successfully",
 			inputBody: &entities.User{
 				Username: "newUser",
-				Password: "validPassword123",
+				Password: "ValidPassword@1",
 				Email:    "newuser@example.com",
 				Name:     "John Doe",
 				Role:     entities.RoleUser,
@@ -66,7 +68,7 @@ func TestCreateUser(t *testing.T) {
 					Email:    "newuser@example.com",
 					Name:     "John Doe",
 					Role:     entities.RoleUser,
-				}, nil)
+				}, nil).Once()
 			},
 			expectedCode: 200,
 		},
@@ -78,8 +80,12 @@ func TestCreateUser(t *testing.T) {
 			c, _ := gin.CreateTestContext(w)
 			c.Set("role", tc.mockRole)
 			if tc.inputBody != nil {
-				b, _ := json.Marshal(tc.inputBody)
+				b, err := json.Marshal(tc.inputBody)
+				if err != nil {
+					t.Fatalf("could not marshal input body: %v", err)
+				}
 				c.Request = httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(b))
+				c.Request.Header.Set("Content-Type", "application/json")
 			}
 
 			tc.given()
@@ -102,10 +108,17 @@ func TestUpdateUser(t *testing.T) {
 		expectedMsg  string
 	}{
 		{
-			name:      "Successful update with password",
+			name:      "Successful update details",
 			uid:       "testUID",
-			inputBody: &entities.UserDetails{Email: "test@email.com", Name: "Test", Password: "TestPassword"},
+			inputBody: &entities.UserDetails{Email: "test@email.com", Name: "Test"},
 			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
 				service.On("UpdateUser", mock.AnythingOfType("*entities.UserDetails")).Return(nil)
 			},
 			expectedCode: http.StatusOK,
@@ -271,12 +284,62 @@ func TestInviteUsers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
+			c.Set("uid", tt.projectID)
 			c.Params = gin.Params{
 				{"project_id", tt.projectID},
 			}
-
+			user := &entities.User{
+				ID:   "testUserID",
+				Name: "Test User",
+			}
+			project := &entities.Project{
+				ID:   "testProjectID",
+				Name: "Test Project",
+			}
+			projects := []*entities.Project{
+				{
+					ID:   "testProjectID",
+					Name: "Test Project",
+				},
+			}
+			expectedFilter := primitive.D{
+				primitive.E{
+					Key:   "_id",
+					Value: tt.projectID,
+				},
+				primitive.E{
+					Key: "members",
+					Value: primitive.D{
+						primitive.E{
+							Key: "$elemMatch",
+							Value: primitive.D{
+								primitive.E{
+									Key:   "user_id",
+									Value: tt.projectID,
+								},
+								primitive.E{
+									Key: "role",
+									Value: primitive.D{
+										primitive.E{
+											Key:   "$in",
+											Value: []string{"Owner"},
+										},
+									},
+								},
+								primitive.E{
+									Key:   "invitation",
+									Value: "Accepted",
+								},
+							},
+						},
+					},
+				},
+			}
 			tt.given()
 
+			service.On("GetProjectByProjectID", "").Return(project, nil)
+			service.On("GetUser", tt.projectID).Return(user, nil)
+			service.On("GetProjects", expectedFilter).Return(projects, nil)
 			rest.InviteUsers(service)(c)
 
 			assert.Equal(t, tt.expectedCode, w.Code)
@@ -418,12 +481,21 @@ func TestUpdatePassword(t *testing.T) {
 	}{
 		{
 			name:                 "Successfully update password",
-			givenBody:            `{"oldPassword":"oldPass", "newPassword":"newPass"}`,
+			givenBody:            `{"oldPassword":"oldPass@123", "newPassword":"newPass@123"}`,
 			givenUsername:        "testUser",
 			givenStrictPassword:  false,
 			givenServiceResponse: nil,
 			expectedCode:         http.StatusOK,
 			expectedOutput:       `{"message":"password has been updated successfully"}`,
+		},
+		{
+			name:                 "Invalid new password",
+			givenBody:            `{"oldPassword":"oldPass@123", "newPassword":"short"}`,
+			givenUsername:        "testUser",
+			givenStrictPassword:  false,
+			givenServiceResponse: errors.New("invalid password"),
+			expectedCode:         utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
+			expectedOutput:       `{"error":"password_policy_violation","errorDescription":"Please ensure the password is atleast 8 characters long and atmost 16 characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase alphabet and 1 special character"}`,
 		},
 	}
 
@@ -439,9 +511,16 @@ func TestUpdatePassword(t *testing.T) {
 
 			userPassword := entities.UserPassword{
 				Username:    tt.givenUsername,
-				OldPassword: "oldPass",
-				NewPassword: "newPass",
+				OldPassword: "oldPass@123",
+				NewPassword: "newPass@123",
 			}
+			user := &entities.User{
+				ID:             "testUID",
+				Username:       "testUser",
+				Email:          "test@example.com",
+				IsInitialLogin: false,
+			}
+			service.On("GetUser", "testUID").Return(user, nil)
 			service.On("UpdatePassword", &userPassword, true).Return(tt.givenServiceResponse)
 
 			rest.UpdatePassword(service)(c)
@@ -466,16 +545,23 @@ func TestResetPassword(t *testing.T) {
 		expectedCode int
 	}{
 		{
-			name: "Non-admin role",
+			name: "Admin role",
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
-				NewPassword: "validPassword123",
+				NewPassword: "ValidPass@123",
 			},
 			mockRole:     "admin",
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
 			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
 				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
 				service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
 			},
@@ -486,7 +572,7 @@ func TestResetPassword(t *testing.T) {
 			inputBody: &entities.UserPassword{
 				Username:    "testUser",
 				OldPassword: "",
-				NewPassword: "validPassword123",
+				NewPassword: "validPass@123",
 			},
 			mockRole:     "user",
 			mockUID:      "testUID",
@@ -507,6 +593,29 @@ func TestResetPassword(t *testing.T) {
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
 			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name: "Admin role wrong password",
+			inputBody: &entities.UserPassword{
+				Username:    "testUser",
+				OldPassword: "",
+				NewPassword: "short",
+			},
+			mockRole:     "admin",
+			mockUID:      "testUID",
+			mockUsername: "adminUser",
+			given: func() {
+				user := &entities.User{
+					ID:             "testUID",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
+				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+				service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
+			},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
 		},
 	}
 
@@ -557,6 +666,13 @@ func TestUpdateUserState(t *testing.T) {
 			mockUsername: "adminUser",
 			mockUID:      "tetstUUIS",
 			given: func() {
+				user := &entities.User{
+					ID:             "tetstUUIS",
+					Username:       "testUser",
+					Email:          "test@example.com",
+					IsInitialLogin: false,
+				}
+				service.On("GetUser", "tetstUUIS").Return(user, nil)
 				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
 				service.On("UpdateStateTransaction", mock.AnythingOfType("entities.UpdateUserState")).Return(nil)
 
