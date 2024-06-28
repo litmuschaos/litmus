@@ -5,6 +5,6 @@ enum Invitation {
 
 enum MemberRole {
   Owner
-  Editor
+  Executer
   Viewer
 }

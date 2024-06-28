@@ -24,7 +24,7 @@ type MemberRole string
 
 const (
 	RoleOwner  MemberRole = "Owner"
-	RoleEditor MemberRole = "Editor"
+	RoleExecuter MemberRole = "Executer"
 	RoleViewer MemberRole = "Viewer"
 )
 
