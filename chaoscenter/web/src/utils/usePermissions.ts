@@ -12,8 +12,8 @@ export function usePermissions(props: UserPermissionsProps): boolean {
   if (projectRole) {
     if (projectRole === PermissionGroup.OWNER) {
       return false;
-    } else if (projectRole === PermissionGroup.EDITOR) {
-      if (permission === PermissionGroup.EDITOR || permission === PermissionGroup.VIEWER) {
+    } else if (projectRole === PermissionGroup.EXECUTER) {
+      if (permission === PermissionGroup.EXECUTER || permission === PermissionGroup.VIEWER) {
         return false;
       }
     } else if (projectRole === PermissionGroup.VIEWER) {

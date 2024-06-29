@@ -306,7 +306,6 @@ editSameExperimentDescription: >-
 editSameExperimentTitle: Edit on the existing Experiment
 editYaml: Edit Yaml
 editingChaosHub: Editing ChaosHub
-editor: Editor
 effect: Effect
 email: Email
 emailIsRequired: Email is a required field
@@ -353,6 +352,7 @@ errorInYamlDescription: There are some errors in the file, please check YAML fil
 evaluationTimeout: Evaluation timeout
 executedBy: Executed by
 executedOn: Executed on
+executer: Executer
 executionDetails: Execution details goes here
 executionError: Execution Error
 executionHistory: Execution History

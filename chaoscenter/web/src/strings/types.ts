@@ -259,7 +259,6 @@ export interface StringsMap {
   'editSameExperimentTitle': unknown
   'editYaml': unknown
   'editingChaosHub': unknown
-  'editor': unknown
   'effect': unknown
   'email': unknown
   'emailIsRequired': unknown
@@ -302,6 +301,7 @@ export interface StringsMap {
   'evaluationTimeout': unknown
   'executedBy': unknown
   'executedOn': unknown
+  'executer': unknown
   'executionDetails': unknown
   'executionError': unknown
   'executionHistory': unknown

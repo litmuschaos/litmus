@@ -96,7 +96,7 @@ export const MenuCell = ({
               icon={'Edit'}
               text={getString('editProbe')}
               onClick={() => setEditProbe({ name: data.name, infrastructureType: infrastructureType })}
-              permission={PermissionGroup.EDITOR || PermissionGroup.OWNER}
+              permission={PermissionGroup.OWNER}
             />
           </ParentComponentErrorWrapper>
           {/* <!-- delete probe button --> */}
@@ -105,7 +105,7 @@ export const MenuCell = ({
               icon="main-trash"
               text={getString('remove')}
               onClick={openRemoveProbeDialog}
-              permission={PermissionGroup.EDITOR || PermissionGroup.OWNER}
+              permission={PermissionGroup.OWNER}
             />
           </ParentComponentErrorWrapper>
         </Menu>

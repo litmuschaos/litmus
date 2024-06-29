@@ -176,7 +176,7 @@ export function RenderChaosInfrastructureOptions({
                   }
                 });
               }}
-              permission={PermissionGroup.EDITOR}
+              permission={PermissionGroup.EXECUTER}
             />
             <MenuDivider />
             <RbacMenuItem
@@ -184,7 +184,7 @@ export function RenderChaosInfrastructureOptions({
               text={getString('disable')}
               className={css.menuItem}
               onClick={openDeleteDialog}
-              permission={PermissionGroup.EDITOR}
+              permission={PermissionGroup.OWNER}
             />
           </Menu>
         }

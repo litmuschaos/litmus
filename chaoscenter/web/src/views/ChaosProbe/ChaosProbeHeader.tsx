@@ -101,7 +101,7 @@ export default function ChaosProbeHeader({
                 text={getString('editProbe')}
                 variation={ButtonVariation.SECONDARY}
                 icon="Edit"
-                permission={PermissionGroup.EDITOR}
+                permission={PermissionGroup.OWNER}
                 onClick={setEditProbeOpen}
               />
             </Layout.Horizontal>
