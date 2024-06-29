@@ -108,10 +108,7 @@ export const MenuCell = ({
             icon="main-trash"
             text={getString('deleteExperiment')}
             onClick={openDeleteDialog}
-            disabled={
-              lastExperimentRunStatus === ExperimentRunStatus.RUNNING ||
-              lastExperimentRunStatus === ExperimentRunStatus.QUEUED
-            }
+            disabled={lastExperimentRunStatus === ExperimentRunStatus.RUNNING}
             permission={PermissionGroup.OWNER}
           />
         </Menu>
