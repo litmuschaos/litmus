@@ -56,18 +56,18 @@ const (
 	ListEnvironments  RoleQuery = "ListEnvironments"
 
 	// Probe
-	AddProbe               RoleQuery = "AddProbe"
-	DeleteProbe            RoleQuery = "DeleteProbe"
-	UpdateProbe            RoleQuery = "UpdateProbe"
-	GetProbe               RoleQuery = "GetProbe"
-	ListProbes             RoleQuery = "ListProbes"
-	MemberRoleOwnerString            = string(model.MemberRoleOwner)
+	AddProbe                 RoleQuery = "AddProbe"
+	DeleteProbe              RoleQuery = "DeleteProbe"
+	UpdateProbe              RoleQuery = "UpdateProbe"
+	GetProbe                 RoleQuery = "GetProbe"
+	ListProbes               RoleQuery = "ListProbes"
+	MemberRoleOwnerString              = string(model.MemberRoleOwner)
 	MemberRoleExecuterString           = string(model.MemberRoleExecuter)
-	MemberRoleViewerString           = string(model.MemberRoleViewer)
+	MemberRoleViewerString             = string(model.MemberRoleViewer)
 )
 
 var MutationRbacRules = map[RoleQuery][]string{
-	UserInfrastructureReg: {MemberRoleOwnerString, MemberRoleExecuterString},
+	UserInfrastructureReg: {MemberRoleOwnerString},
 	CreateChaosExperiment: {MemberRoleOwnerString},
 	ReRunChaosExperiment:  {MemberRoleOwnerString, MemberRoleExecuterString},
 	DeleteChaosExperiment: {MemberRoleOwnerString},
