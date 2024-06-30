@@ -19,6 +19,7 @@ interface AccountPasswordChangeViewProps {
     unknown
   >;
   updatePasswordMutationLoading: boolean;
+  initialMode?: boolean;
 }
 interface AccountPasswordChangeFormProps {
   oldPassword: string;
@@ -27,7 +28,7 @@ interface AccountPasswordChangeFormProps {
 }
 
 export default function AccountPasswordChangeView(props: AccountPasswordChangeViewProps): React.ReactElement {
-  const { handleClose, updatePasswordMutation, updatePasswordMutationLoading, username } = props;
+  const { handleClose, updatePasswordMutation, updatePasswordMutationLoading, username, initialMode } = props;
   const { getString } = useStrings();
   const { showError } = useToaster();
 
@@ -68,7 +69,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
     <Layout.Vertical padding="medium" style={{ gap: '1rem' }}>
       <Layout.Horizontal flex={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Text font={{ variation: FontVariation.H4 }}>{getString('updatePassword')}</Text>
-        <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={() => handleClose()} />
+        {!initialMode && <Icon name="cross" style={{ cursor: 'pointer' }} size={18} onClick={handleClose} />}
       </Layout.Horizontal>
       <Container>
         <Formik<AccountPasswordChangeFormProps>
@@ -125,11 +126,9 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
                       disabled={updatePasswordMutationLoading || isSubmitButtonDisabled(formikProps.values)}
                       style={{ minWidth: '90px' }}
                     />
-                    <Button
-                      variation={ButtonVariation.TERTIARY}
-                      text={getString('cancel')}
-                      onClick={() => handleClose()}
-                    />
+                    {!initialMode && (
+                      <Button variation={ButtonVariation.TERTIARY} text={getString('cancel')} onClick={handleClose} />
+                    )}
                   </Layout.Horizontal>
                 </Layout.Vertical>
               </Form>

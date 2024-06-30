@@ -38,7 +38,7 @@ type Config struct {
 	DbServer       string   `required:"true" split_words:"true"`
 	DbUser         string   `required:"true" split_words:"true"`
 	DbPassword     string   `required:"true" split_words:"true"`
-	AllowedOrigins []string `split_words:"true" default:"litmuschaos.io?,localhost:([0-9]+)?"`
+	AllowedOrigins []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
 }
 
 var config Config

@@ -27,6 +27,8 @@ const BearerSchema = "Bearer "
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrUnauthorized
 //	@Failure		400	{object}	response.ErrInvalidEmail
+//	@Failure		401	{object}	response.ErrStrictPasswordPolicyViolation
+//	@Failure		401	{object}	response.ErrStrictUsernamePolicyViolation
 //	@Failure		401	{object}	response.ErrUserExists
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.UserResponse{}
@@ -56,6 +58,12 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 		userRequest.Username = utils.SanitizeString(userRequest.Username)
 		if userRequest.Role == "" || userRequest.Username == "" || userRequest.Password == "" {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			return
+		}
+		//username validation
+		err = utils.ValidateStrictUsername(userRequest.Username)
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrStrictUsernamePolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictUsernamePolicyViolation))
 			return
 		}
 
@@ -107,6 +115,8 @@ func CreateUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Failure		400	{object}	response.ErrInvalidRequest
+//	@Failure		401	{object}	response.ErrStrictPasswordPolicyViolation
+//	@Failure		401	{object}	response.ErrStrictUsernamePolicyViolation
 //	@Failure		500	{object}	response.ErrServerError
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update/details [post]
@@ -419,17 +429,17 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 		}
 		username := c.MustGet("username").(string)
 		userPasswordRequest.Username = username
-		if utils.StrictPasswordPolicy {
+		if userPasswordRequest.NewPassword != "" {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
 				return
 			}
-		}
-		if userPasswordRequest.NewPassword == "" {
+		} else {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
 			return
 		}
+
 		err = service.UpdatePassword(&userPasswordRequest, true)
 		if err != nil {
 			log.Info(err)
@@ -483,7 +493,7 @@ func ResetPassword(service services.ApplicationService) gin.HandlerFunc {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrPasswordNotUpdated))
 		}
 
-		if utils.StrictPasswordPolicy {
+		if userPasswordRequest.NewPassword != "" {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
 			if err != nil {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation], presenter.CreateErrorResponse(utils.ErrStrictPasswordPolicyViolation))
