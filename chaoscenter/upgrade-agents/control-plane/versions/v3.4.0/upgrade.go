@@ -1,4 +1,4 @@
-package v2_6_0
+package v3_4_0
 
 import (
 	"go.mongodb.org/mongo-driver/mongo"
