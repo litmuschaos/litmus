@@ -1,4 +1,5 @@
 404Error: Oops, we could not find this page.
+Executor: Executor
 FRI: FRI
 MON: MON
 NASlash: N/A
@@ -352,7 +353,6 @@ errorInYamlDescription: There are some errors in the file, please check YAML fil
 evaluationTimeout: Evaluation timeout
 executedBy: Executed by
 executedOn: Executed on
-executer: Executer
 executionDetails: Execution details goes here
 executionError: Execution Error
 executionHistory: Execution History

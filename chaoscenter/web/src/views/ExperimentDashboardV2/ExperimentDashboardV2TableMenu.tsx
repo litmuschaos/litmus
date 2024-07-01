@@ -79,7 +79,7 @@ export const MenuCell = ({
                 pathname: paths.toCloneExperiment({ experimentKey: data.experimentID })
               });
             }}
-            permission={PermissionGroup.EXECUTER}
+            permission={PermissionGroup.Executor}
           />
           {/* <!-- view executions button --> */}
           <RbacMenuItem

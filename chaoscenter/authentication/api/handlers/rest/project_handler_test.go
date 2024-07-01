@@ -203,7 +203,7 @@ func TestGetProject(t *testing.T) {
 								Value: primitive.D{
 									primitive.E{
 										Key:   "$in",
-										Value: []string{"Owner", "Viewer", "Executer"},
+										Value: []string{"Owner", "Viewer", "Executor"},
 									},
 								},
 							},

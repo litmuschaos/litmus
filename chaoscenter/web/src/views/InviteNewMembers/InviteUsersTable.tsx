@@ -83,12 +83,12 @@ export default function InviteUsersTableView({ users, getUsers }: InviteUsersTab
                 }
               >
                 <SplitButtonOption
-                  text={getString('executer')}
+                  text={getString('Executor')}
                   onClick={() =>
                     sendInvitationMutation({
                       body: {
                         projectID: projectID,
-                        role: PermissionGroup.EXECUTER,
+                        role: PermissionGroup.Executor,
                         userID: data.userID
                       }
                     })

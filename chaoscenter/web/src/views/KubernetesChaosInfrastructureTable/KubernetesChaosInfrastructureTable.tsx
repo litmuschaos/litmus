@@ -176,7 +176,7 @@ export function RenderChaosInfrastructureOptions({
                   }
                 });
               }}
-              permission={PermissionGroup.EXECUTER}
+              permission={PermissionGroup.Executor}
             />
             <MenuDivider />
             <RbacMenuItem

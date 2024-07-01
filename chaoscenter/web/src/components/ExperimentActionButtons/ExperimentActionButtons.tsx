@@ -89,7 +89,7 @@ export const RunExperimentButton = ({
         icon={'play'}
         withoutCurrentColor
         variation={ButtonVariation.ICON}
-        permission={PermissionGroup.EXECUTER}
+        permission={PermissionGroup.Executor}
         onClick={() => {
           runChaosExperimentMutation({
             variables: { projectID: scope.projectID, experimentID: experimentID }
@@ -161,7 +161,7 @@ export const StopExperimentButton = ({
             isDark: true,
             ...tooltipProps
           }}
-          permission={PermissionGroup.EXECUTER}
+          permission={PermissionGroup.Executor}
           variation={ButtonVariation.ICON}
           icon={'stop'}
           onClick={openStopExperimentDialog}
@@ -240,7 +240,7 @@ export const StopExperimentRunButton = ({
           }}
           variation={ButtonVariation.ICON}
           icon={'stop'}
-          permission={PermissionGroup.EXECUTER}
+          permission={PermissionGroup.Executor}
           onClick={openStopExperimentRunDialog}
         />
       </div>
@@ -297,7 +297,7 @@ export const CloneExperimentButton = ({ experimentID, tooltipProps }: ActionButt
             pathname: paths.toCloneExperiment({ experimentKey: experimentID })
           });
         }}
-        permission={PermissionGroup.EXECUTER}
+        permission={PermissionGroup.Executor}
       />
     </div>
   );
@@ -425,7 +425,7 @@ export const EnableDisableCronButton = ({
           variation={ButtonVariation.ICON}
           icon={'time'}
           onClick={openCronEnableDisableDialog}
-          permission={PermissionGroup.EXECUTER}
+          permission={PermissionGroup.Executor}
         />
       </div>
       {cronEnableDisableDialog}

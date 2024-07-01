@@ -109,7 +109,7 @@ type MemberRole string
 
 const (
 	RoleOwner    MemberRole = "Owner"
-	RoleExecuter MemberRole = "Executer"
+	RoleExecutor MemberRole = "Executor"
 	RoleViewer   MemberRole = "Viewer"
 )
 

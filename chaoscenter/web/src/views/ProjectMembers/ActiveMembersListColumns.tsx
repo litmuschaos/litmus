@@ -51,8 +51,8 @@ const MemberPermissionDropdown = ({ row: { original: data } }: MemberRow): React
   const [memberRole, setMemberRole] = React.useState<string>(role);
   const rolesDropDown: SelectOption[] = [
     {
-      label: 'Executer',
-      value: 'Executer'
+      label: 'Executor',
+      value: 'Executor'
     },
     {
       label: 'Viewer',
@@ -66,11 +66,11 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
   const { projectID } = useParams<{ projectID: string }>();
   const { getString } = useStrings();
   const { role } = data;
-  const [memberRole, setMemberRole] = React.useState<'Executer' | 'Owner' | 'Viewer'>(role);
+  const [memberRole, setMemberRole] = React.useState<'Executor' | 'Owner' | 'Viewer'>(role);
   const rolesDropDown: SelectOption[] = [
     {
-      label: 'Executer',
-      value: 'Executer'
+      label: 'Executor',
+      value: 'Executor'
     },
     {
       label: 'Viewer',
@@ -103,7 +103,7 @@ const InvitationOperation = ({ row: { original: data } }: MemberRow): React.Reac
         <DropDown
           value={memberRole}
           items={rolesDropDown}
-          onChange={option => setMemberRole(option.label as 'Executer' | 'Owner' | 'Viewer')}
+          onChange={option => setMemberRole(option.label as 'Executor' | 'Owner' | 'Viewer')}
         />
       </Layout.Horizontal>
       <Layout.Horizontal flex={{ justifyContent: 'flex-start' }} spacing="medium">

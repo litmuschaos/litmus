@@ -97,7 +97,7 @@ export const ChaosHubMenuView: React.FC<ChaosHubMenuViewProps> = ({
                   hubID.current = chaosHub.id;
                   syncChaosHubMutation({ variables: { projectID: scope.projectID, id: chaosHub.id } });
                 }}
-                permission={PermissionGroup.EXECUTER}
+                permission={PermissionGroup.Executor}
               />
             )}
             <ParentComponentErrorWrapper>

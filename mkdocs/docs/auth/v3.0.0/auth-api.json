@@ -1072,7 +1072,7 @@
                   "type": "string",
                   "enum": [
                     "Owner",
-                    "Executer",
+                    "Executor",
                     "Viewer"
                   ]
                 }
@@ -1439,7 +1439,7 @@
                     "username": "john",
                     "email": "john@gmail.com",
                     "name": "john doe",
-                    "role": "Executer",
+                    "role": "Executor",
                     "invitation": "Accepted",
                     "joinedAt": 1690245328
                   }
@@ -1726,7 +1726,7 @@
           "type": "string",
           "enum": [
             "Owner",
-            "Executer",
+            "Executor",
             "Viewer"
           ]
         },
@@ -1763,7 +1763,7 @@
           "type": "string",
           "enum": [
             "Owner",
-            "Executer",
+            "Executor",
             "Viewer"
           ]
         },

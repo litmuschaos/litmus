@@ -413,7 +413,7 @@ func SendInvitation(service services.ApplicationService) gin.HandlerFunc {
 		}
 
 		// Validating member role
-		if member.Role == nil || (*member.Role != entities.RoleExecuter && *member.Role != entities.RoleViewer) {
+		if member.Role == nil || (*member.Role != entities.RoleExecutor && *member.Role != entities.RoleViewer) {
 			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRole], presenter.CreateErrorResponse(utils.ErrInvalidRole))
 			return
 		}

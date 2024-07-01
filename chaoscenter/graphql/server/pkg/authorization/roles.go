@@ -62,16 +62,16 @@ const (
 	GetProbe                 RoleQuery = "GetProbe"
 	ListProbes               RoleQuery = "ListProbes"
 	MemberRoleOwnerString              = string(model.MemberRoleOwner)
-	MemberRoleExecuterString           = string(model.MemberRoleExecuter)
+	MemberRoleExecutorString           = string(model.MemberRoleExecutor)
 	MemberRoleViewerString             = string(model.MemberRoleViewer)
 )
 
 var MutationRbacRules = map[RoleQuery][]string{
 	UserInfrastructureReg: {MemberRoleOwnerString},
 	CreateChaosExperiment: {MemberRoleOwnerString},
-	ReRunChaosExperiment:  {MemberRoleOwnerString, MemberRoleExecuterString},
+	ReRunChaosExperiment:  {MemberRoleOwnerString, MemberRoleExecutorString},
 	DeleteChaosExperiment: {MemberRoleOwnerString},
-	StopChaosExperiment:   {MemberRoleOwnerString, MemberRoleExecuterString},
+	StopChaosExperiment:   {MemberRoleOwnerString, MemberRoleExecutorString},
 	AddChaosHub:           {MemberRoleOwnerString},
 	UpdateChaosExperiment: {MemberRoleOwnerString},
 	DeleteInfrastructures: {MemberRoleOwnerString},
@@ -80,14 +80,14 @@ var MutationRbacRules = map[RoleQuery][]string{
 	EnableGitOps:          {MemberRoleOwnerString},
 	DisableGitOps:         {MemberRoleOwnerString},
 	UpdateGitOps:          {MemberRoleOwnerString},
-	ListWorkflowRuns:      {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	GetWorkflowRun:        {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	ListInfrastructures:   {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	GetInfrastructure:     {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	GetManifest:           {MemberRoleOwnerString, MemberRoleExecuterString},
-	GetInfraDetails:       {MemberRoleOwnerString, MemberRoleExecuterString},
-	ListCharts:            {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	ListExperiment:        {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
+	ListWorkflowRuns:      {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	GetWorkflowRun:        {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	ListInfrastructures:   {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	GetInfrastructure:     {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	GetManifest:           {MemberRoleOwnerString, MemberRoleExecutorString},
+	GetInfraDetails:       {MemberRoleOwnerString, MemberRoleExecutorString},
+	ListCharts:            {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	ListExperiment:        {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
 	SaveChaosHub:          {MemberRoleOwnerString},
 	CreateImageRegistry:   {MemberRoleOwnerString},
 	UpdateImageRegistry:   {MemberRoleOwnerString},
@@ -98,11 +98,11 @@ var MutationRbacRules = map[RoleQuery][]string{
 	CreateEnvironment:     {MemberRoleOwnerString},
 	UpdateEnvironment:     {MemberRoleOwnerString},
 	DeleteEnvironment:     {MemberRoleOwnerString},
-	GetEnvironment:        {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	ListEnvironments:      {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
+	GetEnvironment:        {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	ListEnvironments:      {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
 	AddProbe:              {MemberRoleOwnerString},
 	UpdateProbe:           {MemberRoleOwnerString},
-	GetProbe:              {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
-	ListProbes:            {MemberRoleOwnerString, MemberRoleExecuterString, MemberRoleViewerString},
+	GetProbe:              {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
+	ListProbes:            {MemberRoleOwnerString, MemberRoleExecutorString, MemberRoleViewerString},
 	DeleteProbe:           {MemberRoleOwnerString},
 }

@@ -37,7 +37,7 @@ export default function StudioActionButtons({
       )}
       <RbacButton
         // todo
-        permission={PermissionGroup.EXECUTER}
+        permission={PermissionGroup.Executor}
         icon="upload-box"
         variation={ButtonVariation.PRIMARY}
         size={ButtonSize.SMALL}
@@ -53,7 +53,7 @@ export default function StudioActionButtons({
         size={ButtonSize.SMALL}
       />
       <RbacButton
-        permission={PermissionGroup.EXECUTER}
+        permission={PermissionGroup.Executor}
         icon="run-pipeline"
         intent="success"
         variation={ButtonVariation.PRIMARY}
