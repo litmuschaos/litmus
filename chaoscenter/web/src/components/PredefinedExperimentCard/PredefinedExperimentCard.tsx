@@ -61,7 +61,7 @@ function PredefinedExperimentCard({ predefinedExperiment }: PredefinedExperiment
             variation={ButtonVariation.PRIMARY}
             icon="play"
             text={getString('launchExperiment')}
-            permission={PermissionGroup.Executor}
+            permission={PermissionGroup.OWNER}
             onClick={e => {
               e.stopPropagation(); // Prevents the card from being clicked
               launchExperiment();
