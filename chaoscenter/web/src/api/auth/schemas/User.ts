@@ -7,6 +7,7 @@ export interface User {
   createdAt?: number;
   createdBy?: ActionBy;
   email?: string;
+  isInitialLogin?: boolean;
   isRemoved: boolean;
   name?: string;
   role: string;
