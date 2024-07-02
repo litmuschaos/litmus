@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"net/http"
 	"regexp"
 	"strings"
@@ -25,6 +26,11 @@ func ValidateCors() gin.HandlerFunc {
 		}
 
 		validOrigin := false
+		endpoint, err := chaos_infrastructure.GetEndpoint("external")
+		if err != nil {
+			return
+		}
+		allowedOrigins = append(allowedOrigins, endpoint)
 		for _, allowedOrigin := range allowedOrigins {
 			match, err := regexp.MatchString(allowedOrigin, origin)
 			if err == nil && match {
