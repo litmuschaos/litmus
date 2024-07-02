@@ -4,11 +4,11 @@ import "github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 
 var MutationRbacRules = map[string][]string{
 	"sendInvitation":   {string(entities.RoleOwner)},
-	"acceptInvitation": {string(entities.RoleViewer), string(entities.RoleEditor)},
+	"acceptInvitation": {string(entities.RoleViewer), string(entities.RoleExecutor)},
 	"declineInvitation": {string(entities.RoleViewer),
-		string(entities.RoleEditor)},
+		string(entities.RoleExecutor)},
 	"removeInvitation":  {string(entities.RoleOwner)},
-	"leaveProject":      {string(entities.RoleViewer), string(entities.RoleEditor)},
+	"leaveProject":      {string(entities.RoleViewer), string(entities.RoleExecutor)},
 	"updateProjectName": {string(entities.RoleOwner)},
-	"getProject":        {string(entities.RoleOwner), string(entities.RoleViewer), string(entities.RoleEditor)},
+	"getProject":        {string(entities.RoleOwner), string(entities.RoleViewer), string(entities.RoleExecutor)},
 }

@@ -68,7 +68,7 @@ export const MenuCell = ({
                 search: `tab=${StudioTabs.BUILDER}`
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
           {/* <!-- clone experiment button --> */}
           <RbacMenuItem
@@ -79,7 +79,7 @@ export const MenuCell = ({
                 pathname: paths.toCloneExperiment({ experimentKey: data.experimentID })
               });
             }}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.Executor}
           />
           {/* <!-- view executions button --> */}
           <RbacMenuItem
@@ -112,7 +112,7 @@ export const MenuCell = ({
               lastExperimentRunStatus === ExperimentRunStatus.RUNNING ||
               lastExperimentRunStatus === ExperimentRunStatus.QUEUED
             }
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
           />
         </Menu>
       </Popover>
