@@ -1,11 +1,10 @@
 name: push-pipeline
 on:
-  push:
-    branches:
-      - master
-      - ^v[0-9]*.[0-9]*.x$
-    tags:
-      - "*"
+  workflow_dispatch:
+    inputs:
+      Tag:
+        default: "ci"
+
 defaults:
   run:
     working-directory: chaoscenter
