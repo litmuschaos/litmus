@@ -108,9 +108,9 @@ func (member *Member) GetMemberOutput() *Member {
 type MemberRole string
 
 const (
-	RoleOwner  MemberRole = "Owner"
-	RoleEditor MemberRole = "Editor"
-	RoleViewer MemberRole = "Viewer"
+	RoleOwner    MemberRole = "Owner"
+	RoleExecutor MemberRole = "Executor"
+	RoleViewer   MemberRole = "Viewer"
 )
 
 // Invitation defines the type of the invitation that is sent by the Owner of the project to other users
