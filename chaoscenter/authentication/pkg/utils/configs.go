@@ -25,7 +25,7 @@ var (
 	DexClientID                  = os.Getenv("DEX_OAUTH_CLIENT_ID")
 	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
 	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
-	EnableInternalTls            = os.Getenv("ENABLE_INTERNAL_TLS")
+	EnableInternalTls            = getEnvAsBool("ENABLE_INTERNAL_TLS", false)
 	CustomTlsCertPath            = os.Getenv("CUSTOM_TLS_CERT_PATH")
 	TlSKeyPath                   = os.Getenv("TLS_KEY_PATH")
 	CaCertPath                   = os.Getenv("CA_CERT_PATH")
