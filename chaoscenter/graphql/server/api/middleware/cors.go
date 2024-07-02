@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"regexp"
 	"strings"
@@ -29,9 +30,11 @@ func ValidateCors() gin.HandlerFunc {
 		validOrigin := false
 		endpoint, err := chaos_infrastructure.GetEndpoint("external")
 		if err != nil {
-			return
+			logrus.Error(err)
+		} else if endpoint != "" {
+			allowedOrigins = append(allowedOrigins, endpoint)
+
 		}
-		allowedOrigins = append(allowedOrigins, endpoint)
 		for _, allowedOrigin := range allowedOrigins {
 			match, err := regexp.MatchString(allowedOrigin, origin)
 			if err == nil && match {

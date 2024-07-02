@@ -221,7 +221,7 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 
 // UpdateUserByQuery updates user details in the database
 func (r repository) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
-	_, err := r.Collection.UpdateMany(context.Background(), filter, updateQuery)
+	_, err := r.Collection.UpdateOne(context.Background(), filter, updateQuery)
 	if err != nil {
 		return err
 	}
