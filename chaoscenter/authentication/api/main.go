@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/http"
 	"runtime"
-	"strconv"
 	"time"
 
 	"google.golang.org/grpc/credentials"
@@ -118,13 +117,8 @@ func main() {
 
 	validatedAdminSetup(applicationService)
 
-	enableHTTPSConnection, err := strconv.ParseBool(utils.EnableInternalTls)
-	if err != nil {
-		log.Errorf("unable to parse boolean value %v", err)
-	}
-
 	go runGrpcServer(applicationService)
-	if enableHTTPSConnection {
+	if utils.EnableInternalTls {
 		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
 			go runGrpcServerWithTLS(applicationService)
 		} else {
@@ -189,14 +183,9 @@ func runRestServer(applicationService services.ApplicationService) {
 	routes.ProjectRouter(app, applicationService)
 	routes.CapabilitiesRouter(app)
 
-	enableHTTPSConnection, err := strconv.ParseBool(utils.EnableInternalTls)
-	if err != nil {
-		log.Errorf("unable to parse boolean value %v", err)
-	}
-
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
 
-	if enableHTTPSConnection {
+	if utils.EnableInternalTls {
 		log.Infof("Listening and serving HTTPS on %s", utils.PortHttps)
 		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
 			conf := utils.GetTlsConfig()
