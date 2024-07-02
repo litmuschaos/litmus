@@ -197,7 +197,7 @@ func runRestServer(applicationService services.ApplicationService) {
 			}
 			log.Infof("Listening and serving HTTPS on %s", utils.Port)
 			go func() {
-				err = server.ListenAndServeTLS("", "")
+				err := server.ListenAndServeTLS("", "")
 				if err != nil {
 					log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
 				}
@@ -207,7 +207,7 @@ func runRestServer(applicationService services.ApplicationService) {
 		}
 	}
 
-	err = app.Run(utils.Port)
+	err := app.Run(utils.Port)
 	if err != nil {
 		log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
 	}

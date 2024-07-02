@@ -117,7 +117,7 @@ func main() {
 	go startGRPCServer(utils.Config.RpcPort, mongodbOperator) // start GRPC serve
 	if enableHTTPSConnection {
 		if utils.Config.ServerTlsCertPath != "" && utils.Config.ServerTlsKeyPath != "" {
-			go startGRPCServerWithTLS(utils.Config.RpcPortHttps, mongodbOperator) // start GRPC serve
+			go startGRPCServerWithTLS(mongodbOperator) // start GRPC serve
 		} else {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
@@ -163,8 +163,6 @@ func main() {
 	projectEventChannel := make(chan string)
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
-	log.Infof("graphql server running at http://localhost:%s", utils.Config.HttpPort)
-
 	if enableHTTPSConnection {
 		log.Infof("graphql server running at https://localhost:%s", utils.Config.HttpsPort)
 		// configuring TLS config based on provided certificates & keys
@@ -176,15 +174,13 @@ func main() {
 			TLSConfig: conf,
 		}
 		if utils.Config.ServerTlsCertPath != "" && utils.Config.ServerTlsKeyPath != "" {
-			go func() {
-				log.Fatal(server.ListenAndServeTLS("", ""))
-			}()
+			go log.Fatal(server.ListenAndServeTLS("", ""))
 		}
 	}
 
-	if err = http.ListenAndServe(":"+utils.Config.HttpPort, router); err != nil {
-		logrus.Fatal(err)
-	}
+	log.Infof("graphql server running at http://localhost:%s", utils.Config.HttpPort)
+	log.Fatal(http.ListenAndServe(":"+utils.Config.HttpPort, router))
+
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls
@@ -205,7 +201,7 @@ func startGRPCServer(port string, mongodbOperator mongodb.MongoOperator) {
 }
 
 // startGRPCServerWithTLS initializes, registers services to and starts the gRPC server for RPC calls
-func startGRPCServerWithTLS(port string, mongodbOperator mongodb.MongoOperator) {
+func startGRPCServerWithTLS(mongodbOperator mongodb.MongoOperator) {
 
 	lis, err := net.Listen("tcp", ":"+utils.Config.RpcPortHttps)
 	if err != nil {
