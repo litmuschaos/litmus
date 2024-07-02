@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
