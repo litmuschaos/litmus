@@ -164,12 +164,7 @@ func main() {
 	go projects.ProjectEvents(projectEventChannel, mongodb.MgoClient, mongodbOperator)
 
 	log.Infof("graphql server running at http://localhost:%s", utils.Config.HttpPort)
-	go func() {
-		err := http.ListenAndServe(":"+utils.Config.HttpPort, router)
-		if err != nil {
-			logrus.Fatal(err)
-		}
-	}()
+
 	if enableHTTPSConnection {
 		log.Infof("graphql server running at https://localhost:%s", utils.Config.HttpsPort)
 		// configuring TLS config based on provided certificates & keys
@@ -181,11 +176,15 @@ func main() {
 			TLSConfig: conf,
 		}
 		if utils.Config.ServerTlsCertPath != "" && utils.Config.ServerTlsKeyPath != "" {
-			log.Fatal(server.ListenAndServeTLS("", ""))
-
+			go func() {
+				log.Fatal(server.ListenAndServeTLS("", ""))
+			}()
 		}
 	}
 
+	if err = http.ListenAndServe(":"+utils.Config.HttpPort, router); err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 // startGRPCServer initializes, registers services to and starts the gRPC server for RPC calls

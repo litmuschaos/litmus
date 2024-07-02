@@ -195,12 +195,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	}
 
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
-	go func() {
-		err = app.Run(utils.Port)
-		if err != nil {
-			log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
-		}
-	}()
+
 	if enableHTTPSConnection {
 		log.Infof("Listening and serving HTTPS on %s", utils.PortHttps)
 		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
@@ -212,13 +207,20 @@ func runRestServer(applicationService services.ApplicationService) {
 				TLSConfig: conf,
 			}
 			log.Infof("Listening and serving HTTPS on %s", utils.Port)
-			err = server.ListenAndServeTLS("", "")
-			if err != nil {
-				log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
-			}
+			go func() {
+				err = server.ListenAndServeTLS("", "")
+				if err != nil {
+					log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
+				}
+			}()
 		} else {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
+	}
+
+	err = app.Run(utils.Port)
+	if err != nil {
+		log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
 	}
 }
 
