@@ -362,7 +362,6 @@ export interface StringsMap {
   'genericResourceNotFoundError': PrimitiveObject<'resource' | 'resourceID' | 'projectID'>
   'gitConnection': unknown
   'gitOps': unknown
-  'githubRepo': unknown
   'gitops': unknown
   'goBack': unknown
   'goChaosHome': unknown
@@ -737,6 +736,7 @@ export interface StringsMap {
   'registry': unknown
   'registryName': unknown
   'registryType': unknown
+  'remoteRepo': unknown
   'remove': unknown
   'removeMember': unknown
   'removeMemberConfirmation': PrimitiveObject<'username'>
