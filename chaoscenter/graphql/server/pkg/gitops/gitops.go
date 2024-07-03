@@ -173,6 +173,9 @@ func (c GitConfig) GitClone() (*git.Repository, error) {
 // getAuthMethod returns the AuthMethod instance required for the current repo access [read/writes]
 func (c GitConfig) getAuthMethod() (transport.AuthMethod, error) {
 
+	// Azure DevOps requires the 'multi_ack' and 'multi_ack_detailed' capabilities,
+	// which are not fully implemented in the go-git package. By default, these
+	// capabilities are included in 'transport.UnsupportedCapabilities'.
 	transport.UnsupportedCapabilities = []capability.Capability{
 		capability.ThinPack,
 	}
