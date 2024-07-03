@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 
