@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/routes"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
@@ -23,7 +24,6 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
@@ -32,22 +32,22 @@ import (
 )
 
 type Config struct {
-	JwtSecret     string `required:"true" split_words:"true"`
-	AdminUsername string `required:"true" split_words:"true"`
-	AdminPassword string `required:"true" split_words:"true"`
-	DbServer      string `required:"true" split_words:"true"`
-	DbUser        string `required:"true" split_words:"true"`
-	DbPassword    string `required:"true" split_words:"true"`
+	JwtSecret      string   `required:"true" split_words:"true"`
+	AdminUsername  string   `required:"true" split_words:"true"`
+	AdminPassword  string   `required:"true" split_words:"true"`
+	DbServer       string   `required:"true" split_words:"true"`
+	DbUser         string   `required:"true" split_words:"true"`
+	DbPassword     string   `required:"true" split_words:"true"`
+	AllowedOrigins []string `split_words:"true" default:"^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)localhost(:[0-9]+|)"`
 }
+
+var config Config
 
 func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetReportCaller(true)
 	printVersion()
-
-	var c Config
-
-	err := envconfig.Process("", &c)
+	err := envconfig.Process("", &config)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -169,11 +169,7 @@ func runRestServer(applicationService services.ApplicationService) {
 	gin.SetMode(gin.ReleaseMode)
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	app := gin.Default()
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		AllowCredentials: true,
-	}))
+	app.Use(middleware.ValidateCors(config.AllowedOrigins))
 	// Enable dex routes only if passed via environment variables
 	if utils.DexEnabled {
 		routes.DexRouter(app, applicationService)

@@ -139,15 +139,6 @@ data:
 
             location /api/ {
                 proxy_http_version 1.1;
-                proxy_set_header   Host                 $host;
-                proxy_set_header   X-Real-IP            $remote_addr;
-                proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
-                proxy_set_header   X-Forwarded-Proto    $scheme;
-                proxy_pass "http://litmusportal-server-service:9002/";
-            }
-
-            location /ws/ {
-                proxy_http_version 1.1;
                 proxy_set_header   Upgrade              $http_upgrade;
                 proxy_set_header   Connection           $connection_upgrade;
                 proxy_set_header   Host                 $host;
@@ -313,6 +304,8 @@ spec:
               value: "5000000"
             - name: INFRA_COMPATIBLE_VERSIONS
               value: '["ci"]'
+            - name: ALLOWED_ORIGINS
+              value: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -387,6 +380,8 @@ spec:
               value: "litmusportal-server-service"
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
+            - name: ALLOWED_ORIGINS
+              value: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-auth-server-service(:[0-9]+|)?
           resources:
             requests:
               memory: "250Mi"

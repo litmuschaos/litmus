@@ -1,11 +1,11 @@
 package main
 
 import (
+	"regexp"
 	"strconv"
 
 	"google.golang.org/grpc/credentials"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/api/middleware"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub"
@@ -13,7 +13,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
 	dbSchemaChaosHub "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_hub"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/projects"
-	"github.com/openshift/origin/Godeps/_workspace/src/github.com/Sirupsen/logrus"
 
 	"context"
 	"fmt"
@@ -38,6 +37,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/config"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/handlers"
 	pb "github.com/litmuschaos/litmus/chaoscenter/graphql/server/protos"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -83,12 +83,7 @@ func setupGin() *gin.Engine {
 	router := gin.New()
 	router.Use(middleware.DefaultStructuredLogger())
 	router.Use(gin.Recovery())
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		AllowCredentials: true,
-	}))
-
+	router.Use(middleware.ValidateCors())
 	return router
 }
 
@@ -130,14 +125,24 @@ func main() {
 		KeepAlivePingInterval: 10 * time.Second,
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
-				return true
+				origin := r.Header.Get("Origin")
+				if origin == "" {
+					origin = r.Host
+				}
+				for _, allowedOrigin := range utils.Config.AllowedOrigins {
+					match, err := regexp.MatchString(allowedOrigin, origin)
+					if err == nil && match {
+						return true
+					}
+				}
+				return false
 			},
 		},
 	})
 
 	enableIntrospection, err := strconv.ParseBool(utils.Config.EnableGQLIntrospection)
 	if err != nil {
-		logrus.Errorf("unable to parse boolean value %v", err)
+		log.Errorf("unable to parse boolean value %v", err)
 	} else if err == nil && enableIntrospection == true {
 		srv.Use(extension.Introspection{})
 	}
