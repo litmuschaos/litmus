@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
@@ -180,8 +181,7 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(userPassword.NewPassword), utils.PasswordEncryptionCost)
 
 	updateQuery := bson.M{"$set": bson.M{
-		"password":         string(newHashedPassword),
-		"is_initial_login": true, // if admin resets the pwd, user needs to reset it again
+		"password": string(newHashedPassword),
 	}}
 
 	if isAdminBeingReset {
@@ -189,7 +189,11 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 		if err != nil {
 			return err
 		}
-
+		// check if the new pwd is same as old pwd, if yes return err
+		err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(userPassword.NewPassword))
+		if err == nil {
+			return fmt.Errorf("old and new passwords can't be same")
+		}
 		updateQuery = bson.M{"$set": bson.M{
 			"password":         string(newHashedPassword),
 			"is_initial_login": false,
