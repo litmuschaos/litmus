@@ -96,7 +96,7 @@ export default function EnvironmentListView({
               icon="plus"
               iconProps={{ size: 10 }}
               text={getString('newEnvironment')}
-              permission={PermissionGroup.EDITOR}
+              permission={PermissionGroup.OWNER}
               onClick={() => open()}
             />
             {isOpen && (

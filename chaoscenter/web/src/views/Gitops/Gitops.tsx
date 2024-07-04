@@ -139,7 +139,7 @@ export default function GitopsView({
             data-testid="gitops"
             iconProps={{ size: 10 }}
             text={getString('save')}
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
             loading={
               loading.disableGitopsMutationLoading ||
               loading.enableGitopsMutationLoading ||
