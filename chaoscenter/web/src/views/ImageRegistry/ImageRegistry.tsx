@@ -99,7 +99,7 @@ export default function ImageRegistryView({
             loading={
               imageRegistryData ? loading.updateImageRegistryMutationLoading : loading.addImageRegistryMutationLoading
             }
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
             onClick={() => formikRef.current?.handleSubmit()}
           />
           <Button

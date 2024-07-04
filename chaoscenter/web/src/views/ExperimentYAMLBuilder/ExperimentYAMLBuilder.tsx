@@ -108,7 +108,7 @@ function ExperimentYamlBuilderView({ setError, setHasFaults }: ExperimentYamlBui
       <div className={css.buttonsWrapper}>
         {!isEditEnabled && (
           <RbacButton
-            permission={PermissionGroup.EDITOR}
+            permission={PermissionGroup.OWNER}
             variation={ButtonVariation.SECONDARY}
             text={getString('editYaml')}
             onClick={() => {
