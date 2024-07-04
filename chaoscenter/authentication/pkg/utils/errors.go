@@ -23,6 +23,7 @@ var (
 	ErrInvalidRole                   AppError = errors.New("invalid role")
 	ErrInvalidEmail                  AppError = errors.New("invalid email")
 	ErrPasswordNotUpdated            AppError = errors.New("default password not updated")
+	ErrOldPassword                   AppError = errors.New("old and new passwords can't be same")
 )
 
 // ErrorStatusCodes holds the http status codes for every AppError
@@ -43,6 +44,7 @@ var ErrorStatusCodes = map[AppError]int{
 	ErrInvalidRole:                   400,
 	ErrInvalidEmail:                  400,
 	ErrPasswordNotUpdated:            401,
+	ErrOldPassword:                   400,
 }
 
 // ErrorDescriptions holds detailed error description for every AppError
@@ -59,4 +61,5 @@ var ErrorDescriptions = map[AppError]string{
 	ErrProjectNotFound:               "This project does not exist",
 	ErrInvalidEmail:                  "Email address is invalid",
 	ErrPasswordNotUpdated:            "Please update your default password",
+	ErrOldPassword:                   "old and new passwords can't be same",
 }
