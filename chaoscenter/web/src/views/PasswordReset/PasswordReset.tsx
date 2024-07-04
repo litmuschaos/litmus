@@ -7,15 +7,15 @@ import { Icon } from '@harnessio/icons';
 import { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
 import { PASSWORD_REGEX } from '@constants/validation';
-import { User, UpdatePasswordOkResponse, UpdatePasswordMutationProps } from '@api/auth';
+import { User, UpdatePasswordMutationProps, ResponseMessageResponse, UpdatePasswordErrorResponse } from '@api/auth';
 import PasswordInput from '@components/PasswordInput';
 import css from './PasswordReset.module.scss';
 
 interface PasswordResetViewProps {
   currentUserData: User | undefined;
   updatePasswordMutation: UseMutateFunction<
-    UpdatePasswordOkResponse,
-    unknown,
+    ResponseMessageResponse,
+    UpdatePasswordErrorResponse,
     UpdatePasswordMutationProps<never>,
     unknown
   >;

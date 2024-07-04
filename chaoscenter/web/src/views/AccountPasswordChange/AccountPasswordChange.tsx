@@ -6,7 +6,7 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useStrings } from '@strings';
-import type { UpdatePasswordMutationProps, UpdatePasswordOkResponse } from '@api/auth';
+import type { ResponseMessageResponse, UpdatePasswordErrorResponse, UpdatePasswordMutationProps } from '@api/auth';
 import { PASSWORD_REGEX } from '@constants/validation';
 import PasswordInput from '@components/PasswordInput';
 
@@ -14,8 +14,8 @@ interface AccountPasswordChangeViewProps {
   handleClose: () => void;
   username: string | undefined;
   updatePasswordMutation: UseMutateFunction<
-    UpdatePasswordOkResponse,
-    unknown,
+    ResponseMessageResponse,
+    UpdatePasswordErrorResponse,
     UpdatePasswordMutationProps<never>,
     unknown
   >;
@@ -59,7 +59,7 @@ export default function AccountPasswordChangeView(props: AccountPasswordChangeVi
           }
         },
         {
-          onError: () => showError(getString('passwordsDoNotMatch')),
+          onError: err => showError(err.errorDescription),
           onSuccess: () => handleClose()
         }
       );
