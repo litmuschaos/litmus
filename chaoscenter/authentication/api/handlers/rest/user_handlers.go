@@ -2,6 +2,7 @@ package rest
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
@@ -322,7 +323,7 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 
 		if len(ownerProjects) > 0 {
 			defaultProject = ownerProjects[0].ID
-		} else {
+		} else if !user.IsInitialLogin {
 			// Adding user as project owner in project's member list
 			newMember := &entities.Member{
 				UserID:     user.ID,
@@ -415,6 +416,7 @@ func LogoutUser(service services.ApplicationService) gin.HandlerFunc {
 //	@Produce		json
 //	@Failure		400	{object}	response.ErrInvalidRequest
 //	@Failure		401	{object}	response.ErrStrictPasswordPolicyViolation
+//	@Failure		400	{object}	response.ErrOldPassword
 //	@Failure		401	{object}	response.ErrInvalidCredentials
 //	@Success		200	{object}	response.MessageResponse{}
 //	@Router			/update/password [post]
@@ -443,7 +445,11 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 		err = service.UpdatePassword(&userPasswordRequest, true)
 		if err != nil {
 			log.Info(err)
-			c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			if strings.Contains(err.Error(), "old and new passwords can't be same") {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrOldPassword], presenter.CreateErrorResponse(utils.ErrOldPassword))
+			} else {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+			}
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{

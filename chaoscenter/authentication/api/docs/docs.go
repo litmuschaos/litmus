@@ -977,7 +977,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/response.ErrInvalidRequest"
+                            "$ref": "#/definitions/response.ErrOldPassword"
                         }
                     },
                     "401": {
@@ -1182,6 +1182,19 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "Role is invalid"
+                }
+            }
+        },
+        "response.ErrOldPassword": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "message": {
+                    "type": "string",
+                    "example": "The old and new passwords can't be same"
                 }
             }
         },
