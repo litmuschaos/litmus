@@ -62,6 +62,7 @@ export interface InitialValueProps {
   nodeSelectorValues?: Array<NodeSelector>;
   tolerations: boolean;
   tolerationValues?: Array<Toleration>;
+  telemetryEndpoint?: string;
 }
 
 export interface DeploymentScopeItem extends CollapsableSelectOptions {
@@ -106,6 +107,7 @@ export const initialValues: InitialValueProps = {
   addNodeselector: false,
   nodeSelectorValues: [{ key: '', value: '' }],
   tolerations: false,
+  telemetryEndpoint: '',
   tolerationValues: [
     {
       tolerationSeconds: 0,
