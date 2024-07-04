@@ -26,7 +26,7 @@ const PasswordResetController = (): React.ReactElement => {
       onSuccess: data => {
         setUserDetails({ isInitialLogin: false });
         showSuccess(`${data.message}`);
-        history.push(normalizePath(`/account/${accountID}/project/${projectID ?? ''}/dashboard`));
+        history.push(normalizePath(`/account/${accountID}/project/${projectID}/dashboard`));
       },
       onError: err => showError(err.errorDescription)
     }
