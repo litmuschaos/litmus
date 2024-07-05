@@ -1,6 +1,8 @@
 package utils
 
 import (
+	crypto "crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"regexp"
 	"strings"
@@ -45,6 +47,20 @@ func ValidateStrictPassword(input string) error {
 		return fmt.Errorf("password does not contain special characters")
 	}
 	return nil
+}
+
+// RandomString generates random strings, can be used to create ids
+func RandomString(n int) (string, error) {
+	if n > 0 {
+		b := make([]byte, n)
+		_, err := crypto.Read(b)
+		if err != nil {
+			return "", err
+		}
+
+		return base64.URLEncoding.EncodeToString(b), nil
+	}
+	return "", fmt.Errorf("length should be greater than 0")
 }
 
 // Username must start with a letter - ^[a-zA-Z]

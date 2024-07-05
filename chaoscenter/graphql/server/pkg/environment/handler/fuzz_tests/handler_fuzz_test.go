@@ -15,7 +15,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson"
@@ -45,7 +44,6 @@ func GetSignedJWT(name string) (string, error) {
 }
 
 func FuzzCreateEnvironment(f *testing.F) {
-	utils.Config.JwtSecret = JwtSecret
 	f.Fuzz(func(t *testing.T, data []byte) {
 		fuzzConsumer := fuzz.NewConsumer(data)
 		targetStruct := &struct {
@@ -65,7 +63,7 @@ func FuzzCreateEnvironment(f *testing.F) {
 		ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 		service := handler.NewEnvironmentService(environmentOperator)
 
-		env, err := service.CreateEnvironment(ctx, targetStruct.projectID, &targetStruct.input)
+		env, err := service.CreateEnvironment(ctx, targetStruct.projectID, &targetStruct.input, "")
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
 		}
@@ -76,7 +74,6 @@ func FuzzCreateEnvironment(f *testing.F) {
 }
 
 func FuzzTestDeleteEnvironment(f *testing.F) {
-	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		projectID     string
 		environmentID string
@@ -107,7 +104,7 @@ func FuzzTestDeleteEnvironment(f *testing.F) {
 		ctx := context.WithValue(context.Background(), authorization.AuthKey, token)
 		service := handler.NewEnvironmentService(environmentOperator)
 
-		env, err := service.DeleteEnvironment(ctx, projectID, environmentID)
+		env, err := service.DeleteEnvironment(ctx, projectID, environmentID, "")
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
 		}
@@ -119,7 +116,6 @@ func FuzzTestDeleteEnvironment(f *testing.F) {
 }
 
 func FuzzTestGetEnvironment(f *testing.F) {
-	utils.Config.JwtSecret = JwtSecret
 	testCases := []struct {
 		projectID     string
 		environmentID string
