@@ -1,11 +1,11 @@
 name: push-pipeline
 on:
-  push:
-    branches:
-      - master
-      - ^v[0-9]*.[0-9]*.x$
-    tags:
-      - "*"
+  workflow_dispatch:
+    inputs:
+      Tag:
+        default: "ci"
+env:
+  TAG: "${{github.event.inputs.Tag}}"  
 defaults:
   run:
     working-directory: chaoscenter
@@ -48,7 +48,7 @@ jobs:
               img_tag=${GITHUB_REF#refs/*/}
           else
               echo "non tag build"
-              img_tag="ci"
+              img_tag=${{ env.TAG }}
           fi
           # This is a condition where image tag looks like "pull/<pullrequest-name>" during pull request build
           NEW_IMG_TAG=`echo $img_tag | sed "s/\//-/g"`
