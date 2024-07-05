@@ -99,8 +99,12 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 		infraID     = uuid.New().String()
 		currentTime = time.Now()
 	)
+
 	tkn := c.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	token, err := InfraCreateJWT(infraID)
 	if err != nil {
@@ -220,6 +224,10 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 func (in *infraService) DeleteInfra(ctx context.Context, projectID string, infraId string, r store.StateData) (string, error) {
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
+
 	query := bson.D{
 		{"infra_id", infraId},
 		{"project_id", projectID},
@@ -301,6 +309,9 @@ func (in *infraService) GetInfra(ctx context.Context, projectID string, infraID 
 
 	tkn := ctx.Value(authorization.AuthKey).(string)
 	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
 
 	var pipeline mongo.Pipeline
 

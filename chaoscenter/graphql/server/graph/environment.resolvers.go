@@ -25,7 +25,13 @@ func (r *mutationResolver) CreateEnvironment(ctx context.Context, projectID stri
 		return nil, err
 	}
 
-	return r.environmentService.CreateEnvironment(ctx, projectID, request, ctx.Value("username").(string))
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.environmentService.CreateEnvironment(ctx, projectID, request, username)
 }
 
 // UpdateEnvironment is the resolver for the updateEnvironment field.
@@ -42,7 +48,13 @@ func (r *mutationResolver) UpdateEnvironment(ctx context.Context, projectID stri
 		return "", err
 	}
 
-	return r.environmentService.UpdateEnvironment(ctx, projectID, request, ctx.Value("username").(string))
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
+
+	return r.environmentService.UpdateEnvironment(ctx, projectID, request, username)
 }
 
 // DeleteEnvironment is the resolver for the deleteEnvironment field.
@@ -59,7 +71,13 @@ func (r *mutationResolver) DeleteEnvironment(ctx context.Context, projectID stri
 		return "", err
 	}
 
-	return r.environmentService.DeleteEnvironment(ctx, projectID, environmentID, ctx.Value("username").(string))
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return "", err
+	}
+
+	return r.environmentService.DeleteEnvironment(ctx, projectID, environmentID, username)
 }
 
 // GetEnvironment is the resolver for the getEnvironment field.

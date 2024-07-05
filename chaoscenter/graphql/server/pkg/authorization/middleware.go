@@ -37,8 +37,8 @@ func Middleware(handler http.Handler, mongoClient *mongo.Client) gin.HandlerFunc
 		}
 
 		ctx := context.WithValue(c.Request.Context(), AuthKey, jwt)
-		//ctx1 := context.WithValue(ctx, "request-header", c.Request.Header)
-		c.Request = c.Request.WithContext(ctx)
+		ctx1 := context.WithValue(ctx, "request-header", c.Request.Header)
+		c.Request = c.Request.WithContext(ctx1)
 		fmt.Println("here1")
 		handler.ServeHTTP(c.Writer, c.Request)
 	}

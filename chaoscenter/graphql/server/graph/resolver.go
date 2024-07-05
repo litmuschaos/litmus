@@ -2,7 +2,7 @@ package graph
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/authConfig"
 
 	chaos_experiment2 "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_experiment/ops"
@@ -95,16 +95,7 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 			return nil, err
 		}
 
-		fmt.Println("here2")
-
-		fmt.Println("newCtx4", ctx.Value("request-header"))
-
 		newCtx := context.WithValue(ctx, authorization.UserClaim, user)
-		newCtx = context.WithValue(newCtx, "username", user["username"])
-
-		fmt.Println("newCtx5", newCtx.Value("username"))
-		fmt.Println("newCtx6", newCtx.Value(authorization.UserClaim))
-		fmt.Println("newCtx4", newCtx.Value("request-header"))
 
 		return next(newCtx)
 	}
