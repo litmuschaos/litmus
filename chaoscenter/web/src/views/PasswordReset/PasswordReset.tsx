@@ -66,7 +66,7 @@ const PasswordResetView = (props: PasswordResetViewProps): React.ReactElement =>
                 newPassword: '',
                 reEnterNewPassword: ''
               }}
-              onSubmit={values => handleSubmit(values)}
+              onSubmit={handleSubmit}
               validationSchema={Yup.object().shape({
                 oldPassword: Yup.string().required(getString('enterOldPassword')),
                 newPassword: Yup.string()
