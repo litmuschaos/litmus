@@ -9,7 +9,6 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
 	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/k8s"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -20,42 +19,37 @@ type SubscriberConfigurations struct {
 	TLSCert        string
 }
 
-func GetEndpoint(agentType string) (string, error) {
+func GetEndpoint(host string) (string, error) {
 	// returns endpoint from env, if provided by user
+
+	fmt.Println("host", host)
+	fmt.Println("ui-endpoint", utils.Config.ChaosCenterUiEndpoint)
 	if utils.Config.ChaosCenterUiEndpoint != "" {
-		return utils.Config.ChaosCenterUiEndpoint + "/ws/query", nil
+		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
 	}
 
+	return host, nil
 	// generating endpoint based on ChaosCenter Scope & InfraType (Self or External)
-	agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
+	//agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
 
-	if agentEndpoint == "" || err != nil {
-		return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
-	}
+	//if agentEndpoint == "" {
+	//	return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
+	//}
 
-	return agentEndpoint, err
+	//return agentEndpoint, err
+
 }
 
-func GetK8sInfraYaml(infra dbChaosInfra.ChaosInfra) ([]byte, error) {
+func GetK8sInfraYaml(host string, infra dbChaosInfra.ChaosInfra) ([]byte, error) {
 
 	var config SubscriberConfigurations
-	endpoint, err := GetEndpoint(infra.InfraType)
+	endpoint, err := GetEndpoint(host)
 	if err != nil {
 		return nil, err
 	}
 	config.ServerEndpoint = endpoint
 
-	var scope = utils.Config.ChaosCenterScope
-	if scope == ClusterScope && utils.Config.TlsSecretName != "" {
-		config.TLSCert, err = k8s.GetTLSCert(utils.Config.TlsSecretName)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if scope == NamespaceScope {
-		config.TLSCert = utils.Config.TlsCertB64
-	}
+	config.TLSCert = utils.Config.TlsCertB64
 
 	var respData []byte
 	if infra.InfraScope == ClusterScope {

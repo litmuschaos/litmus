@@ -6,7 +6,7 @@ package graph
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	chaosHubOps "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaoshub/ops"
@@ -14,6 +14,7 @@ import (
 
 // AddChaosHub is the resolver for the addChaosHub field.
 func (r *mutationResolver) AddChaosHub(ctx context.Context, projectID string, request model.CreateChaosHubRequest) (*model.ChaosHub, error) {
+
 	if err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.AddChaosHub],
 		model.InvitationAccepted.String()); err != nil {
@@ -95,6 +96,7 @@ func (r *mutationResolver) DeleteChaosHub(ctx context.Context, projectID string,
 
 // ListChaosFaults is the resolver for the listChaosFaults field.
 func (r *queryResolver) ListChaosFaults(ctx context.Context, hubID string, projectID string) ([]*model.Chart, error) {
+	fmt.Println("headerrr", ctx.Value("request-header"))
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListCharts],
 		model.InvitationAccepted.String())

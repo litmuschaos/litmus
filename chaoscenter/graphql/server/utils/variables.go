@@ -25,9 +25,8 @@ type Configuration struct {
 	NodeName                    string   `split_words:"true"`
 	Ingress                     string   `split_words:"true"`
 	IngressName                 string   `split_words:"true"`
-	ChaosCenterUiEndpoint       string   `split_words:"true" default:"localhost:8080"`
+	ChaosCenterUiEndpoint       string   `split_words:"true" default:"https://localhost:8080"`
 	TlsCertB64                  string   `split_words:"true"`
-	TlsSecretName               string   `split_words:"true"`
 	LitmusAuthGrpcEndpoint      string   `split_words:"true" default:"localhost"`
 	LitmusAuthGrpcPort          string   `split_words:"true" default:":3030"`
 	KubeConfigFilePath          string   `split_words:"true"`
