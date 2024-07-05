@@ -16,7 +16,7 @@ func upgradeExecutor(logger *log.Logger, dbClient *mongo.Client) error {
 	if err != nil {
 		fmt.Errorf("Error: %w", err)
 	}
-	log.WithFields(log.Fields{
+	logger.WithFields(log.Fields{
 		"version": "3.9.0",
 	}).Info("Deleted project collection while upgrading to intermediate version v3.9.0")
 	return nil
