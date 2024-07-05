@@ -96,11 +96,17 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 		}
 
 		fmt.Println("here2")
+
+		fmt.Println("newCtx4", ctx.Value("request-header"))
+
 		newCtx := context.WithValue(ctx, authorization.UserClaim, user)
 		newCtx = context.WithValue(newCtx, "username", user["username"])
 
+		fmt.Println("newCtx5", newCtx.Value("username"))
+		fmt.Println("newCtx6", newCtx.Value(authorization.UserClaim))
+		fmt.Println("newCtx4", newCtx.Value("request-header"))
+
 		return next(newCtx)
 	}
-
 	return config
 }
