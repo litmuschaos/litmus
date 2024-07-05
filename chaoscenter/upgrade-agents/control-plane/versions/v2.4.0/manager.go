@@ -1,18 +1,18 @@
 package v2_4_0
 
 import (
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.uber.org/zap"
 )
 
 // VersionManager implements IVersionManger
 type VersionManager struct {
-	Logger   *zap.Logger
+	Logger   *log.Logger
 	DBClient *mongo.Client
 }
 
 // NewVersionManger provides a new instance of a new VersionManager
-func NewVersionManger(logger *zap.Logger, dbClient *mongo.Client) *VersionManager {
+func NewVersionManger(logger *log.Logger, dbClient *mongo.Client) *VersionManager {
 	return &VersionManager{Logger: logger, DBClient: dbClient}
 }
 

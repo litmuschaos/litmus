@@ -13,10 +13,13 @@ import (
 
 	v3_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.4.0"
 
+	v3_8_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.8.0"
+
+	v3_9_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.9.0"
+
 	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.uber.org/zap"
 )
 
 // UpgradeExecutor holds the details regarding the version and IVersionManager for a particular version
@@ -27,7 +30,7 @@ type UpgradeExecutor struct {
 
 // UpgradeManager provides the functionality required to upgrade from the PreviousVersion to the TargetVersion
 type UpgradeManager struct {
-	Logger          *zap.Logger
+	Logger          *log.Logger
 	DBClient        *mongo.Client
 	PreviousVersion *Version
 	TargetVersion   *Version
@@ -80,8 +83,11 @@ func ParseVersion(version string) *Version {
 }
 
 // NewUpgradeManager creates an instance of a upgrade manager with the proper configurations
-func NewUpgradeManager(logger *zap.Logger, dbClient *mongo.Client) (*UpgradeManager, error) {
+func NewUpgradeManager(logger *log.Logger, dbClient *mongo.Client) (*UpgradeManager, error) {
+
+	// added for debug only to run version manager consistently
 	database.UpdateVersion(dbClient, "3.3.0")
+
 	currentVersion := os.Getenv("VERSION")
 	log.WithFields(log.Fields{
 		"targetVersion": currentVersion,
@@ -233,7 +239,11 @@ func (m *UpgradeManager) getVersionMap() map[string]UpgradeExecutor {
 		},
 		"3.8.0": {
 			NextVersion:    "",
-			VersionManager: nil,
+			VersionManager: v3_8_0.NewVersionManger(m.Logger, m.DBClient),
+		},
+		"3.9.0": {
+			NextVersion:    "",
+			VersionManager: v3_9_0.NewVersionManger(m.Logger, m.DBClient),
 		},
 		"4.0.0-beta8": {
 			NextVersion:    "",

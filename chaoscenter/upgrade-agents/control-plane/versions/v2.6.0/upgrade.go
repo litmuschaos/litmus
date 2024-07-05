@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.uber.org/zap"
 )
 
 // upgradeWorkflowCollection updated the index related changes in workflow-collection
-func upgradeWorkflowCollection(logger *zap.Logger, dbClient *mongo.Client) error {
+func upgradeWorkflowCollection(logger *log.Logger, dbClient *mongo.Client) error {
 	workflowCollection := dbClient.Database("litmus").Collection("workflow-collection")
 
 	//delete the existing workflow_name index
