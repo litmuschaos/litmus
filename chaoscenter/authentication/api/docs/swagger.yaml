@@ -57,6 +57,15 @@ definitions:
         example: Role is invalid
         type: string
     type: object
+  response.ErrOldPassword:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: The old and new passwords can't be same
+        type: string
+    type: object
   response.ErrProjectNotFound:
     properties:
       code:
@@ -82,8 +91,19 @@ definitions:
         example: 401
         type: integer
       message:
-        example: Please ensure the password is 8 characters long and has 1 digit,
-          1 lowercase alphabet, 1 uppercase alphabet and 1 special character
+        example: Please ensure the password is atleast 8 characters and atmost 16
+          characters long and has atleast 1 digit, 1 lowercase alphabet, 1 uppercase
+          alphabet and 1 special character
+        type: string
+    type: object
+  response.ErrStrictUsernamePolicyViolation:
+    properties:
+      code:
+        example: 401
+        type: integer
+      message:
+        example: The username should be atleast 3 characters long and atmost 16 characters
+          long.
         type: string
     type: object
   response.ErrUnauthorized:
@@ -762,6 +782,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/response.ErrInvalidRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrStrictUsernamePolicyViolation'
         "500":
           description: Internal Server Error
           schema:
@@ -783,7 +807,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ErrInvalidRequest'
+            $ref: '#/definitions/response.ErrOldPassword'
         "401":
           description: Unauthorized
           schema:
