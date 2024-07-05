@@ -205,7 +205,6 @@ func (in *infraService) RegisterInfra(c context.Context, projectID string, input
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("ref-url-register-infra", referrerURL.Scheme, referrerURL.Host)
 
 	manifestYaml, err := GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), newInfra)
 	if err != nil {

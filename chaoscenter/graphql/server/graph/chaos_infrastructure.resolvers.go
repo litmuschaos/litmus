@@ -97,7 +97,6 @@ func (r *mutationResolver) GetManifestWithInfraID(ctx context.Context, projectID
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("ref-url", referrerURL.Scheme, referrerURL.Host)
 	logrus.WithFields(logFields).Info("request received to get chaos infrastructure installation manifest")
 	manifest, err := r.chaosInfrastructureService.GetManifestWithInfraID(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), infraID, accessKey)
 	if err != nil {
@@ -198,7 +197,6 @@ func (r *queryResolver) GetInfraManifest(ctx context.Context, infraID string, up
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("ref-url", referrerURL.Scheme, referrerURL.Host)
 
 	logrus.WithFields(logFields).Info("request received to get chaos infrastructure manifest")
 	err = authorization.ValidateRole(ctx, projectID,

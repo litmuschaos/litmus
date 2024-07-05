@@ -21,9 +21,6 @@ type SubscriberConfigurations struct {
 
 func GetEndpoint(host string) (string, error) {
 	// returns endpoint from env, if provided by user
-
-	fmt.Println("host", host)
-	fmt.Println("ui-endpoint", utils.Config.ChaosCenterUiEndpoint)
 	if utils.Config.ChaosCenterUiEndpoint != "" {
 		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
 	}

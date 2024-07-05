@@ -54,7 +54,6 @@ func FileHandler(mongodbOperator mongodb.MongoOperator) gin.HandlerFunc {
 			utils.WriteHeaders(&c.Writer, 500)
 			c.Writer.Write([]byte(err.Error()))
 		}
-		fmt.Println("ref-url", referrerURL.Scheme, referrerURL.Host)
 
 		response, err := chaos_infrastructure.GetK8sInfraYaml(fmt.Sprintf("%s://%s", referrerURL.Scheme, referrerURL.Host), infra)
 		if err != nil {

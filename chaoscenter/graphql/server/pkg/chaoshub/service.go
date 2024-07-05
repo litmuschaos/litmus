@@ -320,7 +320,6 @@ func (c *chaosHubService) UpdateChaosHub(ctx context.Context, chaosHub model.Upd
 		SSHPrivateKey: chaosHub.SSHPrivateKey,
 		IsDefault:     false,
 	}
-	fmt.Println(chaosHub.SSHPrivateKey)
 	prevChaosHub, err := c.chaosHubOperator.GetHubByID(ctx, chaosHub.ID, projectID)
 	if err != nil {
 		return nil, err
