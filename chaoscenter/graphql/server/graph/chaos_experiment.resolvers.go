@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/generated"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
@@ -193,6 +194,10 @@ func (r *queryResolver) ListExperiment(ctx context.Context, projectID string, re
 		"chaosExperimentIds": request.ExperimentIDs,
 	}
 	logrus.WithFields(logFields).Info("request received to list chaos experiments")
+	fmt.Println("newCtx2", ctx.Value("request-header"))
+	fmt.Println("newCtx1", ctx.Value("username"))
+
+	fmt.Println("newCtx2", ctx.Value(authorization.UserClaim))
 
 	err := authorization.ValidateRole(ctx, projectID,
 		authorization.MutationRbacRules[authorization.ListExperiment],
