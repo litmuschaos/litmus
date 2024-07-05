@@ -5,12 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
-
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/validations"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -305,7 +304,13 @@ func LoginUser(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := service.GetSignedJWT(user)
+		salt, err := service.GetConfig("salt")
+		if err != nil {
+			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
+			return
+		}
+
+		token, err := service.GetSignedJWT(user, salt.Value)
 		if err != nil {
 			log.Error(err)
 			c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
