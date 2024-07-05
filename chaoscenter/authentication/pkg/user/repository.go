@@ -26,6 +26,7 @@ type Repository interface {
 	UpdatePassword(userPassword *entities.UserPassword, isAdminBeingReset bool) error
 	CreateUser(user *entities.User) (*entities.User, error)
 	UpdateUser(user *entities.UserDetails) error
+	UpdateUserByQuery(filter bson.D, updateQuery bson.D) error
 	IsAdministrator(user *entities.User) error
 	UpdateUserState(ctx context.Context, username string, isDeactivate bool, deactivateTime int64) error
 	InviteUsers(invitedUsers []string) (*[]entities.User, error)
@@ -222,10 +223,20 @@ func (r repository) CreateUser(user *entities.User) (*entities.User, error) {
 	return user.SanitizedUser(), nil
 }
 
+// UpdateUserByQuery updates user details in the database
+func (r repository) UpdateUserByQuery(filter bson.D, updateQuery bson.D) error {
+	_, err := r.Collection.UpdateOne(context.Background(), filter, updateQuery)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // UpdateUser updates user details in the database
 func (r repository) UpdateUser(user *entities.UserDetails) error {
 	data, _ := toDoc(user)
-	_, err := r.Collection.UpdateOne(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
+	_, err := r.Collection.UpdateMany(context.Background(), bson.M{"_id": user.ID}, bson.M{"$set": data})
 	if err != nil {
 		return err
 	}

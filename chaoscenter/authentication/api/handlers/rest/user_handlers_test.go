@@ -13,6 +13,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gin-gonic/gin"
@@ -408,9 +410,11 @@ func TestLoginUser(t *testing.T) {
 					Password: "hashedPassword",
 					Email:    "test@example.com",
 				}
+				service.On("GetConfig", "salt").Return(&authConfig.AuthConfig{}, nil)
 				service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
 				service.On("CheckPasswordHash", "hashedPassword", "testPassword").Return(nil)
-				service.On("GetSignedJWT", userFromDB).Return("someJWTToken", nil)
+				service.On("UpdateUserByQuery", mock.Anything, mock.Anything).Return(nil)
+				service.On("GetSignedJWT", userFromDB, mock.Anything).Return("someJWTToken", nil)
 				project := &entities.Project{
 					ID: "someProjectID",
 				}

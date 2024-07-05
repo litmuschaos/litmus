@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	JwtSecret                    = os.Getenv("JWT_SECRET")
 	AdminName                    = os.Getenv("ADMIN_USERNAME")
 	AdminPassword                = os.Getenv("ADMIN_PASSWORD")
 	DBUrl                        = os.Getenv("DB_SERVER")
@@ -26,6 +25,7 @@ var (
 	GrpcPort                     = ":3030"
 	UserCollection               = "users"
 	ProjectCollection            = "project"
+	AuthConfigCollection         = "auth-config"
 	RevokedTokenCollection       = "revoked-token"
 	ApiTokenCollection           = "api-token"
 	UsernameField                = "username"
