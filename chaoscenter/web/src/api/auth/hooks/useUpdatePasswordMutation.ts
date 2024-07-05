@@ -3,6 +3,9 @@
 // Please do not modify this code directly.
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 
+import type { ResponseMessageResponse } from '../schemas/ResponseMessageResponse';
+import type { ResponseErrOldPassword } from '../schemas/ResponseErrOldPassword';
+import type { ResponseErrInvalidCredentials } from '../schemas/ResponseErrInvalidCredentials';
 import { fetcher, FetcherOptions } from 'services/fetcher';
 
 export type UpdatePasswordRequestBody = {
@@ -11,11 +14,9 @@ export type UpdatePasswordRequestBody = {
   username: string;
 };
 
-export type UpdatePasswordOkResponse = {
-  message?: string;
-};
+export type UpdatePasswordOkResponse = ResponseMessageResponse;
 
-export type UpdatePasswordErrorResponse = unknown;
+export type UpdatePasswordErrorResponse = ResponseErrOldPassword | ResponseErrInvalidCredentials;
 
 export interface UpdatePasswordProps extends Omit<FetcherOptions<unknown, UpdatePasswordRequestBody>, 'url'> {
   body: UpdatePasswordRequestBody;

@@ -442,8 +442,10 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			log.Info(err)
 			if strings.Contains(err.Error(), "old and new passwords can't be same") {
 				c.JSON(utils.ErrorStatusCodes[utils.ErrOldPassword], presenter.CreateErrorResponse(utils.ErrOldPassword))
+			} else if strings.Contains(err.Error(), "invalid credentials") {
+				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidCredentials], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
 			} else {
-				c.JSON(utils.ErrorStatusCodes[utils.ErrInvalidRequest], presenter.CreateErrorResponse(utils.ErrInvalidRequest))
+				c.JSON(utils.ErrorStatusCodes[utils.ErrServerError], presenter.CreateErrorResponse(utils.ErrServerError))
 			}
 			return
 		}

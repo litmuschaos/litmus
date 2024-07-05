@@ -8,7 +8,7 @@ interface PasswordInputProps {
   disabled?: boolean;
   placeholder?: string;
   name: string;
-  label: string;
+  label: string | React.ReactElement;
 }
 
 const PasswordInput = (props: PasswordInputProps): React.ReactElement => {
@@ -22,10 +22,12 @@ const PasswordInput = (props: PasswordInputProps): React.ReactElement => {
 
   return (
     <Layout.Vertical className={style.fieldContainer}>
-      {label && (
+      {label && typeof label === 'string' ? (
         <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.GREY_600}>
           {label}
         </Text>
+      ) : (
+        label
       )}
       <div className={style.inputContainer}>
         <FormInput.Text
