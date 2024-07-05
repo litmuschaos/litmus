@@ -7,13 +7,13 @@ import (
 	"strconv"
 	"strings"
 
-	v2_6_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.6.0"
+	v2_6_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v2.6.0"
 
-	v2_4_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v2.4.0"
+	v2_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v2.4.0"
 
-	v3_4_0 "github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions/v3.4.0"
+	v3_4_0 "github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions/v3.4.0"
 
-	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"

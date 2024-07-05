@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/pkg/database"
-	"github.com/litmuschaos/litmus/litmus-portal/upgrader-agents/control-plane/versions"
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/pkg/database"
+	"github.com/litmuschaos/litmus/chaoscenter/upgrader-agents/control-plane/versions"
 	"go.uber.org/zap"
 )
 
