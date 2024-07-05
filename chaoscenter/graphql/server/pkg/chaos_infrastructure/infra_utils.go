@@ -28,7 +28,7 @@ func GetEndpoint(host string) (string, error) {
 		return utils.Config.ChaosCenterUiEndpoint + "/api/query", nil
 	}
 
-	return host, nil
+	return host + "/api/query", nil
 	// generating endpoint based on ChaosCenter Scope & InfraType (Self or External)
 	//agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
 
