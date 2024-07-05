@@ -188,7 +188,7 @@ func (r repository) UpdatePassword(userPassword *entities.UserPassword, isAdminB
 	if isAdminBeingReset {
 		err := bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(userPassword.OldPassword))
 		if err != nil {
-			return err
+			return fmt.Errorf("invalid credentials")
 		}
 		// check if the new pwd is same as old pwd, if yes return err
 		err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(userPassword.NewPassword))
