@@ -787,8 +787,6 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		return nil, err
 	}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
 	var (
 		wc      = writeconcern.New(writeconcern.WMajority())
 		rc      = readconcern.Snapshot()
@@ -817,11 +815,11 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 					IsRemoved: false,
 					CreatedAt: currentTime,
 					CreatedBy: mongodb.UserDetailResponse{
-						Username: username,
+						Username: ctx.Value(authorization.AuthKey).(string),
 					},
 					UpdatedAt: currentTime,
 					UpdatedBy: mongodb.UserDetailResponse{
-						Username: username,
+						Username: ctx.Value(authorization.AuthKey).(string),
 					},
 				},
 			},
@@ -863,11 +861,11 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 				IsRemoved: false,
 				CreatedAt: currentTime,
 				CreatedBy: mongodb.UserDetailResponse{
-					Username: username,
+					Username: ctx.Value(authorization.AuthKey).(string),
 				},
 				UpdatedAt: currentTime,
 				UpdatedBy: mongodb.UserDetailResponse{
-					Username: username,
+					Username: ctx.Value(authorization.AuthKey).(string),
 				},
 			},
 			NotifyID:        &notifyID,
@@ -910,7 +908,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate probes in workflow manifest, err: %v", err)
 	}
-
+	username := ctx.Value(authorization.AuthKey).(string)
 	manifest, err := yaml.Marshal(workflowManifest)
 	if err != nil {
 		return nil, err
@@ -993,8 +991,7 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return err
 	}
 
-	tkn := ctx.Value(authorization.AuthKey).(string)
-	username, err := authorization.GetUsername(tkn)
+	username := ctx.Value(authorization.AuthKey).(string)
 
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{

@@ -7,6 +7,9 @@ import (
 	"runtime"
 	"time"
 
+	response "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+
 	grpcHandler "github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/middleware"
 	grpcPresenter "github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
@@ -82,6 +85,12 @@ func main() {
 		log.Errorf("failed to create collection  %s", err)
 	}
 
+	// Creating AuthConfig Collection
+	err = utils.CreateCollection(utils.AuthConfigCollection, db)
+	if err != nil {
+		log.Errorf("failed to create collection  %s", err)
+	}
+
 	// Creating RevokedToken Collection
 	if err = utils.CreateCollection(utils.RevokedTokenCollection, db); err != nil {
 		log.Errorf("failed to create collection  %s", err)
@@ -108,9 +117,17 @@ func main() {
 	apiTokenCollection := db.Collection(utils.ApiTokenCollection)
 	apiTokenRepo := session.NewApiTokenRepo(apiTokenCollection)
 
+	authConfigCollection := db.Collection(utils.AuthConfigCollection)
+	authConfigRepo := authConfig.NewAuthConfigRepo(authConfigCollection)
+
 	miscRepo := misc.NewRepo(db, client)
 
-	applicationService := services.NewService(userRepo, projectRepo, miscRepo, revokedTokenRepo, apiTokenRepo, db)
+	applicationService := services.NewService(userRepo, projectRepo, miscRepo, revokedTokenRepo, apiTokenRepo, authConfigRepo, db)
+
+	err = response.AddSalt(applicationService)
+	if err != nil {
+		log.Fatal("couldn't create salt $s", err)
+	}
 
 	validatedAdminSetup(applicationService)
 
@@ -163,10 +180,10 @@ func runRestServer(applicationService services.ApplicationService) {
 	if utils.DexEnabled {
 		routes.DexRouter(app, applicationService)
 	}
+	routes.CapabilitiesRouter(app)
 	routes.MiscRouter(app, applicationService)
 	routes.UserRouter(app, applicationService)
 	routes.ProjectRouter(app, applicationService)
-	routes.CapabilitiesRouter(app)
 
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
 	err := app.Run(utils.Port)
