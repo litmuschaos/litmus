@@ -1,6 +1,6 @@
-import { IDialogProps, Dialog as BluePrintDialog } from '@blueprintjs/core';
+import { IDialogProps } from '@blueprintjs/core';
 import { Color, FontVariation } from '@harnessio/design-system';
-import { Button, ButtonVariation, Layout, Text, useToggleOpen, Dialog } from '@harnessio/uicore';
+import { Button, ButtonVariation, Layout, Text, Dialog } from '@harnessio/uicore';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { isEmpty } from 'lodash-es';
@@ -17,8 +17,6 @@ import NewExperimentButton from '@components/NewExperimentButton';
 import RbacButton from '@components/RbacButton';
 import { PermissionGroup } from '@models';
 import { getUserDetails } from '@utils';
-import AccountPasswordChangeController from '@controllers/AccountPasswordChange';
-import { User } from '@api/auth';
 import TotalChaosHubsCard from './TotalChaosHubsCard';
 import TotalExperimentCard from './TotalExperimentCard';
 import TotalInfrastructureCard from './TotalInfrastructureCard';
@@ -34,9 +32,7 @@ interface OverviewViewProps {
     infraStats: boolean;
     experimentStats: boolean;
     recentExperimentsTable: boolean;
-    getUser: boolean;
   };
-  currentUserData: User | undefined;
 }
 
 export default function OverviewView({
@@ -45,26 +41,17 @@ export default function OverviewView({
   infraStats,
   experimentDashboardTableData,
   experimentStats,
-  refetchExperiments,
-  currentUserData
+  refetchExperiments
 }: OverviewViewProps & RefetchExperiments): React.ReactElement {
   const { getString } = useStrings();
   const paths = useRouteWithBaseUrl();
   const history = useHistory();
-  const {
-    isOpen: isPasswordResetModalOpen,
-    close: closePasswordResetModal,
-    open: openPasswordResetModal
-  } = useToggleOpen();
 
   const [isEnableChaosModalOpen, setIsEnableChaosModalOpen] = React.useState(false);
   const userDetails = getUserDetails();
 
   React.useEffect(() => {
-    if (userDetails?.isInitialLogin) {
-      openPasswordResetModal();
-    }
-    if (infraStats?.totalInfrastructures === 0 && !isPasswordResetModalOpen) setIsEnableChaosModalOpen(true);
+    if (infraStats?.totalInfrastructures === 0) setIsEnableChaosModalOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [infraStats?.totalInfrastructures, userDetails?.isInitialLogin]);
 
@@ -100,21 +87,6 @@ export default function OverviewView({
         color={Color.PRIMARY_BG}
         spacing="xlarge"
       >
-        <BluePrintDialog
-          isOpen={isPasswordResetModalOpen}
-          canOutsideClickClose={false}
-          canEscapeKeyClose={false}
-          onClose={closePasswordResetModal}
-          style={{
-            paddingBottom: 0
-          }}
-        >
-          <AccountPasswordChangeController
-            handleClose={closePasswordResetModal}
-            username={currentUserData?.username}
-            initialMode={true}
-          />
-        </BluePrintDialog>
         <Layout.Vertical spacing="medium">
           <Text font={{ variation: FontVariation.H5 }}>{getString('atAGlance')}</Text>
           <Layout.Horizontal spacing="medium">
