@@ -248,6 +248,25 @@ spec:
             - containerPort: 8001
           imagePullPolicy: Always
 ---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: litmusportal-server
+  namespace: litmus
+  labels:
+    component: litmusportal-server
+spec:
+  policyTypes:
+  - Ingress
+  podSelector:
+    matchLabels:
+      component: litmusportal-server
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          component: litmusportal-frontend
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -327,6 +346,29 @@ spec:
             - containerPort: 3001
             - containerPort: 3031
           imagePullPolicy: Always
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: litmusportal-auth-server
+  namespace: litmus
+  labels:
+    component: litmusportal-auth-server
+spec:
+  policyTypes:
+  - Ingress
+  podSelector:
+    matchLabels:
+      component: litmusportal-auth-server
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          component: litmusportal-frontend
+  - from:
+    - podSelector:
+        matchLabels:
+          component: litmusportal-server
 ---
 apiVersion: v1
 kind: Service
