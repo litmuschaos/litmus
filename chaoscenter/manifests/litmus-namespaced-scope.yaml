@@ -1,33 +1,4 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: litmus-server-role
-rules:
-  - apiGroups: [networking.k8s.io, extensions]
-    resources: [ingresses]
-    verbs: [get]
-  - apiGroups: [""]
-    resources: [services, pods/log]
-    verbs: [get, watch]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: litmus-server-rb
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: litmus-server-role
-subjects:
-  - kind: ServiceAccount
-    name: litmus-server-account
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: litmus-server-account
----
 apiVersion: v1
 kind: Secret
 metadata:
@@ -203,6 +174,7 @@ spec:
       labels:
         component: litmusportal-server
     spec:
+      automountServiceAccountToken: false
       volumes:
         - name: gitops-storage
           emptyDir: {}
@@ -227,25 +199,13 @@ spec:
             - secretRef:
                 name: litmus-portal-admin-secret
           env:
-            - name: LITMUS_PORTAL_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: INFRA_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
             # if self-signed certificate are used pass the base64 tls certificate, to allow agents to use tls for communication
             - name: TLS_CERT_B64
               value: ""
-            - name: CHAOS_CENTER_SCOPE
-              value: "namespace"
             - name: ENABLE_GQL_INTROSPECTION
               value: "false"
             - name: INFRA_DEPLOYMENTS
               value: '["app=chaos-exporter", "name=chaos-operator", "app=workflow-controller", "app=event-tracker"]'
-            - name: SERVER_SERVICE_NAME
-              value: "litmusportal-server-service"
             - name: CHAOS_CENTER_UI_ENDPOINT
               value: ""
             - name: SUBSCRIBER_IMAGE
@@ -271,17 +231,13 @@ spec:
             - name: LITMUS_AUTH_GRPC_PORT
               value: ":3030"
             - name: WORKFLOW_HELPER_IMAGE_VERSION
-              value: "3.7.0"
+              value: "ci"
             - name: REMOTE_HUB_MAX_SIZE
               value: "5000000"
-            - name: INGRESS
-              value: "false"
-            - name: INGRESS_NAME
-              value: "litmus-ingress"
             - name: INFRA_COMPATIBLE_VERSIONS
               value: '["ci"]'
             - name: ALLOWED_ORIGINS
-              value: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?  
+              value: ".*" 
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -295,7 +251,6 @@ spec:
               memory: "712Mi"
               cpu: "550m"
               ephemeral-storage: "1Gi"
-      serviceAccountName: litmus-server-account
 ---
 apiVersion: v1
 kind: Service
@@ -355,7 +310,7 @@ spec:
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
             - name: ALLOWED_ORIGINS
-              value: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-auth-server-service(:[0-9]+|)?
+              value: ".*"
           ports:
             - containerPort: 3000
             - containerPort: 3030

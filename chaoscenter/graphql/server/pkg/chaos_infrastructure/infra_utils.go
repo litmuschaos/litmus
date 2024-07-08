@@ -26,15 +26,6 @@ func GetEndpoint(host string) (string, error) {
 	}
 
 	return host + "/api/query", nil
-	// generating endpoint based on ChaosCenter Scope & InfraType (Self or External)
-	//agentEndpoint, err := k8s.GetServerEndpoint(utils.Config.ChaosCenterScope, agentType)
-
-	//if agentEndpoint == "" {
-	//	return "", fmt.Errorf("failed to retrieve the server endpoint %v", err)
-	//}
-
-	//return agentEndpoint, err
-
 }
 
 func GetK8sInfraYaml(host string, infra dbChaosInfra.ChaosInfra) ([]byte, error) {
