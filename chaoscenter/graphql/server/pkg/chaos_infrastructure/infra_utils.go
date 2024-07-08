@@ -203,13 +203,6 @@ func ManifestParser(infra dbChaosInfra.ChaosInfra, rootPath string, config *Subs
 
 // SendRequestToSubscriber sends events from the graphQL server to the subscribers listening for the requests
 func SendRequestToSubscriber(subscriberRequest SubscriberRequests, r store.StateData) {
-	if utils.Config.ChaosCenterScope == string(model.InfraScopeCluster) {
-		/*
-			namespace = Obtain from WorkflowManifest or
-			from frontend as a separate workflowNamespace field under ChaosWorkFlowRequest model
-			for CreateChaosWorkflow mutation to be passed to this function.
-		*/
-	}
 	newAction := &model.InfraActionResponse{
 		ProjectID: subscriberRequest.ProjectID,
 		Action: &model.ActionPayload{
