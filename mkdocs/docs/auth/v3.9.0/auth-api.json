@@ -1843,8 +1843,15 @@
     },
     "response.MessageResponse": {
         "type": "object",
+        "required": [
+          "message",
+          "projectID"
+        ],
         "properties": {
             "message": {
+                "type": "string"
+            },
+            "projectID": {
                 "type": "string"
             }
         }
