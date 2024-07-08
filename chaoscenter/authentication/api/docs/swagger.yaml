@@ -57,6 +57,15 @@ definitions:
         example: Role is invalid
         type: string
     type: object
+  response.ErrOldPassword:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: The old and new passwords can't be same
+        type: string
+    type: object
   response.ErrProjectNotFound:
     properties:
       code:
@@ -798,7 +807,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/response.ErrInvalidRequest'
+            $ref: '#/definitions/response.ErrOldPassword'
         "401":
           description: Unauthorized
           schema:

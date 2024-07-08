@@ -412,19 +412,21 @@
         "operationId": "updatePassword",
         "responses": {
           "200": {
-            "description": "OK",
-            "examples": {
-              "application/json": {
-                "message": "password has been reset"
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/response.MessageResponse"
               }
-            },
+          },
+          "400": {
+            "description": "Bad Request",
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
+                "$ref": "#/definitions/response.ErrOldPassword"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+                "$ref": "#/definitions/response.ErrInvalidCredentials"
             }
           }
         },
@@ -1832,6 +1834,40 @@
           }
         }
       ]
+    },
+    "response.MessageResponse": {
+        "type": "object",
+        "properties": {
+            "message": {
+                "type": "string"
+            }
+        }
+    },
+    "response.ErrOldPassword": {
+      "type": "object",
+      "properties": {
+          "error": {
+              "type": "string",
+              "example": "The old and new passwords can't be same"
+          },
+          "errorDescription": {
+              "type": "string",
+              "example": "The old and new passwords can't be same"
+          }
+      }
+    },
+    "response.ErrInvalidCredentials": {
+      "type": "object",
+      "properties": {
+          "error": {
+              "type": "string",
+              "example": "The old and new passwords can't be same"
+          },
+          "errorDescription": {
+              "type": "string",
+              "example": "The old and new passwords can't be same"
+          }
+      }
     }
   }
 }

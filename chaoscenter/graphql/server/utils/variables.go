@@ -8,7 +8,6 @@ type Configuration struct {
 	Version                     string   `required:"true"`
 	InfraDeployments            string   `required:"true" split_words:"true"`
 	DbServer                    string   `required:"true" split_words:"true"`
-	JwtSecret                   string   `required:"true" split_words:"true"`
 	LitmusPortalNamespace       string   `required:"true" split_words:"true"`
 	DbUser                      string   `required:"true" split_words:"true"`
 	DbPassword                  string   `required:"true" split_words:"true"`
