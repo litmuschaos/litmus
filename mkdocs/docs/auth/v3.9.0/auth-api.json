@@ -488,6 +488,12 @@
             "schema": {
               "$ref": "#/definitions/User"
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/response.ErrBadRequest"
+            }
           }
         },
         "parameters": [
@@ -1857,6 +1863,19 @@
       }
     },
     "response.ErrInvalidCredentials": {
+      "type": "object",
+      "properties": {
+          "error": {
+              "type": "string",
+              "example": "The old and new passwords can't be same"
+          },
+          "errorDescription": {
+              "type": "string",
+              "example": "The old and new passwords can't be same"
+          }
+      }
+    },
+    "response.ErrBadRequest": {
       "type": "object",
       "properties": {
           "error": {
