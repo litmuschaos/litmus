@@ -94,11 +94,10 @@ func NewConfig(mongodbOperator mongodb.MongoOperator) generated.Config {
 		if err != nil {
 			return nil, err
 		}
+
 		newCtx := context.WithValue(ctx, authorization.UserClaim, user)
-		newCtx = context.WithValue(ctx, "username", user["username"])
 
 		return next(newCtx)
 	}
-
 	return config
 }

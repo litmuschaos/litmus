@@ -11,11 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
+
 	probeUtils "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/probe/utils"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/authorization"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/gitops"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -793,6 +794,12 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 		txnOpts = options.Transaction().SetWriteConcern(wc).SetReadConcern(rc)
 	)
 
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return nil, err
+	}
+
 	session, err := mongodb.MgoClient.StartSession()
 	if err != nil {
 		logrus.Errorf("failed to start mongo session %v", err)
@@ -815,11 +822,11 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 					IsRemoved: false,
 					CreatedAt: currentTime,
 					CreatedBy: mongodb.UserDetailResponse{
-						Username: ctx.Value(authorization.AuthKey).(string),
+						Username: username,
 					},
 					UpdatedAt: currentTime,
 					UpdatedBy: mongodb.UserDetailResponse{
-						Username: ctx.Value(authorization.AuthKey).(string),
+						Username: username,
 					},
 				},
 			},
@@ -861,11 +868,11 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 				IsRemoved: false,
 				CreatedAt: currentTime,
 				CreatedBy: mongodb.UserDetailResponse{
-					Username: ctx.Value(authorization.AuthKey).(string),
+					Username: username,
 				},
 				UpdatedAt: currentTime,
 				UpdatedBy: mongodb.UserDetailResponse{
-					Username: ctx.Value(authorization.AuthKey).(string),
+					Username: username,
 				},
 			},
 			NotifyID:        &notifyID,
@@ -908,7 +915,7 @@ func (c *ChaosExperimentRunHandler) RunChaosWorkFlow(ctx context.Context, projec
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate probes in workflow manifest, err: %v", err)
 	}
-	username := ctx.Value(authorization.AuthKey).(string)
+
 	manifest, err := yaml.Marshal(workflowManifest)
 	if err != nil {
 		return nil, err
@@ -991,7 +998,11 @@ func (c *ChaosExperimentRunHandler) RunCronExperiment(ctx context.Context, proje
 		return err
 	}
 
-	username := ctx.Value(authorization.AuthKey).(string)
+	tkn := ctx.Value(authorization.AuthKey).(string)
+	username, err := authorization.GetUsername(tkn)
+	if err != nil {
+		return err
+	}
 
 	if r != nil {
 		chaos_infrastructure.SendExperimentToSubscriber(projectID, &model.ChaosExperimentRequest{
