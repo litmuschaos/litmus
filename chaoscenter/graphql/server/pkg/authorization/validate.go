@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/grpc"
+	"github.com/sirupsen/logrus"
 
 	grpc2 "google.golang.org/grpc"
 )
@@ -20,7 +21,8 @@ func ValidateRole(ctx context.Context, projectID string,
 		requiredRoles,
 		invitation)
 	if err != nil {
-		return errors.New("permission_denied")
+		logrus.Error(err)
+		return errors.New("permission_denied: " + err.Error())
 	}
 	return nil
 }
