@@ -5,10 +5,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/sirupsen/logrus"
-
-	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure"
-
 	"github.com/gin-gonic/gin"
 	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/utils"
 )
@@ -29,13 +25,7 @@ func ValidateCors() gin.HandlerFunc {
 		}
 
 		validOrigin := false
-		endpoint, err := chaos_infrastructure.GetEndpoint("external")
-		if err != nil {
-			logrus.Error(err)
-		} else if endpoint != "" {
-			allowedOrigins = append(allowedOrigins, endpoint)
 
-		}
 		for _, allowedOrigin := range allowedOrigins {
 			match, err := regexp.MatchString(allowedOrigin, origin)
 			if err == nil && match {
