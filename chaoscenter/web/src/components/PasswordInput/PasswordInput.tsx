@@ -2,6 +2,7 @@ import React from 'react';
 import { Icon, IconName } from '@harnessio/icons';
 import { FormInput, Layout, Text } from '@harnessio/uicore';
 import { Color, FontVariation } from '@harnessio/design-system';
+import cx from 'classnames';
 import style from './PasswordInput.module.scss';
 
 interface PasswordInputProps {
@@ -9,10 +10,11 @@ interface PasswordInputProps {
   placeholder?: string;
   name: string;
   label: string | React.ReactElement;
+  className?: string;
 }
 
 const PasswordInput = (props: PasswordInputProps): React.ReactElement => {
-  const { disabled, label, name, placeholder } = props;
+  const { disabled, label, name, placeholder, className } = props;
   const [showPassword, setShowPassword] = React.useState(false);
   const stateIcon: IconName = showPassword ? 'eye-off' : 'eye-open';
 
@@ -21,7 +23,7 @@ const PasswordInput = (props: PasswordInputProps): React.ReactElement => {
   }
 
   return (
-    <Layout.Vertical className={style.fieldContainer}>
+    <Layout.Vertical className={cx(style.fieldContainer, className)}>
       {label && typeof label === 'string' ? (
         <Text font={{ variation: FontVariation.BODY, weight: 'semi-bold' }} color={Color.GREY_600}>
           {label}

@@ -157,10 +157,11 @@ func validatedAdminSetup(service services.ApplicationService) {
 	password := string(hashedPassword)
 
 	adminUser := entities.User{
-		ID:       uID,
-		Username: utils.AdminName,
-		Password: password,
-		Role:     entities.RoleAdmin,
+		ID:             uID,
+		Username:       utils.AdminName,
+		Password:       password,
+		Role:           entities.RoleAdmin,
+		IsInitialLogin: true,
 		Audit: entities.Audit{
 			CreatedAt: time.Now().UnixMilli(),
 			UpdatedAt: time.Now().UnixMilli(),
