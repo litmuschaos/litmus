@@ -178,7 +178,12 @@ func main() {
 			TLSConfig: conf,
 		}
 		if utils.Config.ServerTlsCertPath != "" && utils.Config.ServerTlsKeyPath != "" {
-			go log.Fatal(server.ListenAndServeTLS("", ""))
+			go func() {
+				err := server.ListenAndServeTLS("", "")
+				if err != nil {
+					log.Fatalf("Failure to start litmus-portal graphql REST server due to %v", err)
+				}
+			}()
 		}
 	}
 
