@@ -34,7 +34,7 @@ RUN microdnf install shadow-utils \
     && chown -R "$APP_USER:0" "$DATA_DIR" "$CONF_DIR" \
     && chmod -R 700 "$DATA_DIR" "$CONF_DIR"
 
-COPY --from=builder /output/event-tracker /litmus
+COPY --from=builder /output/event-tracker $APP_DIR/
 
 WORKDIR $APP_DIR
 USER $APP_USER
