@@ -19,3 +19,8 @@ type UserDetailResponse struct {
 	Username string `bson:"username" json:"username"`
 	Email    string `bson:"email" json:"email"`
 }
+
+type AuthConfig struct {
+	Key   string `bson:"key"`
+	Value string `bson:"value"`
+}

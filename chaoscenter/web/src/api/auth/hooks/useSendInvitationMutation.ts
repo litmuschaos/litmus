@@ -8,7 +8,7 @@ import { fetcher, FetcherOptions } from 'services/fetcher';
 
 export type SendInvitationRequestBody = {
   projectID: string;
-  role: 'Editor' | 'Owner' | 'Viewer';
+  role: 'Executor' | 'Owner' | 'Viewer';
   userID: string;
 };
 

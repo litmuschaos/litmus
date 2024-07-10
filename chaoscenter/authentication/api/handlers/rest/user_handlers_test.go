@@ -13,6 +13,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/authConfig"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gin-gonic/gin"
@@ -408,9 +410,11 @@ func TestLoginUser(t *testing.T) {
 					Password: "hashedPassword",
 					Email:    "test@example.com",
 				}
+				service.On("GetConfig", "salt").Return(&authConfig.AuthConfig{}, nil)
 				service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
 				service.On("CheckPasswordHash", "hashedPassword", "testPassword").Return(nil)
-				service.On("GetSignedJWT", userFromDB).Return("someJWTToken", nil)
+				service.On("UpdateUserByQuery", mock.Anything, mock.Anything).Return(nil)
+				service.On("GetSignedJWT", userFromDB, mock.Anything).Return("someJWTToken", nil)
 				project := &entities.Project{
 					ID: "someProjectID",
 				}
@@ -486,7 +490,7 @@ func TestUpdatePassword(t *testing.T) {
 			givenStrictPassword:  false,
 			givenServiceResponse: nil,
 			expectedCode:         http.StatusOK,
-			expectedOutput:       `{"message":"password has been updated successfully"}`,
+			expectedOutput:       `{"message":"password has been updated successfully","projectID":"someProjectID"}`,
 		},
 		{
 			name:                 "Invalid new password",
@@ -520,9 +524,19 @@ func TestUpdatePassword(t *testing.T) {
 				Email:          "test@example.com",
 				IsInitialLogin: false,
 			}
+			userFromDB := &entities.User{
+				ID:       "testUserID",
+				Username: "testUser",
+				Password: "hashedPassword",
+				Email:    "test@example.com",
+			}
+			service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
 			service.On("GetUser", "testUID").Return(user, nil)
 			service.On("UpdatePassword", &userPassword, true).Return(tt.givenServiceResponse)
-
+			project := &entities.Project{
+				ID: "someProjectID",
+			}
+			service.On("GetOwnerProjectIDs", mock.Anything, "testUserID").Return([]*entities.Project{project}, nil)
 			rest.UpdatePassword(service)(c)
 
 			assert.Equal(t, tt.expectedCode, w.Code)
