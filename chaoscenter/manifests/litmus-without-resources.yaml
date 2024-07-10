@@ -231,15 +231,11 @@ spec:
               value: ".*" 
             - name: ENABLE_INTERNAL_TLS
               value: "false"
-            - name: SERVER_TLS_CERT_PATH
+            - name: TLS_CERT_PATH
               value: ""
-            - name: SERVER_TLS_KEY_PATH
+            - name: TLS_KEY_PATH
               value: ""
-            - name: CLIENT_TLS_CERT_PATH
-              value: ""
-            - name: CLIENT_KEY_CERT_PATH
-              value: ""
-            - name: CA_CERT_PATH
+            - name: CA_CERT_TLS_PATH
               value: ""
           ports:
             - containerPort: 8080
@@ -334,11 +330,11 @@ spec:
               value: ".*"
             - name: ENABLE_INTERNAL_TLS
               value: "false"
-            - name: CUSTOM_TLS_CERT_PATH
+            - name: TLS_CERT_PATH
               value: ""
             - name: TLS_KEY_PATH
               value: ""
-            - name: CA_CERT_PATH
+            - name: CA_CERT_TLS_PATH
               value: ""
           ports:
             - containerPort: 3000
