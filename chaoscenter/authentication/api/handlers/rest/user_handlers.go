@@ -430,6 +430,15 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			return
 		}
 		username := c.MustGet("username").(string)
+
+		// Fetching userDetails
+		user, err := service.FindUserByUsername(username)
+		if err != nil {
+			log.Error(err)
+			c.JSON(utils.ErrorStatusCodes[utils.ErrUserNotFound], presenter.CreateErrorResponse(utils.ErrInvalidCredentials))
+			return
+		}
+
 		userPasswordRequest.Username = username
 		if userPasswordRequest.NewPassword != "" {
 			err := utils.ValidateStrictPassword(userPasswordRequest.NewPassword)
@@ -454,8 +463,56 @@ func UpdatePassword(service services.ApplicationService) gin.HandlerFunc {
 			}
 			return
 		}
+
+		var defaultProject string
+		ownerProjects, err := service.GetOwnerProjectIDs(c, user.ID)
+
+		if len(ownerProjects) > 0 {
+			defaultProject = ownerProjects[0].ID
+		} else {
+			// Adding user as project owner in project's member list
+			newMember := &entities.Member{
+				UserID:     user.ID,
+				Role:       entities.RoleOwner,
+				Invitation: entities.AcceptedInvitation,
+				Username:   user.Username,
+				Name:       user.Name,
+				Email:      user.Email,
+				JoinedAt:   time.Now().UnixMilli(),
+			}
+			var members []*entities.Member
+			members = append(members, newMember)
+			state := "active"
+			newProject := &entities.Project{
+				ID:      uuid.Must(uuid.NewRandom()).String(),
+				Name:    user.Username + "-project",
+				Members: members,
+				State:   &state,
+				Audit: entities.Audit{
+					IsRemoved: false,
+					CreatedAt: time.Now().UnixMilli(),
+					CreatedBy: entities.UserDetailResponse{
+						Username: user.Username,
+						UserID:   user.ID,
+						Email:    user.Email,
+					},
+					UpdatedAt: time.Now().UnixMilli(),
+					UpdatedBy: entities.UserDetailResponse{
+						Username: user.Username,
+						UserID:   user.ID,
+						Email:    user.Email,
+					},
+				},
+			}
+			err := service.CreateProject(newProject)
+			if err != nil {
+				return
+			}
+			defaultProject = newProject.ID
+		}
 		c.JSON(http.StatusOK, gin.H{
-			"message": "password has been updated successfully",
+			"message":   "password has been updated successfully",
+			"projectID": defaultProject,
 		})
 	}
 }
