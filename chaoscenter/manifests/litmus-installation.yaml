@@ -64,7 +64,15 @@ data:
         error_log /var/log/nginx/error.log;
 
         server {
-            listen 8185 default_server;
+            listen 8185 ssl;
+            ssl_certificate /etc/tls/client-cert.pem;
+            ssl_certificate_key /etc/tls/client-key.pem;
+            ssl_protocols TLSv1.2 TLSv1.3;
+            ssl_client_certificate /etc/tls/ca-cert.pem;
+            ssl_ciphers HIGH:!aNULL:!MD5;
+            ssl_prefer_server_ciphers on;
+            ssl_session_cache shared:SSL:10m;
+
             root   /opt/chaos;
 
             location /health {
@@ -86,15 +94,19 @@ data:
             }
 
             location /auth/ {
+                proxy_ssl_verify        off;
+                proxy_ssl_session_reuse on;
                 proxy_http_version 1.1;
                 proxy_set_header   Host                 $host;
                 proxy_set_header   X-Real-IP            $remote_addr;
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
-                proxy_pass "http://litmusportal-auth-server-service:9003/";
+                proxy_pass "https://litmusportal-auth-server-service:9005/";
             }
 
             location /api/ {
+                proxy_ssl_verify        off;
+                proxy_ssl_session_reuse on;
                 proxy_http_version 1.1;
                 proxy_set_header   Upgrade              $http_upgrade;
                 proxy_set_header   Connection           $connection_upgrade;
@@ -102,7 +114,7 @@ data:
                 proxy_set_header   X-Real-IP            $remote_addr;
                 proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
                 proxy_set_header   X-Forwarded-Proto    $scheme;
-                proxy_pass "http://litmusportal-server-service:9002/";
+                proxy_pass "https://litmusportal-server-service:9004/";
             }
         }
     }
@@ -147,10 +159,15 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+            - mountPath: /etc/tls
+              name: tls-secret
       volumes:
         - name: nginx-config
           configMap:
             name: litmusportal-frontend-nginx-configuration
+        - name: tls-secret
+          secret:
+            secretName: tls-secret
 ---
 apiVersion: v1
 kind: Service
@@ -187,6 +204,9 @@ spec:
           emptyDir: {}
         - name: hub-storage
           emptyDir: {}
+        - name: tls-secret
+          secret:
+            secretName: tls-secret
       containers:
         - name: graphql-server
           image: litmuschaos/litmusportal-server:ci
@@ -195,6 +215,8 @@ spec:
               name: gitops-storage
             - mountPath: /tmp/version
               name: hub-storage
+            - mountPath: /etc/tls
+              name: tls-secret
           securityContext:
             runAsUser: 2000
             allowPrivilegeEscalation: false
@@ -246,17 +268,17 @@ spec:
             - name: ALLOWED_ORIGINS
               value: ".*" 
             - name: ENABLE_INTERNAL_TLS
-              value: "false"
+              value: "true"
             - name: SERVER_TLS_CERT_PATH
-              value: ""
+              value: "/etc/tls/client-cert.pem"
             - name: SERVER_TLS_KEY_PATH
-              value: ""
+              value: "/etc/tls/client-key.pem"
             - name: CLIENT_TLS_CERT_PATH
-              value: ""
-            - name: CLIENT_KEY_CERT_PATH
-              value: ""
+              value: "/etc/tls/client-cert.pem"
+            - name: CLIENT_TLS_KEY_PATH
+              value: "/etc/tls/client-key.pem"
             - name: CA_CERT_PATH
-              value: ""
+              value: "/etc/tls/ca-cert.pem"
           ports:
             - containerPort: 8080
             - containerPort: 8000
@@ -330,9 +352,16 @@ spec:
       labels:
         component: litmusportal-auth-server
     spec:
+      volumes:
+        - name: tls-secret
+          secret:
+            secretName: tls-secret
       automountServiceAccountToken: false
       containers:
         - name: auth-server
+          volumeMounts:
+            - mountPath: /etc/tls
+              name: tls-secret
           image: litmuschaos/litmusportal-auth-server:ci
           securityContext:
             runAsUser: 2000
@@ -358,13 +387,13 @@ spec:
             - name: ALLOWED_ORIGINS
               value: ".*"
             - name: ENABLE_INTERNAL_TLS
-              value: "false"
+              value: "true"
             - name: CUSTOM_TLS_CERT_PATH
-              value: ""
+              value: "/etc/tls/client-cert.pem"
             - name: TLS_KEY_PATH
-              value: ""
+              value: "/etc/tls/client-key.pem"
             - name: CA_CERT_PATH
-              value: ""
+              value: "/etc/tls/ca-cert.pem"
           ports:
             - containerPort: 3000
             - containerPort: 3030
