@@ -133,13 +133,14 @@ func main() {
 
 	validatedAdminSetup(applicationService)
 
-	go runGrpcServer(applicationService)
 	if utils.EnableInternalTls {
-		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
+		if utils.TlsCertPath != "" && utils.TlSKeyPath != "" {
 			go runGrpcServerWithTLS(applicationService)
 		} else {
 			log.Fatalf("Failure to start chaoscenter authentication GRPC server due to empty TLS cert file path and TLS key path")
 		}
+	} else {
+		go runGrpcServer(applicationService)
 	}
 
 	runRestServer(applicationService)
@@ -199,30 +200,27 @@ func runRestServer(applicationService services.ApplicationService) {
 	log.Infof("Listening and serving HTTP on %s", utils.Port)
 
 	if utils.EnableInternalTls {
-		log.Infof("Listening and serving HTTPS on %s", utils.PortHttps)
-		if utils.CustomTlsCertPath != "" && utils.TlSKeyPath != "" {
+		if utils.TlsCertPath != "" && utils.TlSKeyPath != "" {
 			conf := utils.GetTlsConfig()
-
 			server := http.Server{
 				Addr:      utils.PortHttps,
 				Handler:   app,
 				TLSConfig: conf,
 			}
-			log.Infof("Listening and serving HTTPS on %s", utils.Port)
-			go func() {
-				err := server.ListenAndServeTLS("", "")
-				if err != nil {
-					log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
-				}
-			}()
+			log.Infof("Listening and serving HTTPS on %s", utils.PortHttps)
+			err := server.ListenAndServeTLS("", "")
+			if err != nil {
+				log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
+			}
 		} else {
 			log.Fatalf("Failure to start chaoscenter authentication REST server due to empty TLS cert file path and TLS key path")
 		}
-	}
-
-	err := app.Run(utils.Port)
-	if err != nil {
-		log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
+	} else {
+		log.Infof("Listening and serving HTTP on %s", utils.Port)
+		err := app.Run(utils.Port)
+		if err != nil {
+			log.Fatalf("Failure to start litmus-portal authentication REST server due to %v", err)
+		}
 	}
 }
 

@@ -381,7 +381,7 @@ spec:
             - name: LITMUS_GQL_GRPC_PORT
               value: ":8000"
             - name: ALLOWED_ORIGINS
-              value: ".*" #eg: ^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?
+              value: "^(http://|https://|)litmuschaos.io(:[0-9]+|)?,^(http://|https://|)litmusportal-server-service(:[0-9]+|)?" #ip needs to added here
             - name: ENABLE_INTERNAL_TLS
               value: "true"
             - name: TLS_CERT_PATH

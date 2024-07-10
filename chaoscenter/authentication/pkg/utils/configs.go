@@ -18,14 +18,13 @@ var (
 	JWTExpiryDuration            = getEnvAsInt("JWT_EXPIRY_MINS", 1440)
 	OAuthJWTExpDuration          = getEnvAsInt("OAUTH_JWT_EXP_MINS", 5)
 	OAuthJwtSecret               = os.Getenv("OAUTH_SECRET")
-	StrictPasswordPolicy         = getEnvAsBool("STRICT_PASSWORD_POLICY", false)
 	DexEnabled                   = getEnvAsBool("DEX_ENABLED", false)
 	DexCallBackURL               = os.Getenv("DEX_OAUTH_CALLBACK_URL")
 	DexClientID                  = os.Getenv("DEX_OAUTH_CLIENT_ID")
 	DexClientSecret              = os.Getenv("DEX_OAUTH_CLIENT_SECRET")
 	DexOIDCIssuer                = os.Getenv("OIDC_ISSUER")
 	EnableInternalTls            = getEnvAsBool("ENABLE_INTERNAL_TLS", false)
-	CustomTlsCertPath            = os.Getenv("TLS_CERT_PATH")
+	TlsCertPath                  = os.Getenv("TLS_CERT_PATH")
 	TlSKeyPath                   = os.Getenv("TLS_KEY_PATH")
 	CaCertPath                   = os.Getenv("CA_CERT_TLS_PATH")
 	DBName                       = "auth"
@@ -77,7 +76,7 @@ func GetTlsConfig() *tls.Config {
 	}
 
 	// read server cert & key
-	serverCert, err := tls.LoadX509KeyPair(CustomTlsCertPath, TlSKeyPath)
+	serverCert, err := tls.LoadX509KeyPair(TlsCertPath, TlSKeyPath)
 	if err != nil {
 		log.Fatal(err)
 	}
