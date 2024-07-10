@@ -511,8 +511,6 @@ func TestUpdatePassword(t *testing.T) {
 			c.Request.Header.Set("Content-Type", "application/json")
 			c.Set("username", tt.givenUsername)
 
-			utils.StrictPasswordPolicy = tt.givenStrictPassword
-
 			userPassword := entities.UserPassword{
 				Username:    tt.givenUsername,
 				OldPassword: "oldPass@123",
